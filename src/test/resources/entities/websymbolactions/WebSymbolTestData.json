@@ -1,0 +1,45 @@
+{
+    "type": "web",
+    "id": 1,
+    "revision": 1,
+    "name" : "Test Symbol",
+    "abbreviation" : "test_symb",
+    "actions" : [
+        {
+            "type": "checkNode",
+            "value": "#node",
+            "url": "http://example.com"
+        },
+        {
+            "type": "checkText",
+            "value": "Lorem Ipsum",
+            "url": "http://example.com"
+        },
+        {
+            "type": "clear",
+            "node": "#node",
+            "url":  "http://example.com"
+        },
+        {
+            "type": "click",
+            "node": "#node",
+            "url":  "http://example.com"
+        },
+        {
+            "type" : "fill",
+            "node" : "#input",
+            "url" : "http://example.com",
+            "generator" : "none"
+        },
+        {
+            "type": "submit",
+            "node": "#node",
+            "url":  "http://example.com"
+        },
+        {
+            "type": "wait",
+            "duration": 1000
+            
+        }
+    ]
+}

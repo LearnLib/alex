@@ -1,0 +1,71 @@
+<div class="modal-header">
+
+    <h3 class="modal-title">Test Settings</h3>
+    <span class="text-muted">Manually set some parameters for the Test</span>
+
+</div>
+
+<div class="modal-body">
+
+    <form>
+
+        <div class="form-group">
+            <label class="control-label">Algorithm</label><br>
+            <span class="text-muted">Select an algorithm that will be used for the learn process (default is L*)</span>
+            <select class="form-control" ng-model="learnConfiguration.algorithm" ng-options="k for (k,v) in learnAlgorithms">
+                <option value="" disabled>select an algorithm</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">EQ Oracle</label><br>
+            <span class="text-muted">Select how counter examples should be found (default is COMPLETE)</span>
+            <select class="form-control" ng-model="learnConfiguration.eqOracle.type" ng-options="v for (k,v) in eqOracles">
+                <option value="" disabled>select a method</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <div ng-if="learnConfiguration.eqOracle.type == eqOracles.RANDOM">
+                <p>
+                    <input class="form-control" ng-model="learnConfiguration.eqOracle.minLength" type="number"
+                           style="display: inline; width: auto"> min length
+                </p>
+
+                <p>
+                    <input class="form-control" ng-model="learnConfiguration.eqOracle.maxLength" type="number"
+                           style="display: inline; width: auto"> max length
+                </p>
+
+                <p>
+                    <input class="form-control" ng-model="learnConfiguration.eqOracle.maxNoOfTests" type="number"
+                           style="display: inline; width: auto"> no of random words to be generated
+                </p>
+            </div>
+
+            <div ng-if="learnConfiguration.eqOracle.type == eqOracles.COMPLETE">
+                <p>
+                    <input class="form-control" ng-model="learnConfiguration.eqOracle.minDepth" type="number"
+                           style="display: inline; width: auto"> min depth
+                </p>
+
+                <p>
+                    <input class="form-control" ng-model="learnConfiguration.eqOracle.maxDepth" type="number"
+                           style="display: inline; width: auto"> max depth
+                </p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">Max Amount of Steps to Learn (0 := never stop)</label>
+            <input ng-model="learnConfiguration.maxAmountOfStepsToLearn" class="form-control" type="text" placeholder="0">
+        </div>
+
+    </form>
+
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="ok()">Ok</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

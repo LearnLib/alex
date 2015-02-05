@@ -1,0 +1,35 @@
+<div class="modal-header">
+
+    <div ng-if="symbol.type == 'web'">
+        <h3 class="modal-title">Create Web Symbol</h3>
+        <span class="text-muted">Create a new web symbol</span>
+    </div>
+
+    <div ng-if="symbol.type == 'rest'">
+        <h3 class="modal-title">Create Rest Symbol</h3>
+        <span class="text-muted">Create a new rest symbol</span>
+    </div>
+
+</div>
+
+<div class="modal-body">
+
+    <form>
+        <div class="form-group">
+            <label>Symbol Name</label>
+            <input class="form-control" type="text" placeholder="name" ng-model="symbol.name">
+        </div>
+        <div class="form-group">
+            <label>Symbol Abbreviation</label>
+            <input class="form-control" type="text" placeholder="abbreviation" ng-model="symbol.abbreviation">
+        </div>
+    </form>
+
+    <div class="alert alert-danger" ng-show="errorMsg" ng-bind="errorMsg"></div>
+
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="createSymbol()">Create</button>
+    <button class="btn btn-warning" ng-click="closeModal()">Cancel</button>
+</div>

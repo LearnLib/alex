@@ -1,0 +1,84 @@
+# Interface declarations
+
+## Assumptions
+
+	*	multiple projects can be edited and executed simultaniously by different users
+
+## Rest Interface
+
+### Application Specific Routes
+
+| Method | Path                               | Description                                                  |
+|--------|------------------------------------|--------------------------------------------------------------|
+| GET    | /settings									 | get app specific settings                                    |
+| PUT	   | /settings									 | update app specific settings                                 |
+| POST	| /export/:id                        | exports a project with ID :id to an archive file 				 |
+| POST   | /import									 | imports a project in the app from an archive file				 |
+
+
+### Project Specific Routes
+
+in the following paths, /p is an abbreviation for 'project'
+
+| Method | Path                               | Description                                                  |
+|--------|------------------------------------|--------------------------------------------------------------|
+| POST   | /p			                         | create a new project														 |
+| PUT    | /p/:id		                         | saves a project								    						 |
+| DELETE | /p/:id	 		                      | deletes a project, its symbols, hypothesis and settings 		 |
+| GET		| /p/all										 | get name, id etc. from all projects									 |
+| GET		| /p/recent									 | get name, id etc. from recent opened projects					 |
+| GET		| /p/:id/settings							 |	get project specific settings  										 |
+| PUT		| /p/:id/settings							 | saves project specific settings										 |
+| GET    | /p/:id/status/web						 | get status = {blocked|learning|available} of a web test      |
+| GET    | /p/:id/status/rest						 | get status = {blocked|learning|available} of a rest test     |
+
+
+### Symbol Specific Routes
+
+all following paths require be appended to '/p/:id', where :id stands for the correspondig project ID
+
+| Method | Path                               | Description                                                  |
+|--------|------------------------------------|--------------------------------------------------------------|
+| GET	   | /symbol/all								 | get all symbols & their actions										 |
+| GET		| /symbol/:id								 | get a symbol and its actions                                 |
+| POST	| /symbol									 | creates a symbol	                                           |
+| PUT		| /symbol/:id								 | updates a symbol	                                           | 
+| DELETE	| /symbol/:id								 | deletes a symbol	                                           |
+| POST	| /symbol/:id/include					 | includes a symbol into the test	                            |
+| POST	| /symbol/:id/exclude 					 | excludes a symbol into the test                              |
+| GET    | /symbol/:id/rev/:num					 | get the :num revision of the symbol with the ID :id          |
+
+
+### Learning Specific Routes
+
+in the following paths, :id marks the ID of the learned project
+
+| Method | Path                               | Description                                                  |
+|--------|------------------------------------|--------------------------------------------------------------|
+| GET		| /learn/:id/status                  | get status = {finished|waitingForUserInput|aborted|paused}   |
+| GET		| /learn/:id/settings					 | get learning process specific settings                       |
+| GET		| /learn/:id/settings/save				 |	save learning process specific settings			             |
+| POST	| /learn/:id/start						 | starts the learning process                                  |
+| POST	| /learn/:id/pause						 | pauses the current learning process                          |
+| POST	| /learn/:id/continue					 | continues the current learning process                       |
+| POST	| /learn/:id/abort						 | stops the current learning process                           |
+
+POST /ce
+	[{"to": 0, "from: "0"}, ...]
+
+### Hypothesis Specific Routes
+
+all following paths require be appended to '/p/:id', where :id stands for the correspondig project ID
+
+| Method | Path                               | Description                                                  |
+|--------|------------------------------------|--------------------------------------------------------------|
+| GET		| /hypothesis/							 | get all final hypothesis of a project 										 |
+| GET		| /hypotheses/:id							 | get a final hypothesis                                             |
+| GET		| /hypothesis/:id/complete							 | get all steps of a learning process                                             |
+| GET		| /hypothesis/:id/step/:num							 | get a hypothesis                                             |
+| GET		| /hypothesis/diff/:id1/:id2
+
+id:rev
+
+| DELETE	| /hypothesis/:id						 | delete a hypothesis                                          |
+

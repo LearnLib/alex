@@ -1,0 +1,54 @@
+<div class="modal-header">
+
+    <h3 class="modal-title">Test Details</h3>
+    <span class="text-muted">View some details about this test</span>
+
+</div>
+
+<div class="modal-body">
+
+    <table class="table table-condensed">
+
+        <tr class="active">
+            <td colspan="2"><strong>About This Test</strong></td>
+        </tr>
+        <tr>
+            <td>nth Test</td>
+            <td>{{test.testNo}}</td>
+        </tr>
+        <tr>
+            <td>nth Hypothesis</td>
+            <td>{{test.stepNo}}</td>
+        </tr>
+        <tr>
+            <td>Started</td>
+            <td>{{test.startTime}}</td>
+        </tr>
+        <tr>
+            <td>Duration</td>
+            <td>{{test.duration}} ms</td>
+        </tr>
+
+        <tr class="active">
+            <td colspan="2"><strong>Configuration</strong></td>
+        </tr>
+        <tr>
+            <td>Algorithm</td>
+            <td>{{test.configuration.algorithm}}</td>
+        </tr>
+        <tr>
+            <td>EQ Oracle</td>
+            <td>{{test.configuration.eqOracle.type}}</td>
+        </tr>
+        <tr>
+            <td>Steps to Learn</td>
+            <td>{{test.configuration.maxAmountOfStepsToLearn}}</td>
+        </tr>
+
+    </table>
+
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">Ok</button>
+</div>

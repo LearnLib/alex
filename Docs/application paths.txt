@@ -1,0 +1,73 @@
+# Pages
+
+Here the paths of the application and their functionality are listed. The pages are chosen this way because they bundle frontend functionality concerning the abgular controller files. Furthermore, the amout of JavaScript files to be included in each page is nearly equally balanced so that there will be no performance issues.
+
+Indented paths are subpaths, which are not directly served by the backend but invoked by angular. Parent paths are actually served by the Backend by a GET Request.
+
+	1.	/
+	|-	1.1.	/settings
+	|-	1.2.	/p/all
+	|-	1.3.	/p/create
+	|-	1.4.	/p/:id/settings
+	|-	1.5.	/p/:id/overview
+	2.	/p/:id/editor/web
+	3. /p/:id/editor/rest
+	5. /p/:id/hypothesis
+	|-	5.1. /p/:id/hypothesis/all
+	|- 5.2. /p/:id/hypothesis/:id
+	|-	5.3. /p/:id/hypothesis/compare/:id1/:id2
+	6. /p/:id/generators
+	7. /p/:id/setup/web
+	|- 7.1. /p/:id/loading/web
+	8. /p/:id/setup/rest
+	|- 8.1. /p/:id/loading/rest
+	
+
+	1. 	the startpage, with options to
+	|			- open a project
+	|			- create a new project
+	|			- list the recently openend projects
+	|			- show which projects are openend right now and what status they currently have
+	|			
+	|-- 1.1.		show and edit app specific settings
+	|	
+	|-- 1.2.		lists all created projects with options to
+	|					- delete an existing project
+	|					- import & export a project
+	|					- open a project
+	|				
+	|-- 1.3.		create a new project and define project specific settings
+	|				
+	|-- 1.4.		- edit project specific settings
+	|				- go to the generator page
+	|			
+	|-- 1.5.		- view the status of the project and the status for the editors
+	|				- enter the visual editor for web symbols 
+	|				- enter the visual editor for rest symbols
+	|
+	2.		shows the visual symbol editor for web symbols
+	|
+	3.		shows the visual symbol editor for web symbols
+	|
+	5.		used to show possibilities for the subpages
+	|	
+	|-- 5.1.		shows a list with all hypothesises of a project
+	|	
+	|-- 5.2.		- show a single hypothesis
+	|				- during the learning process in the intermediate steps while learning
+	|	
+	|-- 5.3.		compare up to two different  hypothesises
+	|				
+	6.		used to create and edit generators for web and rest symbol actions
+	|
+	7.		- show setup page before a web test
+	|		- enable & disable dymbols
+	|		- choose a learning algorithm
+	|		- start web test
+	|
+	|-- 7.1.		show the loading screen while learning a web project
+	|
+	8.		see 7 and replace "web" with "rest"
+	|
+	|-- 8.1.		see 7.1
+	

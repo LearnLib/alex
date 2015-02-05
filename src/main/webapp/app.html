@@ -1,0 +1,116 @@
+<!Doctype html>
+<html ng-app="weblearner">
+<head>
+
+    <!-- uncomment this to use the concatenated version for the needed libraries and comment the scripts below -->
+    <!--<script src="app/libs.js"></script>-->
+
+    <script src="bower_components/angular/angular.min.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="bower_components/ng-sortable/dist/ng-sortable.min.js"></script>
+    <script src="bower_components/angular-ui-ace/ui-ace.min.js"></script>
+    <script src="bower_components/ace-builds/src-min/ace.js"></script>
+    <script src="bower_components/ngtoast/dist/ngToast.min.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="bower_components/d3/d3.min.js"></script>
+    <script src="bower_components/graphlib/dist/graphlib.core.min.js"></script>
+    <script src="bower_components/dagre/dist/dagre.core.min.js"></script>
+    <script src="bower_components/dagre-d3/dist/dagre-d3.core.min.js"></script>
+    <script src="bower_components/chartjs/Chart.min.js"></script>
+
+    <link href="bower_components/ngtoast/dist/ngToast.min.css" rel="stylesheet">
+    <link href="bower_components/ng-sortable/dist/ng-sortable.min.css" rel="stylesheet">
+    <link href="app/styles/lib/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="app/styles/style.css" rel="stylesheet">
+
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<load-screen></load-screen>
+
+<toast></toast>
+
+<web-element-picker></web-element-picker>
+
+<ng-include src="'app/partials/navs/nav-main.html'"></ng-include>
+
+<div class="animate-view" id="view" ui-view
+     style="padding-top: 20px; width: 100%;"></div>
+
+<!-- uncomment this to use the minified version of the application and comment the included scripts below -->
+<!--<script src="app/app.min.js"></script>-->
+
+<script src="app/js/init.js"></script>
+<script src="app/js/constants.js"></script>
+<script src="app/js/enums.js"></script>
+<script src="app/js/routes.js"></script>
+
+<script src="app/js/services/SessionService.js"></script>
+<script src="app/js/services/SelectionService.js"></script>
+<script src="app/js/services/WebElementPickerService.js"></script>
+<script src="app/js/services/LoadScreenService.js"></script>
+<script src="app/js/services/EqOracleService.js"></script>
+<script src="app/js/services/TestResultsChartService.js"></script>
+
+<script src="app/js/resources/ProjectResource.js"></script>
+<script src="app/js/resources/SymbolResource.js"></script>
+<script src="app/js/resources/LearnerResource.js"></script>
+<script src="app/js/resources/TestResource.js"></script>
+
+<script src="app/js/controller/IndexController.js"></script>
+<script src="app/js/controller/DashboardController.js"></script>
+<script src="app/js/controller/NavigationController.js"></script>
+<script src="app/js/controller/ProjectCreateController.js"></script>
+<script src="app/js/controller/ProjectSettingsController.js"></script>
+<script src="app/js/controller/EditorSymbolController.js"></script>
+<script src="app/js/controller/modals/SymbolCreateController.js"></script>
+<script src="app/js/controller/modals/SymbolUpdateController.js"></script>
+<script src="app/js/controller/EditorActionController.js"></script>
+<script src="app/js/controller/modals/ActionCreateController.js"></script>
+<script src="app/js/controller/modals/ActionUpdateController.js"></script>
+<script src="app/js/controller/TestSetupController.js"></script>
+<script src="app/js/controller/modals/TestSetupSettingsController.js"></script>
+<script src="app/js/controller/LearnController.js"></script>
+<script src="app/js/controller/modals/TestDetailsController.js"></script>
+<script src="app/js/controller/TestResultController.js"></script>
+<script src="app/js/controller/HypothesesSlideshowController.js"></script>
+<script src="app/js/controller/SymbolExportController.js"></script>
+<script src="app/js/controller/SymbolUploadController.js"></script>
+<script src="app/js/controller/StatisticsController.js"></script>
+
+<script src="app/js/directives/selection.js"></script>
+<script src="app/js/directives/openSymbolCreateModal.js"></script>
+<script src="app/js/directives/openSymbolUpdateModal.js"></script>
+<script src="app/js/directives/openActionCreateModal.js"></script>
+<script src="app/js/directives/openActionUpdateModal.js"></script>
+<script src="app/js/directives/openTestDetailsModal.js"></script>
+<script src="app/js/directives/openTestSetupSettingsModal.js"></script>
+<script src="app/js/directives/actionFormWeb.js"></script>
+<script src="app/js/directives/actionFormRest.js"></script>
+<script src="app/js/directives/fixOnScroll.js"></script>
+<script src="app/js/directives/hypothesis.js"></script>
+<script src="app/js/directives/openWebElementPicker.js"></script>
+<script src="app/js/directives/webElementPicker.js"></script>
+<script src="app/js/directives/fitParentDimensions.js"></script>
+<script src="app/js/directives/loadScreen.js"></script>
+<script src="app/js/directives/fileDropzone.js"></script>
+<script src="app/js/directives/sidebar.js"></script>
+<script src="app/js/directives/testResultsChart.js"></script>
+<script src="app/js/directives/testResultsChartMultipleFinal.js"></script>
+<script src="app/js/directives/testResultsChartSingleComplete.js"></script>
+<script src="app/js/directives/testResultsChartTwoComplete.js"></script>
+<script src="app/js/directives/downloadCanvasAsImage.js"></script>
+<script src="app/js/directives/appNavigation.js"></script>
+
+<script src="app/js/filters/selectionFilter.js"></script>
+<script src="app/js/filters/collectionFilter.js"></script>
+<script src="app/js/filters/enumFilter.js"></script>
+<script src="app/js/filters/typeOfWeb.js"></script>
+<script src="app/js/filters/typeOfRest.js"></script>
+
+</body>
+</html>

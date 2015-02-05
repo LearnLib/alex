@@ -1,0 +1,5 @@
+{
+    "type": "click",
+    "node": "#node",
+    "url":  "http://example.com"
+}

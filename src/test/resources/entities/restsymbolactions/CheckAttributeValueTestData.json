@@ -1,0 +1,6 @@
+{
+  "type": "checkAttributeValue",
+  "attribute": "object.attribute",
+  "value": "FooBar Lorem",
+  "regexp": true
+}

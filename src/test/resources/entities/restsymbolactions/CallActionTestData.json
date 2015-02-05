@@ -1,0 +1,6 @@
+{
+  "type" : "call",
+  "method" : "GET",
+  "url" : "http://example.com/api",
+  "data" : "{}"
+}

@@ -1,0 +1,81 @@
+<div class="container">
+
+    <h2>Statistics</h2>
+
+    <p class="text-muted">
+        Have a look at some numbers we gathered for your tests
+    </p>
+    <hr>
+</div>
+
+<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+
+    <div class="container" ng-if="chartDataSets.length == 0">
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" select-all-items-checkbox items="tests">
+        </div>
+        <div class="pull-left">
+            <button class="btn btn-xs btn-default" ng-click="chartFromSingleCompleteTestResult()">
+                <i class="fa fa-line-chart fa-fw"></i> Single Complete Test
+            </button>
+            <button class="btn btn-xs btn-default" ng-click="chartFromMultipleFinalTestResults()">
+                <i class="fa fa-bar-chart fa-fw"></i> Multiple Tests
+            </button>
+            <button class="btn btn-xs btn-default" ng-click="chartFromTwoCompleteTestResults()">
+                <i class="fa fa-columns fa-fw"></i> Compare Two Complete Tests
+            </button>
+        </div>
+    </div>
+
+    <div class="container" ng-if="chartDataSets.length > 0">
+        <div class="pull-left">
+            <button class="btn btn-xs btn-default" ng-click="back()">
+                <i class="fa fa-list-ul fa-fw"></i> Test Results
+            </button>
+            <button class="btn btn-xs btn-default" download-canvas-as-image="test-results-chart">
+                <i class="fa fa-save fa-fw"></i> Download Diagram
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<div class="container" ng-if="chartDataSets.length == 0">
+
+    <div selectable-list ng-model="tests">
+        <div selectable-list-item ng-repeat="test in (tests | typeOfWeb)">
+
+            <span class="label label-primary pull-right">
+                Web
+            </span>
+
+            <strong>Test No
+                <span ng-bind="test.testNo"></span>
+            </strong>
+            <br>
+
+            <p class="text-muted">
+                Start date: <span ng-bind="test.startTime"></span>
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<div class="container" ng-if="chartDataSets.length > 0">
+
+    <hr>
+
+    <div ng-if="chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS">
+        <div test-results-chart test-results-chart-multiple-final chart-data="chartDataSets"></div>
+    </div>
+
+    <div ng-if="chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT">
+        <div test-results-chart test-results-chart-single-complete chart-data="chartDataSets"></div>
+    </div>
+
+    <div ng-if="chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS">
+        <div test-results-chart test-results-chart-two-complete chart-data="chartDataSets"></div>
+    </div>
+
+</div>

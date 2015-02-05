@@ -1,0 +1,19 @@
+{
+  "name": "weblearner",
+  "version": "0.1",
+  "main": "./app.html",
+  "dependencies": {
+    "angular": "~1.3.10",
+    "angular-route": "~1.3.8",
+    "angular-animate": "~1.3.10",
+    "ng-sortable": "~1.1.9",
+    "angular-ui-ace": "~0.1.1",
+    "angular-bootstrap": "~0.12.0",
+    "d3": "~3.5.3",
+    "dagre-d3": "~0.4.2",
+    "angular-ui-router": "~0.2.13",
+    "ngtoast": "~1.3.0",
+    "chartjs": "~1.0.1"
+  },
+  "devDependencies": {}
+}

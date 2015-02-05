@@ -1,0 +1,133 @@
+package de.learnlib.weblearner.integrationtests;
+
+import de.learnlib.weblearner.entities.Project;
+import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.WebSymbol;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class WebSymbolIT {
+
+    private static final String BASE_URL = "http://localhost:8080/rest";
+
+    private static Project project;
+
+    @BeforeClass
+    public static void beforeClass() {
+        String projectName = "WebSymbol IT Project";
+        String json =  "{\"name\": \"" + projectName + "\", \"baseUrl\": \"http://localhost:8080\"}";
+        Client client = ClientBuilder.newClient();
+        Response response = client.target(BASE_URL + "/projects").request().post(Entity.json(json));
+
+        project = response.readEntity(Project.class);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        Client client = ClientBuilder.newClient();
+        client.target(BASE_URL + "/projects/" + project.getId()).request().delete();
+    }
+
+    @Test
+    public void validCRUD() {
+        Client client = ClientBuilder.newClient();
+
+        String symbolName = "IT Web Symbol - CRUD";
+        String symbolAbbr = "itwebsymbcrud";
+        String json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+                        + "\", \"abbreviation\": \"" + symbolAbbr + "\", "
+                        + "\"actions\": [{\"type\": \"wait\", \"duration\": 1000}] }";
+
+        // create
+        String path = "/projects/" + project.getId() + "/symbols";
+        Response response = client.target(BASE_URL + path).request().post(
+                                Entity.entity(json, MediaType.APPLICATION_JSON));
+        assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+        Symbol<?> symbol = response.readEntity(Symbol.class);
+        assertTrue(project.getId() > 0);
+        assertEquals(1, symbol.getRevision());
+        assertEquals(symbolName, symbol.getName());
+        assertEquals(symbolAbbr, symbol.getAbbreviation());
+        assertNotNull(((WebSymbol) symbol).getActions());
+        assertEquals(1, ((WebSymbol) symbol).getActions().size());
+
+        // and a second on
+        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName + "2"
+                + "\", \"abbreviation\": \"" + symbolAbbr + "2\", "
+                + "\"actions\": [{\"type\": \"wait\", \"duration\": 1000}] }";
+        client.target(BASE_URL + path).request().post(Entity.entity(json, MediaType.APPLICATION_JSON));
+
+        // read all
+        path = "/projects/" + project.getId() + "/symbols/";
+        response = client.target(BASE_URL + path).request().get();
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        List<Symbol<?>> symbols = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        assertEquals(2 + 2, symbols.size()); // the 2 created symbols + 2 reset symbols
+        assertTrue(project.getId() > 0);
+        symbol = (Symbol<?>) symbols.get(2);
+        assertNotNull(symbol);
+        assertEquals(1, symbol.getRevision());
+        assertEquals(symbolName, symbol.getName());
+        assertEquals(symbolAbbr, symbol.getAbbreviation());
+
+        // read
+        path = "/projects/" + project.getId() + "/symbols/" + symbol.getId();
+        response = client.target(BASE_URL + path).request().get();
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        symbol = response.readEntity(Symbol.class);
+        assertTrue(project.getId() > 0);
+        assertEquals(1, symbol.getRevision());
+        assertEquals(symbolName, symbol.getName());
+        assertEquals(symbolAbbr, symbol.getAbbreviation());
+        assertNotNull(((WebSymbol) symbol).getActions());
+        assertEquals(1, ((WebSymbol) symbol).getActions().size());
+
+        // update
+        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"id\": " + symbol.getId()
+                + ", \"revision\": " + symbol.getRevision() + ", \"name\": \"" + symbolName
+                + " updated\", \"abbreviation\": \"" + symbolAbbr + "n\","
+                + " \"actions\": ["
+                    + "{\"type\": \"click\"},"
+                    + "{\"type\": \"wait\", \"duration\": 1000}"
+                + "]}";
+        path = "/projects/" + project.getId() + "/symbols/" + symbol.getId();
+        response = client.target(BASE_URL + path).request().put(Entity.entity(json, MediaType.APPLICATION_JSON));
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        // test the returned Symbol
+        symbol = response.readEntity(Symbol.class);
+        assertEquals(symbolName + " updated", symbol.getName());
+        assertEquals(symbolAbbr + "n", symbol.getAbbreviation());
+        assertNotNull(((WebSymbol) symbol).getActions());
+        assertEquals(2, ((WebSymbol) symbol).getActions().size());
+        // get all the Symbols to check
+        path = "/projects/" + project.getId() + "/symbols/";
+        response = client.target(BASE_URL + path).request().get();
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        symbols = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        assertEquals(2 + 2, symbols.size()); // update == create a new symbol with a higher revision & hide the old one
+        symbol = (Symbol<?>) symbols.get(2); // 1st symbol, 2nd revision
+        assertEquals(2, ((WebSymbol) symbol).getActions().size());
+
+        // delete
+        path = "/projects/" + project.getId() + "/symbols/" + symbol.getId();
+        response = client.target(BASE_URL + path).request().delete();
+        assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        response = client.target(BASE_URL + path).request().get();
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+}

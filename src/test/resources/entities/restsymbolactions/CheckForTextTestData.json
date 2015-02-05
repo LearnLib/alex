@@ -1,0 +1,5 @@
+{
+  "type": "checkForText",
+  "value": "Lorem Ipsum",
+  "regexp": true
+}

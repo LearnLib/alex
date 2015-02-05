@@ -1,0 +1,25 @@
+<div class="modal-header">
+
+    <div ng-if="symbol.type == 'web'">
+        <h3 class="modal-title">Update Web Action</h3>
+        <span class="text-muted">Update an existing action for a web symbol</span>
+    </div>
+
+    <div ng-if="symbol.type == 'rest'">
+        <h3 class="modal-title">Update Rest Action</h3>
+        <span class="text-muted">Update an existing action for a rest symbol</span>
+    </div>
+
+</div>
+
+<div class="modal-body">
+
+    <action-form-web action-model="action" ng-if="symbol.type == 'web'"></action-form-web>
+    <action-form-rest action-model="action" ng-if="symbol.type == 'rest'"></action-form-rest>
+
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="updateAction()">Update</button>
+    <button class="btn btn-warning" ng-click="closeModal()">Cancel</button>
+</div>

@@ -1,0 +1,62 @@
+<div class="container">
+    <h2>Tests</h2>
+    <p class="text-muted">
+        Have a look at all the tests you ran for this project
+    </p>
+    <hr>
+</div>
+
+<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+    <div class="container">
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" select-all-items-checkbox items="tests">
+        </div>
+        <div class="pull-left">
+            <button class="btn btn-xs btn-primary" ng-click="deleteTests()">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div selectable-list ng-model="tests">
+        <div selectable-list-item ng-repeat="test in tests">
+
+            <div class="btn-group btn-group-xs pull-right" dropdown>
+                <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+                    <i class="fa fa-bars"></i>
+                </button>
+                <ul class="dropdown-menu pull-left" role="menu">
+                    <li>
+                        <a href="" open-test-details-modal test="test">
+                            <i class="fa fa-info fa-fw"></i>&nbsp; Details
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#/project/{{project.id}}/test/result/{{test.testNo}}">
+                            <i class="fa fa-code-fork fa-fw"></i>&nbsp; Hypotheses
+                        </a>
+                    </li>
+                    <li>
+                        <a href="" ng-click="deleteTest(test)">
+                            <i class="fa fa-trash fa-fw"></i>&nbsp; Delete
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <strong>Test No
+                <span ng-bind="test.testNo"></span>
+            </strong>
+            <br>
+
+            <p class="text-muted">
+                Start date: <span ng-bind="test.startTime"></span>
+            </p>
+
+        </div>
+    </div>
+
+</div>

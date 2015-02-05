@@ -1,0 +1,214 @@
+@import "lib/_bootstrap";
+@import "hypothesis";
+@import "web-element-picker";
+@import "load-screen";
+@import "navigation";
+
+*, *:after, *:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  padding-top: 50px;
+}
+
+.navbar {
+  border-radius: 0;
+}
+
+.project-list-group {
+  .list-group-item {
+    &:hover {
+      cursor: pointer;
+      background: #f2f2f2;
+    }
+  }
+}
+
+.panel#alert-list {
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
+  position: absolute;
+  z-index: 2000;
+  height: auto;
+  left: 50%;
+  margin-left: -250px;
+  width: 500px;
+  max-height: 320px;
+  overflow: auto;
+
+  .panel-body {
+    padding-bottom: 0;
+
+    .close {
+      opacity: 0.6;
+      cursor: pointer;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+/* ANIMATIONS
+============================================================================= */
+
+/* fade out and zoom back*/
+@keyframes fadeOut {
+  from {
+    opacity: 1.0
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8)
+  }
+}
+
+/* scale up */
+@keyframes scaleUp {
+  from {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+}
+
+.animate-view.ng-enter {
+  overflow: hidden;
+  animation: scaleUp 0.2s both ease-in;
+  z-index: 8888;
+}
+
+.animate-view.ng-leave {
+  overflow: hidden;
+  animation: fadeOut 0.2s both ease-in;
+  z-index: 9999;
+}
+
+/* Bootstrap Extensions & Modifications
+============================================================================== */
+
+.list-group-minimal {
+  .list-group-item {
+
+    border-radius: 0;
+    border-right: 0;
+    border-top: 0;
+    background: none;
+
+    &.active {
+      background: #fff;
+      color: #333;
+      border-bottom: 1px solid #ddd;
+
+      &:hover {
+        background: #fff;
+      }
+    }
+
+    &:hover {
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.02)
+    }
+  }
+}
+
+form {
+  &.form-condensed {
+    .form-group {
+      margin-bottom: 5px;
+    }
+  }
+}
+
+.sub-nav {
+  height: 38px;
+  width: 100%;
+  background: #fff;
+
+  &.fixed {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 50px;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.4);
+    z-index: 300;
+  }
+
+  &.absolute {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0px;
+    border-bottom: 1px solid #e7e7e7;
+    z-index: 300;
+  }
+
+  .container {
+    padding: 10px 23px;
+  }
+
+  .container-fluid {
+    padding: 10px;
+  }
+}
+
+.ng-toast {
+  margin-top: 75px;
+  .alert {
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.5);
+    max-width: 450px;
+  }
+}
+
+
+
+.alert-condensed {
+  padding: 5px 15px;
+}
+
+
+
+.panel-sidebar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 38px;
+  width: 320px;
+  background: #f8f8f8;
+  border: 1px solid #e7e7e7;
+  z-index: 1;
+  overflow: auto;
+  padding: 10px;
+
+  .panel {
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-bottom: 2px solid #ddd;
+
+    .panel-heading {
+      padding: 10px 15px;
+    }
+
+    .panel-body {
+      padding: 10px 15px;
+    }
+  }
+}
+
+
+.btn {
+  &.btn-icon {
+    padding: 0;
+    opacity: 0.5;
+    &:hover {
+      opacity: 1;
+    }
+    &:active {
+
+    }
+  }
+}

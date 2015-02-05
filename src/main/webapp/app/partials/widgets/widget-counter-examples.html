@@ -1,0 +1,34 @@
+<form class="form form-condensed" ng-submit="addCounterExample()">
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="input" ng-model="newCounterExample.input">
+
+            <div class="input-group-addon">
+                <i class="fa fa-info"></i>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="output" ng-model="newCounterExample.output">
+
+            <div class="input-group-addon">
+                <i class="fa fa-info"></i>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary btn-block btn-sm">Add Counter Example</button>
+    </div>
+</form>
+<hr>
+
+<ul class="list-group">
+    <li class="list-group-item" ng-repeat="ce in counterExamples">
+        <span class="btn btn-icon pull-right" ng-click="removeCounterExample(ce, $index)">
+            <i class="fa fa-trash"></i>
+        </span>
+        {{ce.input}}<br>
+        {{ce.output}}
+    </li>
+</ul>

@@ -1,0 +1,49 @@
+.app-navigation {
+
+  .navbar-menu {
+    display: none;
+    @media screen and (max-width: $screen-sm) {
+      display: inline-block !important;
+    }
+  }
+
+  .app-navigation-wrapper {
+    @media screen and (max-width: $screen-sm) {
+      position: fixed;
+      left: 0;
+      width: 320px;
+      top: 0;
+      bottom: 0;
+      overflow: auto;
+      background: #f2f2f2;
+      padding: 0 21px 0 21px;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+      transform: translate(-320px, 0);
+      transition: transform 200ms;
+    }
+    &.has-off-screen-navigation {
+      transform: translate(0, 0);
+
+      .navbar-header, {
+        float: none;
+      }
+    }
+    .navbar-menu-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 5;
+      border: none;
+      background: none
+    }
+  }
+
+  .navbar-header, {
+    @media screen and (max-width: $screen-sm) {
+      float: left;
+      margin: auto;
+      margin-right: 0;
+      margin-left: -15px;
+    }
+  }
+}

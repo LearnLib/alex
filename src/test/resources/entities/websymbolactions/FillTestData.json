@@ -1,0 +1,6 @@
+{
+    "type" : "fill",
+    "node" : "#input",
+    "url" : "http://example.com",
+    "generator" : "none"
+}

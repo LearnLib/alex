@@ -1,0 +1,54 @@
+<div class="container">
+
+    <h2>Test Setup</h2>
+
+    <p class="text-muted">
+        Include or exclude Symbols you want to use for the following test
+    </p>
+    <hr>
+
+</div>
+
+<!--
+BEGIN: Sub Navigation
+contains call to action buttons to create update & delete symbols
+-->
+<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+    <div class="container">
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" select-all-items-checkbox items="symbols">
+        </div>
+        <div class="pull-right">
+            <button class="btn btn-xs btn-default" open-test-setup-settings-modal
+                    learn-configuration="testConfiguration" on-ok="updateLearnConfiguration">
+                <i class="fa fa-gear"></i>
+            </button>
+            <button class="btn btn-xs btn-primary" ng-click="startTest()">
+                Start Test
+            </button>
+        </div>
+    </div>
+</div>
+<!-- END: Sub Navigation -->
+
+<div class="container">
+
+    <div selectable-list ng-model="symbols">
+        <div selectable-list-item ng-repeat="symbol in symbols">
+
+            <span class="label label-default pull-right">
+                Rev. <span ng-bind="symbol.revision"></span>
+            </span>
+
+            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
+
+            <p class="text-muted">
+                <a href="#/project/{{project.id}}/editor/actions/{{symbol.id}}">
+                    <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
+                </a>
+            </p>
+
+        </div>
+    </div>
+
+</div>

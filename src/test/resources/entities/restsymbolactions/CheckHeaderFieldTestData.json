@@ -1,0 +1,6 @@
+{
+  "type": "checkHeaderField",
+  "key": "Key",
+  "value": "Value",
+  "regexp": true
+}

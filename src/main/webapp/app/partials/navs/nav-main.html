@@ -1,0 +1,108 @@
+<nav app-navigation ng-controller="NavigationController"
+     class="app-navigation navbar navbar-default navbar-fixed-top navbar-application" role="navigation">
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#/"><strong>Wl</strong></a>
+        </div>
+
+        <ul class="nav navbar-nav navbar-left navbar-menu">
+            <li>
+                <a href="" class="off-screen-navigation-handle"><i class="fa fa-bars"></i>&nbsp; Menu</a>
+            </li>
+        </ul>
+
+        <div class="app-navigation-wrapper">
+
+            <button class="btn btn-default navbar-menu navbar-menu-close">
+                <i class="fa fa-close"></i>
+            </button>
+
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown" dropdown>
+                    <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-expanded="false">
+                        <span ng-if="!project">Project</span>
+                        <strong ng-if="project" ng-bind="project.name" style="text-decoration: underline"></strong>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" ng-if="project">
+                        <li><a class="disabled" href="#/project/{{project.id}}">Overview</a></li>
+                        <li><a href="#/project/{{project.id}}/settings">Settings</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#/" ng-click="closeProject()">Close</a></li>
+                    </ul>
+                    <ul class="dropdown-menu" role="menu" ng-if="!project">
+                        <li><a href="#/project/create">Create a new project</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div ng-if="project">
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown" dropdown>
+                        <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">Symbols <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#/project/{{project.id}}/editor/symbols/web">Web Symbol Editor</a></li>
+                            <li><a href="#/project/{{project.id}}/editor/symbols/rest">Rest Symbol Editor</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#/">Text Editor</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#/project/{{project.id}}/symbol/upload">Upload</a></li>
+                            <li><a href="#/project/{{project.id}}/symbol/export">Export</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown" dropdown>
+                        <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">Test <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#/project/{{project.id}}/test/setup/web">Web Application</a></li>
+                            <li><a href="#/project/{{project.id}}/test/setup/rest">Rest Interface</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#/project/{{project.id}}/statistics">Statistics</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown" dropdown>
+                        <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">Hypthesis <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#/project/{{project.id}}/test/result">View & Compare</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown" dropdown>
+                    <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-expanded="false">App <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#/">Settings</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#/about">About</a></li>
+                        <li><a href="#/help">Help</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right" ng-if="!project">
+                <li class="dropdown" dropdown>
+                    <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-expanded="false">Tools <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#/">View Hypothesis from PC</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+</nav>

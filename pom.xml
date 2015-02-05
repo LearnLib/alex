@@ -1,0 +1,480 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.learnlib</groupId>
+    <artifactId>weblearner</artifactId>
+    <version>0.3-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>WebLearner</name>
+    <description>
+        A RESTfull application with a fancy web frontend to configure and run automata lerning alogrithms on websites and webservices.
+    </description>
+    <developers>
+        <developer>
+            <id>alex.b</id>
+            <name>Alexander Bainczyk</name>
+            <email>alexander.bainczyk@tu-dortmund.de</email>
+        </developer>
+        <developer>
+            <id>alex.s</id>
+            <name>Alexander Schieweck</name>
+            <email>alexander.schieweck@tu-dortmund.de</email>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>Oliver Bauer</name>
+            <email>oliver.bauer@tu-dortmund.de</email>
+        </contributor>
+        <contributor>
+            <name>Dr. Johannes Neubauer</name>
+            <email>johannes.neubauer@tu-dortmund.de</email>
+        </contributor>
+    </contributors>
+    <organization>
+        <name>Chair for Programming Systems at TU Dortmund University</name>
+        <url>http://ls5-www.cs.tu-dortmund.de/</url>
+    </organization>
+
+    <scm>
+        <developerConnection>scm:svn:https://projekte.itmc.tu-dortmund.de/svn/learnlibweb</developerConnection>
+        <!--<url></url>-->
+        <tag>HEAD</tag>
+    </scm>
+    <issueManagement>
+        <system>Redmine</system>
+        <url>https://projekte.itmc.tu-dortmund.de/projects/learnlibweb/issues</url>
+    </issueManagement>
+
+    <!--===== properties ======-->
+    <properties>
+        <!-- general -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+
+        <!-- plugin versions -->
+        <clean-plugin.version>2.6</clean-plugin.version>
+        <compiler-plugin.version>3.2</compiler-plugin.version>
+        <dependency-plugin.version>2.10</dependency-plugin.version>
+        <javadoc-plugin.version>2.10.1</javadoc-plugin.version>
+        <javadoc-umlgraph.version>5.6.6</javadoc-umlgraph.version>
+        <surefire-plugin.version>2.18.1</surefire-plugin.version>
+        <surefire-report.version>2.18.1</surefire-report.version>
+        <war-plugin.version>2.6</war-plugin.version>
+
+        <checkstyle.version>2.13</checkstyle.version>
+        <cobertura.version>2.6</cobertura.version>
+        <findbugs.version>3.0.0</findbugs.version>
+        <pmd.version>3.3</pmd.version>
+        <versions-plugin.version>2.1</versions-plugin.version>
+
+        <!-- dependencies versions -->
+        <jersey.version>2.15</jersey.version>
+        <hibernate.version>5.1.3.Final</hibernate.version>
+        <learnlib.version>0.10.1</learnlib.version>
+        <automatalib.version>0.4.1</automatalib.version>
+        <selenium.version>2.44.0</selenium.version>
+    </properties>
+
+    <!--===== dependencies ======-->
+    <dependencies>
+        <!-- Jersey -->
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-jetty-servlet</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+        <!-- Hibernate -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>4.3.8.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator-annotation-processor</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+        <!-- jsoup -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.8.1</version>
+        </dependency>
+
+        <!-- LearnLib -->
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-discrimination-tree</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-dhc </artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-lstar-generic</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-mapper</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-basic-eqtests</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+
+        <!-- we need the selenium webdriver for selenium testing/learning -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
+        </dependency>
+
+        <!-- Log4J -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.1</version>
+        </dependency>
+
+        <!-- JUnit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+            <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!--===== build ======-->
+    <build>
+        <finalName>weblearner</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${compiler-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${dependency-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire-plugin.version}</version>
+                </plugin>
+                
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${war-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-service-docs</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                        <configuration>
+                            <doclet>com.carma.swagger.doclet.ServiceDoclet</doclet>
+                            <docletArtifact>
+                                <groupId>com.carma</groupId>
+                                <artifactId>swagger-doclet</artifactId>
+                                <version>1.0.3</version>
+                            </docletArtifact>
+                            <reportOutputDirectory>${basedir}/src/main/webapp</reportOutputDirectory>
+                            <useStandardDocletOptions>false</useStandardDocletOptions>
+                            <additionalparam>-apiVersion 1 -docBasePath /restdocs/docs -apiBasePath /rest -disableCopySwaggerUi</additionalparam>
+                            <destDir>restdocs/docs</destDir> <!-- not the apidocs folder -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.4</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.6</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>6.1.26</version>
+                <configuration>
+                    <scanIntervalSeconds>60</scanIntervalSeconds> <!-- reload every minute -->
+                    <contextPath>/</contextPath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>start-jetty</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                            <!--<goal>run-exploded</goal>-->
+                        </goals>
+                        <configuration>
+                            <useTestClasspath>true</useTestClasspath>
+                            <scanIntervalSeconds>0</scanIntervalSeconds>
+                            <daemon>true</daemon>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-jetty</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.18</version>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!--===== reports ======-->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.7</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>summary</report>
+                            <report>scm</report>
+                            <report>issue-tracking</report>
+                            <report>project-team</report>
+                            <report>dependencies</report>
+                            <report>dependency-convergence</report>
+                            <report>dependency-management</report>
+                            <report>modules</report>
+                            <report>plugin-management</report>
+                            <report>plugins</report>
+
+                            <!--<report>dependency-info</report> -->
+                            <!--<report>cim</report> -->
+                            <!--<report>distribution-management</report> -->
+                            <!--<report>license</report> -->
+                            <!--<report>mailing-list</report> -->
+                        </reports>
+                    </reportSet>
+                </reportSets>
+                <configuration>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-plugin.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependency-updates-report</report>
+                            <report>plugin-updates-report</report>
+                            <report>property-updates-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <!-- javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${javadoc-plugin.version}</version>
+                <configuration>
+                    <!-- UML -->
+                    <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+                    <docletArtifact>
+                        <groupId>org.umlgraph</groupId>
+                        <artifactId>umlgraph</artifactId>
+                        <version>${javadoc-umlgraph.version}</version>
+                    </docletArtifact>
+                    <additionalparam>
+                        -all -hide java.* -collapsible -inferdep -collpackages java.util.*
+                    </additionalparam>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <!-- surefire report -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${surefire-report.version}</version>
+            </plugin>
+
+            <!-- cobertura -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>${cobertura.version}</version>
+            </plugin>
+
+            <!-- checkstyle -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+                <configuration>
+                    <configLocation>src/site/resources/checkstyle.xml</configLocation>
+                    <suppressionsLocation>src/site/resources/checkstyle-suppressions.xml</suppressionsLocation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>checkstyle</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <!-- PMD -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${pmd.version}</version>
+                <configuration>
+                    <minimumTokens>75</minimumTokens>
+                </configuration>
+            </plugin>
+
+            <!-- Findbugs -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>${findbugs.version}</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Medium</threshold>
+                    <includeTests>true</includeTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>

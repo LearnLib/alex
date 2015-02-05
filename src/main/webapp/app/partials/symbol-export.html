@@ -1,0 +1,43 @@
+<div class="container">
+
+    <h2>Symbol Export</h2>
+    <p class="text-muted">Export your web and rest symbols as a json file</p>
+    <hr>
+
+</div>
+
+<!--
+BEGIN: Sub Navigation
+contains call to action buttons to create update & delete symbols
+-->
+<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+    <div class="container">
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" select-all-items-checkbox items="symbols">
+        </div>
+        <div class="pull-right">
+            <button class="btn btn-xs btn-primary" ng-click="downloadSymbols()">Download</button>
+        </div>
+    </div>
+</div>
+<!-- END: Sub Navigation -->
+
+<div class="container">
+
+    <div selectable-list ng-model="symbols">
+        <div selectable-list-item ng-repeat="symbol in symbols">
+
+            <span class="label label-default pull-right">
+                Rev. <span ng-bind="symbol.revision"></span>
+            </span>
+
+            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
+
+            <p class="text-muted">
+                <span ng-bind="symbol.actions.length"></span> Actions
+            </p>
+
+        </div>
+    </div>
+
+</div>

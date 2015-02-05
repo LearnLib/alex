@@ -1,0 +1,5 @@
+{
+    "type": "submit",
+    "node": "#node",
+    "url":  "http://example.com"
+}
