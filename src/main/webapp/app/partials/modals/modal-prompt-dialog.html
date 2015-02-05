@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <h3 ng-bind="text"></h3>
+</div>
+
+<form name="prompt_form" ng-submit="ok()">
+
+    <div class="modal-body">
+
+        <div class="form-group">
+            <input name="user_input" type="text" class="form-control" ng-model="userInput" ng-pattern="inputPattern" required>
+        </div>
+
+        <div class="alert alert-danger alert-condensed" ng-show="prompt_form.submitted">
+            <small ng-show="prompt_form.user_input.$error" ng-bind="errorMsg"></small>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary btn-sm">Ok</button>
+        <a class="btn btn-default btn-sm" ng-click="close()">Cancel</a>
+    </div>
+
+</form>

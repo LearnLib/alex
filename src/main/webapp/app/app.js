@@ -1270,6 +1270,60 @@ angular
 
     angular
         .module('weblearner.controller')
+        .controller('PromptDialogController', [
+            '$scope', '$modalInstance', 'modalData',
+            PromptDialogController
+        ]);
+
+    /**
+     * PromptDialogController
+     *
+     * The controller that handles the prompt modal dialog.
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param modalData
+     * @constructor
+     */
+    function PromptDialogController($scope, $modalInstance, modalData) {
+
+        /** The model for the input field for the user input **/
+        $scope.userInput;
+
+        /** The text to be displayed **/
+        $scope.text = modalData.text;
+
+        /** The regex the user input has to match **/
+        $scope.inputPattern = modalData.regexp || '';
+
+        /** the message that is shown when the user input doesn't match the regex **/
+        $scope.errorMsg = modalData.errorMsg || 'Unknown validation error';
+
+        //////////
+
+        /**
+         * Close the modal dialog and pass the user input
+         */
+        $scope.ok = function () {
+            if ($scope.prompt_form.$valid) {
+                $modalInstance.close($scope.userInput);
+            } else {
+                $scope.prompt_form.submitted = true;
+            }
+        };
+
+        /**
+         * Close the modal dialog
+         */
+        $scope.close = function () {
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
         .controller('SymbolCreateController', [
             '$scope', '$modalInstance', 'config', 'SymbolResource',
             SymbolCreateController
@@ -1509,7 +1563,10 @@ angular
 
     angular
         .module('weblearner.directives')
-        .directive('downloadCanvasAsImage', downloadCanvasAsImage);
+        .directive('downloadCanvasAsImage', [
+            'PromptService',
+            downloadCanvasAsImage
+        ]);
 
     /**
      * downloadCanvasAsImage
@@ -1517,9 +1574,10 @@ angular
      * The directive to download a given canvas as a png file. Add this directive as an attribute to any kind of
      * element, best on a button. The directive adds an click event to the element of the directive.
      *
+     * @param PromptService
      * @returns {{link: link}}
      */
-    function downloadCanvasAsImage() {
+    function downloadCanvasAsImage(PromptService) {
 
         var directive = {
             restrict: 'A',
@@ -1536,16 +1594,24 @@ angular
          */
         function link(scope, el, attrs) {
 
-            el.on('click', download);
+            el.on('click', promptFileName);
 
             //////////
 
             /**
+             * Prompt the user for a file name for the image of the chart
+             */
+            function promptFileName() {
+                PromptService.prompt('Enter a name for the chart image file.', {
+                    regexp: /^[a-zA-Z0-9\.\-,_]+$/,
+                    errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
+                }).then(download);
+            }
+
+            /**
              * Download the canvas whose id was passed as an attribute from this directive as png
              */
-            function download() {
-
-
+            function download(filename) {
 
                 // make sure the id was passed
                 if (attrs.downloadCanvasAsImage) {
@@ -1561,7 +1627,7 @@ angular
                         // create hidden link element with the data of the image and click on it
                         var a = document.createElement('a');
                         a.setAttribute('href', img);
-                        a.setAttribute('download', 'chart.png');
+                        a.setAttribute('download', filename + '.png');
                         a.setAttribute('target', '_blank');
                         a.click();
                     }
@@ -3893,6 +3959,60 @@ angular
          */
         function hide() {
             $rootScope.$broadcast('loadScreen.hide');
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.services')
+        .service('PromptService', [
+            '$modal',
+            PromptService
+        ]);
+
+    /**
+     * PromptService
+     *
+     * The service that can be called to replace window.prompt() with some more options.
+     *
+     * @param $modal
+     * @return {{prompt: prompt}}
+     * @constructor
+     */
+    function PromptService($modal) {
+
+        var service = {
+            prompt: prompt
+        };
+        return service;
+
+        //////////
+
+        /**
+         * Open the prompt dialog.
+         *
+         * @param text {string} - The text to display
+         * @param options {{regexp: string, errorMsg: string}}
+         * @return {*} - The modal result promise
+         */
+        function prompt(text, options) {
+
+            var modal = $modal.open({
+                templateUrl: 'app/partials/modals/modal-prompt-dialog.html',
+                controller: 'PromptDialogController',
+                resolve: {
+                    modalData: function () {
+                        return {
+                            text: text,
+                            regexp: options.regexp,
+                            errorMsg: options.errorMsg
+                        };
+                    }
+                }
+            });
+
+            return modal.result;
         }
     }
 }());;(function () {
