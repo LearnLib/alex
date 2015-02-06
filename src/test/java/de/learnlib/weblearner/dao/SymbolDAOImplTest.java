@@ -157,7 +157,7 @@ public class SymbolDAOImplTest {
         try {
             symbolDAO.create(symbol); // should fail
             fail("creation didn't fail.");
-        } catch(ValidationException e) {
+        } catch (ValidationException e) {
             assertEquals(0, symbol.getId());
             assertEquals(0, symbol.getRevision());
         }
@@ -214,7 +214,7 @@ public class SymbolDAOImplTest {
         try {
             symbolDAO.create(symbols); // should fail
             fail("creation didn't fail.");
-        } catch(ValidationException e) {
+        } catch (ValidationException e) {
             assertEquals(idBefore, project.getNextSymbolId());
             assertEquals(1, symbol.getId());
             assertEquals(0, symbol.getRevision());
@@ -233,7 +233,7 @@ public class SymbolDAOImplTest {
         try {
             symbolDAO.create(symbols); // should fail
             fail("creation didn't fail.");
-        } catch(ValidationException e) {
+        } catch (ValidationException e) {
             assertEquals(idBefore, project.getNextSymbolId());
             assertEquals(0, symbol.getId());
             assertEquals(1, symbol.getRevision());
@@ -251,7 +251,7 @@ public class SymbolDAOImplTest {
         try {
             symbolDAO.create(symbols); // should fail
             fail("creation didn't fail.");
-        } catch(ValidationException e) {
+        } catch (ValidationException e) {
             assertEquals(idBefore, project.getNextSymbolId());
             assertEquals(0, symbol.getId());
             assertEquals(0, symbol.getRevision());
@@ -269,7 +269,7 @@ public class SymbolDAOImplTest {
         try {
             symbolDAO.create(symbols); // should fail
             fail("creation didn't fail.");
-        } catch(ValidationException e) {
+        } catch (ValidationException e) {
             assertEquals(idBefore, project.getNextSymbolId());
             assertEquals(0, symbol.getId());
             assertEquals(0, symbol.getRevision());
@@ -290,7 +290,7 @@ public class SymbolDAOImplTest {
         try {
             symbolDAO.create(symbols); // should fail
             fail("creation didn't fail.");
-        } catch(ValidationException e) {
+        } catch (ValidationException e) {
             assertEquals(idBefore, project.getNextSymbolId());
             assertEquals(0, symbol2.getId());
             assertEquals(0, symbol2.getRevision());

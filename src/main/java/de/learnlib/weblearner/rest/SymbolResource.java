@@ -3,7 +3,6 @@ package de.learnlib.weblearner.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.weblearner.dao.ProjectDAO;
 import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
@@ -67,21 +66,63 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createSymbol(@PathParam("project_id") long projectId, Symbol<?> symbol) {
         try {
-            if (symbol.getProjectId() == 0) {
-                symbol.setProjectId(projectId);
-            } else if (symbol.getProjectId() != projectId) {
-                IllegalArgumentException exception = new IllegalArgumentException("The symbol should not have a project"
-                                          + "or at least the project id should be the one in the get parameter");
-                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.create", Status.BAD_REQUEST,
-                                                                    exception);
-            }
-
+            checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
             symbolDAO.create(symbol);
+
             String symbolURL = uri.getBaseUri() + "projects/" + symbol.getProjectId() + "/symbols/" + symbol.getId();
             return Response.status(Status.CREATED).header("Location", symbolURL).entity(symbol).build();
 
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
         } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.create", Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
+        }
+    }
+
+    /**
+     * Create a bunch of new Symbols.
+     *
+     * @param projectId
+     *            The ID of the project the symbol should belong to.
+     * @param symbols
+     *            The symbols to add.
+     * @return On success the added symbols (enhanced with information from the DB); An error message on failure.
+     * @responseType java.util.List<de.learnlib.weblearner.entities.Symbol>
+     * @successResponse 201 created
+     * @errorResponse   400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response batchCreateSymbols(@PathParam("project_id") long projectId, List<Symbol<?>> symbols) {
+        try {
+            //TODO (Alex S.): can this loop be moved down to prevent multiple iteration over the symbol list?
+            for (Symbol<?> symbol : symbols) {
+                checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
+            }
+            symbolDAO.create(symbols);
+
+            String json = createSymbolsJSON(symbols);
+            return Response.status(Status.CREATED).entity(json).build();
+
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
+                    Status.BAD_REQUEST, e);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Could write the symbols from the DB into proper JSON!", e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
+                    Status.INTERNAL_SERVER_ERROR, null);
+        }
+    }
+
+    private void checkSymbolBeforeCreation(long projectId, Symbol<?> symbol) {
+        if (symbol.getProjectId() == 0) {
+            symbol.setProjectId(projectId);
+        } else if (symbol.getProjectId() != projectId) {
+            throw new IllegalArgumentException("The symbol should not have a project"
+                    + "or at least the project id should be the one in the get parameter");
         }
     }
 
