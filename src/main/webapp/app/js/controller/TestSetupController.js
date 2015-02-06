@@ -28,8 +28,8 @@
         //////////
 
         LearnerResource.isActive()
-            .then(function (active) {
-                if (active) {
+            .then(function (data) {
+                if (data.active) {
                     $location.path('/project/' + $scope.project.id + '/learn');
                 } else {
                     loadSymbols();

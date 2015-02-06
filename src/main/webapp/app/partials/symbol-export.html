@@ -16,7 +16,9 @@ contains call to action buttons to create update & delete symbols
             <input type="checkbox" select-all-items-checkbox items="symbols">
         </div>
         <div class="pull-right">
-            <button class="btn btn-xs btn-primary" ng-click="downloadSymbols()">Download</button>
+            <button class="btn btn-xs btn-primary" download-as-json data="getSelectedSymbols">
+            	<i class="fa fa-download fa-fw"></i> Download
+           	</button>
         </div>
     </div>
 </div>
@@ -25,11 +27,10 @@ contains call to action buttons to create update & delete symbols
 <div class="container">
 
     <div selectable-list ng-model="symbols">
-        <div selectable-list-item ng-repeat="symbol in symbols">
+    
+        <div selectable-list-item ng-repeat="symbol in (symbols | typeOfWeb)">
 
-            <span class="label label-default pull-right">
-                Rev. <span ng-bind="symbol.revision"></span>
-            </span>
+            <span class="label label-primary pull-right" ng-bind="symbol.type"></span>
 
             <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
 
@@ -38,6 +39,7 @@ contains call to action buttons to create update & delete symbols
             </p>
 
         </div>
+        
     </div>
 
 </div>

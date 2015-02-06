@@ -142,16 +142,15 @@
         /**
          * Check if the server is finished learning a project
          *
-         * @param projectId
          * @return {*}
          */
-        function isActive(projectId) {
+        function isActive() {
             return $http.get(api.URL + '/learner/active')
                 .then(success)
                 .catch(fail);
 
             function success(response) {
-                return response.data.active;
+                return response.data;
             }
 
             function fail(error) {

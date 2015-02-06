@@ -58,18 +58,24 @@
 
                     // find canvas
                     var canvas = document.getElementById(attrs.downloadCanvasAsImage);
+                    var a;
 
                     if (canvas != null) {
 
                         // create image data with highest quality
                         var img = canvas.toDataURL('image/png', 1.0);
-
-                        // create hidden link element with the data of the image and click on it
-                        var a = document.createElement('a');
-                        a.setAttribute('href', img);
-                        a.setAttribute('download', filename + '.png');
-                        a.setAttribute('target', '_blank');
-                        a.click();
+                        
+                        // create new link element with image data
+    					a = document.createElement('a');
+    					a.style.display = 'none';
+    					a.setAttribute('href', img);
+    					a.setAttribute('target', '_blank');
+    	                a.setAttribute('download', filename + '.png');
+              	        
+    	                // append link to the dom, fire click event and remove it
+    	                document.body.appendChild(a);
+              	        a.click();
+              	        document.body.removeChild(a);
                     }
                 }
             }
