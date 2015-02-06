@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class SymbolDAOImplTest {
 
@@ -36,8 +37,11 @@ public class SymbolDAOImplTest {
 
     private static ProjectDAO projectDAO;
     private static SymbolDAO symbolDAO;
+
     private Project project;
     private WebSymbol symbol;
+    private Symbol<?> symbol2;
+    private List<Symbol<?>> symbols;
 
     @BeforeClass
     public static void beforeClass() {
@@ -53,7 +57,7 @@ public class SymbolDAOImplTest {
         project.setBaseUrl("http://example.com/");
         projectDAO.create(project);
 
-        // create symbol
+        // create symbol 1
         symbol = new WebSymbol();
         symbol.setProject(project);
         symbol.setName("SymbolDAOImplTest Symbol - Web ");
@@ -75,6 +79,17 @@ public class SymbolDAOImplTest {
         symbol.addAction(a6);
         WebSymbolAction a7 = new WaitAction();
         symbol.addAction(a7);
+
+        // create symbol 2
+        symbol2 = new WebSymbol();
+        symbol2.setName("SymbolDAOImplTest Symbol - Web 2");
+        symbol2.setAbbreviation("webtest2");
+        symbol2.setProject(project);
+
+        // create symbol list
+        symbols = new LinkedList<>();
+        symbols.add(symbol);
+        symbols.add(symbol2);
     }
 
     @After
@@ -91,37 +106,37 @@ public class SymbolDAOImplTest {
         symbolDAO.create(symbol);
 
         // then
-        Symbol<?> symb2 = symbolDAO.get(project.getId(), symbol.getId(), symbol.getRevision());
-        assertNotNull(symb2);
-        assertTrue(symb2 instanceof WebSymbol);
-        WebSymbol symb2Web = (WebSymbol) symb2;
-        Project project2 = projectDAO.getByID(symb2.getProjectId());
+        Symbol<?> symbolInDB = symbolDAO.get(project.getId(), symbol.getId(), symbol.getRevision());
+        assertNotNull(symbolInDB);
+        assertTrue(symbolInDB instanceof WebSymbol);
+        WebSymbol webSymbolInDB = (WebSymbol) symbolInDB;
+        Project project2 = projectDAO.getByID(symbolInDB.getProjectId());
 
-        assertEquals(symbol.getName(), symb2.getName());
-        assertEquals(symbol.getAbbreviation(), symb2.getAbbreviation());
-        assertEquals(symbol.getRevision(), symb2.getRevision());
-        assertEquals(symbol.getProject(), symb2.getProject());
+        assertEquals(symbol.getName(), symbolInDB.getName());
+        assertEquals(symbol.getAbbreviation(), symbolInDB.getAbbreviation());
+        assertEquals(symbol.getRevision(), symbolInDB.getRevision());
+        assertEquals(symbol.getProject(), symbolInDB.getProject());
         assertEquals(project, project2);
         assertEquals(idBefore + 1, project2.getNextSymbolId());
 
-        assertNotNull(symb2Web.getActions());
-        assertEquals(symbol.getActions().size(), symb2Web.getActions().size());
+        assertNotNull(webSymbolInDB.getActions());
+        assertEquals(symbol.getActions().size(), webSymbolInDB.getActions().size());
         for (int i = 0; i < symbol.getActions().size(); i++) {
             WebSymbolAction expectedAction = symbol.getActions().get(i);
-            WebSymbolAction actualAction = symb2Web.getActions().get(i);
+            WebSymbolAction actualAction = webSymbolInDB.getActions().get(i);
             assertEquals(expectedAction, actualAction);
         }
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotCreateWebSymbolsWithID() {
+    public void shouldNotCreateWebSymbolWithID() {
         symbol.setId(1L);
 
         symbolDAO.create(symbol); // should fail
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotCreateWebSymbolsWithRev() {
+    public void shouldNotCreateWebSymbolWithRev() {
         symbol.setId(0L);
         symbol.setRevision(1L);
 
@@ -129,27 +144,157 @@ public class SymbolDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotCreateWebSymbolsWithoutProject() {
+    public void shouldNotCreateWebSymbolWithoutProject() {
         symbol.setProject(null);
 
         symbolDAO.create(symbol); // should fail
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldNotCreateWebSymbolsWithoutName() {
+    @Test
+    public void shouldNotCreateWebSymbolWithoutName() {
         symbol.setName("");
 
-        symbolDAO.create(symbol); // should fail
+        try {
+            symbolDAO.create(symbol); // should fail
+            fail("creation didn't fail.");
+        } catch(ValidationException e) {
+            assertEquals(0, symbol.getId());
+            assertEquals(0, symbol.getRevision());
+        }
+
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotCreateWebSymbolsWithNotUniqueName() {
+    public void shouldNotCreateWebSymbolWithNotUniqueName() {
         symbolDAO.create(symbol);
         Symbol<?> symb2 = new WebSymbol();
         symb2.setProject(symbol.getProject());
         symb2.setName(symbol.getName());
 
         symbolDAO.create(symb2); // should fail
+    }
+
+    @Test
+    public void shouldCreateValidWebSymbols() {
+        // given
+        long idBefore = project.getNextSymbolId();
+
+        // when
+        symbolDAO.create(symbols);
+
+        // then
+        Symbol<?> symbolInDB = symbolDAO.get(project.getId(), symbol.getId(), symbol.getRevision());
+        assertNotNull(symbolInDB);
+        assertTrue(symbolInDB instanceof WebSymbol);
+        WebSymbol websymbolInDB = (WebSymbol) symbolInDB;
+        Project project2 = projectDAO.getByID(symbolInDB.getProjectId());
+
+        assertEquals(symbol.getName(), symbolInDB.getName());
+        assertEquals(symbol.getAbbreviation(), symbolInDB.getAbbreviation());
+        assertEquals(symbol.getRevision(), symbolInDB.getRevision());
+        assertEquals(symbol.getProject(), symbolInDB.getProject());
+        assertEquals(project, project2);
+        assertEquals(idBefore + 2, project2.getNextSymbolId());
+
+        assertNotNull(websymbolInDB.getActions());
+        assertEquals(symbol.getActions().size(), websymbolInDB.getActions().size());
+        for (int i = 0; i < symbol.getActions().size(); i++) {
+            WebSymbolAction expectedAction = symbol.getActions().get(i);
+            WebSymbolAction actualAction = websymbolInDB.getActions().get(i);
+            assertEquals(expectedAction, actualAction);
+        }
+    }
+
+    @Test
+    public void shouldNotCreateWebSymbolsWithID() {
+        // given
+        long idBefore = project.getNextSymbolId();
+        symbol.setId(1L);
+
+        try {
+            symbolDAO.create(symbols); // should fail
+            fail("creation didn't fail.");
+        } catch(ValidationException e) {
+            assertEquals(idBefore, project.getNextSymbolId());
+            assertEquals(1, symbol.getId());
+            assertEquals(0, symbol.getRevision());
+            assertEquals(0, symbol2.getId());
+            assertEquals(0, symbol2.getRevision());
+        }
+    }
+
+    @Test
+    public void shouldNotCreateWebSymbolsWithRev() {
+        // given
+        long idBefore = project.getNextSymbolId();
+        symbol.setId(0L);
+        symbol.setRevision(1L);
+
+        try {
+            symbolDAO.create(symbols); // should fail
+            fail("creation didn't fail.");
+        } catch(ValidationException e) {
+            assertEquals(idBefore, project.getNextSymbolId());
+            assertEquals(0, symbol.getId());
+            assertEquals(1, symbol.getRevision());
+            assertEquals(0, symbol2.getId());
+            assertEquals(0, symbol2.getRevision());
+        }
+    }
+
+    @Test
+    public void shouldNotCreateWebSymbolsWithoutProject() {
+        // given
+        long idBefore = project.getNextSymbolId();
+        symbol.setProject(null);
+
+        try {
+            symbolDAO.create(symbols); // should fail
+            fail("creation didn't fail.");
+        } catch(ValidationException e) {
+            assertEquals(idBefore, project.getNextSymbolId());
+            assertEquals(0, symbol.getId());
+            assertEquals(0, symbol.getRevision());
+            assertEquals(0, symbol2.getId());
+            assertEquals(0, symbol2.getRevision());
+        }
+    }
+
+    @Test
+    public void shouldNotCreateWebSymbolsWithoutName() {
+        // given
+        long idBefore = project.getNextSymbolId();
+        symbol.setName("");
+
+        try {
+            symbolDAO.create(symbols); // should fail
+            fail("creation didn't fail.");
+        } catch(ValidationException e) {
+            assertEquals(idBefore, project.getNextSymbolId());
+            assertEquals(0, symbol.getId());
+            assertEquals(0, symbol.getRevision());
+            assertEquals(0, symbol2.getId());
+            assertEquals(0, symbol2.getRevision());
+        }
+    }
+
+    @Test
+    public void shouldNotCreateWebSymbolsWithNotUniqueName() {
+        // given
+        long idBefore = project.getNextSymbolId();
+        Symbol<?> invalidSymbol = new WebSymbol();
+        invalidSymbol.setProject(symbol.getProject());
+        invalidSymbol.setName(symbol.getName());
+        symbolDAO.create(invalidSymbol);
+
+        try {
+            symbolDAO.create(symbols); // should fail
+            fail("creation didn't fail.");
+        } catch(ValidationException e) {
+            assertEquals(idBefore, project.getNextSymbolId());
+            assertEquals(0, symbol2.getId());
+            assertEquals(0, symbol2.getRevision());
+        }
     }
 
     @Test

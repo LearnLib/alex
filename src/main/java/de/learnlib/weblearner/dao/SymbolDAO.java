@@ -14,12 +14,23 @@ public interface SymbolDAO {
     /**
      * Save the given symbol.
      * 
-     * @param symb
-     *            The symbol to be saved.
+     * @param symbol
+     *            The symbol to save.
      * @throws ValidationException
-     *             When the Symbol was not valid.
+     *             When the symbol was not valid.
      */
-    void create(Symbol<?> symb) throws ValidationException;
+    void create(Symbol<?> symbol) throws ValidationException;
+
+    /**
+     * Save the given symbols.
+     *
+     * @param symbols
+     *            The symbols to save.
+     * @throws ValidationException
+     *             When one the symbols was not valid.
+     *             In this case all symbols are reverted and not saved.
+     */
+    void create(List<Symbol<?>> symbols) throws ValidationException;
 
     /**
      * Get all symbols of a project.
