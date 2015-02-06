@@ -285,6 +285,44 @@ public class LearnerResultDAOImplTest {
         assertEquals(0L, resultCounter.longValue());
     }
 
+    @Test
+    public void shouldDeleteAllStepsOfMultipleTestRun() {
+        List<LearnerResult> learnerResults = createLearnerResultsList();
+
+        Long[] ids = new Long[learnerResults.size()];
+        for (int i = 0; i < ids.length; i++) {
+            ids[i] = learnerResults.get(i).getId();
+        }
+
+        learnerResultDAO.delete(project.getId(), ids);
+
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        Long resultCounter = (Long) session.createCriteria(LearnerResult.class)
+                                            .add(Restrictions.eq("project.id", project.getId()))
+                                            .add(Restrictions.in("testNo", ids))
+                                            .setProjection(Projections.rowCount())
+                                            .uniqueResult();
+
+        HibernateUtil.commitTransaction();
+
+        assertEquals(0L, resultCounter.longValue());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowAnExceptionIfTheTestResultToDeleteWasNotFound() {
+        List<LearnerResult> learnerResults = createLearnerResultsList();
+
+        Long[] ids = new Long[learnerResults.size()];
+        for (int i = 0; i < ids.length; i++) {
+            ids[i] = learnerResults.get(i).getId();
+        }
+        ids[ids.length - 1] = -1L;
+
+        learnerResultDAO.delete(project.getId(), ids); // should fail
+    }
+
     private void initLearnerResult(LearnerResult result) {
         result.setType(SymbolTypes.WEB);
 

@@ -209,15 +209,27 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public void delete(long projectId, long testNo) {
+    public void delete(long projectId, Long... testNo) {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
+        //FIXME
+        Long validNoCount = (Long) session.createCriteria(LearnerResult.class)
+                                            .add(Restrictions.eq("project.id", projectId))
+                                            .add(Restrictions.in("testNo", testNo))
+                                            .setProjection(Projections.countDistinct("testNo"))
+                                            .uniqueResult();
+        System.out.println("%%%%%% " + validNoCount);
+
+        if (validNoCount != testNo.length) {
+            throw new IllegalArgumentException(); //TODO (Alex S.): add a real error message.
+        }
+
         @SuppressWarnings("unchecked") // should always return a list of LernerResults
         List<LearnerResult> results = session.createCriteria(LearnerResult.class)
                                                     .add(Restrictions.eq("project.id", projectId))
-                                                    .add(Restrictions.eq("testNo", testNo))
+                                                    .add(Restrictions.in("testNo", testNo))
                                                     .list();
 
         for (LearnerResult r : results) {

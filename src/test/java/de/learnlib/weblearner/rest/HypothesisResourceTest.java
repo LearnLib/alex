@@ -23,6 +23,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
 
 public class HypothesisResourceTest extends JerseyTest {
@@ -160,5 +161,30 @@ public class HypothesisResourceTest extends JerseyTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
         verify(learnerResultDAO).delete(PROJECT_ID, RESULT_ID);
+    }
+
+    @Test
+    public void shouldDeleteMultipleTestResults() {
+        Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," + (RESULT_ID + 1))
+                                .request().delete();
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+
+        verify(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+    }
+
+    @Test
+    public void shouldNotCrashIfNoTestNoToDeleteIsSpecified() {
+        Response response = target("/projects/" + PROJECT_ID + "/results/").request().delete();
+        assertEquals(Response.Status.METHOD_NOT_ALLOWED.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldReturnAnErrorIfYouTryToDeleteAnInvalidTestNo() {
+        willThrow(IllegalArgumentException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+
+        Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
+                                .request().delete();
+
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 }

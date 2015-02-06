@@ -104,9 +104,9 @@ public interface LearnerResultDAO {
      * @param projectId
      *         The project id.
      * @param testNo
-     *         The test no.
+     *         The test numbers to delete.
      * @throws IllegalArgumentException
      *         If the project id or test no. was invalid.
      */
-    void delete(long projectId, long testNo) throws  IllegalArgumentException;
+    void delete(long projectId, Long... testNo) throws  IllegalArgumentException;
 }
