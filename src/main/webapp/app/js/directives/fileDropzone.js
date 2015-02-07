@@ -49,11 +49,18 @@
                 e.dataTransfer.dropEffect = 'copy';
             });
 
+            el.on('dragenter', function(){
+                el[0].style.outline = '4px solid rgba(0,0,0,0.2)'
+            }).on('dragleave', function(){
+                el[0].style.outline = '0'
+            });
+
             // add drop event and read files
             el.on('drop', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 readFiles(e.dataTransfer.files);
+                el[0].style.outline = '0'
             });
 
             //////////

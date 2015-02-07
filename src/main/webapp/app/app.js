@@ -704,8 +704,8 @@ angular
             $scope.active = true;
             _interval = $interval(function () {
                 LearnerResource.isActive()
-                    .then(function (active) {
-                        if (!active) {
+                    .then(function (data) {
+                        if (!data.active) {
                             LearnerResource.status()
                                 .then(function (test) {
                                     $scope.active = false;
@@ -988,7 +988,7 @@ angular
          */
         $scope.back = function () {
             $scope.chartDataSets = [];
-        }
+        };
     }
 }());;(function () {
     'use strict';
@@ -1007,36 +1007,37 @@ angular
 
         //////////
 
-        $scope.symbols = [];
+        $scope.symbols = {
+            web: [],
+            rest: []
+        };
 
         //////////
 
         SymbolResource.all(_project.id)
             .then(function (symbols) {
-                $scope.symbols = symbols;
+                $scope.symbols.web = _.filter(symbols, {type: 'web'});
+                $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
             });
 
         //////////
 
-        $scope.downloadSymbols = function () {
+        $scope.getSelectedSymbols = function () {
 
-            var symbolsToDownload = angular.copy(SelectionService.getSelected($scope.symbols));
-            SelectionService.removeSelection(symbolsToDownload);
+            var selectedWebSymbols = SelectionService.getSelected($scope.symbols.web);
+            var selectedRestSymbols = SelectionService.getSelected($scope.symbols.rest);
+            var selectedSymbols = selectedWebSymbols.concat(selectedRestSymbols);
 
-            _.forEach(symbolsToDownload, function (symbol) {
+            SelectionService.removeSelection(selectedSymbols);
+
+            _.forEach(selectedSymbols, function (symbol) {
                 delete symbol.id;
-                delete symbol.project;
                 delete symbol.revision;
-            })
+                delete symbol.project;
+            });
 
-            if (symbolsToDownload.length > 0) {
-                var a = document.createElement('a');
-                a.setAttribute('href', window.URL.createObjectURL(new Blob([angular.toJson(symbolsToDownload)], {type: 'text/json'})));
-                a.setAttribute('target', '_blank');
-                a.setAttribute('download', _fileName);
-                a.click();
-            }
-        }
+            return selectedSymbols;
+        };
     }
 }());;(function () {
     'use strict';
@@ -1054,25 +1055,39 @@ angular
 
         ////////////
 
-        $scope.symbols = [];
+        $scope.symbols = {
+            web: [],
+            rest: []
+        };
 
         ////////////
 
-        $scope.fileLoaded = function(data) {
-            $scope.symbols = data;
-            _.forEach($scope.symbols, function(symbol){
+        $scope.fileLoaded = function (data) {
+
+            var symbols = angular.fromJson(data);
+
+            _.forEach($scope.symbols, function (symbol) {
                 symbol.project = _project.id;
-            })
+            });
+
+            $scope.symbols.web = _.filter(symbols, {type: 'web'});
+            $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
+
+
+            $scope.$apply();
         };
 
-        $scope.createSymbols = function() {
-            var selectedSymbols = SelectionService.getSelected($scope.symbols);
+        $scope.createSymbols = function () {
+
+            var selectedWebSymbols = SelectionService.getSelected($scope.symbols.web);
+            var selectedRestSymbols = SelectionService.getSelected($scope.symbols.rest);
+            var selectedSymbols = selectedWebSymbols.concat(selectedRestSymbols);
+
             SelectionService.removeSelection(selectedSymbols);
-            if (selectedSymbols.length > 1) {
-                _.forEach(selectedSymbols, function(symbol){
-                    SymbolResource.create(symbol);
-                })
-            }
+
+            _.forEach(selectedSymbols, function (symbol) {
+                SymbolResource.create(_project.id, symbol)
+            });
         }
     }
 }());;(function () {
@@ -1126,15 +1141,16 @@ angular
         .module('weblearner.controller')
         .controller('TestSetupController', [
             '$scope', '$location', 'SymbolResource', 'SessionService', 'SelectionService', 'type', 'EqOraclesEnum',
-            'LearnAlgorithmsEnum', 'LearnerResource',
+            'LearnAlgorithmsEnum', 'LearnerResource', 'ngToast',
             TestSetupController
         ]);
 
     function TestSetupController($scope, $location, SymbolResource, SessionService, SelectionService, type, EqOracles,
-                                 LearnAlgorithms, LearnerResource) {
+                                 LearnAlgorithms, LearnerResource, toast) {
 
         $scope.project = SessionService.project.get();
         $scope.symbols = [];
+        $scope.type = type;
         $scope.testConfiguration = {
             symbols: [],
             algorithm: LearnAlgorithms.EXTENSIBLE_LSTAR,
@@ -1149,9 +1165,18 @@ angular
         //////////
 
         LearnerResource.isActive()
-            .then(function (active) {
-                if (active) {
-                    $location.path('/project/' + $scope.project.id + '/learn');
+            .then(function (data) {
+                if (data.active) {
+
+                    if (data.project == $scope.project.id) {
+                        $location.path('/project/' + $scope.project.id + '/learn');
+                    } else {
+                        toast.create({
+                            class: 'danger',
+                            content: 'There is already running a test from another project.',
+                            dismissButton: true
+                        });
+                    }
                 } else {
                     loadSymbols();
                 }
@@ -1558,6 +1583,96 @@ angular
             }
         }
     }
+}());;(function() {
+	'use strict';
+
+	angular
+		.module('weblearner.directives')
+		.directive('downloadAsJson', ['PromptService', downloadAsJson]);
+
+	/**
+	 * downloadAsJson
+	 * 
+	 * Directive that can be applied to any element as an attribute that downloads an object or an array as
+	 * a *.json file. 
+	 * 
+	 * Attribute 'data' has to be defined in order to work and has to be type of object, array or a function 
+	 * that returns an object or an array
+	 * 
+	 * @param PromptService
+	 * @returns {{link: link}}
+	 */
+	function downloadAsJson(PromptService) {
+		
+		var directive = {
+			restrict: 'A',
+			scope:  {
+				data: '='
+			},
+			link: link
+		}
+		return directive;
+		
+		//////////
+		
+		/**
+		 * @param scope
+		 * @param el
+		 * @param attrs
+		 */
+		function link(scope, el, attrs) {
+			
+			el.on('click', promptFilename);
+			
+			//////////
+						
+			/**
+			 * Open a modal dialog that prompts the user for a file name
+			 */
+			function promptFilename () {
+								
+				if (angular.isDefined(scope.data)) {
+	                PromptService.prompt('Enter a name for the symbols file.', {
+	                    regexp: /^[a-zA-Z0-9\.\-,_]+$/,
+	                    errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
+	                }).then(download);
+				}
+			}
+					
+			/**
+			 * Download the json file with the file name from the prompt dialog and the jsonified data
+			 */
+			function download(filename){
+				
+				var a;
+				var json = 'data:text/json;charset=utf-8,';
+				
+				if (angular.isDefined(scope.data)) {
+					
+					// if data parameter was function call it otherwise just convert data into json
+					if (angular.isObject(scope.data) || angular.isArray(scope.data)) {
+						json += encodeURIComponent(angular.toJson(scope.data));
+					} else if (angular.isFunction(scope.data)) {
+						json += encodeURIComponent(angular.toJson(scope.data()));
+					} else {
+						return;
+					}
+					
+					// create new link element with downloadable json
+					a = document.createElement('a');
+					a.style.display = 'none';
+					a.setAttribute('href', json);
+					a.setAttribute('target', '_blank');
+	                a.setAttribute('download', filename + '.json');
+          	        
+	                // append link to the dom, fire click event and remove it
+	                document.body.appendChild(a);
+          	        a.click();
+          	        document.body.removeChild(a);
+				}		
+			}
+		}
+	}
 }());;(function () {
     'use strict';
 
@@ -1618,23 +1733,116 @@ angular
 
                     // find canvas
                     var canvas = document.getElementById(attrs.downloadCanvasAsImage);
+                    var a;
 
                     if (canvas != null) {
 
                         // create image data with highest quality
                         var img = canvas.toDataURL('image/png', 1.0);
-
-                        // create hidden link element with the data of the image and click on it
-                        var a = document.createElement('a');
-                        a.setAttribute('href', img);
-                        a.setAttribute('download', filename + '.png');
-                        a.setAttribute('target', '_blank');
-                        a.click();
+                        
+                        // create new link element with image data
+    					a = document.createElement('a');
+    					a.style.display = 'none';
+    					a.setAttribute('href', img);
+    					a.setAttribute('target', '_blank');
+    	                a.setAttribute('download', filename + '.png');
+              	        
+    	                // append link to the dom, fire click event and remove it
+    	                document.body.appendChild(a);
+              	        a.click();
+              	        document.body.removeChild(a);
                     }
                 }
             }
         }
     }
+}());;(function() {
+
+	angular
+		.module('weblearner.directives')
+		.directive('downloadTestResultsAsCsv', [ 
+             'PromptService', downloadTestResultsAsCsv 
+         ]);
+
+	function downloadTestResultsAsCsv(PromptService) {
+		
+		var directive = {
+			restrict: 'A',
+			scope: {
+				testResults: '='
+			},
+			link: link
+		};
+		return directive;
+		
+		//////////
+		
+		function link(scope, el, attrs) {
+						
+			el.on('click', promptFilename);
+			
+			//////////
+			
+			function promptFilename() {
+				if (angular.isDefined(scope.testResults)) {
+	                PromptService.prompt('Enter a name for the csv file.', {
+	                    regexp: /^[a-zA-Z0-9\.\-,_]+$/,
+	                    errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
+	                }).then(download);
+				}
+			}
+			
+			function download(filename) {
+				
+				var csv = 'data:text/csv;charset=utf-8,';
+				var a;
+				var results;
+
+				if (angular.isDefined(scope.testResults)){
+
+					if (angular.isArray(scope.testResults)) {
+						results = scope.testResults;
+					} else {
+						return;
+					}
+					
+					csv += testResultsToCSV(results);
+					
+					// create new link element with downloadable csv
+					a = document.createElement('a');
+					a.style.display = 'none';
+					a.setAttribute('href', csv);
+					a.setAttribute('target', '_blank');
+	                a.setAttribute('download', filename + '.csv');
+          	        
+	                // append link to the dom, fire click event and remove it
+	                document.body.appendChild(a);
+          	        a.click();
+          	        document.body.removeChild(a);
+				}
+			}
+			
+			function testResultsToCSV(testResults) {
+				
+				var csv = '"Type";"Project";"TestNo";"StepNo";"Algorithm";"EqOracle";"Sybols";"Resets";"Duration (ms)"%0A';
+								
+				_.forEach(testResults, function(result){
+
+					csv += '"' + result.type + '";';
+					csv += '"' + result.project + '";';
+					csv += '"' + result.testNo + '";';
+					csv += '"' + result.stepNo + '";';
+					csv += '"' + result.configuration.algorithm + '";';
+					csv += '"' + result.configuration.eqOracle.type + '";';
+					csv += '"' + result.sigma.length + '";';
+					csv += '"' + result.amountOfResets + '";';
+					csv += '"' + result.duration + '"%0A';
+				});
+				
+				return csv;
+			}
+		}
+	}
 }());;(function () {
     'use strict';
 
@@ -1686,11 +1894,18 @@ angular
                 e.dataTransfer.dropEffect = 'copy';
             });
 
+            el.on('dragenter', function(){
+                el[0].style.outline = '4px solid rgba(0,0,0,0.2)'
+            }).on('dragleave', function(){
+                el[0].style.outline = '0'
+            });
+
             // add drop event and read files
             el.on('drop', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 readFiles(e.dataTransfer.files);
+                el[0].style.outline = '0'
             });
 
             //////////
@@ -1838,6 +2053,30 @@ angular
 	}
 }());
 ;(function(){
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('formatDateTime', formatDateTime);
+
+    function formatDateTime() {
+
+        var directive = {
+            scope: {
+                date: '=formatDateTime',
+                format: '=formatTo'
+            },
+            link: link
+        };
+        return directive;
+
+        //////////
+
+        function link(scope, el, attrs){
+
+        }
+    }
+}());;(function(){
 
     angular
         .module('weblearner.directives')
@@ -1955,6 +2194,66 @@ angular
 
                 angular.element($window).on('resize', fitSize);
             }
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('ifIsTypeOfRest', ['ngIfDirective', ifIsTypeOfRest]);
+
+    function ifIsTypeOfRest(ngIfDirective) {
+        var ngIf = ngIfDirective[0];
+
+        var directive = {
+            transclude: ngIf.transclude,
+            priority: ngIf.priority,
+            terminal: ngIf.terminal,
+            restrict: ngIf.restrict,
+            link: link
+        };
+        return directive;
+
+        //////////
+
+        function link(scope, el, attrs){
+            var value = scope.$eval(attrs['ifIsTypeOfRest']);
+
+            attrs.ngIf = function(){
+                return value == 'rest';
+            };
+            ngIf.link.apply(ngIf, arguments);
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('ifIsTypeOfWeb', ['ngIfDirective', ifIsTypeOfWeb]);
+
+    function ifIsTypeOfWeb(ngIfDirective) {
+        var ngIf = ngIfDirective[0];
+
+        var directive = {
+            transclude: ngIf.transclude,
+            priority: ngIf.priority,
+            terminal: ngIf.terminal,
+            restrict: ngIf.restrict,
+            link: link
+        };
+        return directive;
+
+        //////////
+
+        function link(scope, el, attrs){
+            var value = scope.$eval(attrs['ifIsTypeOfWeb']);
+
+            attrs.ngIf = function(){
+                return value == 'web';
+            };
+            ngIf.link.apply(ngIf, arguments);
         }
     }
 }());;(function () {
@@ -3300,16 +3599,15 @@ angular
         /**
          * Check if the server is finished learning a project
          *
-         * @param projectId
          * @return {*}
          */
-        function isActive(projectId) {
+        function isActive() {
             return $http.get(api.URL + '/learner/active')
                 .then(success)
                 .catch(fail);
 
             function success(response) {
-                return response.data.active;
+                return response.data;
             }
 
             function fail(error) {

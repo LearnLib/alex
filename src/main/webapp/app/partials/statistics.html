@@ -26,9 +26,25 @@
             </button>
         </div>
         <div class="pull-right">
-        	<button class="btn btn-xs btn-default" download-test-results-as-csv test-results="tests">
-        		<i class="fa fa-download fa-fw"></i> Export to CSV
-        	</button>
+
+            <div class="btn-group btn-group-xs pull-right" dropdown>
+                <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+                    <i class="fa fa-download fa-fw"></i> Export to CSV
+                </button>
+                <ul class="dropdown-menu pull-left" role="menu">
+                    <li>
+                        <a href="" download-test-results-as-csv test-results="tests">
+                            All Final Results
+                        </a>
+                    </li>
+                    <!--<li>-->
+                        <!--<a href="" download-test-results-as-csv test-results="tests">-->
+                            <!--A Single Complete Result-->
+                        <!--</a>-->
+                    <!--</li>-->
+                </ul>
+            </div>
+
         </div>
     </div>
 

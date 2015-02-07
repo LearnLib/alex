@@ -5,7 +5,7 @@
 -->
 <div class="container">
 
-    <div ng-if="type == 'web'">
+    <div if-is-type-of-web="type">
         <h2>Web Symbol Editor</h2>
 
         <p class="text-muted">
@@ -13,7 +13,7 @@
         </p>
     </div>
 
-    <div ng-if="type == 'rest'">
+    <div if-is-type-of-rest="type">
         <h2>Rest Symbol Editor</h2>
 
         <p class="text-muted">
@@ -82,4 +82,3 @@ contains call to action buttons to create update & delete symbols
     </div>
 
 </div>
-<!-- END: Symbol List -->

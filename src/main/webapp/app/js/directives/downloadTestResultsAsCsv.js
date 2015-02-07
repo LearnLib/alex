@@ -38,10 +38,17 @@
 				
 				var csv = 'data:text/csv;charset=utf-8,';
 				var a;
-				
-				if (angular.isDefined(scope.testResults) && angular.isArray(scope.testResults)){
+				var results;
+
+				if (angular.isDefined(scope.testResults)){
+
+					if (angular.isArray(scope.testResults)) {
+						results = scope.testResults;
+					} else {
+						return;
+					}
 					
-					csv += testResultsToCSV(scope.testResults)
+					csv += testResultsToCSV(results);
 					
 					// create new link element with downloadable csv
 					a = document.createElement('a');
@@ -59,10 +66,11 @@
 			
 			function testResultsToCSV(testResults) {
 				
-				var csv = '"Project";"TestNo";"StepNo";"Algorithm";"EqOracle";"Sybols";"Resets";"Duration";\r\n';
+				var csv = '"Type";"Project";"TestNo";"StepNo";"Algorithm";"EqOracle";"Sybols";"Resets";"Duration (ms)"%0A';
 								
 				_.forEach(testResults, function(result){
-					
+
+					csv += '"' + result.type + '";';
 					csv += '"' + result.project + '";';
 					csv += '"' + result.testNo + '";';
 					csv += '"' + result.stepNo + '";';
@@ -70,7 +78,7 @@
 					csv += '"' + result.configuration.eqOracle.type + '";';
 					csv += '"' + result.sigma.length + '";';
 					csv += '"' + result.amountOfResets + '";';
-					csv += '"' + result.duration + '";\r\n';
+					csv += '"' + result.duration + '"%0A';
 				});
 				
 				return csv;

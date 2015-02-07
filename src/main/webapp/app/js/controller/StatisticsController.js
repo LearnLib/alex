@@ -103,6 +103,6 @@
          */
         $scope.back = function () {
             $scope.chartDataSets = [];
-        }
+        };
     }
 }());
