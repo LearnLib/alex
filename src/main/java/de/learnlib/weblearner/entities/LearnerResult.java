@@ -66,8 +66,8 @@ public class LearnerResult implements Serializable {
     /** The type of the symbols used for the learning. */
     private SymbolTypes type;
 
-    /** Date and Time when the learning step was started. The format is conform with ISO 8601. */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss,SSS+00:00", timezone = "UTC")
+    /** Date and Time when the learning step was started. The format is conform with the ISO 8601 (JavaScript-Style). */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
     private Date startTime;
 
     /** The duration of the learn step. */

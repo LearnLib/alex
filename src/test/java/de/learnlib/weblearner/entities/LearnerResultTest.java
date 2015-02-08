@@ -36,7 +36,7 @@ public class LearnerResultTest {
                                                         + "{\"from\":1,\"input\":\"0\",\"to\":1,\"output\":\"OK\"},"
                                                         + "{\"from\":1,\"input\":\"1\",\"to\":0,\"output\":\"OK\"}"
                                                 + "]},\"project\":" + PROJECT_ID + ",\"sigma\":[\"0\",\"1\"],"
-                                                + "\"startTime\":\"1970-01-01T00:00:00,000+00:00\","
+                                                + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\","
                                                 + "\"stepNo\":" + STEP_NO + ",\"testNo\":" + ID + ",\"type\":\"web\"}";
 
     @Test
@@ -85,7 +85,7 @@ public class LearnerResultTest {
                         + "]},"
                         + "\"testNo\":" + ID + ",\"project\":" + PROJECT_ID + ","
                         + "\"sigma\":[\"0\",\"1\"],\"stepNo\":" + STEP_NO + ","
-                        + "\"startTime\": \"1970-01-01T00:00:00,000+00:00\"}";
+                        + "\"startTime\": \"1970-01-01T00:00:00.000+00:00\"}";
 
         LearnerResult result = new LearnerResult();
         Method method = LearnerResult.class.getDeclaredMethod("setJSON", String.class);

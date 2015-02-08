@@ -154,7 +154,7 @@ public class LearnerResultDAOImplTest {
                                             + "{\"from\":1,\"input\":\"1\",\"to\":0,\"output\":\"OK\"}"
                                         + "]},"
                                     + "\"project\":" + project.getId() + ",\"sigma\":[\"0\",\"1\"],"
-                                    + "\"startTime\":\"1970-01-01T00:00:00,000+00:00\",\"stepNo\":" + (i + 1) + ","
+                                    + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"stepNo\":" + (i + 1) + ","
                                     + "\"testNo\":" + result.getTestNo() + ",\"type\":\"web\"}";
             String resultAsJSON = resultsInDBAsJSON.get(i);
 
@@ -318,7 +318,7 @@ public class LearnerResultDAOImplTest {
                     + "{\"from\":1,\"input\":\"1\",\"to\":0,\"output\":\"OK\"}"
                 + "]},"
                 + "\"project\":" + result.getProjectId() + ",\"sigma\":[\"0\",\"1\"],"
-                + "\"startTime\":\"1970-01-01T00:00:00,000+00:00\",\"stepNo\":" + result.getStepNo() + ","
+                + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"stepNo\":" + result.getStepNo() + ","
                 + "\"testNo\":" + result.getTestNo() + ",\"type\":\"web\"}";
     }
 
