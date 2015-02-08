@@ -717,6 +717,17 @@ angular
                     _poll();
                 })
         }
+
+        $scope.abort = function () {
+
+            if ($scope.active) {
+                LearnerResource.stop()
+                    .then(function(data){
+
+                        console.log(data)
+                    })
+            }
+        }
     }
 
 }());
@@ -1090,7 +1101,7 @@ angular
 
             TestResource.delete($scope.project.id, test.testNo)
                 .then(function () {
-                    _.remove($scope.tests, {test_no: test.testNo})
+                    _.remove($scope.tests, {testNo: test.testNo});
                 })
         };
 
@@ -2097,8 +2108,7 @@ angular
 
         var directive = {
             scope: {
-                date: '=formatDateTime',
-                format: '=formatTo'
+                date: '=formatDateTime'
             },
             link: link
         };
@@ -2108,6 +2118,16 @@ angular
 
         function link(scope, el, attrs){
 
+            var date = new Date(scope.date);
+            var dateString = '';
+
+            dateString += date.getDate() + '.';
+            dateString += (date.getMonth() + 1) + '.';
+            dateString += date.getFullYear() + ', ';
+            dateString += date.getHours() + ':';
+            dateString += date.getMinutes();
+
+            el[0].innerHTML = dateString;
         }
     }
 }());;(function(){
@@ -2227,6 +2247,10 @@ angular
                 fitSize();
 
                 angular.element($window).on('resize', fitSize);
+
+                window.setTimeout(function(){
+                    window.dispatchEvent(new Event('resize'));
+                }, 100);
             }
         }
     }
@@ -2338,11 +2362,10 @@ angular
 
         function link(scope, el, attrs, ctrl) {
 
-            var index = parseInt(attrs.panelCloseButton);
-
             el.on('click', closePanel);
 
             function closePanel() {
+                var index = parseInt(attrs.panelCloseButton);
                 ctrl.closePanelAt(index);
             }
         }
@@ -2917,17 +2940,28 @@ angular
             '               <tbody ng-transclude>' +
             '               </tbody>' +
             '           </table>',
-            controller: ['$scope', controller]
+            controller: ['$scope', 'SelectionService', controller]
         };
         return directive;
 
         //////////
 
-        function controller($scope) {
+        function controller($scope, SelectionService) {
 
             this.getItems = function () {
                 return $scope.items;
             };
+
+            // this.selectOnlyItemAt = function(index) {
+            //    if (SelectionService.isSelected($scope.items[index])){
+            //        SelectionService.deselectAll($scope.items);
+            //        //SelectionService.deselect($scope.items[index]);
+            //    } else {
+            //        SelectionService.deselectAll($scope.items);
+            //        SelectionService.select($scope.items[index]);
+            //    }
+            //    $scope.$apply();
+            //};
         }
     }
 
@@ -2957,7 +2991,21 @@ angular
         //////////
 
         function link(scope, el, attrs, ctrl) {
+
             scope.item = ctrl.getItems()[scope.$index];
+
+            //////////
+
+            //el[0].getElementsByTagName('div')[0].addEventListener('click', selectOnlyThisItem);
+
+            //////////
+
+            //function selectOnlyThisItem(e){
+            //    e.stopPropagation();
+            //    e.preventDefault();
+            //
+            //    ctrl.selectOnlyItemAt(scope.$index);
+            //}
         }
     }
 }());;(function () {

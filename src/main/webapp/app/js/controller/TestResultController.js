@@ -28,7 +28,7 @@
 
             TestResource.delete($scope.project.id, test.testNo)
                 .then(function () {
-                    _.remove($scope.tests, {test_no: test.testNo})
+                    _.remove($scope.tests, {testNo: test.testNo});
                 })
         };
 

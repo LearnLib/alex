@@ -115,6 +115,10 @@
                 fitSize();
 
                 angular.element($window).on('resize', fitSize);
+
+                window.setTimeout(function(){
+                    window.dispatchEvent(new Event('resize'));
+                }, 100);
             }
         }
     }

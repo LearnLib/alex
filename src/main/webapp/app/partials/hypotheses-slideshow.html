@@ -11,12 +11,31 @@
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="result in finalTestResults"
                     ng-click="fillPanel(result, $parent.$index)">
-                    <strong>Test <span ng-bind="result.testNo"></span></strong>
+
+                    <strong>Test No
+                        <span ng-bind="result.testNo"></span>
+                    </strong>,
+                    [<span ng-bind="result.configuration.algorithm"></span>]
+
+                    <br>
+
+                    <p class="text-muted">
+                        Started: <span format-date-time="result.startTime"></span>
+                    </p>
+
                 </li>
             </ul>
 
         </div>
 
+    </div>
+
+    <div ng-if="panels.length == 0" style="padding-top: 30px">
+        <div class="container">
+            <div class="alert alert-info">
+                Add a panel first
+            </div>
+        </div>
     </div>
 
 </div>

@@ -106,11 +106,10 @@
 
         function link(scope, el, attrs, ctrl) {
 
-            var index = parseInt(attrs.panelCloseButton);
-
             el.on('click', closePanel);
 
             function closePanel() {
+                var index = parseInt(attrs.panelCloseButton);
                 ctrl.closePanelAt(index);
             }
         }

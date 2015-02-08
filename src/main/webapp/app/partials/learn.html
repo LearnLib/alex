@@ -2,8 +2,12 @@
 
     <div ng-if="active == true" class="container" style="margin-top: 54px">
         <div class="alert alert-info">
-            <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is learning ...
+            <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is learning ... <br>
         </div>
+        <hr>
+        <button class="btn btn-default btn-xs pull-right" ng-click="abort()">
+            <i class="fa fa-close fa-fw"></i> Abort Learning
+        </button>
     </div>
 
     <div ng-if="!active && test">

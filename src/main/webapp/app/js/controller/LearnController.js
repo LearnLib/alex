@@ -99,6 +99,17 @@
                     _poll();
                 })
         }
+
+        $scope.abort = function () {
+
+            if ($scope.active) {
+                LearnerResource.stop()
+                    .then(function(data){
+
+                        console.log(data)
+                    })
+            }
+        }
     }
 
 }());

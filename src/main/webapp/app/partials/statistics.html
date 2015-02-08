@@ -72,11 +72,13 @@
 
             <strong>Test No
                 <span ng-bind="test.testNo"></span>
-            </strong>
+            </strong>,
+            [<span ng-bind="test.configuration.algorithm"></span>]
+
             <br>
 
             <p class="text-muted">
-                Start date: <span ng-bind="test.startTime"></span>
+                Started: <span format-date-time="test.startTime"></span>
             </p>
         </div>
     </div>

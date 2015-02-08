@@ -9,8 +9,7 @@
 
         var directive = {
             scope: {
-                date: '=formatDateTime',
-                format: '=formatTo'
+                date: '=formatDateTime'
             },
             link: link
         };
@@ -20,6 +19,16 @@
 
         function link(scope, el, attrs){
 
+            var date = new Date(scope.date);
+            var dateString = '';
+
+            dateString += date.getDate() + '.';
+            dateString += (date.getMonth() + 1) + '.';
+            dateString += date.getFullYear() + ', ';
+            dateString += date.getHours() + ':';
+            dateString += date.getMinutes();
+
+            el[0].innerHTML = dateString;
         }
     }
 }());
