@@ -14,6 +14,10 @@ body {
   padding-top: 50px;
 }
 
+#view {
+  padding-top: 20px; width: 100%;
+}
+
 .navbar {
   border-radius: 0;
 }
@@ -210,5 +214,24 @@ form {
     &:active {
 
     }
+  }
+}
+
+
+.panel {
+  border-right: 1px solid #e7e7e7
+}
+.hypothesis-panel-container {
+  position: absolute;
+  top: 0px;
+  bottom: 0;
+  width: 100%;
+
+  .hypothesis-panel {
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    width: 100%;
+    background: #fff;
   }
 }

@@ -11,65 +11,35 @@
     function HypothesesSlideshowController($scope, $stateParams, SessionService, TestResource) {
 
         $scope.project = SessionService.project.get();
-        $scope.tests = [];
+        $scope.finalTestResults = [];
         $scope.panels = [];
 
         //////////
 
         TestResource.getAllFinal($scope.project.id)
-            .then(function (tests) {
-                $scope.tests = tests;
+            .then(function (finalTestResults) {
+                $scope.finalTestResults = finalTestResults;
                 return $stateParams.testNo;
             })
-            .then(loadIntermediateResults);
+            .then(loadComplete);
 
         //////////
 
-        function loadIntermediateResults(testNo, index) {
+        function loadComplete(testNo, index) {
             TestResource.getComplete($scope.project.id, testNo)
-                .then(function (steps) {
-                    if (!index) {
-                        $scope.panels.push({
-                            testNo: testNo,
-                            steps: steps,
-                            pointer: steps.length - 1
-                        })
+                .then(function(completeTestResult){
+                    if (angular.isUndefined(index)) {
+                        $scope.panels[0] = completeTestResult;
                     } else {
-                        $scope.panels[index] = {
-                            testNo: testNo,
-                            steps: steps,
-                            pointer: steps.length - 1
-                        }
+                        $scope.panels[index] = completeTestResult;
                     }
                 })
         }
 
         //////////
 
-        $scope.getPanelStyle = function (index) {
-
-            var width = 100 / $scope.panels.length;
-            var style = 'width: ' + width + '%; ' +
-                'top: 50px; bottom: 0; background: #fff; border-right: 1px solid #e7e7e7; position: absolute;' +
-                'left: ' + (index * width) + '%';
-
-            return style;
-        };
-
-        $scope.closePanel = function (index) {
-            $scope.panels.splice(index, 1);
-        };
-
-        $scope.addEmptyPanel = function () {
-            $scope.panels.push({})
-        };
-
-        $scope.addPanel = function (test, index) {
-            loadIntermediateResults(test.testNo, index);
-        };
-
-        $scope.clearPanel = function (index) {
-            $scope.panels[index] = {}
+        $scope.fillPanel = function (result, index) {
+            loadComplete(result.testNo, index);
         }
     }
 

@@ -1,0 +1,64 @@
+<div class="hypothesis-panel-container">
+
+    <!-- BEGIN: Subnavigation -->
+    <div class="sub-nav absolute">
+        <div class="container-fluid">
+            <div class="pull-left" style="margin-right: 16px">
+                <div class="btn-group btn-group-xs" dropdown>
+                    <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <ul class="dropdown-menu pull-left" role="menu">
+                        <li>
+                            <a href="" open-test-details-modal test="getCurrentStep()">
+                                <i class="fa fa-info fa-fw"></i>&nbsp; Details
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="" download-hypothesis-as-svg="#hypothesis-{{index}}">
+                                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
+                            </a>
+                            <a href="" download-as-json data="getCurrentStep().hypothesis">
+                                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pull-right">
+
+                <div class="btn-group btn-group-xs">
+                    <button class="btn btn-default" ng-click="firstStep()">
+                        <i class="fa fa-angle-double-left fa-fw"></i>
+                    </button>
+                    <button class="btn btn-default" ng-click="previousStep()">
+                        <i class="fa fa-angle-left fa-fw"></i>
+                    </button>
+                    <button class="btn btn-default disabled">
+                        <span ng-bind="pointer + 1"></span>/<span ng-bind="result.length"></span>
+                    </button>
+                    <button class="btn btn-default" ng-click="nextStep()">
+                        <i class="fa fa-angle-right fa-fw"></i>
+                    </button>
+                    <button class="btn btn-default" ng-click="lastStep()">
+                        <i class="fa fa-angle-double-right fa-fw"></i>
+                    </button>
+                </div>
+
+                <button class="btn btn-xs btn-danger" panel-close-button="index">
+                    <i class="fa fa-close"></i>
+                </button>
+
+            </div>
+        </div>
+    </div>
+    <!-- END: Subnavigation -->
+
+    <div class="hypothesis-panel">
+
+        <hypothesis id="hypothesis-{{index}}" test="getCurrentStep()"></hypothesis>
+
+    </div>
+
+</div>

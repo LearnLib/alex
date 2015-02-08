@@ -1,79 +1,21 @@
-<div ng-repeat="panel in panels" style="{{getPanelStyle($index)}}" xmlns="http://www.w3.org/1999/html">
+<div panel-manager="panels">
 
-    <div ng-if="panel.testNo">
+    <div panel panel-index="$index" ng-repeat="result in panels">
 
-        <div class="sub-nav absolute">
-            <div class="container-fluid">
-                <div class="pull-left" style="margin-right: 16px">
-
-                    <div class="btn-group btn-group-xs" dropdown>
-                        <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
-                            <i class="fa fa-bars"></i>
-                        </button>
-                        <ul class="dropdown-menu pull-left" role="menu">
-                            <li>
-                                <a href="" open-test-details-modal test="panel.steps[panel.pointer]">
-                                    <i class="fa fa-info fa-fw"></i>&nbsp; Details
-                                </a>
-                            </li>
-                            <li>
-                                <a href="">
-                                    <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <button class="btn btn-default btn-xs" ng-if="panels.length == 2" ng-click="clearPanel($index)">
-                        <i class="fa fa-arrow-circle-left"></i>
-                    </button>
-
-                    <button class="btn btn-danger btn-xs" ng-if="panels.length == 2" ng-click="closePanel($index)">
-                        <i class="fa fa-close"></i>
-                    </button>
-
-                    <button class="btn btn-primary btn-xs" ng-if="panels.length == 1" ng-click="addEmptyPanel()">
-                        <i class="fa fa-columns"></i>
-                    </button>
-
-                </div>
-                <div class="pull-right">
-                    <div class="btn-group btn-group-xs">
-                        <button class="btn btn-default">
-                            <i class="fa fa-angle-double-left fa-fw"></i>
-                        </button>
-                        <button class="btn btn-default">
-                            <i class="fa fa-angle-left fa-fw"></i>
-                        </button>
-                        <button class="btn btn-default disabled">
-                            <span ng-bind="panel.pointer + 1"></span>/<span ng-bind="panel.steps.length"></span>
-                        </button>
-                        <button class="btn btn-default">
-                            <i class="fa fa-angle-right fa-fw"></i>
-                        </button>
-                        <button class="btn btn-default">
-                            <i class="fa fa-angle-double-right fa-fw"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div ng-if="result">
+            <hypothesis-slideshow-panel panel-index="{{$index}}" result="result"></hypothesis-slideshow-panel>
         </div>
 
-        <div style="position: absolute; top: 40px; bottom: 0; width: 100%; background: #fff; overflow: auto">
+        <div ng-if="!result" style="padding: 30px">
 
-            <hypothesis test="panel.steps[panel.pointer]"></hypothesis>
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="result in finalTestResults"
+                    ng-click="fillPanel(result, $parent.$index)">
+                    <strong>Test <span ng-bind="result.testNo"></span></strong>
+                </li>
+            </ul>
 
         </div>
-
-    </div>
-
-    <div class="container-fluid" ng-if="!panel.testNo" style="padding: 15px; position: absolute; top: 0; bottom: 0; width: 100%; overflow: auto">
-
-        <ul class="list-group">
-            <li class="list-group-item" ng-repeat="test in tests" ng-click="addPanel(test, $parent.$index)">
-                <strong>Test No. <span ng-bind="test.test_no"></span></strong>
-            </li>
-        </ul>
 
     </div>
 

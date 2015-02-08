@@ -533,65 +533,35 @@ angular
     function HypothesesSlideshowController($scope, $stateParams, SessionService, TestResource) {
 
         $scope.project = SessionService.project.get();
-        $scope.tests = [];
+        $scope.finalTestResults = [];
         $scope.panels = [];
 
         //////////
 
         TestResource.getAllFinal($scope.project.id)
-            .then(function (tests) {
-                $scope.tests = tests;
+            .then(function (finalTestResults) {
+                $scope.finalTestResults = finalTestResults;
                 return $stateParams.testNo;
             })
-            .then(loadIntermediateResults);
+            .then(loadComplete);
 
         //////////
 
-        function loadIntermediateResults(testNo, index) {
+        function loadComplete(testNo, index) {
             TestResource.getComplete($scope.project.id, testNo)
-                .then(function (steps) {
-                    if (!index) {
-                        $scope.panels.push({
-                            testNo: testNo,
-                            steps: steps,
-                            pointer: steps.length - 1
-                        })
+                .then(function(completeTestResult){
+                    if (angular.isUndefined(index)) {
+                        $scope.panels[0] = completeTestResult;
                     } else {
-                        $scope.panels[index] = {
-                            testNo: testNo,
-                            steps: steps,
-                            pointer: steps.length - 1
-                        }
+                        $scope.panels[index] = completeTestResult;
                     }
                 })
         }
 
         //////////
 
-        $scope.getPanelStyle = function (index) {
-
-            var width = 100 / $scope.panels.length;
-            var style = 'width: ' + width + '%; ' +
-                'top: 50px; bottom: 0; background: #fff; border-right: 1px solid #e7e7e7; position: absolute;' +
-                'left: ' + (index * width) + '%';
-
-            return style;
-        };
-
-        $scope.closePanel = function (index) {
-            $scope.panels.splice(index, 1);
-        };
-
-        $scope.addEmptyPanel = function () {
-            $scope.panels.push({})
-        };
-
-        $scope.addPanel = function (test, index) {
-            loadIntermediateResults(test.testNo, index);
-        };
-
-        $scope.clearPanel = function (index) {
-            $scope.panels[index] = {}
+        $scope.fillPanel = function (result, index) {
+            loadComplete(result.testNo, index);
         }
     }
 
@@ -1756,6 +1726,70 @@ angular
             }
         }
     }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('downloadHypothesisAsSvg', [
+            'PromptService',
+            downloadHypothesisAsSvg
+        ]);
+
+    function downloadHypothesisAsSvg(PromptService) {
+
+        var directive = {
+            link: link
+        };
+        return directive;
+
+        //////////
+
+        function link(scope, el, attrs) {
+
+            el.on('click', promptFilename);
+
+            //////////
+
+            function promptFilename() {
+                PromptService.prompt('Enter a name for the svg file.', {
+                    regexp: /^[a-zA-Z0-9\.\-,_]+$/,
+                    errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
+                }).then(download);
+            }
+
+            function download(filename) {
+
+                var selector = attrs.downloadHypothesisAsSvg;
+                var svg = document.querySelector(selector);
+                var a;
+
+                if (svg.nodeName != 'SVG') {
+                    svg = svg.getElementsByTagName('svg')[0];
+                    if (svg == null) {
+                        return;
+                    }
+                }
+
+                svg.setAttribute('version', '1.1');
+                svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+                var r = new XMLSerializer().serializeToString(svg);
+
+                // create new link element with image data
+                a = document.createElement('a');
+                a.style.display = 'none';
+                a.setAttribute('href', 'data:image/svg+xml,' + r);
+                a.setAttribute('target', '_blank');
+                a.setAttribute('download', filename + '.svg');
+
+                // append link to the dom, fire click event and remove it
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+    }
 }());;(function() {
 
 	angular
@@ -2112,7 +2146,7 @@ angular
             scope.$watch('test', function(test){
                 if (angular.isDefined(test) && test != null) {
                     if (angular.isDefined(_svg)){
-                        _svg.innerHTML = ''
+                        el.find('svg')[0].innerHTML = '';
                     }
                     createHypothesis();
                 }
@@ -2193,6 +2227,190 @@ angular
                 fitSize();
 
                 angular.element($window).on('resize', fitSize);
+            }
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('panelManager', panelManager);
+
+    function panelManager() {
+
+        var template = '' +
+            '<div style="position: absolute; top: 50px; bottom: 0; width: 100%;">' +
+            '   <div ng-click="addPanel()" style="position: absolute; right: 0; top: 0; bottom: 0; width: 40px; background: #f2f2f2; border-left: 1px solid #e7e7e7"></div>' +
+            '   <div style="position: absolute; left: 0; top: 0; bottom: 0; right: 40px; background: #fff" ng-transclude></div>' +
+            '</div>';
+
+        var directive = {
+            template: template,
+            transclude: true,
+            scope: {
+                panels: '=panelManager'
+            },
+            controller: [
+                '$scope',
+                controller
+            ]
+        };
+        return directive;
+
+        //////////
+
+        function controller($scope) {
+
+            this.getPanels = function () {
+                return $scope.panels;
+            };
+
+            this.closePanelAt = function (index) {
+                $scope.panels.splice(index, 1);
+                $scope.$apply();
+
+                // has to call resize so that the hypothesis svg is rezsied properly
+                window.dispatchEvent(new Event('resize'));
+            };
+
+            //////////
+
+            $scope.addPanel = function () {
+                $scope.panels.push(null)
+            }
+        }
+    }
+
+    angular
+        .module('weblearner.directives')
+        .directive('panel', panel);
+
+    function panel() {
+
+        var template = '<div class="panel" style="position: absolute; top: 0; bottom: 0; width: 100%;" ng-transclude></div>';
+
+        var directive = {
+            require: '^panelManager',
+            template: template,
+            transclude: true,
+            link: link,
+            scope: {
+                index: '=panelIndex'
+            }
+        };
+        return directive;
+
+        //////////
+
+        function link(scope, el, attrs, ctrl) {
+
+            var panel = el.children()[0];
+            scope.panels = ctrl.getPanels();
+
+            //////////
+
+            scope.$watch('panels.length', init);
+            init();
+
+            //////////
+
+            function init() {
+                panel.style.width = (100 / scope.panels.length) + '%';
+                panel.style.left = ((100 / scope.panels.length) * (scope.index)) + '%';
+            }
+        }
+    }
+
+    angular
+        .module('weblearner.directives')
+        .directive('panelCloseButton', panelCloseButton);
+
+    function panelCloseButton() {
+
+        var directive = {
+            require: '^panelManager',
+            link: link
+        };
+        return directive;
+
+        //////////
+
+        function link(scope, el, attrs, ctrl) {
+
+            var index = parseInt(attrs.panelCloseButton);
+
+            el.on('click', closePanel);
+
+            function closePanel() {
+                ctrl.closePanelAt(index);
+            }
+        }
+    }
+
+    angular
+        .module('weblearner.directives')
+        .directive('hypothesisSlideshowPanel', hypothesisSlideshowPanel);
+
+    function hypothesisSlideshowPanel() {
+
+        var directive = {
+            require: '^panelManager',
+            scope: {
+                result: '=',
+                panelIndex: '@'
+            },
+            templateUrl: 'app/partials/directives/hypothesis-panel.html',
+            link: link
+        };
+        return directive;
+
+        //////////
+
+        function link(scope, el, attrs, ctrl) {
+
+            scope.index;
+            scope.pointer = scope.result.length - 1;
+            scope.panels = ctrl.getPanels();
+
+            //////////
+
+            scope.$watch('panels.length', init);
+
+            //////////
+
+            function init() {
+                scope.index = parseInt(scope.panelIndex);
+            }
+
+            //////////
+
+            scope.firstStep = function () {
+                scope.pointer = 0;
+            };
+
+            scope.previousStep = function () {
+                if (scope.pointer - 1 < 0) {
+                    scope.lastStep();
+                } else {
+                    scope.pointer--;
+                }
+            };
+
+            scope.nextStep = function () {
+                if (scope.pointer + 1 > scope.result.length - 1) {
+                    scope.firstStep();
+                } else {
+                    scope.pointer++;
+                }
+            };
+
+            scope.lastStep = function () {
+                scope.pointer = scope.result.length - 1;
+            };
+
+            scope.getCurrentStep = function () {
+                return scope.result[scope.pointer];
             }
         }
     }
