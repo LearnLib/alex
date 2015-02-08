@@ -25,6 +25,27 @@
                 <i class="fa fa-columns fa-fw"></i> Compare Two Complete Tests
             </button>
         </div>
+        <div class="pull-right">
+
+            <div class="btn-group btn-group-xs pull-right" dropdown>
+                <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+                    <i class="fa fa-download fa-fw"></i> Export to CSV
+                </button>
+                <ul class="dropdown-menu pull-left" role="menu">
+                    <li>
+                        <a href="" download-test-results-as-csv test-results="tests">
+                            All Final Results
+                        </a>
+                    </li>
+                    <li>
+                        <a href="" download-test-results-as-csv test-results="tests">
+                            A Single Complete Result
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
     </div>
 
     <div class="container" ng-if="chartDataSets.length > 0">

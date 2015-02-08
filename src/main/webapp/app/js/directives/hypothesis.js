@@ -34,7 +34,7 @@
             scope.$watch('test', function(test){
                 if (angular.isDefined(test) && test != null) {
                     if (angular.isDefined(_svg)){
-                        _svg.innerHTML = ''
+                        el.find('svg')[0].innerHTML = '';
                     }
                     createHypothesis();
                 }

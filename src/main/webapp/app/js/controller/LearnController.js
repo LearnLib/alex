@@ -56,8 +56,8 @@
             $scope.active = true;
             _interval = $interval(function () {
                 LearnerResource.isActive()
-                    .then(function (active) {
-                        if (!active) {
+                    .then(function (data) {
+                        if (!data.active) {
                             LearnerResource.status()
                                 .then(function (test) {
                                     $scope.active = false;

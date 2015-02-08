@@ -15,35 +15,36 @@
 
         //////////
 
-        $scope.symbols = [];
+        $scope.symbols = {
+            web: [],
+            rest: []
+        };
 
         //////////
 
         SymbolResource.all(_project.id)
             .then(function (symbols) {
-                $scope.symbols = symbols;
+                $scope.symbols.web = _.filter(symbols, {type: 'web'});
+                $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
             });
 
         //////////
 
-        $scope.downloadSymbols = function () {
+        $scope.getSelectedSymbols = function () {
 
-            var symbolsToDownload = angular.copy(SelectionService.getSelected($scope.symbols));
-            SelectionService.removeSelection(symbolsToDownload);
+            var selectedWebSymbols = SelectionService.getSelected($scope.symbols.web);
+            var selectedRestSymbols = SelectionService.getSelected($scope.symbols.rest);
+            var selectedSymbols = selectedWebSymbols.concat(selectedRestSymbols);
 
-            _.forEach(symbolsToDownload, function (symbol) {
+            SelectionService.removeSelection(selectedSymbols);
+
+            _.forEach(selectedSymbols, function (symbol) {
                 delete symbol.id;
-                delete symbol.project;
                 delete symbol.revision;
-            })
+                delete symbol.project;
+            });
 
-            if (symbolsToDownload.length > 0) {
-                var a = document.createElement('a');
-                a.setAttribute('href', window.URL.createObjectURL(new Blob([angular.toJson(symbolsToDownload)], {type: 'text/json'})));
-                a.setAttribute('target', '_blank');
-                a.setAttribute('download', _fileName);
-                a.click();
-            }
-        }
+            return selectedSymbols;
+        };
     }
 }());

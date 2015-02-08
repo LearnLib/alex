@@ -5,15 +5,16 @@
         .module('weblearner.controller')
         .controller('TestSetupController', [
             '$scope', '$location', 'SymbolResource', 'SessionService', 'SelectionService', 'type', 'EqOraclesEnum',
-            'LearnAlgorithmsEnum', 'LearnerResource',
+            'LearnAlgorithmsEnum', 'LearnerResource', 'ngToast',
             TestSetupController
         ]);
 
     function TestSetupController($scope, $location, SymbolResource, SessionService, SelectionService, type, EqOracles,
-                                 LearnAlgorithms, LearnerResource) {
+                                 LearnAlgorithms, LearnerResource, toast) {
 
         $scope.project = SessionService.project.get();
         $scope.symbols = [];
+        $scope.type = type;
         $scope.testConfiguration = {
             symbols: [],
             algorithm: LearnAlgorithms.EXTENSIBLE_LSTAR,
@@ -30,7 +31,16 @@
         LearnerResource.isActive()
             .then(function (active) {
                 if (active) {
-                    $location.path('/project/' + $scope.project.id + '/learn');
+
+                    if (data.project == $scope.project.id) {
+                        $location.path('/project/' + $scope.project.id + '/learn');
+                    } else {
+                        toast.create({
+                            class: 'danger',
+                            content: 'There is already running a test from another project.',
+                            dismissButton: true
+                        });
+                    }
                 } else {
                     loadSymbols();
                 }

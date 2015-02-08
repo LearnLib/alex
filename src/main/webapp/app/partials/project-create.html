@@ -16,7 +16,7 @@
                    placeholder="Enter a name for the project" ng-model="project.name" ng-required="true">
         </div>
         <div class="alert alert-danger alert-condensed" ng-show="create_form.submitted">
-             <small ng-show="create_form.name.$error.required">Name must not be empty</small>
+             <small ng-show="create_form.name.$error">Name must not be empty</small>
         </div>
         <!-- Name -->
 
@@ -29,11 +29,8 @@
                    placeholder="Enter the url of the project" ng-model="project.baseUrl" ng-required="true" ng-pattern="/^(http://|https://).{1,}/">
         </div>
         <div class="alert alert-danger alert-condensed" ng-show="create_form.submitted">
-            <small ng-show="create_form.url.$error.required">
-                Url must not be empty
-            </small><br>
-            <small ng-show="create_form.url.$error.pattern">
-                The url has to start with http(s):// and have a host name
+            <small ng-show="create_form.url.$error">
+                Url must not be empty. The url has to start with http(s):// and have a host name
             </small>
         </div>
         <!-- /Base Url -->
