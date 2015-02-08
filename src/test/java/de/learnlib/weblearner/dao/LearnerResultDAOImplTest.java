@@ -291,7 +291,7 @@ public class LearnerResultDAOImplTest {
 
         Long[] ids = new Long[learnerResults.size()];
         for (int i = 0; i < ids.length; i++) {
-            ids[i] = learnerResults.get(i).getId();
+            ids[i] = learnerResults.get(i).getTestNo();
         }
 
         learnerResultDAO.delete(project.getId(), ids);
@@ -316,7 +316,7 @@ public class LearnerResultDAOImplTest {
 
         Long[] ids = new Long[learnerResults.size()];
         for (int i = 0; i < ids.length; i++) {
-            ids[i] = learnerResults.get(i).getId();
+            ids[i] = learnerResults.get(i).getTestNo();
         }
         ids[ids.length - 1] = -1L;
 
