@@ -126,6 +126,12 @@ public class HypothesisResource {
                                      @PathParam("test_numbers") String testNumbers) {
         try {
             String[] numbersStringArray = testNumbers.split(",");
+            if (numbersStringArray.length == 0) {
+                Exception e = new IllegalArgumentException("You must at least specify one test no to delete.");
+                return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
+                        Response.Status.BAD_REQUEST, e);
+            }
+
             Long[] numbersLongArray = new Long[numbersStringArray.length];
             for (int i = 0; i < numbersStringArray.length; i++) {
                 numbersLongArray[i] = Long.valueOf(numbersStringArray[i]);
@@ -134,6 +140,9 @@ public class HypothesisResource {
             learnerResultDAO.delete(projectId, numbersLongArray);
             return Response.status(Response.Status.NO_CONTENT).build();
 
+        } catch (NumberFormatException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
+                    Response.Status.BAD_REQUEST,  e);
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
                                                                 Response.Status.NOT_FOUND,  e);

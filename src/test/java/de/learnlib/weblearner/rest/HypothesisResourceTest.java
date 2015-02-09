@@ -187,4 +187,24 @@ public class HypothesisResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
+
+    @Test
+    public void ensureThatNoTestNumberToDeleteIsHandledProperly() {
+        willThrow(IllegalArgumentException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+
+        Response response = target("/projects/" + PROJECT_ID + "/results/,,,,")
+                .request().delete();
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void ensureThatANotValidTestNumberStringOnDeletionIsHandledProperly() {
+        willThrow(IllegalArgumentException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+
+        Response response = target("/projects/" + PROJECT_ID + "/results/foobar")
+                .request().delete();
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
 }
