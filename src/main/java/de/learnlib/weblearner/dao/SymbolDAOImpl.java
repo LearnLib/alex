@@ -3,6 +3,7 @@ package de.learnlib.weblearner.dao;
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -93,12 +94,12 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol<?>> getAll(long projectId, boolean withHidden) {
-        return getAll(projectId, Symbol.class, withHidden);
+    public List<Symbol<?>> getAll(long projectId, SymbolVisibilityLevel visibilityLevel) {
+        return getAll(projectId, Symbol.class, visibilityLevel);
     }
 
     @Override
-    public List<Symbol<?>> getAll(long projectID, Class<? extends Symbol> type, boolean withHidden) {
+    public List<Symbol<?>> getAll(long projectID, Class<? extends Symbol> type, SymbolVisibilityLevel visibilityLevel) {
         // subquery preparation to get a list of ids combined with their highest revision
         DetachedCriteria maxRevisions = DetachedCriteria.forClass(Symbol.class)
                                                         .add(Restrictions.eq("project.id", projectID))
@@ -112,20 +113,16 @@ public class SymbolDAOImpl implements SymbolDAO {
         HibernateUtil.beginTransaction();
 
         // fetch the symbols of the project with the correct type & the latest revision
-        Criteria criteria = session.createCriteria(type)
-                                    .add(Restrictions.eq("project.id", projectID))
-                                    .add(Subqueries.propertiesIn(new String[]{
-                                                                        "id",
-                                                                        "revision"
-                                                                    }, maxRevisions))
-                                    .addOrder(Order.asc("id"));
-
-        if (!withHidden) {
-            criteria = criteria.add(Restrictions.eq("deleted", false));
-        }
-
         @SuppressWarnings("unchecked") // should return a list of symbols
-        List<Symbol<?>> result = criteria.list();
+        List<Symbol<?>> result = session.createCriteria(type)
+                                            .add(Restrictions.eq("project.id", projectID))
+                                            .add(Subqueries.propertiesIn(new String[]{
+                                                    "id",
+                                                    "revision"
+                                            }, maxRevisions))
+                                            .add(visibilityLevel.getExpression())
+                                            .addOrder(Order.asc("id"))
+                                            .list();
 
         // load the lazy relations
         Hibernate.initialize(result.get(0).getProject());

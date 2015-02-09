@@ -2,6 +2,7 @@ package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -37,11 +38,11 @@ public interface SymbolDAO {
      *
      * @param projectID
      *         The project the symbols should belong to.
-     * @param withHidden
+     * @param visibilityLevel
      *         Include symbols that are currently marked as deleted?
      * @return A list of symbols belonging to the project.
      */
-    List<Symbol<?>> getAll(long projectID, boolean withHidden);
+    List<Symbol<?>> getAll(long projectID, SymbolVisibilityLevel visibilityLevel);
 
     /**
      * Get all symbols of a project which have a specific type.
@@ -50,11 +51,11 @@ public interface SymbolDAO {
      *            The project the symbols should belong to.
      * @param type
      *            The requested type for the symbols.
-     * @param withHidden
+     * @param visibilityLevel
      *         Include symbols that are currently marked as deleted?
      * @return A list of symbols matching the project and type.
      */
-    List<Symbol<?>> getAll(long projectId, Class<? extends Symbol> type, boolean withHidden);
+    List<Symbol<?>> getAll(long projectId, Class<? extends Symbol> type, SymbolVisibilityLevel visibilityLevel);
 
     /**
      * Get a list of specific symbols of a project.

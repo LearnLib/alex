@@ -4,6 +4,7 @@ import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.entities.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.ClearAction;
@@ -319,7 +320,7 @@ public class SymbolDAOImplTest {
     public void shouldGetAllVisibleSymbols() {
         List<Symbol<?>> symbols = createTestSymbolLists();
 
-        List<Symbol<?>> symbolsFromDB = symbolDAO.getAll(project.getId(), false);
+        List<Symbol<?>> symbolsFromDB = symbolDAO.getAll(project.getId(), SymbolVisibilityLevel.VISIBLE);
 
         assertEquals(symbols.size() + 2 - 1, symbolsFromDB.size()); // +2 -> reset symbol, -1 hidden
         for (Symbol<?> x : symbols) {
@@ -338,7 +339,7 @@ public class SymbolDAOImplTest {
     public void shouldGetAllSymbolsIncludingHiddenOnes() {
         List<Symbol<?>> symbols = createTestSymbolLists();
 
-        List<Symbol<?>> symbolsFromDB = symbolDAO.getAll(project.getId(), true);
+        List<Symbol<?>> symbolsFromDB = symbolDAO.getAll(project.getId(), SymbolVisibilityLevel.ALL);
 
         assertEquals(symbols.size() + 2, symbolsFromDB.size()); // +2 -> reset symbol
         for (Symbol<?> x : symbols) {
@@ -377,7 +378,7 @@ public class SymbolDAOImplTest {
         List<Symbol<?>> symbols = createWebSymbolTestList();
         createRESTSymbolTestList();
 
-        List<Symbol<?>> webSymbolsFromDB = symbolDAO.getAll(project.getId(), WebSymbol.class, true);
+        List<Symbol<?>> webSymbolsFromDB = symbolDAO.getAll(project.getId(), WebSymbol.class, SymbolVisibilityLevel.ALL);
         assertNotNull(webSymbolsFromDB);
         for (Symbol<?> x : webSymbolsFromDB) {
             assertTrue(x instanceof WebSymbol);
@@ -391,7 +392,7 @@ public class SymbolDAOImplTest {
             }
         }
 
-        List<Symbol<?>> restSymbols = symbolDAO.getAll(project.getId(), RESTSymbol.class, true);
+        List<Symbol<?>> restSymbols = symbolDAO.getAll(project.getId(), RESTSymbol.class, SymbolVisibilityLevel.ALL);
         assertNotNull(restSymbols);
         for (Symbol<?> x : restSymbols) {
             assertTrue(x instanceof RESTSymbol);
@@ -627,7 +628,7 @@ public class SymbolDAOImplTest {
     }
 
     private Symbol<?> getResetSymbol() {
-        List<Symbol<?>> symbols = symbolDAO.getAll(project.getId(), false);
+        List<Symbol<?>> symbols = symbolDAO.getAll(project.getId(), SymbolVisibilityLevel.VISIBLE);
         for (Symbol<?> s : symbols) {
             if (s.getName().equals("Reset")) {
                 return s;

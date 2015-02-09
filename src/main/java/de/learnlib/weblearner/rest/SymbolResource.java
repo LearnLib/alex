@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
 import org.apache.logging.log4j.LogManager;
@@ -143,18 +144,19 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") long projectId,
                            @QueryParam("type") @DefaultValue("all") String type,
-                           @QueryParam("showHidden") @DefaultValue("false") boolean showHidden) {
+                           @QueryParam("showHidden") @DefaultValue("visible") String visibilityLevelAsString) {
         try {
+            SymbolVisibilityLevel visibilityLevel = SymbolVisibilityLevel.valueOf(visibilityLevelAsString.toUpperCase());
             List<Symbol<?>> symbols;
             switch(type) {
             case "all":
-                symbols = symbolDAO.getAll(projectId, showHidden);
+                symbols = symbolDAO.getAll(projectId, visibilityLevel);
                 break;
             case "web":
-                symbols = symbolDAO.getAll(projectId, WebSymbol.class, showHidden);
+                symbols = symbolDAO.getAll(projectId, WebSymbol.class, visibilityLevel);
                 break;
             case "rest":
-                symbols = symbolDAO.getAll(projectId, RESTSymbol.class, showHidden);
+                symbols = symbolDAO.getAll(projectId, RESTSymbol.class, visibilityLevel);
                 break;
             default:
                 IllegalArgumentException e = new IllegalArgumentException("Unknown type:" + type + ".");
