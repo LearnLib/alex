@@ -1,5 +1,7 @@
 package de.learnlib.weblearner.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.WeblearnerTestApplication;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
@@ -19,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import javax.validation.ValidationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
@@ -50,6 +53,8 @@ public class SymbolResourceTest extends JerseyTest {
     private Project project;
 
     private Symbol symbol;
+    private Symbol symbol2;
+    private List<Symbol<?>> symbols;
 
     @Override
     protected Application configure() {
@@ -66,6 +71,7 @@ public class SymbolResourceTest extends JerseyTest {
 
         project = new Project();
         project.setId(PROJECT_TEST_ID);
+        given(projectDAO.getByID(project.getId())).willReturn(project);
 
         symbol = new WebSymbol();
         symbol.setId(SYMBOL_TEST_ID);
@@ -73,7 +79,15 @@ public class SymbolResourceTest extends JerseyTest {
         symbol.setAbbreviation("srts");
         symbol.setProject(project);
 
-        given(projectDAO.getByID(project.getId())).willReturn(project);
+        symbol2 = new WebSymbol();
+        symbol2.setId(SYMBOL_TEST_ID + 1);
+        symbol2.setName("Symbol Resource Test Symbol 2");
+        symbol2.setAbbreviation("srts 2");
+        symbol2.setProject(project);
+
+        symbols = new LinkedList<>();
+        symbols.add(symbol);
+        symbols.add(symbol2);
     }
 
     @Test
@@ -133,6 +147,83 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().post(Entity.json(symbol));
 
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldCreateValidSymbols() throws IOException {
+        // given
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { }).writeValueAsString(symbols);
+
+        // when
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
+
+        // then
+        assertSymbolListCreation(response);
+    }
+
+
+
+    @Test
+    public void shouldCreateValidSymbolsWithoutProjectOrRevision() throws IOException {
+        // given
+        symbol.setProject(null);
+        symbol2.setRevision(0);
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { }).writeValueAsString(symbols);
+
+        // when
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
+
+        // then
+        symbol.setProject(project);
+        assertSymbolListCreation(response);
+    }
+
+    @Test
+    public void shouldCreateSymbolsWithCorrectProject() throws IOException {
+        // given
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { }).writeValueAsString(symbols);
+
+        // when
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
+        given(symbolDAO.get(PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+
+        // then
+        assertSymbolListCreation(response);
+    }
+
+    @Test
+    public void shouldNotCreateASymbolsWithAnWrongProject() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        symbol.setProjectId(PROJECT_TEST_ID + 1);
+        String json = mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { }).writeValueAsString(symbols);
+
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
+        given(symbolDAO.get(PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        verify(symbolDAO, never()).create(symbols);
+    }
+
+    @Test
+    public void shouldReturn400IfSymbolsCouldNotBeCreated() throws JsonProcessingException {
+        willThrow(new ValidationException()).given(symbolDAO).create(symbols);
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { }).writeValueAsString(symbols);
+
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
+
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    private void assertSymbolListCreation(Response response) {
+        assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
+        List<Symbol<?>> responseSymbols = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        assertEquals(symbol, responseSymbols.get(0));
+        assertEquals(symbol2, responseSymbols.get(1));
+        verify(symbolDAO).create(symbols);
     }
 
     @Test

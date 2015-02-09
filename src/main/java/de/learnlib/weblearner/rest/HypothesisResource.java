@@ -113,19 +113,36 @@ public class HypothesisResource {
      *
      * @param projectId
      *         The project of the test run.
-     * @param testNo
-     *         The number of the test run.
+     * @param testNumbers
+     *         The numbers of the results to delete as a comma (',') separated list.
      * @return On success no content will be returned; an error message on failure.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
-    @Path("{test_no}")
+    @Path("{test_numbers}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteAResultSet(@PathParam("project_id") long projectId, @PathParam("test_no") long testNo) {
+    public Response deleteAResultSet(@PathParam("project_id") long projectId,
+                                     @PathParam("test_numbers") String testNumbers) {
         try {
-            learnerResultDAO.delete(projectId, testNo);
+            String[] numbersStringArray = testNumbers.split(",");
+            if (numbersStringArray.length == 0) {
+                Exception e = new IllegalArgumentException("You must at least specify one test no to delete.");
+                return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
+                        Response.Status.BAD_REQUEST, e);
+            }
+
+            Long[] numbersLongArray = new Long[numbersStringArray.length];
+            for (int i = 0; i < numbersStringArray.length; i++) {
+                numbersLongArray[i] = Long.valueOf(numbersStringArray[i]);
+            }
+
+            learnerResultDAO.delete(projectId, numbersLongArray);
             return Response.status(Response.Status.NO_CONTENT).build();
+
+        } catch (NumberFormatException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
+                    Response.Status.BAD_REQUEST,  e);
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
                                                                 Response.Status.NOT_FOUND,  e);

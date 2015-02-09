@@ -23,12 +23,6 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     public void create(Symbol<?> symbol) throws ValidationException {
-        // new symbols should have a project, not an id and not a revision
-        if (symbol.getProject() == null || symbol.getId() > 0 || symbol.getRevision() > 0) {
-            throw new ValidationException(
-                    "To create a symbols it must have a Project but not haven an ID or and revision");
-        }
-
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -41,11 +35,43 @@ public class SymbolDAOImpl implements SymbolDAO {
         } catch (javax.validation.ConstraintViolationException |
                  org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
+            symbol.setId(0L);
+            symbol.setRevision(0L);
+            throw new ValidationException("Could not create symbol because it was invalid.", e);
+        }
+    }
+
+    @Override
+    public void create(List<Symbol<?>> symbols) throws ValidationException {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+        try {
+            // create the symbol
+            for (Symbol<?> symbol : symbols) {
+                create(session, symbol);
+            }
+            HibernateUtil.commitTransaction();
+
+            // error handling
+        } catch (javax.validation.ConstraintViolationException |
+                org.hibernate.exception.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            for (Symbol<?> symbol : symbols) {
+                symbol.setId(0L);
+                symbol.setRevision(0L);
+            }
             throw new ValidationException("Could not create symbol because it was invalid.", e);
         }
     }
 
     private void create(Session session, Symbol<?> symbol) {
+        // new symbols should have a project, not an id and not a revision
+        if (symbol.getProject() == null || symbol.getId() > 0 || symbol.getRevision() > 0) {
+            throw new ValidationException(
+                    "To create a symbols it must have a Project but not haven an ID or and revision");
+        }
+
         Project project = (Project) session.load(Project.class, symbol.getProjectId());
 
         // test for unique constrains

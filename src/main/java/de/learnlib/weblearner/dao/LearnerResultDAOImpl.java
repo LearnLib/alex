@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.LearnerResult;
+import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -11,7 +12,11 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 
 import javax.validation.ValidationException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Implementation of a LearnerResultDAO using Hibernate.
@@ -31,17 +36,17 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         HibernateUtil.beginTransaction();
 
         // get the current highest symbol id in the project and add 1 for the next id
-        Long maxID = (Long) session.createCriteria(LearnerResult.class)
-                                    .add(Restrictions.eq("project", learnerResult.getProject()))
-                                    .setProjection(Projections.max("testNo"))
-                                    .uniqueResult();
-        if (maxID == null) {
-            maxID = 0L;
+        Long maxTestNo = (Long) session.createCriteria(LearnerResult.class)
+                                            .add(Restrictions.eq("project", learnerResult.getProject()))
+                                            .setProjection(Projections.max("testNo"))
+                                            .uniqueResult();
+        if (maxTestNo == null) {
+            maxTestNo = 0L;
         }
-        long id = maxID + 1;
+        long nextTestNo = maxTestNo + 1;
 
         learnerResult.setId(0L);
-        learnerResult.setTestNo(id);
+        learnerResult.setTestNo(nextTestNo);
         learnerResult.setStepNo(1L);
 
         session.save(learnerResult);
@@ -209,23 +214,43 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public void delete(long projectId, long testNo) {
+    public void delete(long projectId, Long... testNo) {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
+        List<Long> validTestNumbers = getTestNumbersInDB(session, projectId, testNo);
+        Set<Long> diffSet = difference(Arrays.asList(testNo), validTestNumbers);
+        if (diffSet.size() > 0) {
+            String errorMessage = "The result with the number " + diffSet + " was not found, thus nothing could be deleted";
+            throw new IllegalArgumentException(errorMessage);
+        }
+
         @SuppressWarnings("unchecked") // should always return a list of LernerResults
         List<LearnerResult> results = session.createCriteria(LearnerResult.class)
                                                     .add(Restrictions.eq("project.id", projectId))
-                                                    .add(Restrictions.eq("testNo", testNo))
+                                                    .add(Restrictions.in("testNo", testNo))
                                                     .list();
-
         for (LearnerResult r : results) {
             session.delete(r);
         }
 
         // done
         HibernateUtil.commitTransaction();
+    }
+
+    private List<Long> getTestNumbersInDB(Session session, Long projectId, Long... testNo) {
+        return session.createCriteria(LearnerResult.class)
+                                    .add(Restrictions.eq("project.id", projectId))
+                                    .add(Restrictions.in("testNo", testNo))
+                                    .setProjection(Projections.distinct(Projections.property("testNo")))
+                                    .list();
+    }
+
+    private Set<Long> difference(Collection<Long> collectionA, Collection<Long> collectionB) {
+        Set<Long> diffSet = new TreeSet<>(collectionA);
+        diffSet.removeAll(collectionB);
+        return  diffSet;
     }
 
 }
