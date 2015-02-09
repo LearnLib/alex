@@ -26,7 +26,7 @@
             getAllFinal: getAllFinal,
             getFinal: getFinal,
             getComplete: getComplete,
-            delete: deleteTest
+            delete: deleteTests
         };
         return service;
 
@@ -121,16 +121,27 @@
          * @param testNo
          * @return {*}
          */
-        function deleteTest(projectId, testNo) {
+        function deleteTests(projectId, testNo) {
+        	
+        	if (angular.isArray(testNo)) {
+        		testNo = testNo.join();
+        	}
+        	
             return $http.delete(api.URL + '/projects/' + projectId + '/results/' + testNo, {})
                 .then(success)
                 .catch(fail);
 
             function success(response) {
+            	toast.create({
+                    class: 'success',
+                    content: 'The results were deleted.',
+                    dismissButton: true
+                });
                 return response.data;
             }
 
             function fail(error) {
+            	console.log('=============');
                 console.error(error.data);
                 toast.create({
                     class: 'danger',

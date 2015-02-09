@@ -13,6 +13,7 @@
         $scope.project = SessionService.project.get();
         $scope.finalTestResults = [];
         $scope.panels = [];
+        $scope.layoutSettings = [];
 
         //////////
 

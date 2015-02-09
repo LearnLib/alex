@@ -141,6 +141,11 @@
          * @return {*}
          */
         function createSymbol(projectId, symbol) {
+        	
+        	if (angular.isArray(symbol)) {
+        		return createSymbols(projectId, symbol)
+        	}
+        	        	
             return $http.post(api.URL + '/projects/' + projectId + '/symbols', symbol)
                 .then(success)
                 .catch(fail);
@@ -148,7 +153,7 @@
             function success(response) {
                 toast.create({
                     class: 'success',
-                    content: 'Symbol "' + response.data.name + '" created'
+                    content: 'Symbol ' + response.data.name + ' created'
                 });
                 return response.data;
             }
@@ -163,7 +168,32 @@
                 return $q.reject();
             }
         }
+        
+    	function createSymbols(projectId, symbols) {
+        	        	        	
+            return $http.put(api.URL + '/projects/' + projectId + '/symbols', symbols)
+                .then(success)
+                .catch(fail);
 
+            function success(response) {
+                toast.create({
+                    class: 'success',
+                    content: 'Symbols created'
+                });
+                return response.data;
+            }
+
+            function fail(error) {
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: 'Upload failed. Some symbols already exist or existed in this project',
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+        
         /**
          * update an existing symbol
          * @param symbol
@@ -199,6 +229,9 @@
          * @return {*}
          */
         function deleteSymbol(projectId, symbolId) {
+        	
+        	console.log(symbolId)
+        	
             return $http.delete(api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
                 .then(success)
                 .catch(fail);

@@ -39,6 +39,8 @@
             input: '',
             output: ''
         };
+        
+        $scope.layoutSettings;
 
         //////////
 

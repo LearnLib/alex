@@ -32,12 +32,19 @@
                 })
         };
 
-        $scope.deleteTests = function (tests) {
+        $scope.deleteTests = function () {
 
             var selectedTests = SelectionService.getSelected($scope.tests);
-
+            var testNos;
+            
             if (selectedTests.length > 0) {
-                _.forEach(selectedTests, $scope.deleteTest)
+            	testNos = _.pluck(selectedTests, 'testNo');
+            	TestResource.delete($scope.project.id, testNos)
+            		.then(function(){
+            			_.forEach(testNos, function(testNo){
+            				_.remove($scope.tests, {testNo: testNo})
+            			})
+            		})
             }
         }
     }

@@ -16,8 +16,11 @@
 
                 <div class="pull-left">
                     <button class="btn btn-xs btn-default" open-test-details-modal test="test">
-                        <i class="fa fa-info"></i>&nbsp; Details
+                        <i class="fa fa-info fa-fw"></i> Details
                     </button>
+                	<button class="btn btn-xs btn-default" open-hypothesis-layout-settings-modal layout-settings="layoutSettings" on-update="updateLayoutSettings">
+                		<i class="fa fa-eye fa-fw"></i> Layout
+                	</button>
                 </div>
 
                 <div class="pull-right" ng-if="isEqOracleSample">
@@ -42,7 +45,7 @@
 
         </div>
 
-        <hypothesis test="test" counter-example="counterExample"></hypothesis>
+        <hypothesis test="test" counter-example="counterExample" layout-settings="layoutSettings"></hypothesis>
     </div>
 
 </div>
