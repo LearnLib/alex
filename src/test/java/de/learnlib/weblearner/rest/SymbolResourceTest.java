@@ -162,8 +162,6 @@ public class SymbolResourceTest extends JerseyTest {
         assertSymbolListCreation(response);
     }
 
-
-
     @Test
     public void shouldCreateValidSymbolsWithoutProjectOrRevision() throws IOException {
         // given
@@ -376,36 +374,30 @@ public class SymbolResourceTest extends JerseyTest {
     */
 
     @Test
-    public void shouldDeleteTheSymbolProject() {
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId()).request().delete();
+    public void shouldHideTheSymbolProject() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/hide";
+        Response response = target(path).request().post(null);
         assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO).delete(PROJECT_TEST_ID, symbol.getId());
+        verify(symbolDAO).hide(PROJECT_TEST_ID, symbol.getId());
     }
 
     @Test
-    public void shouldReturn404OnDeleteWhenSymbolNotFound() {
-        willThrow(new IllegalArgumentException()).given(symbolDAO).delete(PROJECT_TEST_ID, SYMBOL_TEST_ID);
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID;
-        Response response = target(path).request().delete();
+    public void shouldReturn404OnHideWhenSymbolNotFound() {
+        willThrow(new IllegalArgumentException()).given(symbolDAO).hide(PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/hide";
+        Response response = target(path).request().post(null);
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 
-    /*
     @Test
-    public void shouldDeleteTheRightSymbolWithRevision() {
-        Symbol symbol = new WebSymbol();
-        symbol.setID(SYMBOL_TEST_ID);
-        symbol.setRevision(SYMBOL_TEST_REV);
-        target("/projects/" + PROJECT_TEST_ID + "/symbols/").request().post(Entity.json(symbol));
-
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getID() + ":" + symbol.getRevision();
-        Response response = target(path).request().delete();
+    public void shouldShowTheSymbolProject() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/show";
+        Response response = target(path).request().post(null);
         assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO).delete(PROJECT_TEST_ID, symbol.getID(), symbol.getRevision());
+        verify(symbolDAO).show(PROJECT_TEST_ID, symbol.getId());
     }
-    */
 
 }

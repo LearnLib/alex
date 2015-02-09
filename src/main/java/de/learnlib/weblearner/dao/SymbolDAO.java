@@ -110,20 +110,18 @@ public interface SymbolDAO {
      * @throws IllegalArgumentException
      *             When the Symbol was not found.
      */
-    void delete(long projectId, long id) throws IllegalArgumentException;
+    void hide(long projectId, long id) throws IllegalArgumentException;
 
     /**
-     * Mark a symbol as deleted.
-     * 
+     * Revive a symbol from the deleted state.
+     *
      * @param projectId
      *            The ID of the project the symbol belongs to.
      * @param id
-     *            The ID of the symbol itself in the project.
-     * @param revision
-     *            The wanted revision of the symbol.
+     *            The ID of the symbol.
      * @throws IllegalArgumentException
      *             When the Symbol was not found.
      */
-    void delete(long projectId, long id, long revision) throws IllegalArgumentException;
+    void show(long projectId, long id) throws IllegalArgumentException;
 
 }

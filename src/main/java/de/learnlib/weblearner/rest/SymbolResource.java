@@ -277,27 +277,40 @@ public class SymbolResource {
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
      */
-    @DELETE
-    @Path("/{id}")
+    @POST
+    @Path("/{id}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") long projectId, @PathParam("id") long id) {
+    public Response hide(@PathParam("project_id") long projectId, @PathParam("id") long id) {
         try {
-            symbolDAO.delete(projectId, id);
+            symbolDAO.hide(projectId, id);
             return Response.status(Status.NO_CONTENT).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.delete", Status.NOT_FOUND, e);
         }
     }
 
-    /*
-    @DELETE
-    @Path("/{id}:{revision}")
-    public Response deleteWtihRevision(@PathParam("project_id") long projectId, @PathParam("id") long id,
-            @PathParam("revision") long revision) {
-        symbolDAO.delete(projectId, id, revision);
-        return Response.status(Status.NO_CONTENT).build();
+    /**
+     * Remove the deleted flag from a symbol.
+     *
+     * @param projectId
+     *            The ID of the project.
+     * @param id
+     *            The ID of the symbol.
+     * @return On success no content will be returned; an error message on failure.
+     * @successResponse 204 OK & no content
+     * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
+    @POST
+    @Path("/{id}/show")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response show(@PathParam("project_id") long projectId, @PathParam("id") long id) {
+        try {
+            symbolDAO.show(projectId, id);
+            return Response.status(Status.NO_CONTENT).build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.delete", Status.NOT_FOUND, e);
+        }
     }
-    */
 
     /**
      * Create the JSON for a list of Symbols with the 'type' property. Workaround of a Jackson thing.

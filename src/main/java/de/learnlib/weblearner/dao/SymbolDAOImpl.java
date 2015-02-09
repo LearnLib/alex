@@ -287,17 +287,58 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public void delete(long projectId, long id) throws IllegalArgumentException {
-        Symbol<?> symbol = get(projectId, id);
+    public void hide(long projectId, long id) throws IllegalArgumentException {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
 
-        delete(symbol);
+        // update
+        List<Symbol<?>> symbols = getSymbols(session, projectId, id);
+
+        for (Symbol symbol : symbols) {
+            symbol.loadLazyRelations();
+            if (symbol.isResetSymbol()) {
+                HibernateUtil.rollbackTransaction();
+                throw new IllegalArgumentException("A reset symbol can never be marked as deleted.");
+            }
+
+            symbol.setDeleted(true);
+            session.update(symbol);
+        }
+
+        // done
+        HibernateUtil.commitTransaction();
     }
 
     @Override
-    public void delete(long projectId, long id, long revision) throws IllegalArgumentException {
-        Symbol<?> symbol = get(projectId, id, revision);
+    public void show(long projectId, long id) throws IllegalArgumentException {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
 
-        delete(symbol);
+        // update
+        List<Symbol<?>> symbols = getSymbols(session, projectId, id);
+
+        for (Symbol symbol : symbols) {
+            symbol.setDeleted(false);
+            session.update(symbol);
+        }
+
+        // done
+        HibernateUtil.commitTransaction();
+    }
+
+    private List<Symbol<?>> getSymbols(Session session, Long projectId, Long symbolId) {
+        List<Symbol<?>> symbols = session.createCriteria(Symbol.class)
+                                            .add(Restrictions.eq("project.id", projectId))
+                                            .add(Restrictions.eq("id", symbolId))
+                .list();
+
+        if (symbols.size() == 0) {
+            throw new IllegalArgumentException("Could not mark the symbol as deleted because it was not found.");
+        }
+
+        return symbols;
     }
 
     /**
@@ -327,35 +368,6 @@ public class SymbolDAOImpl implements SymbolDAO {
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("The name or the abbreviation of the symbol is already used in the project.");
         }
-    }
-
-    /**
-     * Mark a symbol as deleted. Helper method for the two delete methods specified in {@link SymbolDAO}.
-     *
-     * @param symbol
-     *            The symbol to be marked as deleted.
-     * @throws IllegalArgumentException
-     *             When the Symbol was not found.
-     */
-    private void delete(Symbol<?> symbol) throws IllegalArgumentException {
-        if (symbol == null) {
-            throw new IllegalArgumentException("Could not mark the symbol as deleted because it was not found.");
-        }
-
-        if (symbol.isResetSymbol()) {
-            throw new IllegalArgumentException("A reset symbol can never be marked as deleted.");
-        }
-
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        // update
-        symbol.setDeleted(true);
-        session.update(symbol);
-
-        // done
-        HibernateUtil.commitTransaction();
     }
 
 }

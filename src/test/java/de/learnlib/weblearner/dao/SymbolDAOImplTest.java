@@ -19,6 +19,7 @@ import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.validation.ValidationException;
@@ -26,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -449,9 +451,9 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldReturnNullIfSymbolIsDeleted() {
+    public void shouldReturnNullIfSymbolIsHidden() {
         symbolDAO.create(symbol);
-        symbolDAO.delete(symbol.getProjectId(), symbol.getId());
+        symbolDAO.hide(symbol.getProjectId(), symbol.getId());
 
         Symbol<?> symb2 = symbolDAO.get(symbol.getProjectId(), symbol.getId());
         assertNull(symb2);
@@ -555,47 +557,64 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldDeleteAValidSymbolWithoutRevision() {
+    public void shouldHideAValidSymbols() {
         symbolDAO.create(symbol);
-        symbolDAO.delete(symbol.getProject().getId(), symbol.getId());
+        symbol.setName(symbol.getName() + " - updated");
+        symbolDAO.update(symbol);
 
-        Symbol<?> symb2 = symbolDAO.get(symbol.getProject().getId(), symbol.getId());
-        assertNull(symb2);
+        symbolDAO.hide(symbol.getProject().getId(), symbol.getId());
 
-        Symbol<?> symb3 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), symbol.getRevision());
-        assertNotNull(symb3);
-        assertTrue(symb3.isDeleted());
+        Symbol<?> symbolRev1 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 1);
+        assertNotNull(symbolRev1);
+        assertTrue(symbolRev1.isDeleted());
+
+        Symbol<?> symbolRev2 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 2);
+        assertNotNull(symbolRev2);
+        assertTrue(symbolRev2.isDeleted());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotHideAnythingByInvalidID() {
+        symbolDAO.create(symbol);
+        symbolDAO.hide(project.getId(), -1L);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotHideAResetSymbol() {
+        Symbol<?> resetSymbol = getResetSymbol();
+        assertTrue(resetSymbol.isResetSymbol());
+        symbolDAO.hide(project.getId(), resetSymbol.getId()); // should fail
     }
 
     @Test
-    public void shouldDeleteAValidSymbolWithRevision() {
+    public void shouldShowAValidSymbols() {
         symbolDAO.create(symbol);
-        symbolDAO.delete(symbol.getProject().getId(), symbol.getId(), symbol.getRevision());
+        symbol.setName(symbol.getName() + " - updated");
+        symbolDAO.update(symbol);
 
-        Symbol<?> symb2 = symbolDAO.get(symbol.getProject().getId(), symbol.getId());
-        assertNull(symb2);
+        symbolDAO.hide(symbol.getProject().getId(), symbol.getId());
+        symbolDAO.show(symbol.getProject().getId(), symbol.getId());
 
-        Symbol<?> symb3 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), symbol.getRevision());
-        assertNotNull(symb3);
-        assertTrue(symb3.isDeleted());
+        Symbol<?> symbolRev1 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 1);
+        assertNotNull(symbolRev1);
+        assertFalse(symbolRev1.isDeleted());
+
+        Symbol<?> symbolRev2 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 2);
+        assertNotNull(symbolRev2);
+        assertFalse(symbolRev2.isDeleted());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldNotDeleteAnythingByInvalidID() {
+    public void shouldNotShowAnythingByInvalidID() {
         symbolDAO.create(symbol);
-        symbolDAO.delete(project.getId(), -1L);
+        symbolDAO.show(project.getId(), -1L);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotDeleteAnythingByInvalidRevision() {
-        symbolDAO.create(symbol);
-        symbolDAO.delete(project.getId(), symbol.getId(), -1L);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotDeleteAResetSymbol() {
+    @Test
+    public void shouldShowAResetSymbolWithoutMessage() {
         Symbol<?> resetSymbol = getResetSymbol();
-        symbolDAO.delete(project.getId(), resetSymbol.getId()); // should fail
+        System.out.println(resetSymbol.getId());
+        symbolDAO.show(project.getId(), resetSymbol.getId()); // should do nothing
     }
 
     private Symbol<?> getResetSymbol() {
