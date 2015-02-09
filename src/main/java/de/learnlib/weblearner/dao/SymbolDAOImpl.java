@@ -4,6 +4,7 @@ import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.utils.HibernateUtil;
+import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
@@ -92,18 +93,18 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol<?>> getAll(long projectId) {
-        return getAll(projectId, Symbol.class);
+    public List<Symbol<?>> getAll(long projectId, boolean withHidden) {
+        return getAll(projectId, Symbol.class, withHidden);
     }
 
     @Override
-    public List<Symbol<?>> getAll(long projectID, Class<? extends Symbol> type) {
+    public List<Symbol<?>> getAll(long projectID, Class<? extends Symbol> type, boolean withHidden) {
         // subquery preparation to get a list of ids combined with their highest revision
         DetachedCriteria maxRevisions = DetachedCriteria.forClass(Symbol.class)
                                                         .add(Restrictions.eq("project.id", projectID))
                                                         .setProjection(Projections.projectionList()
-                                                                .add(Projections.groupProperty("id"))
-                                                                .add(Projections.max("revision"))
+                                                                        .add(Projections.groupProperty("id"))
+                                                                        .add(Projections.max("revision"))
                                                         );
 
         // start session
@@ -111,16 +112,20 @@ public class SymbolDAOImpl implements SymbolDAO {
         HibernateUtil.beginTransaction();
 
         // fetch the symbols of the project with the correct type & the latest revision
+        Criteria criteria = session.createCriteria(type)
+                                    .add(Restrictions.eq("project.id", projectID))
+                                    .add(Subqueries.propertiesIn(new String[]{
+                                                                        "id",
+                                                                        "revision"
+                                                                    }, maxRevisions))
+                                    .addOrder(Order.asc("id"));
+
+        if (!withHidden) {
+            criteria = criteria.add(Restrictions.eq("deleted", false));
+        }
+
         @SuppressWarnings("unchecked") // should return a list of symbols
-        List<Symbol<?>> result = session.createCriteria(type)
-                                        .add(Restrictions.eq("project.id", projectID))
-                                        .add(Restrictions.eq("deleted", false))
-                                        .add(Subqueries.propertiesIn(new String[] {
-                                                    "id",
-                                                    "revision"
-                                                }, maxRevisions))
-                                        .addOrder(Order.asc("id"))
-                                        .list();
+        List<Symbol<?>> result = criteria.list();
 
         // load the lazy relations
         Hibernate.initialize(result.get(0).getProject());
@@ -190,11 +195,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         // fetch the symbol & return it, if it is not deleted
         Symbol<?> result = get(projectId, id, lastRevision);
-        if (result.isDeleted()) {
-            return null;
-        } else {
-            return result;
-        }
+        return result;
     }
 
     @Override
@@ -329,6 +330,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     private List<Symbol<?>> getSymbols(Session session, Long projectId, Long symbolId) {
+        @SuppressWarnings("should return a list of Symbols")
         List<Symbol<?>> symbols = session.createCriteria(Symbol.class)
                                             .add(Restrictions.eq("project.id", projectId))
                                             .add(Restrictions.eq("id", symbolId))
@@ -356,12 +358,12 @@ public class SymbolDAOImpl implements SymbolDAO {
         // put constrains into a query
         @SuppressWarnings("unchecked") // should return list of symbols
         List<Symbol<?>> testList = session.createCriteria(symbol.getClass())
-                                        .add(Restrictions.eq("project.id", symbol.getProjectId()))
-                                        .add(Restrictions.ne("id", symbol.getId()))
-                                        .add(Restrictions.disjunction()
-                                                .add(Restrictions.eq("name", symbol.getName()))
-                                                .add(Restrictions.eq("abbreviation", symbol.getAbbreviation())))
-                                        .list();
+                                            .add(Restrictions.eq("project.id", symbol.getProjectId()))
+                                            .add(Restrictions.ne("id", symbol.getId()))
+                                            .add(Restrictions.disjunction()
+                                                    .add(Restrictions.eq("name", symbol.getName()))
+                                                    .add(Restrictions.eq("abbreviation", symbol.getAbbreviation())))
+                                            .list();
 
         // if the query result is not empty, the constrains are violated.
         if (testList.size() > 0) {

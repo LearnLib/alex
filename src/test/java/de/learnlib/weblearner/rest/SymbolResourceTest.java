@@ -225,10 +225,10 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturnAllSymbols() {
+    public void shouldReturnAllSymbolsThatAreVisible() {
         List<Symbol<?>> symbols = new LinkedList<>();
         symbols.add(symbol);
-        given(symbolDAO.getAll(PROJECT_TEST_ID)).willReturn(symbols);
+        given(symbolDAO.getAll(PROJECT_TEST_ID, false)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").request().get();
 
@@ -238,14 +238,32 @@ public class SymbolResourceTest extends JerseyTest {
                                 + "\"resetSymbol\":false,\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAll(project.getId());
+        verify(symbolDAO).getAll(project.getId(), false);
+    }
+
+    @Test
+    public void shouldReturnAllSymbolsIncludingHiddenOnes() {
+        List<Symbol<?>> symbols = new LinkedList<>();
+        symbols.add(symbol);
+        given(symbolDAO.getAll(PROJECT_TEST_ID, true)).willReturn(symbols);
+
+        Response response = target("/projects/" + project.getId() + "/symbols").queryParam("showHidden", true)
+                            .request().get();
+
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        String expectedJSON = "[{\"type\":\"web\",\"abbreviation\":\"srts\",\"actions\":[],"
+                + "\"id\":1,\"name\":\"Symbol Resource Test Symbol\",\"project\":10,"
+                + "\"resetSymbol\":false,\"revision\":0}]";
+        assertEquals(expectedJSON, response.readEntity(String.class));
+        assertEquals("1", response.getHeaderString("X-Total-Count"));
+        verify(symbolDAO).getAll(project.getId(), true);
     }
 
     @Test
     public void shouldReturnOnlyWebSymbols() {
         List<Symbol<?>> symbols = new LinkedList<>();
         symbols.add(symbol);
-        given(symbolDAO.getAll(PROJECT_TEST_ID, WebSymbol.class)).willReturn(symbols);
+        given(symbolDAO.getAll(PROJECT_TEST_ID, WebSymbol.class, false)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("type", "web")
                                 .request().get();
@@ -257,7 +275,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
 
-        verify(symbolDAO).getAll(project.getId(), WebSymbol.class);
+        verify(symbolDAO).getAll(project.getId(), WebSymbol.class, false);
     }
 
     @Test
@@ -269,7 +287,7 @@ public class SymbolResourceTest extends JerseyTest {
         restSymbol.setAbbreviation("srrts");
         restSymbol.setProject(project);
         symbols.add(restSymbol);
-        given(symbolDAO.getAll(PROJECT_TEST_ID, RESTSymbol.class)).willReturn(symbols);
+        given(symbolDAO.getAll(PROJECT_TEST_ID, RESTSymbol.class, false)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("type", "rest")
                                 .request().get();
@@ -280,7 +298,7 @@ public class SymbolResourceTest extends JerseyTest {
                 + "\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAll(project.getId(), RESTSymbol.class);
+        verify(symbolDAO).getAll(project.getId(), RESTSymbol.class, false);
     }
 
     @Test

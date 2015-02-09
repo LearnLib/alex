@@ -34,12 +34,14 @@ public interface SymbolDAO {
 
     /**
      * Get all symbols of a project.
-     * 
+     *
      * @param projectID
-     *            The project the symbols should belong to.
+     *         The project the symbols should belong to.
+     * @param withHidden
+     *         Include symbols that are currently marked as deleted?
      * @return A list of symbols belonging to the project.
      */
-    List<Symbol<?>> getAll(long projectID);
+    List<Symbol<?>> getAll(long projectID, boolean withHidden);
 
     /**
      * Get all symbols of a project which have a specific type.
@@ -48,9 +50,11 @@ public interface SymbolDAO {
      *            The project the symbols should belong to.
      * @param type
      *            The requested type for the symbols.
+     * @param withHidden
+     *         Include symbols that are currently marked as deleted?
      * @return A list of symbols matching the project and type.
      */
-    List<Symbol<?>> getAll(long projectId, Class<? extends Symbol> type);
+    List<Symbol<?>> getAll(long projectId, Class<? extends Symbol> type, boolean withHidden);
 
     /**
      * Get a list of specific symbols of a project.

@@ -123,11 +123,12 @@ public class WebSymbolIT {
         assertEquals(2, ((WebSymbol) symbol).getActions().size());
 
         // delete
-        path = "/projects/" + project.getId() + "/symbols/" + symbol.getId();
-        response = client.target(BASE_URL + path).request().delete();
+        path = "/projects/" + project.getId() + "/symbols/" + symbol.getId() + "/hide";
+        response = client.target(BASE_URL + path).request().post(null);
         assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        path = "/projects/" + project.getId() + "/symbols/" + symbol.getId();
         response = client.target(BASE_URL + path).request().get();
-        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
     }
 
 }

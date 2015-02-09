@@ -142,18 +142,19 @@ public class SymbolResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") long projectId,
-                           @QueryParam("type") @DefaultValue("all") String type) {
+                           @QueryParam("type") @DefaultValue("all") String type,
+                           @QueryParam("showHidden") @DefaultValue("false") boolean showHidden) {
         try {
             List<Symbol<?>> symbols;
             switch(type) {
             case "all":
-                symbols = symbolDAO.getAll(projectId);
+                symbols = symbolDAO.getAll(projectId, showHidden);
                 break;
             case "web":
-                symbols = symbolDAO.getAll(projectId, WebSymbol.class);
+                symbols = symbolDAO.getAll(projectId, WebSymbol.class, showHidden);
                 break;
             case "rest":
-                symbols = symbolDAO.getAll(projectId, RESTSymbol.class);
+                symbols = symbolDAO.getAll(projectId, RESTSymbol.class, showHidden);
                 break;
             default:
                 IllegalArgumentException e = new IllegalArgumentException("Unknown type:" + type + ".");
