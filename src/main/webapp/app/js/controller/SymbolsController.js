@@ -3,12 +3,12 @@
 
     angular
         .module('weblearner.controller')
-        .controller('EditorSymbolController', [
+        .controller('SymbolsController', [
             '$scope', 'SessionService', 'SymbolResource', 'SelectionService', 'type',
-            EditorSymbolController
+            SymbolsController
         ]);
 
-    function EditorSymbolController($scope, SessionService, SymbolResource, SelectionService, type) {
+    function SymbolsController($scope, SessionService, SymbolResource, SelectionService, type) {
 
         /** the open project @type {*} */
         $scope.project = SessionService.project.get();

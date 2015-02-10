@@ -3,12 +3,12 @@
 
     angular
         .module('weblearner.controller')
-        .controller('SymbolExportController', [
+        .controller('SymbolsExportController', [
             '$scope', 'SessionService', 'SymbolResource', 'SelectionService',
-            SymbolExportController
+            SymbolsExportController
         ]);
 
-    function SymbolExportController($scope, SessionService, SymbolResource, SelectionService) {
+    function SymbolsExportController($scope, SessionService, SymbolResource, SelectionService) {
 
         var _project = SessionService.project.get();
         var _fileName = 'symbols-project-' + _project.id + '.json';

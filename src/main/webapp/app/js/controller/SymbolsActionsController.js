@@ -3,12 +3,12 @@
 
     angular
         .module('weblearner.controller')
-        .controller('EditorActionController', [
+        .controller('SymbolsActionsController', [
             '$scope', '$stateParams', 'SymbolResource', 'SessionService', 'SelectionService', 'WebActionTypesEnum', 'RestActionTypesEnum', 'ngToast',
-            EditorActionController
+            SymbolsActionsController
         ]);
 
-    function EditorActionController($scope, $stateParams, SymbolResource, SessionService, SelectionService, WebActionTypesEnum, RestActionTypesEnum, toast) {
+    function SymbolsActionsController($scope, $stateParams, SymbolResource, SessionService, SelectionService, WebActionTypesEnum, RestActionTypesEnum, toast) {
 
         var _id = 0;
 

@@ -2,13 +2,13 @@
 
     angular
         .module('weblearner.controller')
-        .controller('LearnController', [
-            '$scope', '$interval', 'SessionService', 'LearnerResource',
-            LearnController
+        .controller('LearnStartController', [
+            '$scope', '$stateParams', '$interval', 'SessionService', 'LearnerResource',
+            LearnStartController
         ]);
 
     /**
-     * LearnController
+     * LearnStartController
      *
      * Shows a load screen and the hypothesis of a test.
      *
@@ -18,7 +18,7 @@
      * @param Learner
      * @constructor
      */
-    function LearnController($scope, $interval, SessionService, LearnerResource) {
+    function LearnStartController($scope, $stateParams, $interval, SessionService, LearnerResource) {
 
         var _project = SessionService.project.get();
         var _interval = null;
@@ -43,7 +43,7 @@
         $scope.layoutSettings;
 
         //////////
-
+        
         // start polling the server
         _poll();
 

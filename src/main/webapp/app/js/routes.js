@@ -22,17 +22,17 @@
         });
 
         // redirect to the start page when no other route fits
-        $urlRouterProvider.otherwise("/");
+        $urlRouterProvider.otherwise("/home");
 
         $stateProvider
 
             // =========================================================
             // index route
 
-            .state('state0', {
-                url: '/',
-                controller: 'IndexController',
-                templateUrl: 'app/partials/index.html',
+            .state('home', {
+                url: '/home',
+                controller: 'HomeController',
+                templateUrl: 'app/partials/home.html',
                 data: {
                     requiresProject: false
                 }
@@ -41,165 +41,192 @@
             // =========================================================
             // project related routes
 
-            .state('state1', {
-                url: '/project/create',
-                controller: 'ProjectCreateController',
-                templateUrl: 'app/partials/project-create.html',
-                data: {
-                    requiresProject: false
-                }
-            })
-            .state('state2', {
-                url: '/project/:projectId',
-                controller: 'DashboardController',
-                templateUrl: 'app/partials/dashboard.html',
+            .state('project', {
+                url: '/project',
+                controller: 'ProjectController',
+                templateUrl: 'app/partials/project.html',
                 data: {
                     requiresProject: true
                 }
             })
-            .state('state3', {
-                url: '/project/:projectId/settings',
-                templateUrl: 'app/partials/project-settings.html',
-                controller: 'ProjectSettingsController',
-                data: {
-                    requiresProject: true
-                }
-            })
-
-            // =========================================================
-            // editor related routes
-
-            .state('state4', {
-                url: '/project/:projectId/editor/symbols/web',
-                controller: 'EditorSymbolController',
-                templateUrl: 'app/partials/editor-symbols.html',
-                data: {
-                    requiresProject: true
-                },
-                resolve: {
-                    type: function () {
-                        return 'web'
-                    }
-                }
-            })
-            .state('state5', {
-                url: '/project/:projectId/editor/symbols/rest',
-                controller: 'EditorSymbolController',
-                templateUrl: 'app/partials/editor-symbols.html',
-                data: {
-                    requiresProject: true
-                },
-                resolve: {
-                    type: function () {
-                        return 'rest'
-                    }
-                }
-            })
-            .state('state6', {
-                url: '/project/:projectId/editor/actions/:symbolId',
-                controller: 'EditorActionController',
-                templateUrl: 'app/partials/editor-actions.html',
-                data: {
-                    requiresProject: true
-                }
-            })
-
-            // =========================================================
-            // test and learn related routes
-
-            .state('state7', {
-                url: '/project/:projectId/test/setup/web',
-                controller: 'TestSetupController',
-                templateUrl: 'app/partials/test-setup.html',
-                data: {
-                    requiresProject: true
-                },
-                resolve: {
-                    type: function () {
-                        return 'web'
-                    }
-                }
-            })
-            .state('state71', {
-                url: '/project/:projectId/test/setup/rest',
-                controller: 'TestSetupController',
-                templateUrl: 'app/partials/test-setup.html',
-                data: {
-                    requiresProject: true
-                },
-                resolve: {
-                    type: function () {
-                        return 'rest'
-                    }
-                }
-            })
-            .state('state8', {
-                url: '/project/:projectId/learn',
-                controller: 'LearnController',
-                templateUrl: 'app/partials/learn.html',
-                data: {
-                    requiresProject: true
-                }
-            })
-            .state('state9', {
-                url: '/project/:projectId/test/result',
-                controller: 'TestResultController',
-                templateUrl: 'app/partials/test-result.html',
-                data: {
-                    requiresProject: true
-                }
-            })
-            .state('state15', {
-                url: '/project/:projectId/test/result/:testNo',
-                controller: 'HypothesesSlideshowController',
-                templateUrl: 'app/partials/hypotheses-slideshow.html',
-                data: {
-                    requiresProject: true
-                }
-            })
-            .state('state10', {
-                url: '/project/:projectId/statistics',
-                controller: 'StatisticsController',
-                templateUrl: 'app/partials/statistics.html',
-                data: {
-                    requiresProject: true
-                }
-            })
+	            .state('project.create', {
+	                url: '/create',
+	                controller: 'ProjectCreateController',
+	                templateUrl: 'app/partials/project-create.html',
+	                data: {
+	                    requiresProject: false
+	                }
+	            })
+	            .state('project.settings', {
+	                url: '/settings',
+	                templateUrl: 'app/partials/project-settings.html',
+	                controller: 'ProjectSettingsController',
+	                data: {
+	                    requiresProject: true
+	                }
+	            })
 
             // =========================================================
             // symbol related routes
 
-            .state('state11', {
-                url: '/project/:projectId/symbol/upload',
-                controller: 'SymbolUploadController',
-                templateUrl: 'app/partials/symbol-upload.html',
-                data: {
-                    requiresProject: true
-                }
+            .state('symbols', {
+            	abstract: true,
+            	url: '/symbols',
+            	template: '<ui-view class="animate-view" />'
             })
-            .state('state12', {
-                url: '/project/:projectId/symbol/export',
-                controller: 'SymbolExportController',
-                templateUrl: 'app/partials/symbol-export.html',
-                data: {
-                    requiresProject: true
-                }
+	            .state('symbols.web', {
+	                url: '/web',
+	                controller: 'SymbolsController',
+	                templateUrl: 'app/partials/symbols.html',
+	                data: {
+	                    requiresProject: true
+	                },
+	                resolve: {
+	                    type: function () {
+	                        return 'web'
+	                    }
+	                }
+	            })
+	            .state('symbols.rest', {
+	                url: '/rest',
+	                controller: 'SymbolsController',
+	                templateUrl: 'app/partials/symbols.html',
+	                data: {
+	                    requiresProject: true
+	                },
+	                resolve: {
+	                    type: function () {
+	                        return 'rest'
+	                    }
+	                }
+	            })
+	            .state('symbols.actions', {
+	            	url: '/{symbolId:int}/actions',
+	                controller: 'SymbolsActionsController',
+	                templateUrl: 'app/partials/symbols-actions.html',
+	                data: {
+	                    requiresProject: true
+	                }
+	            })
+	            .state('symbols.import', {
+	            	url: '/import',
+	                controller: 'SymbolsImportController',
+	                templateUrl: 'app/partials/symbols-import.html',
+	                data: {
+	                    requiresProject: true
+	                }
+	            })
+	            .state('symbols.export', {
+	            	url: '/export',
+	                controller: 'SymbolsExportController',
+	                templateUrl: 'app/partials/symbols-export.html',
+	                data: {
+	                    requiresProject: true
+	                }
+	            })
+
+            // =========================================================
+            // test and learn related routes
+            
+            .state('learn', {
+	            abstract: true,
+	        	url: '/learn',
+	        	template: '<ui-view class="animate-view" />'
             })
+	            .state('learn.setup', {
+	            	abstract: true,
+	            	url: '/setup',
+	            	template: '<ui-view class="animate-view" />'
+	            })
+		            .state('learn.setup.web', {
+		            	url: '/web',
+		                controller: 'LearnSetupController',
+		                templateUrl: 'app/partials/learn-setup.html',
+		                data: {
+		                    requiresProject: true
+		                },
+		                resolve: {
+		                    type: function () {
+		                        return 'web'
+		                    }
+		                }
+		            })
+		            .state('learn.setup.rest', {
+		            	url: '/rest',
+		                controller: 'LearnSetupController',
+		                templateUrl: 'app/partials/learn-setup.html',
+		                data: {
+		                    requiresProject: true
+		                },
+		                resolve: {
+		                    type: function () {
+		                        return 'rest'
+		                    }
+		                }
+		            })
+	            .state('learn.start', {
+	            	url: '/start',
+	            	controller: 'LearnStartController',
+	            	templateUrl: 'app/partials/learn-start.html',
+	            	data: {
+	                    requiresProject: true
+	                }
+	            })
+	            .state('learn.results', {
+	            	url: '/results',
+	            	controller: 'LearnResultsController',
+	            	templateUrl: 'app/partials/learn-results.html',
+	            	data: {
+	                    requiresProject: true
+	                }
+	            })
+		            .state('learn.results.statistics', {
+		            	url: '/statistics',
+		            	controller: 'LearnResultsStatisticsController',
+		            	templateUrl: 'app/partials/learn-results-statistics.html',
+		            	data: {
+		                    requiresProject: true
+		                }
+		            })
+		            .state('learn.results.compare', {
+		            	url: '/compare/:testNos',
+		            	controller: 'LearnResultsCompareController',
+		            	templateUrl: 'app/partials/learn-results-compare.html',
+		            	data: {
+		                    requiresProject: true
+		                }
+		            })
+            
 
             // =========================================================
             // static pages related routes
 
-            .state('state13', {
+            .state('about', {
                 url: '/about',
                 templateUrl: 'app/partials/about.html',
                 data: {
                     requiresProject: false
                 }
             })
-            .state('state14', {
+            .state('help', {
                 url: '/help',
                 templateUrl: 'app/partials/help.html',
                 data: {
+                    requiresProject: false
+                }
+            })
+            
+            // =========================================================
+            // tool pages
+            
+            .state('tools', {
+            	abstract: true,
+	        	template: '<ui-view class="animate-view" />'
+            })
+            .state('tools.hyotheses', {
+            	'url': '/tools/hypotheses/view',
+            	templateUrl: 'app/partials/tools-hypotheses-view.html',
+            	data: {
                     requiresProject: false
                 }
             })
@@ -216,9 +243,9 @@
     function run ($rootScope, $state, SessionService) {
 
         // route validation
-        $rootScope.$on("$stateChangeStart", function (event, toState, toParams, fromState, fromParams) {
+        $rootScope.$on("$stateChangeStart", function (event, toState, toParams, fromState, fromParams) {        	
             if (toState.data.requiresProject && SessionService.project.get() == null) {
-                $state.transitionTo("state0");
+                $state.transitionTo("home");
                 event.preventDefault();
             }
         });

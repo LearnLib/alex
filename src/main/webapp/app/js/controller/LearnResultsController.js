@@ -3,12 +3,12 @@
 
     angular
         .module('weblearner.controller')
-        .controller('TestResultController', [
+        .controller('LearnResultsController', [
             '$scope', 'SessionService', 'TestResource', 'SelectionService',
-            TestResultController
+            LearnResultsController
         ]);
 
-    function TestResultController($scope, SessionService, TestResource, SelectionService) {
+    function LearnResultsController($scope, SessionService, TestResource, SelectionService) {
 
         $scope.project = SessionService.project.get();
         $scope.tests = [];

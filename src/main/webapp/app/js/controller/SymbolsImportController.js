@@ -3,12 +3,12 @@
 
     angular
         .module('weblearner.controller')
-        .controller('SymbolUploadController', [
+        .controller('SymbolsImportController', [
             '$scope', 'SessionService', 'SymbolResource', 'SelectionService',
-            SymbolUploadController
+            SymbolsImportController
         ]);
 
-    function SymbolUploadController($scope, SessionService, SymbolResource, SelectionService) {
+    function SymbolsImportController($scope, SessionService, SymbolResource, SelectionService) {
 
         var _project = SessionService.project.get();
 

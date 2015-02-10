@@ -3,13 +3,13 @@
 
     angular
         .module('weblearner.controller')
-        .controller('StatisticsController', [
+        .controller('LearnResultsStatisticsController', [
             '$scope', 'SessionService', 'TestResource', 'TestResultsChartService', 'SelectionService',
-            StatisticsController
+            LearnResultsStatisticsController
         ]);
 
     /**
-     * StatisticsController
+     * LearnResultsStatisticsController
      *
      * The controller that is used for the statistics page
      *
@@ -20,7 +20,7 @@
      * @param SelectionService
      * @constructor
      */
-    function StatisticsController($scope, SessionService, TestResource, TestResultsChartService, SelectionService) {
+    function LearnResultsStatisticsController($scope, SessionService, TestResource, TestResultsChartService, SelectionService) {
 
         /** The open project */
         $scope.project = SessionService.project.get();

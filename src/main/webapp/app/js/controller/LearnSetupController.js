@@ -3,13 +3,13 @@
 
     angular
         .module('weblearner.controller')
-        .controller('TestSetupController', [
-            '$scope', '$location', 'SymbolResource', 'SessionService', 'SelectionService', 'type', 'EqOraclesEnum',
+        .controller('LearnSetupController', [
+            '$scope', '$state', 'SymbolResource', 'SessionService', 'SelectionService', 'type', 'EqOraclesEnum',
             'LearnAlgorithmsEnum', 'LearnerResource', 'ngToast',
-            TestSetupController
+            LearnSetupController
         ]);
 
-    function TestSetupController($scope, $location, SymbolResource, SessionService, SelectionService, type, EqOracles,
+    function LearnSetupController($scope, $state, SymbolResource, SessionService, SelectionService, type, EqOracles,
                                  LearnAlgorithms, LearnerResource, toast) {
 
         $scope.project = SessionService.project.get();
@@ -33,7 +33,7 @@
                 if (data.active) {
 
                     if (data.project == $scope.project.id) {
-                        $location.path('/project/' + $scope.project.id + '/learn');
+                    	$state.go('learn.start');
                     } else {
                         toast.create({
                             class: 'danger',
@@ -86,7 +86,7 @@
 
             LearnerResource.start($scope.project.id, $scope.testConfiguration)
                 .then(function (data) {
-                    $location.path('/project/' + $scope.project.id + '/learn');
+                	$state.go('learn.start')
                 })
         };
 

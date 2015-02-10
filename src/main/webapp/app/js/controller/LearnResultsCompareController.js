@@ -3,12 +3,12 @@
 
     angular
         .module('weblearner.controller')
-        .controller('HypothesesSlideshowController', [
+        .controller('LearnResultsCompareController', [
             '$scope', '$stateParams', 'SessionService', 'TestResource',
-            HypothesesSlideshowController
+            LearnResultsCompareController
         ]);
 
-    function HypothesesSlideshowController($scope, $stateParams, SessionService, TestResource) {
+    function LearnResultsCompareController($scope, $stateParams, SessionService, TestResource) {
 
         $scope.project = SessionService.project.get();
         $scope.finalTestResults = [];
@@ -20,21 +20,25 @@
         TestResource.getAllFinal($scope.project.id)
             .then(function (finalTestResults) {
                 $scope.finalTestResults = finalTestResults;
-                return $stateParams.testNo;
+                return $stateParams.testNos;
             })
             .then(loadComplete);
 
         //////////
 
-        function loadComplete(testNo, index) {
-            TestResource.getComplete($scope.project.id, testNo)
+        function loadComplete(testNos, index) {
+        	
+        	testNos = testNos.split(',');
+        	_.forEach(testNos, function(testNo){       		
+        		TestResource.getComplete($scope.project.id, testNo)
                 .then(function(completeTestResult){
                     if (angular.isUndefined(index)) {
-                        $scope.panels[0] = completeTestResult;
+                        $scope.panels.push(completeTestResult);
                     } else {
                         $scope.panels[index] = completeTestResult;
                     }
                 })
+        	})
         }
 
         //////////

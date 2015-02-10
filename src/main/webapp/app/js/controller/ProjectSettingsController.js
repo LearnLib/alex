@@ -11,8 +11,8 @@
     function ProjectSettingsController($scope, $location, ProjectResource, SessionService) {
 
         $scope.project = SessionService.project.get();
-        $scope.projectCopy = SessionService.project.get();
-
+        $scope.projectCopy = angular.copy($scope.project);
+        
         //////////
 
         $scope.updateProject = function () {

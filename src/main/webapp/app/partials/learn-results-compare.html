@@ -20,7 +20,7 @@
                     <br>
 
                     <p class="text-muted">
-                        Started: <span format-date-time="result.startTime"></span>
+                        Started: <span ng-bind="(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
                     </p>
 
                 </li>
