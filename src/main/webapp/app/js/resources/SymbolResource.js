@@ -24,6 +24,8 @@
             all: getAllSymbols,
             allWeb: getAllWebSymbols,
             allRest: getAllRestSymbols,
+            getAllDeleted: getAllDeletedSymbols,
+            recover: recoverSymbol,
             get: getSymbol,
             create: createSymbol,
             update: updateSymbol,
@@ -82,7 +84,7 @@
                 return $q.reject();
             }
         }
-
+        
         /**
          * get all rest symbols of a project by the projects it
          * @param projectId
@@ -94,6 +96,46 @@
                 .catch(fail);
 
             function success(response) {
+                return response.data;
+            }
+
+            function fail(error) {
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: error.data.message,
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+        
+        function getAllDeletedSymbols(projectId, type){
+        	return $http.get(api.URL + '/projects/' + projectId + '/symbols/?type=' + type + '&showHidden=hidden')
+        		.then(success)
+        		.catch(fail);
+        	
+        	function success(response) {
+                return response.data;
+            }
+
+            function fail(error) {
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: error.data.message,
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+        
+        function recoverSymbol(projectId, symbolId) {
+        	return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/show', {})
+	    		.then(success)
+	    		.catch(fail);
+        	
+        	function success(response) {
                 return response.data;
             }
 
@@ -232,7 +274,7 @@
         	
         	console.log(symbolId)
         	
-            return $http.delete(api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
+            return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide')
                 .then(success)
                 .catch(fail);
 

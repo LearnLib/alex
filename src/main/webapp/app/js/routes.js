@@ -87,6 +87,19 @@
 	                    }
 	                }
 	            })
+	            	.state('symbols.web.trash', {
+	            		url: '/trash',
+	            		controller: 'SymbolsTrashController',
+		                templateUrl: 'app/partials/symbols-trash.html',
+		                data: {
+		                    requiresProject: true
+		                },
+		                resolve: {
+		                    type: function () {
+		                        return 'web'
+		                    }
+		                }
+	            	})
 	            .state('symbols.rest', {
 	                url: '/rest',
 	                controller: 'SymbolsController',
@@ -100,6 +113,19 @@
 	                    }
 	                }
 	            })
+	            	.state('symbols.rest.trash', {
+	            		url: '/trash',
+	            		controller: 'SymbolsTrashController',
+		                templateUrl: 'app/partials/symbols-trash.html',
+		                data: {
+		                    requiresProject: true
+		                },
+		                resolve: {
+		                    type: function () {
+		                        return 'rest'
+		                    }
+		                }
+	            	})
 	            .state('symbols.actions', {
 	            	url: '/{symbolId:int}/actions',
 	                controller: 'SymbolsActionsController',

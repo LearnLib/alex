@@ -1,84 +1,78 @@
-<!--
-    BEGIN: Symbol List
-    The list (actually a table) to display all web or rest symbol that belong to a project. You can select them by
-    clicking them or you use the checkbox on the left.
--->
-<div class="container">
+<div ui-view class="animate-view">
 
-    <div if-is-type-of-web="type">
-        <h2>Web Symbol Editor</h2>
-
-        <p class="text-muted">
-            Create and edit web symbols and manage its actions
-        </p>
-    </div>
-
-    <div if-is-type-of-rest="type">
-        <h2>Rest Symbol Editor</h2>
-
-        <p class="text-muted">
-            Create and edit rest symbols and manage its actions
-        </p>
-    </div>
-
-    <hr>
-
-</div>
-
-
-<!--
-BEGIN: Sub Navigation
-contains call to action buttons to create update & delete symbols
--->
-<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
-    <div class="container">
-        <div class="pull-left" style="margin-right: 16px">
-            <input type="checkbox" select-all-items-checkbox items="symbols">
-        </div>
-        <div class="pull-left">
-            <button class="btn btn-xs btn-primary"
-                    open-symbol-create-modal symbol-type="{{type}}" project-id="{{project.id}}" on-created="addSymbol">
-                Create
-            </button>
-            <button class="btn btn-xs btn-default"
-                    open-symbol-update-modal symbol="(symbols | selected | first)" on-updated="updateSymbol">
-                Edit
-            </button>
-            <button class="btn btn-xs btn-default" ng-click="deleteSelectedSymbols()">
-                Delete
-            </button>
-        </div>
-        <div class="pull-right">
-            <button class="btn btn-xs btn-default">
-                <i class="fa fa-trash fa-fw"></i>Trash
-            </button>
-        </div>
-    </div>
-</div>
-<!-- END: Sub Navigation -->
-
-<div class="container">
-
-    <div selectable-list ng-model="symbols">
-        <div selectable-list-item ng-repeat="symbol in symbols">
-
-            <span class="label label-default pull-right">
-                Rev. <span ng-bind="symbol.revision"></span>
-            </span>
-
-            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
-
-            <p class="text-muted">
-                <a ui-sref="symbols.actions({symbolId:symbol.id})">
-                    <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
-                </a>
-            </p>
-
-        </div>
-    </div>
-
-    <div class="alert alert-info" ng-show="symbols.length == 0">
-        You haven't created any symbols yet.
-    </div>
+	<div class="container">
+	
+	    <div if-is-type-of-web="type">
+	        <h2>Web Symbol Editor</h2>
+	
+	        <p class="text-muted">
+	            Create and edit web symbols and manage its actions
+	        </p>
+	    </div>
+	
+	    <div if-is-type-of-rest="type">
+	        <h2>Rest Symbol Editor</h2>
+	
+	        <p class="text-muted">
+	            Create and edit rest symbols and manage its actions
+	        </p>
+	    </div>
+	
+	    <hr>
+	
+	</div>
+	
+	<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+	    <div class="container">
+	        <div class="pull-left" style="margin-right: 16px">
+	            <input type="checkbox" select-all-items-checkbox items="symbols">
+	        </div>
+	        <div class="pull-left">
+	            <button class="btn btn-xs btn-primary"
+	                    open-symbol-create-modal symbol-type="{{type}}" project-id="{{project.id}}" on-created="addSymbol">
+	                Create
+	            </button>
+	            <button class="btn btn-xs btn-default"
+	                    open-symbol-update-modal symbol="(symbols | selected | first)" on-updated="updateSymbol">
+	                Edit
+	            </button>
+	            <button class="btn btn-xs btn-default" ng-click="deleteSelectedSymbols()">
+	                Delete
+	            </button>
+	        </div>
+	        <div class="pull-right">
+	            <a ui-sref="symbols.{{type}}.trash" class="btn btn-xs btn-default">
+	                <i class="fa fa-trash fa-fw"></i>Trash
+	            </a>
+	        </div>
+	    </div>
+	</div>
+	<!-- END: Sub Navigation -->
+	
+	<div class="container">
+	
+	    <div selectable-list ng-model="symbols">
+	        <div selectable-list-item ng-repeat="symbol in symbols">
+	
+	            <span class="label label-default pull-right">
+	                Rev. <span ng-bind="symbol.revision"></span>
+	            </span>
+	
+	            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
+	
+	            <p class="text-muted">
+	                <a ui-sref="symbols.actions({symbolId:symbol.id})">
+	                    <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
+	                </a>
+	            </p>
+	
+	        </div>
+	    </div>
+	
+	    <div class="alert alert-info" ng-show="symbols.length == 0">
+	        You haven't created any symbols yet.
+	    </div>
+	
+	</div>
 
 </div>
