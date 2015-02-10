@@ -10,6 +10,7 @@ import de.learnlib.weblearner.entities.SymbolTypes;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
+import de.learnlib.weblearner.utils.ResourceInputHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -265,8 +266,8 @@ public class SymbolResource {
      * 
      * @param projectId
      *            The ID of the project.
-     * @param id
-     *            The ID of the symbol.
+     * @param ids
+     *            The IDs of the symbols to hide.
      * @return On success no content will be returned; an error message on failure.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
@@ -274,12 +275,24 @@ public class SymbolResource {
     @POST
     @Path("/{id}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("project_id") long projectId, @PathParam("id") long id) {
+    public Response hide(@PathParam("project_id") long projectId, @PathParam("id") String ids) {
         try {
-            symbolDAO.hide(projectId, id);
+            Long[] idsArray;
+            try {
+                idsArray = ResourceInputHelper.splitUp(ids);
+            } catch (NumberFormatException e) {
+                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
+                        Response.Status.BAD_REQUEST,  e);
+            } catch (IllegalArgumentException e) {
+                Exception e2 = new IllegalArgumentException("You must at least specify one id to hide.");
+                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
+                        Response.Status.BAD_REQUEST, e2);
+            }
+
+            symbolDAO.hide(projectId, idsArray);
             return Response.status(Status.NO_CONTENT).build();
         } catch (IllegalArgumentException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.delete", Status.NOT_FOUND, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
         }
     }
 
@@ -288,8 +301,8 @@ public class SymbolResource {
      *
      * @param projectId
      *            The ID of the project.
-     * @param id
-     *            The ID of the symbol.
+     * @param ids
+     *            The IDs of the symbol to show.
      * @return On success no content will be returned; an error message on failure.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
@@ -297,9 +310,21 @@ public class SymbolResource {
     @POST
     @Path("/{id}/show")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response show(@PathParam("project_id") long projectId, @PathParam("id") long id) {
+    public Response show(@PathParam("project_id") long projectId, @PathParam("id") String ids) {
         try {
-            symbolDAO.show(projectId, id);
+            Long[] idsArray;
+            try {
+                idsArray = ResourceInputHelper.splitUp(ids);
+            } catch (NumberFormatException e) {
+                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
+                        Response.Status.BAD_REQUEST,  e);
+            } catch (IllegalArgumentException e) {
+                Exception e2 = new IllegalArgumentException("You must at least specify one id to show.");
+                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
+                        Response.Status.BAD_REQUEST, e2);
+            }
+
+            symbolDAO.show(projectId, idsArray);
             return Response.status(Status.NO_CONTENT).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.delete", Status.NOT_FOUND, e);

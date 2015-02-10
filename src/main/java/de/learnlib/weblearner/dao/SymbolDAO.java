@@ -110,23 +110,23 @@ public interface SymbolDAO {
      * 
      * @param projectId
      *            The ID of the project the symbol belongs to.
-     * @param id
-     *            The ID of the symbol.
+     * @param ids
+     *            The IDs of the symbols to hide.
      * @throws IllegalArgumentException
      *             When the Symbol was not found.
      */
-    void hide(long projectId, long id) throws IllegalArgumentException;
+    void hide(long projectId, Long... ids) throws IllegalArgumentException;
 
     /**
      * Revive a symbol from the deleted state.
      *
      * @param projectId
      *            The ID of the project the symbol belongs to.
-     * @param id
-     *            The ID of the symbol.
+     * @param ids
+     *            The ID of the symbols to show.
      * @throws IllegalArgumentException
      *             When the Symbol was not found.
      */
-    void show(long projectId, long id) throws IllegalArgumentException;
+    void show(long projectId, Long... ids) throws IllegalArgumentException;
 
 }

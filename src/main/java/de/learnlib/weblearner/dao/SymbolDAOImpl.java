@@ -284,45 +284,65 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public void hide(long projectId, long id) throws IllegalArgumentException {
+    public void hide(long projectId, Long... ids) throws IllegalArgumentException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         // update
-        List<Symbol<?>> symbols = getSymbols(session, projectId, id);
+        try {
+            for (Long id : ids) {
+                List<Symbol<?>> symbols = getSymbols(session, projectId, id);
 
-        for (Symbol symbol : symbols) {
-            symbol.loadLazyRelations();
-            if (symbol.isResetSymbol()) {
-                HibernateUtil.rollbackTransaction();
-                throw new IllegalArgumentException("A reset symbol can never be marked as deleted.");
+                hideSymbols(session, symbols);
             }
-
-            symbol.setDeleted(true);
-            session.update(symbol);
+        } catch (IllegalArgumentException e) {
+            HibernateUtil.rollbackTransaction();
+            throw  e;
         }
 
         // done
         HibernateUtil.commitTransaction();
     }
 
+    private void hideSymbols(Session session, List<Symbol<?>> symbols) throws IllegalArgumentException {
+        for (Symbol symbol : symbols) {
+            symbol.loadLazyRelations();
+            if (symbol.isResetSymbol()) {
+                throw new IllegalArgumentException("A reset symbol can never be marked as deleted.");
+            }
+
+            symbol.setDeleted(true);
+            session.update(symbol);
+        }
+    }
+
     @Override
-    public void show(long projectId, long id) throws IllegalArgumentException {
+    public void show(long projectId, Long... ids) throws IllegalArgumentException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         // update
-        List<Symbol<?>> symbols = getSymbols(session, projectId, id);
-
-        for (Symbol symbol : symbols) {
-            symbol.setDeleted(false);
-            session.update(symbol);
+        try {
+            for (Long id : ids) {
+                List<Symbol<?>> symbols = getSymbols(session, projectId, id);
+                showSymbols(session, symbols);
+            }
+        } catch (IllegalArgumentException e) {
+            HibernateUtil.rollbackTransaction();
+            throw  e;
         }
 
         // done
         HibernateUtil.commitTransaction();
+    }
+
+    private void showSymbols(Session session, List<Symbol<?>> symbols) {
+        for (Symbol symbol : symbols) {
+            symbol.setDeleted(false);
+            session.update(symbol);
+        }
     }
 
     private List<Symbol<?>> getSymbols(Session session, Long projectId, Long symbolId) {

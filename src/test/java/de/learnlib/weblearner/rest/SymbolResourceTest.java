@@ -32,15 +32,17 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class SymbolResourceTest extends JerseyTest {
 
-    private static final int PROJECT_TEST_ID = 10;
-    private static final int SYMBOL_TEST_ID = 1;
-    private static final int SYMBOL_TEST_REV = 3;
+    private static final long PROJECT_TEST_ID = 10;
+    private static final long SYMBOL_TEST_ID = 1;
+    private static final long SYMBOL_TEST_REV = 3;
 
     @Mock
     private ProjectDAO projectDAO;
@@ -393,12 +395,21 @@ public class SymbolResourceTest extends JerseyTest {
     */
 
     @Test
-    public void shouldHideTheSymbolProject() {
+    public void shouldHideASymbol() {
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/hide";
         Response response = target(path).request().post(null);
         assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
         verify(symbolDAO).hide(PROJECT_TEST_ID, symbol.getId());
+    }
+
+    @Test
+    public void shouldHideMultipleSymbols() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "," + symbol2.getId() + "/hide";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO).hide(PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
     }
 
     @Test
@@ -411,12 +422,66 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldShowTheSymbolProject() {
+    public void ensureThatInvalidIdsToHideAreHandledProperly() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/,,,/hide";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO, never()).hide(eq(PROJECT_TEST_ID), any(Long[].class));
+    }
+
+    @Test
+    public void ensureThatInvalidIdsToHideAreHandledProperly2() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/foobar/hide";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO, never()).hide(eq(PROJECT_TEST_ID), any(Long[].class));
+    }
+
+    @Test
+    public void shouldShowASymbol() {
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/show";
         Response response = target(path).request().post(null);
         assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
         verify(symbolDAO).show(PROJECT_TEST_ID, symbol.getId());
+    }
+
+    @Test
+    public void shouldShowMultipleSymbols() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "," + symbol2.getId() + "/show";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO).show(PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
+    }
+
+    @Test
+    public void shouldReturn404OnShowWhenSymbolNotFound() {
+        willThrow(new IllegalArgumentException()).given(symbolDAO).show(PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/show";
+        Response response = target(path).request().post(null);
+
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void ensureThatInvalidIdsToShowAreHandledProperly() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/,,,/show";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO, never()).show(eq(PROJECT_TEST_ID), any(Long[].class));
+    }
+
+    @Test
+    public void ensureThatInvalidIdsToShowAreHandledProperly2() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/foobar/show";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO, never()).show(eq(PROJECT_TEST_ID), any(Long[].class));
     }
 
 }
