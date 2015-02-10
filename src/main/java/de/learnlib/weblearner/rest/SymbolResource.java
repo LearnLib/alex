@@ -4,17 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.dao.SymbolDAO;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.WebSymbol;
+import de.learnlib.weblearner.entities.SymbolTypes;
+import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
+import de.learnlib.weblearner.utils.ResourceInputHelpers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -132,33 +132,25 @@ public class SymbolResource {
      * @param projectId
      *         The ID of the project.
      * @param type
-     *         Specify the type of the symbols you are intressted in.
-     *         Valid valus are: 'all', web, 'rest'. Default is 'all'.
+     *         Specify the type of the symbols you are interested in.
+     *         Valid values are: 'all', web, 'rest'. Default is 'all'.
+     *         Optional.
+     * @param visibilityLevel
+     *         Specify the visibility level of the symbols you want to get.
+     *         Valid values are: 'all'/ 'unknown', 'visible', 'hidden'.
+     *         Optional.
      * @return A list of all Symbols belonging to the project.
      * @responseType java.util.List<de.learnlib.weblearner.entities.Symbol>
      * @successResponse 200 OK
-     * @errorResponse   400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") long projectId,
-                           @QueryParam("type") @DefaultValue("all") String type) {
+                           @QueryParam("type") @DefaultValue("UNKNOWN") SymbolTypes type,
+                           @QueryParam("showHidden") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         try {
-            List<Symbol<?>> symbols;
-            switch(type) {
-            case "all":
-                symbols = symbolDAO.getAll(projectId);
-                break;
-            case "web":
-                symbols = symbolDAO.getAll(projectId, WebSymbol.class);
-                break;
-            case "rest":
-                symbols = symbolDAO.getAll(projectId, RESTSymbol.class);
-                break;
-            default:
-                IllegalArgumentException e = new IllegalArgumentException("Unknown type:" + type + ".");
-                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.create", Status.BAD_REQUEST, e);
-            }
+            List<Symbol<?>> symbols = symbolDAO.getAll(projectId, type.getClazz(), visibilityLevel);
 
             String json = createSymbolsJSON(symbols);
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
@@ -254,50 +246,75 @@ public class SymbolResource {
         }
     }
 
-    /*
-    @PUT
-    @Path("/{id}:{revision}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response updateWithRevision(@PathParam("project_id") long projectId, @PathParam("id") long id,
-            @PathParam("revision") long revision, Symbol symbol) {
-        symbolDAO.update(symbol);
-        return Response.ok(symbol).build();
-    }
-    */
-
     /**
-     * Mark on symbol as deleted.
+     * Mark on symbol as hidden.
      * 
      * @param projectId
      *            The ID of the project.
-     * @param id
-     *            The ID of the symbol.
+     * @param ids
+     *            The IDs of the symbols to hide.
      * @return On success no content will be returned; an error message on failure.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
      */
-    @DELETE
-    @Path("/{id}")
+    @POST
+    @Path("/{id}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") long projectId, @PathParam("id") long id) {
+    public Response hide(@PathParam("project_id") long projectId, @PathParam("id") String ids) {
         try {
-            symbolDAO.delete(projectId, id);
+            Long[] idsArray;
+            try {
+                idsArray = ResourceInputHelpers.splitUp(ids);
+            } catch (NumberFormatException e) {
+                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
+                        Response.Status.BAD_REQUEST,  e);
+            } catch (IllegalArgumentException e) {
+                Exception e2 = new IllegalArgumentException("You must at least specify one id to hide.");
+                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
+                        Response.Status.BAD_REQUEST, e2);
+            }
+
+            symbolDAO.hide(projectId, idsArray);
+            return Response.status(Status.NO_CONTENT).build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
+        }
+    }
+
+    /**
+     * Remove the hidden flag from a symbol.
+     *
+     * @param projectId
+     *            The ID of the project.
+     * @param ids
+     *            The IDs of the symbol to show.
+     * @return On success no content will be returned; an error message on failure.
+     * @successResponse 204 OK & no content
+     * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
+    @POST
+    @Path("/{id}/show")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response show(@PathParam("project_id") long projectId, @PathParam("id") String ids) {
+        try {
+            Long[] idsArray;
+            try {
+                idsArray = ResourceInputHelpers.splitUp(ids);
+            } catch (NumberFormatException e) {
+                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
+                        Response.Status.BAD_REQUEST,  e);
+            } catch (IllegalArgumentException e) {
+                Exception e2 = new IllegalArgumentException("You must at least specify one id to show.");
+                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
+                        Response.Status.BAD_REQUEST, e2);
+            }
+
+            symbolDAO.show(projectId, idsArray);
             return Response.status(Status.NO_CONTENT).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.delete", Status.NOT_FOUND, e);
         }
     }
-
-    /*
-    @DELETE
-    @Path("/{id}:{revision}")
-    public Response deleteWtihRevision(@PathParam("project_id") long projectId, @PathParam("id") long id,
-            @PathParam("revision") long revision) {
-        symbolDAO.delete(projectId, id, revision);
-        return Response.status(Status.NO_CONTENT).build();
-    }
-    */
 
     /**
      * Create the JSON for a list of Symbols with the 'type' property. Workaround of a Jackson thing.

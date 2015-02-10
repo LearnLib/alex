@@ -3,6 +3,7 @@ package de.learnlib.weblearner.rest;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.utils.JSONHelpers;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
+import de.learnlib.weblearner.utils.ResourceInputHelpers;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -125,25 +126,22 @@ public class HypothesisResource {
     public Response deleteAResultSet(@PathParam("project_id") long projectId,
                                      @PathParam("test_numbers") String testNumbers) {
         try {
-            String[] numbersStringArray = testNumbers.split(",");
-            if (numbersStringArray.length == 0) {
-                Exception e = new IllegalArgumentException("You must at least specify one test no to delete.");
+            Long[] numbersLongArray;
+            try {
+                numbersLongArray = ResourceInputHelpers.splitUp(testNumbers);
+            } catch (NumberFormatException e) {
                 return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
-                        Response.Status.BAD_REQUEST, e);
-            }
-
-            Long[] numbersLongArray = new Long[numbersStringArray.length];
-            for (int i = 0; i < numbersStringArray.length; i++) {
-                numbersLongArray[i] = Long.valueOf(numbersStringArray[i]);
+                        Response.Status.BAD_REQUEST,  e);
+            } catch (IllegalArgumentException e) {
+                Exception e2 = new IllegalArgumentException("You must at least specify one test no to delete.");
+                return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
+                        Response.Status.BAD_REQUEST, e2);
             }
 
             learnerResultDAO.delete(projectId, numbersLongArray);
             return Response.status(Response.Status.NO_CONTENT).build();
 
-        } catch (NumberFormatException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
-                    Response.Status.BAD_REQUEST,  e);
-        } catch (IllegalArgumentException e) {
+        }  catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
                                                                 Response.Status.NOT_FOUND,  e);
         }

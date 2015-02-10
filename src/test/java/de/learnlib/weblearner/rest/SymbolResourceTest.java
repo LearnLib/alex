@@ -10,6 +10,7 @@ import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.learner.Learner;
 import org.glassfish.jersey.test.JerseyTest;
@@ -31,15 +32,17 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class SymbolResourceTest extends JerseyTest {
 
-    private static final int PROJECT_TEST_ID = 10;
-    private static final int SYMBOL_TEST_ID = 1;
-    private static final int SYMBOL_TEST_REV = 3;
+    private static final long PROJECT_TEST_ID = 10;
+    private static final long SYMBOL_TEST_ID = 1;
+    private static final long SYMBOL_TEST_REV = 3;
 
     @Mock
     private ProjectDAO projectDAO;
@@ -162,8 +165,6 @@ public class SymbolResourceTest extends JerseyTest {
         assertSymbolListCreation(response);
     }
 
-
-
     @Test
     public void shouldCreateValidSymbolsWithoutProjectOrRevision() throws IOException {
         // given
@@ -227,62 +228,77 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturnAllSymbols() {
-        List<Symbol<?>> symbols = new LinkedList<>();
-        symbols.add(symbol);
-        given(symbolDAO.getAll(PROJECT_TEST_ID)).willReturn(symbols);
+    public void shouldReturnAllSymbolsThatAreVisible() {
+        symbols.remove(symbol2);
+        given(symbolDAO.getAll(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.VISIBLE)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").request().get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"type\":\"web\",\"abbreviation\":\"srts\",\"actions\":[],"
-                                + "\"id\":1,\"name\":\"Symbol Resource Test Symbol\",\"project\":10,"
-                                + "\"resetSymbol\":false,\"revision\":0}]";
+                                + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
+                                + "\"project\":10,\"resetSymbol\":false,\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAll(project.getId());
+        verify(symbolDAO).getAll(project.getId(), Symbol.class, SymbolVisibilityLevel.VISIBLE);
+    }
+
+    @Test
+    public void shouldReturnAllSymbolsIncludingHiddenOnes() {
+        symbols.remove(symbol2);
+        given(symbolDAO.getAll(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.ALL)).willReturn(symbols);
+
+        Response response = target("/projects/" + project.getId() + "/symbols").queryParam("showHidden", "all")
+                            .request().get();
+
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        String expectedJSON = "[{\"type\":\"web\",\"abbreviation\":\"srts\",\"actions\":[],"
+                                + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
+                                + "\"project\":10,\"resetSymbol\":false,\"revision\":0}]";
+        assertEquals(expectedJSON, response.readEntity(String.class));
+        assertEquals("1", response.getHeaderString("X-Total-Count"));
+        verify(symbolDAO).getAll(project.getId(), Symbol.class, SymbolVisibilityLevel.ALL);
     }
 
     @Test
     public void shouldReturnOnlyWebSymbols() {
-        List<Symbol<?>> symbols = new LinkedList<>();
-        symbols.add(symbol);
-        given(symbolDAO.getAll(PROJECT_TEST_ID, WebSymbol.class)).willReturn(symbols);
+        symbols.remove(symbol2);
+        given(symbolDAO.getAll(PROJECT_TEST_ID, WebSymbol.class, SymbolVisibilityLevel.VISIBLE)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("type", "web")
                                 .request().get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"type\":\"web\",\"abbreviation\":\"srts\",\"actions\":[],"
-                + "\"id\":1,\"name\":\"Symbol Resource Test Symbol\",\"project\":10,\"resetSymbol\":false,"
-                + "\"revision\":0}]";
+                                + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
+                                + "\"project\":10,\"resetSymbol\":false,\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
 
-        verify(symbolDAO).getAll(project.getId(), WebSymbol.class);
+        verify(symbolDAO).getAll(project.getId(), WebSymbol.class, SymbolVisibilityLevel.VISIBLE);
     }
 
     @Test
     public void shouldReturnOnlyRestSymbols() {
-        List<Symbol<?>> symbols = new LinkedList<>();
+        symbols = new LinkedList<>();
         Symbol<?> restSymbol = new RESTSymbol();
         restSymbol.setId(SYMBOL_TEST_ID);
         restSymbol.setName("Symbol Resource REST Test Symbol");
         restSymbol.setAbbreviation("srrts");
         restSymbol.setProject(project);
         symbols.add(restSymbol);
-        given(symbolDAO.getAll(PROJECT_TEST_ID, RESTSymbol.class)).willReturn(symbols);
+        given(symbolDAO.getAll(PROJECT_TEST_ID, RESTSymbol.class, SymbolVisibilityLevel.VISIBLE)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("type", "rest")
                                 .request().get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"type\":\"rest\",\"abbreviation\":\"srrts\",\"actions\":[],"
-                + "\"id\":1,\"name\":\"Symbol Resource REST Test Symbol\",\"project\":10,\"resetSymbol\":false,"
-                + "\"revision\":0}]";
+                                + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource REST Test Symbol\","
+                                + "\"project\":10,\"resetSymbol\":false,\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAll(project.getId(), RESTSymbol.class);
+        verify(symbolDAO).getAll(project.getId(), RESTSymbol.class, SymbolVisibilityLevel.VISIBLE);
     }
 
     @Test
@@ -359,53 +375,94 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
-    /*
     @Test
-    public void shouldUpdateTheRightSymboltWithRevision() {
-        Symbol symbol = new WebSymbol();
-        symbol.setID(SYMBOL_TEST_ID);
-        symbol.setRevision(SYMBOL_TEST_REV);
-        target("/projects/" + PROJECT_TEST_ID + "/symbols/").request().post(Entity.json(symbol));
-
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getID() + ":" + symbol.getRevision();
-        Response response = target(path).request().put(Entity.json(symbol));
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-
-        verify(symbolDAO).update(symbol);
-    }
-    */
-
-    @Test
-    public void shouldDeleteTheSymbolProject() {
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId()).request().delete();
+    public void shouldHideASymbol() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/hide";
+        Response response = target(path).request().post(null);
         assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO).delete(PROJECT_TEST_ID, symbol.getId());
+        verify(symbolDAO).hide(PROJECT_TEST_ID, symbol.getId());
     }
 
     @Test
-    public void shouldReturn404OnDeleteWhenSymbolNotFound() {
-        willThrow(new IllegalArgumentException()).given(symbolDAO).delete(PROJECT_TEST_ID, SYMBOL_TEST_ID);
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID;
-        Response response = target(path).request().delete();
+    public void shouldHideMultipleSymbols() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "," + symbol2.getId() + "/hide";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO).hide(PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
+    }
+
+    @Test
+    public void shouldReturn404OnHideWhenSymbolNotFound() {
+        willThrow(new IllegalArgumentException()).given(symbolDAO).hide(PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/hide";
+        Response response = target(path).request().post(null);
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 
-    /*
     @Test
-    public void shouldDeleteTheRightSymbolWithRevision() {
-        Symbol symbol = new WebSymbol();
-        symbol.setID(SYMBOL_TEST_ID);
-        symbol.setRevision(SYMBOL_TEST_REV);
-        target("/projects/" + PROJECT_TEST_ID + "/symbols/").request().post(Entity.json(symbol));
+    public void ensureThatInvalidIdsToHideAreHandledProperly() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/,,,/hide";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
 
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getID() + ":" + symbol.getRevision();
-        Response response = target(path).request().delete();
+        verify(symbolDAO, never()).hide(eq(PROJECT_TEST_ID), any(Long[].class));
+    }
+
+    @Test
+    public void ensureThatInvalidIdsToHideAreHandledProperly2() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/foobar/hide";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO, never()).hide(eq(PROJECT_TEST_ID), any(Long[].class));
+    }
+
+    @Test
+    public void shouldShowASymbol() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/show";
+        Response response = target(path).request().post(null);
         assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO).delete(PROJECT_TEST_ID, symbol.getID(), symbol.getRevision());
+        verify(symbolDAO).show(PROJECT_TEST_ID, symbol.getId());
     }
-    */
+
+    @Test
+    public void shouldShowMultipleSymbols() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "," + symbol2.getId() + "/show";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO).show(PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
+    }
+
+    @Test
+    public void shouldReturn404OnShowWhenSymbolNotFound() {
+        willThrow(new IllegalArgumentException()).given(symbolDAO).show(PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/show";
+        Response response = target(path).request().post(null);
+
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void ensureThatInvalidIdsToShowAreHandledProperly() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/,,,/show";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO, never()).show(eq(PROJECT_TEST_ID), any(Long[].class));
+    }
+
+    @Test
+    public void ensureThatInvalidIdsToShowAreHandledProperly2() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/foobar/show";
+        Response response = target(path).request().post(null);
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        verify(symbolDAO, never()).show(eq(PROJECT_TEST_ID), any(Long[].class));
+    }
 
 }

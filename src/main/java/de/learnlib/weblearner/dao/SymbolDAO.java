@@ -2,6 +2,7 @@ package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -34,12 +35,14 @@ public interface SymbolDAO {
 
     /**
      * Get all symbols of a project.
-     * 
+     *
      * @param projectID
-     *            The project the symbols should belong to.
+     *         The project the symbols should belong to.
+     * @param visibilityLevel
+     *         Include symbols that are currently marked as hidden?
      * @return A list of symbols belonging to the project.
      */
-    List<Symbol<?>> getAll(long projectID);
+    List<Symbol<?>> getAll(long projectID, SymbolVisibilityLevel visibilityLevel);
 
     /**
      * Get all symbols of a project which have a specific type.
@@ -48,9 +51,11 @@ public interface SymbolDAO {
      *            The project the symbols should belong to.
      * @param type
      *            The requested type for the symbols.
+     * @param visibilityLevel
+     *         Include symbols that are currently marked as hidden?
      * @return A list of symbols matching the project and type.
      */
-    List<Symbol<?>> getAll(long projectId, Class<? extends Symbol> type);
+    List<Symbol<?>> getAll(long projectId, Class<? extends Symbol> type, SymbolVisibilityLevel visibilityLevel);
 
     /**
      * Get a list of specific symbols of a project.
@@ -101,29 +106,27 @@ public interface SymbolDAO {
     void update(Symbol<?> symbol) throws IllegalArgumentException, ValidationException;
 
     /**
-     * Mark a symbol as deleted.
+     * Mark a symbol as hidden.
      * 
      * @param projectId
      *            The ID of the project the symbol belongs to.
-     * @param id
-     *            The ID of the symbol.
+     * @param ids
+     *            The IDs of the symbols to hide.
      * @throws IllegalArgumentException
      *             When the Symbol was not found.
      */
-    void delete(long projectId, long id) throws IllegalArgumentException;
+    void hide(long projectId, Long... ids) throws IllegalArgumentException;
 
     /**
-     * Mark a symbol as deleted.
-     * 
+     * Revive a symbol from the hidden state.
+     *
      * @param projectId
      *            The ID of the project the symbol belongs to.
-     * @param id
-     *            The ID of the symbol itself in the project.
-     * @param revision
-     *            The wanted revision of the symbol.
+     * @param ids
+     *            The ID of the symbols to show.
      * @throws IllegalArgumentException
      *             When the Symbol was not found.
      */
-    void delete(long projectId, long id, long revision) throws IllegalArgumentException;
+    void show(long projectId, Long... ids) throws IllegalArgumentException;
 
 }

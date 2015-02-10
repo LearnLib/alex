@@ -85,16 +85,17 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
     @Size(min = 1, max = 15)
     protected String abbreviation;
 
-    /** flag to mark a symbol as deleted. */
-    @JsonIgnore
-    protected boolean deleted;
+    /**
+     * flag to mark a symbol as hidden.
+     * readonly.
+     */
+    protected boolean hidden;
 
     /**
      * Get the ID of Symbol used in the DB.
      * 
      * @return The internal ID.
      */
-    @JsonIgnore
     public long getSymbolId() {
         return symbolId;
     }
@@ -161,7 +162,6 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * @return The ID.
      * @requiredField
      */
-    @JsonProperty("id")
     public long getId() {
         return this.id;
     }
@@ -172,7 +172,6 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * @param id
      *            The new ID.
      */
-    @JsonProperty("id")
     public void setId(long id) {
         this.id = id;
     }
@@ -183,7 +182,6 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * @return The revision.
      * @requiredField
      */
-    @JsonProperty("revision")
     public long getRevision() {
         return this.revision;
     }
@@ -194,15 +192,25 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * @param revision
      *            The new revision.
      */
-    @JsonProperty("revision")
     public void setRevision(long revision) {
         this.revision = revision;
     }
 
+    /**
+     * Is the symbol a reset symbol in the related project.
+     *
+     * @return true, if the symbol is indeed a reset symbol; false otherwise.
+     */
     public boolean isResetSymbol() {
         return resetSymbol;
     }
 
+    /**
+     * Set if the symbol is a reset symbol in the related project.
+     *
+     * @param resetSymbol
+     *         true if the symbol is a reset symbol.
+     */
     public void setResetSymbol(boolean resetSymbol) {
         this.resetSymbol = resetSymbol;
     }
@@ -242,22 +250,24 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
     }
 
     /**
-     * Determine if the symbol is flagged as deleted.
+     * Determine if the symbol is flagged as hidden.
      * 
-     * @return true if the symbol should be considered deleted; false otherwise.
+     * @return true if the symbol should be considered hidden; false otherwise.
      */
-    public boolean isDeleted() {
-        return deleted;
+    @JsonProperty
+    public boolean isHidden() {
+        return hidden;
     }
 
     /**
-     * Mark the symbol as deleted or remove the deleted flag.
+     * Mark the symbol as hidden or remove the hidden flag.
      * 
-     * @param deleted
-     *            true if the symbol should be considered deleted; false otherwise.
+     * @param hidden
+     *            true if the symbol should be considered hidden; false otherwise.
      */
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    @JsonIgnore
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     /**

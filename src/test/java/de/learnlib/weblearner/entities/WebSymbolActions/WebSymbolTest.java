@@ -2,8 +2,12 @@ package de.learnlib.weblearner.entities.WebSymbolActions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.Project;
+import de.learnlib.weblearner.entities.PropertyFilterMixIn;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.learner.WebSiteConnector;
@@ -77,10 +81,15 @@ public class WebSymbolTest {
                     + "{\"type\":\"checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                     + "{\"type\":\"wait\",\"duration\":0}"
                 + "],\"id\":0,\"name\":\"WebSymbol\",\"project\":0,\"resetSymbol\":false,\"revision\":0}";
-        ObjectMapper mapper = new ObjectMapper();
-
         symb.setProject(null);
-        String json = mapper.writeValueAsString(symb);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.addMixInAnnotations(Object.class, PropertyFilterMixIn.class);
+
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("hidden");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("filter properties by name", filter);
+
+        String json = mapper.writer(filters).writeValueAsString(symb);
 
         assertEquals(expectedJson, json);
     }
@@ -88,10 +97,11 @@ public class WebSymbolTest {
     @Test
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
         String expectedJson = "{\"type\":\"web\",\"abbreviation\":\"symb\",\"actions\":["
-                + "{\"type\":\"click\",\"node\":null,\"url\":null},"
-                + "{\"type\":\"checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
-                + "{\"type\":\"wait\",\"duration\":0}"
-            + "],\"id\":0,\"name\":\"WebSymbol\",\"project\":1,\"resetSymbol\":false,\"revision\":0}";
+                                    + "{\"type\":\"click\",\"node\":null,\"url\":null},"
+                                    + "{\"type\":\"checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
+                                    + "{\"type\":\"wait\",\"duration\":0}"
+                                + "],\"hidden\":false,\"id\":0,\"name\":\"WebSymbol\",\"project\":1,"
+                                + "\"resetSymbol\":false,\"revision\":0}";
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symb);
 

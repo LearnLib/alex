@@ -3,6 +3,7 @@ package de.learnlib.weblearner.dao;
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -92,18 +93,18 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol<?>> getAll(long projectId) {
-        return getAll(projectId, Symbol.class);
+    public List<Symbol<?>> getAll(long projectId, SymbolVisibilityLevel visibilityLevel) {
+        return getAll(projectId, Symbol.class, visibilityLevel);
     }
 
     @Override
-    public List<Symbol<?>> getAll(long projectID, Class<? extends Symbol> type) {
+    public List<Symbol<?>> getAll(long projectID, Class<? extends Symbol> type, SymbolVisibilityLevel visibilityLevel) {
         // subquery preparation to get a list of ids combined with their highest revision
         DetachedCriteria maxRevisions = DetachedCriteria.forClass(Symbol.class)
                                                         .add(Restrictions.eq("project.id", projectID))
                                                         .setProjection(Projections.projectionList()
-                                                                .add(Projections.groupProperty("id"))
-                                                                .add(Projections.max("revision"))
+                                                                        .add(Projections.groupProperty("id"))
+                                                                        .add(Projections.max("revision"))
                                                         );
 
         // start session
@@ -113,14 +114,14 @@ public class SymbolDAOImpl implements SymbolDAO {
         // fetch the symbols of the project with the correct type & the latest revision
         @SuppressWarnings("unchecked") // should return a list of symbols
         List<Symbol<?>> result = session.createCriteria(type)
-                                        .add(Restrictions.eq("project.id", projectID))
-                                        .add(Restrictions.eq("deleted", false))
-                                        .add(Subqueries.propertiesIn(new String[] {
+                                            .add(Restrictions.eq("project.id", projectID))
+                                            .add(Subqueries.propertiesIn(new String[]{
                                                     "id",
                                                     "revision"
-                                                }, maxRevisions))
-                                        .addOrder(Order.asc("id"))
-                                        .list();
+                                            }, maxRevisions))
+                                            .add(visibilityLevel.getCriterion())
+                                            .addOrder(Order.asc("id"))
+                                            .list();
 
         // load the lazy relations
         Hibernate.initialize(result.get(0).getProject());
@@ -188,13 +189,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             return null;
         }
 
-        // fetch the symbol & return it, if it is not deleted
+        // fetch the symbol & return it, if it is not hidden
         Symbol<?> result = get(projectId, id, lastRevision);
-        if (result.isDeleted()) {
-            return null;
-        } else {
-            return result;
-        }
+        return result;
     }
 
     @Override
@@ -287,17 +284,79 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public void delete(long projectId, long id) throws IllegalArgumentException {
-        Symbol<?> symbol = get(projectId, id);
+    public void hide(long projectId, Long... ids) throws IllegalArgumentException {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
 
-        delete(symbol);
+        // update
+        try {
+            for (Long id : ids) {
+                List<Symbol<?>> symbols = getSymbols(session, projectId, id);
+
+                hideSymbols(session, symbols);
+            }
+        } catch (IllegalArgumentException e) {
+            HibernateUtil.rollbackTransaction();
+            throw  e;
+        }
+
+        // done
+        HibernateUtil.commitTransaction();
+    }
+
+    private void hideSymbols(Session session, List<Symbol<?>> symbols) throws IllegalArgumentException {
+        for (Symbol symbol : symbols) {
+            symbol.loadLazyRelations();
+            if (symbol.isResetSymbol()) {
+                throw new IllegalArgumentException("A reset symbol can never be marked as hidden.");
+            }
+
+            symbol.setHidden(true);
+            session.update(symbol);
+        }
     }
 
     @Override
-    public void delete(long projectId, long id, long revision) throws IllegalArgumentException {
-        Symbol<?> symbol = get(projectId, id, revision);
+    public void show(long projectId, Long... ids) throws IllegalArgumentException {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
 
-        delete(symbol);
+        // update
+        try {
+            for (Long id : ids) {
+                List<Symbol<?>> symbols = getSymbols(session, projectId, id);
+                showSymbols(session, symbols);
+            }
+        } catch (IllegalArgumentException e) {
+            HibernateUtil.rollbackTransaction();
+            throw  e;
+        }
+
+        // done
+        HibernateUtil.commitTransaction();
+    }
+
+    private void showSymbols(Session session, List<Symbol<?>> symbols) {
+        for (Symbol symbol : symbols) {
+            symbol.setHidden(false);
+            session.update(symbol);
+        }
+    }
+
+    private List<Symbol<?>> getSymbols(Session session, Long projectId, Long symbolId) {
+        @SuppressWarnings("should return a list of Symbols")
+        List<Symbol<?>> symbols = session.createCriteria(Symbol.class)
+                                            .add(Restrictions.eq("project.id", projectId))
+                                            .add(Restrictions.eq("id", symbolId))
+                .list();
+
+        if (symbols.size() == 0) {
+            throw new IllegalArgumentException("Could not mark the symbol as hidden because it was not found.");
+        }
+
+        return symbols;
     }
 
     /**
@@ -315,47 +374,18 @@ public class SymbolDAOImpl implements SymbolDAO {
         // put constrains into a query
         @SuppressWarnings("unchecked") // should return list of symbols
         List<Symbol<?>> testList = session.createCriteria(symbol.getClass())
-                                        .add(Restrictions.eq("project.id", symbol.getProjectId()))
-                                        .add(Restrictions.ne("id", symbol.getId()))
-                                        .add(Restrictions.disjunction()
-                                                .add(Restrictions.eq("name", symbol.getName()))
-                                                .add(Restrictions.eq("abbreviation", symbol.getAbbreviation())))
-                                        .list();
+                                            .add(Restrictions.eq("project.id", symbol.getProjectId()))
+                                            .add(Restrictions.ne("id", symbol.getId()))
+                                            .add(Restrictions.disjunction()
+                                                    .add(Restrictions.eq("name", symbol.getName()))
+                                                    .add(Restrictions.eq("abbreviation", symbol.getAbbreviation())))
+                                            .list();
 
         // if the query result is not empty, the constrains are violated.
         if (testList.size() > 0) {
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("The name or the abbreviation of the symbol is already used in the project.");
         }
-    }
-
-    /**
-     * Mark a symbol as deleted. Helper method for the two delete methods specified in {@link SymbolDAO}.
-     *
-     * @param symbol
-     *            The symbol to be marked as deleted.
-     * @throws IllegalArgumentException
-     *             When the Symbol was not found.
-     */
-    private void delete(Symbol<?> symbol) throws IllegalArgumentException {
-        if (symbol == null) {
-            throw new IllegalArgumentException("Could not mark the symbol as deleted because it was not found.");
-        }
-
-        if (symbol.isResetSymbol()) {
-            throw new IllegalArgumentException("A reset symbol can never be marked as deleted.");
-        }
-
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        // update
-        symbol.setDeleted(true);
-        session.update(symbol);
-
-        // done
-        HibernateUtil.commitTransaction();
     }
 
 }

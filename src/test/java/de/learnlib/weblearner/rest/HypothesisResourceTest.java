@@ -183,7 +183,7 @@ public class HypothesisResourceTest extends JerseyTest {
         willThrow(IllegalArgumentException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
-                                .request().delete();
+                            .request().delete();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
@@ -193,7 +193,7 @@ public class HypothesisResourceTest extends JerseyTest {
         willThrow(IllegalArgumentException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/,,,,")
-                .request().delete();
+                            .request().delete();
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
@@ -203,7 +203,7 @@ public class HypothesisResourceTest extends JerseyTest {
         willThrow(IllegalArgumentException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/foobar")
-                .request().delete();
+                            .request().delete();
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
