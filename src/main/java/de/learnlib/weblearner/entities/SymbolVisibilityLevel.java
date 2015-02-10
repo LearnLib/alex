@@ -9,13 +9,13 @@ import org.hibernate.criterion.Restrictions;
 public enum SymbolVisibilityLevel {
 
     /** Show all symbols. */
-    ALL(Restrictions.in("deleted", new Boolean[] {true, false })),
+    ALL(Restrictions.in("hidden", new Boolean[] {true, false })),
 
     /** Show only visible ones. */
-    VISIBLE(Restrictions.eq("deleted", false)),
+    VISIBLE(Restrictions.eq("hidden", false)),
 
     /** Show only hidden ones. */
-    HIDDEN(Restrictions.eq("deleted", true));
+    HIDDEN(Restrictions.eq("hidden", true));
 
 
     /** A criterion/ expression related to the entry. */

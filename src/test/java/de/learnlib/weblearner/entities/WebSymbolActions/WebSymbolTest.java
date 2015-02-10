@@ -86,7 +86,7 @@ public class WebSymbolTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.addMixInAnnotations(Object.class, PropertyFilterMixIn.class);
 
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("deleted");
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("hidden");
         FilterProvider filters = new SimpleFilterProvider().addFilter("filter properties by name", filter);
 
         String json = mapper.writer(filters).writeValueAsString(symb);
@@ -100,7 +100,7 @@ public class WebSymbolTest {
                                     + "{\"type\":\"click\",\"node\":null,\"url\":null},"
                                     + "{\"type\":\"checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"duration\":0}"
-                                + "],\"deleted\":false,\"id\":0,\"name\":\"WebSymbol\",\"project\":1,"
+                                + "],\"hidden\":false,\"id\":0,\"name\":\"WebSymbol\",\"project\":1,"
                                 + "\"resetSymbol\":false,\"revision\":0}";
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symb);

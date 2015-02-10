@@ -247,7 +247,7 @@ public class SymbolResource {
     }
 
     /**
-     * Mark on symbol as deleted.
+     * Mark on symbol as hidden.
      * 
      * @param projectId
      *            The ID of the project.
@@ -282,7 +282,7 @@ public class SymbolResource {
     }
 
     /**
-     * Remove the deleted flag from a symbol.
+     * Remove the hidden flag from a symbol.
      *
      * @param projectId
      *            The ID of the project.

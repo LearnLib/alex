@@ -39,7 +39,7 @@ public interface SymbolDAO {
      * @param projectID
      *         The project the symbols should belong to.
      * @param visibilityLevel
-     *         Include symbols that are currently marked as deleted?
+     *         Include symbols that are currently marked as hidden?
      * @return A list of symbols belonging to the project.
      */
     List<Symbol<?>> getAll(long projectID, SymbolVisibilityLevel visibilityLevel);
@@ -52,7 +52,7 @@ public interface SymbolDAO {
      * @param type
      *            The requested type for the symbols.
      * @param visibilityLevel
-     *         Include symbols that are currently marked as deleted?
+     *         Include symbols that are currently marked as hidden?
      * @return A list of symbols matching the project and type.
      */
     List<Symbol<?>> getAll(long projectId, Class<? extends Symbol> type, SymbolVisibilityLevel visibilityLevel);
@@ -106,7 +106,7 @@ public interface SymbolDAO {
     void update(Symbol<?> symbol) throws IllegalArgumentException, ValidationException;
 
     /**
-     * Mark a symbol as deleted.
+     * Mark a symbol as hidden.
      * 
      * @param projectId
      *            The ID of the project the symbol belongs to.
@@ -118,7 +118,7 @@ public interface SymbolDAO {
     void hide(long projectId, Long... ids) throws IllegalArgumentException;
 
     /**
-     * Revive a symbol from the deleted state.
+     * Revive a symbol from the hidden state.
      *
      * @param projectId
      *            The ID of the project the symbol belongs to.

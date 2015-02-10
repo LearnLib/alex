@@ -1,6 +1,5 @@
 package de.learnlib.weblearner.entities;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -87,10 +86,10 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
     protected String abbreviation;
 
     /**
-     * flag to mark a symbol as deleted.
+     * flag to mark a symbol as hidden.
      * readonly.
      */
-    protected boolean deleted;
+    protected boolean hidden;
 
     /**
      * Get the ID of Symbol used in the DB.
@@ -251,24 +250,24 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
     }
 
     /**
-     * Determine if the symbol is flagged as deleted.
+     * Determine if the symbol is flagged as hidden.
      * 
-     * @return true if the symbol should be considered deleted; false otherwise.
+     * @return true if the symbol should be considered hidden; false otherwise.
      */
     @JsonProperty
-    public boolean isDeleted() {
-        return deleted;
+    public boolean isHidden() {
+        return hidden;
     }
 
     /**
-     * Mark the symbol as deleted or remove the deleted flag.
+     * Mark the symbol as hidden or remove the hidden flag.
      * 
-     * @param deleted
-     *            true if the symbol should be considered deleted; false otherwise.
+     * @param hidden
+     *            true if the symbol should be considered hidden; false otherwise.
      */
     @JsonIgnore
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     /**

@@ -323,7 +323,7 @@ public class SymbolDAOImplTest {
 
         assertEquals(symbols.size() + 2 - 1, symbolsFromDB.size()); // +2 -> reset symbol, -1 hidden
         for (Symbol<?> x : symbols) {
-            if (!x.isDeleted()) {
+            if (!x.isHidden()) {
                 int index = symbolsFromDB.indexOf(x);
                 assertTrue(index > -1);
                 if (x instanceof WebSymbol) {
@@ -521,11 +521,11 @@ public class SymbolDAOImplTest {
 
         Symbol<?> symbolRev1 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 1);
         assertNotNull(symbolRev1);
-        assertTrue(symbolRev1.isDeleted());
+        assertTrue(symbolRev1.isHidden());
 
         Symbol<?> symbolRev2 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 2);
         assertNotNull(symbolRev2);
-        assertTrue(symbolRev2.isDeleted());
+        assertTrue(symbolRev2.isHidden());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -552,11 +552,11 @@ public class SymbolDAOImplTest {
 
         Symbol<?> symbolRev1 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 1);
         assertNotNull(symbolRev1);
-        assertFalse(symbolRev1.isDeleted());
+        assertFalse(symbolRev1.isHidden());
 
         Symbol<?> symbolRev2 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 2);
         assertNotNull(symbolRev2);
-        assertFalse(symbolRev2.isDeleted());
+        assertFalse(symbolRev2.isHidden());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -589,7 +589,7 @@ public class SymbolDAOImplTest {
             s.setAbbreviation("web_all_" + i);
             ((WebSymbol) s).addAction(new WaitAction());
             if (i == SYMBOL_COUNT - 1) {
-                s.setDeleted(true);
+                s.setHidden(true);
             }
             symbolDAO.create(s);
 
@@ -598,7 +598,7 @@ public class SymbolDAOImplTest {
                 WebSymbolAction newAction = new ClearAction();
                 ((WebSymbol) s).addAction(newAction);
                 if (i == SYMBOL_COUNT - 1) {
-                    s.setDeleted(true);
+                    s.setHidden(true);
                 }
 
                 symbolDAO.update(s);

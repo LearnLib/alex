@@ -189,7 +189,7 @@ public class SymbolDAOImpl implements SymbolDAO {
             return null;
         }
 
-        // fetch the symbol & return it, if it is not deleted
+        // fetch the symbol & return it, if it is not hidden
         Symbol<?> result = get(projectId, id, lastRevision);
         return result;
     }
@@ -309,10 +309,10 @@ public class SymbolDAOImpl implements SymbolDAO {
         for (Symbol symbol : symbols) {
             symbol.loadLazyRelations();
             if (symbol.isResetSymbol()) {
-                throw new IllegalArgumentException("A reset symbol can never be marked as deleted.");
+                throw new IllegalArgumentException("A reset symbol can never be marked as hidden.");
             }
 
-            symbol.setDeleted(true);
+            symbol.setHidden(true);
             session.update(symbol);
         }
     }
@@ -340,7 +340,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     private void showSymbols(Session session, List<Symbol<?>> symbols) {
         for (Symbol symbol : symbols) {
-            symbol.setDeleted(false);
+            symbol.setHidden(false);
             session.update(symbol);
         }
     }
@@ -353,7 +353,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                 .list();
 
         if (symbols.size() == 0) {
-            throw new IllegalArgumentException("Could not mark the symbol as deleted because it was not found.");
+            throw new IllegalArgumentException("Could not mark the symbol as hidden because it was not found.");
         }
 
         return symbols;
