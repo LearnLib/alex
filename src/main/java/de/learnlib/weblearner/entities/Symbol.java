@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -85,8 +86,10 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
     @Size(min = 1, max = 15)
     protected String abbreviation;
 
-    /** flag to mark a symbol as deleted. */
-    @JsonIgnore
+    /**
+     * flag to mark a symbol as deleted.
+     * readonly.
+     */
     protected boolean deleted;
 
     /**
@@ -94,7 +97,6 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * 
      * @return The internal ID.
      */
-    @JsonIgnore
     public long getSymbolId() {
         return symbolId;
     }
@@ -161,7 +163,6 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * @return The ID.
      * @requiredField
      */
-    @JsonProperty("id")
     public long getId() {
         return this.id;
     }
@@ -172,7 +173,6 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * @param id
      *            The new ID.
      */
-    @JsonProperty("id")
     public void setId(long id) {
         this.id = id;
     }
@@ -183,7 +183,6 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * @return The revision.
      * @requiredField
      */
-    @JsonProperty("revision")
     public long getRevision() {
         return this.revision;
     }
@@ -194,7 +193,6 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * @param revision
      *            The new revision.
      */
-    @JsonProperty("revision")
     public void setRevision(long revision) {
         this.revision = revision;
     }
@@ -257,6 +255,7 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * 
      * @return true if the symbol should be considered deleted; false otherwise.
      */
+    @JsonProperty
     public boolean isDeleted() {
         return deleted;
     }
@@ -267,6 +266,7 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
      * @param deleted
      *            true if the symbol should be considered deleted; false otherwise.
      */
+    @JsonIgnore
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
