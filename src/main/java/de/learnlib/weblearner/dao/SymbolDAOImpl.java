@@ -5,7 +5,6 @@ import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
-import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
@@ -120,7 +119,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                     "id",
                                                     "revision"
                                             }, maxRevisions))
-                                            .add(visibilityLevel.getExpression())
+                                            .add(visibilityLevel.getCriterion())
                                             .addOrder(Order.asc("id"))
                                             .list();
 

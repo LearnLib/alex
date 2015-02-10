@@ -229,7 +229,7 @@ public class SymbolResourceTest extends JerseyTest {
     public void shouldReturnAllSymbolsThatAreVisible() {
         List<Symbol<?>> symbols = new LinkedList<>();
         symbols.add(symbol);
-        given(symbolDAO.getAll(PROJECT_TEST_ID, SymbolVisibilityLevel.VISIBLE)).willReturn(symbols);
+        given(symbolDAO.getAll(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.VISIBLE)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").request().get();
 
@@ -239,14 +239,14 @@ public class SymbolResourceTest extends JerseyTest {
                                 + "\"resetSymbol\":false,\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAll(project.getId(), SymbolVisibilityLevel.VISIBLE);
+        verify(symbolDAO).getAll(project.getId(), Symbol.class, SymbolVisibilityLevel.VISIBLE);
     }
 
     @Test
     public void shouldReturnAllSymbolsIncludingHiddenOnes() {
         List<Symbol<?>> symbols = new LinkedList<>();
         symbols.add(symbol);
-        given(symbolDAO.getAll(PROJECT_TEST_ID, SymbolVisibilityLevel.ALL)).willReturn(symbols);
+        given(symbolDAO.getAll(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.ALL)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("showHidden", "all")
                             .request().get();
@@ -257,7 +257,7 @@ public class SymbolResourceTest extends JerseyTest {
                 + "\"resetSymbol\":false,\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAll(project.getId(), SymbolVisibilityLevel.ALL);
+        verify(symbolDAO).getAll(project.getId(), Symbol.class, SymbolVisibilityLevel.ALL);
     }
 
     @Test

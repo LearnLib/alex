@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolTypes;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
@@ -133,35 +134,25 @@ public class SymbolResource {
      * @param projectId
      *         The ID of the project.
      * @param type
-     *         Specify the type of the symbols you are intressted in.
-     *         Valid valus are: 'all', web, 'rest'. Default is 'all'.
+     *         Specify the type of the symbols you are interested in.
+     *         Valid values are: 'all', web, 'rest'. Default is 'all'.
+     *         Optional.
+     * @param visibilityLevel
+     *         Specify the visibility level of the symbols you want to get.
+     *         Valid values are: 'all'/ 'unknown', 'visible', 'hidden'.
+     *         Optional.
      * @return A list of all Symbols belonging to the project.
      * @responseType java.util.List<de.learnlib.weblearner.entities.Symbol>
      * @successResponse 200 OK
-     * @errorResponse   400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") long projectId,
-                           @QueryParam("type") @DefaultValue("all") String type,
-                           @QueryParam("showHidden") @DefaultValue("visible") String visibilityLevelAsString) {
+                           @QueryParam("type") @DefaultValue("UNKNOWN") SymbolTypes type,
+                           @QueryParam("showHidden") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         try {
-            SymbolVisibilityLevel visibilityLevel = SymbolVisibilityLevel.valueOf(visibilityLevelAsString.toUpperCase());
-            List<Symbol<?>> symbols;
-            switch(type) {
-            case "all":
-                symbols = symbolDAO.getAll(projectId, visibilityLevel);
-                break;
-            case "web":
-                symbols = symbolDAO.getAll(projectId, WebSymbol.class, visibilityLevel);
-                break;
-            case "rest":
-                symbols = symbolDAO.getAll(projectId, RESTSymbol.class, visibilityLevel);
-                break;
-            default:
-                IllegalArgumentException e = new IllegalArgumentException("Unknown type:" + type + ".");
-                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.create", Status.BAD_REQUEST, e);
-            }
+            List<Symbol<?>> symbols = symbolDAO.getAll(projectId, type.getClazz(), visibilityLevel);
 
             String json = createSymbolsJSON(symbols);
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
