@@ -4,20 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.dao.SymbolDAO;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolTypes;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
-import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
-import de.learnlib.weblearner.utils.ResourceInputHelper;
+import de.learnlib.weblearner.utils.ResourceInputHelpers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -249,18 +246,6 @@ public class SymbolResource {
         }
     }
 
-    /*
-    @PUT
-    @Path("/{id}:{revision}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response updateWithRevision(@PathParam("project_id") long projectId, @PathParam("id") long id,
-            @PathParam("revision") long revision, Symbol symbol) {
-        symbolDAO.update(symbol);
-        return Response.ok(symbol).build();
-    }
-    */
-
     /**
      * Mark on symbol as deleted.
      * 
@@ -279,7 +264,7 @@ public class SymbolResource {
         try {
             Long[] idsArray;
             try {
-                idsArray = ResourceInputHelper.splitUp(ids);
+                idsArray = ResourceInputHelpers.splitUp(ids);
             } catch (NumberFormatException e) {
                 return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
                         Response.Status.BAD_REQUEST,  e);
@@ -314,7 +299,7 @@ public class SymbolResource {
         try {
             Long[] idsArray;
             try {
-                idsArray = ResourceInputHelper.splitUp(ids);
+                idsArray = ResourceInputHelpers.splitUp(ids);
             } catch (NumberFormatException e) {
                 return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
                         Response.Status.BAD_REQUEST,  e);

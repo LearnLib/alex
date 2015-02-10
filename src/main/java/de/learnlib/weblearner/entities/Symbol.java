@@ -199,10 +199,21 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
         this.revision = revision;
     }
 
+    /**
+     * Is the symbol a reset symbol in the related project.
+     *
+     * @return true, if the symbol is indeed a reset symbol; false otherwise.
+     */
     public boolean isResetSymbol() {
         return resetSymbol;
     }
 
+    /**
+     * Set if the symbol is a reset symbol in the related project.
+     *
+     * @param resetSymbol
+     *         true if the symbol is a reset symbol.
+     */
     public void setResetSymbol(boolean resetSymbol) {
         this.resetSymbol = resetSymbol;
     }

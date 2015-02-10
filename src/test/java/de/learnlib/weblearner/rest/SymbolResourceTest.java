@@ -229,8 +229,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAllSymbolsThatAreVisible() {
-        List<Symbol<?>> symbols = new LinkedList<>();
-        symbols.add(symbol);
+        symbols.remove(symbol2);
         given(symbolDAO.getAll(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.VISIBLE)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").request().get();
@@ -246,8 +245,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAllSymbolsIncludingHiddenOnes() {
-        List<Symbol<?>> symbols = new LinkedList<>();
-        symbols.add(symbol);
+        symbols.remove(symbol2);
         given(symbolDAO.getAll(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.ALL)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("showHidden", "all")
@@ -264,8 +262,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnOnlyWebSymbols() {
-        List<Symbol<?>> symbols = new LinkedList<>();
-        symbols.add(symbol);
+        symbols.remove(symbol2);
         given(symbolDAO.getAll(PROJECT_TEST_ID, WebSymbol.class, SymbolVisibilityLevel.VISIBLE)).willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("type", "web")
@@ -283,7 +280,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnOnlyRestSymbols() {
-        List<Symbol<?>> symbols = new LinkedList<>();
+        symbols = new LinkedList<>();
         Symbol<?> restSymbol = new RESTSymbol();
         restSymbol.setId(SYMBOL_TEST_ID);
         restSymbol.setName("Symbol Resource REST Test Symbol");
@@ -377,22 +374,6 @@ public class SymbolResourceTest extends JerseyTest {
 
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
-
-    /*
-    @Test
-    public void shouldUpdateTheRightSymboltWithRevision() {
-        Symbol symbol = new WebSymbol();
-        symbol.setID(SYMBOL_TEST_ID);
-        symbol.setRevision(SYMBOL_TEST_REV);
-        target("/projects/" + PROJECT_TEST_ID + "/symbols/").request().post(Entity.json(symbol));
-
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getID() + ":" + symbol.getRevision();
-        Response response = target(path).request().put(Entity.json(symbol));
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-
-        verify(symbolDAO).update(symbol);
-    }
-    */
 
     @Test
     public void shouldHideASymbol() {

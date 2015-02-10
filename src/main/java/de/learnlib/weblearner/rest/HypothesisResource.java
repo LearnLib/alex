@@ -3,7 +3,7 @@ package de.learnlib.weblearner.rest;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.utils.JSONHelpers;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
-import de.learnlib.weblearner.utils.ResourceInputHelper;
+import de.learnlib.weblearner.utils.ResourceInputHelpers;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -128,7 +128,7 @@ public class HypothesisResource {
         try {
             Long[] numbersLongArray;
             try {
-                numbersLongArray = ResourceInputHelper.splitUp(testNumbers);
+                numbersLongArray = ResourceInputHelpers.splitUp(testNumbers);
             } catch (NumberFormatException e) {
                 return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
                         Response.Status.BAD_REQUEST,  e);

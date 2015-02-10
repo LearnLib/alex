@@ -3,7 +3,13 @@ package de.learnlib.weblearner.utils;
 /**
  * A helper class used by the REST resources to parse and handel their input parameters.
  */
-public class ResourceInputHelper {
+public final class ResourceInputHelpers {
+
+    /**
+     * Disabled default constructor, this is only a utility class with static methods.
+     */
+    private ResourceInputHelpers() {
+    }
 
     /**
      * Split up a csv like string into an array of long values.

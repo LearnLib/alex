@@ -9,7 +9,7 @@ import org.hibernate.criterion.Restrictions;
 public enum SymbolVisibilityLevel {
 
     /** Show all symbols. */
-    ALL(Restrictions.in("deleted", new Boolean[] { true, false } )),
+    ALL(Restrictions.in("deleted", new Boolean[] {true, false })),
 
     /** Show only visible ones. */
     VISIBLE(Restrictions.eq("deleted", false)),
@@ -50,7 +50,7 @@ public enum SymbolVisibilityLevel {
      * @throws IllegalArgumentException
      *         If the name could not be parsed.
      */
-    public static SymbolVisibilityLevel fromString(String name) {
+    public static SymbolVisibilityLevel fromString(String name) throws IllegalArgumentException {
         return SymbolVisibilityLevel.valueOf(name.toUpperCase());
     }
 
