@@ -3,13 +3,13 @@
 
     angular
         .module('weblearner.controller')
-        .controller('IndexController', [
-            '$scope', '$location', 'ProjectResource', 'SessionService',
-            IndexController
+        .controller('HomeController', [
+            '$scope', '$state', 'ProjectResource', 'SessionService',
+            HomeController
         ]);
 
     /**
-     * IndexController
+     * HomeController
      *
      * The controller for the landing page. It lists the projects.
      *
@@ -19,7 +19,7 @@
      * @param SessionService
      * @constructor
      */
-    function IndexController($scope, $location, ProjectResource, SessionService) {
+    function HomeController($scope, $state, ProjectResource, SessionService) {
 
         /** The project list */
         $scope.projects = [];
@@ -27,8 +27,8 @@
         //////////
 
         // redirect to the project dash page if one is open
-        if (SessionService.project.get() != null) {
-            $location.path('/project/' + SessionService.project.get().id);
+        if (SessionService.project.get()) {
+            $state.go('project');
         }
 
         // get all projects from the server
@@ -46,7 +46,7 @@
          */
         $scope.openProject = function (project) {
             SessionService.project.save(project);
-            $location.path('/project/' + project.id);
+            $state.go('project');
         }
     }
 }());

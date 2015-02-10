@@ -12,7 +12,8 @@
         var directive = {
             scope: {
                 test: '=',
-                counterExample: '='
+                counterExample: '=',
+                layoutSettings: '='
             },
             templateUrl: 'app/partials/directives/hypothesis.html',
             link: link
@@ -33,19 +34,27 @@
 
             scope.$watch('test', function(test){
                 if (angular.isDefined(test) && test != null) {
-                    if (angular.isDefined(_svg)){
-                        el.find('svg')[0].innerHTML = '';
-                    }
                     createHypothesis();
                 }
             });
-
-            //////////
+            
+            scope.$watch('layoutSettings', function(ls){
+            	if (angular.isDefined(ls)) {
+            		createHypothesis();
+            	}
+            })
+            
+            //////////            
 
             function createHypothesis () {
+            	clearSvg();
                 initGraph();
                 layoutGraph();
                 renderGraph();
+            }
+            
+            function clearSvg() {
+            	el.find('svg')[0].innerHTML = '';
             }
 
             function initGraph() {
@@ -58,7 +67,16 @@
                     directed: true,
                     multigraph: true
                 });
-                _graph.setGraph({edgesep: 25});
+                
+                if (angular.isDefined(scope.layoutSettings)) {               	
+                	_graph.setGraph({
+                		edgesep: scope.layoutSettings.edgesep,
+                		nodesep: scope.layoutSettings.nodesep,
+                		ranksep: scope.layoutSettings.ranksep
+            		});
+                } else {
+                	_graph.setGraph({edgesep: 25});
+                }
             }
 
             function layoutGraph() {
@@ -80,15 +98,19 @@
                 _renderer = new dagreD3.render();
                 _renderer(_svgGroup, _graph);
 
-                _svg.selectAll('.edgeLabel').on('click', function(){
+                // attach click events for the selection of counter examples only if counterexamples
+                // is defined
+                if (angular.isDefined(scope.counterExample)){
+                	_svg.selectAll('.edgeLabel').on('click', function(){
 
-                    var el = this.getElementsByTagName('tspan')[0];
-                    var label = el.innerHTML.split('/');
-
-                    scope.counterExample.input += (label[0] + ',');
-                    scope.counterExample.output += (label[1] + ',');
-                    scope.$apply()
-                });
+                        var el = this.getElementsByTagName('tspan')[0];
+                        var label = el.innerHTML.split('/');
+                        
+                        scope.counterExample.input += (label[0] + ',');
+                        scope.counterExample.output += (label[1] + ',');
+                        scope.$apply()
+                    });
+                }
 
                 // Center graph
                 var xCenterOffset = (_svgContainer.clientWidth - _graph.graph().width) / 2;

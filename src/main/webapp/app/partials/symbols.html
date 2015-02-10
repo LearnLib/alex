@@ -69,7 +69,7 @@ contains call to action buttons to create update & delete symbols
             <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
 
             <p class="text-muted">
-                <a href="#/project/{{project.id}}/editor/actions/{{symbol.id}}">
+                <a ui-sref="symbols.actions({symbolId:symbol.id})">
                     <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
                 </a>
             </p>

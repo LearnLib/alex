@@ -3,12 +3,12 @@
 
     angular
         .module('weblearner.controller')
-        .controller('DashboardController', [
+        .controller('ProjectController', [
             '$scope', 'SessionService',
-            DashboardController
+            ProjectController
         ]);
 
-    function DashboardController($scope, SessionService) {
+    function ProjectController($scope, SessionService) {
 
         $scope.project = SessionService.project.get();
     }

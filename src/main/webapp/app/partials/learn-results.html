@@ -1,3 +1,5 @@
+<div class="ui-view" class="animate-view">
+
 <div class="container">
     <h2>Tests</h2>
 
@@ -40,7 +42,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#/project/{{project.id}}/test/result/{{test.testNo}}">
+                            <a ui-sref="learn.results.compare({testNos: [test.testNo]})">
                                 <i class="fa fa-code-fork fa-fw"></i>&nbsp; Hypotheses
                             </a>
                         </li>
@@ -60,7 +62,7 @@
                 <br>
 
                 <p class="text-muted">
-                    Started: <span format-date-time="test.startTime"></span>
+                    Started: <span ng-bind="(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
                 </p>
 
             </div>
@@ -73,4 +75,5 @@
     <div class="alert alert-info">
         You have not run any tests yet or the active one is not finished.
     </div>
+</div>
 </div>

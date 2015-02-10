@@ -78,7 +78,7 @@
             <br>
 
             <p class="text-muted">
-                Started: <span format-date-time="test.startTime"></span>
+                Started: <span ng-bind="(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
             </p>
         </div>
     </div>

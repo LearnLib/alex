@@ -3,12 +3,12 @@
 
     angular
         .module('weblearner.controller')
-        .controller('SymbolUploadController', [
+        .controller('SymbolsImportController', [
             '$scope', 'SessionService', 'SymbolResource', 'SelectionService',
-            SymbolUploadController
+            SymbolsImportController
         ]);
 
-    function SymbolUploadController($scope, SessionService, SymbolResource, SelectionService) {
+    function SymbolsImportController($scope, SessionService, SymbolResource, SelectionService) {
 
         var _project = SessionService.project.get();
 
@@ -36,17 +36,15 @@
             $scope.$apply();
         };
 
-        $scope.createSymbols = function () {
+        $scope.uploadSymbols = function () {
 
             var selectedWebSymbols = SelectionService.getSelected($scope.symbols.web);
             var selectedRestSymbols = SelectionService.getSelected($scope.symbols.rest);
             var selectedSymbols = selectedWebSymbols.concat(selectedRestSymbols);
 
             SelectionService.removeSelection(selectedSymbols);
-
-            _.forEach(selectedSymbols, function (symbol) {
-                SymbolResource.create(_project.id, symbol)
-            });
+                       
+            SymbolResource.create(_project.id, selectedSymbols);
         }
     }
 }());
