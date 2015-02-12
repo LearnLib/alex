@@ -1,21 +1,12 @@
 <div class="container">
-
-    <h2>Test Setup -
-        <span if-is-type-of-web="type">Web</span>
-        <span if-is-type-of-rest="type">Rest</span>
-    </h2>
+    <h2>Test Setup - <span ng-bind="(type|capitalize)"></span></h2>
 
     <p class="text-muted">
         Include or exclude Symbols you want to use for the following test
     </p>
     <hr>
-
 </div>
 
-<!--
-BEGIN: Sub Navigation
-contains call to action buttons to create update & delete symbols
--->
 <div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
     <div class="container">
         <div class="pull-left" style="margin-right: 16px">
@@ -23,7 +14,7 @@ contains call to action buttons to create update & delete symbols
         </div>
         <div class="pull-right">
             <button class="btn btn-xs btn-default" open-test-setup-settings-modal
-                    learn-configuration="testConfiguration" on-ok="updateLearnConfiguration">
+                    learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
                 <i class="fa fa-gear"></i>
             </button>
             <button class="btn btn-xs btn-primary" ng-click="startTest()">
@@ -32,7 +23,6 @@ contains call to action buttons to create update & delete symbols
         </div>
     </div>
 </div>
-<!-- END: Sub Navigation -->
 
 <div class="container">
 
@@ -46,7 +36,7 @@ contains call to action buttons to create update & delete symbols
             <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
 
             <p class="text-muted">
-                <a href="#/project/{{project.id}}/editor/actions/{{symbol.id}}">
+                <a ui-sref="symbols.actions({symbolId:symbol.id})">
                     <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
                 </a>
             </p>

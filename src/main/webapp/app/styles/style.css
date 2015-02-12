@@ -4280,12 +4280,22 @@ body {
             transform: scale(0.8); } }
 .animate-view.ng-enter {
   overflow: hidden;
+  position: absolute;
+  top: 70px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   -webkit-animation: scaleUp 0.2s both ease-in;
           animation: scaleUp 0.2s both ease-in;
   z-index: 8888; }
 
 .animate-view.ng-leave {
   overflow: hidden;
+  position: absolute;
+  top: 70px;
+  bottom: 0;
+  left: 0;
+  right: 0;
   -webkit-animation: fadeOut 0.2s both ease-in;
           animation: fadeOut 0.2s both ease-in;
   z-index: 9999; }
@@ -4365,10 +4375,14 @@ form.form-condensed .form-group {
       padding: 10px 15px; }
 
 .btn.btn-icon {
-  padding: 0;
+  background: none;
+  border: 0;
   opacity: 0.5; }
   .btn.btn-icon:hover {
     opacity: 1; }
+  .btn.btn-icon:active {
+    box-shadow: none;
+    outline: none; }
 
 .panel {
   border-right: 1px solid #e7e7e7; }

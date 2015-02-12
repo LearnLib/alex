@@ -8,7 +8,7 @@
     <script src="bower_components/angular/angular.min.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="bower_components/angular-animate/angular-animate.min.js"></script>
-    <script src="bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="bower_components/lodash/lodash.min.js"></script>
     <script src="bower_components/ng-sortable/dist/ng-sortable.min.js"></script>
     <script src="bower_components/angular-ui-ace/ui-ace.min.js"></script>
     <script src="bower_components/ace-builds/src-min/ace.js"></script>
@@ -38,7 +38,7 @@
 
 <navigation></navigation>
 
-<div class="animate-view" id="view" ui-view></div>
+<div ui-view id="view" class="animate-view"></div>
 
 <!-- uncomment this to use the minified version of the application and comment the included scripts below -->
 <!--<script src="app/app.min.js"></script>-->
@@ -114,16 +114,17 @@
 <script src="app/js/directives/downloadAsJson.js"></script>
 <script src="app/js/directives/downloadTestResultsAsCsv.js"></script>
 <script src="app/js/directives/navigation.js"></script>
-<script src="app/js/directives/ifIsTypeOfWeb.js"></script>
-<script src="app/js/directives/ifIsTypeOfRest.js"></script>
 <script src="app/js/directives/hypothesisPanel.js"></script>
 <script src="app/js/directives/downloadHypothesisAsSvg.js"></script>
+<script src="app/js/directives/dropdownHover.js"></script>
+<script src="app/js/directives/lazyValidationForm.js"></script>
 
 <script src="app/js/filters/selectionFilter.js"></script>
 <script src="app/js/filters/collectionFilter.js"></script>
 <script src="app/js/filters/enumFilter.js"></script>
 <script src="app/js/filters/typeOfWeb.js"></script>
 <script src="app/js/filters/typeOfRest.js"></script>
+<script src="app/js/filters/stringFilter.js"></script>
 
 </body>
 </html>

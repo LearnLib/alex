@@ -10,7 +10,7 @@
 		var directive = {
 			templateUrl: 'app/partials/directives/navigation.html',
 			link: link,
-			controller: ['$scope', '$state', 'SessionService', controller]
+			controller: ['$scope', '$window', '$state', 'SessionService', controller]
 		};
 		return directive;
 		
@@ -23,7 +23,7 @@
             var view = angular.element(document.getElementById('view'));
             var cssClass = 'has-off-screen-navigation';
 
-            menuButton.on('click', toggleNavigation);
+			menuButton.on('click', toggleNavigation);
 
             function toggleNavigation(e) {
                 e.stopPropagation();
@@ -46,12 +46,32 @@
 		
 		//////////
 		
-		function controller($scope, $state, SessionService){
+		function controller($scope, $window, $state, SessionService){
+
+			var mediaQuery;
+
+			//////////
 			
 			/** the project */
 	        $scope.project = SessionService.project.get();
+			$scope.hover = false;
+			$scope.offScreen = false;
 
 	        //////////
+
+			this.setHover = function(hover){
+				$scope.hover = hover;
+			};
+
+			this.isHover = function(){
+				return $scope.hover;
+			};
+
+			this.isOffScreen = function(){
+				return $scope.offScreen;
+			};
+
+			//////////
 
 	        // load project into scope when projectOpened is emitted
 	        $scope.$on('project.opened', function () {
@@ -63,6 +83,21 @@
 	            $scope.project = null;
 	        });
 
+			// watch for media query event
+			mediaQuery = window.matchMedia('screen and (max-width: 768px)');
+			mediaQuery.addListener(mediaQueryMatches);
+			mediaQueryMatches(null, mediaQuery.matches);
+
+			//////////
+
+			function mediaQueryMatches(evt, matches){
+				if (evt === null) {
+					$scope.offScreen = matches ? true : false;
+				} else {
+					$scope.offScreen = evt.matches;
+				}
+			}
+
 	        //////////
 
 	        /**
@@ -72,6 +107,43 @@
 	        	SessionService.project.remove();
 	            $state.go('home');
 	        }
+		}
+	}
+
+	angular
+		.module('weblearner.directives')
+		.directive('dropdownNavigation', ['$document', dropdownNavigation]);
+
+	function dropdownNavigation($document){
+		return {
+			require: ['dropdown', '^navigation'],
+			link: function(scope, el, attrs, ctrls) {
+
+				var dropDownCtrl = ctrls[0];
+				var navigationCtrl = ctrls[1];
+
+				el.on('click', function(e){
+					e.stopPropagation();
+
+					if (!navigationCtrl.isOffScreen()){
+						if (!navigationCtrl.isHover()){
+							navigationCtrl.setHover(true);
+							$document.on('click', closeDropDown);
+						}
+					}
+				}).on('mouseenter', function(){
+					if (navigationCtrl.isHover()){
+						scope.$apply(function(){
+							dropDownCtrl.toggle(true);
+						})
+					}
+				});
+
+				function closeDropDown() {
+					navigationCtrl.setHover(false);
+					$document.off('click', closeDropDown);
+				}
+			}
 		}
 	}
 }());

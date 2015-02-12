@@ -1,22 +1,14 @@
-<!--
-    BEGIN: Action List
-    The list (actually a table) to display all actions of a symbol. You can select them by clicking it or the checkbox
-    on the left. Through drag and drop they can be rearranged so that the actions will be executed in a new order.
--->
 <div class="container">
-
     <h2>Action Editor</h2>
 
     <p class="text-muted">
-        Create and manage the actions for symbol <strong ng-bind="symbol.name"></strong>&nbsp; <span
-            class="label label-primary" ng-bind="symbol.type"></span></p>
+        Create and manage the actions for symbol
+        <strong ng-bind="symbol.name"></strong>
+        <span class="label label-primary" ng-bind="symbol.type"></span>
+    </p>
     <hr>
 </div>
 
-<!--
-BEGIN: Sub Navigation
-contains call to action buttons to create update & delete actions
--->
 <div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
     <div class="container">
         <div class="pull-left" style="margin-right: 16px">
@@ -31,7 +23,7 @@ contains call to action buttons to create update & delete actions
                     on-updated="updateAction">
                 Edit
             </button>
-            <button class="btn btn-xs btn-default" ng-click="deleteActions()">
+            <button class="btn btn-xs btn-default" ng-click="deleteSelectedActions()">
                 Delete
             </button>
         </div>
@@ -41,7 +33,6 @@ contains call to action buttons to create update & delete actions
         </div>
     </div>
 </div>
-<!-- END: Sub Navigation -->
 
 <div class="container">
 
@@ -139,4 +130,3 @@ contains call to action buttons to create update & delete actions
     </div>
 
 </div>
-

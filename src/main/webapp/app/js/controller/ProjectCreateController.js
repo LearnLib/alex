@@ -4,21 +4,22 @@
     angular
         .module('weblearner.controller')
         .controller('ProjectCreateController', [
-            '$scope', '$location', 'ProjectResource',
+            '$scope', '$state', 'ProjectResource',
             ProjectCreateController
         ]);
 
     /**
-     * create a new project
-     * @template 'app/partials/project-create.html'
+     * ProjectCreateController
+     *
+     * The controller that handles the creation of new projects
+     *
      * @param $scope
      * @param $location
-     * @param Project
+     * @param ProjectResource
      * @constructor
      */
-    function ProjectCreateController($scope, $location, ProjectResource) {
+    function ProjectCreateController($scope, $state, ProjectResource) {
 
-        /** @type {{}} */
         $scope.project = {};
 
         //////////
@@ -27,21 +28,14 @@
          * create a new project
          */
         $scope.createProject = function () {
-            if ($scope.create_form.$valid) {
-                ProjectResource.create($scope.project)
-                    .then(function (project) {
-                        $location.path('/');
-                    })
-            } else {
-                $scope.create_form.submitted = true;
-            }
-        };
 
-        /**
-         * reset the form
-         */
-        $scope.reset = function () {
-            $scope.project = {}
-        }
+            console.log('asd');
+            return;
+
+            ProjectResource.create($scope.project)
+                .then(function () {
+                    $state.go('home');
+                })
+        };
     }
 }());

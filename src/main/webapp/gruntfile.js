@@ -32,7 +32,7 @@ module.exports = function(grunt){
 					'bower_components/angular/angular.min.js',
 					'bower_components/angular-ui-router/release/angular-ui-router.min.js',
 					'bower_components/angular-animate/angular-animate.min.js',
-					'bower_components/lodash/dist/lodash.min.js',
+					'bower_components/lodash/lodash.min.js',
 					'bower_components/ng-sortable/dist/ng-sortable.min.js',
 					'bower_components/angular-ui-ace/ui-ace.min.js',
 					'bower_components/ace-builds/src-min/ace.js',

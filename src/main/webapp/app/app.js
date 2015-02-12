@@ -58,183 +58,250 @@ angular
         });
 
         // redirect to the start page when no other route fits
-        $urlRouterProvider.otherwise("/");
+        $urlRouterProvider.otherwise("/home");
 
         $stateProvider
 
             // =========================================================
             // index route
 
-            .state('state0', {
-                url: '/',
-                controller: 'IndexController',
-                templateUrl: 'app/partials/index.html',
-                data: {
-                    requiresProject: false
-                }
+            .state('home', {
+                url: '/home',
+                controller: 'HomeController',
+                templateUrl: 'app/partials/home.html'
             })
 
             // =========================================================
             // project related routes
 
-            .state('state1', {
-                url: '/project/create',
-                controller: 'ProjectCreateController',
-                templateUrl: 'app/partials/project-create.html',
+            .state('project', {
+                url: '/project',
+                views: {
+                    '@': {
+                        controller: 'ProjectController',
+                        templateUrl: 'app/partials/project.html'
+                    }
+                },
+                data: {
+                    requiresProject: true
+                }
+            })
+            .state('project.create', {
+                url: '/create',
+                views: {
+                    '@': {
+                        controller: 'ProjectCreateController',
+                        templateUrl: 'app/partials/project-create.html'
+                    }
+                },
                 data: {
                     requiresProject: false
                 }
             })
-            .state('state2', {
-                url: '/project/:projectId',
-                controller: 'DashboardController',
-                templateUrl: 'app/partials/dashboard.html',
-                data: {
-                    requiresProject: true
-                }
-            })
-            .state('state3', {
-                url: '/project/:projectId/settings',
-                templateUrl: 'app/partials/project-settings.html',
-                controller: 'ProjectSettingsController',
-                data: {
-                    requiresProject: true
-                }
-            })
-
-            // =========================================================
-            // editor related routes
-
-            .state('state4', {
-                url: '/project/:projectId/editor/symbols/web',
-                controller: 'EditorSymbolController',
-                templateUrl: 'app/partials/editor-symbols.html',
-                data: {
-                    requiresProject: true
-                },
-                resolve: {
-                    type: function () {
-                        return 'web'
+            .state('project.settings', {
+                url: '/settings',
+                views: {
+                    '@': {
+                        templateUrl: 'app/partials/project-settings.html',
+                        controller: 'ProjectSettingsController'
                     }
-                }
-            })
-            .state('state5', {
-                url: '/project/:projectId/editor/symbols/rest',
-                controller: 'EditorSymbolController',
-                templateUrl: 'app/partials/editor-symbols.html',
-                data: {
-                    requiresProject: true
-                },
-                resolve: {
-                    type: function () {
-                        return 'rest'
-                    }
-                }
-            })
-            .state('state6', {
-                url: '/project/:projectId/editor/actions/:symbolId',
-                controller: 'EditorActionController',
-                templateUrl: 'app/partials/editor-actions.html',
-                data: {
-                    requiresProject: true
-                }
-            })
-
-            // =========================================================
-            // test and learn related routes
-
-            .state('state7', {
-                url: '/project/:projectId/test/setup/web',
-                controller: 'TestSetupController',
-                templateUrl: 'app/partials/test-setup.html',
-                data: {
-                    requiresProject: true
-                },
-                resolve: {
-                    type: function () {
-                        return 'web'
-                    }
-                }
-            })
-            .state('state71', {
-                url: '/project/:projectId/test/setup/rest',
-                controller: 'TestSetupController',
-                templateUrl: 'app/partials/test-setup.html',
-                data: {
-                    requiresProject: true
-                },
-                resolve: {
-                    type: function () {
-                        return 'rest'
-                    }
-                }
-            })
-            .state('state8', {
-                url: '/project/:projectId/learn',
-                controller: 'LearnController',
-                templateUrl: 'app/partials/learn.html',
-                data: {
-                    requiresProject: true
-                }
-            })
-            .state('state9', {
-                url: '/project/:projectId/test/result',
-                controller: 'TestResultController',
-                templateUrl: 'app/partials/test-result.html',
-                data: {
-                    requiresProject: true
-                }
-            })
-            .state('state15', {
-                url: '/project/:projectId/test/result/:testNo',
-                controller: 'HypothesesSlideshowController',
-                templateUrl: 'app/partials/hypotheses-slideshow.html',
-                data: {
-                    requiresProject: true
-                }
-            })
-            .state('state10', {
-                url: '/project/:projectId/statistics',
-                controller: 'StatisticsController',
-                templateUrl: 'app/partials/statistics.html',
-                data: {
-                    requiresProject: true
                 }
             })
 
             // =========================================================
             // symbol related routes
 
-            .state('state11', {
-                url: '/project/:projectId/symbol/upload',
-                controller: 'SymbolUploadController',
-                templateUrl: 'app/partials/symbol-upload.html',
+            .state('symbols', {
+                abstract: true,
+                url: '/symbols',
                 data: {
                     requiresProject: true
                 }
             })
-            .state('state12', {
-                url: '/project/:projectId/symbol/export',
-                controller: 'SymbolExportController',
-                templateUrl: 'app/partials/symbol-export.html',
-                data: {
-                    requiresProject: true
+            .state('symbols.web', {
+                url: '/web',
+                views: {
+                    '@': {
+                        controller: 'SymbolsController',
+                        templateUrl: 'app/partials/symbols.html'
+                    }
+                },
+                resolve: {
+                    type: function () {
+                        return 'web'
+                    }
+                }
+            })
+            .state('symbols.web.trash', {
+                url: '/trash',
+                views: {
+                    '@': {
+                        controller: 'SymbolsTrashController',
+                        templateUrl: 'app/partials/symbols-trash.html'
+                    }
+                }
+            })
+            .state('symbols.rest', {
+                url: '/rest',
+                views: {
+                    '@': {
+                        controller: 'SymbolsController',
+                        templateUrl: 'app/partials/symbols.html'
+                    }
+                },
+                resolve: {
+                    type: function () {
+                        return 'rest'
+                    }
+                }
+            })
+            .state('symbols.rest.trash', {
+                url: '/trash',
+                views: {
+                    '@': {
+                        controller: 'SymbolsTrashController',
+                        templateUrl: 'app/partials/symbols-trash.html'
+                    }
+                }
+            })
+            .state('symbols.actions', {
+                url: '/{symbolId:int}/actions',
+                views: {
+                    '@': {
+                        controller: 'SymbolsActionsController',
+                        templateUrl: 'app/partials/symbols-actions.html'
+                    }
+                }
+
+            })
+            .state('symbols.import', {
+                url: '/import',
+                views: {
+                    '@': {
+                        controller: 'SymbolsImportController',
+                        templateUrl: 'app/partials/symbols-import.html'
+                    }
+                }
+
+            })
+            .state('symbols.export', {
+                url: '/export',
+                views: {
+                    '@': {
+                        controller: 'SymbolsExportController',
+                        templateUrl: 'app/partials/symbols-export.html'
+                    }
                 }
             })
 
             // =========================================================
+            // test and learn related routes
+
+            .state('learn', {
+                abstract: true,
+                url: '/learn',
+                data: {
+                    requiresProject: true
+                }
+            })
+            .state('learn.setup', {
+                abstract: true,
+                url: '/setup'
+            })
+            .state('learn.setup.web', {
+                url: '/web',
+                views: {
+                    '@': {
+                        controller: 'LearnSetupController',
+                        templateUrl: 'app/partials/learn-setup.html'
+                    }
+                },
+                resolve: {
+                    type: function () {
+                        return 'web'
+                    }
+                }
+            })
+            .state('learn.setup.rest', {
+                url: '/rest',
+                views: {
+                    '@': {
+                        controller: 'LearnSetupController',
+                        templateUrl: 'app/partials/learn-setup.html'
+                    }
+                },
+                resolve: {
+                    type: function () {
+                        return 'rest'
+                    }
+                }
+            })
+            .state('learn.start', {
+                url: '/start',
+                views: {
+                    '@': {
+                        controller: 'LearnStartController',
+                        templateUrl: 'app/partials/learn-start.html'
+                    }
+                }
+            })
+            .state('learn.results', {
+                url: '/results',
+                views: {
+                    '@': {
+                        controller: 'LearnResultsController',
+                        templateUrl: 'app/partials/learn-results.html'
+                    }
+                }
+            })
+            .state('learn.results.statistics', {
+                url: '/statistics',
+                views: {
+                    '@': {
+                        controller: 'LearnResultsStatisticsController',
+                        templateUrl: 'app/partials/learn-results-statistics.html'
+                    }
+                }
+            })
+            .state('learn.results.compare', {
+                url: '/compare/:testNos',
+                views: {
+                    '@': {
+                        controller: 'LearnResultsCompareController',
+                        templateUrl: 'app/partials/learn-results-compare.html'
+                    }
+                }
+            })
+
+
+            // =========================================================
             // static pages related routes
 
-            .state('state13', {
+            .state('about', {
                 url: '/about',
                 templateUrl: 'app/partials/about.html',
                 data: {
                     requiresProject: false
                 }
             })
-            .state('state14', {
+            .state('help', {
                 url: '/help',
                 templateUrl: 'app/partials/help.html',
+                data: {
+                    requiresProject: false
+                }
+            })
+
+            // =========================================================
+            // tool pages
+
+            .state('tools', {
+                abstract: true,
+                template: '<ui-view class="animate-view" />'
+            })
+            .state('tools.hyotheses', {
+                'url': '/tools/hypotheses/view',
+                templateUrl: 'app/partials/tools-hypotheses-view.html',
                 data: {
                     requiresProject: false
                 }
@@ -249,13 +316,15 @@ angular
             run
         ]);
 
-    function run ($rootScope, $state, SessionService) {
+    function run($rootScope, $state, SessionService) {
 
         // route validation
         $rootScope.$on("$stateChangeStart", function (event, toState, toParams, fromState, fromParams) {
-            if (toState.data.requiresProject && SessionService.project.get() == null) {
-                $state.transitionTo("state0");
-                event.preventDefault();
+            if (toState.data) {
+                if (toState.data.requiresProject && SessionService.project.get() == null) {
+                    $state.transitionTo("home");
+                    event.preventDefault();
+                }
             }
         });
     }
@@ -310,273 +379,18 @@ angular
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE'
         })
 
-}());;(function(){
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('DashboardController', [
-            '$scope', 'SessionService',
-            DashboardController
-        ]);
-
-    function DashboardController($scope, SessionService) {
-
-        $scope.project = SessionService.project.get();
-    }
 }());;(function () {
     'use strict';
 
     angular
         .module('weblearner.controller')
-        .controller('EditorActionController', [
-            '$scope', '$stateParams', 'SymbolResource', 'SessionService', 'SelectionService', 'WebActionTypesEnum', 'RestActionTypesEnum', 'ngToast',
-            EditorActionController
-        ]);
-
-    function EditorActionController($scope, $stateParams, SymbolResource, SessionService, SelectionService, WebActionTypesEnum, RestActionTypesEnum, toast) {
-
-        var _id = 0;
-
-        //////////
-
-        /** the enum for web action types that are displayed in a select box */
-        $scope.webActionTypes = WebActionTypesEnum;
-
-        /** the enum for rest action types that are displayed in a select box */
-        $scope.restActionTypes = RestActionTypesEnum;
-
-        //////////
-
-        /** the open project */
-        $scope.project = SessionService.project.get();
-
-        /** the symbol whose actions are managed */
-        $scope.symbol = null;
-
-        /** a copy of $scope.symbol to revert unsaved changes */
-        $scope.symbolCopy = null;
-
-        //////////
-
-        // load all actions from the symbol
-        SymbolResource.get($scope.project.id, $stateParams.symbolId).then(function (symbol) {
-
-            _.forEach(symbol.actions, function (action) {
-                action._id = _id++;
-            });
-
-            $scope.symbol = symbol;
-            $scope.symbolCopy = angular.copy($scope.symbol);
-        });
-
-        //////////
-
-        /**
-         * delete the actions that the user selected from the scope
-         */
-        $scope.deleteActions = function () {
-            var selectedActions = SelectionService.getSelected($scope.symbol.actions);
-            if (selectedActions.length > 0) {
-                _.forEach(selectedActions, function (action) {
-                    _.remove($scope.symbol.actions, {_id: action._id})
-                });
-                toast.create({
-                    class: 'success',
-                    content: 'Actions deleted'
-                });
-            }
-        };
-
-        /**
-         * add a new action to the list of actions of the symbol
-         * @param action
-         */
-        $scope.addAction = function (action) {
-            action._id = _id++;
-            $scope.symbol.actions.push(action);
-        };
-
-        /**
-         * update an action
-         * @param updatedAction
-         */
-        $scope.updateAction = function (updatedAction) {
-            var index = _.findIndex($scope.symbol.actions, {_id: updatedAction._id});
-            if (index > -1) {
-                $scope.symbol.actions[index] = updatedAction;
-            }
-        };
-
-        /**
-         * save the changes that were made to the symbol by updating it on the server
-         */
-        $scope.saveChanges = function () {
-            var copy = angular.copy($scope.symbol);
-            SelectionService.removeSelection(copy.actions);
-            _.forEach(copy.actions, function (action) {
-                delete action._id;
-            });
-            SymbolResource.update($scope.project.id, copy)
-                .then(function (updatedSymbol) {
-
-                    _id = 0;
-                    _.forEach(updatedSymbol.actions, function (action) {
-                        action._id = _id++;
-                    });
-
-                    $scope.symbol = updatedSymbol;
-                    $scope.symbolCopy = angular.copy(updatedSymbol);
-                })
-        };
-
-        /**
-         * revert the changes that were made to the symbol
-         */
-        $scope.revertChanges = function () {
-            $scope.symbol = angular.copy($scope.symbolCopy);
-        };
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('EditorSymbolController', [
-            '$scope', 'SessionService', 'SymbolResource', 'SelectionService', 'type',
-            EditorSymbolController
-        ]);
-
-    function EditorSymbolController($scope, SessionService, SymbolResource, SelectionService, type) {
-
-        /** the open project @type {*} */
-        $scope.project = SessionService.project.get();
-
-        /** the symbol type @type {string} */
-        $scope.type = type;
-
-        /** the list of web or rest symbols @type {[]|*[]} */
-        $scope.symbols = [];
-
-        //////////
-
-        // load symbols from the server
-        switch ($scope.type) {
-            case 'web':
-                // web symbols
-                SymbolResource.allWeb($scope.project.id)
-                    .then(function (symbols) {
-                        $scope.symbols = symbols;
-                    });
-                break;
-            case 'rest':
-                // rest symbols
-                SymbolResource.allRest($scope.project.id)
-                    .then(function (symbols) {
-                        $scope.symbols = symbols;
-                    });
-                break;
-            default:
-                break;
-        }
-
-        //////////
-
-        /**
-         * @description deletes the symbols that the user selected from the server and the scope
-         */
-        $scope.deleteSelectedSymbols = function () {
-            var selectedSymbols = SelectionService.getSelected($scope.symbols);
-            if (selectedSymbols.length > 0) {
-                SelectionService.removeSelection(selectedSymbols);
-                _.forEach(selectedSymbols, function (symbol) {
-                    SymbolResource.delete(symbol.project, symbol.id)
-                        .then(function () {
-                            _.remove($scope.symbols, function (s) {
-                                return s.id == symbol.id
-                            })
-                        })
-                })
-            }
-        };
-
-        /**
-         * @description add a symbol to the scope
-         * @param symbol {{}}
-         */
-        $scope.addSymbol = function (symbol) {
-            $scope.symbols.push(symbol)
-        };
-
-        /**
-         * @description updates a symbol in the scope
-         * @param symbol {{}}
-         */
-        $scope.updateSymbol = function (symbol) {
-            var index = _.findIndex($scope.symbols, {id: symbol.id});
-            if (index > -1) {
-                SelectionService.select(symbol);
-                $scope.symbols[index] = symbol;
-            }
-        };
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('HypothesesSlideshowController', [
-            '$scope', '$stateParams', 'SessionService', 'TestResource',
-            HypothesesSlideshowController
-        ]);
-
-    function HypothesesSlideshowController($scope, $stateParams, SessionService, TestResource) {
-
-        $scope.project = SessionService.project.get();
-        $scope.finalTestResults = [];
-        $scope.panels = [];
-
-        //////////
-
-        TestResource.getAllFinal($scope.project.id)
-            .then(function (finalTestResults) {
-                $scope.finalTestResults = finalTestResults;
-                return $stateParams.testNo;
-            })
-            .then(loadComplete);
-
-        //////////
-
-        function loadComplete(testNo, index) {
-            TestResource.getComplete($scope.project.id, testNo)
-                .then(function(completeTestResult){
-                    if (angular.isUndefined(index)) {
-                        $scope.panels[0] = completeTestResult;
-                    } else {
-                        $scope.panels[index] = completeTestResult;
-                    }
-                })
-        }
-
-        //////////
-
-        $scope.fillPanel = function (result, index) {
-            loadComplete(result.testNo, index);
-        }
-    }
-
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('IndexController', [
-            '$scope', '$location', 'ProjectResource', 'SessionService',
-            IndexController
+        .controller('HomeController', [
+            '$scope', '$state', 'ProjectResource', 'SessionService',
+            HomeController
         ]);
 
     /**
-     * IndexController
+     * HomeController
      *
      * The controller for the landing page. It lists the projects.
      *
@@ -586,7 +400,7 @@ angular
      * @param SessionService
      * @constructor
      */
-    function IndexController($scope, $location, ProjectResource, SessionService) {
+    function HomeController($scope, $state, ProjectResource, SessionService) {
 
         /** The project list */
         $scope.projects = [];
@@ -594,8 +408,8 @@ angular
         //////////
 
         // redirect to the project dash page if one is open
-        if (SessionService.project.get() != null) {
-            $location.path('/project/' + SessionService.project.get().id);
+        if (SessionService.project.get()) {
+            $state.go('project');
         }
 
         // get all projects from the server
@@ -613,269 +427,122 @@ angular
          */
         $scope.openProject = function (project) {
             SessionService.project.save(project);
-            $location.path('/project/' + project.id);
+            $state.go('project');
         }
     }
 }());;(function () {
+    'use strict';
 
     angular
         .module('weblearner.controller')
-        .controller('LearnController', [
-            '$scope', '$interval', 'SessionService', 'LearnerResource',
-            LearnController
+        .controller('LearnResultsCompareController', [
+            '$scope', '$stateParams', 'SessionService', 'TestResource',
+            LearnResultsCompareController
         ]);
 
-    /**
-     * LearnController
-     *
-     * Shows a load screen and the hypothesis of a test.
-     *
-     * @param $scope
-     * @param $interval
-     * @param SessionService
-     * @param Learner
-     * @constructor
-     */
-    function LearnController($scope, $interval, SessionService, LearnerResource) {
+    function LearnResultsCompareController($scope, $stateParams, SessionService, TestResource) {
 
-        var _project = SessionService.project.get();
-        var _interval = null;
-        var _intervalTime = 10000;
+        $scope.project = SessionService.project.get();
+        $scope.finalTestResults = [];
+        $scope.panels = [];
+        $scope.layoutSettings = [];
 
         //////////
 
-        /** the test result **/
-        $scope.test = null;
-
-        /** indicator for polling the server for a test result */
-        $scope.active = false;
-
-        /** indicator if eqOracle was type 'sample' **/
-        $scope.isEqOracleSample = false;
-
-        $scope.counterExample = {
-            input: '',
-            output: ''
-        };
+        TestResource.getAllFinal($scope.project.id)
+            .then(function (finalTestResults) {
+                $scope.finalTestResults = finalTestResults;
+                return $stateParams.testNos;
+            })
+            .then(loadComplete);
 
         //////////
 
-        // start polling the server
-        _poll();
-
-        //////////
-
-        /**
-         * check every x seconds if the server has finished learning and set the test if he did finish
-         * @private
-         */
-        function _poll() {
-
-            $scope.active = true;
-            _interval = $interval(function () {
-                LearnerResource.isActive()
-                    .then(function (data) {
-                        if (!data.active) {
-                            LearnerResource.status()
-                                .then(function (test) {
-                                    $scope.active = false;
-                                    $scope.test = test;
-                                    $scope.isEqOracleSample = test.configuration.eqOracle.type == 'sample';
-                                });
-                            $interval.cancel(_interval);
-                        }
-                    })
-            }, _intervalTime);
-        }
-
-        //////////
-
-        /**
-         * Update the configuration for the continuing test when choosing eqOracle 'sample' and showing an intermediate
-         * hypothesis
-         *
-         * @param config
-         */
-        $scope.updateLearnConfiguration = function (config) {
-
-            $scope.test.configuration = config;
-        };
-
-        /**
-         * Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample'
-         *
-         * @param config
-         */
-        $scope.resumeLearning = function () {
-
-            var copy = angular.copy($scope.test.configuration);
-            delete copy.algorithm;
-            delete copy.symbols;
-
-            LearnerResource.resume(_project.id, $scope.test.testNo, copy)
-                .then(function () {
-                    _poll();
+        function loadComplete(testNos, index) {
+        	
+        	testNos = testNos.split(',');
+        	_.forEach(testNos, function(testNo){       		
+        		TestResource.getComplete($scope.project.id, testNo)
+                .then(function(completeTestResult){
+                    if (angular.isUndefined(index)) {
+                        $scope.panels.push(completeTestResult);
+                    } else {
+                        $scope.panels[index] = completeTestResult;
+                    }
                 })
+        	})
         }
 
-        $scope.abort = function () {
+        //////////
 
-            if ($scope.active) {
-                LearnerResource.stop()
-                    .then(function(data){
-
-                        console.log(data)
-                    })
-            }
+        $scope.fillPanel = function (result, index) {
+            loadComplete(result.testNo, index);
         }
     }
 
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('LearnResultsController', [
+            '$scope', 'SessionService', 'TestResource', 'SelectionService',
+            LearnResultsController
+        ]);
+
+    function LearnResultsController($scope, SessionService, TestResource, SelectionService) {
+
+        $scope.project = SessionService.project.get();
+        $scope.tests = [];
+
+        //////////
+
+        TestResource.getAllFinal($scope.project.id)
+            .then(function (tests) {
+                $scope.tests = tests;
+            });
+
+        //////////
+
+        $scope.deleteTest = function (test) {
+
+            SelectionService.removeSelection(test);
+
+            TestResource.delete($scope.project.id, test.testNo)
+                .then(function () {
+                    _.remove($scope.tests, {testNo: test.testNo});
+                })
+        };
+
+        $scope.deleteTests = function () {
+
+            var selectedTests = SelectionService.getSelected($scope.tests);
+            var testNos;
+            
+            if (selectedTests.length > 0) {
+            	testNos = _.pluck(selectedTests, 'testNo');
+            	TestResource.delete($scope.project.id, testNos)
+            		.then(function(){
+            			_.forEach(testNos, function(testNo){
+            				_.remove($scope.tests, {testNo: testNo})
+            			})
+            		})
+            }
+        }
+    }
 }());
 ;(function () {
     'use strict';
 
     angular
         .module('weblearner.controller')
-        .controller('NavigationController', [
-            '$scope', '$location', 'SessionService',
-            NavigationController
-        ]);
-
-    /**
-     * the controller to handle the app navigation
-     * @template 'app/partials/navs/nav-main.html'
-     * @param $scope
-     * @param $location
-     * @param Session
-     * @constructor
-     */
-    function NavigationController($scope, $location, Session) {
-
-        /** the project or null if not open */
-        $scope.project = Session.project.get();
-
-        //////////
-
-        // load project into scope when projectOpened is emitted
-        $scope.$on('project.opened', function () {
-            $scope.project = Session.project.get();
-        });
-
-        // delete project from scope when projectOpened is emitted
-        $scope.$on('project.closed', function () {
-            $scope.project = null;
-        });
-
-        //////////
-
-        /**
-         * remove the project object from the session and redirect to the start page
-         */
-        $scope.closeProject = function () {
-            Session.project.remove();
-            $location.path('/');
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('ProjectCreateController', [
-            '$scope', '$location', 'ProjectResource',
-            ProjectCreateController
-        ]);
-
-    /**
-     * create a new project
-     * @template 'app/partials/project-create.html'
-     * @param $scope
-     * @param $location
-     * @param Project
-     * @constructor
-     */
-    function ProjectCreateController($scope, $location, ProjectResource) {
-
-        /** @type {{}} */
-        $scope.project = {};
-
-        //////////
-
-        /**
-         * create a new project
-         */
-        $scope.createProject = function () {
-            if ($scope.create_form.$valid) {
-                ProjectResource.create($scope.project)
-                    .then(function (project) {
-                        $location.path('/');
-                    })
-            } else {
-                $scope.create_form.submitted = true;
-            }
-        };
-
-        /**
-         * reset the form
-         */
-        $scope.reset = function () {
-            $scope.project = {}
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('ProjectSettingsController', [
-            '$scope', '$location', 'ProjectResource', 'SessionService',
-            ProjectSettingsController
-        ]);
-
-    function ProjectSettingsController($scope, $location, ProjectResource, SessionService) {
-
-        $scope.project = SessionService.project.get();
-        $scope.projectCopy = SessionService.project.get();
-
-        //////////
-
-        $scope.updateProject = function () {
-            if ($scope.update_form.$valid) {
-                ProjectResource.update($scope.project)
-                    .then(function (project) {
-                        SessionService.project.save(project);
-                        $scope.project = project;
-                        $scope.projectCopy = project;
-                    })
-            } else {
-                $scope.update_form.submitted = true;
-            }
-        };
-
-        $scope.deleteProject = function () {
-            ProjectResource.delete($scope.project)
-                .then(function () {
-                    SessionService.project.remove();
-                    $location.path('/')
-                })
-        };
-
-        $scope.reset = function () {
-            $scope.project = angular.copy($scope.projectCopy);
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('StatisticsController', [
+        .controller('LearnResultsStatisticsController', [
             '$scope', 'SessionService', 'TestResource', 'TestResultsChartService', 'SelectionService',
-            StatisticsController
+            LearnResultsStatisticsController
         ]);
 
     /**
-     * StatisticsController
+     * LearnResultsStatisticsController
      *
      * The controller that is used for the statistics page
      *
@@ -886,7 +553,7 @@ angular
      * @param SelectionService
      * @constructor
      */
-    function StatisticsController($scope, SessionService, TestResource, TestResultsChartService, SelectionService) {
+    function LearnResultsStatisticsController($scope, SessionService, TestResource, TestResultsChartService, SelectionService) {
 
         /** The open project */
         $scope.project = SessionService.project.get();
@@ -976,15 +643,513 @@ angular
 
     angular
         .module('weblearner.controller')
-        .controller('SymbolExportController', [
-            '$scope', 'SessionService', 'SymbolResource', 'SelectionService',
-            SymbolExportController
+        .controller('LearnSetupController', [
+            '$scope', '$state', 'SymbolResource', 'SessionService', 'SelectionService', 'type', 'EqOraclesEnum',
+            'LearnAlgorithmsEnum', 'LearnerResource', 'ngToast',
+            LearnSetupController
         ]);
 
-    function SymbolExportController($scope, SessionService, SymbolResource, SelectionService) {
+    function LearnSetupController($scope, $state, SymbolResource, SessionService, SelectionService, type, EqOracles,
+                                 LearnAlgorithms, LearnerResource, toast) {
+
+        $scope.project = SessionService.project.get();
+        $scope.symbols = [];
+        $scope.type = type;
+
+        $scope.learnConfiguration = {
+            symbols: [],
+            algorithm: LearnAlgorithms.EXTENSIBLE_LSTAR,
+            eqOracle: {
+                type: EqOracles.COMPLETE,
+                minDepth: 1,
+                maxDepth: 1
+            },
+            maxAmountOfStepsToLearn: 0
+        };
+
+        //////////
+
+        LearnerResource.isActive()
+            .then(function (data) {
+                if (data.active) {
+                    if (data.project == $scope.project.id) {
+                    	$state.go('learn.start');
+                    } else {
+                        toast.create({
+                            class: 'danger',
+                            content: 'There is already running a test from another project.',
+                            dismissButton: true
+                        });
+                    }
+                } else {
+                    SymbolResource.getAll($scope.project.id, {type:type})
+                        .then(function(symbols){
+                            $scope.symbols = symbols;
+                        })
+                }
+            });
+
+        //////////
+
+        $scope.startLearning = function () {
+            var selectedSymbols = SelectionService.getSelected($scope.symbols);
+
+            // make sure there are selected symbols
+            if (selectedSymbols.length) {
+
+                // get id:revision pair from each selected symbol and add it to the learn configuration
+                _.forEach(selectedSymbols, function (symbol) {
+                    $scope.learnConfiguration.symbols.push({
+                        id: symbol.id,
+                        revision: symbol.revision
+                    });
+                });
+
+                // start learning and go to the load page
+                LearnerResource.start($scope.project.id, $scope.learnConfiguration)
+                    .then(function () {
+                        $state.go('learn.start')
+                    })
+            }
+        };
+
+        $scope.updateLearnConfiguration = function (config) {
+            $scope.learnConfiguration = config;
+        };
+    }
+}());;(function () {
+
+    angular
+        .module('weblearner.controller')
+        .controller('LearnStartController', [
+            '$scope', '$stateParams', '$interval', 'SessionService', 'LearnerResource',
+            LearnStartController
+        ]);
+
+    /**
+     * LearnStartController
+     *
+     * Shows a load screen and the hypothesis of a test.
+     *
+     * @param $scope
+     * @param $interval
+     * @param SessionService
+     * @param Learner
+     * @constructor
+     */
+    function LearnStartController($scope, $stateParams, $interval, SessionService, LearnerResource) {
 
         var _project = SessionService.project.get();
-        var _fileName = 'symbols-project-' + _project.id + '.json';
+        var _interval = null;
+        var _intervalTime = 10000;
+
+        //////////
+
+        /** the test result **/
+        $scope.test = null;
+
+        /** indicator for polling the server for a test result */
+        $scope.active = false;
+
+        /** indicator if eqOracle was type 'sample' **/
+        $scope.isEqOracleSample = false;
+
+        $scope.counterExample = {
+            input: '',
+            output: ''
+        };
+        
+        $scope.layoutSettings;
+
+        //////////
+        
+        // start polling the server
+        _poll();
+
+        //////////
+
+        /**
+         * check every x seconds if the server has finished learning and set the test if he did finish
+         * @private
+         */
+        function _poll() {
+
+            $scope.active = true;
+            _interval = $interval(function () {
+                LearnerResource.isActive()
+                    .then(function (data) {
+                        if (!data.active) {
+                            LearnerResource.status()
+                                .then(function (test) {
+                                    $scope.active = false;
+                                    $scope.test = test;
+                                    $scope.isEqOracleSample = test.configuration.eqOracle.type == 'sample';
+                                });
+                            $interval.cancel(_interval);
+                        }
+                    })
+            }, _intervalTime);
+        }
+
+        //////////
+
+        /**
+         * Update the configuration for the continuing test when choosing eqOracle 'sample' and showing an intermediate
+         * hypothesis
+         *
+         * @param config
+         */
+        $scope.updateLearnConfiguration = function (config) {
+
+            $scope.test.configuration = config;
+        };
+
+        /**
+         * Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample'
+         *
+         * @param config
+         */
+        $scope.resumeLearning = function () {
+
+            var copy = angular.copy($scope.test.configuration);
+            delete copy.algorithm;
+            delete copy.symbols;
+
+            LearnerResource.resume(_project.id, $scope.test.testNo, copy)
+                .then(function () {
+                    _poll();
+                })
+        }
+
+        $scope.abort = function () {
+
+            if ($scope.active) {
+                LearnerResource.stop()
+                    .then(function(data){
+
+                        console.log(data)
+                    })
+            }
+        }
+    }
+
+}());
+;(function(){
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('ProjectController', [
+            '$scope', 'SessionService',
+            ProjectController
+        ]);
+
+    function ProjectController($scope, SessionService) {
+
+        $scope.project = SessionService.project.get();
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('ProjectCreateController', [
+            '$scope', '$location', 'ProjectResource',
+            ProjectCreateController
+        ]);
+
+    /**
+     * create a new project
+     * @template 'app/partials/project-create.html'
+     * @param $scope
+     * @param $location
+     * @param Project
+     * @constructor
+     */
+    function ProjectCreateController($scope, $location, ProjectResource) {
+
+        /** @type {{}} */
+        $scope.project = {};
+
+        //////////
+
+        /**
+         * create a new project
+         */
+        $scope.createProject = function () {
+            if ($scope.create_form.$valid) {
+                ProjectResource.create($scope.project)
+                    .then(function (project) {
+                        $location.path('/');
+                    })
+            } else {
+                $scope.create_form.submitted = true;
+            }
+        };
+
+        /**
+         * reset the form
+         */
+        $scope.reset = function () {
+            $scope.project = {}
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('ProjectSettingsController', [
+            '$scope', '$location', 'ProjectResource', 'SessionService',
+            ProjectSettingsController
+        ]);
+
+    function ProjectSettingsController($scope, $location, ProjectResource, SessionService) {
+
+        $scope.project = SessionService.project.get();
+        $scope.projectCopy = angular.copy($scope.project);
+        
+        //////////
+
+        $scope.updateProject = function () {
+            if ($scope.update_form.$valid) {
+                ProjectResource.update($scope.project)
+                    .then(function (project) {
+                        SessionService.project.save(project);
+                        $scope.project = project;
+                        $scope.projectCopy = project;
+                    })
+            } else {
+                $scope.update_form.submitted = true;
+            }
+        };
+
+        $scope.deleteProject = function () {
+            ProjectResource.delete($scope.project)
+                .then(function () {
+                    SessionService.project.remove();
+                    $location.path('/')
+                })
+        };
+
+        $scope.reset = function () {
+            $scope.project = angular.copy($scope.projectCopy);
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('SymbolsActionsController', [
+            '$scope', '$stateParams', 'SymbolResource', 'SessionService', 'SelectionService', 'WebActionTypesEnum',
+            'RestActionTypesEnum', 'ngToast',
+            SymbolsActionsController
+        ]);
+
+    function SymbolsActionsController($scope, $stateParams, SymbolResource, SessionService, SelectionService,
+                                      WebActionTypesEnum, RestActionTypesEnum, toast) {
+
+        /** the enum for web action types that are displayed in a select box */
+        $scope.webActionTypes = WebActionTypesEnum;
+
+        /** the enum for rest action types that are displayed in a select box */
+        $scope.restActionTypes = RestActionTypesEnum;
+
+        /** the open project */
+        $scope.project = SessionService.project.get();
+
+        /** the symbol whose actions are managed */
+        $scope.symbol = null;
+
+        /** a copy of $scope.symbol to revert unsaved changes */
+        $scope.symbolCopy = null;
+
+        //////////
+
+        // load all actions from the symbol
+        SymbolResource.get($scope.project.id, $stateParams.symbolId)
+            .then(init);
+
+        //////////
+
+        function init(symbol) {
+
+            // create unique ids for actions
+            _.forEach(symbol.actions, function (action) {
+                action._id = _.uniqueId();
+            });
+
+            // add symbol to scope and create a copy in order to revert changes
+            $scope.symbol = symbol;
+            $scope.symbolCopy = angular.copy($scope.symbol);
+        }
+
+        //////////
+
+        /**
+         * delete the actions that the user selected from the scope
+         */
+        $scope.deleteSelectedActions = function () {
+            var selectedActions = SelectionService.getSelected($scope.symbol.actions);
+            if (selectedActions.length) {
+                _.forEach(selectedActions, $scope.deleteAction);
+            }
+        };
+
+        $scope.deleteAction = function(action) {
+            _.remove($scope.symbol.actions, {_id: action._id});
+        };
+
+        /**
+         * add a new action to the list of actions of the symbol
+         * @param action
+         */
+        $scope.addAction = function (action) {
+            action._id = _.uniqueId();
+            $scope.symbol.actions.push(action);
+        };
+
+        /**
+         * update an action
+         * @param updatedAction
+         */
+        $scope.updateAction = function (updatedAction) {
+            var index = _.findIndex($scope.symbol.actions, {_id: updatedAction._id});
+            if (index > -1) {
+                $scope.symbol.actions[index] = updatedAction;
+            }
+        };
+
+        /**
+         * save the changes that were made to the symbol by updating it on the server
+         */
+        $scope.saveChanges = function () {
+            SelectionService.removeSelection($scope.actions);
+
+            // remove the temporarily create unique id attribute
+            _.forEach(copy.actions, function (action) {
+                delete action._id;
+            });
+
+            // update the symbol
+            SymbolResource.update($scope.project.id, $scope.symbol)
+                .then(init)
+        };
+
+        /**
+         * revert the changes that were made to the symbol
+         */
+        $scope.revertChanges = function () {
+            $scope.symbol = angular.copy($scope.symbolCopy);
+        };
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('SymbolsController', [
+            '$scope', 'SessionService', 'SymbolResource', 'SelectionService', 'type',
+            SymbolsController
+        ]);
+
+    function SymbolsController($scope, SessionService, SymbolResource, SelectionService, type) {
+
+        /** the open project @type {*} */
+        $scope.project = SessionService.project.get();
+
+        /** the symbol type @type {string} */
+        $scope.type = type;
+
+        /** the list of web or rest symbols @type {[]|*[]} */
+        $scope.symbols = [];
+
+        //////////
+
+        // load symbols from the server
+        SymbolResource.getAll($scope.project.id, {type: type})
+            .then(function (symbols) {
+                $scope.symbols = symbols;
+            });
+
+        //////////
+
+        /**
+         *
+         * @param symbols
+         */
+        function removeSymbolsFromScope(symbols) {
+            if (symbols.length) {
+                _.forEach(symbols, function (symbol) {
+                    _.remove($scope.symbols, {id: symbol.id})
+                })
+            }
+        }
+
+        //////////
+
+        /**
+         *
+         * @param symbol
+         */
+        $scope.deleteSymbol = function (symbol) {
+            SymbolResource.delete($scope.project.id, symbol.id)
+                .then(function () {
+                    removeSymbolsFromScope([symbol])
+                })
+        };
+
+        /**
+         * Delete the symbols the user selected from the server and the scope
+         */
+        $scope.deleteSelectedSymbols = function () {
+
+            var selectedSymbols = SelectionService.getSelected($scope.symbols);
+            var symbolsIds;
+
+            if (selectedSymbols.length) {
+                symbolsIds = _.pluck(selectedSymbols, 'id');
+                SymbolResource.deleteSome($scope.project.id, symbolsIds)
+                    .then(function () {
+                        removeSymbolsFromScope(selectedSymbols);
+                    });
+            }
+        };
+
+        /**
+         * Add a symbol to the scope
+         * @param symbol
+         */
+        $scope.addSymbol = function (symbol) {
+            $scope.symbols.push(symbol)
+        };
+
+        /**
+         * Update a symbol in the scope
+         * @param symbol
+         */
+        $scope.updateSymbol = function (symbol) {
+            var index = _.findIndex($scope.symbols, {id: symbol.id});
+            if (index > -1) {
+                SelectionService.select(symbol);
+                $scope.symbols[index] = symbol;
+            }
+        };
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('SymbolsExportController', [
+            '$scope', 'SessionService', 'SymbolResource', 'SelectionService',
+            SymbolsExportController
+        ]);
+
+    function SymbolsExportController($scope, SessionService, SymbolResource, SelectionService) {
+
+        var _project = SessionService.project.get();
 
         //////////
 
@@ -995,7 +1160,7 @@ angular
 
         //////////
 
-        SymbolResource.all(_project.id)
+        SymbolResource.getAll(_project.id)
             .then(function (symbols) {
                 $scope.symbols.web = _.filter(symbols, {type: 'web'});
                 $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
@@ -1025,12 +1190,12 @@ angular
 
     angular
         .module('weblearner.controller')
-        .controller('SymbolUploadController', [
+        .controller('SymbolsImportController', [
             '$scope', 'SessionService', 'SymbolResource', 'SelectionService',
-            SymbolUploadController
+            SymbolsImportController
         ]);
 
-    function SymbolUploadController($scope, SessionService, SymbolResource, SelectionService) {
+    function SymbolsImportController($scope, SessionService, SymbolResource, SelectionService) {
 
         var _project = SessionService.project.get();
 
@@ -1058,17 +1223,15 @@ angular
             $scope.$apply();
         };
 
-        $scope.createSymbols = function () {
+        $scope.uploadSymbols = function () {
 
             var selectedWebSymbols = SelectionService.getSelected($scope.symbols.web);
             var selectedRestSymbols = SelectionService.getSelected($scope.symbols.rest);
             var selectedSymbols = selectedWebSymbols.concat(selectedRestSymbols);
 
             SelectionService.removeSelection(selectedSymbols);
-
-            _.forEach(selectedSymbols, function (symbol) {
-                SymbolResource.create(_project.id, symbol)
-            });
+                       
+            SymbolResource.create(_project.id, selectedSymbols);
         }
     }
 }());;(function () {
@@ -1076,140 +1239,68 @@ angular
 
     angular
         .module('weblearner.controller')
-        .controller('TestResultController', [
-            '$scope', 'SessionService', 'TestResource', 'SelectionService',
-            TestResultController
+        .controller('SymbolsTrashController', [
+            '$scope', 'type', 'SessionService', 'SymbolResource', 'SelectionService',
+            SymbolsTrashController
         ]);
 
-    function TestResultController($scope, SessionService, TestResource, SelectionService) {
+    /**
+     * SymbolsTrashController
+     *
+     * @param $scope
+     * @param type
+     * @param SessionService
+     * @param SymbolResource
+     * @param SelectionService
+     * @constructor
+     */
+    function SymbolsTrashController($scope, type, SessionService, SymbolResource, SelectionService) {
 
+        /**
+         * The open project
+         */
         $scope.project = SessionService.project.get();
-        $scope.tests = [];
 
-        //////////
-
-        TestResource.getAllFinal($scope.project.id)
-            .then(function (tests) {
-                $scope.tests = tests;
-            });
-
-        //////////
-
-        $scope.deleteTest = function (test) {
-
-            SelectionService.removeSelection(test);
-
-            TestResource.delete($scope.project.id, test.testNo)
-                .then(function () {
-                    _.remove($scope.tests, {testNo: test.testNo});
-                })
-        };
-
-        $scope.deleteTests = function (tests) {
-
-            var selectedTests = SelectionService.getSelected($scope.tests);
-
-            if (selectedTests.length > 0) {
-                _.forEach(selectedTests, $scope.deleteTest)
-            }
-        }
-    }
-}());
-;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('TestSetupController', [
-            '$scope', '$location', 'SymbolResource', 'SessionService', 'SelectionService', 'type', 'EqOraclesEnum',
-            'LearnAlgorithmsEnum', 'LearnerResource', 'ngToast',
-            TestSetupController
-        ]);
-
-    function TestSetupController($scope, $location, SymbolResource, SessionService, SelectionService, type, EqOracles,
-                                 LearnAlgorithms, LearnerResource, toast) {
-
-        $scope.project = SessionService.project.get();
+        /**
+         * The list of deleted symbols
+         * @type {Array}
+         */
         $scope.symbols = [];
+
+        /**
+         * The type of the symbols
+         * @type {String}
+         */
         $scope.type = type;
-        $scope.testConfiguration = {
-            symbols: [],
-            algorithm: LearnAlgorithms.EXTENSIBLE_LSTAR,
-            eqOracle: {
-                type: EqOracles.COMPLETE,
-                minDepth: 1,
-                maxDepth: 1
-            },
-            maxAmountOfStepsToLearn: 0
-        };
 
         //////////
 
-        LearnerResource.isActive()
-            .then(function (data) {
-                if (data.active) {
-
-                    if (data.project == $scope.project.id) {
-                        $location.path('/project/' + $scope.project.id + '/learn');
-                    } else {
-                        toast.create({
-                            class: 'danger',
-                            content: 'There is already running a test from another project.',
-                            dismissButton: true
-                        });
-                    }
-                } else {
-                    loadSymbols();
-                }
+        // load all deleted symbols into scope
+        SymbolResource.getAll($scope.project.id, {type:type, deleted: true})
+            .then(function (symbols) {
+                $scope.symbols = symbols;
             });
 
         //////////
 
-        function loadSymbols() {
-            switch (type) {
-                case 'web':
-                    SymbolResource.allWeb($scope.project.id)
-                        .then(function (symbols) {
-                            $scope.symbols = symbols;
-                        });
-                    break;
-                case 'rest':
-                    SymbolResource.allRest($scope.project.id)
-                        .then(function (symbols) {
-                            $scope.symbols = symbols;
-                        });
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        //////////
-
-        $scope.startTest = function () {
-
-            var selectedSymbols = SelectionService.getSelected($scope.symbols);
-
-            if (selectedSymbols.length == 0) {
-                return;
-            }
-
-            _.forEach(selectedSymbols, function (symbol) {
-                $scope.testConfiguration.symbols.push({
-                    id: symbol.id,
-                    revision: symbol.revision
-                });
-            });
-
-            LearnerResource.start($scope.project.id, $scope.testConfiguration)
-                .then(function (data) {
-                    $location.path('/project/' + $scope.project.id + '/learn');
+        /**
+         * Recover a deleted symbol and remove it from the scope
+         * @param {Object} symbol
+         */
+        $scope.recover = function (symbol) {
+            SymbolResource.recover($scope.project.id, symbol.id)
+                .then(function () {
+                    _.remove($scope.symbols, {id: symbol.id});
                 })
         };
 
-        $scope.updateLearnConfiguration = function (config) {
-            $scope.testConfiguration = config;
-        };
+        /**
+         * Recover the symbols that were selected
+         */
+        $scope.recoverSelected = function () {
+            var selectedSymbols = SelectionService.getSelected($scope.symbols);
+            _.forEach(selectedSymbols, $scope.recover)
+        }
     }
 }());;(function(){
     'use strict';
@@ -1271,6 +1362,51 @@ angular
             $modalInstance.dismiss();
         }
     }
+}());;(function(){
+	'use strict';
+	
+	angular
+		.module('weblearner.controller')
+		.controller('HypothesisLayoutSettingsController', [
+	         '$scope', '$modalInstance', 'modalData',
+	         HypothesisLayoutSettingsController
+       ]);
+	
+	function HypothesisLayoutSettingsController($scope, $modalInstance, modalData){
+		
+		var _defaultLayoutSetting = {
+			nodesep: 50,
+			edgesep: 25,
+			ranksep: 50
+		};
+		
+		$scope.layoutSettings;
+		
+		//////////
+		
+		if (angular.isDefined(modalData.layoutSettings)) {
+			$scope.layoutSettings = angular.copy(modalData.layoutSettings);
+		} else {
+			$scope.layoutSettings = angular.copy(_defaultLayoutSetting);
+		}
+		
+		//////////
+		
+		$scope.update = function(){
+						
+			$modalInstance.close($scope.layoutSettings);
+		}
+		
+		$scope.close = function(){
+			
+			$modalInstance.dismiss();
+		}
+		
+		$scope.defaultLayoutSettings = function(){
+			
+			$scope.layoutSettings = angular.copy(_defaultLayoutSetting);
+		}
+	}
 }());;(function () {
     'use strict';
 
@@ -1520,50 +1656,6 @@ angular
             $scope.types = WebActionTypesEnum;
         }
     }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('appNavigation', appNavigation);
-
-    function appNavigation() {
-
-        var directive = {
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attrs) {
-
-            var menuButton = angular.element(el[0].getElementsByClassName('navbar-menu'));
-            var wrapper = angular.element(el[0].getElementsByClassName('app-navigation-wrapper'));
-            var view = angular.element(document.getElementById('view'));
-            var cssClass = 'has-off-screen-navigation';
-
-            menuButton.on('click', toggleNavigation);
-
-            function toggleNavigation(e) {
-                e.stopPropagation();
-
-                if (wrapper.hasClass(cssClass)) {
-                    wrapper.removeClass(cssClass);
-                } else {
-                    wrapper.addClass(cssClass);
-                    wrapper.on('click', hideNavigation);
-                }
-            }
-
-            function hideNavigation(e) {
-                if (e.target.tagName == 'A' && e.target.getAttribute('href') != '#') {
-                    wrapper.removeClass(cssClass);
-                    wrapper.off('click', hideNavigation);
-                }
-            }
-        }
-    }
 }());;(function() {
 	'use strict';
 
@@ -1748,6 +1840,28 @@ angular
         ]);
 
     function downloadHypothesisAsSvg(PromptService) {
+    	
+    	var defs = '' +
+    		'<defs>' +
+        	'<style type="text/css"><![CDATA[' +
+            '	.hypothesis text {' +
+    	  	'		font-size: 12px;}' +
+			'	.hypothesis .node {' +
+      		'		fill: #fff;' +
+      		'		stroke: #000;' +
+      		'		stroke-width: 1; }' +
+			'	.hypothesis .node .label text {' +
+		    ' 		fill: #000;' +
+      		'		stroke: #000;' +
+      		'		stroke-width: 1; }' +
+    		'	.hypothesis .edgePath .path {' +
+      		'		stroke: rgba(0, 0, 0, 0.3);' +
+      		'		stroke-width: 3;' +
+      		'		fill: none; }' +
+    		'	.hypothesis .edgeLabel text {' +
+      		'		fill: #555; }' +
+			']]></style>'+
+			'</defs>';
 
         var directive = {
             link: link
@@ -1785,12 +1899,13 @@ angular
                 svg.setAttribute('version', '1.1');
                 svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-                var r = new XMLSerializer().serializeToString(svg);
+                // create serialized string from svg element
+                var svgString = new XMLSerializer().serializeToString(svg);
 
                 // create new link element with image data
                 a = document.createElement('a');
                 a.style.display = 'none';
-                a.setAttribute('href', 'data:image/svg+xml,' + r);
+                a.setAttribute('href', 'data:image/svg+xml,' + svgString);                
                 a.setAttribute('target', '_blank');
                 a.setAttribute('download', filename + '.svg');
 
@@ -1888,6 +2003,47 @@ angular
 			}
 		}
 	}
+}());;(function(){
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('dropdownHover', dropdownHover);
+
+    /**
+     * dropdownHover
+     *
+     * A directive in addition to the dropdown directive from ui-bootstrap. It opens the dropdown menu when entering the
+     * trigger element of the menu with the mouse so you don't have to click on it. Place it as attribute 'dropdown-hover'
+     * beside 'dropdown' in order to work as expected.
+     *
+     * @return {{require: string, link: link}}
+     */
+    function dropdownHover(){
+
+        var directive = {
+            restrict: 'A',
+            require: 'dropdown',
+            link: link
+        };
+        return directive;
+
+        //////////
+
+        /**
+         * @param scope
+         * @param el
+         * @param attrs
+         * @param ctrl - the dropdown controller
+         */
+        function link(scope, el, attrs, ctrl) {
+            el.on('mouseenter', function(){
+                scope.$apply(function(){
+                    ctrl.toggle(true);
+                })
+            })
+        }
+    }
 }());;(function () {
     'use strict';
 
@@ -2098,39 +2254,6 @@ angular
 	}
 }());
 ;(function(){
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('formatDateTime', formatDateTime);
-
-    function formatDateTime() {
-
-        var directive = {
-            scope: {
-                date: '=formatDateTime'
-            },
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attrs){
-
-            var date = new Date(scope.date);
-            var dateString = '';
-
-            dateString += date.getDate() + '.';
-            dateString += (date.getMonth() + 1) + '.';
-            dateString += date.getFullYear() + ', ';
-            dateString += date.getHours() + ':';
-            dateString += date.getMinutes();
-
-            el[0].innerHTML = dateString;
-        }
-    }
-}());;(function(){
 
     angular
         .module('weblearner.directives')
@@ -2144,7 +2267,8 @@ angular
         var directive = {
             scope: {
                 test: '=',
-                counterExample: '='
+                counterExample: '=',
+                layoutSettings: '='
             },
             templateUrl: 'app/partials/directives/hypothesis.html',
             link: link
@@ -2165,19 +2289,27 @@ angular
 
             scope.$watch('test', function(test){
                 if (angular.isDefined(test) && test != null) {
-                    if (angular.isDefined(_svg)){
-                        el.find('svg')[0].innerHTML = '';
-                    }
                     createHypothesis();
                 }
             });
-
-            //////////
+            
+            scope.$watch('layoutSettings', function(ls){
+            	if (angular.isDefined(ls)) {
+            		createHypothesis();
+            	}
+            })
+            
+            //////////            
 
             function createHypothesis () {
+            	clearSvg();
                 initGraph();
                 layoutGraph();
                 renderGraph();
+            }
+            
+            function clearSvg() {
+            	el.find('svg')[0].innerHTML = '';
             }
 
             function initGraph() {
@@ -2190,7 +2322,16 @@ angular
                     directed: true,
                     multigraph: true
                 });
-                _graph.setGraph({edgesep: 25});
+                
+                if (angular.isDefined(scope.layoutSettings)) {               	
+                	_graph.setGraph({
+                		edgesep: scope.layoutSettings.edgesep,
+                		nodesep: scope.layoutSettings.nodesep,
+                		ranksep: scope.layoutSettings.ranksep
+            		});
+                } else {
+                	_graph.setGraph({edgesep: 25});
+                }
             }
 
             function layoutGraph() {
@@ -2212,15 +2353,19 @@ angular
                 _renderer = new dagreD3.render();
                 _renderer(_svgGroup, _graph);
 
-                _svg.selectAll('.edgeLabel').on('click', function(){
+                // attach click events for the selection of counter examples only if counterexamples
+                // is defined
+                if (angular.isDefined(scope.counterExample)){
+                	_svg.selectAll('.edgeLabel').on('click', function(){
 
-                    var el = this.getElementsByTagName('tspan')[0];
-                    var label = el.innerHTML.split('/');
-
-                    scope.counterExample.input += (label[0] + ',');
-                    scope.counterExample.output += (label[1] + ',');
-                    scope.$apply()
-                });
+                        var el = this.getElementsByTagName('tspan')[0];
+                        var label = el.innerHTML.split('/');
+                        
+                        scope.counterExample.input += (label[0] + ',');
+                        scope.counterExample.output += (label[1] + ',');
+                        scope.$apply()
+                    });
+                }
 
                 // Center graph
                 var xCenterOffset = (_svgContainer.clientWidth - _graph.graph().width) / 2;
@@ -2442,66 +2587,6 @@ angular
 
     angular
         .module('weblearner.directives')
-        .directive('ifIsTypeOfRest', ['ngIfDirective', ifIsTypeOfRest]);
-
-    function ifIsTypeOfRest(ngIfDirective) {
-        var ngIf = ngIfDirective[0];
-
-        var directive = {
-            transclude: ngIf.transclude,
-            priority: ngIf.priority,
-            terminal: ngIf.terminal,
-            restrict: ngIf.restrict,
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attrs){
-            var value = scope.$eval(attrs['ifIsTypeOfRest']);
-
-            attrs.ngIf = function(){
-                return value == 'rest';
-            };
-            ngIf.link.apply(ngIf, arguments);
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('ifIsTypeOfWeb', ['ngIfDirective', ifIsTypeOfWeb]);
-
-    function ifIsTypeOfWeb(ngIfDirective) {
-        var ngIf = ngIfDirective[0];
-
-        var directive = {
-            transclude: ngIf.transclude,
-            priority: ngIf.priority,
-            terminal: ngIf.terminal,
-            restrict: ngIf.restrict,
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attrs){
-            var value = scope.$eval(attrs['ifIsTypeOfWeb']);
-
-            attrs.ngIf = function(){
-                return value == 'web';
-            };
-            ngIf.link.apply(ngIf, arguments);
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
         .directive('loadScreen', loadScreen);
 
     function loadScreen() {
@@ -2541,6 +2626,154 @@ angular
             }
         }
     }
+}());;(function(){
+	'use strict';
+	
+	angular
+		.module('weblearner.directives')
+		.directive('navigation', navigation);
+	
+	function navigation() {
+		
+		var directive = {
+			templateUrl: 'app/partials/directives/navigation.html',
+			link: link,
+			controller: ['$scope', '$window', '$state', 'SessionService', controller]
+		};
+		return directive;
+		
+		//////////
+		
+		function link(scope, el, attrs) {
+
+            var menuButton = angular.element(el[0].getElementsByClassName('navbar-menu'));
+            var wrapper = angular.element(el[0].getElementsByClassName('app-navigation-wrapper'));
+            var view = angular.element(document.getElementById('view'));
+            var cssClass = 'has-off-screen-navigation';
+
+			menuButton.on('click', toggleNavigation);
+
+            function toggleNavigation(e) {
+                e.stopPropagation();
+
+                if (wrapper.hasClass(cssClass)) {
+                    wrapper.removeClass(cssClass);
+                } else {
+                    wrapper.addClass(cssClass);
+                    wrapper.on('click', hideNavigation);
+                }
+            }
+
+            function hideNavigation(e) {
+                if (e.target.tagName == 'A' && e.target.getAttribute('href') != '#') {
+                    wrapper.removeClass(cssClass);
+                    wrapper.off('click', hideNavigation);
+                }
+            }
+        }
+		
+		//////////
+		
+		function controller($scope, $window, $state, SessionService){
+
+			var mediaQuery;
+
+			//////////
+			
+			/** the project */
+	        $scope.project = SessionService.project.get();
+			$scope.hover = false;
+			$scope.offScreen = false;
+
+	        //////////
+
+			this.setHover = function(hover){
+				$scope.hover = hover;
+			};
+
+			this.isHover = function(){
+				return $scope.hover;
+			};
+
+			this.isOffScreen = function(){
+				return $scope.offScreen;
+			};
+
+			//////////
+
+	        // load project into scope when projectOpened is emitted
+	        $scope.$on('project.opened', function () {
+	            $scope.project = SessionService.project.get();
+	        });
+
+	        // delete project from scope when projectOpened is emitted
+	        $scope.$on('project.closed', function () {
+	            $scope.project = null;
+	        });
+
+			// watch for media query event
+			mediaQuery = window.matchMedia('screen and (max-width: 768px)');
+			mediaQuery.addListener(mediaQueryMatches);
+			mediaQueryMatches(null, mediaQuery.matches);
+
+			//////////
+
+			function mediaQueryMatches(evt, matches){
+				if (evt === null) {
+					$scope.offScreen = matches ? true : false;
+				} else {
+					$scope.offScreen = evt.matches;
+				}
+			}
+
+	        //////////
+
+	        /**
+	         * remove the project object from the session and redirect to the start page
+	         */
+	        $scope.closeProject = function () {
+	        	SessionService.project.remove();
+	            $state.go('home');
+	        }
+		}
+	}
+
+	angular
+		.module('weblearner.directives')
+		.directive('dropdownNavigation', ['$document', dropdownNavigation]);
+
+	function dropdownNavigation($document){
+		return {
+			require: ['dropdown', '^navigation'],
+			link: function(scope, el, attrs, ctrls) {
+
+				var dropDownCtrl = ctrls[0];
+				var navigationCtrl = ctrls[1];
+
+				el.on('click', function(e){
+					e.stopPropagation();
+
+					if (!navigationCtrl.isOffScreen()){
+						if (!navigationCtrl.isHover()){
+							navigationCtrl.setHover(true);
+							$document.on('click', closeDropDown);
+						}
+					}
+				}).on('mouseenter', function(){
+					if (navigationCtrl.isHover()){
+						scope.$apply(function(){
+							dropDownCtrl.toggle(true);
+						})
+					}
+				});
+
+				function closeDropDown() {
+					navigationCtrl.setHover(false);
+					$document.off('click', closeDropDown);
+				}
+			}
+		}
+	}
 }());;(function () {
     'use strict';
 
@@ -2652,6 +2885,53 @@ angular
             }
         }
     }
+}());;(function(){
+	'use strict';
+		
+	angular
+		.module('weblearner.directives')
+		.directive('openHypothesisLayoutSettingsModal', [
+             '$modal', openHypothesisLayoutSettingsModal
+         ]);
+
+	function openHypothesisLayoutSettingsModal($modal) {
+		
+		var directive = {
+            scope: {
+                layoutSettings: '=',
+            },
+            link: link
+		};
+		return directive;
+		
+		//////////
+		
+		function link(scope, el, attrs) {
+			
+			el.on('click', handleModal);
+			
+			//////////
+
+            function handleModal() {
+            	                
+            	var modal = $modal.open({
+                    templateUrl: 'app/partials/modals/modal-hypothesis-layout-settings.html',
+                    controller: 'HypothesisLayoutSettingsController',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                layoutSettings: scope.layoutSettings
+                            }
+                        }
+                    }
+                });
+                
+                modal.result.then(function (layoutSettings) {
+                    scope.layoutSettings = layoutSettings
+                })
+            }
+		}
+	}
 }());;(function () {
     'use strict';
 
@@ -4081,92 +4361,17 @@ angular
     function SymbolResource($http, $q, api, toast) {
 
         var service = {
-            all: getAllSymbols,
-            allWeb: getAllWebSymbols,
-            allRest: getAllRestSymbols,
             get: getSymbol,
+            getAll: getAllSymbols,
+            recover: recoverSymbol,
             create: createSymbol,
             update: updateSymbol,
-            delete: deleteSymbol
+            delete: deleteSymbol,
+            deleteSome: deleteSomeSymbols
         };
         return service;
 
         //////////
-
-        /**
-         * get all rest and web symbols of a project by the projects id
-         * @param projectId
-         * @return {*}
-         */
-        function getAllSymbols(projectId) {
-            return $http.get(api.URL + '/projects/' + projectId + '/symbols')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
-        }
-
-        /**
-         * get all web symbols of a project by the projects id
-         * @param projectId
-         * @return {*}
-         */
-        function getAllWebSymbols(projectId) {
-            return $http.get(api.URL + '/projects/' + projectId + '/symbols/?type=web')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
-        }
-
-        /**
-         * get all rest symbols of a project by the projects it
-         * @param projectId
-         * @return {*}
-         */
-        function getAllRestSymbols(projectId) {
-            return $http.get(api.URL + '/projects/' + projectId + '/symbols/?type=rest')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
-        }
 
         /**
          * get a specific web or rest symbol by its id
@@ -4175,11 +4380,72 @@ angular
          * @return {*}
          */
         function getSymbol(projectId, symbolId) {
+
             return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
                 .then(success)
                 .catch(fail);
 
             function success(response) {
+                return response.data;
+            }
+
+            function fail(error) {
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: error.data.message,
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+
+        /**
+         * get all rest and web symbols of a project by the projects id
+         * @param projectId
+         * @return {*}
+         */
+        function getAllSymbols(projectId, options) {
+
+            var queryParams = '?';
+
+            if (options) {
+
+                if (options.type) queryParams += 'type=' + options.type;
+                if (options.deleted && options.deleted === true) queryParams += '&showHidden=hidden';
+
+                return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + queryParams)
+                    .then(success)
+                    .catch(fail);
+
+            } else {
+                return $http.get(api.URL + '/projects/' + projectId + '/symbols')
+                    .then(success)
+                    .catch(fail);
+            }
+
+            function success(response) {
+                return response.data;
+            }
+
+            function fail(error) {
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: error.data.message,
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+
+        function recoverSymbol(projectId, symbolId) {
+        	return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/show', {})
+	    		.then(success)
+	    		.catch(fail);
+        	
+        	function success(response) {
+                console.log(response);
                 return response.data;
             }
 
@@ -4201,6 +4467,11 @@ angular
          * @return {*}
          */
         function createSymbol(projectId, symbol) {
+        	
+        	if (angular.isArray(symbol)) {
+        		return createSymbols(projectId, symbol)
+        	}
+        	        	
             return $http.post(api.URL + '/projects/' + projectId + '/symbols', symbol)
                 .then(success)
                 .catch(fail);
@@ -4208,7 +4479,7 @@ angular
             function success(response) {
                 toast.create({
                     class: 'success',
-                    content: 'Symbol "' + response.data.name + '" created'
+                    content: 'Symbol ' + response.data.name + ' created'
                 });
                 return response.data;
             }
@@ -4223,7 +4494,32 @@ angular
                 return $q.reject();
             }
         }
+        
+    	function createSymbols(projectId, symbols) {
+        	        	        	
+            return $http.put(api.URL + '/projects/' + projectId + '/symbols', symbols)
+                .then(success)
+                .catch(fail);
 
+            function success(response) {
+                toast.create({
+                    class: 'success',
+                    content: 'Symbols created'
+                });
+                return response.data;
+            }
+
+            function fail(error) {
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: 'Upload failed. Some symbols already exist or existed in this project',
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+        
         /**
          * update an existing symbol
          * @param symbol
@@ -4259,7 +4555,8 @@ angular
          * @return {*}
          */
         function deleteSymbol(projectId, symbolId) {
-            return $http.delete(api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
+
+            return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide')
                 .then(success)
                 .catch(fail);
 
@@ -4267,6 +4564,33 @@ angular
                 toast.create({
                     class: 'success',
                     content: 'Symbol deleted'
+                });
+                return response.data;
+            }
+
+            function fail(error) {
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: error.data.message,
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+
+        function deleteSomeSymbols(projectId, symbolsIds) {
+
+            symbolsIds = symbolsIds.join();
+
+            return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolsIds + '/hide')
+                .then(success)
+                .catch(fail);
+
+            function success(response) {
+                toast.create({
+                    class: 'success',
+                    content: 'Symbols deleted'
                 });
                 return response.data;
             }
@@ -4310,7 +4634,7 @@ angular
             getAllFinal: getAllFinal,
             getFinal: getFinal,
             getComplete: getComplete,
-            delete: deleteTest
+            delete: deleteTests
         };
         return service;
 
@@ -4405,16 +4729,27 @@ angular
          * @param testNo
          * @return {*}
          */
-        function deleteTest(projectId, testNo) {
+        function deleteTests(projectId, testNo) {
+        	
+        	if (angular.isArray(testNo)) {
+        		testNo = testNo.join();
+        	}
+        	
             return $http.delete(api.URL + '/projects/' + projectId + '/results/' + testNo, {})
                 .then(success)
                 .catch(fail);
 
             function success(response) {
+            	toast.create({
+                    class: 'success',
+                    content: 'The results were deleted.',
+                    dismissButton: true
+                });
                 return response.data;
             }
 
             function fail(error) {
+            	console.log('=============');
                 console.error(error.data);
                 toast.create({
                     class: 'danger',
@@ -5032,6 +5367,18 @@ angular
             return _.filter(items, function (item) {
                 return SelectionService.isSelected(item);
             })
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.filters')
+        .filter('capitalize', capitalize);
+
+    function capitalize() {
+        return function (string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
         }
     }
 }());;(function () {

@@ -11,7 +11,6 @@
     function SymbolsExportController($scope, SessionService, SymbolResource, SelectionService) {
 
         var _project = SessionService.project.get();
-        var _fileName = 'symbols-project-' + _project.id + '.json';
 
         //////////
 
@@ -22,7 +21,7 @@
 
         //////////
 
-        SymbolResource.all(_project.id)
+        SymbolResource.getAll(_project.id)
             .then(function (symbols) {
                 $scope.symbols.web = _.filter(symbols, {type: 'web'});
                 $scope.symbols.rest = _.filter(symbols, {type: 'rest'});

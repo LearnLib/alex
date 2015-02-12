@@ -19,7 +19,7 @@
             </button>
 
             <ul class="nav navbar-nav navbar-left">
-                <li class="dropdown" dropdown>
+                <li class="dropdown" dropdown dropdown-navigation>
                     <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
                        aria-expanded="false">
                         <span ng-if="!project">Project</span>
@@ -40,14 +40,14 @@
 
             <div ng-if="project">
                 <ul class="nav navbar-nav navbar-left">
-                    <li class="dropdown" dropdown>
+                    <li class="dropdown" dropdown dropdown-navigation>
                         <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-expanded="false">Symbols <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
                             <li><a ui-sref="symbols.web">Web Symbol Editor</a></li>
                             <li><a ui-sref="symbols.rest">Rest Symbol Editor</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#/">Text Editor</a></li>
+                            <!--<li class="divider"></li>-->
+                            <!--<li><a href="#/">Text Editor</a></li>-->
                             <li class="divider"></li>
                             <li><a ui-sref="symbols.import">Import</a></li>
                             <li><a ui-sref="symbols.export">Export</a></li>
@@ -56,7 +56,7 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-left">
-                    <li class="dropdown" dropdown>
+                    <li class="dropdown" dropdown dropdown-navigation>
                         <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-expanded="false">Learn <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
@@ -67,7 +67,7 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-left">
-                    <li class="dropdown" dropdown>
+                    <li class="dropdown" dropdown dropdown-navigation>
                         <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-expanded="false">Results <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
@@ -80,7 +80,7 @@
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown" dropdown>
+                <li class="dropdown" dropdown dropdown-navigation>
                     <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
                        aria-expanded="false">App <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
@@ -93,7 +93,7 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right" ng-if="!project">
-                <li class="dropdown" dropdown>
+                <li class="dropdown" dropdown dropdown-navigation>
                     <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
                        aria-expanded="false">Tools <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">

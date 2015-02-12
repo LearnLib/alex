@@ -80,15 +80,24 @@ body {
 
 .animate-view.ng-enter {
   overflow: hidden;
+  position: absolute;
+  top: 70px;
+  bottom: 0;
+  left: 0; right: 0;
   animation: scaleUp 0.2s both ease-in;
   z-index: 8888;
 }
 
 .animate-view.ng-leave {
   overflow: hidden;
+  position: absolute;
+  top: 70px;
+  bottom: 0;
+  left: 0; right: 0;
   animation: fadeOut 0.2s both ease-in;
   z-index: 9999;
 }
+
 
 /* Bootstrap Extensions & Modifications
 ============================================================================== */
@@ -206,13 +215,15 @@ form {
 
 .btn {
   &.btn-icon {
-    padding: 0;
+    background: none;
+    border: 0;
     opacity: 0.5;
     &:hover {
       opacity: 1;
     }
     &:active {
-
+      box-shadow: none;
+      outline: none;
     }
   }
 }

@@ -1,1 +1,45 @@
-Coming soon
+<div class="container">
+    <h2>Symbols Trash - <span ng-bind="(type|capitalize)"></span></h2>
+
+    <p class="text-muted">
+        View deleted <span ng-bind="type"></span> symbols and recover them
+    </p>
+
+    <hr>
+</div>
+
+<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+    <div class="container">
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" select-all-items-checkbox items="symbols">
+        </div>
+        <div class="pull-left">
+            <button class="btn btn-xs btn-default" ng-class="(symbols|selected).length > 0 ? '' : 'disabled'"
+                    ng-click="recoverSelected()">
+                <i class="fa fa-rotate-left fa-fw"></i> Recover
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div selectable-list ng-model="symbols">
+        <div selectable-list-item ng-repeat="symbol in symbols">
+
+            <button class="btn btn-xs btn-icon pull-right" ng-click="recover(symbol)">
+                <i class="fa fa-rotate-left"></i>
+            </button>
+
+            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
+            <p class="text-muted">
+                Rev. <span ng-bind="symbol.revision"></span>
+            </p>
+        </div>
+    </div>
+
+    <div class="alert alert-info" ng-show="symbols.length == 0">
+        There are no symbols in the trash
+    </div>
+
+</div>

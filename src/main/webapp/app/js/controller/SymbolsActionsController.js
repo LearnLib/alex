@@ -4,23 +4,19 @@
     angular
         .module('weblearner.controller')
         .controller('SymbolsActionsController', [
-            '$scope', '$stateParams', 'SymbolResource', 'SessionService', 'SelectionService', 'WebActionTypesEnum', 'RestActionTypesEnum', 'ngToast',
+            '$scope', '$stateParams', 'SymbolResource', 'SessionService', 'SelectionService', 'WebActionTypesEnum',
+            'RestActionTypesEnum', 'ngToast',
             SymbolsActionsController
         ]);
 
-    function SymbolsActionsController($scope, $stateParams, SymbolResource, SessionService, SelectionService, WebActionTypesEnum, RestActionTypesEnum, toast) {
-
-        var _id = 0;
-
-        //////////
+    function SymbolsActionsController($scope, $stateParams, SymbolResource, SessionService, SelectionService,
+                                      WebActionTypesEnum, RestActionTypesEnum, toast) {
 
         /** the enum for web action types that are displayed in a select box */
         $scope.webActionTypes = WebActionTypesEnum;
 
         /** the enum for rest action types that are displayed in a select box */
         $scope.restActionTypes = RestActionTypesEnum;
-
-        //////////
 
         /** the open project */
         $scope.project = SessionService.project.get();
@@ -34,32 +30,37 @@
         //////////
 
         // load all actions from the symbol
-        SymbolResource.get($scope.project.id, $stateParams.symbolId).then(function (symbol) {
+        SymbolResource.get($scope.project.id, $stateParams.symbolId)
+            .then(init);
 
+        //////////
+
+        function init(symbol) {
+
+            // create unique ids for actions
             _.forEach(symbol.actions, function (action) {
-                action._id = _id++;
+                action._id = _.uniqueId();
             });
 
+            // add symbol to scope and create a copy in order to revert changes
             $scope.symbol = symbol;
             $scope.symbolCopy = angular.copy($scope.symbol);
-        });
+        }
 
         //////////
 
         /**
          * delete the actions that the user selected from the scope
          */
-        $scope.deleteActions = function () {
+        $scope.deleteSelectedActions = function () {
             var selectedActions = SelectionService.getSelected($scope.symbol.actions);
-            if (selectedActions.length > 0) {
-                _.forEach(selectedActions, function (action) {
-                    _.remove($scope.symbol.actions, {_id: action._id})
-                });
-                toast.create({
-                    class: 'success',
-                    content: 'Actions deleted'
-                });
+            if (selectedActions.length) {
+                _.forEach(selectedActions, $scope.deleteAction);
             }
+        };
+
+        $scope.deleteAction = function(action) {
+            _.remove($scope.symbol.actions, {_id: action._id});
         };
 
         /**
@@ -67,7 +68,7 @@
          * @param action
          */
         $scope.addAction = function (action) {
-            action._id = _id++;
+            action._id = _.uniqueId();
             $scope.symbol.actions.push(action);
         };
 
@@ -86,22 +87,16 @@
          * save the changes that were made to the symbol by updating it on the server
          */
         $scope.saveChanges = function () {
-            var copy = angular.copy($scope.symbol);
-            SelectionService.removeSelection(copy.actions);
+            SelectionService.removeSelection($scope.actions);
+
+            // remove the temporarily create unique id attribute
             _.forEach(copy.actions, function (action) {
                 delete action._id;
             });
-            SymbolResource.update($scope.project.id, copy)
-                .then(function (updatedSymbol) {
 
-                    _id = 0;
-                    _.forEach(updatedSymbol.actions, function (action) {
-                        action._id = _id++;
-                    });
-
-                    $scope.symbol = updatedSymbol;
-                    $scope.symbolCopy = angular.copy(updatedSymbol);
-                })
+            // update the symbol
+            SymbolResource.update($scope.project.id, $scope.symbol)
+                .then(init)
         };
 
         /**

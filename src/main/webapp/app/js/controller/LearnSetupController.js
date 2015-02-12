@@ -15,7 +15,8 @@
         $scope.project = SessionService.project.get();
         $scope.symbols = [];
         $scope.type = type;
-        $scope.testConfiguration = {
+
+        $scope.learnConfiguration = {
             symbols: [],
             algorithm: LearnAlgorithms.EXTENSIBLE_LSTAR,
             eqOracle: {
@@ -31,7 +32,6 @@
         LearnerResource.isActive()
             .then(function (data) {
                 if (data.active) {
-
                     if (data.project == $scope.project.id) {
                     	$state.go('learn.start');
                     } else {
@@ -42,56 +42,39 @@
                         });
                     }
                 } else {
-                    loadSymbols();
+                    SymbolResource.getAll($scope.project.id, {type:type})
+                        .then(function(symbols){
+                            $scope.symbols = symbols;
+                        })
                 }
             });
 
         //////////
 
-        function loadSymbols() {
-            switch (type) {
-                case 'web':
-                    SymbolResource.allWeb($scope.project.id)
-                        .then(function (symbols) {
-                            $scope.symbols = symbols;
-                        });
-                    break;
-                case 'rest':
-                    SymbolResource.allRest($scope.project.id)
-                        .then(function (symbols) {
-                            $scope.symbols = symbols;
-                        });
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        //////////
-
-        $scope.startTest = function () {
-
+        $scope.startLearning = function () {
             var selectedSymbols = SelectionService.getSelected($scope.symbols);
 
-            if (selectedSymbols.length == 0) {
-                return;
-            }
+            // make sure there are selected symbols
+            if (selectedSymbols.length) {
 
-            _.forEach(selectedSymbols, function (symbol) {
-                $scope.testConfiguration.symbols.push({
-                    id: symbol.id,
-                    revision: symbol.revision
+                // get id:revision pair from each selected symbol and add it to the learn configuration
+                _.forEach(selectedSymbols, function (symbol) {
+                    $scope.learnConfiguration.symbols.push({
+                        id: symbol.id,
+                        revision: symbol.revision
+                    });
                 });
-            });
 
-            LearnerResource.start($scope.project.id, $scope.testConfiguration)
-                .then(function (data) {
-                	$state.go('learn.start')
-                })
+                // start learning and go to the load page
+                LearnerResource.start($scope.project.id, $scope.learnConfiguration)
+                    .then(function () {
+                        $state.go('learn.start')
+                    })
+            }
         };
 
         $scope.updateLearnConfiguration = function (config) {
-            $scope.testConfiguration = config;
+            $scope.learnConfiguration = config;
         };
     }
 }());
