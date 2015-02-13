@@ -2,6 +2,7 @@ package de.learnlib.weblearner.integrationtests;
 
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
+import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
 import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
@@ -27,7 +28,6 @@ import static org.junit.Assert.assertTrue;
 public class RESTSymbolLearnerIT extends JerseyTest {
 
     private static final int MAX_TIME_TO_WAIT_FOR_LEARNER = 180000; // three minutes !!
-    private static final int TIME_TO_WAIT_BETWEEN_POLLS = 2000; // three minutes !!
 
     private static final String BASE_LEARNER_URL = "http://localhost:8080/rest";
     private static final String BASE_TEST_URL = "http://localhost:9998/test";
@@ -65,7 +65,7 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         String json =  "{\"name\": \"" + projectName + "\","
                         + "\"baseUrl\": \"" + BASE_TEST_URL + "\"}";
         Response response = client.target(BASE_LEARNER_URL + "/projects").request().post(Entity.json(json));
-        project = response.readEntity(Project.class);
+        project = ProjectTest.readProject(response.readEntity(String.class));
 
         // modify reset symbol
         String path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/2";

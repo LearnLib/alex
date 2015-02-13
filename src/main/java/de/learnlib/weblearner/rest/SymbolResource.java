@@ -142,20 +142,19 @@ public class SymbolResource {
      * @return A list of all Symbols belonging to the project.
      * @responseType java.util.List<de.learnlib.weblearner.entities.Symbol>
      * @successResponse 200 OK
-     * @errorResponse 400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") long projectId,
                            @QueryParam("type") @DefaultValue("UNKNOWN") SymbolTypes type,
-                           @QueryParam("showHidden") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
+                           @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         try {
-            List<Symbol<?>> symbols = symbolDAO.getAll(projectId, type.getClazz(), visibilityLevel);
+            List<Symbol<?>> symbols = symbolDAO.getAllWithLatestRevision(projectId, type.getClazz(), visibilityLevel);
 
             String json = createSymbolsJSON(symbols);
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
         } catch (JsonProcessingException e) {
-            LOGGER.error("Could write the symbols from the DB into proper JSON!", e);
+            LOGGER.error("Could not write the symbols from the DB into proper JSON!", e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getAll", Status.INTERNAL_SERVER_ERROR,
                     null);
         }
@@ -163,6 +162,7 @@ public class SymbolResource {
 
     /**
      * Get a Symbol by its ID.
+     * This returns only the latest revision of the symbol.
      * 
      * @param projectId
      *            The ID of the project.
@@ -177,11 +177,38 @@ public class SymbolResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") long projectId, @PathParam("id") long id) {
-        Symbol<?> symbol = symbolDAO.get(projectId, id);
+        Symbol<?> symbol = symbolDAO.getWithLatestRevision(projectId, id);
         if (symbol != null) {
             return Response.ok(symbol).build();
         } else {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.get", Status.NOT_FOUND, null);
+        }
+    }
+
+    /**
+     * Get a Symbol by its ID.
+     * This returns all revisions of a symbol
+     *
+     * @param projectId
+     *            The ID of the project.
+     * @param id
+     *            The ID of the symbol.
+     * @return A Symbol matching the projectID & ID or a not found response.
+     * @responseType    java.util.List<de.learnlib.weblearner.entities.Symbol>
+     * @successResponse 200 OK
+     */
+    @GET
+    @Path("/{id}/complete")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getComplete(@PathParam("project_id") long projectId, @PathParam("id") long id) {
+        List<Symbol<?>> symbols = symbolDAO.getWithAllRevisions(projectId, id);
+        try {
+            String json = createSymbolsJSON(symbols);
+            return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Could not write the symbols from the DB into proper JSON!", e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getComplete", Status.INTERNAL_SERVER_ERROR,
+                                                               null);
         }
     }
 
@@ -208,7 +235,7 @@ public class SymbolResource {
         if (symbol != null) {
             return Response.ok(symbol).build();
         } else {
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.get", Status.NOT_FOUND, null);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getWithRevision", Status.NOT_FOUND, null);
         }
     }
 
@@ -275,9 +302,20 @@ public class SymbolResource {
             }
 
             symbolDAO.hide(projectId, idsArray);
-            return Response.status(Status.NO_CONTENT).build();
+            List<Symbol<?>> symbols = symbolDAO.getByIdsWithLatestRevision(projectId, idsArray);
+
+            if (symbols.size() == 1) {
+                return Response.status(Status.OK).entity(symbols.get(0)).build();
+            } else {
+                String json = createSymbolsJSON(symbols);
+                return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
+            }
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Could write the symbols from the DB into proper JSON!", e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.INTERNAL_SERVER_ERROR,
+                                                               null);
         }
     }
 
@@ -310,9 +348,20 @@ public class SymbolResource {
             }
 
             symbolDAO.show(projectId, idsArray);
-            return Response.status(Status.NO_CONTENT).build();
+            List<Symbol<?>> symbols = symbolDAO.getByIdsWithLatestRevision(projectId, idsArray);
+
+            if (symbols.size() == 1) {
+                return Response.status(Status.OK).entity(symbols.get(0)).build();
+            } else {
+                String json = createSymbolsJSON(symbols);
+                return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
+            }
         } catch (IllegalArgumentException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.delete", Status.NOT_FOUND, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Could write the symbols from the DB into proper JSON!", e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.INTERNAL_SERVER_ERROR,
+                                                               null);
         }
     }
 

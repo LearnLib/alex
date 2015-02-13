@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.integrationtests;
 
 import de.learnlib.weblearner.entities.Project;
+import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.Symbol;
 import org.junit.Test;
 
@@ -11,6 +12,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +24,7 @@ public class ProjectIT {
     private static final String BASE_URL = "http://localhost:8080/rest";
 
     @Test
-    public void validCRUD() {
+    public void validCRUD() throws IOException {
         Client client = ClientBuilder.newClient();
 
         String projectName = "IT Project - CRUD";
@@ -32,7 +34,7 @@ public class ProjectIT {
         Response response = client.target(BASE_URL + "/projects").request().post(
                 Entity.entity(json, MediaType.APPLICATION_JSON));
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-        Project project = response.readEntity(Project.class);
+        Project project = ProjectTest.readProject(response.readEntity(String.class));
         assertTrue(project.getId() > 0);
         assertEquals(projectName, project.getName());
         assertEquals("http://example.com", project.getBaseUrl());

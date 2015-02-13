@@ -10,7 +10,10 @@ import javax.persistence.Transient;
  */
 public class LearnerResumeConfiguration {
 
-    /** The type of EQ oracle to find a counter example. */
+    /**
+     * The type of EQ oracle to find a counter example.
+     * @requiredField
+     */
     protected AbstractEquivalenceOracleProxy eqOracle;
 
     /** How many steps should the learner take before stopping the process.

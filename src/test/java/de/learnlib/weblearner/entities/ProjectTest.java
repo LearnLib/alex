@@ -1,6 +1,10 @@
 package de.learnlib.weblearner.entities;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.junit.Test;
 
 import java.io.File;
@@ -18,14 +22,21 @@ public class ProjectTest {
     public static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "
             + "sed diam nonumy eirmod tempor invidunt ut labore";
 
+    public static Project readProject(String json) throws IOException {
+        json = json.replaceFirst(",\"symbolAmount\":[ ]?[0-9]+", "");
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, Project.class);
+    }
+
     @Test
     public void ensureThatSerializingAndThenDeserializingChangesNothing() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+
         Project p = new Project();
         p.setName("Test Project");
 
-        ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(p);
-        Project p2 = mapper.readValue(json, Project.class);
+        Project p2 = readProject(json);
 
         assertEquals(p.getName(), p2.getName());
         assertTrue(p2.getSymbols() != null);

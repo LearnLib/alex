@@ -188,7 +188,7 @@ public class Project implements Serializable {
      * @param size
      *            Irrelevant.
      */
-    @JsonProperty("symbolAmount")
+    @JsonIgnore
     public void setSymbolsSize(int size) {
         // you can not change the size this way -> nothing to do here
         LOGGER.info("One tried to set the size of the symbols set.");

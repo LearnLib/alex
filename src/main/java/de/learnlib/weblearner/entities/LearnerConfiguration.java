@@ -17,10 +17,16 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     /** to be serializable. */
     private static final long serialVersionUID = -5130245647384793948L;
 
-    /** Link to the {@link Symbol Symbols} that are must be used during the learning. */
+    /**
+     * Link to the Symbols that are must be used during the learning.
+     * @requiredField
+     */
     private List<IdRevisionPair> symbols;
 
-    /** The algorithm to be used during the learning. */
+    /**
+     * The algorithm to be used during the learning.
+     * @requiredField
+     */
     private LearnAlgorithms algorithm;
 
     /**

@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.integrationtests;
 
 import de.learnlib.weblearner.entities.Project;
+import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.WebSymbol;
 import org.junit.AfterClass;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -27,13 +29,13 @@ public class WebSymbolIT {
     private static Project project;
 
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws IOException {
         String projectName = "WebSymbol IT Project";
         String json =  "{\"name\": \"" + projectName + "\", \"baseUrl\": \"http://localhost:8080\"}";
         Client client = ClientBuilder.newClient();
         Response response = client.target(BASE_URL + "/projects").request().post(Entity.json(json));
 
-        project = response.readEntity(Project.class);
+        project = ProjectTest.readProject(response.readEntity(String.class));
     }
 
     @AfterClass

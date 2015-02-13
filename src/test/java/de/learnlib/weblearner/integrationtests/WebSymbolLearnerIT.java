@@ -2,6 +2,7 @@ package de.learnlib.weblearner.integrationtests;
 
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
+import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
@@ -18,6 +19,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -42,7 +44,7 @@ public class WebSymbolLearnerIT {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         client = ClientBuilder.newClient();
 
         // create project
@@ -51,7 +53,7 @@ public class WebSymbolLearnerIT {
                         + "\"baseUrl\": \"" + BASE_TEST_URL + "\"}";
         Response response = client.target(BASE_LEARNER_URL + "/projects").request().post(
                 Entity.entity(json, MediaType.APPLICATION_JSON));
-        project = response.readEntity(Project.class);
+        project = ProjectTest.readProject(response.readEntity(String.class));
 
         // modify reset symbol
         String path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/1";

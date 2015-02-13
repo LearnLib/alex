@@ -34,6 +34,21 @@ public interface SymbolDAO {
     void create(List<Symbol<?>> symbols) throws ValidationException;
 
     /**
+     * Get a list of specific symbols of a project.
+     *
+     * @param projectId
+     *            The project the symbols should belong to.
+     * @param idRevPairs
+     *            A list of pairs of an ID and revisions to specify the expected symbols.
+     * @return A list of symbols matching the project and list of IDs and revisions.
+     */
+    List<Symbol<?>> getAll(long projectId, List<IdRevisionPair> idRevPairs);
+
+    List<Symbol<?>> getByIdsWithLatestRevision(long projectId, Long... ids);
+
+    List<Symbol<?>> getByIdsWithLatestRevision(long projectId, SymbolVisibilityLevel visibilityLevel, Long... ids);
+
+    /**
      * Get all symbols of a project.
      *
      * @param projectID
@@ -42,7 +57,7 @@ public interface SymbolDAO {
      *         Include symbols that are currently marked as hidden?
      * @return A list of symbols belonging to the project.
      */
-    List<Symbol<?>> getAll(long projectID, SymbolVisibilityLevel visibilityLevel);
+    List<Symbol<?>> getAllWithLatestRevision(long projectID, SymbolVisibilityLevel visibilityLevel);
 
     /**
      * Get all symbols of a project which have a specific type.
@@ -55,30 +70,7 @@ public interface SymbolDAO {
      *         Include symbols that are currently marked as hidden?
      * @return A list of symbols matching the project and type.
      */
-    List<Symbol<?>> getAll(long projectId, Class<? extends Symbol> type, SymbolVisibilityLevel visibilityLevel);
-
-    /**
-     * Get a list of specific symbols of a project.
-     * 
-     * @param projectId
-     *            The project the symbols should belong to.
-     * @param idRevPairs
-     *            A list of pairs of an ID and revisions to specify the expected symbols.
-     * @return A list of symbols matching the project and list of IDs and revisions.
-     */
-    List<Symbol<?>> get(long projectId, List<IdRevisionPair> idRevPairs);
-
-    /**
-     * Get a specific symbol by its identifying parameters and the last
-     * revision.
-     * 
-     * @param projectId
-     *            The ID of the project the symbol belongs to.
-     * @param id
-     *            The ID of the symbol itself in the project.
-     * @return The Symbol or null.
-     */
-    Symbol<?> get(long projectId, long id);
+    List<Symbol<?>> getAllWithLatestRevision(long projectId, Class<? extends Symbol> type, SymbolVisibilityLevel visibilityLevel);
 
     /**
      * Get a specific symbol by its identifying parameters.
@@ -92,6 +84,20 @@ public interface SymbolDAO {
      * @return The Symbol or null.
      */
     Symbol<?> get(long projectId, long id, long revision);
+
+    /**
+     * Get a specific symbol by its identifying parameters and the last
+     * revision.
+     *
+     * @param projectId
+     *            The ID of the project the symbol belongs to.
+     * @param id
+     *            The ID of the symbol itself in the project.
+     * @return The Symbol or null.
+     */
+    Symbol<?> getWithLatestRevision(long projectId, long id);
+
+    List<Symbol<?>> getWithAllRevisions(long projectId, long id);
 
     /**
      * Update a symbol.
