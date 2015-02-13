@@ -4,7 +4,7 @@
     angular
         .module('weblearner')
         .config([
-            '$stateProvider', '$urlRouterProvider', 'ngToastProvider',
+            '$stateProvider', '$urlRouterProvider', 'ngToastProvider', 'paths',
             config
         ]);
 
@@ -13,7 +13,7 @@
      * @param $stateProvider
      * @param $urlRouterProvider
      */
-    function config($stateProvider, $urlRouterProvider, ngToastProvider) {
+    function config($stateProvider, $urlRouterProvider, ngToastProvider, paths) {
 
         ngToastProvider.configure({
             verticalPosition: 'top',
@@ -32,7 +32,7 @@
             .state('home', {
                 url: '/home',
                 controller: 'HomeController',
-                templateUrl: 'app/partials/home.html'
+                templateUrl: paths.PARTIALS + '/home.html'
             })
 
             // =========================================================
@@ -43,7 +43,7 @@
                 views: {
                     '@': {
                         controller: 'ProjectController',
-                        templateUrl: 'app/partials/project.html'
+                        templateUrl: paths.PARTIALS + '/project.html'
                     }
                 },
                 data: {
@@ -55,7 +55,7 @@
                 views: {
                     '@': {
                         controller: 'ProjectCreateController',
-                        templateUrl: 'app/partials/project-create.html'
+                        templateUrl: paths.PARTIALS + '/project-create.html'
                     }
                 },
                 data: {
@@ -66,7 +66,7 @@
                 url: '/settings',
                 views: {
                     '@': {
-                        templateUrl: 'app/partials/project-settings.html',
+                        templateUrl: paths.PARTIALS + '/project-settings.html',
                         controller: 'ProjectSettingsController'
                     }
                 }
@@ -87,7 +87,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsController',
-                        templateUrl: 'app/partials/symbols.html'
+                        templateUrl: paths.PARTIALS + '/symbols.html'
                     }
                 },
                 resolve: {
@@ -101,7 +101,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsTrashController',
-                        templateUrl: 'app/partials/symbols-trash.html'
+                        templateUrl: paths.PARTIALS + '/symbols-trash.html'
                     }
                 }
             })
@@ -110,7 +110,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsController',
-                        templateUrl: 'app/partials/symbols.html'
+                        templateUrl: paths.PARTIALS + '/symbols.html'
                     }
                 },
                 resolve: {
@@ -124,7 +124,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsTrashController',
-                        templateUrl: 'app/partials/symbols-trash.html'
+                        templateUrl: paths.PARTIALS + '/symbols-trash.html'
                     }
                 }
             })
@@ -133,7 +133,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsHistoryController',
-                        templateUrl: 'app/partials/symbols-history.html'
+                        templateUrl: paths.PARTIALS + '/symbols-history.html'
                     }
                 }
             })
@@ -142,7 +142,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsActionsController',
-                        templateUrl: 'app/partials/symbols-actions.html'
+                        templateUrl: paths.PARTIALS + '/symbols-actions.html'
                     }
                 }
 
@@ -152,7 +152,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsImportController',
-                        templateUrl: 'app/partials/symbols-import.html'
+                        templateUrl: paths.PARTIALS + '/symbols-import.html'
                     }
                 }
 
@@ -162,7 +162,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsExportController',
-                        templateUrl: 'app/partials/symbols-export.html'
+                        templateUrl: paths.PARTIALS + '/symbols-export.html'
                     }
                 }
             })
@@ -186,7 +186,7 @@
                 views: {
                     '@': {
                         controller: 'LearnSetupController',
-                        templateUrl: 'app/partials/learn-setup.html'
+                        templateUrl: paths.PARTIALS + '/learn-setup.html'
                     }
                 },
                 resolve: {
@@ -200,7 +200,7 @@
                 views: {
                     '@': {
                         controller: 'LearnSetupController',
-                        templateUrl: 'app/partials/learn-setup.html'
+                        templateUrl: paths.PARTIALS + '/learn-setup.html'
                     }
                 },
                 resolve: {
@@ -214,7 +214,7 @@
                 views: {
                     '@': {
                         controller: 'LearnStartController',
-                        templateUrl: 'app/partials/learn-start.html'
+                        templateUrl: paths.PARTIALS + '/learn-start.html'
                     }
                 }
             })
@@ -223,7 +223,7 @@
                 views: {
                     '@': {
                         controller: 'LearnResultsController',
-                        templateUrl: 'app/partials/learn-results.html'
+                        templateUrl: paths.PARTIALS + '/learn-results.html'
                     }
                 }
             })
@@ -232,7 +232,7 @@
                 views: {
                     '@': {
                         controller: 'LearnResultsStatisticsController',
-                        templateUrl: 'app/partials/learn-results-statistics.html'
+                        templateUrl: paths.PARTIALS + '/learn-results-statistics.html'
                     }
                 }
             })
@@ -241,7 +241,7 @@
                 views: {
                     '@': {
                         controller: 'LearnResultsCompareController',
-                        templateUrl: 'app/partials/learn-results-compare.html'
+                        templateUrl: paths.PARTIALS + '/learn-results-compare.html'
                     }
                 }
             })
@@ -252,14 +252,14 @@
 
             .state('about', {
                 url: '/about',
-                templateUrl: 'app/partials/about.html',
+                templateUrl: paths.PARTIALS + '/about.html',
                 data: {
                     requiresProject: false
                 }
             })
             .state('help', {
                 url: '/help',
-                templateUrl: 'app/partials/help.html',
+                templateUrl: paths.PARTIALS + '/help.html',
                 data: {
                     requiresProject: false
                 }
@@ -273,8 +273,8 @@
                 template: '<ui-view class="animate-view" />'
             })
             .state('tools.hyotheses', {
-                'url': '/tools/hypotheses/view',
-                templateUrl: 'app/partials/tools-hypotheses-view.html',
+                url: '/tools/hypotheses/view',
+                templateUrl: paths.PARTIALS + '/tools-hypotheses-view.html',
                 data: {
                     requiresProject: false
                 }

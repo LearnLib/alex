@@ -1,6 +1,8 @@
 (function(){
 	'use strict';
 	
+	console.log('asd');
+	
 	angular
 		.module('weblearner.controller')
 		.controller('SymbolsHistoryController', [
@@ -16,7 +18,7 @@
 		
 		//////////
 		
-		SymbolResource.getRevions($scope.project.id, $stateParams.id)
+		SymbolResource.getRevisions($scope.project.id, $stateParams.symbolId)
 			.then(function(revisions){
 				$scope.latestSymbol = revisions.pop();
 				$scope.revisions = revisions;

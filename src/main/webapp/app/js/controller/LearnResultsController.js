@@ -4,11 +4,11 @@
     angular
         .module('weblearner.controller')
         .controller('LearnResultsController', [
-            '$scope', 'SessionService', 'LearnResultResource', 'SelectionService',
+            '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService',
             LearnResultsController
         ]);
 
-    function LearnResultsController($scope, SessionService, LearnResultResource, SelectionService) {
+    function LearnResultsController($scope, SessionService, LearnResultResource, SelectionService, PromptService) {
 
         $scope.project = SessionService.project.get();
         $scope.tests = [];
@@ -26,10 +26,13 @@
 
             SelectionService.removeSelection(test);
 
-            LearnResultResource.delete($scope.project.id, test.testNo)
-                .then(function () {
-                    _.remove($scope.tests, {testNo: test.testNo});
-                })
+            PromptService.confirm("Do you want to permanently delete this result?")
+	            .then(function(){
+	            	LearnResultResource.delete($scope.project.id, test.testNo)
+	                .then(function () {
+	                    _.remove($scope.tests, {testNo: test.testNo});
+	                })
+	            })
         };
 
         $scope.deleteTests = function () {
@@ -39,12 +42,16 @@
             
             if (selectedTests.length > 0) {
             	testNos = _.pluck(selectedTests, 'testNo');
-            	LearnResultResource.delete($scope.project.id, testNos)
-            		.then(function(){
-            			_.forEach(testNos, function(testNo){
-            				_.remove($scope.tests, {testNo: testNo})
-            			})
-            		})
+            	
+            	PromptService.confirm("Do you want to permanently delete this result?")
+	            	.then(function(){
+	            		LearnResultResource.delete($scope.project.id, testNos)
+	            		.then(function(){
+	            			_.forEach(testNos, function(testNo){
+	            				_.remove($scope.tests, {testNo: testNo})
+	            			})
+	            		})
+	            	})
             }
         }
     }

@@ -3,43 +3,31 @@
 
     angular
         .module('weblearner.directives')
-        .directive('loadScreen', loadScreen);
+        .directive('loadScreen', ['$http', loadScreen]);
 
-    function loadScreen() {
+    function loadScreen($http) {
 
         var directive = {
-            scope: {},
             templateUrl: 'app/partials/directives/load-screen.html',
-            controller: [
-                '$scope',
-                controller
-            ]
+            link: link
         };
         return directive;
 
         //////////
 
-        function controller($scope) {
+        function link (scope, el, attrs) {
+        	        	            
+        	scope.isLoading = function () {
+                return $http.pendingRequests.length > 0;
+            };
 
-            $scope.counter = 0;
-
-            //////////
-
-            $scope.$on('loadScreen.show', show);
-            $scope.$on('loadScreen.hide', hide);
-
-            //////////
-
-            function show() {
-                $scope.counter++;
-            }
-
-            function hide() {
-                $scope.counter--;
-                if ($scope.counter < 0) {
-                    $scope.counter = 0;
+            scope.$watch(scope.isLoading, function (v) {
+                if(v){
+                	el[0].style.display = 'block'
+                }else{
+                	el[0].style.display = 'none'
                 }
-            }
+            });
         }
     }
 }());

@@ -9,15 +9,16 @@
         ]);
 
     /**
-     *
-     * @param $http
-     * @param $q
-     * @param api
-     * @param toast
-     * @return {{all: getAllSymbols, allWeb: getAllWebSymbols, allRest: getAllRestSymbols, get: getSymbol,
-     *          create: createSymbol, update: updateSymbol, delete: deleteSymbol}}
-     * @constructor
-     */
+	 * 
+	 * @param $http
+	 * @param $q
+	 * @param api
+	 * @param toast
+	 * @return {{all: getAllSymbols, allWeb: getAllWebSymbols, allRest:
+	 *         getAllRestSymbols, get: getSymbol, create: createSymbol, update:
+	 *         updateSymbol, delete: deleteSymbol}}
+	 * @constructor
+	 */
     function SymbolResource($http, $q, api, toast) {
 
         var service = {
@@ -32,14 +33,15 @@
         };
         return service;
 
-        //////////
+        // ////////
 
         /**
-         * get a specific web or rest symbol by its id
-         * @param projectId
-         * @param symbolId
-         * @return {*}
-         */
+		 * get a specific web or rest symbol by its id
+		 * 
+		 * @param projectId
+		 * @param symbolId
+		 * @return {*}
+		 */
         function getSymbol(projectId, symbolId) {
 
             return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
@@ -62,10 +64,11 @@
         }
 
         /**
-         * get all rest and web symbols of a project by the projects id
-         * @param projectId
-         * @return {*}
-         */
+		 * get all rest and web symbols of a project by the projects id
+		 * 
+		 * @param projectId
+		 * @return {*}
+		 */
         function getAllSymbols(projectId, options) {
 
             var queryParams = '?';
@@ -73,7 +76,7 @@
             if (options) {
 
                 if (options.type) queryParams += 'type=' + options.type;
-                if (options.deleted && options.deleted === true) queryParams += '&showHidden=hidden';
+                if (options.deleted && options.deleted === true) queryParams += '&visbility=hidden';
 
                 return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + queryParams)
                     .then(success)
@@ -122,11 +125,12 @@
         }
 
         /**
-         * create a new symbol
-         * @parem projectId
-         * @param symbol
-         * @return {*}
-         */
+		 * create a new symbol
+		 * 
+		 * @parem projectId
+		 * @param symbol
+		 * @return {*}
+		 */
         function createSymbol(projectId, symbol) {
         	
         	if (angular.isArray(symbol)) {
@@ -182,10 +186,11 @@
         }
         
         /**
-         * update an existing symbol
-         * @param symbol
-         * @return {*}
-         */
+		 * update an existing symbol
+		 * 
+		 * @param symbol
+		 * @return {*}
+		 */
         function updateSymbol(projectId, symbol) {
             return $http.put(api.URL + '/projects/' + projectId+ '/symbols/' + symbol.id, symbol)
                 .then(success)
@@ -211,10 +216,11 @@
         }
 
         /**
-         * delete an existing symbol
-         * @param symbol
-         * @return {*}
-         */
+		 * delete an existing symbol
+		 * 
+		 * @param symbol
+		 * @return {*}
+		 */
         function deleteSymbol(projectId, symbolId) {
 
             return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide')
@@ -269,23 +275,23 @@
         
         function getRevisions(projectId, symbolId) {
         	
-        	return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
-            .then(success)
-            .catch(fail);
+        	return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
+            	.then(success)
+            	.catch(fail);
 
-        function success(response) {
-            return response.data;
-        }
-
-        function fail(error) {
-            console.error(error.data);
-            toast.create({
-                class: 'danger',
-                content: error.data.message,
-                dismissButton: true
-            });
-            return $q.reject();
-        }
+	        function success(response) {
+	            return response.data;
+	        }
+	
+	        function fail(error) {
+	            console.error(error.data);
+	            toast.create({
+	                class: 'danger',
+	                content: error.data.message,
+	                dismissButton: true
+	            });
+	            return $q.reject();
+	        }
         }
     }
 }());

@@ -40,7 +40,7 @@ angular
     angular
         .module('weblearner')
         .config([
-            '$stateProvider', '$urlRouterProvider', 'ngToastProvider',
+            '$stateProvider', '$urlRouterProvider', 'ngToastProvider', 'paths',
             config
         ]);
 
@@ -49,7 +49,7 @@ angular
      * @param $stateProvider
      * @param $urlRouterProvider
      */
-    function config($stateProvider, $urlRouterProvider, ngToastProvider) {
+    function config($stateProvider, $urlRouterProvider, ngToastProvider, paths) {
 
         ngToastProvider.configure({
             verticalPosition: 'top',
@@ -68,7 +68,7 @@ angular
             .state('home', {
                 url: '/home',
                 controller: 'HomeController',
-                templateUrl: 'app/partials/home.html'
+                templateUrl: paths.PARTIALS + '/home.html'
             })
 
             // =========================================================
@@ -79,7 +79,7 @@ angular
                 views: {
                     '@': {
                         controller: 'ProjectController',
-                        templateUrl: 'app/partials/project.html'
+                        templateUrl: paths.PARTIALS + '/project.html'
                     }
                 },
                 data: {
@@ -91,7 +91,7 @@ angular
                 views: {
                     '@': {
                         controller: 'ProjectCreateController',
-                        templateUrl: 'app/partials/project-create.html'
+                        templateUrl: paths.PARTIALS + '/project-create.html'
                     }
                 },
                 data: {
@@ -102,7 +102,7 @@ angular
                 url: '/settings',
                 views: {
                     '@': {
-                        templateUrl: 'app/partials/project-settings.html',
+                        templateUrl: paths.PARTIALS + '/project-settings.html',
                         controller: 'ProjectSettingsController'
                     }
                 }
@@ -123,7 +123,7 @@ angular
                 views: {
                     '@': {
                         controller: 'SymbolsController',
-                        templateUrl: 'app/partials/symbols.html'
+                        templateUrl: paths.PARTIALS + '/symbols.html'
                     }
                 },
                 resolve: {
@@ -137,7 +137,7 @@ angular
                 views: {
                     '@': {
                         controller: 'SymbolsTrashController',
-                        templateUrl: 'app/partials/symbols-trash.html'
+                        templateUrl: paths.PARTIALS + '/symbols-trash.html'
                     }
                 }
             })
@@ -146,7 +146,7 @@ angular
                 views: {
                     '@': {
                         controller: 'SymbolsController',
-                        templateUrl: 'app/partials/symbols.html'
+                        templateUrl: paths.PARTIALS + '/symbols.html'
                     }
                 },
                 resolve: {
@@ -160,7 +160,7 @@ angular
                 views: {
                     '@': {
                         controller: 'SymbolsTrashController',
-                        templateUrl: 'app/partials/symbols-trash.html'
+                        templateUrl: paths.PARTIALS + '/symbols-trash.html'
                     }
                 }
             })
@@ -169,7 +169,7 @@ angular
                 views: {
                     '@': {
                         controller: 'SymbolsHistoryController',
-                        templateUrl: 'app/partials/symbols-history.html'
+                        templateUrl: paths.PARTIALS + '/symbols-history.html'
                     }
                 }
             })
@@ -178,7 +178,7 @@ angular
                 views: {
                     '@': {
                         controller: 'SymbolsActionsController',
-                        templateUrl: 'app/partials/symbols-actions.html'
+                        templateUrl: paths.PARTIALS + '/symbols-actions.html'
                     }
                 }
 
@@ -188,7 +188,7 @@ angular
                 views: {
                     '@': {
                         controller: 'SymbolsImportController',
-                        templateUrl: 'app/partials/symbols-import.html'
+                        templateUrl: paths.PARTIALS + '/symbols-import.html'
                     }
                 }
 
@@ -198,7 +198,7 @@ angular
                 views: {
                     '@': {
                         controller: 'SymbolsExportController',
-                        templateUrl: 'app/partials/symbols-export.html'
+                        templateUrl: paths.PARTIALS + '/symbols-export.html'
                     }
                 }
             })
@@ -222,7 +222,7 @@ angular
                 views: {
                     '@': {
                         controller: 'LearnSetupController',
-                        templateUrl: 'app/partials/learn-setup.html'
+                        templateUrl: paths.PARTIALS + '/learn-setup.html'
                     }
                 },
                 resolve: {
@@ -236,7 +236,7 @@ angular
                 views: {
                     '@': {
                         controller: 'LearnSetupController',
-                        templateUrl: 'app/partials/learn-setup.html'
+                        templateUrl: paths.PARTIALS + '/learn-setup.html'
                     }
                 },
                 resolve: {
@@ -250,7 +250,7 @@ angular
                 views: {
                     '@': {
                         controller: 'LearnStartController',
-                        templateUrl: 'app/partials/learn-start.html'
+                        templateUrl: paths.PARTIALS + '/learn-start.html'
                     }
                 }
             })
@@ -259,7 +259,7 @@ angular
                 views: {
                     '@': {
                         controller: 'LearnResultsController',
-                        templateUrl: 'app/partials/learn-results.html'
+                        templateUrl: paths.PARTIALS + '/learn-results.html'
                     }
                 }
             })
@@ -268,7 +268,7 @@ angular
                 views: {
                     '@': {
                         controller: 'LearnResultsStatisticsController',
-                        templateUrl: 'app/partials/learn-results-statistics.html'
+                        templateUrl: paths.PARTIALS + '/learn-results-statistics.html'
                     }
                 }
             })
@@ -277,7 +277,7 @@ angular
                 views: {
                     '@': {
                         controller: 'LearnResultsCompareController',
-                        templateUrl: 'app/partials/learn-results-compare.html'
+                        templateUrl: paths.PARTIALS + '/learn-results-compare.html'
                     }
                 }
             })
@@ -288,14 +288,14 @@ angular
 
             .state('about', {
                 url: '/about',
-                templateUrl: 'app/partials/about.html',
+                templateUrl: paths.PARTIALS + '/about.html',
                 data: {
                     requiresProject: false
                 }
             })
             .state('help', {
                 url: '/help',
-                templateUrl: 'app/partials/help.html',
+                templateUrl: paths.PARTIALS + '/help.html',
                 data: {
                     requiresProject: false
                 }
@@ -309,8 +309,8 @@ angular
                 template: '<ui-view class="animate-view" />'
             })
             .state('tools.hyotheses', {
-                'url': '/tools/hypotheses/view',
-                templateUrl: 'app/partials/tools-hypotheses-view.html',
+                url: '/tools/hypotheses/view',
+                templateUrl: paths.PARTIALS + '/tools-hypotheses-view.html',
                 data: {
                     requiresProject: false
                 }
@@ -344,7 +344,13 @@ angular
         .constant('api', {
             URL: '/rest',
             PROXY_URL: '/rest/proxy?url='
-        });
+        })
+    	.constant('paths', {
+    		PARTIALS: '/app/partials',
+    		PARTIALS_DIRECTIVES: 'app/partials/directives',
+    		PARTIALS_MODALS: 'app/partials/directives',
+    		PARTIALS_WIDGETS: 'app/partials/widgets'
+    	})
 }());;(function () {
     'use strict';
 
@@ -494,11 +500,11 @@ angular
     angular
         .module('weblearner.controller')
         .controller('LearnResultsController', [
-            '$scope', 'SessionService', 'LearnResultResource', 'SelectionService',
+            '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService',
             LearnResultsController
         ]);
 
-    function LearnResultsController($scope, SessionService, LearnResultResource, SelectionService) {
+    function LearnResultsController($scope, SessionService, LearnResultResource, SelectionService, PromptService) {
 
         $scope.project = SessionService.project.get();
         $scope.tests = [];
@@ -516,10 +522,13 @@ angular
 
             SelectionService.removeSelection(test);
 
-            LearnResultResource.delete($scope.project.id, test.testNo)
-                .then(function () {
-                    _.remove($scope.tests, {testNo: test.testNo});
-                })
+            PromptService.confirm("Do you want to permanently delete this result?")
+	            .then(function(){
+	            	LearnResultResource.delete($scope.project.id, test.testNo)
+	                .then(function () {
+	                    _.remove($scope.tests, {testNo: test.testNo});
+	                })
+	            })
         };
 
         $scope.deleteTests = function () {
@@ -529,12 +538,16 @@ angular
             
             if (selectedTests.length > 0) {
             	testNos = _.pluck(selectedTests, 'testNo');
-            	LearnResultResource.delete($scope.project.id, testNos)
-            		.then(function(){
-            			_.forEach(testNos, function(testNo){
-            				_.remove($scope.tests, {testNo: testNo})
-            			})
-            		})
+            	
+            	PromptService.confirm("Do you want to permanently delete this result?")
+	            	.then(function(){
+	            		LearnResultResource.delete($scope.project.id, testNos)
+	            		.then(function(){
+	            			_.forEach(testNos, function(testNo){
+	            				_.remove($scope.tests, {testNo: testNo})
+	            			})
+	            		})
+	            	})
             }
         }
     }
@@ -1186,6 +1199,8 @@ angular
 }());;(function(){
 	'use strict';
 	
+	console.log('asd');
+	
 	angular
 		.module('weblearner.controller')
 		.controller('SymbolsHistoryController', [
@@ -1201,7 +1216,7 @@ angular
 		
 		//////////
 		
-		SymbolResource.getRevions($scope.project.id, $stateParams.id)
+		SymbolResource.getRevisions($scope.project.id, $stateParams.symbolId)
 			.then(function(revisions){
 				$scope.latestSymbol = revisions.pop();
 				$scope.revisions = revisions;
@@ -2703,43 +2718,31 @@ angular
 
     angular
         .module('weblearner.directives')
-        .directive('loadScreen', loadScreen);
+        .directive('loadScreen', ['$http', loadScreen]);
 
-    function loadScreen() {
+    function loadScreen($http) {
 
         var directive = {
-            scope: {},
             templateUrl: 'app/partials/directives/load-screen.html',
-            controller: [
-                '$scope',
-                controller
-            ]
+            link: link
         };
         return directive;
 
         //////////
 
-        function controller($scope) {
+        function link (scope, el, attrs) {
+        	        	            
+        	scope.isLoading = function () {
+                return $http.pendingRequests.length > 0;
+            };
 
-            $scope.counter = 0;
-
-            //////////
-
-            $scope.$on('loadScreen.show', show);
-            $scope.$on('loadScreen.hide', hide);
-
-            //////////
-
-            function show() {
-                $scope.counter++;
-            }
-
-            function hide() {
-                $scope.counter--;
-                if ($scope.counter < 0) {
-                    $scope.counter = 0;
+            scope.$watch(scope.isLoading, function (v) {
+                if(v){
+                	el[0].style.display = 'block'
+                }else{
+                	el[0].style.display = 'none'
                 }
-            }
+            });
         }
     }
 }());;(function(){
@@ -4620,15 +4623,16 @@ angular
         ]);
 
     /**
-     *
-     * @param $http
-     * @param $q
-     * @param api
-     * @param toast
-     * @return {{all: getAllSymbols, allWeb: getAllWebSymbols, allRest: getAllRestSymbols, get: getSymbol,
-     *          create: createSymbol, update: updateSymbol, delete: deleteSymbol}}
-     * @constructor
-     */
+	 * 
+	 * @param $http
+	 * @param $q
+	 * @param api
+	 * @param toast
+	 * @return {{all: getAllSymbols, allWeb: getAllWebSymbols, allRest:
+	 *         getAllRestSymbols, get: getSymbol, create: createSymbol, update:
+	 *         updateSymbol, delete: deleteSymbol}}
+	 * @constructor
+	 */
     function SymbolResource($http, $q, api, toast) {
 
         var service = {
@@ -4643,14 +4647,15 @@ angular
         };
         return service;
 
-        //////////
+        // ////////
 
         /**
-         * get a specific web or rest symbol by its id
-         * @param projectId
-         * @param symbolId
-         * @return {*}
-         */
+		 * get a specific web or rest symbol by its id
+		 * 
+		 * @param projectId
+		 * @param symbolId
+		 * @return {*}
+		 */
         function getSymbol(projectId, symbolId) {
 
             return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
@@ -4673,10 +4678,11 @@ angular
         }
 
         /**
-         * get all rest and web symbols of a project by the projects id
-         * @param projectId
-         * @return {*}
-         */
+		 * get all rest and web symbols of a project by the projects id
+		 * 
+		 * @param projectId
+		 * @return {*}
+		 */
         function getAllSymbols(projectId, options) {
 
             var queryParams = '?';
@@ -4684,7 +4690,7 @@ angular
             if (options) {
 
                 if (options.type) queryParams += 'type=' + options.type;
-                if (options.deleted && options.deleted === true) queryParams += '&showHidden=hidden';
+                if (options.deleted && options.deleted === true) queryParams += '&visbility=hidden';
 
                 return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + queryParams)
                     .then(success)
@@ -4733,11 +4739,12 @@ angular
         }
 
         /**
-         * create a new symbol
-         * @parem projectId
-         * @param symbol
-         * @return {*}
-         */
+		 * create a new symbol
+		 * 
+		 * @parem projectId
+		 * @param symbol
+		 * @return {*}
+		 */
         function createSymbol(projectId, symbol) {
         	
         	if (angular.isArray(symbol)) {
@@ -4793,10 +4800,11 @@ angular
         }
         
         /**
-         * update an existing symbol
-         * @param symbol
-         * @return {*}
-         */
+		 * update an existing symbol
+		 * 
+		 * @param symbol
+		 * @return {*}
+		 */
         function updateSymbol(projectId, symbol) {
             return $http.put(api.URL + '/projects/' + projectId+ '/symbols/' + symbol.id, symbol)
                 .then(success)
@@ -4822,10 +4830,11 @@ angular
         }
 
         /**
-         * delete an existing symbol
-         * @param symbol
-         * @return {*}
-         */
+		 * delete an existing symbol
+		 * 
+		 * @param symbol
+		 * @return {*}
+		 */
         function deleteSymbol(projectId, symbolId) {
 
             return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide')
@@ -4880,23 +4889,23 @@ angular
         
         function getRevisions(projectId, symbolId) {
         	
-        	return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
-            .then(success)
-            .catch(fail);
+        	return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
+            	.then(success)
+            	.catch(fail);
 
-        function success(response) {
-            return response.data;
-        }
-
-        function fail(error) {
-            console.error(error.data);
-            toast.create({
-                class: 'danger',
-                content: error.data.message,
-                dismissButton: true
-            });
-            return $q.reject();
-        }
+	        function success(response) {
+	            return response.data;
+	        }
+	
+	        function fail(error) {
+	            console.error(error.data);
+	            toast.create({
+	                class: 'danger',
+	                content: error.data.message,
+	                dismissButton: true
+	            });
+	            return $q.reject();
+	        }
         }
     }
 }());;(function () {
