@@ -4,45 +4,39 @@
     angular
         .module('weblearner.controller')
         .controller('SymbolsExportController', [
-            '$scope', 'SessionService', 'SymbolResource', 'SelectionService',
+            '$scope', '$filter', 'SessionService', 'SymbolResource', 'SelectionService',
             SymbolsExportController
         ]);
 
-    function SymbolsExportController($scope, SessionService, SymbolResource, SelectionService) {
+    function SymbolsExportController($scope, $filter, SessionService, SymbolResource, SelectionService) {
 
         var _project = SessionService.project.get();
 
         //////////
 
         $scope.symbols = {
-            web: [],
-            rest: []
+    		web: [], rest: []
         };
 
         //////////
-
+        
         SymbolResource.getAll(_project.id)
             .then(function (symbols) {
-                $scope.symbols.web = _.filter(symbols, {type: 'web'});
-                $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
+            	$scope.symbols.web = $filter('typeOfWeb')(symbols);
+            	$scope.symbols.rest = $filter('typeOfRest')(symbols);
             });
 
         //////////
 
         $scope.getSelectedSymbols = function () {
-
-            var selectedWebSymbols = SelectionService.getSelected($scope.symbols.web);
-            var selectedRestSymbols = SelectionService.getSelected($scope.symbols.rest);
-            var selectedSymbols = selectedWebSymbols.concat(selectedRestSymbols);
-
+            var symbols = $scope.symbols.web.concat($scope.symbols.rest);
+            var selectedSymbols = SelectionService.getSelected(symbols);
             SelectionService.removeSelection(selectedSymbols);
-
             _.forEach(selectedSymbols, function (symbol) {
                 delete symbol.id;
                 delete symbol.revision;
                 delete symbol.project;
             });
-
             return selectedSymbols;
         };
     }

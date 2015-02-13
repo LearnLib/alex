@@ -28,10 +28,6 @@
          * create a new project
          */
         $scope.createProject = function () {
-
-            console.log('asd');
-            return;
-
             ProjectResource.create($scope.project)
                 .then(function () {
                     $state.go('home');

@@ -23,11 +23,12 @@
         var service = {
             get: getSymbol,
             getAll: getAllSymbols,
+            getRevisions: getRevisions,
             recover: recoverSymbol,
             create: createSymbol,
             update: updateSymbol,
             delete: deleteSymbol,
-            deleteSome: deleteSomeSymbols
+            deleteSome: deleteSomeSymbols,
         };
         return service;
 
@@ -242,7 +243,7 @@
         function deleteSomeSymbols(projectId, symbolsIds) {
 
             symbolsIds = symbolsIds.join();
-
+            
             return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolsIds + '/hide')
                 .then(success)
                 .catch(fail);
@@ -264,6 +265,27 @@
                 });
                 return $q.reject();
             }
+        }
+        
+        function getRevisions(projectId, symbolId) {
+        	
+        	return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
+            .then(success)
+            .catch(fail);
+
+        function success(response) {
+            return response.data;
+        }
+
+        function fail(error) {
+            console.error(error.data);
+            toast.create({
+                class: 'danger',
+                content: error.data.message,
+                dismissButton: true
+            });
+            return $q.reject();
+        }
         }
     }
 }());

@@ -29,11 +29,10 @@
                 symbol.project = _project.id;
             });
 
-            $scope.symbols.web = _.filter(symbols, {type: 'web'});
-            $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
-
-
-            $scope.$apply();
+            $scope.$apply(function(){
+            	$scope.symbols.web = _.filter(symbols, {type: 'web'});
+                $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
+            });
         };
 
         $scope.uploadSymbols = function () {

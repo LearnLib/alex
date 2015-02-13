@@ -17,7 +17,7 @@
                     learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
                 <i class="fa fa-gear"></i>
             </button>
-            <button class="btn btn-xs btn-primary" ng-click="startTest()">
+            <button class="btn btn-xs btn-primary" ng-click="startLearning()">
                 Start Test
             </button>
         </div>
@@ -28,10 +28,6 @@
 
     <div selectable-list ng-model="symbols">
         <div selectable-list-item ng-repeat="symbol in symbols">
-
-            <span class="label label-default pull-right">
-                Rev. <span ng-bind="symbol.revision"></span>
-            </span>
 
             <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
 

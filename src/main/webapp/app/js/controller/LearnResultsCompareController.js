@@ -4,11 +4,11 @@
     angular
         .module('weblearner.controller')
         .controller('LearnResultsCompareController', [
-            '$scope', '$stateParams', 'SessionService', 'TestResource',
+            '$scope', '$stateParams', 'SessionService', 'LearnResultResource',
             LearnResultsCompareController
         ]);
 
-    function LearnResultsCompareController($scope, $stateParams, SessionService, TestResource) {
+    function LearnResultsCompareController($scope, $stateParams, SessionService, LearnResultResource) {
 
         $scope.project = SessionService.project.get();
         $scope.finalTestResults = [];
@@ -17,7 +17,7 @@
 
         //////////
 
-        TestResource.getAllFinal($scope.project.id)
+        LearnResultResource.getAllFinal($scope.project.id)
             .then(function (finalTestResults) {
                 $scope.finalTestResults = finalTestResults;
                 return $stateParams.testNos;
@@ -27,10 +27,9 @@
         //////////
 
         function loadComplete(testNos, index) {
-        	
         	testNos = testNos.split(',');
         	_.forEach(testNos, function(testNo){       		
-        		TestResource.getComplete($scope.project.id, testNo)
+        		LearnResultResource.getComplete($scope.project.id, testNo)
                 .then(function(completeTestResult){
                     if (angular.isUndefined(index)) {
                         $scope.panels.push(completeTestResult);
@@ -44,7 +43,7 @@
         //////////
 
         $scope.fillPanel = function (result, index) {
-            loadComplete(result.testNo, index);
+            loadComplete(result.testNo + '', index);
         }
     }
 

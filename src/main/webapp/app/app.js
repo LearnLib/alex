@@ -164,6 +164,15 @@ angular
                     }
                 }
             })
+            .state('symbols.history', {
+            	url: '/{symbolId:int}/history',
+                views: {
+                    '@': {
+                        controller: 'SymbolsHistoryController',
+                        templateUrl: 'app/partials/symbols-history.html'
+                    }
+                }
+            })
             .state('symbols.actions', {
                 url: '/{symbolId:int}/actions',
                 views: {
@@ -436,11 +445,11 @@ angular
     angular
         .module('weblearner.controller')
         .controller('LearnResultsCompareController', [
-            '$scope', '$stateParams', 'SessionService', 'TestResource',
+            '$scope', '$stateParams', 'SessionService', 'LearnResultResource',
             LearnResultsCompareController
         ]);
 
-    function LearnResultsCompareController($scope, $stateParams, SessionService, TestResource) {
+    function LearnResultsCompareController($scope, $stateParams, SessionService, LearnResultResource) {
 
         $scope.project = SessionService.project.get();
         $scope.finalTestResults = [];
@@ -449,7 +458,7 @@ angular
 
         //////////
 
-        TestResource.getAllFinal($scope.project.id)
+        LearnResultResource.getAllFinal($scope.project.id)
             .then(function (finalTestResults) {
                 $scope.finalTestResults = finalTestResults;
                 return $stateParams.testNos;
@@ -459,10 +468,9 @@ angular
         //////////
 
         function loadComplete(testNos, index) {
-        	
         	testNos = testNos.split(',');
         	_.forEach(testNos, function(testNo){       		
-        		TestResource.getComplete($scope.project.id, testNo)
+        		LearnResultResource.getComplete($scope.project.id, testNo)
                 .then(function(completeTestResult){
                     if (angular.isUndefined(index)) {
                         $scope.panels.push(completeTestResult);
@@ -476,7 +484,7 @@ angular
         //////////
 
         $scope.fillPanel = function (result, index) {
-            loadComplete(result.testNo, index);
+            loadComplete(result.testNo + '', index);
         }
     }
 
@@ -486,18 +494,18 @@ angular
     angular
         .module('weblearner.controller')
         .controller('LearnResultsController', [
-            '$scope', 'SessionService', 'TestResource', 'SelectionService',
+            '$scope', 'SessionService', 'LearnResultResource', 'SelectionService',
             LearnResultsController
         ]);
 
-    function LearnResultsController($scope, SessionService, TestResource, SelectionService) {
+    function LearnResultsController($scope, SessionService, LearnResultResource, SelectionService) {
 
         $scope.project = SessionService.project.get();
         $scope.tests = [];
 
         //////////
 
-        TestResource.getAllFinal($scope.project.id)
+        LearnResultResource.getAllFinal($scope.project.id)
             .then(function (tests) {
                 $scope.tests = tests;
             });
@@ -508,7 +516,7 @@ angular
 
             SelectionService.removeSelection(test);
 
-            TestResource.delete($scope.project.id, test.testNo)
+            LearnResultResource.delete($scope.project.id, test.testNo)
                 .then(function () {
                     _.remove($scope.tests, {testNo: test.testNo});
                 })
@@ -521,7 +529,7 @@ angular
             
             if (selectedTests.length > 0) {
             	testNos = _.pluck(selectedTests, 'testNo');
-            	TestResource.delete($scope.project.id, testNos)
+            	LearnResultResource.delete($scope.project.id, testNos)
             		.then(function(){
             			_.forEach(testNos, function(testNo){
             				_.remove($scope.tests, {testNo: testNo})
@@ -537,7 +545,7 @@ angular
     angular
         .module('weblearner.controller')
         .controller('LearnResultsStatisticsController', [
-            '$scope', 'SessionService', 'TestResource', 'TestResultsChartService', 'SelectionService',
+            '$scope', 'SessionService', 'LearnResultResource', 'TestResultsChartService', 'SelectionService',
             LearnResultsStatisticsController
         ]);
 
@@ -553,7 +561,7 @@ angular
      * @param SelectionService
      * @constructor
      */
-    function LearnResultsStatisticsController($scope, SessionService, TestResource, TestResultsChartService, SelectionService) {
+    function LearnResultsStatisticsController($scope, SessionService, LearnResultResource, TestResultsChartService, SelectionService) {
 
         /** The open project */
         $scope.project = SessionService.project.get();
@@ -577,7 +585,7 @@ angular
         //////////
 
         // get all final tests of the project
-        TestResource.getAllFinal($scope.project.id)
+        LearnResultResource.getAllFinal($scope.project.id)
             .then(function (tests) {
                 $scope.tests = tests;
             });
@@ -602,7 +610,7 @@ angular
         $scope.chartFromSingleCompleteTestResult = function () {
             var tests = SelectionService.getSelected($scope.tests);
             if (tests.length == 1) {
-                TestResource.getComplete($scope.project.id, tests[0].testNo)
+            	LearnResultResource.getComplete($scope.project.id, tests[0].testNo)
                     .then(function (results) {
                         $scope.chartMode = $scope.chartModes.SINGLE_COMPLETE_TEST_RESULT;
                         $scope.chartDataSets = [TestResultsChartService.createChartDataFromSingleCompleteTestResult(results)];
@@ -618,10 +626,10 @@ angular
             var tests = SelectionService.getSelected($scope.tests);
             var dataSets = [];
             if (tests.length == 2) {
-                TestResource.getComplete($scope.project.id, tests[0].testNo)
+            	LearnResultResource.getComplete($scope.project.id, tests[0].testNo)
                     .then(function (results) {
                         dataSets.push(TestResultsChartService.createChartDataFromSingleCompleteTestResult(results));
-                        TestResource.getComplete($scope.project.id, tests[1].testNo)
+                        LearnResultResource.getComplete($scope.project.id, tests[1].testNo)
                             .then(function (results) {
                                 dataSets.push(TestResultsChartService.createChartDataFromSingleCompleteTestResult(results));
                                 $scope.chartMode = $scope.chartModes.TWO_COMPLETE_TEST_RESULTS;
@@ -693,7 +701,7 @@ angular
 
         $scope.startLearning = function () {
             var selectedSymbols = SelectionService.getSelected($scope.symbols);
-
+            
             // make sure there are selected symbols
             if (selectedSymbols.length) {
 
@@ -854,21 +862,22 @@ angular
     angular
         .module('weblearner.controller')
         .controller('ProjectCreateController', [
-            '$scope', '$location', 'ProjectResource',
+            '$scope', '$state', 'ProjectResource',
             ProjectCreateController
         ]);
 
     /**
-     * create a new project
-     * @template 'app/partials/project-create.html'
+     * ProjectCreateController
+     *
+     * The controller that handles the creation of new projects
+     *
      * @param $scope
      * @param $location
-     * @param Project
+     * @param ProjectResource
      * @constructor
      */
-    function ProjectCreateController($scope, $location, ProjectResource) {
+    function ProjectCreateController($scope, $state, ProjectResource) {
 
-        /** @type {{}} */
         $scope.project = {};
 
         //////////
@@ -877,22 +886,11 @@ angular
          * create a new project
          */
         $scope.createProject = function () {
-            if ($scope.create_form.$valid) {
-                ProjectResource.create($scope.project)
-                    .then(function (project) {
-                        $location.path('/');
-                    })
-            } else {
-                $scope.create_form.submitted = true;
-            }
+            ProjectResource.create($scope.project)
+                .then(function () {
+                    $state.go('home');
+                })
         };
-
-        /**
-         * reset the form
-         */
-        $scope.reset = function () {
-            $scope.project = {}
-        }
     }
 }());;(function () {
     'use strict';
@@ -900,11 +898,11 @@ angular
     angular
         .module('weblearner.controller')
         .controller('ProjectSettingsController', [
-            '$scope', '$location', 'ProjectResource', 'SessionService',
+            '$scope', '$state', 'ProjectResource', 'SessionService', 'PromptService',
             ProjectSettingsController
         ]);
 
-    function ProjectSettingsController($scope, $location, ProjectResource, SessionService) {
+    function ProjectSettingsController($scope, $state, ProjectResource, SessionService, PromptService) {
 
         $scope.project = SessionService.project.get();
         $scope.projectCopy = angular.copy($scope.project);
@@ -925,11 +923,15 @@ angular
         };
 
         $scope.deleteProject = function () {
-            ProjectResource.delete($scope.project)
-                .then(function () {
-                    SessionService.project.remove();
-                    $location.path('/')
-                })
+        	
+        	PromptService.confirm("Do you really want to delete this project with all its symbols and test results? This process can not be undone.")
+	        	.then(function(){
+	        		ProjectResource.delete($scope.project)
+		                .then(function () {
+		                    SessionService.project.remove();
+		                    $state.go('home');
+		                })
+	        	})
         };
 
         $scope.reset = function () {
@@ -1025,7 +1027,9 @@ angular
          * save the changes that were made to the symbol by updating it on the server
          */
         $scope.saveChanges = function () {
-            SelectionService.removeSelection($scope.actions);
+        	
+        	var copy = angular.copy($scope.symbol);
+            SelectionService.removeSelection(copy.actions);
 
             // remove the temporarily create unique id attribute
             _.forEach(copy.actions, function (action) {
@@ -1033,7 +1037,7 @@ angular
             });
 
             // update the symbol
-            SymbolResource.update($scope.project.id, $scope.symbol)
+            SymbolResource.update($scope.project.id, copy)
                 .then(init)
         };
 
@@ -1143,48 +1147,84 @@ angular
     angular
         .module('weblearner.controller')
         .controller('SymbolsExportController', [
-            '$scope', 'SessionService', 'SymbolResource', 'SelectionService',
+            '$scope', '$filter', 'SessionService', 'SymbolResource', 'SelectionService',
             SymbolsExportController
         ]);
 
-    function SymbolsExportController($scope, SessionService, SymbolResource, SelectionService) {
+    function SymbolsExportController($scope, $filter, SessionService, SymbolResource, SelectionService) {
 
         var _project = SessionService.project.get();
 
         //////////
 
         $scope.symbols = {
-            web: [],
-            rest: []
+    		web: [], rest: []
         };
 
         //////////
-
+        
         SymbolResource.getAll(_project.id)
             .then(function (symbols) {
-                $scope.symbols.web = _.filter(symbols, {type: 'web'});
-                $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
+            	$scope.symbols.web = $filter('typeOfWeb')(symbols);
+            	$scope.symbols.rest = $filter('typeOfRest')(symbols);
             });
 
         //////////
 
         $scope.getSelectedSymbols = function () {
-
-            var selectedWebSymbols = SelectionService.getSelected($scope.symbols.web);
-            var selectedRestSymbols = SelectionService.getSelected($scope.symbols.rest);
-            var selectedSymbols = selectedWebSymbols.concat(selectedRestSymbols);
-
+            var symbols = $scope.symbols.web.concat($scope.symbols.rest);
+            var selectedSymbols = SelectionService.getSelected(symbols);
             SelectionService.removeSelection(selectedSymbols);
-
             _.forEach(selectedSymbols, function (symbol) {
                 delete symbol.id;
                 delete symbol.revision;
                 delete symbol.project;
             });
-
             return selectedSymbols;
         };
     }
+}());;(function(){
+	'use strict';
+	
+	angular
+		.module('weblearner.controller')
+		.controller('SymbolsHistoryController', [
+		     '$scope', '$stateParams', 'SymbolResource', 'SessionService',
+		     SymbolsHistoryController
+	     ]);
+     
+    function SymbolsHistoryController($scope, $stateParams, SymbolResource, SessionService) {
+		
+		$scope.project = SessionService.project.get();
+		$scope.revisions = [];
+		$scope.latestSymbol;
+		
+		//////////
+		
+		SymbolResource.getRevions($scope.project.id, $stateParams.id)
+			.then(function(revisions){
+				$scope.latestSymbol = revisions.pop();
+				$scope.revisions = revisions;
+			})
+		
+		//////////
+		
+		$scope.restoreRevision = function(revision) {
+			
+			// copy all important properties from the revision to the latest
+			$scope.latestSymbol.name = revision.name;
+			$scope.latestSymbol.abbreviation = revision.abbreviation;
+			$scope.latestSymbol.actions = revision.actions;
+			
+			// update symbol with new properties
+			SymbolResource.update($scope.project.id, $scope.latestSymbol)
+				.then(function(symbol){
+					
+					$scope.revisions.push($scope.latestSymbol)
+					$scope.latestSymbol = symbol;
+				})
+		}
+	}
 }());;(function () {
     'use strict';
 
@@ -1216,11 +1256,10 @@ angular
                 symbol.project = _project.id;
             });
 
-            $scope.symbols.web = _.filter(symbols, {type: 'web'});
-            $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
-
-
-            $scope.$apply();
+            $scope.$apply(function(){
+            	$scope.symbols.web = _.filter(symbols, {type: 'web'});
+                $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
+            });
         };
 
         $scope.uploadSymbols = function () {
@@ -1359,6 +1398,47 @@ angular
         };
 
         $scope.closeModal = function () {
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('ConfirmDialogController', [
+            '$scope', '$modalInstance', 'modalData',
+            ConfirmDialogController
+        ]);
+
+    /**
+     * ConfirmDialogController
+     *
+     * The controller that handles the confirm modal dialog.
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param modalData
+     * @constructor
+     */
+    function ConfirmDialogController($scope, $modalInstance, modalData) {
+
+        /** The text to be displayed **/
+        $scope.text = modalData.text;
+
+        //////////
+
+        /**
+         * Close the modal dialog
+         */
+        $scope.ok = function () {
+        	$modalInstance.close();
+        };
+
+        /**
+         * Close the modal dialog
+         */
+        $scope.close = function () {
             $modalInstance.dismiss();
         }
     }
@@ -2582,6 +2662,42 @@ angular
             }
         }
     }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('lazyValidationForm', lazyValidationForm);
+
+    function lazyValidationForm() {
+
+        var directive = {
+            restrict: 'A',
+            scope: {
+                form: '=lazyValidationForm',
+                submit: '&onSubmit'
+            },
+            link: link
+        };
+        return directive;
+
+        //////////
+
+        function link(scope, el, attrs) {
+            if (attrs.name) {
+                attrs.$set('novalidate', '');
+                el.bind('submit', function () {
+                    if (scope.form.$valid) {
+                        scope.submit()();
+                    } else {
+                        scope.form.submitted = true;
+                        scope.$apply();
+                    }
+                })
+            }
+        }
+    }
+
 }());;(function () {
     'use strict';
 
@@ -4006,6 +4122,161 @@ angular
 
     angular
         .module('weblearner.resources')
+        .factory('LearnResultResource', [
+            '$http', '$q', 'api', 'ngToast',
+            LearnResultResource
+        ]);
+
+    /**
+     * LearnResultResource
+     * 
+     * The resource the get test results from the server
+     *
+     * @param $http
+     * @param $q
+     * @param api
+     * @param toast
+     * @return {{getGetAllFinal: getGetAllFinal, getFinal: getFinal, getComplete: getComplete, delete: deleteTest}}
+     * @constructor
+     */
+    function LearnResultResource($http, $q, api, toast) {
+
+        // the service
+        var service = {
+            getAllFinal: getAllFinal,
+            getFinal: getFinal,
+            getComplete: getComplete,
+            delete: deleteTests
+        };
+        return service;
+
+        //////////
+
+        /**
+         * Get all final results from all tests that were run for a project. the results only include the final
+         * hypothesis
+         *
+         * @param projectId
+         * @return {*}
+         */
+        function getAllFinal(projectId) {
+            return $http.get(api.URL + '/projects/' + projectId + '/results')
+                .then(success)
+                .catch(fail);
+
+            function success(response) {
+                return response.data;
+            }
+
+            function fail(error) {
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: error.data.message,
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+
+        /**
+         * Get the final test result for a project that only includes the final hypothesis
+         *
+         * @param projectId
+         * @param testNo
+         * @return {*}
+         */
+        function getFinal(projectId, testNo) {
+            return $http.get(api.URL + '/projects/' + projectId + '/results/' + testNo)
+                .then(success)
+                .catch(fail);
+
+            function success(response) {
+                return response.data;
+            }
+
+            function fail(error) {
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: error.data.message,
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+
+        /**
+         * Get all created hypotheses that were created during a learn process of a project
+         *
+         * @param projectId
+         * @param testNo
+         * @return {*}
+         */
+        function getComplete(projectId, testNo) {
+
+            return $http.get(api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
+                .then(success)
+                .catch(fail);
+
+            function success(response) {
+                return response.data;
+            }
+
+            function fail(error) {
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: error.data.message,
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+
+        /**
+         * Delete a complete test run, that also includes all hypotheses that were created
+         *
+         * @param projectId
+         * @param testNo
+         * @return {*}
+         */
+        function deleteTests(projectId, testNo) {
+        	
+        	if (angular.isArray(testNo)) {
+        		testNo = testNo.join();
+        	}
+        	
+            return $http.delete(api.URL + '/projects/' + projectId + '/results/' + testNo, {})
+                .then(success)
+                .catch(fail);
+
+            function success(response) {
+            	toast.create({
+                    class: 'success',
+                    content: 'The results were deleted.',
+                    dismissButton: true
+                });
+                return response.data;
+            }
+
+            function fail(error) {
+            	console.log('=============');
+                console.error(error.data);
+                toast.create({
+                    class: 'danger',
+                    content: error.data.message,
+                    dismissButton: true
+                });
+                return $q.reject();
+            }
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.resources')
         .factory('LearnerResource', [
             '$http', '$q', 'api', 'ngToast',
             Learner
@@ -4363,11 +4634,12 @@ angular
         var service = {
             get: getSymbol,
             getAll: getAllSymbols,
+            getRevisions: getRevisions,
             recover: recoverSymbol,
             create: createSymbol,
             update: updateSymbol,
             delete: deleteSymbol,
-            deleteSome: deleteSomeSymbols
+            deleteSome: deleteSomeSymbols,
         };
         return service;
 
@@ -4582,7 +4854,7 @@ angular
         function deleteSomeSymbols(projectId, symbolsIds) {
 
             symbolsIds = symbolsIds.join();
-
+            
             return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolsIds + '/hide')
                 .then(success)
                 .catch(fail);
@@ -4605,159 +4877,26 @@ angular
                 return $q.reject();
             }
         }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.resources')
-        .factory('TestResource', [
-            '$http', '$q', 'api', 'ngToast',
-            Test
-        ]);
-
-    /**
-     * Test
-     * The resource the get test results from the server
-     *
-     * @param $http
-     * @param $q
-     * @param api
-     * @param toast
-     * @return {{getGetAllFinal: getGetAllFinal, getFinal: getFinal, getComplete: getComplete, delete: deleteTest}}
-     * @constructor
-     */
-    function Test($http, $q, api, toast) {
-
-        // the service
-        var service = {
-            getAllFinal: getAllFinal,
-            getFinal: getFinal,
-            getComplete: getComplete,
-            delete: deleteTests
-        };
-        return service;
-
-        //////////
-
-        /**
-         * Get all final results from all tests that were run for a project. the results only include the final
-         * hypothesis
-         *
-         * @param projectId
-         * @return {*}
-         */
-        function getAllFinal(projectId) {
-            return $http.get(api.URL + '/projects/' + projectId + '/results')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
-        }
-
-        /**
-         * Get the final test result for a project that only includes the final hypothesis
-         *
-         * @param projectId
-         * @param testNo
-         * @return {*}
-         */
-        function getFinal(projectId, testNo) {
-            return $http.get(api.URL + '/projects/' + projectId + '/results/' + testNo)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
-        }
-
-        /**
-         * Get all created hypotheses that were created during a learn process of a project
-         *
-         * @param projectId
-         * @param testNo
-         * @return {*}
-         */
-        function getComplete(projectId, testNo) {
-
-            return $http.get(api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
-        }
-
-        /**
-         * Delete a complete test run, that also includes all hypotheses that were created
-         *
-         * @param projectId
-         * @param testNo
-         * @return {*}
-         */
-        function deleteTests(projectId, testNo) {
+        
+        function getRevisions(projectId, symbolId) {
         	
-        	if (angular.isArray(testNo)) {
-        		testNo = testNo.join();
-        	}
-        	
-            return $http.delete(api.URL + '/projects/' + projectId + '/results/' + testNo, {})
-                .then(success)
-                .catch(fail);
+        	return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
+            .then(success)
+            .catch(fail);
 
-            function success(response) {
-            	toast.create({
-                    class: 'success',
-                    content: 'The results were deleted.',
-                    dismissButton: true
-                });
-                return response.data;
-            }
+        function success(response) {
+            return response.data;
+        }
 
-            function fail(error) {
-            	console.log('=============');
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+        function fail(error) {
+            console.error(error.data);
+            toast.create({
+                class: 'danger',
+                content: error.data.message,
+                dismissButton: true
+            });
+            return $q.reject();
+        }
         }
     }
 }());;(function () {
@@ -4882,7 +5021,8 @@ angular
     function PromptService($modal) {
 
         var service = {
-            prompt: prompt
+            prompt: prompt,
+            confirm: confirm
         };
         return service;
 
@@ -4906,6 +5046,28 @@ angular
                             text: text,
                             regexp: options.regexp,
                             errorMsg: options.errorMsg
+                        };
+                    }
+                }
+            });
+
+            return modal.result;
+        }
+        
+        /**
+         * Open the confirm dialog
+         * 
+         * @param text - The text to be displayed
+         */
+        function confirm(text) {
+
+            var modal = $modal.open({
+                templateUrl: 'app/partials/modals/modal-confirm-dialog.html',
+                controller: 'ConfirmDialogController',
+                resolve: {
+                    modalData: function () {
+                        return {
+                            text: text
                         };
                     }
                 }
@@ -5381,38 +5543,38 @@ angular
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
     }
-}());;(function () {
-    'use strict';
+}());;(function() {
+	'use strict';
 
-    angular
-        .module('weblearner.filters')
-        .filter('typeOfRest', typeOfRest);
+	angular.module('weblearner.filters')
+		.filter('typeOfRest', typeOfRest)
+		.filter('typeOfWeb', typeOfWeb);
 
-    /**
-     * The filter that takes an array of objects and returns only those with a property 'type' with the value 'rest'
-     *
-     * @return {Function}
-     */
-    function typeOfRest() {
-        return function (list) {
-            return _.filter(list, {type: 'rest'})
-        }
-    }
-}());;(function () {
-    'use strict';
+	/**
+	 * The filter that takes an array of objects and returns only those with a
+	 * property 'type' with the value 'rest'
+	 * 
+	 * @return {Function}
+	 */
+	function typeOfRest() {
+		return function(list) {
+			return _.filter(list, {
+				type : 'rest'
+			})
+		}
+	}
 
-    angular
-        .module('weblearner.filters')
-        .filter('typeOfWeb', typeOfWeb);
-
-    /**
-     * The filter that takes an array of objects and returns only those with a property 'type' with the value 'web'
-     *
-     * @return {Function}
-     */
-    function typeOfWeb() {
-        return function (list) {
-            return _.filter(list, {type: 'web'})
-        }
-    }
+	/**
+	 * The filter that takes an array of objects and returns only those with a
+	 * property 'type' with the value 'web'
+	 * 
+	 * @return {Function}
+	 */
+	function typeOfWeb() {
+		return function(list) {
+			return _.filter(list, {
+				type : 'web'
+			})
+		}
+	}
 }());

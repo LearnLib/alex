@@ -3,13 +3,14 @@
 
     angular
         .module('weblearner.resources')
-        .factory('TestResource', [
+        .factory('LearnResultResource', [
             '$http', '$q', 'api', 'ngToast',
-            Test
+            LearnResultResource
         ]);
 
     /**
-     * Test
+     * LearnResultResource
+     * 
      * The resource the get test results from the server
      *
      * @param $http
@@ -19,7 +20,7 @@
      * @return {{getGetAllFinal: getGetAllFinal, getFinal: getFinal, getComplete: getComplete, delete: deleteTest}}
      * @constructor
      */
-    function Test($http, $q, api, toast) {
+    function LearnResultResource($http, $q, api, toast) {
 
         // the service
         var service = {

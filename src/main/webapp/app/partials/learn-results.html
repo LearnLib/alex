@@ -28,10 +28,10 @@
         <div class="container">
 
             <div selectable-list ng-model="tests">
-                <div selectable-list-item ng-repeat="test in tests">
+                <div selectable-list-item ng-repeat="test in (tests|typeOfWeb)">
 
-                    <div class="btn-group btn-group-xs pull-right" dropdown>
-                        <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+                    <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
                             <i class="fa fa-bars"></i>
                         </button>
                         <ul class="dropdown-menu pull-left" role="menu">

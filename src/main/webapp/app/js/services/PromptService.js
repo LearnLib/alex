@@ -20,7 +20,8 @@
     function PromptService($modal) {
 
         var service = {
-            prompt: prompt
+            prompt: prompt,
+            confirm: confirm
         };
         return service;
 
@@ -44,6 +45,28 @@
                             text: text,
                             regexp: options.regexp,
                             errorMsg: options.errorMsg
+                        };
+                    }
+                }
+            });
+
+            return modal.result;
+        }
+        
+        /**
+         * Open the confirm dialog
+         * 
+         * @param text - The text to be displayed
+         */
+        function confirm(text) {
+
+            var modal = $modal.open({
+                templateUrl: 'app/partials/modals/modal-confirm-dialog.html',
+                controller: 'ConfirmDialogController',
+                resolve: {
+                    modalData: function () {
+                        return {
+                            text: text
                         };
                     }
                 }

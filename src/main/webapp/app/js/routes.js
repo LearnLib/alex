@@ -128,6 +128,15 @@
                     }
                 }
             })
+            .state('symbols.history', {
+            	url: '/{symbolId:int}/history',
+                views: {
+                    '@': {
+                        controller: 'SymbolsHistoryController',
+                        templateUrl: 'app/partials/symbols-history.html'
+                    }
+                }
+            })
             .state('symbols.actions', {
                 url: '/{symbolId:int}/actions',
                 views: {

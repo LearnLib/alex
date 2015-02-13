@@ -4,11 +4,11 @@
     angular
         .module('weblearner.controller')
         .controller('ProjectSettingsController', [
-            '$scope', '$location', 'ProjectResource', 'SessionService',
+            '$scope', '$state', 'ProjectResource', 'SessionService', 'PromptService',
             ProjectSettingsController
         ]);
 
-    function ProjectSettingsController($scope, $location, ProjectResource, SessionService) {
+    function ProjectSettingsController($scope, $state, ProjectResource, SessionService, PromptService) {
 
         $scope.project = SessionService.project.get();
         $scope.projectCopy = angular.copy($scope.project);
@@ -29,11 +29,15 @@
         };
 
         $scope.deleteProject = function () {
-            ProjectResource.delete($scope.project)
-                .then(function () {
-                    SessionService.project.remove();
-                    $location.path('/')
-                })
+        	
+        	PromptService.confirm("Do you really want to delete this project with all its symbols and test results? This process can not be undone.")
+	        	.then(function(){
+	        		ProjectResource.delete($scope.project)
+		                .then(function () {
+		                    SessionService.project.remove();
+		                    $state.go('home');
+		                })
+	        	})
         };
 
         $scope.reset = function () {

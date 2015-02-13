@@ -53,7 +53,7 @@
 
         $scope.startLearning = function () {
             var selectedSymbols = SelectionService.getSelected($scope.symbols);
-
+            
             // make sure there are selected symbols
             if (selectedSymbols.length) {
 

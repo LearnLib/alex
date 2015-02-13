@@ -4,7 +4,7 @@
     angular
         .module('weblearner.controller')
         .controller('LearnResultsStatisticsController', [
-            '$scope', 'SessionService', 'TestResource', 'TestResultsChartService', 'SelectionService',
+            '$scope', 'SessionService', 'LearnResultResource', 'TestResultsChartService', 'SelectionService',
             LearnResultsStatisticsController
         ]);
 
@@ -20,7 +20,7 @@
      * @param SelectionService
      * @constructor
      */
-    function LearnResultsStatisticsController($scope, SessionService, TestResource, TestResultsChartService, SelectionService) {
+    function LearnResultsStatisticsController($scope, SessionService, LearnResultResource, TestResultsChartService, SelectionService) {
 
         /** The open project */
         $scope.project = SessionService.project.get();
@@ -44,7 +44,7 @@
         //////////
 
         // get all final tests of the project
-        TestResource.getAllFinal($scope.project.id)
+        LearnResultResource.getAllFinal($scope.project.id)
             .then(function (tests) {
                 $scope.tests = tests;
             });
@@ -69,7 +69,7 @@
         $scope.chartFromSingleCompleteTestResult = function () {
             var tests = SelectionService.getSelected($scope.tests);
             if (tests.length == 1) {
-                TestResource.getComplete($scope.project.id, tests[0].testNo)
+            	LearnResultResource.getComplete($scope.project.id, tests[0].testNo)
                     .then(function (results) {
                         $scope.chartMode = $scope.chartModes.SINGLE_COMPLETE_TEST_RESULT;
                         $scope.chartDataSets = [TestResultsChartService.createChartDataFromSingleCompleteTestResult(results)];
@@ -85,10 +85,10 @@
             var tests = SelectionService.getSelected($scope.tests);
             var dataSets = [];
             if (tests.length == 2) {
-                TestResource.getComplete($scope.project.id, tests[0].testNo)
+            	LearnResultResource.getComplete($scope.project.id, tests[0].testNo)
                     .then(function (results) {
                         dataSets.push(TestResultsChartService.createChartDataFromSingleCompleteTestResult(results));
-                        TestResource.getComplete($scope.project.id, tests[1].testNo)
+                        LearnResultResource.getComplete($scope.project.id, tests[1].testNo)
                             .then(function (results) {
                                 dataSets.push(TestResultsChartService.createChartDataFromSingleCompleteTestResult(results));
                                 $scope.chartMode = $scope.chartModes.TWO_COMPLETE_TEST_RESULTS;

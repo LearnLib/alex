@@ -20,10 +20,12 @@
             </button>
             <button class="btn btn-xs btn-default" open-action-update-modal symbol="symbol"
                     action="(symbol.actions | selected | first)"
-                    on-updated="updateAction">
+                    on-updated="updateAction"
+                    ng-class="(symbol.actions|selected).length != 1 ? 'disabled': ''">
                 Edit
             </button>
-            <button class="btn btn-xs btn-default" ng-click="deleteSelectedActions()">
+            <button class="btn btn-xs btn-default" ng-click="deleteSelectedActions()"
+            		ng-class="(symbol.actions|selected).length == 0 ? 'disabled': ''">
                 Delete
             </button>
         </div>
@@ -39,8 +41,26 @@
     <div ng-if="symbol.actions" as-sortable ng-model="symbol.actions">
         <div selectable-list ng-model="symbol.actions">
             <div selectable-list-item ng-repeat="action in symbol.actions" as-sortable-item>
-
-                <span class="text-muted pull-right" as-sortable-item-handle>
+                
+                <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+	                <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+	                    <i class="fa fa-bars"></i>
+	                </button>
+	                <ul class="dropdown-menu pull-left" role="menu">
+	                    <li>
+	                        <a href open-action-update-modal symbol="symbol" action="action" on-updated="updateAction">
+	                            <i class="fa fa-edit fa-fw"></i> Edit
+	                        </a>
+	                    </li>
+	                    <li>
+	                        <a href ng-click="deleteAction(action)">
+	                            <i class="fa fa-trash fa-fw"></i> Delete
+	                        </a>
+	                    </li>
+	                </ul>
+	            </div>
+	            
+	           <span class="text-muted pull-right" as-sortable-item-handle style="margin-right: 15px; padding: 2px;">
                     <i class="fa fa-sort fa-fw"></i>
                 </span>
 

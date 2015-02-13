@@ -87,7 +87,9 @@
          * save the changes that were made to the symbol by updating it on the server
          */
         $scope.saveChanges = function () {
-            SelectionService.removeSelection($scope.actions);
+        	
+        	var copy = angular.copy($scope.symbol);
+            SelectionService.removeSelection(copy.actions);
 
             // remove the temporarily create unique id attribute
             _.forEach(copy.actions, function (action) {
@@ -95,7 +97,7 @@
             });
 
             // update the symbol
-            SymbolResource.update($scope.project.id, $scope.symbol)
+            SymbolResource.update($scope.project.id, copy)
                 .then(init)
         };
 
