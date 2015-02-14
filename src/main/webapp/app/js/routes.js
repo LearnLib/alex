@@ -2,24 +2,28 @@
     'use strict';
 
     angular
-        .module('weblearner')
+        .module('weblearner.routes')
         .config([
-            '$stateProvider', '$urlRouterProvider', 'ngToastProvider', 'paths',
+            '$stateProvider', '$urlRouterProvider', 'paths',
             config
+        ])
+        .run([
+            '$rootScope', '$state', 'SessionService',
+            run
         ]);
 
+
+
+
+
     /**
-     * Application routes
+     * Define application routes
+     *
      * @param $stateProvider
      * @param $urlRouterProvider
+     * @param paths
      */
-    function config($stateProvider, $urlRouterProvider, ngToastProvider, paths) {
-
-        ngToastProvider.configure({
-            verticalPosition: 'top',
-            horizontalPosition: 'center',
-            maxNumber: 1
-        });
+    function config($stateProvider, $urlRouterProvider, paths) {
 
         // redirect to the start page when no other route fits
         $urlRouterProvider.otherwise("/home");
@@ -281,24 +285,25 @@
             })
     }
 
-    //////////
-
-    angular.module('weblearner')
-        .run([
-            '$rootScope', '$state', 'SessionService',
-            run
-        ]);
-
+    /**
+     * Validate routes on state change
+     *
+     * @param $rootScope
+     * @param $state
+     * @param SessionService
+     */
     function run($rootScope, $state, SessionService) {
 
         // route validation
-        $rootScope.$on("$stateChangeStart", function (event, toState, toParams, fromState, fromParams) {
+        $rootScope.$on("$stateChangeStart", stateChangeStart);
+
+        function stateChangeStart(event, toState, toParams, fromState, fromParams){
             if (toState.data) {
                 if (toState.data.requiresProject && SessionService.project.get() == null) {
-                    $state.transitionTo("home");
+                    $state.go("home");
                     event.preventDefault();
                 }
             }
-        });
+        }
     }
 }());

@@ -14,7 +14,7 @@
      * The controller that handles the creation of new projects
      *
      * @param $scope
-     * @param $location
+     * @param $state
      * @param ProjectResource
      * @constructor
      */

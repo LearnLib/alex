@@ -1,8 +1,6 @@
 (function(){
 	'use strict';
-	
-	console.log('asd');
-	
+
 	angular
 		.module('weblearner.controller')
 		.controller('SymbolsHistoryController', [
@@ -22,7 +20,7 @@
 			.then(function(revisions){
 				$scope.latestSymbol = revisions.pop();
 				$scope.revisions = revisions;
-			})
+			});
 		
 		//////////
 		
@@ -36,8 +34,7 @@
 			// update symbol with new properties
 			SymbolResource.update($scope.project.id, $scope.latestSymbol)
 				.then(function(symbol){
-					
-					$scope.revisions.push($scope.latestSymbol)
+					$scope.revisions.push($scope.latestSymbol);
 					$scope.latestSymbol = symbol;
 				})
 		}

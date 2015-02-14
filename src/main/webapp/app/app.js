@@ -1,61 +1,70 @@
-angular
-    .module('weblearner', [
-
-        // modules from external libraries
-        'ngAnimate',
-        'ui.sortable',
-        'ui.bootstrap',
-        'ui.ace',
-        'ui.router',
-        'ngToast',
-
-        // application specific modules
-        'weblearner.controller',
-        'weblearner.resources',
-        'weblearner.directives',
-        'weblearner.enums',
-        'weblearner.services',
-        'weblearner.filters'
-    ]);
-
-angular
-    .module('weblearner.controller', []);
-
-angular
-    .module('weblearner.resources', []);
-
-angular
-    .module('weblearner.directives', []);
-
-angular
-    .module('weblearner.enums', []);
-
-angular
-    .module('weblearner.services', []);
-
-angular
-    .module('weblearner.filters', []);;(function () {
+(function(){
     'use strict';
 
     angular
-        .module('weblearner')
-        .config([
-            '$stateProvider', '$urlRouterProvider', 'ngToastProvider', 'paths',
-            config
+        .module('weblearner', [
+
+            // modules from external libraries
+            'ngAnimate',
+            'ui.sortable',
+            'ui.bootstrap',
+            'ui.ace',
+            'ui.router',
+            'ngToast',
+
+            // application specific modules
+            'weblearner.controller',
+            'weblearner.resources',
+            'weblearner.directives',
+            'weblearner.services',
+            'weblearner.filters',
+            'weblearner.routes',
+            'weblearner.constants'
         ]);
 
+    angular.module('weblearner.controller', []);
+    angular.module('weblearner.resources', []);
+    angular.module('weblearner.directives', []);
+    angular.module('weblearner.services', []);
+    angular.module('weblearner.filters', []);
+    angular.module('weblearner.routes', ['weblearner.constants']);
+    angular.module('weblearner.constants', []);
+
+    angular.module('weblearner')
+        .config(['ngToastProvider', function(ngToastProvider){
+
+            ngToastProvider.configure({
+                verticalPosition: 'top',
+                horizontalPosition: 'center',
+                maxNumber: 1
+            });
+        }]);
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.routes')
+        .config([
+            '$stateProvider', '$urlRouterProvider', 'paths',
+            config
+        ])
+        .run([
+            '$rootScope', '$state', 'SessionService',
+            run
+        ]);
+
+
+
+
+
     /**
-     * Application routes
+     * Define application routes
+     *
      * @param $stateProvider
      * @param $urlRouterProvider
+     * @param paths
      */
-    function config($stateProvider, $urlRouterProvider, ngToastProvider, paths) {
-
-        ngToastProvider.configure({
-            verticalPosition: 'top',
-            horizontalPosition: 'center',
-            maxNumber: 1
-        });
+    function config($stateProvider, $urlRouterProvider, paths) {
 
         // redirect to the start page when no other route fits
         $urlRouterProvider.otherwise("/home");
@@ -317,45 +326,46 @@ angular
             })
     }
 
-    //////////
-
-    angular.module('weblearner')
-        .run([
-            '$rootScope', '$state', 'SessionService',
-            run
-        ]);
-
+    /**
+     * Validate routes on state change
+     *
+     * @param $rootScope
+     * @param $state
+     * @param SessionService
+     */
     function run($rootScope, $state, SessionService) {
 
         // route validation
-        $rootScope.$on("$stateChangeStart", function (event, toState, toParams, fromState, fromParams) {
+        $rootScope.$on("$stateChangeStart", stateChangeStart);
+
+        function stateChangeStart(event, toState, toParams, fromState, fromParams){
             if (toState.data) {
                 if (toState.data.requiresProject && SessionService.project.get() == null) {
-                    $state.transitionTo("home");
+                    $state.go("home");
                     event.preventDefault();
                 }
             }
-        });
+        }
     }
 }());;(function(){
+    'use strict';
 
     angular
-        .module('weblearner.resources')
+        .module('weblearner.constants')
+
+        // api related stuff
         .constant('api', {
             URL: '/rest',
             PROXY_URL: '/rest/proxy?url='
         })
+
+        // paths that are used in the application
     	.constant('paths', {
     		PARTIALS: '/app/partials',
     		PARTIALS_DIRECTIVES: 'app/partials/directives',
     		PARTIALS_MODALS: 'app/partials/directives',
     		PARTIALS_WIDGETS: 'app/partials/widgets'
     	})
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.enums')
 
         // web action types
         .constant('WebActionTypesEnum', {
@@ -393,7 +403,6 @@ angular
             DHC: 'DHC',
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE'
         })
-
 }());;(function () {
     'use strict';
 
@@ -885,7 +894,7 @@ angular
      * The controller that handles the creation of new projects
      *
      * @param $scope
-     * @param $location
+     * @param $state
      * @param ProjectResource
      * @constructor
      */
@@ -1198,9 +1207,7 @@ angular
     }
 }());;(function(){
 	'use strict';
-	
-	console.log('asd');
-	
+
 	angular
 		.module('weblearner.controller')
 		.controller('SymbolsHistoryController', [
@@ -1220,7 +1227,7 @@ angular
 			.then(function(revisions){
 				$scope.latestSymbol = revisions.pop();
 				$scope.revisions = revisions;
-			})
+			});
 		
 		//////////
 		
@@ -1234,8 +1241,7 @@ angular
 			// update symbol with new properties
 			SymbolResource.update($scope.project.id, $scope.latestSymbol)
 				.then(function(symbol){
-					
-					$scope.revisions.push($scope.latestSymbol)
+					$scope.revisions.push($scope.latestSymbol);
 					$scope.latestSymbol = symbol;
 				})
 		}
@@ -3350,17 +3356,6 @@ angular
             this.getItems = function () {
                 return $scope.items;
             };
-
-            // this.selectOnlyItemAt = function(index) {
-            //    if (SelectionService.isSelected($scope.items[index])){
-            //        SelectionService.deselectAll($scope.items);
-            //        //SelectionService.deselect($scope.items[index]);
-            //    } else {
-            //        SelectionService.deselectAll($scope.items);
-            //        SelectionService.select($scope.items[index]);
-            //    }
-            //    $scope.$apply();
-            //};
         }
     }
 
@@ -3392,19 +3387,6 @@ angular
         function link(scope, el, attrs, ctrl) {
 
             scope.item = ctrl.getItems()[scope.$index];
-
-            //////////
-
-            //el[0].getElementsByTagName('div')[0].addEventListener('click', selectOnlyThisItem);
-
-            //////////
-
-            //function selectOnlyThisItem(e){
-            //    e.stopPropagation();
-            //    e.preventDefault();
-            //
-            //    ctrl.selectOnlyItemAt(scope.$index);
-            //}
         }
     }
 }());;(function () {
@@ -4126,7 +4108,7 @@ angular
     angular
         .module('weblearner.resources')
         .factory('LearnResultResource', [
-            '$http', '$q', 'api', 'ngToast',
+            '$http', '$q', 'api', 'ResourceResponseService',
             LearnResultResource
         ]);
 
@@ -4138,11 +4120,11 @@ angular
      * @param $http
      * @param $q
      * @param api
-     * @param toast
+     * @param ResourceResponseService
      * @return {{getGetAllFinal: getGetAllFinal, getFinal: getFinal, getComplete: getComplete, delete: deleteTest}}
      * @constructor
      */
-    function LearnResultResource($http, $q, api, toast) {
+    function LearnResultResource($http, $q, api, ResourceResponseService) {
 
         // the service
         var service = {
@@ -4164,22 +4146,8 @@ angular
          */
         function getAllFinal(projectId) {
             return $http.get(api.URL + '/projects/' + projectId + '/results')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -4191,22 +4159,8 @@ angular
          */
         function getFinal(projectId, testNo) {
             return $http.get(api.URL + '/projects/' + projectId + '/results/' + testNo)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -4219,22 +4173,8 @@ angular
         function getComplete(projectId, testNo) {
 
             return $http.get(api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -4252,26 +4192,11 @@ angular
         	
             return $http.delete(api.URL + '/projects/' + projectId + '/results/' + testNo, {})
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-            	toast.create({
-                    class: 'success',
-                    content: 'The results were deleted.',
-                    dismissButton: true
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-            	console.log('=============');
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'The results were deleted';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
     }
@@ -4281,7 +4206,7 @@ angular
     angular
         .module('weblearner.resources')
         .factory('LearnerResource', [
-            '$http', '$q', 'api', 'ngToast',
+            '$http', '$q', 'api', 'ResourceResponseService',
             Learner
         ]);
 
@@ -4292,11 +4217,11 @@ angular
      * @param $http
      * @param $q
      * @param api
-     * @param toast
+     * @param ResourceResponseService
      * @return {{start: startLearning, stop: stopLearning, resume: resumeLearning, status: getStatus, isActive: isActive}}
      * @constructor
      */
-    function Learner($http, $q, api, toast) {
+    function Learner($http, $q, api, ResourceResponseService) {
 
         var service = {
             start: startLearning,
@@ -4318,22 +4243,8 @@ angular
          */
         function startLearning(projectId, learnConfiguration) {
             return $http.post(api.URL + '/learner/start/' + projectId, learnConfiguration)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error);
-                toast.create({
-                    class: 'danger',
-                    content: error,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -4344,22 +4255,8 @@ angular
          */
         function stopLearning() {
             return $http.get(api.URL + '/learner/stop/')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -4372,22 +4269,8 @@ angular
          */
         function resumeLearning(projectId, testNo, learnConfiguration) {
             return $http.post(api.URL + '/learner/resume/' + projectId + '/' + testNo, learnConfiguration)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -4398,22 +4281,8 @@ angular
          */
         function getStatus() {
             return $http.get(api.URL + '/learner/status/')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -4423,22 +4292,8 @@ angular
          */
         function isActive() {
             return $http.get(api.URL + '/learner/active')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
     }
 }());;(function () {
@@ -4447,23 +4302,18 @@ angular
     angular
         .module('weblearner.resources')
         .factory('ProjectResource', [
-            '$http', '$q', 'api', 'ngToast',
-            Project
+            '$http', 'api', 'ResourceResponseService',
+            ProjectResource
         ]);
 
     /**
-     * Project
-     * The resource to do crud operations on a project
-     *
      * @param $http
-     * @param $q
      * @param api
-     * @param toast
-     * @return {{all: getAllProjects, get: getProject, create: createProject, update: updateProject,
-     *          delete: deleteProject}}
+     * @param ResourceResponseService
+     * @return {{all: getAllProjects, get: getProject, create: createProject, update: updateProject, delete: deleteProject}}
      * @constructor
      */
-    function Project($http, $q, api, toast) {
+    function ProjectResource($http, api, ResourceResponseService) {
 
         var service = {
             all: getAllProjects,
@@ -4483,21 +4333,8 @@ angular
          */
         function getAllProjects() {
             return $http.get(api.URL + '/projects')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -4509,23 +4346,11 @@ angular
         function createProject(project) {
             return $http.post(api.URL + '/projects', project)
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Project "' + response.data.name + '" created'
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'Project "' + response.data.name + '" created';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
 
@@ -4537,21 +4362,8 @@ angular
          */
         function getProject(id) {
             return $http.get(api.URL + '/projects/' + id)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -4563,23 +4375,11 @@ angular
         function deleteProject(project) {
             return $http.delete(api.URL + '/projects/' + project.id)
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Project deleted'
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'Project deleted';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
 
@@ -4592,23 +4392,11 @@ angular
         function updateProject(project) {
             return $http.put(api.URL + '/projects/' + project.id, project)
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Project Updated'
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'Project updated';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
     }
@@ -4618,22 +4406,21 @@ angular
     angular
         .module('weblearner.resources')
         .factory('SymbolResource', [
-            '$http', '$q', 'api', 'ngToast',
+            '$http', '$q', 'api', 'ResourceResponseService',
             SymbolResource
         ]);
 
+
     /**
-	 * 
-	 * @param $http
-	 * @param $q
-	 * @param api
-	 * @param toast
-	 * @return {{all: getAllSymbols, allWeb: getAllWebSymbols, allRest:
-	 *         getAllRestSymbols, get: getSymbol, create: createSymbol, update:
-	 *         updateSymbol, delete: deleteSymbol}}
-	 * @constructor
-	 */
-    function SymbolResource($http, $q, api, toast) {
+     *
+     * @param $http
+     * @param $q
+     * @param api
+     * @param ResourceResponseService
+     * @return {{get: getSymbol, getAll: getAllSymbols, getRevisions: getRevisions, recover: recoverSymbol, create: createSymbol, update: updateSymbol, delete: deleteSymbol, deleteSome: deleteSomeSymbols}}
+     * @constructor
+     */
+    function SymbolResource($http, $q, api, ResourceResponseService) {
 
         var service = {
             get: getSymbol,
@@ -4650,39 +4437,26 @@ angular
         // ////////
 
         /**
-		 * get a specific web or rest symbol by its id
-		 * 
-		 * @param projectId
-		 * @param symbolId
-		 * @return {*}
-		 */
+         * get a specific web or rest symbol by its id
+         *
+         * @param projectId
+         * @param symbolId
+         * @return {*}
+         */
         function getSymbol(projectId, symbolId) {
 
             return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
-		 * get all rest and web symbols of a project by the projects id
-		 * 
-		 * @param projectId
-		 * @return {*}
-		 */
+         * get all rest and web symbols of a project by the projects id
+         *
+         * @param projectId
+         * @param options
+         * @return {*}
+         */
         function getAllSymbols(projectId, options) {
 
             var queryParams = '?';
@@ -4693,219 +4467,124 @@ angular
                 if (options.deleted && options.deleted === true) queryParams += '&visbility=hidden';
 
                 return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + queryParams)
-                    .then(success)
-                    .catch(fail);
+                    .then(ResourceResponseService.success)
+                    .catch(ResourceResponseService.fail);
 
             } else {
                 return $http.get(api.URL + '/projects/' + projectId + '/symbols')
-                    .then(success)
-                    .catch(fail);
-            }
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
-        }
-
-        function recoverSymbol(projectId, symbolId) {
-        	return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/show', {})
-	    		.then(success)
-	    		.catch(fail);
-        	
-        	function success(response) {
-                console.log(response);
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                    .then(ResourceResponseService.success)
+                    .catch(ResourceResponseService.fail);
             }
         }
 
         /**
-		 * create a new symbol
-		 * 
-		 * @parem projectId
-		 * @param symbol
-		 * @return {*}
-		 */
+         *
+         * @param projectId
+         * @param symbolId
+         * @return {*}
+         */
+        function recoverSymbol(projectId, symbolId) {
+            return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/show', {})
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
+        }
+
+        /**
+         * create a new symbol
+         *
+         * @param projectId
+         * @param symbol
+         * @return {*}
+         */
         function createSymbol(projectId, symbol) {
-        	
-        	if (angular.isArray(symbol)) {
-        		return createSymbols(projectId, symbol)
-        	}
-        	        	
+
+            if (angular.isArray(symbol)) {
+                return createSymbols(projectId, symbol)
+            }
+
             return $http.post(api.URL + '/projects/' + projectId + '/symbols', symbol)
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Symbol ' + response.data.name + ' created'
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'Symbol ' + response.data.name + ' created';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
-        
-    	function createSymbols(projectId, symbols) {
-        	        	        	
+
+        function createSymbols(projectId, symbols) {
+
             return $http.put(api.URL + '/projects/' + projectId + '/symbols', symbols)
                 .then(success)
                 .catch(fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Symbols created'
-                });
-                return response.data;
+                var message = 'Symbols created';
+                return ResourceResponseService.successWithToast(response, message);
             }
 
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: 'Upload failed. Some symbols already exist or existed in this project',
-                    dismissButton: true
-                });
-                return $q.reject();
+            function fail(response) {
+                var message = 'Upload failed. Some symbols already exist or existed in this project';
+                return ResourceResponseService.failWithToast(response, message);
             }
         }
-        
+
         /**
-		 * update an existing symbol
-		 * 
-		 * @param symbol
-		 * @return {*}
-		 */
+         * update an existing symbol
+         *
+         * @param projectId
+         * @param symbol
+         * @return {*}
+         */
         function updateSymbol(projectId, symbol) {
-            return $http.put(api.URL + '/projects/' + projectId+ '/symbols/' + symbol.id, symbol)
+            return $http.put(api.URL + '/projects/' + projectId + '/symbols/' + symbol.id, symbol)
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Symbol "' + response.data.name + '" updated'
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'Symbol "' + response.data.name + '" updated';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
 
         /**
-		 * delete an existing symbol
-		 * 
-		 * @param symbol
-		 * @return {*}
-		 */
+         * delete an existing symbol
+         *
+         * @param projectId
+         * @param symbolId
+         * @return {*}
+         */
         function deleteSymbol(projectId, symbolId) {
 
             return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide')
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Symbol deleted'
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'Symbol deleted';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
 
         function deleteSomeSymbols(projectId, symbolsIds) {
 
             symbolsIds = symbolsIds.join();
-            
+
             return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolsIds + '/hide')
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Symbols deleted'
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'Symbols deleted';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
-        
-        function getRevisions(projectId, symbolId) {
-        	
-        	return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
-            	.then(success)
-            	.catch(fail);
 
-	        function success(response) {
-	            return response.data;
-	        }
-	
-	        function fail(error) {
-	            console.error(error.data);
-	            toast.create({
-	                class: 'danger',
-	                content: error.data.message,
-	                dismissButton: true
-	            });
-	            return $q.reject();
-	        }
+        function getRevisions(projectId, symbolId) {
+
+            return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
     }
 }());;(function () {
@@ -5083,6 +4762,61 @@ angular
             });
 
             return modal.result;
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.services')
+        .factory('ResourceResponseService', [
+            '$q', 'ngToast',
+            ResourceResponseService
+        ]);
+
+    function ResourceResponseService($q, ngToast) {
+
+        var service = {
+            success: success,
+            successWithToast: successWithToast,
+            fail: fail,
+            failWithoutToast: failWithoutToast,
+            failWithToast: failWithToast
+        };
+        return service;
+
+        //////////
+
+        function success(response) {
+            return response.data;
+        }
+
+        function successWithToast(response, message) {
+            ngToast.create({
+                class: 'success',
+                content: message
+            });
+            return response.data;
+        }
+
+        function fail(response) {
+            console.error(response.data);
+            return failWithToast(response, response.data);
+        }
+
+        function failWithToast(response, message) {
+            console.error(response.data);
+            ngToast.create({
+                class: 'danger',
+                content: message,
+                dismissButton: true
+            });
+            return $q.reject();
+        }
+
+        function failWithoutToast(response) {
+            console.error(response.data);
+            return $q.reject();
         }
     }
 }());;(function () {

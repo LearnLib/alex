@@ -18,8 +18,7 @@ module.exports = function(grunt) {
 					separator : ';'
 				},
 				app : {
-					src : [ 'app/js/init.js', 'app/js/routes.js',
-							'app/js/constants.js', 'app/js/enums.js',
+					src : [ 'app/js/init.js', 'app/js/routes.js', 'app/js/constants.js',
 							'app/js/controller/**/*.js',
 							'app/js/directives/*.js',
 							'app/js/resources/*.js',
@@ -51,15 +50,15 @@ module.exports = function(grunt) {
 					files : [ 'app/js/**/*.js' ],
 					tasks : [ 'build-js' ],
 					options : {
-						spawn : false,
-					},
+						spawn : false
+					}
 				},
 				sass : {
 					files : [ 'app/styles/**/*.scss' ],
 					tasks : [ 'build-css' ],
 					options : {
-						spawn : false,
-					},
+						spawn : false
+					}
 				},
 			},
 			sass : {
@@ -68,7 +67,7 @@ module.exports = function(grunt) {
 						style : 'compressed'
 					},
 					files : {
-						'app/styles/style.scss' : 'app/styles/style.css',
+						'app/styles/style.scss' : 'app/styles/style.css'
 					}
 				}
 			}

@@ -70,17 +70,6 @@
             this.getItems = function () {
                 return $scope.items;
             };
-
-            // this.selectOnlyItemAt = function(index) {
-            //    if (SelectionService.isSelected($scope.items[index])){
-            //        SelectionService.deselectAll($scope.items);
-            //        //SelectionService.deselect($scope.items[index]);
-            //    } else {
-            //        SelectionService.deselectAll($scope.items);
-            //        SelectionService.select($scope.items[index]);
-            //    }
-            //    $scope.$apply();
-            //};
         }
     }
 
@@ -112,19 +101,6 @@
         function link(scope, el, attrs, ctrl) {
 
             scope.item = ctrl.getItems()[scope.$index];
-
-            //////////
-
-            //el[0].getElementsByTagName('div')[0].addEventListener('click', selectOnlyThisItem);
-
-            //////////
-
-            //function selectOnlyThisItem(e){
-            //    e.stopPropagation();
-            //    e.preventDefault();
-            //
-            //    ctrl.selectOnlyItemAt(scope.$index);
-            //}
         }
     }
 }());

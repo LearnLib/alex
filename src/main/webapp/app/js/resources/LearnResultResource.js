@@ -4,7 +4,7 @@
     angular
         .module('weblearner.resources')
         .factory('LearnResultResource', [
-            '$http', '$q', 'api', 'ngToast',
+            '$http', '$q', 'api', 'ResourceResponseService',
             LearnResultResource
         ]);
 
@@ -16,11 +16,11 @@
      * @param $http
      * @param $q
      * @param api
-     * @param toast
+     * @param ResourceResponseService
      * @return {{getGetAllFinal: getGetAllFinal, getFinal: getFinal, getComplete: getComplete, delete: deleteTest}}
      * @constructor
      */
-    function LearnResultResource($http, $q, api, toast) {
+    function LearnResultResource($http, $q, api, ResourceResponseService) {
 
         // the service
         var service = {
@@ -42,22 +42,8 @@
          */
         function getAllFinal(projectId) {
             return $http.get(api.URL + '/projects/' + projectId + '/results')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -69,22 +55,8 @@
          */
         function getFinal(projectId, testNo) {
             return $http.get(api.URL + '/projects/' + projectId + '/results/' + testNo)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -97,22 +69,8 @@
         function getComplete(projectId, testNo) {
 
             return $http.get(api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -130,26 +88,11 @@
         	
             return $http.delete(api.URL + '/projects/' + projectId + '/results/' + testNo, {})
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-            	toast.create({
-                    class: 'success',
-                    content: 'The results were deleted.',
-                    dismissButton: true
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-            	console.log('=============');
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'The results were deleted';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
     }

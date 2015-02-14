@@ -4,7 +4,7 @@
     angular
         .module('weblearner.resources')
         .factory('LearnerResource', [
-            '$http', '$q', 'api', 'ngToast',
+            '$http', '$q', 'api', 'ResourceResponseService',
             Learner
         ]);
 
@@ -15,11 +15,11 @@
      * @param $http
      * @param $q
      * @param api
-     * @param toast
+     * @param ResourceResponseService
      * @return {{start: startLearning, stop: stopLearning, resume: resumeLearning, status: getStatus, isActive: isActive}}
      * @constructor
      */
-    function Learner($http, $q, api, toast) {
+    function Learner($http, $q, api, ResourceResponseService) {
 
         var service = {
             start: startLearning,
@@ -41,22 +41,8 @@
          */
         function startLearning(projectId, learnConfiguration) {
             return $http.post(api.URL + '/learner/start/' + projectId, learnConfiguration)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error);
-                toast.create({
-                    class: 'danger',
-                    content: error,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -67,22 +53,8 @@
          */
         function stopLearning() {
             return $http.get(api.URL + '/learner/stop/')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -95,22 +67,8 @@
          */
         function resumeLearning(projectId, testNo, learnConfiguration) {
             return $http.post(api.URL + '/learner/resume/' + projectId + '/' + testNo, learnConfiguration)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -121,22 +79,8 @@
          */
         function getStatus() {
             return $http.get(api.URL + '/learner/status/')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -146,22 +90,8 @@
          */
         function isActive() {
             return $http.get(api.URL + '/learner/active')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                console.error(error.data);
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
     }
 }());

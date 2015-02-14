@@ -1,7 +1,46 @@
 <div class="container">
-	<h2>Symbols History</h2>
-	<p class="muted">
-		Restore and older version of the symbol <strong>Symbol.Name</strong>
-	</p>
-	<hr>
+    <h2>Symbols History</h2>
+
+    <p class="muted">
+        Restore and older version of the symbol <strong>Symbol.Name</strong>
+    </p>
+    <hr>
+</div>
+
+
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+
+            <tr ng-repeat="revision in revisions">
+                <td>
+
+                    <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <ul class="dropdown-menu pull-left" role="menu">
+                            <li>
+                                <a href ng-click="restoreRevision(revision)">
+                                    <i class="fa fa-history fa-fw"></i> Restore
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <strong ng-bind="revision.name"></strong> [<span ng-bind="revision.abbreviation"></span>]
+
+                    <p class="text-muted">
+                        <span ng-bind="revision.actions.length"></span> Actions
+                    </p>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
 </div>

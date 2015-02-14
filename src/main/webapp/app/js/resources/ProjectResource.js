@@ -4,23 +4,18 @@
     angular
         .module('weblearner.resources')
         .factory('ProjectResource', [
-            '$http', '$q', 'api', 'ngToast',
-            Project
+            '$http', 'api', 'ResourceResponseService',
+            ProjectResource
         ]);
 
     /**
-     * Project
-     * The resource to do crud operations on a project
-     *
      * @param $http
-     * @param $q
      * @param api
-     * @param toast
-     * @return {{all: getAllProjects, get: getProject, create: createProject, update: updateProject,
-     *          delete: deleteProject}}
+     * @param ResourceResponseService
+     * @return {{all: getAllProjects, get: getProject, create: createProject, update: updateProject, delete: deleteProject}}
      * @constructor
      */
-    function Project($http, $q, api, toast) {
+    function ProjectResource($http, api, ResourceResponseService) {
 
         var service = {
             all: getAllProjects,
@@ -40,21 +35,8 @@
          */
         function getAllProjects() {
             return $http.get(api.URL + '/projects')
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -66,23 +48,11 @@
         function createProject(project) {
             return $http.post(api.URL + '/projects', project)
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Project "' + response.data.name + '" created'
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'Project "' + response.data.name + '" created';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
 
@@ -94,21 +64,8 @@
          */
         function getProject(id) {
             return $http.get(api.URL + '/projects/' + id)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                return response.data;
-            }
-
-            function fail(error) {
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
-            }
+                .then(ResourceResponseService.success)
+                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -120,23 +77,11 @@
         function deleteProject(project) {
             return $http.delete(api.URL + '/projects/' + project.id)
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Project deleted'
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'Project deleted';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
 
@@ -149,23 +94,11 @@
         function updateProject(project) {
             return $http.put(api.URL + '/projects/' + project.id, project)
                 .then(success)
-                .catch(fail);
+                .catch(ResourceResponseService.fail);
 
             function success(response) {
-                toast.create({
-                    class: 'success',
-                    content: 'Project Updated'
-                });
-                return response.data;
-            }
-
-            function fail(error) {
-                toast.create({
-                    class: 'danger',
-                    content: error.data.message,
-                    dismissButton: true
-                });
-                return $q.reject();
+                var message = 'Project updated';
+                return ResourceResponseService.successWithToast(response, message);
             }
         }
     }
