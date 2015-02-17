@@ -1,33 +1,33 @@
 <div class="modal-header">
-
-    <div ng-if="symbol.type == 'web'">
-        <h3 class="modal-title">Update Web Symbol</h3>
-        <span class="text-muted">Update an existing web symbol</span>
-    </div>
-
-    <div ng-if="symbol.type == 'rest'">
-        <h3 class="modal-title">Update Rest Symbol</h3>
-        <span class="text-muted">Update an existing rest symbol</span>
-    </div>
-
+	<h3 class="modal-title">Update <span ng-bind="(symbol.type|capitalize)"></span> Symbol</h3>
+	<span class="text-muted">Update an existing <span ng-bind="symbol.type"></span> symbol</span>
 </div>
 
-<div class="modal-body">
+<form name="update_symbol_form" ng-submit="updateSymbol()">
 
-    <form>
+	<div class="modal-body">
+	
         <div class="form-group">
             <label>Symbol Name</label>
-            <input class="form-control" type="text" placeholder="name" ng-model="symbol.name">
+            <input class="form-control" name="name" type="text" placeholder="name" required ng-model="symbol.name">
         </div>
+        <div class="alert alert-danger alert-condensed" ng-show="update_symbol_form.name.$dirty && update_symbol_form.name.$invalid">
+			<small ng-show="update_symbol_form.name.$error.required"> The field must not be empty. </small>
+		</div>
+				
         <div class="form-group">
             <label>Symbol Abbreviation</label>
-            <input class="form-control" type="text" placeholder="abbreviation" ng-model="symbol.abbreviation">
+            <input class="form-control" name="abbreviation" type="text" placeholder="abbreviation" required ng-model="symbol.abbreviation">
         </div>
-    </form>
+        <div class="alert alert-danger alert-condensed" ng-show="update_symbol_form.abbreviation.$dirty && update_symbol_form.abbreviation.$invalid">
+			<small ng-show="update_symbol_form.abbreviation.$error.required"> The field must not be empty. </small>
+		</div>
+	    		
+	</div>
+	
+	<div class="modal-footer">
+	    <button class="btn btn-primary" type="submit">Update</button>
+	    <a class="btn btn-default" ng-click="closeModal()">Cancel</a>
+	</div>
 
-</div>
-
-<div class="modal-footer">
-    <button class="btn btn-primary" ng-click="updateSymbol()">Update</button>
-    <button class="btn btn-warning" ng-click="closeModal()">Cancel</button>
-</div>
+</form>

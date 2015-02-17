@@ -5,7 +5,7 @@
     <p class="text-muted">You can create a new project here</p>
     <hr/>
 
-    <form name="create_form" role="form" ng-submit="createProject()" novalidate>
+    <form name="create_form" role="form" ng-submit="createProject()">
 
         <!-- Name -->
         <div class="form-group">
@@ -15,8 +15,8 @@
             <input name="name" type="text" class="form-control"
                    placeholder="Enter a name for the project" ng-model="project.name" ng-required="true">
         </div>
-        <div class="alert alert-danger alert-condensed" ng-show="create_form.submitted">
-             <small ng-show="create_form.name.$error">Name must not be empty</small>
+        <div class="alert alert-danger alert-condensed" ng-show="create_form.name.$dirty && create_form.name.$invalid">
+             <small ng-show="create_form.name.$error.required">Name must not be empty.</small>
         </div>
         <!-- Name -->
 
@@ -28,9 +28,12 @@
             <input name="url" class="form-control" type="text"
                    placeholder="Enter the url of the project" ng-model="project.baseUrl" ng-required="true" ng-pattern="/^(http://|https://).{1,}/">
         </div>
-        <div class="alert alert-danger alert-condensed" ng-show="create_form.submitted">
-            <small ng-show="create_form.url.$error">
-                Url must not be empty. The url has to start with http(s):// and have a host name
+        <div class="alert alert-danger alert-condensed" ng-show="create_form.url.$dirty && create_form.url.$invalid">
+            <small ng-show="create_form.url.$error.required">
+                Url must not be empty.
+            </small>
+            <small ng-show="create_form.url.$error.pattern">
+            	The url has to start with http(s):// and have a host name
             </small>
         </div>
         <!-- /Base Url -->

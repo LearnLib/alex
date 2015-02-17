@@ -22,6 +22,8 @@
 
         /** The text to be displayed **/
         $scope.text = modalData.text;
+        $scope.regexp = modalData.regexp;
+        $scope.errorMsg = modalData.errorMsg;
 
         //////////
 

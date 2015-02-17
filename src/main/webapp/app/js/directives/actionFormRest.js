@@ -3,17 +3,17 @@
 
     angular
         .module('weblearner.directives')
-        .directive('actionFormRest', actionFormRest);
+        .directive('actionFormGroupsRest', actionFormGroupsRest);
 
     /**
-     * actionFormRest
+     * actionFormGroupsRest
      *
      * The directive that loads the forms that are necessary to create rest actions. The value of the parameter
      * actionModel should be an object that has at least the property 'type'.
      *
      * @return {{scope: {action: string}, templateUrl: string, controller: *[]}}
      */
-    function actionFormRest() {
+    function actionFormGroupsRest() {
 
         // the directive
         var directive = {

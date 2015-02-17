@@ -795,6 +795,11 @@
         
         // start polling the server
         _poll();
+        
+        // stop polling when you leave the page
+        $scope.$on("$destroy", function(){
+        	$interval.cancel(_interval);
+        });
 
         //////////
 
@@ -932,16 +937,15 @@
         //////////
 
         $scope.updateProject = function () {
-            if ($scope.update_form.$valid) {
-                ProjectResource.update($scope.project)
-                    .then(function (project) {
-                        SessionService.project.save(project);
-                        $scope.project = project;
-                        $scope.projectCopy = project;
-                    })
-            } else {
-                $scope.update_form.submitted = true;
-            }
+        	
+        	delete $scope.project.symbolAmount;
+        	
+            ProjectResource.update($scope.project)
+                .then(function (project) {
+                    SessionService.project.save(project);
+                    $scope.project = project;
+                    $scope.projectCopy = project;
+                })
         };
 
         $scope.deleteProject = function () {
@@ -1446,6 +1450,8 @@
 
         /** The text to be displayed **/
         $scope.text = modalData.text;
+        $scope.regexp = modalData.regexp;
+        $scope.errorMsg = modalData.errorMsg;
 
         //////////
 
@@ -1658,11 +1664,11 @@
         $scope.eqOracles = eqOracles;
         $scope.learnAlgorithms = learnAlgorithms;
         $scope.learnConfiguration = modalData.learnConfiguration;
-
+        
         //////////
-
+                
         $scope.$watch('learnConfiguration.eqOracle.type', function(type){
-            $scope.learnConfiguration.eqOracle = EqOracleService.create(type);
+    		$scope.learnConfiguration.eqOracle = EqOracleService.create(type);
         });
 
         //////////
@@ -1680,17 +1686,17 @@
 
     angular
         .module('weblearner.directives')
-        .directive('actionFormRest', actionFormRest);
+        .directive('actionFormGroupsRest', actionFormGroupsRest);
 
     /**
-     * actionFormRest
+     * actionFormGroupsRest
      *
      * The directive that loads the forms that are necessary to create rest actions. The value of the parameter
      * actionModel should be an object that has at least the property 'type'.
      *
      * @return {{scope: {action: string}, templateUrl: string, controller: *[]}}
      */
-    function actionFormRest() {
+    function actionFormGroupsRest() {
 
         // the directive
         var directive = {
@@ -1727,17 +1733,17 @@
 
     angular
         .module('weblearner.directives')
-        .directive('actionFormWeb', actionFormWeb);
+        .directive('actionFormGroupsWeb', actionFormGroupsWeb);
 
     /**
-     * actionFormWeb
+     * actionFormGroupsWeb
      *
      * The directive that loads the forms that are necessary to create web actions. The value of the parameter
      * actionModel should be an object that has at least the property 'type'.
      *
      * @return {{scope: {action: string}, templateUrl: string, controller: *[]}}
      */
-    function actionFormWeb() {
+    function actionFormGroupsWeb() {
 
         var directive = {
             scope: {
@@ -2683,42 +2689,64 @@
             }
         }
     }
-}());;(function () {
-    'use strict';
+}());;(function() {
+	'use strict';
 
-    angular
-        .module('weblearner.directives')
-        .directive('lazyValidationForm', lazyValidationForm);
+	angular.module('weblearner.directives').directive('ifIsTypeOfRest',
+			[ 'ngIfDirective', ifIsTypeOfRest ]);
 
-    function lazyValidationForm() {
+	function ifIsTypeOfRest(ngIfDirective) {
+		var ngIf = ngIfDirective[0];
 
-        var directive = {
-            restrict: 'A',
-            scope: {
-                form: '=lazyValidationForm',
-                submit: '&onSubmit'
-            },
-            link: link
-        };
-        return directive;
+		var directive = {
+			transclude : ngIf.transclude,
+			priority : ngIf.priority,
+			terminal : ngIf.terminal,
+			restrict : ngIf.restrict,
+			link : link
+		};
+		return directive;
 
-        //////////
+		// ////////
 
-        function link(scope, el, attrs) {
-            if (attrs.name) {
-                attrs.$set('novalidate', '');
-                el.bind('submit', function () {
-                    if (scope.form.$valid) {
-                        scope.submit()();
-                    } else {
-                        scope.form.submitted = true;
-                        scope.$apply();
-                    }
-                })
-            }
-        }
-    }
+		function link(scope, el, attrs) {
+			var value = scope.$eval(attrs['ifIsTypeOfRest']);
 
+			attrs.ngIf = function() {
+				return value == 'rest';
+			};
+			ngIf.link.apply(ngIf, arguments);
+		}
+	}
+}());;(function() {
+	'use strict';
+
+	angular.module('weblearner.directives').directive('ifIsTypeOfWeb',
+			[ 'ngIfDirective', ifIsTypeOfWeb ]);
+
+	function ifIsTypeOfWeb(ngIfDirective) {
+		var ngIf = ngIfDirective[0];
+
+		var directive = {
+			transclude : ngIf.transclude,
+			priority : ngIf.priority,
+			terminal : ngIf.terminal,
+			restrict : ngIf.restrict,
+			link : link
+		};
+		return directive;
+
+		// ////////
+
+		function link(scope, el, attrs) {
+			var value = scope.$eval(attrs['ifIsTypeOfWeb']);
+
+			attrs.ngIf = function() {
+				return value == 'web';
+			};
+			ngIf.link.apply(ngIf, arguments);
+		}
+	}
 }());;(function () {
     'use strict';
 
@@ -3225,7 +3253,7 @@
 
             el.on('click', handleModal);
 
-            function handleModal() {
+            function handleModal() {            	
                 var modal = $modal.open({
                     templateUrl: 'app/partials/modals/modal-test-setup-settings.html',
                     controller: 'TestSetupSettingsController',
@@ -4465,7 +4493,7 @@
 
                 if (options.type) queryParams += 'type=' + options.type;
                 if (options.deleted && options.deleted === true) queryParams += '&visbility=hidden';
-
+                
                 return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + queryParams)
                     .then(ResourceResponseService.success)
                     .catch(ResourceResponseService.fail);

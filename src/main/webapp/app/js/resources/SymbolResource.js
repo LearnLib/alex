@@ -63,7 +63,7 @@
 
                 if (options.type) queryParams += 'type=' + options.type;
                 if (options.deleted && options.deleted === true) queryParams += '&visbility=hidden';
-
+                
                 return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + queryParams)
                     .then(ResourceResponseService.success)
                     .catch(ResourceResponseService.fail);

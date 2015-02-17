@@ -3,17 +3,17 @@
 
     angular
         .module('weblearner.directives')
-        .directive('actionFormWeb', actionFormWeb);
+        .directive('actionFormGroupsWeb', actionFormGroupsWeb);
 
     /**
-     * actionFormWeb
+     * actionFormGroupsWeb
      *
      * The directive that loads the forms that are necessary to create web actions. The value of the parameter
      * actionModel should be an object that has at least the property 'type'.
      *
      * @return {{scope: {action: string}, templateUrl: string, controller: *[]}}
      */
-    function actionFormWeb() {
+    function actionFormGroupsWeb() {
 
         var directive = {
             scope: {

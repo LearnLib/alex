@@ -1,4 +1,5 @@
 
+<!-- BEGIN: SEARCH_FOR_TEXT -->
 <div ng-if="action.type == types.SEARCH_FOR_TEXT">
     <p class="text-muted">
         Search on a page for a piece of text or a regular expression
@@ -17,7 +18,10 @@
         <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
     </button>
 </div>
+<!-- END: SEARCH_FOR_TEXT -->
 
+
+<!-- BEGIN: SEARCH_FOR_NODE -->
 <div ng-if="action.type == types.SEARCH_FOR_NODE">
     <p class="text-muted">
         Search an HTML element in the DOM tree of a page
@@ -32,7 +36,10 @@
         <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
     </button>
 </div>
+<!-- END: SEARCH_FOR_NODE -->
 
+
+<!-- BEGIN: CLEAR -->
 <div ng-if="action.type == types.CLEAR">
     <p class="text-muted">
         Clear an element (eg. input or contenteditable element)
@@ -47,7 +54,10 @@
         <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
     </button>
 </div>
+<!-- END: CLEAR -->
 
+
+<!-- BEGIN: CLICK -->
 <div ng-if="action.type == types.CLICK">
     <p class="text-muted">
         Click on an element
@@ -61,7 +71,10 @@
         <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
     </button>
 </div>
+<!-- END: CLICK -->
 
+
+<!-- BEGIN: FILL -->
 <div ng-if="action.type == types.FILL">
     <p class="text-muted">
         Fill an element with content (eg. input or contenteditable element)
@@ -79,7 +92,10 @@
         <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
     </button>
 </div>
+<!-- END: FILL -->
 
+
+<!-- BEGIN: GO_TO -->
 <div ng-if="action.type == types.GO_TO">
     <p class="text-muted">
         Go to a url that is <strong>relative</strong> to your projects' base url
@@ -90,7 +106,10 @@
         <input class="form-control" type="text" placeholder="url" ng-model="action.url">
     </div>
 </div>
+<!-- END: GO_TO -->
 
+
+<!-- BEGIN: SUBMIT -->
 <div ng-if="action.type == types.SUBMIT">
     <p class="text-muted">
         Submit a form
@@ -104,7 +123,10 @@
         <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
     </button>
 </div>
+<!-- END: SUBMIT -->
 
+
+<!-- BEGIN: WAIT -->
 <div ng-if="action.type == types.WAIT">
     <p class="text-muted">
         Wait for a specified amount of time before the next action will be executed
@@ -115,3 +137,4 @@
         <input class="form-control" type="number" placeholder="time in ms" ng-model="action.duration">
     </div>
 </div>
+<!-- END: WAIT -->

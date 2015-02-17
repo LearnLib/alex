@@ -46,6 +46,11 @@
         
         // start polling the server
         _poll();
+        
+        // stop polling when you leave the page
+        $scope.$on("$destroy", function(){
+        	$interval.cancel(_interval);
+        });
 
         //////////
 

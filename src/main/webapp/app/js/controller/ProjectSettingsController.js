@@ -16,16 +16,15 @@
         //////////
 
         $scope.updateProject = function () {
-            if ($scope.update_form.$valid) {
-                ProjectResource.update($scope.project)
-                    .then(function (project) {
-                        SessionService.project.save(project);
-                        $scope.project = project;
-                        $scope.projectCopy = project;
-                    })
-            } else {
-                $scope.update_form.submitted = true;
-            }
+        	
+        	delete $scope.project.symbolAmount;
+        	
+            ProjectResource.update($scope.project)
+                .then(function (project) {
+                    SessionService.project.save(project);
+                    $scope.project = project;
+                    $scope.projectCopy = project;
+                })
         };
 
         $scope.deleteProject = function () {

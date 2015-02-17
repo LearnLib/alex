@@ -13,11 +13,11 @@
         $scope.eqOracles = eqOracles;
         $scope.learnAlgorithms = learnAlgorithms;
         $scope.learnConfiguration = modalData.learnConfiguration;
-
+        
         //////////
-
+                
         $scope.$watch('learnConfiguration.eqOracle.type', function(type){
-            $scope.learnConfiguration.eqOracle = EqOracleService.create(type);
+    		$scope.learnConfiguration.eqOracle = EqOracleService.create(type);
         });
 
         //////////
