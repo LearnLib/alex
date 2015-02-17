@@ -1,4 +1,4 @@
-angular.module('templates-all', ['app/partials/about.html', 'app/partials/directives/action-form-rest.html', 'app/partials/directives/action-form-web.html', 'app/partials/directives/hypothesis-panel.html', 'app/partials/directives/hypothesis.html', 'app/partials/directives/load-screen.html', 'app/partials/directives/navigation.html', 'app/partials/directives/observation-table.html', 'app/partials/directives/web-element-picker.html', 'app/partials/help.html', 'app/partials/home.html', 'app/partials/learn-results-compare.html', 'app/partials/learn-results-statistics.html', 'app/partials/learn-results.html', 'app/partials/learn-setup.html', 'app/partials/learn-start.html', 'app/partials/modals/modal-action-create.html', 'app/partials/modals/modal-action-update.html', 'app/partials/modals/modal-confirm-dialog.html', 'app/partials/modals/modal-hypothesis-layout-settings.html', 'app/partials/modals/modal-prompt-dialog.html', 'app/partials/modals/modal-symbol-create.html', 'app/partials/modals/modal-symbol-update.html', 'app/partials/modals/modal-test-details.html', 'app/partials/modals/modal-test-setup-settings.html', 'app/partials/project-create.html', 'app/partials/project-settings.html', 'app/partials/project.html', 'app/partials/symbols-actions.html', 'app/partials/symbols-export.html', 'app/partials/symbols-history.html', 'app/partials/symbols-import.html', 'app/partials/symbols-trash.html', 'app/partials/symbols.html', 'app/partials/tools-hypotheses-view.html', 'app/partials/widgets/widget-counter-examples.html', 'app/partials/widgets/widget-test-resume-settings.html']);
+angular.module('templates-all', ['app/partials/about.html', 'app/partials/directives/hypothesis-panel.html', 'app/partials/directives/hypothesis.html', 'app/partials/directives/load-screen.html', 'app/partials/directives/navigation.html', 'app/partials/directives/observation-table.html', 'app/partials/directives/project-create-form.html', 'app/partials/directives/project-edit-form.html', 'app/partials/directives/rest-action-create-form.html', 'app/partials/directives/rest-action-edit-form.html', 'app/partials/directives/symbol-create-form.html', 'app/partials/directives/symbol-edit-form.html', 'app/partials/directives/web-action-create-form.html', 'app/partials/directives/web-action-edit-form.html', 'app/partials/directives/web-element-picker.html', 'app/partials/help.html', 'app/partials/home.html', 'app/partials/learn-results-compare.html', 'app/partials/learn-results-statistics.html', 'app/partials/learn-results.html', 'app/partials/learn-setup.html', 'app/partials/learn-start.html', 'app/partials/modals/action-create-modal.html', 'app/partials/modals/action-edit-modal.html', 'app/partials/modals/modal-confirm-dialog.html', 'app/partials/modals/modal-hypothesis-layout-settings.html', 'app/partials/modals/modal-prompt-dialog.html', 'app/partials/modals/modal-test-details.html', 'app/partials/modals/modal-test-setup-settings.html', 'app/partials/modals/symbol-create-modal.html', 'app/partials/modals/symbol-edit-modal.html', 'app/partials/project-create.html', 'app/partials/project-settings.html', 'app/partials/project.html', 'app/partials/symbols-actions.html', 'app/partials/symbols-export.html', 'app/partials/symbols-history.html', 'app/partials/symbols-import.html', 'app/partials/symbols-trash.html', 'app/partials/symbols.html', 'app/partials/tools-hypotheses-view.html', 'app/partials/widgets/widget-counter-examples.html', 'app/partials/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/partials/about.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -26,239 +26,6 @@ angular.module("app/partials/about.html", []).run(["$templateCache", function($t
     "    </p>\n" +
     "\n" +
     "</div>");
-}]);
-
-angular.module("app/partials/directives/action-form-rest.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/directives/action-form-rest.html",
-    "<div ng-if=\"action.type == types.CALL_URL\">\n" +
-    "    <p class=\"text-muted\">Make a HTTP request to an URL (relative to your projects base url)</p>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <select class=\"form-control\" ng-options=\"m for m in ['DELETE', 'GET', 'POST', 'PUT']\" ng-model=\"action.method\">\n" +
-    "            <option value=\"\" disabled>Select a Method</option>\n" +
-    "        </select>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label>Data</label>\n" +
-    "        <div ng-model=\"action.data\" style=\"border-radius: 4px; width: 100%; height: 150px; border: 1px solid #ccc\" ui-ace=\"{useWrapMode : true, showGutter: true, theme:'eclipse', mode: 'json'}\"></div>\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div ng-if=\"action.type == types.CHECK_ATTRIBUTE_EXISTS\">\n" +
-    "    <p class=\"text-muted\">Check if a JSON attribute exists in the response body</p>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div ng-if=\"action.type == types.CHECK_ATTRIBUTE_TYPE\">\n" +
-    "    <p class=\"text-muted\">Check if a JSON attribute in the response body has a specific type</p>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <select class=\"form-control\" ng-model=\"action.jsonType\" ng-options=\"t as t for t in ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']\">\n" +
-    "            <option value=\"\" disabled>Choose a JavaScript type</option>\n" +
-    "        </select>\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div ng-if=\"action.type == types.CHECK_ATTRIBUTE_VALUE\">\n" +
-    "    <p class=\"text-muted\">Check a JSON attribute of the response body to be a specific value</p>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"the attribute value\" ng-model=\"action.value\">\n" +
-    "    </div>\n" +
-    "    <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "            <input type=\"checkbox\" ng-model=\"action.regexp\"> is regular expression\n" +
-    "        </label>\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div ng-if=\"action.type == types.CHECK_HEADER_FIELD\">\n" +
-    "    <p class=\"text-muted\">Check a HTTP response header field to have a specific value</p>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"http header field, e.g. Content-Type\" ng-model=\"action.key\">\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"http header field value, e.g. application/json\" ng-model=\"action.value\">\n" +
-    "    </div>\n" +
-    "    <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "            <input type=\"checkbox\" ng-model=\"action.regexp\">is regular expression\n" +
-    "        </label>\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div ng-if=\"action.type == types.CHECK_HTTP_BODY_TEXT\">\n" +
-    "    <p class=\"text-muted\">Search for a string or a regular express in the response body of a request</p>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"value to search for\" ng-model=\"action.value\">\n" +
-    "    </div>\n" +
-    "    <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "            <input type=\"checkbox\" ng-model=\"action.regexp\">\n" +
-    "            is regular expression\n" +
-    "        </label>\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div ng-if=\"action.type == types.CHECK_STATUS\">\n" +
-    "    <p class=\"text-muted\">Check the HTTP response to have a specific status</p>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input class=\"form-control\" type=\"number\" placeholder=\"e.g. 200, 404 ...\" ng-model=\"action.status\">\n" +
-    "    </div>\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/directives/action-form-web.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/directives/action-form-web.html",
-    "<!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
-    "<div ng-if=\"action.type == types.SEARCH_FOR_TEXT\">\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Search on a page for a piece of text or a regular expression\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Value</label>\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
-    "    </div>\n" +
-    "    <div class=\"checkbox\">\n" +
-    "        <label>\n" +
-    "            <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
-    "        </label>\n" +
-    "    </div>\n" +
-    "    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
-    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "    </button>\n" +
-    "</div>\n" +
-    "<!-- END: SEARCH_FOR_TEXT -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: SEARCH_FOR_NODE -->\n" +
-    "<div ng-if=\"action.type == types.SEARCH_FOR_NODE\">\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Search an HTML element in the DOM tree of a page\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">CSS selector</label>\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
-    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "    </button>\n" +
-    "</div>\n" +
-    "<!-- END: SEARCH_FOR_NODE -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: CLEAR -->\n" +
-    "<div ng-if=\"action.type == types.CLEAR\">\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Clear an element (eg. input or contenteditable element)\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">CSS selector</label>\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "    </button>\n" +
-    "</div>\n" +
-    "<!-- END: CLEAR -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: CLICK -->\n" +
-    "<div ng-if=\"action.type == types.CLICK\">\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Click on an element\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">CSS selector</label>\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "    </div>\n" +
-    "    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "    </button>\n" +
-    "</div>\n" +
-    "<!-- END: CLICK -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: FILL -->\n" +
-    "<div ng-if=\"action.type == types.FILL\">\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Fill an element with content (eg. input or contenteditable element)\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">CSS selector</label>\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">The value to fill the element with</label>\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
-    "    </div>\n" +
-    "    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "    </button>\n" +
-    "</div>\n" +
-    "<!-- END: FILL -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: GO_TO -->\n" +
-    "<div ng-if=\"action.type == types.GO_TO\">\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Go to a url that is <strong>relative</strong> to your projects' base url\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Url</label>\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "<!-- END: GO_TO -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: SUBMIT -->\n" +
-    "<div ng-if=\"action.type == types.SUBMIT\">\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Submit a form\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">CSS selector</label>\n" +
-    "        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "    </div>\n" +
-    "    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "    </button>\n" +
-    "</div>\n" +
-    "<!-- END: SUBMIT -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: WAIT -->\n" +
-    "<div ng-if=\"action.type == types.WAIT\">\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Wait for a specified amount of time before the next action will be executed\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Time to wait (in ms)</label>\n" +
-    "        <input class=\"form-control\" type=\"number\" placeholder=\"time in ms\" ng-model=\"action.duration\">\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "<!-- END: WAIT -->");
 }]);
 
 angular.module("app/partials/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
@@ -470,6 +237,722 @@ angular.module("app/partials/directives/observation-table.html", []).run(["$temp
   "use strict";
   $templateCache.put("app/partials/directives/observation-table.html",
     "");
+}]);
+
+angular.module("app/partials/directives/project-create-form.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/directives/project-create-form.html",
+    "<form id=\"project-create-form\" name=\"create_form\" role=\"form\" ng-submit=\"submitForm()\">\n" +
+    "\n" +
+    "    <!-- Name -->\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Name*</label>\n" +
+    "\n" +
+    "        <p class=\"text-muted\">The name of your project</p>\n" +
+    "        <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
+    "               placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
+    "    </div>\n" +
+    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
+    "        <small ng-show=\"create_form.name.$error.required\">Name must not be empty.</small>\n" +
+    "    </div>\n" +
+    "    <!-- Name -->\n" +
+    "\n" +
+    "    <!-- Base Url -->\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Url*</label>\n" +
+    "\n" +
+    "        <p class=\"text-muted\">The url of your website</p>\n" +
+    "        <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
+    "               placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\" ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
+    "    </div>\n" +
+    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
+    "        <small ng-show=\"create_form.url.$error.required\">\n" +
+    "            Url must not be empty.\n" +
+    "        </small>\n" +
+    "        <small ng-show=\"create_form.url.$error.pattern\">\n" +
+    "            The url has to start with http(s):// and have a host name\n" +
+    "        </small>\n" +
+    "    </div>\n" +
+    "    <!-- /Base Url -->\n" +
+    "\n" +
+    "    <!-- Description -->\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Description</label>\n" +
+    "\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            If you want you can describe your new project with a few words\n" +
+    "        </p>\n" +
+    "            <textarea name=\"description\" ng-model=\"project.description\"\n" +
+    "                      placeholder=\"Enter the description for the project\"\n" +
+    "                      class=\"form-control\" rows=\"3\"></textarea>\n" +
+    "    </div>\n" +
+    "    <!-- /Description -->\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <button type=\"submit\" class=\"btn btn-sm btn-primary\">Create Project</button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
+}]);
+
+angular.module("app/partials/directives/project-edit-form.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/directives/project-edit-form.html",
+    "<form id=\"project-edit-form\" name=\"update_form\" role=\"form\" ng-submit=\"submitForm()\">\n" +
+    "\n" +
+    "    <!-- Name -->\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Name*</label>\n" +
+    "\n" +
+    "        <p class=\"text-muted\">The name of your project</p>\n" +
+    "        <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
+    "               placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
+    "    </div>\n" +
+    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
+    "        <small ng-show=\"create_form.name.$error.required\">Name must not be empty.</small>\n" +
+    "    </div>\n" +
+    "    <!-- Name -->\n" +
+    "\n" +
+    "    <!-- Base Url -->\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Url*</label>\n" +
+    "\n" +
+    "        <p class=\"text-muted\">The url of your website</p>\n" +
+    "        <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
+    "               placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\" ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
+    "    </div>\n" +
+    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
+    "        <small ng-show=\"create_form.url.$error.required\">\n" +
+    "            Url must not be empty.\n" +
+    "        </small>\n" +
+    "        <small ng-show=\"create_form.url.$error.pattern\">\n" +
+    "            The url has to start with http(s):// and have a host name\n" +
+    "        </small>\n" +
+    "    </div>\n" +
+    "    <!-- /Base Url -->\n" +
+    "\n" +
+    "    <!-- Description -->\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Description</label>\n" +
+    "\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            If you want you can describe your new project with a few words\n" +
+    "        </p>\n" +
+    "            <textarea name=\"description\" ng-model=\"project.description\"\n" +
+    "                      placeholder=\"Enter the description for the project\"\n" +
+    "                      class=\"form-control\" rows=\"3\"></textarea>\n" +
+    "    </div>\n" +
+    "    <!-- /Description -->\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <button type=\"submit\" class=\"btn btn-sm btn-primary\">Update</button>\n" +
+    "        <a class=\"btn btn-sm btn-default\" ng-click=\"resetForm()\">Reset</a>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
+}]);
+
+angular.module("app/partials/directives/rest-action-create-form.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/directives/rest-action-create-form.html",
+    "<form id=\"rest-action-create-form\" ng-submit=\"submitForm()\">\n" +
+    "\n" +
+    "    <select class=\"form-control\" ng-model=\"action.type\" ng-options=\"k for (k,v) in actionTypes\">\n" +
+    "        <option value=\"\" disabled>Select an action you want to create</option>\n" +
+    "    </select>\n" +
+    "\n" +
+    "    <p></p>\n" +
+    "\n" +
+    "    <!-- BEGIN: CALL_URL -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CALL_URL\">\n" +
+    "        <p class=\"text-muted\">Make a HTTP request to an URL (relative to your projects base url)</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <select class=\"form-control\" ng-options=\"m for m in ['DELETE', 'GET', 'POST', 'PUT']\" ng-model=\"action.method\">\n" +
+    "                <option value=\"\" disabled>Select a Method</option>\n" +
+    "            </select>\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label>Data</label>\n" +
+    "            <div ng-model=\"action.data\" style=\"border-radius: 4px; width: 100%; height: 150px; border: 1px solid #ccc\" ui-ace=\"{useWrapMode : true, showGutter: true, theme:'eclipse', mode: 'json'}\"></div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CALL_URL -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_ATTRIBUTE_EXISTS -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_ATTRIBUTE_EXISTS\">\n" +
+    "        <p class=\"text-muted\">Check if a JSON attribute exists in the response body</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_ATTRIBUTE_EXISTS -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_ATTRIBUTE_TYPE -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_ATTRIBUTE_TYPE\">\n" +
+    "        <p class=\"text-muted\">Check if a JSON attribute in the response body has a specific type</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <select class=\"form-control\" ng-model=\"action.jsonType\" ng-options=\"t as t for t in ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']\">\n" +
+    "                <option value=\"\" disabled>Choose a JavaScript type</option>\n" +
+    "            </select>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_ATTRIBUTE_TYPE -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_ATTRIBUTE_VALUE -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_ATTRIBUTE_VALUE\">\n" +
+    "        <p class=\"text-muted\">Check a JSON attribute of the response body to be a specific value</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"the attribute value\" ng-model=\"action.value\">\n" +
+    "        </div>\n" +
+    "        <div class=\"checkbox\">\n" +
+    "            <label>\n" +
+    "                <input type=\"checkbox\" ng-model=\"action.regexp\"> is regular expression\n" +
+    "            </label>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_ATTRIBUTE_VALUE -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_HEADER_FIELD -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_HEADER_FIELD\">\n" +
+    "        <p class=\"text-muted\">Check a HTTP response header field to have a specific value</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"http header field, e.g. Content-Type\" ng-model=\"action.key\">\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"http header field value, e.g. application/json\" ng-model=\"action.value\">\n" +
+    "        </div>\n" +
+    "        <div class=\"checkbox\">\n" +
+    "            <label>\n" +
+    "                <input type=\"checkbox\" ng-model=\"action.regexp\">is regular expression\n" +
+    "            </label>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_HEADER_FIELD -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_HTTP_BODY_TEXT -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_HTTP_BODY_TEXT\">\n" +
+    "        <p class=\"text-muted\">Search for a string or a regular express in the response body of a request</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"value to search for\" ng-model=\"action.value\">\n" +
+    "        </div>\n" +
+    "        <div class=\"checkbox\">\n" +
+    "            <label>\n" +
+    "                <input type=\"checkbox\" ng-model=\"action.regexp\">\n" +
+    "                is regular expression\n" +
+    "            </label>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_HTTP_BODY_TEXT -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_STATUS -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_STATUS\">\n" +
+    "        <p class=\"text-muted\">Check the HTTP response to have a specific status</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"number\" placeholder=\"e.g. 200, 404 ...\" ng-model=\"action.status\">\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_STATUS -->\n" +
+    "\n" +
+    "    <div ng-if=\"action.type\">\n" +
+    "        <hr>\n" +
+    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Create Action</button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
+}]);
+
+angular.module("app/partials/directives/rest-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/directives/rest-action-edit-form.html",
+    "<form id=\"rest-action-update-form\" ng-submit=\"submitForm()\">\n" +
+    "\n" +
+    "    <!-- BEGIN: CALL_URL -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CALL_URL\">\n" +
+    "        <p class=\"text-muted\">Make a HTTP request to an URL (relative to your projects base url)</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <select class=\"form-control\" ng-options=\"m for m in ['DELETE', 'GET', 'POST', 'PUT']\" ng-model=\"action.method\">\n" +
+    "                <option value=\"\" disabled>Select a Method</option>\n" +
+    "            </select>\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label>Data</label>\n" +
+    "            <div ng-model=\"action.data\" style=\"border-radius: 4px; width: 100%; height: 150px; border: 1px solid #ccc\" ui-ace=\"{useWrapMode : true, showGutter: true, theme:'eclipse', mode: 'json'}\"></div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CALL_URL -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_ATTRIBUTE_EXISTS -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_ATTRIBUTE_EXISTS\">\n" +
+    "        <p class=\"text-muted\">Check if a JSON attribute exists in the response body</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_ATTRIBUTE_EXISTS -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_ATTRIBUTE_TYPE -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_ATTRIBUTE_TYPE\">\n" +
+    "        <p class=\"text-muted\">Check if a JSON attribute in the response body has a specific type</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <select class=\"form-control\" ng-model=\"action.jsonType\" ng-options=\"t as t for t in ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']\">\n" +
+    "                <option value=\"\" disabled>Choose a JavaScript type</option>\n" +
+    "            </select>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_ATTRIBUTE_TYPE -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_ATTRIBUTE_VALUE -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_ATTRIBUTE_VALUE\">\n" +
+    "        <p class=\"text-muted\">Check a JSON attribute of the response body to be a specific value</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"the attribute value\" ng-model=\"action.value\">\n" +
+    "        </div>\n" +
+    "        <div class=\"checkbox\">\n" +
+    "            <label>\n" +
+    "                <input type=\"checkbox\" ng-model=\"action.regexp\"> is regular expression\n" +
+    "            </label>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_ATTRIBUTE_VALUE -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_HEADER_FIELD -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_HEADER_FIELD\">\n" +
+    "        <p class=\"text-muted\">Check a HTTP response header field to have a specific value</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"http header field, e.g. Content-Type\" ng-model=\"action.key\">\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"http header field value, e.g. application/json\" ng-model=\"action.value\">\n" +
+    "        </div>\n" +
+    "        <div class=\"checkbox\">\n" +
+    "            <label>\n" +
+    "                <input type=\"checkbox\" ng-model=\"action.regexp\">is regular expression\n" +
+    "            </label>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_HEADER_FIELD -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_HTTP_BODY_TEXT -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_HTTP_BODY_TEXT\">\n" +
+    "        <p class=\"text-muted\">Search for a string or a regular express in the response body of a request</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"value to search for\" ng-model=\"action.value\">\n" +
+    "        </div>\n" +
+    "        <div class=\"checkbox\">\n" +
+    "            <label>\n" +
+    "                <input type=\"checkbox\" ng-model=\"action.regexp\">\n" +
+    "                is regular expression\n" +
+    "            </label>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_HTTP_BODY_TEXT -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CHECK_STATUS -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CHECK_STATUS\">\n" +
+    "        <p class=\"text-muted\">Check the HTTP response to have a specific status</p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <input class=\"form-control\" type=\"number\" placeholder=\"e.g. 200, 404 ...\" ng-model=\"action.status\">\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: CHECK_STATUS -->\n" +
+    "\n" +
+    "    <hr>\n" +
+    "    <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update Action</button>\n" +
+    "\n" +
+    "</form>");
+}]);
+
+angular.module("app/partials/directives/symbol-create-form.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/directives/symbol-create-form.html",
+    "<form id=\"symbol-create-form\" name=\"create_symbol_form\" ng-submit=\"submitForm()\">\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label>Symbol Name</label>\n" +
+    "        <input class=\"form-control\" name=\"name\" type=\"text\" placeholder=\"name\" required ng-model=\"symbol.name\">\n" +
+    "    </div>\n" +
+    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_symbol_form.name.$dirty && create_symbol_form.name.$invalid\">\n" +
+    "        <small ng-show=\"create_symbol_form.name.$error.required\"> The field must not be empty. </small>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label>Symbol Abbreviation</label>\n" +
+    "        <input class=\"form-control\" name=\"abbreviation\" type=\"text\" placeholder=\"abbreviation\" required ng-model=\"symbol.abbreviation\">\n" +
+    "    </div>\n" +
+    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_symbol_form.abbreviation.$dirty && create_symbol_form.abbreviation.$invalid\">\n" +
+    "        <small ng-show=\"create_symbol_form.abbreviation.$error.required\"> The field must not be empty. </small>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <button class=\"btn btn-primary\" type=\"submit\">Create Symbol</button>\n" +
+    "\n" +
+    "</form>");
+}]);
+
+angular.module("app/partials/directives/symbol-edit-form.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/directives/symbol-edit-form.html",
+    "<form name=\"update_symbol_form\" ng-submit=\"submitForm()\">\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label>Symbol Name</label>\n" +
+    "        <input class=\"form-control\" name=\"name\" type=\"text\" placeholder=\"name\" required ng-model=\"symbol.name\">\n" +
+    "    </div>\n" +
+    "    <div class=\"alert alert-danger alert-condensed\"\n" +
+    "         ng-show=\"update_symbol_form.name.$dirty && update_symbol_form.name.$invalid\">\n" +
+    "        <small ng-show=\"update_symbol_form.name.$error.required\"> The field must not be empty.</small>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label>Symbol Abbreviation</label>\n" +
+    "        <input class=\"form-control\" name=\"abbreviation\" type=\"text\" placeholder=\"abbreviation\" required\n" +
+    "               ng-model=\"symbol.abbreviation\">\n" +
+    "    </div>\n" +
+    "    <div class=\"alert alert-danger alert-condensed\"\n" +
+    "         ng-show=\"update_symbol_form.abbreviation.$dirty && update_symbol_form.abbreviation.$invalid\">\n" +
+    "        <small ng-show=\"update_symbol_form.abbreviation.$error.required\"> The field must not be empty.</small>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <button class=\"btn btn-sm btn-primary\" type=\"submit\">Update Symbol</button>\n" +
+    "\n" +
+    "</form>");
+}]);
+
+angular.module("app/partials/directives/web-action-create-form.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/directives/web-action-create-form.html",
+    "<form id=\"web-action-create-form\" ng-submit=\"submitForm()\">\n" +
+    "\n" +
+    "    <select class=\"form-control\" ng-model=\"action.type\" ng-options=\"k for (k,v) in actionTypes\">\n" +
+    "        <option value=\"\" disabled>Select an action you want to create</option>\n" +
+    "    </select>\n" +
+    "\n" +
+    "    <p></p>\n" +
+    "\n" +
+    "    <!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.SEARCH_FOR_TEXT\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Search on a page for a piece of text or a regular expression\n" +
+    "        </p>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Value</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
+    "        </div>\n" +
+    "        <div class=\"checkbox\">\n" +
+    "            <label>\n" +
+    "                <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
+    "            </label>\n" +
+    "        </div>\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: SEARCH_FOR_TEXT -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: SEARCH_FOR_NODE -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.SEARCH_FOR_NODE\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Search an HTML element in the DOM tree of a page\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">CSS selector</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: SEARCH_FOR_NODE -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CLEAR -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CLEAR\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Clear an element (eg. input or contenteditable element)\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">CSS selector</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: CLEAR -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CLICK -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CLICK\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Click on an element\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">CSS selector</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "        </div>\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: CLICK -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: FILL -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.FILL\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Fill an element with content (eg. input or contenteditable element)\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">CSS selector</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">The value to fill the element with</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
+    "        </div>\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: FILL -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: GO_TO -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.GO_TO\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Go to a url that is <strong>relative</strong> to your projects' base url\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Url</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: GO_TO -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: SUBMIT -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.SUBMIT\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Submit a form\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">CSS selector</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "        </div>\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: SUBMIT -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: WAIT -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.WAIT\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Wait for a specified amount of time before the next action will be executed\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Time to wait (in ms)</label>\n" +
+    "            <input class=\"form-control\" type=\"number\" placeholder=\"time in ms\" ng-model=\"action.duration\">\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: WAIT -->\n" +
+    "\n" +
+    "    <div ng-if=\"action.type\">\n" +
+    "        <hr>\n" +
+    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Create Action</button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
+}]);
+
+angular.module("app/partials/directives/web-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/directives/web-action-edit-form.html",
+    "<form id=\"web-action-edit-form\" ng-submit=\"submitForm()\">\n" +
+    "\n" +
+    "    <!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.SEARCH_FOR_TEXT\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Search on a page for a piece of text or a regular expression\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Value</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
+    "        </div>\n" +
+    "        <div class=\"checkbox\">\n" +
+    "            <label>\n" +
+    "                <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
+    "            </label>\n" +
+    "        </div>\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: SEARCH_FOR_TEXT -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: SEARCH_FOR_NODE -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.SEARCH_FOR_NODE\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Search an HTML element in the DOM tree of a page\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">CSS selector</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: SEARCH_FOR_NODE -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CLEAR -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CLEAR\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Clear an element (eg. input or contenteditable element)\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">CSS selector</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: CLEAR -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: CLICK -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.CLICK\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Click on an element\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">CSS selector</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "        </div>\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: CLICK -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: FILL -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.FILL\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Fill an element with content (eg. input or contenteditable element)\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">CSS selector</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">The value to fill the element with</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
+    "        </div>\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: FILL -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: GO_TO -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.GO_TO\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Go to a url that is <strong>relative</strong> to your projects' base url\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Url</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: GO_TO -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: SUBMIT -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.SUBMIT\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Submit a form\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">CSS selector</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "        </div>\n" +
+    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
+    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "    <!-- END: SUBMIT -->\n" +
+    "\n" +
+    "\n" +
+    "    <!-- BEGIN: WAIT -->\n" +
+    "    <div ng-if=\"action.type == actionTypes.WAIT\">\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Wait for a specified amount of time before the next action will be executed\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Time to wait (in ms)</label>\n" +
+    "            <input class=\"form-control\" type=\"number\" placeholder=\"time in ms\" ng-model=\"action.duration\">\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: WAIT -->\n" +
+    "\n" +
+    "    <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update Action</button>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/partials/directives/web-element-picker.html", []).run(["$templateCache", function($templateCache) {
@@ -901,69 +1384,48 @@ angular.module("app/partials/learn-start.html", []).run(["$templateCache", funct
     "");
 }]);
 
-angular.module("app/partials/modals/modal-action-create.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/partials/modals/action-create-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-action-create.html",
+  $templateCache.put("app/partials/modals/action-create-modal.html",
     "<div class=\"modal-header\">\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
     "	<h3 class=\"modal-title\">Create <span ng-bind=\"(symbol.type|capitalize)\"></span> Action</h3>\n" +
     "	<span class=\"text-muted\">Create a new action for a <span ng-bind=\"symbol.type\"></span> symbol</span>\n" +
     "</div>\n" +
     "\n" +
-    "<form name=\"action_create_form\" ng-submit=\"createAction()\">\n" +
+    "<div class=\"modal-body\">\n" +
     "\n" +
-    "	<div class=\"modal-body\">\n" +
-    "	\n" +
-    "	    <div if-is-type-of-web=\"symbol.type\">\n" +
-    "	        <select class=\"form-control\" ng-model=\"action.type\" ng-options=\"k for (k,v) in webActionTypes\">\n" +
-    "	            <option value=\"\" disabled>Select an action you want to create</option>\n" +
-    "	        </select>\n" +
-    "	        <div action-form-groups-web action-model=\"action\" ng-if=\"action.type\"></div>\n" +
-    "	    </div>\n" +
-    "	\n" +
-    "	    <div if-is-type-of-rest=\"symbol.type\">\n" +
-    "	        <select class=\"form-control\" ng-model=\"action.type\" ng-options=\"k for (k,v) in restActionTypes\">\n" +
-    "	            <option value=\"\" disabled>Select an action you want to create</option>\n" +
-    "	        </select>\n" +
-    "	        <div action-form-groups-rest action-model=\"action\" ng-if=\"action.type\"></div>\n" +
-    "	    </div>\n" +
-    "	\n" +
-    "	</div>\n" +
-    "	\n" +
-    "	<div class=\"modal-footer\">\n" +
-    "	    <button class=\"btn btn-primary\" type=\"submit\">Create</button>\n" +
-    "	    <a class=\"btn btn-warning\" ng-click=\"closeModal()\">Cancel</a>\n" +
-    "	</div>\n" +
+    "    <web-action-create-form if-is-type-of-web=\"symbol.type\"></web-action-create-form>\n" +
+    "    <rest-action-create-form if-is-type-of-rest=\"symbol.type\"></rest-action-create-form>\n" +
     "\n" +
-    "</form>");
+    "</div>");
 }]);
 
-angular.module("app/partials/modals/modal-action-update.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/partials/modals/action-edit-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-action-update.html",
+  $templateCache.put("app/partials/modals/action-edit-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
-    "    <div ng-if=\"symbol.type == 'web'\">\n" +
-    "        <h3 class=\"modal-title\">Update Web Action</h3>\n" +
-    "        <span class=\"text-muted\">Update an existing action for a web symbol</span>\n" +
-    "    </div>\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
     "\n" +
-    "    <div ng-if=\"symbol.type == 'rest'\">\n" +
-    "        <h3 class=\"modal-title\">Update Rest Action</h3>\n" +
-    "        <span class=\"text-muted\">Update an existing action for a rest symbol</span>\n" +
+    "    <div>\n" +
+    "        <h3 class=\"modal-title\">Update <span ng-bind=\"(symbol.type|capitalize)\"></span> Action</h3>\n" +
+    "        <span class=\"text-muted\">Update an existing action for a <span ng-bind=\"symbol.type\"></span> symbol</span>\n" +
     "    </div>\n" +
     "\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"modal-body\">\n" +
     "\n" +
-    "    <action-form-web action-model=\"action\" ng-if=\"symbol.type == 'web'\"></action-form-web>\n" +
-    "    <action-form-rest action-model=\"action\" ng-if=\"symbol.type == 'rest'\"></action-form-rest>\n" +
+    "    <web-action-edit-form action=\"action\" if-is-type-of-web=\"symbol.type\"></web-action-edit-form>\n" +
+    "    <rest-action-edit-form action=\"action\" if-is-type-of-rest=\"symbol.type\"></rest-action-edit-form>\n" +
     "\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"modal-footer\">\n" +
-    "    <button class=\"btn btn-primary\" ng-click=\"updateAction()\">Update</button>\n" +
-    "    <button class=\"btn btn-warning\" ng-click=\"closeModal()\">Cancel</button>\n" +
     "</div>");
 }]);
 
@@ -1050,84 +1512,6 @@ angular.module("app/partials/modals/modal-prompt-dialog.html", []).run(["$templa
     "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Ok</button>\n" +
     "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">Cancel</a>\n" +
     "    </div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/partials/modals/modal-symbol-create.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/modals/modal-symbol-create.html",
-    "<div class=\"modal-header\">\n" +
-    "\n" +
-    "	<h3 class=\"modal-title\">Create <span ng-bind=\"(symbol.type|capitalize)\"></span> Symbol</h3>\n" +
-    "    <span class=\"text-muted\">Create a new <span ng-bind=\"symbol.type\"></span> symbol</span>\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "<form name=\"create_symbol_form\" ng-submit=\"createSymbol()\">\n" +
-    "\n" +
-    "	<div class=\"modal-body\">\n" +
-    "	\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label>Symbol Name</label>\n" +
-    "            <input class=\"form-control\" name=\"name\" type=\"text\" placeholder=\"name\" required ng-model=\"symbol.name\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_symbol_form.name.$dirty && create_symbol_form.name.$invalid\">\n" +
-    "			<small ng-show=\"create_symbol_form.name.$error.required\"> The field must not be empty. </small>\n" +
-    "		</div>\n" +
-    "				\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label>Symbol Abbreviation</label>\n" +
-    "            <input class=\"form-control\" name=\"abbreviation\" type=\"text\" placeholder=\"abbreviation\" required ng-model=\"symbol.abbreviation\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_symbol_form.abbreviation.$dirty && create_symbol_form.abbreviation.$invalid\">\n" +
-    "			<small ng-show=\"create_symbol_form.abbreviation.$error.required\"> The field must not be empty. </small>\n" +
-    "		</div>\n" +
-    "	    		\n" +
-    "	</div>\n" +
-    "	\n" +
-    "	<div class=\"modal-footer\">\n" +
-    "	    <button class=\"btn btn-primary\" type=\"submit\">Create</button>\n" +
-    "	    <a class=\"btn btn-default\" ng-click=\"closeModal()\">Cancel</a>\n" +
-    "	</div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/partials/modals/modal-symbol-update.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/modals/modal-symbol-update.html",
-    "<div class=\"modal-header\">\n" +
-    "	<h3 class=\"modal-title\">Update <span ng-bind=\"(symbol.type|capitalize)\"></span> Symbol</h3>\n" +
-    "	<span class=\"text-muted\">Update an existing <span ng-bind=\"symbol.type\"></span> symbol</span>\n" +
-    "</div>\n" +
-    "\n" +
-    "<form name=\"update_symbol_form\" ng-submit=\"updateSymbol()\">\n" +
-    "\n" +
-    "	<div class=\"modal-body\">\n" +
-    "	\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label>Symbol Name</label>\n" +
-    "            <input class=\"form-control\" name=\"name\" type=\"text\" placeholder=\"name\" required ng-model=\"symbol.name\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"update_symbol_form.name.$dirty && update_symbol_form.name.$invalid\">\n" +
-    "			<small ng-show=\"update_symbol_form.name.$error.required\"> The field must not be empty. </small>\n" +
-    "		</div>\n" +
-    "				\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label>Symbol Abbreviation</label>\n" +
-    "            <input class=\"form-control\" name=\"abbreviation\" type=\"text\" placeholder=\"abbreviation\" required ng-model=\"symbol.abbreviation\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"update_symbol_form.abbreviation.$dirty && update_symbol_form.abbreviation.$invalid\">\n" +
-    "			<small ng-show=\"update_symbol_form.abbreviation.$error.required\"> The field must not be empty. </small>\n" +
-    "		</div>\n" +
-    "	    		\n" +
-    "	</div>\n" +
-    "	\n" +
-    "	<div class=\"modal-footer\">\n" +
-    "	    <button class=\"btn btn-primary\" type=\"submit\">Update</button>\n" +
-    "	    <a class=\"btn btn-default\" ng-click=\"closeModal()\">Cancel</a>\n" +
-    "	</div>\n" +
     "\n" +
     "</form>");
 }]);
@@ -1324,6 +1708,47 @@ angular.module("app/partials/modals/modal-test-setup-settings.html", []).run(["$
     "</form>");
 }]);
 
+angular.module("app/partials/modals/symbol-create-modal.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/modals/symbol-create-modal.html",
+    "<div class=\"modal-header\">\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
+    "	<h3 class=\"modal-title\">Create <span ng-bind=\"(type|capitalize)\"></span> Symbol</h3>\n" +
+    "    <span class=\"text-muted\">Create a new <span ng-bind=\"type\"></span> symbol</span>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-body\">\n" +
+    "\n" +
+    "    <symbol-create-form type=\"{{type}}\"></symbol-create-form>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/partials/modals/symbol-edit-modal.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/modals/symbol-edit-modal.html",
+    "<div class=\"modal-header\">\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
+    "	<h3 class=\"modal-title\">Update <span ng-bind=\"(symbol.type|capitalize)\"></span> Symbol</h3>\n" +
+    "	<span class=\"text-muted\">Update an existing <span ng-bind=\"symbol.type\"></span> symbol</span>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-body\">\n" +
+    "\n" +
+    "    <symbol-edit-form symbol=\"symbol\"></symbol-edit-form>\n" +
+    "\n" +
+    "</div>");
+}]);
+
 angular.module("app/partials/project-create.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/partials/project-create.html",
@@ -1334,61 +1759,7 @@ angular.module("app/partials/project-create.html", []).run(["$templateCache", fu
     "    <p class=\"text-muted\">You can create a new project here</p>\n" +
     "    <hr/>\n" +
     "\n" +
-    "    <form name=\"create_form\" role=\"form\" ng-submit=\"createProject()\">\n" +
-    "\n" +
-    "        <!-- Name -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Name*</label>\n" +
-    "\n" +
-    "            <p class=\"text-muted\">The name of your project</p>\n" +
-    "            <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
-    "                   placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
-    "             <small ng-show=\"create_form.name.$error.required\">Name must not be empty.</small>\n" +
-    "        </div>\n" +
-    "        <!-- Name -->\n" +
-    "\n" +
-    "        <!-- Base Url -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Url*</label>\n" +
-    "\n" +
-    "            <p class=\"text-muted\">The url of your website</p>\n" +
-    "            <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
-    "                   placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\" ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
-    "            <small ng-show=\"create_form.url.$error.required\">\n" +
-    "                Url must not be empty.\n" +
-    "            </small>\n" +
-    "            <small ng-show=\"create_form.url.$error.pattern\">\n" +
-    "            	The url has to start with http(s):// and have a host name\n" +
-    "            </small>\n" +
-    "        </div>\n" +
-    "        <!-- /Base Url -->\n" +
-    "\n" +
-    "        <!-- Description -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Description</label>\n" +
-    "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                If you want you can describe your new project with a few words\n" +
-    "            </p>\n" +
-    "            <textarea name=\"description\" ng-model=\"project.description\"\n" +
-    "                      placeholder=\"Enter the description for the project\"\n" +
-    "                      class=\"form-control\" rows=\"3\"></textarea>\n" +
-    "        </div>\n" +
-    "        <!-- /Description -->\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <button type=\"submit\" class=\"btn btn-sm btn-primary\">Create Project</button>\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </form>\n" +
-    "\n" +
-    "    <hr>\n" +
-    "\n" +
-    "    <p class=\"text-muted\"><em>* these fields are required in order to create a new project</em></p>\n" +
+    "    <project-create-form></project-create-form>\n" +
     "\n" +
     "</div>");
 }]);
@@ -1400,66 +1771,9 @@ angular.module("app/partials/project-settings.html", []).run(["$templateCache", 
     "\n" +
     "    <h2>Project Settings</h2>\n" +
     "    <p class=\"text-muted\">Update your project and change settings</p>\n" +
-    "    <hr/>\n" +
-    "\n" +
-    "    <form name=\"update_form\" role=\"form\" ng-submit=\"updateProject()\" novalidate>\n" +
-    "\n" +
-    "        <!-- Name -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Name*</label>\n" +
-    "\n" +
-    "            <p class=\"text-muted\">The name of your project</p>\n" +
-    "            <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
-    "                   placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
-    "             <small ng-show=\"create_form.name.$error.required\">Name must not be empty.</small>\n" +
-    "        </div>\n" +
-    "        <!-- Name -->\n" +
-    "\n" +
-    "        <!-- Base Url -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Url*</label>\n" +
-    "\n" +
-    "            <p class=\"text-muted\">The url of your website</p>\n" +
-    "            <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
-    "                   placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\" ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
-    "            <small ng-show=\"create_form.url.$error.required\">\n" +
-    "                Url must not be empty.\n" +
-    "            </small>\n" +
-    "            <small ng-show=\"create_form.url.$error.pattern\">\n" +
-    "            	The url has to start with http(s):// and have a host name\n" +
-    "            </small>\n" +
-    "        </div>\n" +
-    "        <!-- /Base Url -->\n" +
-    "\n" +
-    "        <!-- Description -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Description</label>\n" +
-    "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                If you want you can describe your new project with a few words\n" +
-    "            </p>\n" +
-    "            <textarea name=\"description\" ng-model=\"project.description\"\n" +
-    "                      placeholder=\"Enter the description for the project\"\n" +
-    "                      class=\"form-control\" rows=\"3\"></textarea>\n" +
-    "        </div>\n" +
-    "        <!-- /Description -->\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <button type=\"submit\" class=\"btn btn-sm btn-primary\">Update Project</button>\n" +
-    "            <a class=\"btn btn-sm btn-default\" ng-click=\"reset()\">Reset</a>\n" +
-    "            <a class=\"btn btn-sm btn-default\" ng-click=\"deleteProject()\">Delete</a>\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </form>\n" +
-    "\n" +
-    "\n" +
     "    <hr>\n" +
     "\n" +
-    "    <p class=\"text-muted\"><em>* these fields are required in order to create a new project</em></p>\n" +
+    "    <project-edit-form project=\"project\"></project-edit-form>\n" +
     "\n" +
     "</div>");
 }]);
@@ -1498,7 +1812,7 @@ angular.module("app/partials/symbols-actions.html", []).run(["$templateCache", f
     "            <button class=\"btn btn-xs btn-primary\" open-action-create-modal symbol=\"symbol\" on-created=\"addAction\">\n" +
     "                Create\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" open-action-update-modal symbol=\"symbol\"\n" +
+    "            <button class=\"btn btn-xs btn-default\" open-action-edit-modal symbol=\"symbol\"\n" +
     "                    action=\"(symbol.actions | selected | first)\"\n" +
     "                    on-updated=\"updateAction\"\n" +
     "                    ng-class=\"(symbol.actions|selected).length != 1 ? 'disabled': ''\">\n" +
@@ -1528,7 +1842,7 @@ angular.module("app/partials/symbols-actions.html", []).run(["$templateCache", f
     "	                </button>\n" +
     "	                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
     "	                    <li>\n" +
-    "	                        <a href open-action-update-modal symbol=\"symbol\" action=\"action\" on-updated=\"updateAction\">\n" +
+    "	                        <a href open-action-edit-modal symbol=\"symbol\" action=\"action\" on-updated=\"updateAction\">\n" +
     "	                            <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
     "	                        </a>\n" +
     "	                    </li>\n" +
@@ -1903,7 +2217,7 @@ angular.module("app/partials/symbols.html", []).run(["$templateCache", function(
     "                Create\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-class=\"(symbols|selected).length == 1 ? '' : 'disabled'\"\n" +
-    "                    open-symbol-update-modal symbol=\"(symbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
+    "                    open-symbol-edit-modal symbol=\"(symbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
     "                Edit\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-class=\"(symbols|selected).length > 0 ? '' : 'disabled'\"\n" +
@@ -1930,7 +2244,7 @@ angular.module("app/partials/symbols.html", []).run(["$templateCache", function(
     "                </button>\n" +
     "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
     "                    <li>\n" +
-    "                        <a href open-symbol-update-modal symbol=\"symbol\" on-updated=\"updateSymbol\">\n" +
+    "                        <a href open-symbol-edit-modal symbol=\"symbol\" on-updated=\"updateSymbol\">\n" +
     "                            <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
     "                        </a>\n" +
     "                    </li>\n" +

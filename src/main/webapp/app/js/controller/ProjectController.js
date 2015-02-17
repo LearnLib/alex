@@ -13,3 +13,4 @@
         $scope.project = SessionService.project.get();
     }
 }());
+

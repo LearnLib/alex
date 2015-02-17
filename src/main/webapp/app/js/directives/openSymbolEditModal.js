@@ -3,12 +3,12 @@
 
     angular
         .module('weblearner.directives')
-        .directive('openSymbolUpdateModal', [
-            '$modal',
-            openSymbolUpdateModal
+        .directive('openSymbolEditModal', [
+            '$modal', 'paths',
+            openSymbolEditModal
         ]);
 
-    function openSymbolUpdateModal($modal) {
+    function openSymbolEditModal($modal, paths) {
 
         var directive = {
             restrict: 'EA',
@@ -33,8 +33,8 @@
                 }
 
                 var modal = $modal.open({
-                    templateUrl: 'app/partials/modals/modal-symbol-update.html',
-                    controller: 'SymbolUpdateController',
+                    templateUrl: paths.PARTIALS_MODALS + '/symbol-edit-modal.html',
+                    controller: 'SymbolEditModalController',
                     resolve: {
                         modalData: function () {
                             return {

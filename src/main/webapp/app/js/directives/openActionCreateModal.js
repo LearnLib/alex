@@ -4,11 +4,11 @@
     angular
         .module('weblearner.directives')
         .directive('openActionCreateModal', [
-            '$modal', 'ngToast',
+            '$modal', 'ngToast', 'paths',
             openActionCreateModal
         ]);
 
-    function openActionCreateModal($modal, toast) {
+    function openActionCreateModal($modal, toast, paths) {
 
         var directive = {
             restrict: 'EA',
@@ -29,8 +29,8 @@
             function handleModal() {
 
                 var modal = $modal.open({
-                    templateUrl: 'app/partials/modals/modal-action-create.html',
-                    controller: 'ActionCreateController',
+                    templateUrl: paths.PARTIALS_MODALS + '/action-create-modal.html',
+                    controller: 'ActionCreateModalController',
                     resolve: {
                         modalData: function () {
                             return {

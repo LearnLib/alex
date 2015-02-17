@@ -28,10 +28,10 @@
 
             function handleModal() {
                 var modal = $modal.open({
-                    templateUrl: 'app/partials/modals/modal-symbol-create.html',
-                    controller: 'SymbolCreateController',
+                    templateUrl: 'app/partials/modals/symbol-create-modal.html',
+                    controller: 'SymbolCreateModalController',
                     resolve: {
-                        config: function () {
+                        modalData: function () {
                             return {
                                 symbolType: scope.symbolType,
                                 projectId: scope.projectId

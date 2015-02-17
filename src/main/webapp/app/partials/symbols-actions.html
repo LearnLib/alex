@@ -18,7 +18,7 @@
             <button class="btn btn-xs btn-primary" open-action-create-modal symbol="symbol" on-created="addAction">
                 Create
             </button>
-            <button class="btn btn-xs btn-default" open-action-update-modal symbol="symbol"
+            <button class="btn btn-xs btn-default" open-action-edit-modal symbol="symbol"
                     action="(symbol.actions | selected | first)"
                     on-updated="updateAction"
                     ng-class="(symbol.actions|selected).length != 1 ? 'disabled': ''">
@@ -48,7 +48,7 @@
 	                </button>
 	                <ul class="dropdown-menu pull-left" role="menu">
 	                    <li>
-	                        <a href open-action-update-modal symbol="symbol" action="action" on-updated="updateAction">
+	                        <a href open-action-edit-modal symbol="symbol" action="action" on-updated="updateAction">
 	                            <i class="fa fa-edit fa-fw"></i> Edit
 	                        </a>
 	                    </li>

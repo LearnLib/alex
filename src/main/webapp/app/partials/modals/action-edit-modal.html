@@ -1,0 +1,19 @@
+<div class="modal-header">
+
+    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+    <div>
+        <h3 class="modal-title">Update <span ng-bind="(symbol.type|capitalize)"></span> Action</h3>
+        <span class="text-muted">Update an existing action for a <span ng-bind="symbol.type"></span> symbol</span>
+    </div>
+
+</div>
+
+<div class="modal-body">
+
+    <web-action-edit-form action="action" if-is-type-of-web="symbol.type"></web-action-edit-form>
+    <rest-action-edit-form action="action" if-is-type-of-rest="symbol.type"></rest-action-edit-form>
+
+</div>

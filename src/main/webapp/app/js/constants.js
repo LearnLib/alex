@@ -14,12 +14,12 @@
     	.constant('paths', {
     		PARTIALS: 'app/partials',
     		PARTIALS_DIRECTIVES: 'app/partials/directives',
-    		PARTIALS_MODALS: 'app/partials/directives',
+    		PARTIALS_MODALS: 'app/partials/modals',
     		PARTIALS_WIDGETS: 'app/partials/widgets'
     	})
 
         // web action types
-        .constant('WebActionTypesEnum', {
+        .constant('WebActionTypes', {
             SEARCH_FOR_TEXT: 'checkText',
             SEARCH_FOR_NODE: 'checkNode',
             CLEAR: 'clear',
@@ -31,7 +31,7 @@
         })
 
         // rest action types
-        .constant('RestActionTypesEnum', {
+        .constant('RestActionTypes', {
             CALL_URL: 'call',
             CHECK_STATUS: 'checkStatus',
             CHECK_HEADER_FIELD: 'checkHeaderField',

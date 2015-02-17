@@ -11,7 +11,7 @@
     /**
      * ProjectCreateController
      *
-     * The controller that handles the creation of new projects
+     * The controller that belongs to 'app/partials/project-create.html' and handles the creation of a new project
      *
      * @param $scope
      * @param $state
@@ -20,18 +20,20 @@
      */
     function ProjectCreateController($scope, $state, ProjectResource) {
 
-        $scope.project = {};
-
-        //////////
+        // Listen for the event project.created from a child controller
+        $scope.$on('project.created', createProject);
 
         /**
-         * create a new project
+         * Make a call to the API to create a new project
+         *
+         * @param evt - The event object
+         * @param project - The project that should be created
          */
-        $scope.createProject = function () {
-            ProjectResource.create($scope.project)
+        function createProject(evt, project) {
+            ProjectResource.create(project)
                 .then(function () {
                     $state.go('home');
                 })
-        };
+        }
     }
 }());

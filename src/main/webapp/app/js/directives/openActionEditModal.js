@@ -3,12 +3,12 @@
 
     angular
         .module('weblearner.directives')
-        .directive('openActionUpdateModal', [
+        .directive('openActionEditModal', [
             '$modal', 'ngToast',
-            openActionUpdateModal
+            openActionEditModal
         ]);
 
-    function openActionUpdateModal($modal, toast) {
+    function openActionEditModal($modal, toast) {
         var directive = {
             restrict: 'EA',
             scope: {
@@ -33,8 +33,8 @@
                 }
 
                 var modal = $modal.open({
-                    templateUrl: 'app/partials/modals/modal-action-update.html',
-                    controller: 'ActionUpdateController',
+                    templateUrl: 'app/partials/modals/action-edit-modal.html',
+                    controller: 'ActionEditModalController',
                     resolve: {
                         modalData: function () {
                             return {

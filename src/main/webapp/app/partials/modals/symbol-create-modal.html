@@ -1,0 +1,16 @@
+<div class="modal-header">
+
+    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+	<h3 class="modal-title">Create <span ng-bind="(type|capitalize)"></span> Symbol</h3>
+    <span class="text-muted">Create a new <span ng-bind="type"></span> symbol</span>
+
+</div>
+
+<div class="modal-body">
+
+    <symbol-create-form type="{{type}}"></symbol-create-form>
+
+</div>

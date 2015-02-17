@@ -4,19 +4,19 @@
     angular
         .module('weblearner.controller')
         .controller('SymbolsActionsController', [
-            '$scope', '$stateParams', 'SymbolResource', 'SessionService', 'SelectionService', 'WebActionTypesEnum',
-            'RestActionTypesEnum', 'ngToast',
+            '$scope', '$stateParams', 'SymbolResource', 'SessionService', 'SelectionService', 'WebActionTypes',
+            'RestActionTypes', 'ngToast',
             SymbolsActionsController
         ]);
 
     function SymbolsActionsController($scope, $stateParams, SymbolResource, SessionService, SelectionService,
-                                      WebActionTypesEnum, RestActionTypesEnum, toast) {
+                                      WebActionTypes, RestActionTypes, toast) {
 
         /** the enum for web action types that are displayed in a select box */
-        $scope.webActionTypes = WebActionTypesEnum;
+        $scope.webActionTypes = WebActionTypes;
 
         /** the enum for rest action types that are displayed in a select box */
-        $scope.restActionTypes = RestActionTypesEnum;
+        $scope.restActionTypes = RestActionTypes;
 
         /** the open project */
         $scope.project = SessionService.project.get();

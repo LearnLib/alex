@@ -1,0 +1,15 @@
+<div class="modal-header">
+
+    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+	<h3 class="modal-title">Update <span ng-bind="(symbol.type|capitalize)"></span> Symbol</h3>
+	<span class="text-muted">Update an existing <span ng-bind="symbol.type"></span> symbol</span>
+</div>
+
+<div class="modal-body">
+
+    <symbol-edit-form symbol="symbol"></symbol-edit-form>
+
+</div>
