@@ -19,7 +19,7 @@
      * @param SessionService
      * @constructor
      */
-    function HomeController($scope, $state, ProjectResource, SessionService) {
+    function HomeController($scope, $state, ProjectResource, SessionService) {   	
 
         /** The project list */
         $scope.projects = [];

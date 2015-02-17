@@ -18,11 +18,11 @@ module.exports = function(grunt) {
 					separator : ';'
 				},
 				app : {
-					src : [ 'app/js/init.js', 'app/js/routes.js', 'app/js/constants.js',
+					src : [ 'app/js/init.js', 'app/templates.js', 'app/js/routes.js', 'app/js/constants.js',
 							'app/js/controller/**/*.js',
 							'app/js/directives/*.js',
 							'app/js/resources/*.js',
-							'app/js/services/*.js', 'app/js/filters/*.js' ],
+							'app/js/services/*.js', 'app/js/filters/*.js'],
 					dest : './app/app.js'
 				},
 				libs : {
@@ -45,6 +45,18 @@ module.exports = function(grunt) {
 					dest : 'app/libs.js'
 				}
 			},
+			
+			html2js: {
+				options: {
+					useStrict: true,
+					base: '../webapp'
+				},
+				all: {
+					src: ['app/partials/**/*.html'],
+					dest: 'app/templates.js'
+				}
+			},
+			
 			watch : {
 				scripts : {
 					files : [ 'app/js/**/*.js' ],
@@ -60,6 +72,13 @@ module.exports = function(grunt) {
 						spawn : false
 					}
 				},
+				html : {
+					files: ['app/partials/**/*.html'],
+					tasks: ['build-html'],
+					options: {
+						spawn : false
+					}
+				}
 			},
 			sass : {
 				dist : {
@@ -77,9 +96,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-sass');
+	grunt.loadNpmTasks('grunt-html2js');
 
-	grunt.registerTask('build-js', [ 'concat', 'uglify' ]);
+	grunt.registerTask('build-js', [ 'html2js', 'concat', 'uglify' ]);
 	grunt.registerTask('build-css', [ 'sass' ]);
+	grunt.registerTask('build-html', ['html2js'])
 	grunt.registerTask('default', [ 'build-js' ]);
 
 }

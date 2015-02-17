@@ -12,10 +12,6 @@
             run
         ]);
 
-
-
-
-
     /**
      * Define application routes
      *
@@ -24,7 +20,7 @@
      * @param paths
      */
     function config($stateProvider, $urlRouterProvider, paths) {
-
+    	    	
         // redirect to the start page when no other route fits
         $urlRouterProvider.otherwise("/home");
 
@@ -293,7 +289,7 @@
      * @param SessionService
      */
     function run($rootScope, $state, SessionService) {
-
+    	
         // route validation
         $rootScope.$on("$stateChangeStart", stateChangeStart);
 
