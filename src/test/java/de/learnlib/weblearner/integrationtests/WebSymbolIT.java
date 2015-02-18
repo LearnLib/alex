@@ -127,7 +127,7 @@ public class WebSymbolIT {
         // delete
         path = "/projects/" + project.getId() + "/symbols/" + symbol.getId() + "/hide";
         response = client.target(BASE_URL + path).request().post(null);
-        assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
         path = "/projects/" + project.getId() + "/symbols/" + symbol.getId();
         response = client.target(BASE_URL + path).request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());

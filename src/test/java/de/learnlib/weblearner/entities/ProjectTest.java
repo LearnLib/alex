@@ -10,6 +10,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,6 +28,19 @@ public class ProjectTest {
         json = json.replaceFirst(",\"symbolAmount\":[ ]?[0-9]+", "");
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, Project.class);
+    }
+
+    public static List<Project> readProjectList(String json) throws IOException {
+        List<Project> projects = new LinkedList<>();
+
+        json = json.substring(1, json.length() - 1);
+        json= json.replace("},{", "};{");
+        for (String s : json.split(";")) {
+            Project nextProject = ProjectTest.readProject(s.trim());
+            projects.add(nextProject);
+        }
+
+        return projects;
     }
 
     @Test

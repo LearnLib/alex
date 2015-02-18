@@ -3,6 +3,7 @@ package de.learnlib.weblearner.integrationtests;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.Symbol;
+import org.apache.xerces.xs.datatypes.ObjectList;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -45,7 +47,7 @@ public class ProjectIT {
         projectName = "IT Project - CRUD";
         json =  "{\"name\": \"" + projectName + " 2\", \"baseUrl\": \"http://example.com\"}";
         response = client.target(BASE_URL + "/projects").request().post(Entity.json(json));
-        Project project2 = response.readEntity(Project.class);
+        Project project2 = ProjectTest.readProject(response.readEntity(String.class));
         String symbolName = "IT Project 2 AbstractSymbol - CRUD";
         String symbolAbbr = "ip2scrud";
         json = "{\"type\": \"web\", \"project\": " + project2.getId() + ", \"name\": \"" + symbolName
@@ -62,7 +64,7 @@ public class ProjectIT {
         // read all
         response = client.target(BASE_URL + "/projects/").request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        List<Project> projects = response.readEntity(new GenericType<List<Project>>() { });
+        List<Project> projects = ProjectTest.readProjectList(response.readEntity(String.class));
         assertEquals("Projects in DB: " + projects, 2, projects.size());
         Project projectFromDB = projects.get(1);
         assertEquals(projectName + " 2", projectFromDB.getName());
@@ -72,7 +74,7 @@ public class ProjectIT {
         response = client.target(BASE_URL + "/projects/" + project.getId()).queryParam("embed", "symbols")
                             .request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        project = response.readEntity(Project.class);
+        project = ProjectTest.readProject(response.readEntity(String.class));
         assertTrue(project.getId() > 0);
         assertEquals(projectName, project.getName());
         assertNotNull(project.getSymbols());
@@ -83,7 +85,7 @@ public class ProjectIT {
                     + ", \"baseUrl\": \"http://example2.com\"}";
         response = client.target(BASE_URL + "/projects/" + project2.getId()).request().put(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        Project responseProject = response.readEntity(Project.class);
+        Project responseProject = ProjectTest.readProject(response.readEntity(String.class));
         assertEquals(projectName + " updated", responseProject.getName());
         assertEquals("http://example2.com", responseProject.getBaseUrl());
 
