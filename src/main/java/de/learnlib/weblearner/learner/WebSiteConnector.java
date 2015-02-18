@@ -2,6 +2,7 @@ package de.learnlib.weblearner.learner;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -39,6 +40,22 @@ public class WebSiteConnector {
         this.driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
         this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WATI_TIME, TimeUnit.SECONDS);
         this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Try to clear all data from the browser, including Cookies, local storage & session storage.
+     */
+    void clearBrowserData() {
+        this.driver.manage().deleteAllCookies();
+
+        try {
+            JavascriptExecutor javascriptExecutor = (JavascriptExecutor) this.driver;
+            javascriptExecutor.executeScript("localStorage.clear();");
+            javascriptExecutor.executeScript("sessionStorage.clear();");
+        } catch (UnsupportedOperationException e) {
+            // JavaScript is not enabled in the Driver
+            // -> assume that localStorage and sessionStorage are not available and therefor must not be cleared.
+        }
     }
 
     /**

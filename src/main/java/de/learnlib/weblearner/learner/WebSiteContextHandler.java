@@ -30,6 +30,7 @@ public class WebSiteContextHandler extends AbstractContextHandlerWithCounter<Web
     @Override
     public WebSiteConnector createContext() {
         incrementCounter();
+        this.connector.clearBrowserData();
         resetSymbol.execute(connector);
         return connector;
     }
