@@ -49,16 +49,7 @@
             scope: {
                 items: '=ngModel'
             },
-            template: ' <table class="table" >' +
-            '               <thead>' +
-            '                   <tr>' +
-            '                       <th style="width: 1px"></th>' +
-            '                       <th></th>' +
-            '                   </tr>' +
-            '               </thead>' +
-            '               <tbody ng-transclude>' +
-            '               </tbody>' +
-            '           </table>',
+            template: '<div class="selectable-list" ng-transclude></div>',
             controller: ['$scope', 'SelectionService', controller]
         };
         return directive;
@@ -84,14 +75,12 @@
             require: '^selectableList',
             replace: true,
             transclude: true,
-            template: ' <tr ng-class="item._selected ? \'active\' : \'\'">' +
-            '               <td>' +
-            '                   <input type="checkbox" ng-model="item._selected"><br>' +
-            '               </td>' +
-            '               <td>' +
-            '                   <div ng-transclude></div>' +
-            '               </td>' +
-            '           </tr>',
+            template: ' <div class="selectable-list-item" ng-class="item._selected ? \'active\' : \'\'">' +
+            '               <div class="selectable-list-control">' +
+            '                   <input type="checkbox" ng-model="item._selected">' +
+            '               </div>' +
+            '               <div class="selectable-list-content" ng-transclude></div>' +
+            '           </div>',
             link: link
         };
         return directive;

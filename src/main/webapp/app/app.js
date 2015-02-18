@@ -994,6 +994,7 @@ angular.module("app/partials/directives/web-action-edit-form.html", []).run(["$t
     "    </div>\n" +
     "    <!-- END: WAIT -->\n" +
     "\n" +
+    "    <hr>\n" +
     "    <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update Action</button>\n" +
     "\n" +
     "</form>");
@@ -1837,12 +1838,11 @@ angular.module("app/partials/symbols-actions.html", []).run(["$templateCache", f
   "use strict";
   $templateCache.put("app/partials/symbols-actions.html",
     "<div class=\"container\">\n" +
-    "    <h2>Action Editor</h2>\n" +
+    "    <h2><span ng-bind=\"(symbol.type|capitalize)\"></span> Actions Editor</h2>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Create and manage the actions for symbol\n" +
-    "        <strong ng-bind=\"symbol.name\"></strong>\n" +
-    "        <span class=\"label label-primary\" ng-bind=\"symbol.type\"></span>\n" +
+    "        Create and manage the actions for symbol:\n" +
+    "        <strong ng-bind=\"symbol.name\"></strong> <em>[<span ng-bind=\"symbol.abbreviation\"></span>]</em>\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "</div>\n" +
@@ -2295,6 +2295,12 @@ angular.module("app/partials/symbols.html", []).run(["$templateCache", function(
     "                    <li>\n" +
     "                        <a href ng-click=\"deleteSymbol(symbol)\">\n" +
     "                            <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                    <li class=\"divider\"></li>\n" +
+    "                    <li>\n" +
+    "                        <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                            <i class=\"fa fa-list-ol fa-fw\"></i> Actions\n" +
     "                        </a>\n" +
     "                    </li>\n" +
     "                    <li class=\"divider\"></li>\n" +
@@ -5885,16 +5891,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             scope: {
                 items: '=ngModel'
             },
-            template: ' <table class="table" >' +
-            '               <thead>' +
-            '                   <tr>' +
-            '                       <th style="width: 1px"></th>' +
-            '                       <th></th>' +
-            '                   </tr>' +
-            '               </thead>' +
-            '               <tbody ng-transclude>' +
-            '               </tbody>' +
-            '           </table>',
+            template: '<div class="selectable-list" ng-transclude></div>',
             controller: ['$scope', 'SelectionService', controller]
         };
         return directive;
@@ -5920,14 +5917,12 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             require: '^selectableList',
             replace: true,
             transclude: true,
-            template: ' <tr ng-class="item._selected ? \'active\' : \'\'">' +
-            '               <td>' +
-            '                   <input type="checkbox" ng-model="item._selected"><br>' +
-            '               </td>' +
-            '               <td>' +
-            '                   <div ng-transclude></div>' +
-            '               </td>' +
-            '           </tr>',
+            template: ' <div class="selectable-list-item" ng-class="item._selected ? \'active\' : \'\'">' +
+            '               <div class="selectable-list-control">' +
+            '                   <input type="checkbox" ng-model="item._selected">' +
+            '               </div>' +
+            '               <div class="selectable-list-content" ng-transclude></div>' +
+            '           </div>',
             link: link
         };
         return directive;

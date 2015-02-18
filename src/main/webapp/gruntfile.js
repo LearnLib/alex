@@ -81,10 +81,11 @@ module.exports = function(grunt) {
 				}
 			},
 			sass : {
+                options : {
+                    sourceMap: false,
+                    outputStyle: 'compressed'
+                },
 				dist : {
-					options : {
-						style : 'compressed'
-					},
 					files : {
 						'app/styles/style.scss' : 'app/styles/style.css'
 					}
@@ -95,7 +96,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-contrib-sass');
+	grunt.loadNpmTasks('grunt-sass');
 	grunt.loadNpmTasks('grunt-html2js');
 
 	grunt.registerTask('build-js', [ 'html2js', 'concat', 'uglify' ]);
