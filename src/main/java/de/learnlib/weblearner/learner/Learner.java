@@ -74,7 +74,7 @@ public class Learner {
     }
 
     /**
-     * Ends the learning process.
+     * Ends the learning process after the current step.
      */
     public void stop() {
         thread.interrupt();

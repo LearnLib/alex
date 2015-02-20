@@ -119,8 +119,9 @@ public class LearnerResource {
     }
 
     /**
-     * Stop the learning.
-     * 
+     * Stop the learning after the current step.
+     * This does not stop the learning immediately!
+     *
      * @return The status of the current learn process.
      * @successResponse 200 OK
      * @responseType de.learnlib.weblearner.entities.LearnerStatus

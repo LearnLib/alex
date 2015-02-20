@@ -203,7 +203,9 @@ public class LearnerThread<C> extends Thread {
 
     private boolean continueLearning(boolean shouldDoAnotherStep, long maxStepCount) {
         int maxAmountOfStepsToLearn = result.getConfiguration().getMaxAmountOfStepsToLearn();
-        return shouldDoAnotherStep && (maxAmountOfStepsToLearn == 0 || result.getStepNo() < maxStepCount);
+        return shouldDoAnotherStep
+                && (maxAmountOfStepsToLearn == 0 || result.getStepNo() < maxStepCount)
+                && !Thread.interrupted();
     }
 
     private void learnFirstHypothesis() {
