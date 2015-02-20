@@ -1,33 +1,31 @@
-.hypothesis text {
-  font-size: 12px;
-}
-
-.hypothesis .node {
-  fill: #fff;
-  stroke: #000;
-  stroke-width: 1;
-}
-
-.hypothesis .node .label text {
-  fill: #000;
-  stroke: #000;
-  stroke-width: 1;
-}
-
-.hypothesis .edgePath .path {
-  stroke: rgba(0, 0, 0, 0.3);
-  stroke-width: 3;
-  fill: none;
-}
-
-.hypothesis .edgeLabel {
-  &:hover {
-    cursor: pointer;
-    text {
-      fill: #428bca;
+.hypothesis {
+  text, tspan {
+    fill: #000;
+    font-size: 11px;
+  }
+  .node {
+    fill: #fff;
+    stroke: #000;
+    stroke-width: 1;
+    .label {
+      text {
+        stroke-width: 0;
+      }
     }
   }
-  text {
-    fill: #555;
+  
+  .edgePath {
+    .path {
+      stroke: rgba(0, 0, 0, 0.3);
+      stroke-width: 3;
+      fill: none;
+    }
+  }
+  
+  .edgeLabel tspan {
+    &:hover {
+      cursor: pointer;
+      fill: #428bca;    
+    }
   }
 }

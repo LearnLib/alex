@@ -74,12 +74,13 @@ module.exports = function(grunt) {
 				},
 				html : {
 					files: ['app/partials/**/*.html'],
-					tasks: ['build-html'],
+					tasks: ['build-js'],
 					options: {
 						spawn : false
 					}
 				}
 			},
+			
 			sass : {
                 options : {
                     sourceMap: false,
@@ -87,9 +88,13 @@ module.exports = function(grunt) {
                 },
 				dist : {
 					files : {
-						'app/styles/style.scss' : 'app/styles/style.css'
+						'app/styles/style.css' : 'app/styles/style.scss'
 					}
 				}
+			},
+			
+			jasmine : {
+				
 			}
 		});
 
@@ -98,10 +103,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-sass');
 	grunt.loadNpmTasks('grunt-html2js');
+	grunt.loadNpmTasks('grunt-contrib-jasmine');
 
 	grunt.registerTask('build-js', [ 'html2js', 'concat', 'uglify' ]);
 	grunt.registerTask('build-css', [ 'sass' ]);
-	grunt.registerTask('build-html', ['html2js'])
+	grunt.registerTask('build-html', ['html2js']);
 	grunt.registerTask('default', [ 'build-js' ]);
 
-}
+};

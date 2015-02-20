@@ -42,7 +42,7 @@
                 maxNumber: 1
             });
         }]);
-}());;angular.module('templates-all', ['app/partials/about.html', 'app/partials/directives/hypothesis-panel.html', 'app/partials/directives/hypothesis.html', 'app/partials/directives/load-screen.html', 'app/partials/directives/navigation.html', 'app/partials/directives/observation-table.html', 'app/partials/directives/project-create-form.html', 'app/partials/directives/project-edit-form.html', 'app/partials/directives/rest-action-create-form.html', 'app/partials/directives/rest-action-edit-form.html', 'app/partials/directives/symbol-create-form.html', 'app/partials/directives/symbol-edit-form.html', 'app/partials/directives/web-action-create-form.html', 'app/partials/directives/web-action-edit-form.html', 'app/partials/directives/web-element-picker.html', 'app/partials/help.html', 'app/partials/home.html', 'app/partials/learn-results-compare.html', 'app/partials/learn-results-statistics.html', 'app/partials/learn-results.html', 'app/partials/learn-setup.html', 'app/partials/learn-start.html', 'app/partials/modals/action-create-modal.html', 'app/partials/modals/action-edit-modal.html', 'app/partials/modals/modal-confirm-dialog.html', 'app/partials/modals/modal-hypothesis-layout-settings.html', 'app/partials/modals/modal-prompt-dialog.html', 'app/partials/modals/modal-test-details.html', 'app/partials/modals/modal-test-setup-settings.html', 'app/partials/modals/symbol-create-modal.html', 'app/partials/modals/symbol-edit-modal.html', 'app/partials/project-create.html', 'app/partials/project-settings.html', 'app/partials/project.html', 'app/partials/symbols-actions.html', 'app/partials/symbols-export.html', 'app/partials/symbols-history.html', 'app/partials/symbols-import.html', 'app/partials/symbols-trash.html', 'app/partials/symbols.html', 'app/partials/tools-hypotheses-view.html', 'app/partials/widgets/widget-counter-examples.html', 'app/partials/widgets/widget-test-resume-settings.html']);
+}());;angular.module('templates-all', ['app/partials/about.html', 'app/partials/directives/hypothesis-panel.html', 'app/partials/directives/hypothesis.html', 'app/partials/directives/load-screen.html', 'app/partials/directives/navigation.html', 'app/partials/directives/observation-table.html', 'app/partials/directives/project-create-form.html', 'app/partials/directives/project-edit-form.html', 'app/partials/directives/rest-action-create-form.html', 'app/partials/directives/rest-action-edit-form.html', 'app/partials/directives/symbol-create-form.html', 'app/partials/directives/symbol-edit-form.html', 'app/partials/directives/web-action-create-form.html', 'app/partials/directives/web-action-edit-form.html', 'app/partials/directives/web-element-picker.html', 'app/partials/help.html', 'app/partials/home.html', 'app/partials/learn-results-compare.html', 'app/partials/learn-results-statistics.html', 'app/partials/learn-results.html', 'app/partials/learn-setup.html', 'app/partials/learn-start.html', 'app/partials/modals/action-create-modal.html', 'app/partials/modals/action-edit-modal.html', 'app/partials/modals/hypothesis-layout-settings-modal.html', 'app/partials/modals/modal-confirm-dialog.html', 'app/partials/modals/modal-prompt-dialog.html', 'app/partials/modals/modal-test-details.html', 'app/partials/modals/modal-test-setup-settings.html', 'app/partials/modals/symbol-create-modal.html', 'app/partials/modals/symbol-edit-modal.html', 'app/partials/project-create.html', 'app/partials/project-settings.html', 'app/partials/project.html', 'app/partials/symbols-actions.html', 'app/partials/symbols-export.html', 'app/partials/symbols-history.html', 'app/partials/symbols-import.html', 'app/partials/symbols-trash.html', 'app/partials/symbols.html', 'app/partials/tools-hypotheses-view.html', 'app/partials/widgets/widget-counter-examples.html', 'app/partials/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/partials/about.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -1474,26 +1474,9 @@ angular.module("app/partials/modals/action-edit-modal.html", []).run(["$template
     "</div>");
 }]);
 
-angular.module("app/partials/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/partials/modals/hypothesis-layout-settings-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-confirm-dialog.html",
-    "<form ng-submit=\"ok()\">\n" +
-    "\n" +
-    "	<div class=\"modal-body\">\n" +
-    "	    <h4 ng-bind=\"text\"></h4>\n" +
-    "	</div>\n" +
-    "\n" +
-    "    <div class=\"modal-footer\">\n" +
-    "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Yes</button>\n" +
-    "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">No</a>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/partials/modals/modal-hypothesis-layout-settings.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/modals/modal-hypothesis-layout-settings.html",
+  $templateCache.put("app/partials/modals/hypothesis-layout-settings-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <div>\n" +
@@ -1522,6 +1505,12 @@ angular.module("app/partials/modals/modal-hypothesis-layout-settings.html", []).
     "		<input type=\"number\" class=\"form-control\" placeholder=\"ranksep\" ng-model=\"layoutSettings.ranksep\">\n" +
     "		<p class=\"help-block\">Number of pixels between each rank in the layout.</p>\n" +
     "	</div>\n" +
+    "	\n" +
+    "	<div class=\"checkbox\">\n" +
+    "    	<label>\n" +
+    "      		<input type=\"checkbox\" ng-model=\"layoutSettings.multigraph\"> Multigraph\n" +
+    "    	</label>\n" +
+    "  	</div>\n" +
     "		\n" +
     "</div>\n" +
     "\n" +
@@ -1530,6 +1519,23 @@ angular.module("app/partials/modals/modal-hypothesis-layout-settings.html", []).
     "    <button class=\"btn btn-primary btn-sm\" ng-click=\"update()\">Update</button>\n" +
     "    <button class=\"btn btn-warning btn-sm\" ng-click=\"close()\">Cancel</button>\n" +
     "</div>");
+}]);
+
+angular.module("app/partials/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/modals/modal-confirm-dialog.html",
+    "<form ng-submit=\"ok()\">\n" +
+    "\n" +
+    "	<div class=\"modal-body\">\n" +
+    "	    <h4 ng-bind=\"text\"></h4>\n" +
+    "	</div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Yes</button>\n" +
+    "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">No</a>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/partials/modals/modal-prompt-dialog.html", []).run(["$templateCache", function($templateCache) {
@@ -3882,7 +3888,8 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 		var _defaultLayoutSetting = {
 			nodesep: 50,
 			edgesep: 25,
-			ranksep: 50
+			ranksep: 50,
+			multigraph: false,
 		};
 		
 		$scope.layoutSettings;
@@ -3897,20 +3904,17 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 		
 		//////////
 		
-		$scope.update = function(){
-						
+		$scope.update = function(){					
 			$modalInstance.close($scope.layoutSettings);
-		}
+		};
 		
-		$scope.close = function(){
-			
+		$scope.close = function(){			
 			$modalInstance.dismiss();
-		}
+		};
 		
-		$scope.defaultLayoutSettings = function(){
-			
+		$scope.defaultLayoutSettings = function(){	
 			$scope.layoutSettings = angular.copy(_defaultLayoutSetting);
-		}
+		};
 	}
 }());;(function () {
     'use strict';
@@ -4740,152 +4744,286 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 		}
 	}
 }());
-;(function(){
+;(function() {
 
-    angular
-        .module('weblearner.directives')
-        .directive('hypothesis', [
-            '$window',
-            hypothesis
-        ]);
+	angular.module('weblearner.directives').directive('hypothesis',
+			[ '$window', hypothesis ]);
 
-    function hypothesis ($window) {
+	function intersectNode(node, point) {
+		return node.intersect(point);
+	}
 
-        var directive = {
-            scope: {
-                test: '=',
-                counterExample: '=',
-                layoutSettings: '='
-            },
-            templateUrl: 'app/partials/directives/hypothesis.html',
-            link: link
-        };
-        return directive;
+	function calcPoints(g, e) {
+		var edge = g.edge(e), tail = g.node(e.v), head = g.node(e.w), points = edge.points
+				.slice(1, edge.points.length - 1);
 
-        //////////
+		points.unshift(intersectNode(tail, points[0]));
+		points.push(intersectNode(head, points[points.length - 1]));
 
-        function link (scope, el, attrs) {
+		return createLine(edge, points);
+	}
 
-            var _svg;
-            var _svgGroup;
-            var _svgContainer;
-            var _graph;
-            var _renderer;
+	function createLine(edge, points) {
+		var line = d3.svg.line().x(function(d) {
+			return d.x;
+		}).y(function(d) {
+			return d.y;
+		});
 
-            //////////
+		if (_.has(edge, "lineInterpolate")) {
+			line.interpolate(edge.lineInterpolate);
+		}
 
-            scope.$watch('test', function(test){
-                if (angular.isDefined(test) && test != null) {
-                    createHypothesis();
-                }
-            });
-            
-            scope.$watch('layoutSettings', function(ls){
-            	if (angular.isDefined(ls)) {
-            		createHypothesis();
-            	}
-            })
-            
-            //////////            
+		if (_.has(edge, "lineTension")) {
+			line.tension(Number(edge.lineTension));
+		}
 
-            function createHypothesis () {
-            	clearSvg();
-                initGraph();
-                layoutGraph();
-                renderGraph();
-            }
-            
-            function clearSvg() {
-            	el.find('svg')[0].innerHTML = '';
-            }
+		return line(points);
+	}
 
-            function initGraph() {
+	function hypothesis($window) {
 
-                _svg = d3.select(el.find('svg')[0]);
-                _svgGroup = _svg.append("g");
-                _svgContainer = _svg.node().parentNode;
+		var directive = {
+			scope : {
+				test : '=',
+				counterExample : '=',
+				layoutSettings : '='
+			},
+			templateUrl : 'app/partials/directives/hypothesis.html',
+			link : link
+		};
+		return directive;
 
-                _graph = new graphlib.Graph({
-                    directed: true,
-                    multigraph: true
-                });
-                
-                if (angular.isDefined(scope.layoutSettings)) {               	
-                	_graph.setGraph({
-                		edgesep: scope.layoutSettings.edgesep,
-                		nodesep: scope.layoutSettings.nodesep,
-                		ranksep: scope.layoutSettings.ranksep
-            		});
-                } else {
-                	_graph.setGraph({edgesep: 25});
-                }
-            }
+		//////////
 
-            function layoutGraph() {
+		function link(scope, el, attrs) {
 
-                _.forEach(scope.test.hypothesis.nodes, function (node, i) {
-                    _graph.setNode("" + i, {shape: 'circle', label: node.toString(), width: 25});
-                });
+			var _svg;
+			var _svgGroup;
+			var _svgContainer;
+			var _graph;
+			var _renderer;
 
-                _.forEach(scope.test.hypothesis.edges, function (edge, i) {
-                    var edgeName =  edge.from + "-" + edge.to + "|" + i;
-                    _graph.setEdge(edge.from, edge.to, {label: edge.input + "/" + edge.output, labeloffset: 5}, edgeName);
-                });
+			//////////
 
-                dagreD3.dagre.layout(_graph, {});
-            }
+			scope.$watch('test', function(test) {
+				if (angular.isDefined(test) && test != null) {
+					createHypothesis();
+				}
+			});
 
-            function renderGraph() {
+			scope.$watch('layoutSettings', function(ls) {
+				if (angular.isDefined(ls)) {
+					createHypothesis();
+				}
+			});
 
-                _renderer = new dagreD3.render();
-                _renderer(_svgGroup, _graph);
+			//////////
 
-                // attach click events for the selection of counter examples only if counterexamples
-                // is defined
-                if (angular.isDefined(scope.counterExample)){
-                	_svg.selectAll('.edgeLabel').on('click', function(){
+			function createHypothesis() {
+				clearSvg();
+				initGraph();
+				layout();
+				renderGraph();
+				handleEvents();
+			}
 
-                        var el = this.getElementsByTagName('tspan')[0];
-                        var label = el.innerHTML.split('/');
-                        
-                        scope.counterExample.input += (label[0] + ',');
-                        scope.counterExample.output += (label[1] + ',');
-                        scope.$apply()
-                    });
-                }
+			function clearSvg() {
+				el.find('svg')[0].innerHTML = '';
+			}
 
-                // Center graph
-                var xCenterOffset = (_svgContainer.clientWidth - _graph.graph().width) / 2;
-                _svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
+			function initGraph() {
 
-                // Create and handle zoom event
-                var zoom = d3.behavior.zoom()
-                    .scaleExtent([0.1, 10])
-                    .translate([xCenterOffset, 100])
-                    .on("zoom", zoomHandler);
+				_svg = d3.select(el.find('svg')[0]);
+				_svgGroup = _svg.append("g");
+				_svgContainer = _svg.node().parentNode;
 
-                function zoomHandler() {
-                    _svgGroup.attr('transform', 'translate(' + zoom.translate() + ')' + ' scale(' + zoom.scale() + ')');
-                }
+				_graph = new graphlib.Graph({
+					directed : true,
+					multigraph : true
+				});
 
-                // attach zoom event to svg g
-                zoom(_svg);
+				if (angular.isDefined(scope.layoutSettings)) {
+					_graph.setGraph({
+						edgesep : scope.layoutSettings.edgesep,
+						nodesep : scope.layoutSettings.nodesep,
+						ranksep : scope.layoutSettings.ranksep
+					});
+				} else {
+					_graph.setGraph({
+						edgesep : 25
+					});
+				}
+			}
+			
+			function layout() {
+				if (angular.isDefined(scope.layoutSettings)) {
+					if (scope.layoutSettings.multigraph) {
+						layoutAsMultiGraph();
+					} else {
+						layoutAsGraph();
+					}
+				} else {
+					layoutAsGraph();
+				}
+			}
 
-                function fitSize() {
-                    _svg.attr("width", _svgContainer.clientWidth);
-                    _svg.attr("height", _svgContainer.clientHeight);
-                }
+			function layoutAsMultiGraph() {
 
-                fitSize();
+				// add nodes to the graph
+				_.forEach(scope.test.hypothesis.nodes, function(node, i) {
+					_graph.setNode("" + i, {
+						shape : 'circle',
+						label : node.toString(),
+						width : 25
+					});
+				});
 
-                angular.element($window).on('resize', fitSize);
+				// add edges to the graph
+				_.forEach(scope.test.hypothesis.edges, function(edge, i) {
+					var edgeName = edge.from + "-" + edge.to + "|" + i;
+					_graph.setEdge(edge.from, edge.to, {
+						label : edge.input + "/" + edge.output,
+						labeloffset : 5,
+						lineInterpolate : 'basis'
+					}, edgeName);
+				});
 
-                window.setTimeout(function(){
-                    window.dispatchEvent(new Event('resize'));
-                }, 100);
-            }
-        }
-    }
+				// layout it
+				dagreD3.dagre.layout(_graph, {});
+			}
+
+			function layoutAsGraph() {
+
+				// another format of a graph for merged multi edges
+				// graph = {<from>: {<to>: <label[]>, ...}, ...}
+				var graph = {};
+
+				// add nodes to the rendered graph
+				_.forEach(scope.test.hypothesis.nodes, function(node, i) {
+					_graph.setNode("" + i, {
+						shape : 'circle',
+						label : node.toString(),
+						width : 25
+					});
+				});
+
+				// build data structure for the alternative representation by
+				// pushing some data
+				_.forEach(scope.test.hypothesis.edges, function(edge, i) {
+					if (!graph[edge.from]) {
+						graph[edge.from] = {};
+						graph[edge.from][edge.to] = [ edge.input + "/"
+								+ edge.output ];
+					} else {
+						if (!graph[edge.from][edge.to]) {
+							graph[edge.from][edge.to] = [ edge.input + "/"
+									+ edge.output ];
+						} else {
+							graph[edge.from][edge.to].push(edge.input + "/"
+									+ edge.output);
+						}
+					}
+				});
+
+				// add edges to the rendered graph and combine <label[]>
+				_.forEach(graph, function(k, from) {
+					_.forEach(k, function(labels, to) {
+						_graph.setEdge(from, to, {
+							label : labels.join('\n'),
+							labeloffset : 5,
+							lineInterpolate : 'basis'
+						}, (from + '' + to));
+					});
+				});
+
+				// render the graph on the svg
+				dagreD3.dagre.layout(_graph, {});
+			}
+
+			function renderGraph() {
+
+				// render the graph in the svg
+				_renderer = new dagreD3.render();
+				_renderer(_svgGroup, _graph);
+
+				// Center graph horizontally
+				var xCenterOffset = (_svgContainer.clientWidth - _graph.graph().width) / 2;
+				_svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
+			}
+			
+			function handleEvents(){
+				
+				var zoom;
+				var drag;
+				
+				// attach click events for the selection of counter examples to the edge labels
+				// only if counterExamples is defined
+				if (angular.isDefined(scope.counterExample)) {
+					_svg.selectAll('.edgeLabel tspan').on('click', function() {
+						var label = this.innerHTML.split('/');
+						scope.$apply(function(){
+							scope.counterExample.input += (label[0] + ',');
+							scope.counterExample.output += (label[1] + ',');
+						});
+					});
+				}
+				
+				// Create and handle zoom  & pan event
+				zoom = d3.behavior.zoom().scaleExtent([ 0.1, 10 ])
+						.translate([ (_svgContainer.clientWidth - _graph.graph().width) / 2, 100 ]).on("zoom", zoomHandler);
+				zoom(_svg);
+
+				function zoomHandler() {
+					_svgGroup.attr('transform', 'translate(' + zoom.translate()
+							+ ')' + ' scale(' + zoom.scale() + ')');
+				}
+				
+				// Add drag behavior for nodes
+				drag = d3.behavior.drag()
+						.origin(function(d) { return d; })
+						.on('dragstart', dragstart)
+						.on("drag", drag);
+
+				_svg.selectAll('.node')
+						.attr('cx', function(d) { return d.x; })
+						.attr('cy', function(d) { return d.y; })
+						.call(drag);
+
+				// prevent pan effect while dragging nodes
+				function dragstart(d) {
+					d3.event.sourceEvent.stopPropagation();
+				}
+
+				function drag(d) {
+					var node = d3.select(this);
+					var attrs = _graph.node(d);
+					attrs.x += d3.event.dx;
+					attrs.y += d3.event.dy;
+					node.attr('transform', 'translate(' + attrs.x + ','
+							+ attrs.y + ')');
+
+					// redraw edges
+					var paths = d3.selectAll('.path');
+					_.forEach(_graph.edges(), function(edge, i) {
+						var line = calcPoints(_graph, edge);
+						paths[0][i].setAttribute('d', line);
+					});
+				}
+				
+				angular.element($window).on('resize', fitSize);
+
+				function fitSize() {
+					_svg.attr("width", _svgContainer.clientWidth);
+					_svg.attr("height", _svgContainer.clientHeight);
+				}
+
+				window.setTimeout(function() {
+					window.dispatchEvent(new Event('resize'));
+				}, 100);
+			}
+		}
+	}
 }());;(function () {
     'use strict';
 
@@ -5448,7 +5586,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             function handleModal() {
             	                
             	var modal = $modal.open({
-                    templateUrl: 'app/partials/modals/modal-hypothesis-layout-settings.html',
+                    templateUrl: 'app/partials/modals/hypothesis-layout-settings-modal.html',
                     controller: 'HypothesisLayoutSettingsController',
                     resolve: {
                         modalData: function () {

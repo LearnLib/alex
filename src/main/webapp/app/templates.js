@@ -1,4 +1,4 @@
-angular.module('templates-all', ['app/partials/about.html', 'app/partials/directives/hypothesis-panel.html', 'app/partials/directives/hypothesis.html', 'app/partials/directives/load-screen.html', 'app/partials/directives/navigation.html', 'app/partials/directives/observation-table.html', 'app/partials/directives/project-create-form.html', 'app/partials/directives/project-edit-form.html', 'app/partials/directives/rest-action-create-form.html', 'app/partials/directives/rest-action-edit-form.html', 'app/partials/directives/symbol-create-form.html', 'app/partials/directives/symbol-edit-form.html', 'app/partials/directives/web-action-create-form.html', 'app/partials/directives/web-action-edit-form.html', 'app/partials/directives/web-element-picker.html', 'app/partials/help.html', 'app/partials/home.html', 'app/partials/learn-results-compare.html', 'app/partials/learn-results-statistics.html', 'app/partials/learn-results.html', 'app/partials/learn-setup.html', 'app/partials/learn-start.html', 'app/partials/modals/action-create-modal.html', 'app/partials/modals/action-edit-modal.html', 'app/partials/modals/modal-confirm-dialog.html', 'app/partials/modals/modal-hypothesis-layout-settings.html', 'app/partials/modals/modal-prompt-dialog.html', 'app/partials/modals/modal-test-details.html', 'app/partials/modals/modal-test-setup-settings.html', 'app/partials/modals/symbol-create-modal.html', 'app/partials/modals/symbol-edit-modal.html', 'app/partials/project-create.html', 'app/partials/project-settings.html', 'app/partials/project.html', 'app/partials/symbols-actions.html', 'app/partials/symbols-export.html', 'app/partials/symbols-history.html', 'app/partials/symbols-import.html', 'app/partials/symbols-trash.html', 'app/partials/symbols.html', 'app/partials/tools-hypotheses-view.html', 'app/partials/widgets/widget-counter-examples.html', 'app/partials/widgets/widget-test-resume-settings.html']);
+angular.module('templates-all', ['app/partials/about.html', 'app/partials/directives/hypothesis-panel.html', 'app/partials/directives/hypothesis.html', 'app/partials/directives/load-screen.html', 'app/partials/directives/navigation.html', 'app/partials/directives/observation-table.html', 'app/partials/directives/project-create-form.html', 'app/partials/directives/project-edit-form.html', 'app/partials/directives/rest-action-create-form.html', 'app/partials/directives/rest-action-edit-form.html', 'app/partials/directives/symbol-create-form.html', 'app/partials/directives/symbol-edit-form.html', 'app/partials/directives/web-action-create-form.html', 'app/partials/directives/web-action-edit-form.html', 'app/partials/directives/web-element-picker.html', 'app/partials/help.html', 'app/partials/home.html', 'app/partials/learn-results-compare.html', 'app/partials/learn-results-statistics.html', 'app/partials/learn-results.html', 'app/partials/learn-setup.html', 'app/partials/learn-start.html', 'app/partials/modals/action-create-modal.html', 'app/partials/modals/action-edit-modal.html', 'app/partials/modals/hypothesis-layout-settings-modal.html', 'app/partials/modals/modal-confirm-dialog.html', 'app/partials/modals/modal-prompt-dialog.html', 'app/partials/modals/modal-test-details.html', 'app/partials/modals/modal-test-setup-settings.html', 'app/partials/modals/symbol-create-modal.html', 'app/partials/modals/symbol-edit-modal.html', 'app/partials/project-create.html', 'app/partials/project-settings.html', 'app/partials/project.html', 'app/partials/symbols-actions.html', 'app/partials/symbols-export.html', 'app/partials/symbols-history.html', 'app/partials/symbols-import.html', 'app/partials/symbols-trash.html', 'app/partials/symbols.html', 'app/partials/tools-hypotheses-view.html', 'app/partials/widgets/widget-counter-examples.html', 'app/partials/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/partials/about.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -1430,26 +1430,9 @@ angular.module("app/partials/modals/action-edit-modal.html", []).run(["$template
     "</div>");
 }]);
 
-angular.module("app/partials/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/partials/modals/hypothesis-layout-settings-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-confirm-dialog.html",
-    "<form ng-submit=\"ok()\">\n" +
-    "\n" +
-    "	<div class=\"modal-body\">\n" +
-    "	    <h4 ng-bind=\"text\"></h4>\n" +
-    "	</div>\n" +
-    "\n" +
-    "    <div class=\"modal-footer\">\n" +
-    "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Yes</button>\n" +
-    "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">No</a>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/partials/modals/modal-hypothesis-layout-settings.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/modals/modal-hypothesis-layout-settings.html",
+  $templateCache.put("app/partials/modals/hypothesis-layout-settings-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <div>\n" +
@@ -1478,6 +1461,12 @@ angular.module("app/partials/modals/modal-hypothesis-layout-settings.html", []).
     "		<input type=\"number\" class=\"form-control\" placeholder=\"ranksep\" ng-model=\"layoutSettings.ranksep\">\n" +
     "		<p class=\"help-block\">Number of pixels between each rank in the layout.</p>\n" +
     "	</div>\n" +
+    "	\n" +
+    "	<div class=\"checkbox\">\n" +
+    "    	<label>\n" +
+    "      		<input type=\"checkbox\" ng-model=\"layoutSettings.multigraph\"> Multigraph\n" +
+    "    	</label>\n" +
+    "  	</div>\n" +
     "		\n" +
     "</div>\n" +
     "\n" +
@@ -1486,6 +1475,23 @@ angular.module("app/partials/modals/modal-hypothesis-layout-settings.html", []).
     "    <button class=\"btn btn-primary btn-sm\" ng-click=\"update()\">Update</button>\n" +
     "    <button class=\"btn btn-warning btn-sm\" ng-click=\"close()\">Cancel</button>\n" +
     "</div>");
+}]);
+
+angular.module("app/partials/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/partials/modals/modal-confirm-dialog.html",
+    "<form ng-submit=\"ok()\">\n" +
+    "\n" +
+    "	<div class=\"modal-body\">\n" +
+    "	    <h4 ng-bind=\"text\"></h4>\n" +
+    "	</div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Yes</button>\n" +
+    "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">No</a>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/partials/modals/modal-prompt-dialog.html", []).run(["$templateCache", function($templateCache) {

@@ -28,7 +28,7 @@
             function handleModal() {
             	                
             	var modal = $modal.open({
-                    templateUrl: 'app/partials/modals/modal-hypothesis-layout-settings.html',
+                    templateUrl: 'app/partials/modals/hypothesis-layout-settings-modal.html',
                     controller: 'HypothesisLayoutSettingsController',
                     resolve: {
                         modalData: function () {
