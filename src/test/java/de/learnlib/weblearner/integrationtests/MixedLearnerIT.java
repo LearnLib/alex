@@ -75,7 +75,7 @@ public class MixedLearnerIT extends JerseyTest {
         response = client.target(path).request().get();
         WebSymbol resetSymbolWeb = (WebSymbol) response.readEntity(Symbol.class);
         List<WebSymbolAction> actions = resetSymbolWeb.getActions();
-        ((GotoAction) actions.get(0)).setUrl("/web");
+        ((GotoAction) actions.get(0)).setUrl("/web/reset");
         client.target(path).request().put(Entity.json(resetSymbolWeb));
 
         path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/2";
@@ -91,17 +91,18 @@ public class MixedLearnerIT extends JerseyTest {
         String symbolAbbr = "learnrest1";
         json = "{\"type\": \"rest\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/test\"},"
-                + "{\"type\": \"checkStatus\", \"status\" : 200}"
+                    + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/test\"},"
+                    + "{\"type\": \"checkStatus\", \"status\" : 200}"
                 + "]}";
         Symbol symbol1 = testHelper.addSymbol(client, project, json);
 
-        // rest symbol 2
+        // web symbol 1
         symbolName = "MixedLearnerIT Web Symbol 1";
         symbolAbbr = "learnweb1";
         json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                + "{\"type\": \"checkText\", \"value\": \"Lorem Ipsum\"}"
+                    + "{\"type\": \"goto\", \"url\": \"/web/page1\"},"
+                    + "{\"type\": \"checkText\", \"value\": \"Lorem Ipsum\"}"
                 + "]}";
         Symbol symbol2 = testHelper.addSymbol(client, project, json);
 
@@ -126,8 +127,8 @@ public class MixedLearnerIT extends JerseyTest {
         // start learning
         String path = "/learner/start/" + project.getId();
         String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "], \"eqOracle\":"
-                + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                + "\"algorithm\": \"DISCRIMINATION_TREE\"}";
+                            + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
+                        + "\"algorithm\": \"DISCRIMINATION_TREE\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 

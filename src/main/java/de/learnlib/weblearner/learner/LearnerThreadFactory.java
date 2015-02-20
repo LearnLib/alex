@@ -45,11 +45,8 @@ public class LearnerThreadFactory {
      * @param symbols
      *         The Symbols to use during the learning
      * @return A new thread ready to use for learning.
-     * @throws IllegalArgumentException
-     *         I the Symbols are not of the same type (e.g. WebSymbols and RESTSymbols mixed).
      */
-    public LearnerThread createThread(Project project, LearnerConfiguration configuration, Symbol... symbols)
-            throws IllegalArgumentException {
+    public LearnerThread createThread(Project project, LearnerConfiguration configuration, Symbol... symbols) {
         if (symbols.length == 0) {
             throw new IllegalArgumentException("No Symbols found.");
         }
@@ -60,8 +57,6 @@ public class LearnerThreadFactory {
 
         MultiContextHandler context = new MultiContextHandler();
         for (Class<?> c : symbolsByType.keySet()) {
-            System.out.println("%%%%% " + c.getName());
-
             ContextExecutableInputSUL.ContextHandler<? extends Connector> newHandler;
             if (WebSymbol.class.equals(c)) {
                 newHandler = createWebSiteContextHandler(project);
@@ -84,11 +79,8 @@ public class LearnerThreadFactory {
      * @param newConfiguration
      *         The resume configuration to use for the next learning steps.
      * @return A new thread ready to use for learning.
-     * @throws IllegalArgumentException
-     *         If the Symbols are not of the same type (e.g. WebSymbols and RESTSymbols mixed).
      */
-    public LearnerThread updateThread(LearnerThread thread, LearnerResumeConfiguration newConfiguration)
-            throws IllegalArgumentException {
+    public LearnerThread updateThread(LearnerThread thread, LearnerResumeConfiguration newConfiguration) {
         LearnerResult learnerResult = thread.getResult();
 
         learnerResult.getConfiguration().updateConfiguration(newConfiguration);
