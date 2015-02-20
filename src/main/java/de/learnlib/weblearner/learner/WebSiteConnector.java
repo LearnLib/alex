@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * Connector to communicate with a WebSite.
  * This is a facade around Seleniums {@link WebDriver}.
  */
-public class WebSiteConnector {
+public class WebSiteConnector implements Connector {
 
     /** How long we should wait before doing the next step. Introduced by Selenium. */
     private static final int IMPLICITLY_WATI_TIME = 1;

@@ -6,6 +6,7 @@ import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.WebSymbol;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -59,7 +60,7 @@ public class WebSymbolIT {
         Response response = client.target(BASE_URL + path).request().post(
                                 Entity.entity(json, MediaType.APPLICATION_JSON));
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-        Symbol<?> symbol = response.readEntity(Symbol.class);
+        Symbol symbol = response.readEntity(Symbol.class);
         assertTrue(project.getId() > 0);
         assertEquals(1, symbol.getRevision());
         assertEquals(symbolName, symbol.getName());
@@ -77,10 +78,10 @@ public class WebSymbolIT {
         path = "/projects/" + project.getId() + "/symbols/";
         response = client.target(BASE_URL + path).request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        List<Symbol<?>> symbols = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        List<Symbol> symbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2 + 2, symbols.size()); // the 2 created symbols + 2 reset symbols
         assertTrue(project.getId() > 0);
-        symbol = (Symbol<?>) symbols.get(2);
+        symbol = symbols.get(2);
         assertNotNull(symbol);
         assertEquals(1, symbol.getRevision());
         assertEquals(symbolName, symbol.getName());
@@ -119,9 +120,9 @@ public class WebSymbolIT {
         path = "/projects/" + project.getId() + "/symbols/";
         response = client.target(BASE_URL + path).request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        symbols = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        symbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2 + 2, symbols.size()); // update == create a new symbol with a higher revision & hide the old one
-        symbol = (Symbol<?>) symbols.get(2); // 1st symbol, 2nd revision
+        symbol = symbols.get(2); // 1st symbol, 2nd revision
         assertEquals(2, ((WebSymbol) symbol).getActions().size());
 
         // delete

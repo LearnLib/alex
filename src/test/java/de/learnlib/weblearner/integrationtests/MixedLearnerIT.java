@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.integrationtests;
 
+
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
@@ -7,13 +8,15 @@ import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
 import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.WebSymbol;
+import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
+import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -24,15 +27,13 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-@Ignore
-public class RESTSymbolLearnerIT extends JerseyTest {
+public class MixedLearnerIT extends JerseyTest {
 
     private static final int MAX_TIME_TO_WAIT_FOR_LEARNER = 180000; // three minutes !!
 
     private static final String BASE_LEARNER_URL = "http://localhost:8080/rest";
-    private static final String BASE_TEST_URL = "http://localhost:9998/test";
+    private static final String BASE_TEST_URL = "http://localhost:9998/";
 
     private LearnerTestHelper testHelper;
     private Client client;
@@ -42,11 +43,11 @@ public class RESTSymbolLearnerIT extends JerseyTest {
 
     public static class RESTTestApplication extends ResourceConfig {
         public RESTTestApplication() {
-            super(RESTTestResource.class);
+            super(RESTTestResource.class, WebTestResource.class);
         }
     }
 
-    public RESTSymbolLearnerIT() {
+    public MixedLearnerIT() {
         this.testHelper = new LearnerTestHelper(BASE_LEARNER_URL);
     }
 
@@ -64,37 +65,43 @@ public class RESTSymbolLearnerIT extends JerseyTest {
 
         // create project
         String projectName = "RestSymbolLearn IT Project";
-        String json =  "{\"name\": \"" + projectName + "\","
-                        + "\"baseUrl\": \"" + BASE_TEST_URL + "\"}";
+        String json = "{\"name\": \"" + projectName + "\","
+                + "\"baseUrl\": \"" + BASE_TEST_URL + "\"}";
         Response response = client.target(BASE_LEARNER_URL + "/projects").request().post(Entity.json(json));
         project = ProjectTest.readProject(response.readEntity(String.class));
 
         // modify reset symbol
-        String path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/2";
+        String path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/1";
         response = client.target(path).request().get();
-        RESTSymbol resetSymbol = (RESTSymbol) response.readEntity(Symbol.class);
-        List<RESTSymbolAction> restActions = resetSymbol.getActions();
-        ((CallAction) restActions.get(0)).setUrl("/reset");
-        client.target(path).request().put(Entity.json(resetSymbol));
+        WebSymbol resetSymbolWeb = (WebSymbol) response.readEntity(Symbol.class);
+        List<WebSymbolAction> actions = resetSymbolWeb.getActions();
+        ((GotoAction) actions.get(0)).setUrl("/web");
+        client.target(path).request().put(Entity.json(resetSymbolWeb));
+
+        path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/2";
+        response = client.target(path).request().get();
+        RESTSymbol resetSymbolRest = (RESTSymbol) response.readEntity(Symbol.class);
+        List<RESTSymbolAction> restActions = resetSymbolRest.getActions();
+        ((CallAction) restActions.get(0)).setUrl("/test/reset");
+        client.target(path).request().put(Entity.json(resetSymbolRest));
 
         // create symbols
-        // symbol 1
-        String symbolName = "RESTSymbolLearnerIT REST Symbol 1";
+        // rest symbol 1
+        String symbolName = "MixedLearnerIT REST Symbol 1";
         String symbolAbbr = "learnrest1";
         json = "{\"type\": \"rest\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                    + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/\"},"
-                    + "{\"type\": \"checkStatus\", \"status\" : 200}"
+                + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/test\"},"
+                + "{\"type\": \"checkStatus\", \"status\" : 200}"
                 + "]}";
         Symbol symbol1 = testHelper.addSymbol(client, project, json);
 
-        // symbol 2
-        symbolName = "RESTSymbolLearnerIT REST Symbol 2";
-        symbolAbbr = "learnrest2";
-        json = "{\"type\": \"rest\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        // rest symbol 2
+        symbolName = "MixedLearnerIT Web Symbol 1";
+        symbolAbbr = "learnweb1";
+        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                    + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/entity\"},"
-                    + "{\"type\": \"checkAttributeValue\", \"attribute\" : \"field1\", \"value\": \"Hello\"}"
+                + "{\"type\": \"checkText\", \"value\": \"Lorem Ipsum\"}"
                 + "]}";
         Symbol symbol2 = testHelper.addSymbol(client, project, json);
 
@@ -105,10 +112,8 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         // remember alphabet
         testAlphabet = new SimpleAlphabet<>();
         testAlphabet.add(symbol1.getAbbreviation());
-        testAlphabet.add(symbol2.getAbbreviation());
     }
 
-    @Override
     @After
     public void tearDown() {
         client.target(BASE_LEARNER_URL + "/projects/" + project.getId()).request().delete();
@@ -121,8 +126,8 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         // start learning
         String path = "/learner/start/" + project.getId();
         String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "], \"eqOracle\":"
-                        + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                        + "\"algorithm\": \"DHC\"}";
+                + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
+                + "\"algorithm\": \"DISCRIMINATION_TREE\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -134,8 +139,8 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         response = client.target(BASE_LEARNER_URL + path).request().get();
         LearnerResult result = new LearnerResult();
         String resultAsJSON = response.readEntity(String.class);
+        System.out.println("&&&&&&& " + resultAsJSON);
         result.setJSON(resultAsJSON);
-        assertTrue(testHelper.hypothesisIsEqualToTheExpectedOne(result.getHypothesis(), testAlphabet, "rest"));
     }
 
 }

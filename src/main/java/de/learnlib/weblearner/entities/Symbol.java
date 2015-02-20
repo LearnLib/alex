@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
+import de.learnlib.weblearner.learner.MultiConnector;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
@@ -42,7 +44,7 @@ import java.io.Serializable;
     @Type(name = "rest", value = RESTSymbol.class),
     @Type(name = "web", value = WebSymbol.class)
 })
-public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Serializable {
+public abstract class Symbol implements ContextExecutableInput<String, MultiConnector>, Serializable {
 
     /** to be serializable. */
     private static final long serialVersionUID = 7987585761829495962L;
@@ -313,7 +315,7 @@ public abstract class Symbol<C> implements ContextExecutableInput<String, C>, Se
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Symbol<?> other = (Symbol<?>) obj;
+        Symbol other = (Symbol) obj;
         if (id != other.id) {
             return false;
         }

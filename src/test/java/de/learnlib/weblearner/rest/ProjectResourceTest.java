@@ -47,7 +47,7 @@ public class ProjectResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        Symbol<?> symbol = new WebSymbol();
+        Symbol symbol = new WebSymbol();
         symbol.setName("Project Resource Test Symbol");
         symbol.setAbbreviation("prts");
 

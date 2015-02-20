@@ -3,7 +3,6 @@ package de.learnlib.weblearner.integrationtests;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.Symbol;
-import org.apache.xerces.xs.datatypes.ObjectList;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -14,7 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -57,7 +55,7 @@ public class ProjectIT {
         client.target(BASE_URL + path).request().post(Entity.json(json));
 
         response = client.target(BASE_URL + "/projects/" + project2.getId() + "/symbols").request().get();
-        List<Symbol<?>> symbolsInDB = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        List<Symbol> symbolsInDB = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals("Symbols of the project: " + symbolsInDB, 3, symbolsInDB.size());
         assertTrue("reset symbol was not set " + symbolsInDB, symbolsInDB.get(0).isResetSymbol());
 
@@ -90,7 +88,7 @@ public class ProjectIT {
         assertEquals("http://example2.com", responseProject.getBaseUrl());
 
         response = client.target(BASE_URL + "/projects/" + project2.getId() + "/symbols").request().get();
-        symbolsInDB = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        symbolsInDB = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals("Symbols of the project: " + symbolsInDB, 3, symbolsInDB.size());
         assertTrue("reset symbol was not set " + symbolsInDB.get(0) + " -> " + symbolsInDB,
                 symbolsInDB.get(0).isResetSymbol());

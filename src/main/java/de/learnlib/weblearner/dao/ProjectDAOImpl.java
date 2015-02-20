@@ -155,7 +155,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             if (foobar.contains("symbols")) {
                 Hibernate.initialize(project.getSymbols());
-                for (Symbol<?> s : project.getSymbols()) {
+                for (Symbol s : project.getSymbols()) {
                     s.loadLazyRelations();
                 }
             } else {
@@ -164,7 +164,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             if (foobar.contains("resetSymbols")) {
                 Hibernate.initialize(project.getResetSymbols());
-                for (Symbol<?> s : project.getResetSymbols().values()) {
+                for (Symbol s : project.getResetSymbols().values()) {
                     s.loadLazyRelations();
                 }
             } else {

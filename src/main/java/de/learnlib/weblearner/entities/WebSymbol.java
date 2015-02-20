@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.api.SULException;
 import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
+import de.learnlib.weblearner.learner.MultiConnector;
 import de.learnlib.weblearner.learner.WebSiteConnector;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -23,7 +24,7 @@ import java.util.List;
 @Entity
 @DiscriminatorValue("web")
 @JsonTypeName("web")
-public class WebSymbol extends  Symbol<WebSiteConnector> implements SymbolActionHandler<WebSymbolAction> {
+public class WebSymbol extends Symbol implements SymbolActionHandler<WebSymbolAction> {
 
     /** to be serializable. */
     private static final long serialVersionUID = -775668321836011920L;
@@ -89,7 +90,11 @@ public class WebSymbol extends  Symbol<WebSiteConnector> implements SymbolAction
     }
 
     @Override
-    public String execute(WebSiteConnector context) throws SULException {
-        return actionHandler.execute(context);
+    public String execute(MultiConnector connector) throws SULException {
+        return execute((WebSiteConnector) connector.getConnector(WebSiteConnector.class));
+    }
+
+    public String execute(WebSiteConnector connector) throws SULException {
+        return actionHandler.execute(connector);
     }
 }

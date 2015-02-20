@@ -66,7 +66,7 @@ public class LearnerResource {
     public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration) {
         LearnerStatus status = new LearnerStatus(learner);
         try {
-            List<Symbol<?>> symbols = symbolDAO.getAll(projectId, configuration.getSymbols());
+            List<Symbol> symbols = symbolDAO.getAll(projectId, configuration.getSymbols());
             Project project = projectDAO.getByID(projectId, "all");
 
             learner.start(project, configuration, symbols.toArray(new Symbol[symbols.size()]));

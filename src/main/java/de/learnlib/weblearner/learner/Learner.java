@@ -42,7 +42,7 @@ public class Learner {
      * @throws IllegalStateException
      *         If a learning process is already active.
      */
-    public void start(Project project, LearnerConfiguration configuration, Symbol<?>... symbols)
+    public void start(Project project, LearnerConfiguration configuration, Symbol... symbols)
             throws IllegalArgumentException, IllegalStateException {
         if (isActive()) {
             throw new IllegalStateException("You can only start the learning if no other learning is active");

@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.learner;
 
 import de.learnlib.api.LearningAlgorithm;
+import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.LearnerResult;
@@ -11,7 +12,10 @@ import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolTypes;
 import de.learnlib.weblearner.entities.WebSymbol;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Factory to create a {@link LearnerThread} for the given Symbols.
@@ -44,21 +48,32 @@ public class LearnerThreadFactory {
      * @throws IllegalArgumentException
      *         I the Symbols are not of the same type (e.g. WebSymbols and RESTSymbols mixed).
      */
-    public LearnerThread<?> createThread(Project project, LearnerConfiguration configuration, Symbol<?>... symbols)
+    public LearnerThread createThread(Project project, LearnerConfiguration configuration, Symbol... symbols)
             throws IllegalArgumentException {
         if (symbols.length == 0) {
             throw new IllegalArgumentException("No Symbols found.");
         }
-        checkIfAllSymbolsHaveTheSameType(symbols); // throws exception if condition is not met
 
+        Map<Class<? extends Symbol>, List<Symbol>> symbolsByType = splitSymbolsByType(symbols);
         LearnerResult learnerResult = createLearnerResult(project, configuration);
-        if (symbols[0] instanceof WebSymbol) {
-            return createWebSiteLearnerThread(project, learnerResult, symbols);
-        } else  if (symbols[0] instanceof RESTSymbol) {
-            return createWebServiceLearnerThread(project, learnerResult, symbols);
-        } else {
-            return null;
+        learnerResult.setType(getTypeOf(symbolsByType));
+
+        MultiContextHandler context = new MultiContextHandler();
+        for (Class<?> c : symbolsByType.keySet()) {
+            System.out.println("%%%%% " + c.getName());
+
+            ContextExecutableInputSUL.ContextHandler<? extends Connector> newHandler;
+            if (WebSymbol.class.equals(c)) {
+                newHandler = createWebSiteContextHandler(project);
+            } else  if (RESTSymbol.class.equals(c)) {
+                newHandler = createWebServiceContextHandler(project);
+            } else {
+                return null;
+            }
+            context.addHandler(newHandler);
         }
+
+        return new LearnerThread(learnerResultDAO, learnerResult, context, symbols);
     }
 
     /**
@@ -72,33 +87,53 @@ public class LearnerThreadFactory {
      * @throws IllegalArgumentException
      *         If the Symbols are not of the same type (e.g. WebSymbols and RESTSymbols mixed).
      */
-    public LearnerThread<?> updateThread(LearnerThread<?> thread, LearnerResumeConfiguration newConfiguration)
+    public LearnerThread updateThread(LearnerThread thread, LearnerResumeConfiguration newConfiguration)
             throws IllegalArgumentException {
         LearnerResult learnerResult = thread.getResult();
 
         learnerResult.getConfiguration().updateConfiguration(newConfiguration);
-        List<? extends Symbol<?>> symbols = thread.getSymbols();
+        List<? extends Symbol> symbolsList = thread.getSymbols();
 
-        if (symbols.get(0) instanceof WebSymbol) {
-            return updateWebSiteLearnerThread((LearnerThread<WebSiteConnector>) thread, learnerResult,
-                                              newConfiguration);
-        } else if (symbols.get(0) instanceof RESTSymbol) {
-            return updateWebServiceLearnerThread((LearnerThread<WebServiceConnector>) thread, learnerResult,
-                                                 newConfiguration);
-        } else {
-            return null;
-        }
+        LearningAlgorithm.MealyLearner<String, String> learner = thread.getLearner();
+        Symbol[] symbols = symbolsList.toArray(new Symbol[symbolsList.size()]);
+
+        LearnerThread<MultiConnector> leanerThread = new LearnerThread<>(learnerResultDAO,
+                                                                         learnerResult,
+                                                                         thread.getContext(),
+                                                                         learner,
+                                                                         symbols);
+        leanerThread.getResult().getConfiguration().updateConfiguration(newConfiguration);
+
+        return leanerThread;
     }
 
-    private Class<?> checkIfAllSymbolsHaveTheSameType(Symbol<?>[] symbols) throws IllegalArgumentException {
-        Class<?> type = symbols[0].getClass();
-        for (int i = 1; i < symbols.length; i++) {
-            if (!type.isInstance(symbols[i])) {
-                throw new IllegalArgumentException("All Symbols must be of the same type.");
+    private Map<Class<? extends Symbol>, List<Symbol>> splitSymbolsByType(Symbol... symbols) {
+        Map<Class<? extends Symbol>, List<Symbol>> resultMap = new HashMap<>();
+
+        for (Symbol s : symbols) {
+            List<Symbol> bucket = resultMap.get(s.getClass());
+            if (bucket == null) {
+                bucket = new LinkedList<>();
+                resultMap.put(s.getClass(), bucket);
             }
+            bucket.add(s);
         }
 
-        return type;
+        return resultMap;
+    }
+
+    private SymbolTypes getTypeOf(Map<Class<? extends Symbol>, List<Symbol>> symbolsByType) {
+        if (symbolsByType.keySet().size() == 1) {
+            if (symbolsByType.keySet().contains(WebSymbol.class)) {
+                return SymbolTypes.WEB;
+            } else  if (symbolsByType.keySet().contains(RESTSymbol.class)) {
+                return SymbolTypes.REST;
+            } else {
+                return null;
+            }
+        } else {
+            return SymbolTypes.UNKNOWN;
+        }
     }
 
     private LearnerResult createLearnerResult(Project project, LearnerConfiguration configuration) {
@@ -109,60 +144,14 @@ public class LearnerThreadFactory {
         return learnerResult;
     }
 
-    private LearnerThread<WebSiteConnector> createWebSiteLearnerThread(Project project,
-                                                                       LearnerResult learnerResult,
-                                                                       Symbol<?>... symbols) {
-        learnerResult.setType(SymbolTypes.WEB);
+    private WebSiteContextHandler createWebSiteContextHandler(Project project) {
         WebSymbol resetSymbol = (WebSymbol) project.getResetSymbol(WebSymbol.class);
-        WebSiteContextHandler context = new WebSiteContextHandler(project.getBaseUrl(), resetSymbol);
-
-        LearnerThread<WebSiteConnector> leaner = new LearnerThread<>(learnerResultDAO, learnerResult, context,
-                                                                     (Symbol<WebSiteConnector>[]) symbols);
-
-        return leaner;
+        return new WebSiteContextHandler(project.getBaseUrl(), resetSymbol);
     }
 
-    private LearnerThread<?> updateWebSiteLearnerThread(LearnerThread<WebSiteConnector> thread,
-                                                        LearnerResult learnerResult,
-                                                        LearnerResumeConfiguration newConfiguration) {
-        LearningAlgorithm.MealyLearner<String, String> learner = thread.getLearner();
-        List<Symbol<WebSiteConnector>> symbolsList = thread.getSymbols();
-        Symbol[] symbols = symbolsList.toArray(new Symbol[symbolsList.size()]);
-
-        LearnerThread<WebSiteConnector> leanerThread = new LearnerThread<>(learnerResultDAO, learnerResult,
-                                                                           thread.getContext(), learner, symbols);
-
-        leanerThread.getResult().getConfiguration().updateConfiguration(newConfiguration);
-
-        return leanerThread;
-    }
-
-    private LearnerThread<WebServiceConnector> createWebServiceLearnerThread(Project project,
-                                                                             LearnerResult learnerResult,
-                                                                             Symbol<?>... symbols) {
-        learnerResult.setType(SymbolTypes.REST);
+    private WebServiceContextHandler createWebServiceContextHandler(Project project) {
         RESTSymbol resetSymbol = (RESTSymbol) project.getResetSymbol(RESTSymbol.class);
-        WebServiceContextHandler context = new WebServiceContextHandler(project.getBaseUrl(), resetSymbol);
-
-        LearnerThread<WebServiceConnector> leaner = new LearnerThread<>(learnerResultDAO, learnerResult,
-                                                                        context,
-                                                                        (Symbol<WebServiceConnector>[]) symbols);
-
-        return leaner;
-    }
-
-    private LearnerThread<?> updateWebServiceLearnerThread(LearnerThread<WebServiceConnector> thread,
-                                                           LearnerResult learnerResult,
-                                                           LearnerResumeConfiguration newConfiguration) {
-        LearningAlgorithm.MealyLearner<String, String> learner = thread.getLearner();
-        List<Symbol<WebServiceConnector>> symbolsList = thread.getSymbols();
-        Symbol[] symbols = symbolsList.toArray(new Symbol[symbolsList.size()]);
-
-        LearnerThread<WebServiceConnector> leanerThread = new LearnerThread<>(learnerResultDAO, learnerResult,
-                                                                              thread.getContext(), learner, symbols);
-        leanerThread.getResult().getConfiguration().updateConfiguration(newConfiguration);
-
-        return leanerThread;
+        return new WebServiceContextHandler(project.getBaseUrl(), resetSymbol);
     }
 
 }

@@ -11,6 +11,7 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -25,6 +26,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class WebSymbolLearnerIT {
 
     private static final int MAX_TIME_TO_WAIT_FOR_LEARNER = 180000; // three minutes !!
@@ -71,7 +73,7 @@ public class WebSymbolLearnerIT {
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                 + "{\"type\": \"checkText\", \"value\": \"Lorem Ipsum\"}"
                 + "]}";
-        Symbol<?> symbol1 = testHelper.addSymbol(client, project, json);
+        Symbol symbol1 = testHelper.addSymbol(client, project, json);
 
         // symbol 2
         symbolName = "WebSymbolLearnerIT Web Symbol 2";
@@ -80,7 +82,7 @@ public class WebSymbolLearnerIT {
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                 + "{\"type\": \"click\", \"node\" : \"#link\"}"
                 + "]}";
-        Symbol<?> symbol2 = testHelper.addSymbol(client, project, json);
+        Symbol symbol2 = testHelper.addSymbol(client, project, json);
 
         // symbol 3
         symbolName = "WebSymbolLearnerIT Web Symbol 3";
@@ -89,7 +91,7 @@ public class WebSymbolLearnerIT {
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                 + "{\"type\": \"click\", \"node\" : \"#link2\"}"
                 + "]}";
-        Symbol<?> symbol3 = testHelper.addSymbol(client, project, json);
+        Symbol symbol3 = testHelper.addSymbol(client, project, json);
 
         // symbol 4
         symbolName = "WebSymbolLearnerIT Web Symbol 4";
@@ -99,7 +101,7 @@ public class WebSymbolLearnerIT {
                     + "{\"type\": \"checkText\", \"value\": \".*Test App - Page [0-9].*\","
                     + "\"regexp\": true}"
                 + "]}";
-        Symbol<?> symbol4 = testHelper.addSymbol(client, project, json);
+        Symbol symbol4 = testHelper.addSymbol(client, project, json);
 
         // remember symbol references
         symbolsIdAndRevisionAsJSON = "{\"id\": " + symbol1.getId() + ", \"revision\": " + symbol1.getRevision() + "},"
@@ -140,6 +142,7 @@ public class WebSymbolLearnerIT {
         response = client.target(BASE_LEARNER_URL + path).request().get();
         LearnerResult result = new LearnerResult();
         String resultAsJSON = response.readEntity(String.class);
+        System.out.println("&&&&&&& " + resultAsJSON);
         result.setJSON(resultAsJSON);
 
         assertTrue(testHelper.hypothesisIsEqualToTheExpectedOne(result.getHypothesis(), testAlphabet, "web"));

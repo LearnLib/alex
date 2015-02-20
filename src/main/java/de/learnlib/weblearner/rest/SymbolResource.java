@@ -64,7 +64,7 @@ public class SymbolResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSymbol(@PathParam("project_id") long projectId, Symbol<?> symbol) {
+    public Response createSymbol(@PathParam("project_id") long projectId, Symbol symbol) {
         try {
             checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
             symbolDAO.create(symbol);
@@ -94,10 +94,10 @@ public class SymbolResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response batchCreateSymbols(@PathParam("project_id") long projectId, List<Symbol<?>> symbols) {
+    public Response batchCreateSymbols(@PathParam("project_id") long projectId, List<Symbol> symbols) {
         try {
             //TODO (Alex S.): can this loop be moved down to prevent multiple iteration over the symbol list?
-            for (Symbol<?> symbol : symbols) {
+            for (Symbol symbol : symbols) {
                 checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
             }
             symbolDAO.create(symbols);
@@ -117,7 +117,7 @@ public class SymbolResource {
         }
     }
 
-    private void checkSymbolBeforeCreation(long projectId, Symbol<?> symbol) {
+    private void checkSymbolBeforeCreation(long projectId, Symbol symbol) {
         if (symbol.getProjectId() == 0) {
             symbol.setProjectId(projectId);
         } else if (symbol.getProjectId() != projectId) {
@@ -149,7 +149,7 @@ public class SymbolResource {
                            @QueryParam("type") @DefaultValue("UNKNOWN") SymbolTypes type,
                            @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         try {
-            List<Symbol<?>> symbols = symbolDAO.getAllWithLatestRevision(projectId, type.getClazz(), visibilityLevel);
+            List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(projectId, type.getClazz(), visibilityLevel);
 
             String json = createSymbolsJSON(symbols);
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
@@ -177,7 +177,7 @@ public class SymbolResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") long projectId, @PathParam("id") long id) {
-        Symbol<?> symbol = symbolDAO.getWithLatestRevision(projectId, id);
+        Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);
         if (symbol != null) {
             return Response.ok(symbol).build();
         } else {
@@ -201,7 +201,7 @@ public class SymbolResource {
     @Path("/{id}/complete")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getComplete(@PathParam("project_id") long projectId, @PathParam("id") long id) {
-        List<Symbol<?>> symbols = symbolDAO.getWithAllRevisions(projectId, id);
+        List<Symbol> symbols = symbolDAO.getWithAllRevisions(projectId, id);
         try {
             String json = createSymbolsJSON(symbols);
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
@@ -231,7 +231,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWithRevision(@PathParam("project_id") long projectId, @PathParam("id") long id,
             @PathParam("revision") long revision) {
-        Symbol<?> symbol = symbolDAO.get(projectId, id, revision);
+        Symbol symbol = symbolDAO.get(projectId, id, revision);
         if (symbol != null) {
             return Response.ok(symbol).build();
         } else {
@@ -258,7 +258,7 @@ public class SymbolResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") long projectId, @PathParam("id") long id, Symbol<?> symbol) {
+    public Response update(@PathParam("project_id") long projectId, @PathParam("id") long id, Symbol symbol) {
         if (id != symbol.getId() || projectId != symbol.getProjectId()) {
             return  Response.status(Status.BAD_REQUEST).build();
         } else {
@@ -302,7 +302,7 @@ public class SymbolResource {
             }
 
             symbolDAO.hide(projectId, idsArray);
-            List<Symbol<?>> symbols = symbolDAO.getByIdsWithLatestRevision(projectId, idsArray);
+            List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(projectId, idsArray);
 
             if (symbols.size() == 1) {
                 return Response.status(Status.OK).entity(symbols.get(0)).build();
@@ -348,7 +348,7 @@ public class SymbolResource {
             }
 
             symbolDAO.show(projectId, idsArray);
-            List<Symbol<?>> symbols = symbolDAO.getByIdsWithLatestRevision(projectId, idsArray);
+            List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(projectId, idsArray);
 
             if (symbols.size() == 1) {
                 return Response.status(Status.OK).entity(symbols.get(0)).build();
@@ -374,9 +374,9 @@ public class SymbolResource {
      * @throws JsonProcessingException
      *             If something went wrong while converting to JSON.
      */
-    private String createSymbolsJSON(List<Symbol<?>> symbols) throws JsonProcessingException {
+    private String createSymbolsJSON(List<Symbol> symbols) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { })
+        return mapper.writerWithType(new TypeReference<List<Symbol>>() { })
                 .writeValueAsString(symbols);
     }
 

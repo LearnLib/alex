@@ -32,7 +32,7 @@ public class LearnerTestHelper {
         this.learnerUrl = learnerUrl;
     }
 
-    public Symbol<?> addSymbol(Client client, Project project, String json) {
+    public Symbol addSymbol(Client client, Project project, String json) {
         String path = "/projects/" + project.getId() + "/symbols";
         Response response = client.target(learnerUrl + path).request().post(Entity.json(json));
         return response.readEntity(Symbol.class);
@@ -60,6 +60,8 @@ public class LearnerTestHelper {
         Word<String> separatingWord = DeterministicEquivalenceTest.findSeparatingWord(expectedMealy,
                                                                                       actualMealy,
                                                                                       testAlphabet);
+
+        System.out.println("######### " + separatingWord);
 
         return separatingWord == null;
     }
