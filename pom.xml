@@ -246,6 +246,11 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>${war-plugin.version}</version>
                     <configuration>
+                        <warSourceExcludes>
+                            **/.idea/**,
+                            **/node_modules/**,
+                            **/testsite/**
+                        </warSourceExcludes>
                         <packagingIncludes>
                             app/**,
                             app.html,
