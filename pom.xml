@@ -248,7 +248,6 @@
                     <configuration>
                         <packagingIncludes>
                             app/**,
-                            app.html,
                             index.html,
                             restdocs/**,
                             WEB-INF/**,
