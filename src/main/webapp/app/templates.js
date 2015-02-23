@@ -1,36 +1,8 @@
-angular.module('templates-all', ['app/partials/about.html', 'app/partials/directives/hypothesis-panel.html', 'app/partials/directives/hypothesis.html', 'app/partials/directives/load-screen.html', 'app/partials/directives/navigation.html', 'app/partials/directives/observation-table.html', 'app/partials/directives/project-create-form.html', 'app/partials/directives/project-edit-form.html', 'app/partials/directives/rest-action-create-form.html', 'app/partials/directives/rest-action-edit-form.html', 'app/partials/directives/symbol-create-form.html', 'app/partials/directives/symbol-edit-form.html', 'app/partials/directives/web-action-create-form.html', 'app/partials/directives/web-action-edit-form.html', 'app/partials/directives/web-element-picker.html', 'app/partials/help.html', 'app/partials/home.html', 'app/partials/learn-results-compare.html', 'app/partials/learn-results-statistics.html', 'app/partials/learn-results.html', 'app/partials/learn-setup.html', 'app/partials/learn-start.html', 'app/partials/modals/action-create-modal.html', 'app/partials/modals/action-edit-modal.html', 'app/partials/modals/hypothesis-layout-settings-modal.html', 'app/partials/modals/modal-confirm-dialog.html', 'app/partials/modals/modal-prompt-dialog.html', 'app/partials/modals/modal-test-details.html', 'app/partials/modals/modal-test-setup-settings.html', 'app/partials/modals/symbol-create-modal.html', 'app/partials/modals/symbol-edit-modal.html', 'app/partials/project-create.html', 'app/partials/project-settings.html', 'app/partials/project.html', 'app/partials/symbols-actions.html', 'app/partials/symbols-export.html', 'app/partials/symbols-history.html', 'app/partials/symbols-import.html', 'app/partials/symbols-trash.html', 'app/partials/symbols.html', 'app/partials/tools-hypotheses-view.html', 'app/partials/widgets/widget-counter-examples.html', 'app/partials/widgets/widget-test-resume-settings.html']);
+angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/project-create-form.html', 'app/views/directives/project-edit-form.html', 'app/views/directives/rest-action-create-form.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/symbol-create-form.html', 'app/views/directives/symbol-edit-form.html', 'app/views/directives/web-action-create-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/modal-test-setup-settings.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
-angular.module("app/partials/about.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/about.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <h2>About</h2>\n" +
-    "    <p class=\"text-muted\">Information about this application</p>\n" +
-    "    <hr/>\n" +
-    "\n" +
-    "    <h3>Authors</h3>\n" +
-    "    <p>\n" +
-    "        <strong>Alexander Bainczyk</strong><br>\n" +
-    "        <a href=\"mailto:alexander.bainczyk@tu-dortmund.de\">\n" +
-    "            <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
-    "            alexander.bainczyk@tu-dortmund.de\n" +
-    "        </a>\n" +
-    "    </p>\n" +
-    "    <p>\n" +
-    "        <strong>Alexander Schieweck</strong><br>\n" +
-    "        <a href=\"mailto:alexander.schieweck@tu-dortmund.de\">\n" +
-    "            <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
-    "            alexander.schieweck@tu-dortmund.de\n" +
-    "        </a>\n" +
-    "    </p>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/directives/hypothesis-panel.html",
+  $templateCache.put("app/views/directives/hypothesis-panel.html",
     "<div class=\"hypothesis-panel-container\">\n" +
     "\n" +
     "    <!-- BEGIN: Subnavigation -->\n" +
@@ -101,17 +73,17 @@ angular.module("app/partials/directives/hypothesis-panel.html", []).run(["$templ
     "</div>");
 }]);
 
-angular.module("app/partials/directives/hypothesis.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/hypothesis.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/hypothesis.html",
+  $templateCache.put("app/views/directives/hypothesis.html",
     "<div style=\"position: absolute; top: 0; width: 100%; bottom: 0; overflow: hidden; background: #fff;\">\n" +
     "    <svg class=\"hypothesis\"></svg>\n" +
     "</div>");
 }]);
 
-angular.module("app/partials/directives/load-screen.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/load-screen.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/load-screen.html",
+  $templateCache.put("app/views/directives/load-screen.html",
     "<div id=\"load-screen\">\n" +
     "    <p class=\"text-center\" id=\"load-screen-indicator\">\n" +
     "        <i class=\"fa fa-spin fa-3x fa-circle-o-notch\"></i>\n" +
@@ -119,9 +91,9 @@ angular.module("app/partials/directives/load-screen.html", []).run(["$templateCa
     "</div>");
 }]);
 
-angular.module("app/partials/directives/navigation.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/navigation.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/navigation.html",
+  $templateCache.put("app/views/directives/navigation.html",
     "<nav class=\"app-navigation navbar navbar-default navbar-fixed-top navbar-application\" role=\"navigation\">\n" +
     "\n" +
     "    <div class=\"container-fluid\">\n" +
@@ -233,15 +205,15 @@ angular.module("app/partials/directives/navigation.html", []).run(["$templateCac
     "");
 }]);
 
-angular.module("app/partials/directives/observation-table.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/observation-table.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/observation-table.html",
+  $templateCache.put("app/views/directives/observation-table.html",
     "");
 }]);
 
-angular.module("app/partials/directives/project-create-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/project-create-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/project-create-form.html",
+  $templateCache.put("app/views/directives/project-create-form.html",
     "<form id=\"project-create-form\" name=\"create_form\" role=\"form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <!-- Name -->\n" +
@@ -295,9 +267,9 @@ angular.module("app/partials/directives/project-create-form.html", []).run(["$te
     "</form>");
 }]);
 
-angular.module("app/partials/directives/project-edit-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/project-edit-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/project-edit-form.html",
+  $templateCache.put("app/views/directives/project-edit-form.html",
     "<form id=\"project-edit-form\" name=\"update_form\" role=\"form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <!-- Name -->\n" +
@@ -352,9 +324,9 @@ angular.module("app/partials/directives/project-edit-form.html", []).run(["$temp
     "</form>");
 }]);
 
-angular.module("app/partials/directives/rest-action-create-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/rest-action-create-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/rest-action-create-form.html",
+  $templateCache.put("app/views/directives/rest-action-create-form.html",
     "<form id=\"rest-action-create-form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <select class=\"form-control\" ng-model=\"action.type\" ng-options=\"k for (k,v) in actionTypes\">\n" +
@@ -476,9 +448,9 @@ angular.module("app/partials/directives/rest-action-create-form.html", []).run([
     "</form>");
 }]);
 
-angular.module("app/partials/directives/rest-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/rest-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/rest-action-edit-form.html",
+  $templateCache.put("app/views/directives/rest-action-edit-form.html",
     "<form id=\"rest-action-update-form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <!-- BEGIN: CALL_URL -->\n" +
@@ -592,9 +564,9 @@ angular.module("app/partials/directives/rest-action-edit-form.html", []).run(["$
     "</form>");
 }]);
 
-angular.module("app/partials/directives/symbol-create-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/symbol-create-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/symbol-create-form.html",
+  $templateCache.put("app/views/directives/symbol-create-form.html",
     "<form id=\"symbol-create-form\" name=\"create_symbol_form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <div class=\"form-group\">\n" +
@@ -618,9 +590,9 @@ angular.module("app/partials/directives/symbol-create-form.html", []).run(["$tem
     "</form>");
 }]);
 
-angular.module("app/partials/directives/symbol-edit-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/symbol-edit-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/symbol-edit-form.html",
+  $templateCache.put("app/views/directives/symbol-edit-form.html",
     "<form name=\"update_symbol_form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <div class=\"form-group\">\n" +
@@ -647,9 +619,9 @@ angular.module("app/partials/directives/symbol-edit-form.html", []).run(["$templ
     "</form>");
 }]);
 
-angular.module("app/partials/directives/web-action-create-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/web-action-create-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/web-action-create-form.html",
+  $templateCache.put("app/views/directives/web-action-create-form.html",
     "<form id=\"web-action-create-form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <select class=\"form-control\" ng-model=\"action.type\" ng-options=\"k for (k,v) in actionTypes\">\n" +
@@ -805,9 +777,9 @@ angular.module("app/partials/directives/web-action-create-form.html", []).run(["
     "</form>");
 }]);
 
-angular.module("app/partials/directives/web-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/web-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/web-action-edit-form.html",
+  $templateCache.put("app/views/directives/web-action-edit-form.html",
     "<form id=\"web-action-edit-form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
@@ -956,9 +928,9 @@ angular.module("app/partials/directives/web-action-edit-form.html", []).run(["$t
     "</form>");
 }]);
 
-angular.module("app/partials/directives/web-element-picker.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/web-element-picker.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/web-element-picker.html",
+  $templateCache.put("app/views/directives/web-element-picker.html",
     "<div ng-show=\"show\" id=\"web-element-picker-wrapper\">\n" +
     "\n" +
     "    <div id=\"web-element-picker\">\n" +
@@ -1001,393 +973,9 @@ angular.module("app/partials/directives/web-element-picker.html", []).run(["$tem
     "</div>");
 }]);
 
-angular.module("app/partials/help.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/action-create-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/help.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <h2>Help</h2>\n" +
-    "    <p class=\"text-muted\">If you need help using this application, maybe there is some information for you here</p>\n" +
-    "    <hr/>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/home.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/home.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <div class=\"list-group project-list-group\">\n" +
-    "\n" +
-    "        <div class=\"list-group-item\" ng-if=\"projects.length > 0\" ng-repeat=\"project in projects\"\n" +
-    "             ng-click=\"openProject(project)\">\n" +
-    "            <h3 class=\"list-group-item-heading\" ng-bind=\"project.name\"></h3>\n" +
-    "\n" +
-    "            <p class=\"list-group-item-text\">\n" +
-    "                <span ng-bind=\"project.baseUrl\"></span> <br>\n" +
-    "                <span class=\"text-muted\" ng-if=\"!project.description\">There is no description for this project</span>\n" +
-    "                <span class=\"text-muted\" ng-if=\"project.description\" ng-bind=\"project.description\"></span>\n" +
-    "            </p>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"container\" ng-if=\"projects.length == 0\">\n" +
-    "            <div class=\"alert alert-info\">\n" +
-    "                You haven't created a project yet. You can create a new one <a href=\"#/project/create\">here</a> and start\n" +
-    "                testing it.\n" +
-    "            </div>\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/learn-results-compare.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/learn-results-compare.html",
-    "<div panel-manager=\"panels\">\n" +
-    "\n" +
-    "    <div panel panel-index=\"$index\" ng-repeat=\"result in panels track by $index\">\n" +
-    "\n" +
-    "        <div ng-if=\"result\">\n" +
-    "            <hypothesis-slideshow-panel panel-index=\"{{$index}}\" result=\"result\"></hypothesis-slideshow-panel>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
-    "\n" +
-    "            <ul class=\"list-group\">\n" +
-    "                <li class=\"list-group-item\" ng-repeat=\"result in finalTestResults\"\n" +
-    "                    ng-click=\"fillPanel(result, $parent.$index)\">\n" +
-    "\n" +
-    "                    <strong>Test No\n" +
-    "                        <span ng-bind=\"result.testNo\"></span>\n" +
-    "                    </strong>,\n" +
-    "                    [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                    <br>\n" +
-    "\n" +
-    "                    <p class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                </li>\n" +
-    "            </ul>\n" +
-    "\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"panels.length == 0\" style=\"padding-top: 30px\">\n" +
-    "        <div class=\"container\">\n" +
-    "            <div class=\"alert alert-info\">\n" +
-    "                Add a panel first\n" +
-    "            </div>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/learn-results-statistics.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/learn-results-statistics.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <h2>Statistics</h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Have a look at some numbers we gathered for your tests\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
-    "\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
-    "        </div>\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromSingleCompleteTestResult()\">\n" +
-    "                <i class=\"fa fa-line-chart fa-fw\"></i> Single Complete Test\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromMultipleFinalTestResults()\">\n" +
-    "                <i class=\"fa fa-bar-chart fa-fw\"></i> Multiple Tests\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromTwoCompleteTestResults()\">\n" +
-    "                <i class=\"fa fa-columns fa-fw\"></i> Compare Two Complete Tests\n" +
-    "            </button>\n" +
-    "        </div>\n" +
-    "        <div class=\"pull-right\">\n" +
-    "\n" +
-    "            <div class=\"btn-group btn-group-xs pull-right\" dropdown>\n" +
-    "                <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
-    "                    <i class=\"fa fa-download fa-fw\"></i> Export to CSV\n" +
-    "                </button>\n" +
-    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                    <li>\n" +
-    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
-    "                            All Final Results\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                    <li>\n" +
-    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
-    "                            A Single Complete Result\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                </ul>\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"back()\">\n" +
-    "                <i class=\"fa fa-list-ul fa-fw\"></i> Test Results\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" download-canvas-as-image=\"test-results-chart\">\n" +
-    "                <i class=\"fa fa-save fa-fw\"></i> Download Diagram\n" +
-    "            </button>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
-    "\n" +
-    "    <div selectable-list ng-model=\"tests\">\n" +
-    "        <div selectable-list-item ng-repeat=\"test in tests\">\n" +
-    "\n" +
-    "            <span class=\"label label-primary pull-right\">\n" +
-    "                Web\n" +
-    "            </span>\n" +
-    "\n" +
-    "            <strong>Test No\n" +
-    "                <span ng-bind=\"test.testNo\"></span>\n" +
-    "            </strong>,\n" +
-    "            [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "            <br>\n" +
-    "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "            </p>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
-    "\n" +
-    "    <hr>\n" +
-    "\n" +
-    "    <div ng-if=\"chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS\">\n" +
-    "        <div test-results-chart test-results-chart-multiple-final chart-data=\"chartDataSets\"></div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT\">\n" +
-    "        <div test-results-chart test-results-chart-single-complete chart-data=\"chartDataSets\"></div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS\">\n" +
-    "        <div test-results-chart test-results-chart-two-complete chart-data=\"chartDataSets\"></div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/learn-results.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/learn-results.html",
-    "<div class=\"container\">\n" +
-    "        <h2>Tests</h2>\n" +
-    "\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Have a look at all the tests you ran for this project\n" +
-    "        </p>\n" +
-    "        <hr>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"tests.length > 0\">\n" +
-    "        <div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
-    "            <div class=\"container\">\n" +
-    "                <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "                    <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
-    "                </div>\n" +
-    "                <div class=\"pull-left\">\n" +
-    "                    <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteTests()\">\n" +
-    "                        Delete\n" +
-    "                    </button>\n" +
-    "                    <button class=\"btn btn-xs btn-default\">\n" +
-    "                        Slideshow\n" +
-    "                    </button>\n" +
-    "                </div>\n" +
-    "            </div>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"container\">\n" +
-    "\n" +
-    "            <div selectable-list ng-model=\"tests\">\n" +
-    "                <div selectable-list-item ng-repeat=\"test in (tests|typeOfWeb)\">\n" +
-    "\n" +
-    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                            <i class=\"fa fa-bars\"></i>\n" +
-    "                        </button>\n" +
-    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                            <li>\n" +
-    "                                <a href=\"\" open-test-details-modal test=\"test\">\n" +
-    "                                    <i class=\"fa fa-info fa-fw\"></i>&nbsp; Details\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a ui-sref=\"learn.results.compare({testNos: [test.testNo]})\">\n" +
-    "                                    <i class=\"fa fa-code-fork fa-fw\"></i>&nbsp; Hypotheses\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a href=\"\" ng-click=\"deleteTest(test)\">\n" +
-    "                                    <i class=\"fa fa-trash fa-fw\"></i>&nbsp; Delete\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                        </ul>\n" +
-    "                    </div>\n" +
-    "\n" +
-    "                    <strong>Test No\n" +
-    "                        <span ng-bind=\"test.testNo\"></span>\n" +
-    "                    </strong>,\n" +
-    "                    [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                    <br>\n" +
-    "\n" +
-    "                    <p class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                </div>\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div class=\"container\" ng-if=\"tests.length == 0\">\n" +
-    "        <div class=\"alert alert-info\">\n" +
-    "            You have not run any tests yet or the active one is not finished.\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "");
-}]);
-
-angular.module("app/partials/learn-setup.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/learn-setup.html",
-    "<div class=\"container\">\n" +
-    "    <h2>Test Setup - <span ng-bind=\"(type|capitalize)\"></span></h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Include or exclude Symbols you want to use for the following test\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
-    "    <div class=\"container\">\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbols\">\n" +
-    "        </div>\n" +
-    "        <div class=\"pull-right\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" open-test-setup-settings-modal\n" +
-    "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
-    "                <i class=\"fa fa-gear\"></i>\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"startLearning()\">\n" +
-    "                Start Test\n" +
-    "            </button>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <div selectable-list ng-model=\"symbols\">\n" +
-    "        <div selectable-list-item ng-repeat=\"symbol in symbols\">\n" +
-    "\n" +
-    "            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
-    "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                    <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                </a>\n" +
-    "            </p>\n" +
-    "\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/learn-start.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/learn-start.html",
-    "<div style=\"position: absolute; width: 100%; top: 50px; bottom: 0; overflow: auto;\">\n" +
-    "\n" +
-    "    <div ng-if=\"active == true\" class=\"container\" style=\"margin-top: 54px\">\n" +
-    "        <div class=\"alert alert-info\">\n" +
-    "            <i class=\"fa fa-circle-o-notch fa-spin\"></i>&nbsp; Application is learning ... <br>\n" +
-    "        </div>\n" +
-    "        <hr>\n" +
-    "        <button class=\"btn btn-default btn-xs pull-right\" ng-click=\"abort()\">\n" +
-    "            <i class=\"fa fa-close fa-fw\"></i> Abort Learning\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"!active && test\">\n" +
-    "        <div class=\"sub-nav fixed\">\n" +
-    "            <div class=\"container-fluid\">\n" +
-    "\n" +
-    "                <div class=\"pull-left\">\n" +
-    "                    <button class=\"btn btn-xs btn-default\" open-test-details-modal test=\"test\">\n" +
-    "                        <i class=\"fa fa-info fa-fw\"></i> Details\n" +
-    "                    </button>\n" +
-    "                	<button class=\"btn btn-xs btn-default\" open-hypothesis-layout-settings-modal layout-settings=\"layoutSettings\" on-update=\"updateLayoutSettings\">\n" +
-    "                		<i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
-    "                	</button>\n" +
-    "                </div>\n" +
-    "\n" +
-    "                <div class=\"pull-right\" ng-if=\"isEqOracleSample\">\n" +
-    "                    <button class=\"btn btn-xs btn-success\" ng-click=\"resumeLearning()\">\n" +
-    "                        Resume\n" +
-    "                    </button>\n" +
-    "                </div>\n" +
-    "\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"panel-sidebar\" ng-if=\"isEqOracleSample\">\n" +
-    "\n" +
-    "            <div widget widget-title=\"Configuration\" collapsed=\"false\">\n" +
-    "                <div widget-test-resume-settings configuration=\"test.configuration\"></div>\n" +
-    "            </div>\n" +
-    "\n" +
-    "            <div widget widget-title=\"Counter Examples\" collapsed=\"true\">\n" +
-    "                <div widget-counter-examples counter-examples=\"test.configuration.eqOracle.counterExamples\" counter-example=\"counterExample\"></div>\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <hypothesis test=\"test\" counter-example=\"counterExample\" layout-settings=\"layoutSettings\"></hypothesis>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>\n" +
-    "");
-}]);
-
-angular.module("app/partials/modals/action-create-modal.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/modals/action-create-modal.html",
+  $templateCache.put("app/views/modals/action-create-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
@@ -1406,9 +994,9 @@ angular.module("app/partials/modals/action-create-modal.html", []).run(["$templa
     "</div>");
 }]);
 
-angular.module("app/partials/modals/action-edit-modal.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/action-edit-modal.html",
+  $templateCache.put("app/views/modals/action-edit-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
@@ -1430,9 +1018,9 @@ angular.module("app/partials/modals/action-edit-modal.html", []).run(["$template
     "</div>");
 }]);
 
-angular.module("app/partials/modals/hypothesis-layout-settings-modal.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/hypothesis-layout-settings-modal.html",
+  $templateCache.put("app/views/modals/hypothesis-layout-settings-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <div>\n" +
@@ -1477,9 +1065,9 @@ angular.module("app/partials/modals/hypothesis-layout-settings-modal.html", []).
     "</div>");
 }]);
 
-angular.module("app/partials/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-confirm-dialog.html",
+  $templateCache.put("app/views/modals/modal-confirm-dialog.html",
     "<form ng-submit=\"ok()\">\n" +
     "\n" +
     "	<div class=\"modal-body\">\n" +
@@ -1494,9 +1082,9 @@ angular.module("app/partials/modals/modal-confirm-dialog.html", []).run(["$templ
     "</form>");
 }]);
 
-angular.module("app/partials/modals/modal-prompt-dialog.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/modal-prompt-dialog.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-prompt-dialog.html",
+  $templateCache.put("app/views/modals/modal-prompt-dialog.html",
     "<div class=\"modal-header\">\n" +
     "    <h3 ng-bind=\"text\"></h3>\n" +
     "</div>\n" +
@@ -1523,9 +1111,9 @@ angular.module("app/partials/modals/modal-prompt-dialog.html", []).run(["$templa
     "</form>");
 }]);
 
-angular.module("app/partials/modals/modal-test-details.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/modal-test-details.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-test-details.html",
+  $templateCache.put("app/views/modals/modal-test-details.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <h3 class=\"modal-title\">Test Details</h3>\n" +
@@ -1582,9 +1170,9 @@ angular.module("app/partials/modals/modal-test-details.html", []).run(["$templat
     "</div>");
 }]);
 
-angular.module("app/partials/modals/modal-test-setup-settings.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/modal-test-setup-settings.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-test-setup-settings.html",
+  $templateCache.put("app/views/modals/modal-test-setup-settings.html",
     "<div class=\"modal-header\">\n" +
     "	<h3 class=\"modal-title\">Test Settings</h3>\n" +
     "	<span class=\"text-muted\">Manually set some parameters for the\n" +
@@ -1715,9 +1303,9 @@ angular.module("app/partials/modals/modal-test-setup-settings.html", []).run(["$
     "</form>");
 }]);
 
-angular.module("app/partials/modals/symbol-create-modal.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/symbol-create-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/symbol-create-modal.html",
+  $templateCache.put("app/views/modals/symbol-create-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
@@ -1736,9 +1324,9 @@ angular.module("app/partials/modals/symbol-create-modal.html", []).run(["$templa
     "</div>");
 }]);
 
-angular.module("app/partials/modals/symbol-edit-modal.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/symbol-edit-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/symbol-edit-modal.html",
+  $templateCache.put("app/views/modals/symbol-edit-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
@@ -1756,9 +1344,421 @@ angular.module("app/partials/modals/symbol-edit-modal.html", []).run(["$template
     "</div>");
 }]);
 
-angular.module("app/partials/project-create.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/about.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/project-create.html",
+  $templateCache.put("app/views/pages/about.html",
+    "<div class=\"container\">\n" +
+    "\n" +
+    "    <h2>About</h2>\n" +
+    "    <p class=\"text-muted\">Information about this application</p>\n" +
+    "    <hr/>\n" +
+    "\n" +
+    "    <h3>Authors</h3>\n" +
+    "    <p>\n" +
+    "        <strong>Alexander Bainczyk</strong><br>\n" +
+    "        <a href=\"mailto:alexander.bainczyk@tu-dortmund.de\">\n" +
+    "            <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
+    "            alexander.bainczyk@tu-dortmund.de\n" +
+    "        </a>\n" +
+    "    </p>\n" +
+    "    <p>\n" +
+    "        <strong>Alexander Schieweck</strong><br>\n" +
+    "        <a href=\"mailto:alexander.schieweck@tu-dortmund.de\">\n" +
+    "            <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
+    "            alexander.schieweck@tu-dortmund.de\n" +
+    "        </a>\n" +
+    "    </p>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/help.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/help.html",
+    "<div class=\"container\">\n" +
+    "\n" +
+    "    <h2>Help</h2>\n" +
+    "    <p class=\"text-muted\">If you need help using this application, maybe there is some information for you here</p>\n" +
+    "    <hr/>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/home.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/home.html",
+    "<div class=\"container\">\n" +
+    "\n" +
+    "    <div class=\"list-group project-list-group\">\n" +
+    "\n" +
+    "        <div class=\"list-group-item\" ng-if=\"projects.length > 0\" ng-repeat=\"project in projects\"\n" +
+    "             ng-click=\"openProject(project)\">\n" +
+    "            <h3 class=\"list-group-item-heading\" ng-bind=\"project.name\"></h3>\n" +
+    "\n" +
+    "            <p class=\"list-group-item-text\">\n" +
+    "                <span ng-bind=\"project.baseUrl\"></span> <br>\n" +
+    "                <span class=\"text-muted\" ng-if=\"!project.description\">There is no description for this project</span>\n" +
+    "                <span class=\"text-muted\" ng-if=\"project.description\" ng-bind=\"project.description\"></span>\n" +
+    "            </p>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"container\" ng-if=\"projects.length == 0\">\n" +
+    "            <div class=\"alert alert-info\">\n" +
+    "                You haven't created a project yet. You can create a new one <a href=\"#/project/create\">here</a> and start\n" +
+    "                testing it.\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/learn-results-compare.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/learn-results-compare.html",
+    "<div panel-manager=\"panels\">\n" +
+    "\n" +
+    "    <div panel panel-index=\"$index\" ng-repeat=\"result in panels track by $index\">\n" +
+    "\n" +
+    "        <div ng-if=\"result\">\n" +
+    "            <hypothesis-slideshow-panel panel-index=\"{{$index}}\" result=\"result\"></hypothesis-slideshow-panel>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
+    "\n" +
+    "            <ul class=\"list-group\">\n" +
+    "                <li class=\"list-group-item\" ng-repeat=\"result in finalTestResults\"\n" +
+    "                    ng-click=\"fillPanel(result, $parent.$index)\">\n" +
+    "\n" +
+    "                    <strong>Test No\n" +
+    "                        <span ng-bind=\"result.testNo\"></span>\n" +
+    "                    </strong>,\n" +
+    "                    [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
+    "\n" +
+    "                    <br>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                    </p>\n" +
+    "\n" +
+    "                </li>\n" +
+    "            </ul>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"panels.length == 0\" style=\"padding-top: 30px\">\n" +
+    "        <div class=\"container\">\n" +
+    "            <div class=\"alert alert-info\">\n" +
+    "                Add a panel first\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/learn-results-statistics.html",
+    "<div class=\"container\">\n" +
+    "\n" +
+    "    <h2>Statistics</h2>\n" +
+    "\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        Have a look at some numbers we gathered for your tests\n" +
+    "    </p>\n" +
+    "    <hr>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "\n" +
+    "    <div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
+    "        </div>\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromSingleCompleteTestResult()\">\n" +
+    "                <i class=\"fa fa-line-chart fa-fw\"></i> Single Complete Test\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromMultipleFinalTestResults()\">\n" +
+    "                <i class=\"fa fa-bar-chart fa-fw\"></i> Multiple Tests\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromTwoCompleteTestResults()\">\n" +
+    "                <i class=\"fa fa-columns fa-fw\"></i> Compare Two Complete Tests\n" +
+    "            </button>\n" +
+    "        </div>\n" +
+    "        <div class=\"pull-right\">\n" +
+    "\n" +
+    "            <div class=\"btn-group btn-group-xs pull-right\" dropdown>\n" +
+    "                <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
+    "                    <i class=\"fa fa-download fa-fw\"></i> Export to CSV\n" +
+    "                </button>\n" +
+    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                    <li>\n" +
+    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
+    "                            All Final Results\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                    <li>\n" +
+    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
+    "                            A Single Complete Result\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                </ul>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-click=\"back()\">\n" +
+    "                <i class=\"fa fa-list-ul fa-fw\"></i> Test Results\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-default\" download-canvas-as-image=\"test-results-chart\">\n" +
+    "                <i class=\"fa fa-save fa-fw\"></i> Download Diagram\n" +
+    "            </button>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
+    "\n" +
+    "    <div selectable-list ng-model=\"tests\">\n" +
+    "        <div selectable-list-item ng-repeat=\"test in tests\">\n" +
+    "\n" +
+    "            <span class=\"label label-primary pull-right\">\n" +
+    "                Web\n" +
+    "            </span>\n" +
+    "\n" +
+    "            <strong>Test No\n" +
+    "                <span ng-bind=\"test.testNo\"></span>\n" +
+    "            </strong>,\n" +
+    "            [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
+    "\n" +
+    "            <br>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "            </p>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
+    "\n" +
+    "    <hr>\n" +
+    "\n" +
+    "    <div ng-if=\"chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS\">\n" +
+    "        <div test-results-chart test-results-chart-multiple-final chart-data=\"chartDataSets\"></div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT\">\n" +
+    "        <div test-results-chart test-results-chart-single-complete chart-data=\"chartDataSets\"></div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS\">\n" +
+    "        <div test-results-chart test-results-chart-two-complete chart-data=\"chartDataSets\"></div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/learn-results.html",
+    "<div class=\"container\">\n" +
+    "        <h2>Tests</h2>\n" +
+    "\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Have a look at all the tests you ran for this project\n" +
+    "        </p>\n" +
+    "        <hr>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"tests.length > 0\">\n" +
+    "        <div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "            <div class=\"container\">\n" +
+    "                <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "                    <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
+    "                </div>\n" +
+    "                <div class=\"pull-left\">\n" +
+    "                    <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteTests()\">\n" +
+    "                        Delete\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-xs btn-default\">\n" +
+    "                        Slideshow\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"container\">\n" +
+    "\n" +
+    "            <div selectable-list ng-model=\"tests\">\n" +
+    "                <div selectable-list-item ng-repeat=\"test in (tests|typeOfWeb)\">\n" +
+    "\n" +
+    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                            <i class=\"fa fa-bars\"></i>\n" +
+    "                        </button>\n" +
+    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                            <li>\n" +
+    "                                <a href=\"\" open-test-details-modal test=\"test\">\n" +
+    "                                    <i class=\"fa fa-info fa-fw\"></i>&nbsp; Details\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li>\n" +
+    "                                <a ui-sref=\"learn.results.compare({testNos: [test.testNo]})\">\n" +
+    "                                    <i class=\"fa fa-code-fork fa-fw\"></i>&nbsp; Hypotheses\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li>\n" +
+    "                                <a href=\"\" ng-click=\"deleteTest(test)\">\n" +
+    "                                    <i class=\"fa fa-trash fa-fw\"></i>&nbsp; Delete\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                        </ul>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <strong>Test No\n" +
+    "                        <span ng-bind=\"test.testNo\"></span>\n" +
+    "                    </strong>,\n" +
+    "                    [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
+    "\n" +
+    "                    <br>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                    </p>\n" +
+    "\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"container\" ng-if=\"tests.length == 0\">\n" +
+    "        <div class=\"alert alert-info\">\n" +
+    "            You have not run any tests yet or the active one is not finished.\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "");
+}]);
+
+angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/learn-setup.html",
+    "<div class=\"container\">\n" +
+    "    <h2>Test Setup - <span ng-bind=\"(type|capitalize)\"></span></h2>\n" +
+    "\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        Include or exclude Symbols you want to use for the following test\n" +
+    "    </p>\n" +
+    "    <hr>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "    <div class=\"container\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbols\">\n" +
+    "        </div>\n" +
+    "        <div class=\"pull-right\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" open-test-setup-settings-modal\n" +
+    "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
+    "                <i class=\"fa fa-gear\"></i>\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"startLearning()\">\n" +
+    "                Start Test\n" +
+    "            </button>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"container\">\n" +
+    "\n" +
+    "    <div selectable-list ng-model=\"symbols\">\n" +
+    "        <div selectable-list-item ng-repeat=\"symbol in symbols\">\n" +
+    "\n" +
+    "            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                    <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
+    "                </a>\n" +
+    "            </p>\n" +
+    "\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/learn-start.html",
+    "<div style=\"position: absolute; width: 100%; top: 50px; bottom: 0; overflow: auto;\">\n" +
+    "\n" +
+    "    <div ng-if=\"active == true\" class=\"container\" style=\"margin-top: 54px\">\n" +
+    "        <div class=\"alert alert-info\">\n" +
+    "            <i class=\"fa fa-circle-o-notch fa-spin\"></i>&nbsp; Application is learning ... <br>\n" +
+    "        </div>\n" +
+    "        <hr>\n" +
+    "        <button class=\"btn btn-default btn-xs pull-right\" ng-click=\"abort()\">\n" +
+    "            <i class=\"fa fa-close fa-fw\"></i> Abort Learning\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"!active && test\">\n" +
+    "        <div class=\"sub-nav fixed\">\n" +
+    "            <div class=\"container-fluid\">\n" +
+    "\n" +
+    "                <div class=\"pull-left\">\n" +
+    "                    <button class=\"btn btn-xs btn-default\" open-test-details-modal test=\"test\">\n" +
+    "                        <i class=\"fa fa-info fa-fw\"></i> Details\n" +
+    "                    </button>\n" +
+    "                	<button class=\"btn btn-xs btn-default\" open-hypothesis-layout-settings-modal layout-settings=\"layoutSettings\" on-update=\"updateLayoutSettings\">\n" +
+    "                		<i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
+    "                	</button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "                <div class=\"pull-right\" ng-if=\"isEqOracleSample\">\n" +
+    "                    <button class=\"btn btn-xs btn-success\" ng-click=\"resumeLearning()\">\n" +
+    "                        Resume\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"panel-sidebar\" ng-if=\"isEqOracleSample\">\n" +
+    "\n" +
+    "            <div widget widget-title=\"Configuration\" collapsed=\"false\">\n" +
+    "                <div widget-test-resume-settings configuration=\"test.configuration\"></div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div widget widget-title=\"Counter Examples\" collapsed=\"true\">\n" +
+    "                <div widget-counter-examples counter-examples=\"test.configuration.eqOracle.counterExamples\" counter-example=\"counterExample\"></div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <hypothesis test=\"test\" counter-example=\"counterExample\" layout-settings=\"layoutSettings\"></hypothesis>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("app/views/pages/project-create.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/project-create.html",
     "<div class=\"container\">\n" +
     "\n" +
     "    <h2>Create a New Project</h2>\n" +
@@ -1771,9 +1771,9 @@ angular.module("app/partials/project-create.html", []).run(["$templateCache", fu
     "</div>");
 }]);
 
-angular.module("app/partials/project-settings.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/project-settings.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/project-settings.html",
+  $templateCache.put("app/views/pages/project-settings.html",
     "<div class=\"container\">\n" +
     "\n" +
     "    <h2>Project Settings</h2>\n" +
@@ -1785,9 +1785,9 @@ angular.module("app/partials/project-settings.html", []).run(["$templateCache", 
     "</div>");
 }]);
 
-angular.module("app/partials/project.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/project.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/project.html",
+  $templateCache.put("app/views/pages/project.html",
     "<div class=\"container\">\n" +
     "\n" +
     "    Dashboard will soon appear at this place\n" +
@@ -1796,9 +1796,9 @@ angular.module("app/partials/project.html", []).run(["$templateCache", function(
     "");
 }]);
 
-angular.module("app/partials/symbols-actions.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols-actions.html",
+  $templateCache.put("app/views/pages/symbols-actions.html",
     "<div class=\"container\">\n" +
     "    <h2><span ng-bind=\"(symbol.type|capitalize)\"></span> Actions Editor</h2>\n" +
     "\n" +
@@ -1953,9 +1953,9 @@ angular.module("app/partials/symbols-actions.html", []).run(["$templateCache", f
     "");
 }]);
 
-angular.module("app/partials/symbols-export.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols-export.html",
+  $templateCache.put("app/views/pages/symbols-export.html",
     "<div class=\"container\">\n" +
     "\n" +
     "    <h2>Symbol Export</h2>\n" +
@@ -2022,9 +2022,9 @@ angular.module("app/partials/symbols-export.html", []).run(["$templateCache", fu
     "</div>");
 }]);
 
-angular.module("app/partials/symbols-history.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols-history.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols-history.html",
+  $templateCache.put("app/views/pages/symbols-history.html",
     "<div class=\"container\">\n" +
     "    <h2>Symbols History</h2>\n" +
     "\n" +
@@ -2073,9 +2073,9 @@ angular.module("app/partials/symbols-history.html", []).run(["$templateCache", f
     "</div>");
 }]);
 
-angular.module("app/partials/symbols-import.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols-import.html",
+  $templateCache.put("app/views/pages/symbols-import.html",
     "<div class=\"container\">\n" +
     "\n" +
     "        <h2>Symbol Upload</h2>\n" +
@@ -2140,9 +2140,9 @@ angular.module("app/partials/symbols-import.html", []).run(["$templateCache", fu
     "    </div>");
 }]);
 
-angular.module("app/partials/symbols-trash.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols-trash.html",
+  $templateCache.put("app/views/pages/symbols-trash.html",
     "<div class=\"container\">\n" +
     "    <h2>Symbols Trash - <span ng-bind=\"(type|capitalize)\"></span></h2>\n" +
     "\n" +
@@ -2200,9 +2200,9 @@ angular.module("app/partials/symbols-trash.html", []).run(["$templateCache", fun
     "</div>");
 }]);
 
-angular.module("app/partials/symbols.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols.html",
+  $templateCache.put("app/views/pages/symbols.html",
     "<div class=\"container\">\n" +
     "    <h2><span ng-bind=\"(type|capitalize)\"></span> Symbol Editor</h2>\n" +
     "\n" +
@@ -2294,15 +2294,15 @@ angular.module("app/partials/symbols.html", []).run(["$templateCache", function(
     "");
 }]);
 
-angular.module("app/partials/tools-hypotheses-view.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/tools-hypotheses-view.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/tools-hypotheses-view.html",
+  $templateCache.put("app/views/pages/tools-hypotheses-view.html",
     "drop hypothesis from json here");
 }]);
 
-angular.module("app/partials/widgets/widget-counter-examples.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/widgets/widget-counter-examples.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/widgets/widget-counter-examples.html",
+  $templateCache.put("app/views/widgets/widget-counter-examples.html",
     "<form class=\"form form-condensed\" ng-submit=\"addCounterExample()\">\n" +
     "    <div class=\"form-group\">\n" +
     "        <div class=\"input-group\">\n" +
@@ -2339,9 +2339,9 @@ angular.module("app/partials/widgets/widget-counter-examples.html", []).run(["$t
     "</ul>");
 }]);
 
-angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/widgets/widget-test-resume-settings.html",
+  $templateCache.put("app/views/widgets/widget-test-resume-settings.html",
     "<form class=\"form form-condensed\">\n" +
     "\n" +
     "    <div class=\"form-group\">\n" +
