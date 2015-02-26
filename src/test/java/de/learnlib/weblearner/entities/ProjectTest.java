@@ -1,10 +1,6 @@
 package de.learnlib.weblearner.entities;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.junit.Test;
 
 import java.io.File;
@@ -34,7 +30,7 @@ public class ProjectTest {
         List<Project> projects = new LinkedList<>();
 
         json = json.substring(1, json.length() - 1);
-        json= json.replace("},{", "};{");
+        json = json.replace("},{", "};{");
         for (String s : json.split(";")) {
             Project nextProject = ProjectTest.readProject(s.trim());
             projects.add(nextProject);

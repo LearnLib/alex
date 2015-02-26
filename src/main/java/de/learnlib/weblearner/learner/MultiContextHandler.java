@@ -2,8 +2,6 @@ package de.learnlib.weblearner.learner;
 
 import de.learnlib.mapper.ContextExecutableInputSUL;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 

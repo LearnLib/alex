@@ -70,7 +70,9 @@ public interface SymbolDAO {
      *         Include symbols that are currently marked as hidden?
      * @return A list of symbols matching the project and type.
      */
-    List<Symbol> getAllWithLatestRevision(long projectId, Class<? extends Symbol> type, SymbolVisibilityLevel visibilityLevel);
+    List<Symbol> getAllWithLatestRevision(long projectId,
+                                          Class<? extends Symbol> type,
+                                          SymbolVisibilityLevel visibilityLevel);
 
     /**
      * Get a specific symbol by its identifying parameters.

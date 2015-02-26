@@ -22,9 +22,7 @@ public class WebTestResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String getPage1() throws IOException {
         String path = System.getProperty("user.dir") + "/src/test/resources/integrationtest/test_app.html";
-        String content = new Scanner(new File(path)).useDelimiter("\\Z").next();
-
-        System.out.println(content);
+        String content = new Scanner(new File(path), "UTF-8").useDelimiter("\\Z").next();
 
         return content;
     }

@@ -33,8 +33,8 @@ public class SymbolDAOImpl implements SymbolDAO {
             HibernateUtil.commitTransaction();
 
         // error handling
-        } catch (javax.validation.ConstraintViolationException |
-                 org.hibernate.exception.ConstraintViolationException e) {
+        } catch (javax.validation.ConstraintViolationException
+                 | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             symbol.setId(0L);
             symbol.setRevision(0L);
@@ -55,8 +55,8 @@ public class SymbolDAOImpl implements SymbolDAO {
             HibernateUtil.commitTransaction();
 
             // error handling
-        } catch (javax.validation.ConstraintViolationException |
-                org.hibernate.exception.ConstraintViolationException e) {
+        } catch (javax.validation.ConstraintViolationException
+                | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             for (Symbol symbol : symbols) {
                 symbol.setId(0L);
@@ -206,7 +206,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         idRevisionList.add(idRevisionPair);
         List<Symbol> resultList = getAll(projectId, idRevisionList);
 
-        if(resultList.isEmpty()) {
+        if (resultList.isEmpty()) {
             return null;
         }
         return resultList.get(0);
@@ -287,8 +287,8 @@ public class SymbolDAOImpl implements SymbolDAO {
             HibernateUtil.commitTransaction();
 
         // error handling
-        } catch (javax.validation.ConstraintViolationException |
-                 org.hibernate.exception.ConstraintViolationException e) {
+        } catch (javax.validation.ConstraintViolationException
+                 | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("Could not update the Symbol because it is not valid.", e);
         }

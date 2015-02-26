@@ -207,7 +207,8 @@ public class SymbolResource {
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
         } catch (JsonProcessingException e) {
             LOGGER.error("Could not write the symbols from the DB into proper JSON!", e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getComplete", Status.INTERNAL_SERVER_ERROR,
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getComplete",
+                                                               Status.INTERNAL_SERVER_ERROR,
                                                                null);
         }
     }
@@ -235,7 +236,9 @@ public class SymbolResource {
         if (symbol != null) {
             return Response.ok(symbol).build();
         } else {
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getWithRevision", Status.NOT_FOUND, null);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getWithRevision",
+                                                               Status.NOT_FOUND,
+                                                               null);
         }
     }
 

@@ -402,7 +402,9 @@ public class SymbolDAOImplTest {
             }
         }
 
-        List<Symbol> restSymbols = symbolDAO.getAllWithLatestRevision(project.getId(), RESTSymbol.class, SymbolVisibilityLevel.ALL);
+        List<Symbol> restSymbols = symbolDAO.getAllWithLatestRevision(project.getId(),
+                                                                      RESTSymbol.class,
+                                                                      SymbolVisibilityLevel.ALL);
         assertNotNull(restSymbols);
         for (Symbol x : restSymbols) {
             assertTrue(x instanceof RESTSymbol);

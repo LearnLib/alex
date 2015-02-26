@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.weblearner.learner.MultiConnector;
 import org.hibernate.validator.constraints.NotBlank;
@@ -30,9 +29,6 @@ import java.io.Serializable;
 
 /**
  * Basic class for the different symbols.
- * 
- * @param <C>
- *            The type used to implement the actions the Symbol will use during the learning process.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
