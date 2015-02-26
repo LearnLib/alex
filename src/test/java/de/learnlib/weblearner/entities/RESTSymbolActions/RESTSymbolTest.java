@@ -2,6 +2,8 @@ package de.learnlib.weblearner.entities.RESTSymbolActions;
 
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.RESTSymbol;
+import de.learnlib.weblearner.entities.WebSymbol;
+import de.learnlib.weblearner.learner.MultiConnector;
 import de.learnlib.weblearner.learner.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +32,7 @@ public class RESTSymbolTest {
 
     @Test
     public void shouldReturnOkIfAllActionsRunSuccessfully() throws Exception {
-        WebServiceConnector connector = mock(WebServiceConnector.class);
+        MultiConnector connector = mock(MultiConnector.class);
         given(action1.execute(connector)).willReturn(ExecuteResult.OK);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 
@@ -41,7 +43,7 @@ public class RESTSymbolTest {
 
     @Test
     public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
-        WebServiceConnector connector = mock(WebServiceConnector.class);
+        MultiConnector connector = mock(MultiConnector.class);
         given(action1.execute(connector)).willReturn(ExecuteResult.FAILED);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 
@@ -53,7 +55,7 @@ public class RESTSymbolTest {
 
     @Test
     public void shouldReturnFailedIfOneActionsThrowsAnException() throws Exception {
-        WebServiceConnector connector = mock(WebServiceConnector.class);
+        MultiConnector connector = mock(MultiConnector.class);
         given(action1.execute(connector)).willThrow(IllegalStateException.class);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 

@@ -38,7 +38,7 @@ public class WebSymbol extends Symbol implements SymbolActionHandler<WebSymbolAc
     /** The actions handler. */
     @Transient
     @JsonIgnore
-    private transient DefaultSymbolActionHandler<WebSymbolAction, WebSiteConnector> actionHandler;
+    private transient DefaultSymbolActionHandler<WebSymbolAction, MultiConnector> actionHandler;
 
     /**
      * Default constructor.
@@ -91,10 +91,7 @@ public class WebSymbol extends Symbol implements SymbolActionHandler<WebSymbolAc
 
     @Override
     public String execute(MultiConnector connector) throws SULException {
-        return execute((WebSiteConnector) connector.getConnector(WebSiteConnector.class));
-    }
-
-    public String execute(WebSiteConnector connector) throws SULException {
         return actionHandler.execute(connector);
     }
+
 }

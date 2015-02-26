@@ -2,8 +2,11 @@ package de.learnlib.weblearner.entities.RESTSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.SymbolAction;
+import de.learnlib.weblearner.learner.MultiConnector;
 import de.learnlib.weblearner.learner.WebServiceConnector;
+import de.learnlib.weblearner.learner.WebSiteConnector;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -23,9 +26,16 @@ import javax.persistence.Entity;
         @JsonSubTypes.Type(name = "checkHeaderField", value = CheckHeaderFieldAction.class),
         @JsonSubTypes.Type(name = "checkStatus", value = CheckStatusAction.class),
 })
-public abstract class RESTSymbolAction extends SymbolAction<WebServiceConnector> {
+public abstract class RESTSymbolAction extends SymbolAction<MultiConnector> {
 
-        /** to be serializable. */
-        private static final long serialVersionUID = -897337751104947135L;
+    /** to be serializable. */
+    private static final long serialVersionUID = -897337751104947135L;
+
+    @Override
+    public ExecuteResult execute(MultiConnector target) {
+        return execute((WebServiceConnector) target.getConnector(WebServiceConnector.class));
+    }
+
+    protected abstract ExecuteResult execute(WebServiceConnector connector);
 
 }

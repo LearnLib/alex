@@ -31,7 +31,6 @@ public class WebServiceContextHandler extends AbstractContextHandlerWithCounter<
     @Override
     public WebServiceConnector createContext() {
         incrementCounter();
-        resetSymbol.execute(connector);
         return connector;
     }
 

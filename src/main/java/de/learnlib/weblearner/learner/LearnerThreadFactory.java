@@ -68,6 +68,11 @@ public class LearnerThreadFactory {
             context.addHandler(newHandler);
         }
 
+        WebSymbol webResetSymbol = (WebSymbol) project.getResetSymbol(WebSymbol.class);
+        RESTSymbol restResetSymbol = (RESTSymbol) project.getResetSymbol(RESTSymbol.class);
+        context.addResetSymbol(webResetSymbol);
+        context.addResetSymbol(restResetSymbol);
+
         return new LearnerThread(learnerResultDAO, learnerResult, context, symbols);
     }
 

@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.learner;
 
 import de.learnlib.mapper.ContextExecutableInputSUL;
+import de.learnlib.weblearner.entities.Symbol;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,17 +10,23 @@ public class MultiContextHandler extends AbstractContextHandlerWithCounter<Multi
 
     private List<ContextExecutableInputSUL.ContextHandler<? extends Connector>> handlers;
 
+    private List<Symbol> resetSymbols;
+
     private MultiConnector connectors;
 
     public MultiContextHandler() {
         this.handlers = new LinkedList<>();
+        this.resetSymbols = new LinkedList<>();
         this.connectors = new MultiConnector();
         resetCounter();
     }
 
     public void addHandler(ContextExecutableInputSUL.ContextHandler<? extends Connector> handler) {
         this.handlers.add(handler);
+    }
 
+    public void addResetSymbol(Symbol resetSymbol) {
+        this.resetSymbols.add(resetSymbol);
     }
 
     @Override
@@ -30,6 +37,15 @@ public class MultiContextHandler extends AbstractContextHandlerWithCounter<Multi
             Connector newConnector = h.createContext();
             connectors.addConnector(newConnector.getClass(), newConnector);
         }
+
+        for (Symbol s : resetSymbols) {
+            try {
+                s.execute(connectors);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return connectors;
     }
 

@@ -38,7 +38,7 @@ public class RESTSymbol extends Symbol implements SymbolActionHandler<RESTSymbol
     /** The actions handler. */
     @Transient
     @JsonIgnore
-    private transient DefaultSymbolActionHandler<RESTSymbolAction, WebServiceConnector> actionHandler;
+    private transient DefaultSymbolActionHandler<RESTSymbolAction, MultiConnector> actionHandler;
 
     /**
      * Default constructor.
@@ -90,10 +90,6 @@ public class RESTSymbol extends Symbol implements SymbolActionHandler<RESTSymbol
 
     @Override
     public String execute(MultiConnector connector) throws SULException {
-        return execute((WebServiceConnector) connector.getConnector(WebServiceConnector.class));
-    }
-
-    public String execute(WebServiceConnector connector) throws SULException {
         return actionHandler.execute(connector);
     }
 
