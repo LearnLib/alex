@@ -142,13 +142,11 @@ public class LearnerThreadFactory {
     }
 
     private WebSiteContextHandler createWebSiteContextHandler(Project project) {
-        WebSymbol resetSymbol = (WebSymbol) project.getResetSymbol(WebSymbol.class);
-        return new WebSiteContextHandler(project.getBaseUrl(), resetSymbol);
+        return new WebSiteContextHandler(project.getBaseUrl());
     }
 
     private WebServiceContextHandler createWebServiceContextHandler(Project project) {
-        RESTSymbol resetSymbol = (RESTSymbol) project.getResetSymbol(RESTSymbol.class);
-        return new WebServiceContextHandler(project.getBaseUrl(), resetSymbol);
+        return new WebServiceContextHandler(project.getBaseUrl());
     }
 
 }

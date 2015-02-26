@@ -38,7 +38,7 @@ public class RESTSymbol extends Symbol implements SymbolActionHandler<RESTSymbol
     /** The actions handler. */
     @Transient
     @JsonIgnore
-    private transient DefaultSymbolActionHandler<RESTSymbolAction, MultiConnector> actionHandler;
+    private transient DefaultSymbolActionHandler<RESTSymbolAction> actionHandler;
 
     /**
      * Default constructor.

@@ -38,7 +38,7 @@ public class WebSymbol extends Symbol implements SymbolActionHandler<WebSymbolAc
     /** The actions handler. */
     @Transient
     @JsonIgnore
-    private transient DefaultSymbolActionHandler<WebSymbolAction, MultiConnector> actionHandler;
+    private transient DefaultSymbolActionHandler<WebSymbolAction> actionHandler;
 
     /**
      * Default constructor.
