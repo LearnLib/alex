@@ -42,39 +42,11 @@
                 maxNumber: 1
             });
         }]);
-}());;angular.module('templates-all', ['app/partials/about.html', 'app/partials/directives/hypothesis-panel.html', 'app/partials/directives/hypothesis.html', 'app/partials/directives/load-screen.html', 'app/partials/directives/navigation.html', 'app/partials/directives/observation-table.html', 'app/partials/directives/project-create-form.html', 'app/partials/directives/project-edit-form.html', 'app/partials/directives/rest-action-create-form.html', 'app/partials/directives/rest-action-edit-form.html', 'app/partials/directives/symbol-create-form.html', 'app/partials/directives/symbol-edit-form.html', 'app/partials/directives/web-action-create-form.html', 'app/partials/directives/web-action-edit-form.html', 'app/partials/directives/web-element-picker.html', 'app/partials/help.html', 'app/partials/home.html', 'app/partials/learn-results-compare.html', 'app/partials/learn-results-statistics.html', 'app/partials/learn-results.html', 'app/partials/learn-setup.html', 'app/partials/learn-start.html', 'app/partials/modals/action-create-modal.html', 'app/partials/modals/action-edit-modal.html', 'app/partials/modals/modal-confirm-dialog.html', 'app/partials/modals/modal-hypothesis-layout-settings.html', 'app/partials/modals/modal-prompt-dialog.html', 'app/partials/modals/modal-test-details.html', 'app/partials/modals/modal-test-setup-settings.html', 'app/partials/modals/symbol-create-modal.html', 'app/partials/modals/symbol-edit-modal.html', 'app/partials/project-create.html', 'app/partials/project-settings.html', 'app/partials/project.html', 'app/partials/symbols-actions.html', 'app/partials/symbols-export.html', 'app/partials/symbols-history.html', 'app/partials/symbols-import.html', 'app/partials/symbols-trash.html', 'app/partials/symbols.html', 'app/partials/tools-hypotheses-view.html', 'app/partials/widgets/widget-counter-examples.html', 'app/partials/widgets/widget-test-resume-settings.html']);
+}());;angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/project-create-form.html', 'app/views/directives/project-edit-form.html', 'app/views/directives/rest-action-create-form.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/symbol-create-form.html', 'app/views/directives/symbol-edit-form.html', 'app/views/directives/web-action-create-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/modal-test-setup-settings.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
-angular.module("app/partials/about.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/about.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <h2>About</h2>\n" +
-    "    <p class=\"text-muted\">Information about this application</p>\n" +
-    "    <hr/>\n" +
-    "\n" +
-    "    <h3>Authors</h3>\n" +
-    "    <p>\n" +
-    "        <strong>Alexander Bainczyk</strong><br>\n" +
-    "        <a href=\"mailto:alexander.bainczyk@tu-dortmund.de\">\n" +
-    "            <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
-    "            alexander.bainczyk@tu-dortmund.de\n" +
-    "        </a>\n" +
-    "    </p>\n" +
-    "    <p>\n" +
-    "        <strong>Alexander Schieweck</strong><br>\n" +
-    "        <a href=\"mailto:alexander.schieweck@tu-dortmund.de\">\n" +
-    "            <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
-    "            alexander.schieweck@tu-dortmund.de\n" +
-    "        </a>\n" +
-    "    </p>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/directives/hypothesis-panel.html",
+  $templateCache.put("app/views/directives/hypothesis-panel.html",
     "<div class=\"hypothesis-panel-container\">\n" +
     "\n" +
     "    <!-- BEGIN: Subnavigation -->\n" +
@@ -145,17 +117,17 @@ angular.module("app/partials/directives/hypothesis-panel.html", []).run(["$templ
     "</div>");
 }]);
 
-angular.module("app/partials/directives/hypothesis.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/hypothesis.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/hypothesis.html",
+  $templateCache.put("app/views/directives/hypothesis.html",
     "<div style=\"position: absolute; top: 0; width: 100%; bottom: 0; overflow: hidden; background: #fff;\">\n" +
     "    <svg class=\"hypothesis\"></svg>\n" +
     "</div>");
 }]);
 
-angular.module("app/partials/directives/load-screen.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/load-screen.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/load-screen.html",
+  $templateCache.put("app/views/directives/load-screen.html",
     "<div id=\"load-screen\">\n" +
     "    <p class=\"text-center\" id=\"load-screen-indicator\">\n" +
     "        <i class=\"fa fa-spin fa-3x fa-circle-o-notch\"></i>\n" +
@@ -163,9 +135,9 @@ angular.module("app/partials/directives/load-screen.html", []).run(["$templateCa
     "</div>");
 }]);
 
-angular.module("app/partials/directives/navigation.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/navigation.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/navigation.html",
+  $templateCache.put("app/views/directives/navigation.html",
     "<nav class=\"app-navigation navbar navbar-default navbar-fixed-top navbar-application\" role=\"navigation\">\n" +
     "\n" +
     "    <div class=\"container-fluid\">\n" +
@@ -277,15 +249,15 @@ angular.module("app/partials/directives/navigation.html", []).run(["$templateCac
     "");
 }]);
 
-angular.module("app/partials/directives/observation-table.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/observation-table.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/observation-table.html",
+  $templateCache.put("app/views/directives/observation-table.html",
     "");
 }]);
 
-angular.module("app/partials/directives/project-create-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/project-create-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/project-create-form.html",
+  $templateCache.put("app/views/directives/project-create-form.html",
     "<form id=\"project-create-form\" name=\"create_form\" role=\"form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <!-- Name -->\n" +
@@ -339,9 +311,9 @@ angular.module("app/partials/directives/project-create-form.html", []).run(["$te
     "</form>");
 }]);
 
-angular.module("app/partials/directives/project-edit-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/project-edit-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/project-edit-form.html",
+  $templateCache.put("app/views/directives/project-edit-form.html",
     "<form id=\"project-edit-form\" name=\"update_form\" role=\"form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <!-- Name -->\n" +
@@ -396,9 +368,9 @@ angular.module("app/partials/directives/project-edit-form.html", []).run(["$temp
     "</form>");
 }]);
 
-angular.module("app/partials/directives/rest-action-create-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/rest-action-create-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/rest-action-create-form.html",
+  $templateCache.put("app/views/directives/rest-action-create-form.html",
     "<form id=\"rest-action-create-form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <select class=\"form-control\" ng-model=\"action.type\" ng-options=\"k for (k,v) in actionTypes\">\n" +
@@ -520,9 +492,9 @@ angular.module("app/partials/directives/rest-action-create-form.html", []).run([
     "</form>");
 }]);
 
-angular.module("app/partials/directives/rest-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/rest-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/rest-action-edit-form.html",
+  $templateCache.put("app/views/directives/rest-action-edit-form.html",
     "<form id=\"rest-action-update-form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <!-- BEGIN: CALL_URL -->\n" +
@@ -636,9 +608,9 @@ angular.module("app/partials/directives/rest-action-edit-form.html", []).run(["$
     "</form>");
 }]);
 
-angular.module("app/partials/directives/symbol-create-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/symbol-create-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/symbol-create-form.html",
+  $templateCache.put("app/views/directives/symbol-create-form.html",
     "<form id=\"symbol-create-form\" name=\"create_symbol_form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <div class=\"form-group\">\n" +
@@ -662,9 +634,9 @@ angular.module("app/partials/directives/symbol-create-form.html", []).run(["$tem
     "</form>");
 }]);
 
-angular.module("app/partials/directives/symbol-edit-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/symbol-edit-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/symbol-edit-form.html",
+  $templateCache.put("app/views/directives/symbol-edit-form.html",
     "<form name=\"update_symbol_form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <div class=\"form-group\">\n" +
@@ -691,9 +663,9 @@ angular.module("app/partials/directives/symbol-edit-form.html", []).run(["$templ
     "</form>");
 }]);
 
-angular.module("app/partials/directives/web-action-create-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/web-action-create-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/web-action-create-form.html",
+  $templateCache.put("app/views/directives/web-action-create-form.html",
     "<form id=\"web-action-create-form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <select class=\"form-control\" ng-model=\"action.type\" ng-options=\"k for (k,v) in actionTypes\">\n" +
@@ -849,9 +821,9 @@ angular.module("app/partials/directives/web-action-create-form.html", []).run(["
     "</form>");
 }]);
 
-angular.module("app/partials/directives/web-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/web-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/web-action-edit-form.html",
+  $templateCache.put("app/views/directives/web-action-edit-form.html",
     "<form id=\"web-action-edit-form\" ng-submit=\"submitForm()\">\n" +
     "\n" +
     "    <!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
@@ -994,14 +966,15 @@ angular.module("app/partials/directives/web-action-edit-form.html", []).run(["$t
     "    </div>\n" +
     "    <!-- END: WAIT -->\n" +
     "\n" +
+    "    <hr>\n" +
     "    <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update Action</button>\n" +
     "\n" +
     "</form>");
 }]);
 
-angular.module("app/partials/directives/web-element-picker.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/web-element-picker.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/directives/web-element-picker.html",
+  $templateCache.put("app/views/directives/web-element-picker.html",
     "<div ng-show=\"show\" id=\"web-element-picker-wrapper\">\n" +
     "\n" +
     "    <div id=\"web-element-picker\">\n" +
@@ -1044,393 +1017,9 @@ angular.module("app/partials/directives/web-element-picker.html", []).run(["$tem
     "</div>");
 }]);
 
-angular.module("app/partials/help.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/action-create-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/help.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <h2>Help</h2>\n" +
-    "    <p class=\"text-muted\">If you need help using this application, maybe there is some information for you here</p>\n" +
-    "    <hr/>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/home.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/home.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <div class=\"list-group project-list-group\">\n" +
-    "\n" +
-    "        <div class=\"list-group-item\" ng-if=\"projects.length > 0\" ng-repeat=\"project in projects\"\n" +
-    "             ng-click=\"openProject(project)\">\n" +
-    "            <h3 class=\"list-group-item-heading\" ng-bind=\"project.name\"></h3>\n" +
-    "\n" +
-    "            <p class=\"list-group-item-text\">\n" +
-    "                <span ng-bind=\"project.baseUrl\"></span> <br>\n" +
-    "                <span class=\"text-muted\" ng-if=\"!project.description\">There is no description for this project</span>\n" +
-    "                <span class=\"text-muted\" ng-if=\"project.description\" ng-bind=\"project.description\"></span>\n" +
-    "            </p>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"container\" ng-if=\"projects.length == 0\">\n" +
-    "            <div class=\"alert alert-info\">\n" +
-    "                You haven't created a project yet. You can create a new one <a href=\"#/project/create\">here</a> and start\n" +
-    "                testing it.\n" +
-    "            </div>\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/learn-results-compare.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/learn-results-compare.html",
-    "<div panel-manager=\"panels\">\n" +
-    "\n" +
-    "    <div panel panel-index=\"$index\" ng-repeat=\"result in panels track by $index\">\n" +
-    "\n" +
-    "        <div ng-if=\"result\">\n" +
-    "            <hypothesis-slideshow-panel panel-index=\"{{$index}}\" result=\"result\"></hypothesis-slideshow-panel>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
-    "\n" +
-    "            <ul class=\"list-group\">\n" +
-    "                <li class=\"list-group-item\" ng-repeat=\"result in finalTestResults\"\n" +
-    "                    ng-click=\"fillPanel(result, $parent.$index)\">\n" +
-    "\n" +
-    "                    <strong>Test No\n" +
-    "                        <span ng-bind=\"result.testNo\"></span>\n" +
-    "                    </strong>,\n" +
-    "                    [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                    <br>\n" +
-    "\n" +
-    "                    <p class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                </li>\n" +
-    "            </ul>\n" +
-    "\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"panels.length == 0\" style=\"padding-top: 30px\">\n" +
-    "        <div class=\"container\">\n" +
-    "            <div class=\"alert alert-info\">\n" +
-    "                Add a panel first\n" +
-    "            </div>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/learn-results-statistics.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/learn-results-statistics.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <h2>Statistics</h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Have a look at some numbers we gathered for your tests\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
-    "\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
-    "        </div>\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromSingleCompleteTestResult()\">\n" +
-    "                <i class=\"fa fa-line-chart fa-fw\"></i> Single Complete Test\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromMultipleFinalTestResults()\">\n" +
-    "                <i class=\"fa fa-bar-chart fa-fw\"></i> Multiple Tests\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromTwoCompleteTestResults()\">\n" +
-    "                <i class=\"fa fa-columns fa-fw\"></i> Compare Two Complete Tests\n" +
-    "            </button>\n" +
-    "        </div>\n" +
-    "        <div class=\"pull-right\">\n" +
-    "\n" +
-    "            <div class=\"btn-group btn-group-xs pull-right\" dropdown>\n" +
-    "                <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
-    "                    <i class=\"fa fa-download fa-fw\"></i> Export to CSV\n" +
-    "                </button>\n" +
-    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                    <li>\n" +
-    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
-    "                            All Final Results\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                    <li>\n" +
-    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
-    "                            A Single Complete Result\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                </ul>\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"back()\">\n" +
-    "                <i class=\"fa fa-list-ul fa-fw\"></i> Test Results\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" download-canvas-as-image=\"test-results-chart\">\n" +
-    "                <i class=\"fa fa-save fa-fw\"></i> Download Diagram\n" +
-    "            </button>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
-    "\n" +
-    "    <div selectable-list ng-model=\"tests\">\n" +
-    "        <div selectable-list-item ng-repeat=\"test in tests\">\n" +
-    "\n" +
-    "            <span class=\"label label-primary pull-right\">\n" +
-    "                Web\n" +
-    "            </span>\n" +
-    "\n" +
-    "            <strong>Test No\n" +
-    "                <span ng-bind=\"test.testNo\"></span>\n" +
-    "            </strong>,\n" +
-    "            [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "            <br>\n" +
-    "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "            </p>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
-    "\n" +
-    "    <hr>\n" +
-    "\n" +
-    "    <div ng-if=\"chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS\">\n" +
-    "        <div test-results-chart test-results-chart-multiple-final chart-data=\"chartDataSets\"></div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT\">\n" +
-    "        <div test-results-chart test-results-chart-single-complete chart-data=\"chartDataSets\"></div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS\">\n" +
-    "        <div test-results-chart test-results-chart-two-complete chart-data=\"chartDataSets\"></div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/learn-results.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/learn-results.html",
-    "<div class=\"container\">\n" +
-    "        <h2>Tests</h2>\n" +
-    "\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Have a look at all the tests you ran for this project\n" +
-    "        </p>\n" +
-    "        <hr>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"tests.length > 0\">\n" +
-    "        <div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
-    "            <div class=\"container\">\n" +
-    "                <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "                    <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
-    "                </div>\n" +
-    "                <div class=\"pull-left\">\n" +
-    "                    <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteTests()\">\n" +
-    "                        Delete\n" +
-    "                    </button>\n" +
-    "                    <button class=\"btn btn-xs btn-default\">\n" +
-    "                        Slideshow\n" +
-    "                    </button>\n" +
-    "                </div>\n" +
-    "            </div>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"container\">\n" +
-    "\n" +
-    "            <div selectable-list ng-model=\"tests\">\n" +
-    "                <div selectable-list-item ng-repeat=\"test in (tests|typeOfWeb)\">\n" +
-    "\n" +
-    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                            <i class=\"fa fa-bars\"></i>\n" +
-    "                        </button>\n" +
-    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                            <li>\n" +
-    "                                <a href=\"\" open-test-details-modal test=\"test\">\n" +
-    "                                    <i class=\"fa fa-info fa-fw\"></i>&nbsp; Details\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a ui-sref=\"learn.results.compare({testNos: [test.testNo]})\">\n" +
-    "                                    <i class=\"fa fa-code-fork fa-fw\"></i>&nbsp; Hypotheses\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a href=\"\" ng-click=\"deleteTest(test)\">\n" +
-    "                                    <i class=\"fa fa-trash fa-fw\"></i>&nbsp; Delete\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                        </ul>\n" +
-    "                    </div>\n" +
-    "\n" +
-    "                    <strong>Test No\n" +
-    "                        <span ng-bind=\"test.testNo\"></span>\n" +
-    "                    </strong>,\n" +
-    "                    [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                    <br>\n" +
-    "\n" +
-    "                    <p class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                </div>\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div class=\"container\" ng-if=\"tests.length == 0\">\n" +
-    "        <div class=\"alert alert-info\">\n" +
-    "            You have not run any tests yet or the active one is not finished.\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "");
-}]);
-
-angular.module("app/partials/learn-setup.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/learn-setup.html",
-    "<div class=\"container\">\n" +
-    "    <h2>Test Setup - <span ng-bind=\"(type|capitalize)\"></span></h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Include or exclude Symbols you want to use for the following test\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
-    "    <div class=\"container\">\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbols\">\n" +
-    "        </div>\n" +
-    "        <div class=\"pull-right\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" open-test-setup-settings-modal\n" +
-    "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
-    "                <i class=\"fa fa-gear\"></i>\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"startLearning()\">\n" +
-    "                Start Test\n" +
-    "            </button>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <div selectable-list ng-model=\"symbols\">\n" +
-    "        <div selectable-list-item ng-repeat=\"symbol in symbols\">\n" +
-    "\n" +
-    "            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
-    "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                    <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                </a>\n" +
-    "            </p>\n" +
-    "\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>");
-}]);
-
-angular.module("app/partials/learn-start.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/learn-start.html",
-    "<div style=\"position: absolute; width: 100%; top: 50px; bottom: 0; overflow: auto;\">\n" +
-    "\n" +
-    "    <div ng-if=\"active == true\" class=\"container\" style=\"margin-top: 54px\">\n" +
-    "        <div class=\"alert alert-info\">\n" +
-    "            <i class=\"fa fa-circle-o-notch fa-spin\"></i>&nbsp; Application is learning ... <br>\n" +
-    "        </div>\n" +
-    "        <hr>\n" +
-    "        <button class=\"btn btn-default btn-xs pull-right\" ng-click=\"abort()\">\n" +
-    "            <i class=\"fa fa-close fa-fw\"></i> Abort Learning\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"!active && test\">\n" +
-    "        <div class=\"sub-nav fixed\">\n" +
-    "            <div class=\"container-fluid\">\n" +
-    "\n" +
-    "                <div class=\"pull-left\">\n" +
-    "                    <button class=\"btn btn-xs btn-default\" open-test-details-modal test=\"test\">\n" +
-    "                        <i class=\"fa fa-info fa-fw\"></i> Details\n" +
-    "                    </button>\n" +
-    "                	<button class=\"btn btn-xs btn-default\" open-hypothesis-layout-settings-modal layout-settings=\"layoutSettings\" on-update=\"updateLayoutSettings\">\n" +
-    "                		<i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
-    "                	</button>\n" +
-    "                </div>\n" +
-    "\n" +
-    "                <div class=\"pull-right\" ng-if=\"isEqOracleSample\">\n" +
-    "                    <button class=\"btn btn-xs btn-success\" ng-click=\"resumeLearning()\">\n" +
-    "                        Resume\n" +
-    "                    </button>\n" +
-    "                </div>\n" +
-    "\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"panel-sidebar\" ng-if=\"isEqOracleSample\">\n" +
-    "\n" +
-    "            <div widget widget-title=\"Configuration\" collapsed=\"false\">\n" +
-    "                <div widget-test-resume-settings configuration=\"test.configuration\"></div>\n" +
-    "            </div>\n" +
-    "\n" +
-    "            <div widget widget-title=\"Counter Examples\" collapsed=\"true\">\n" +
-    "                <div widget-counter-examples counter-examples=\"test.configuration.eqOracle.counterExamples\" counter-example=\"counterExample\"></div>\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <hypothesis test=\"test\" counter-example=\"counterExample\" layout-settings=\"layoutSettings\"></hypothesis>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>\n" +
-    "");
-}]);
-
-angular.module("app/partials/modals/action-create-modal.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/modals/action-create-modal.html",
+  $templateCache.put("app/views/modals/action-create-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
@@ -1449,9 +1038,9 @@ angular.module("app/partials/modals/action-create-modal.html", []).run(["$templa
     "</div>");
 }]);
 
-angular.module("app/partials/modals/action-edit-modal.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/action-edit-modal.html",
+  $templateCache.put("app/views/modals/action-edit-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
@@ -1473,26 +1062,9 @@ angular.module("app/partials/modals/action-edit-modal.html", []).run(["$template
     "</div>");
 }]);
 
-angular.module("app/partials/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-confirm-dialog.html",
-    "<form ng-submit=\"ok()\">\n" +
-    "\n" +
-    "	<div class=\"modal-body\">\n" +
-    "	    <h4 ng-bind=\"text\"></h4>\n" +
-    "	</div>\n" +
-    "\n" +
-    "    <div class=\"modal-footer\">\n" +
-    "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Yes</button>\n" +
-    "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">No</a>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/partials/modals/modal-hypothesis-layout-settings.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/partials/modals/modal-hypothesis-layout-settings.html",
+  $templateCache.put("app/views/modals/hypothesis-layout-settings-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <div>\n" +
@@ -1521,6 +1093,12 @@ angular.module("app/partials/modals/modal-hypothesis-layout-settings.html", []).
     "		<input type=\"number\" class=\"form-control\" placeholder=\"ranksep\" ng-model=\"layoutSettings.ranksep\">\n" +
     "		<p class=\"help-block\">Number of pixels between each rank in the layout.</p>\n" +
     "	</div>\n" +
+    "	\n" +
+    "	<div class=\"checkbox\">\n" +
+    "    	<label>\n" +
+    "      		<input type=\"checkbox\" ng-model=\"layoutSettings.multigraph\"> Multigraph\n" +
+    "    	</label>\n" +
+    "  	</div>\n" +
     "		\n" +
     "</div>\n" +
     "\n" +
@@ -1531,9 +1109,26 @@ angular.module("app/partials/modals/modal-hypothesis-layout-settings.html", []).
     "</div>");
 }]);
 
-angular.module("app/partials/modals/modal-prompt-dialog.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-prompt-dialog.html",
+  $templateCache.put("app/views/modals/modal-confirm-dialog.html",
+    "<form ng-submit=\"ok()\">\n" +
+    "\n" +
+    "	<div class=\"modal-body\">\n" +
+    "	    <h4 ng-bind=\"text\"></h4>\n" +
+    "	</div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Yes</button>\n" +
+    "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">No</a>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
+}]);
+
+angular.module("app/views/modals/modal-prompt-dialog.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/modals/modal-prompt-dialog.html",
     "<div class=\"modal-header\">\n" +
     "    <h3 ng-bind=\"text\"></h3>\n" +
     "</div>\n" +
@@ -1560,9 +1155,9 @@ angular.module("app/partials/modals/modal-prompt-dialog.html", []).run(["$templa
     "</form>");
 }]);
 
-angular.module("app/partials/modals/modal-test-details.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/modal-test-details.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-test-details.html",
+  $templateCache.put("app/views/modals/modal-test-details.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <h3 class=\"modal-title\">Test Details</h3>\n" +
@@ -1619,9 +1214,9 @@ angular.module("app/partials/modals/modal-test-details.html", []).run(["$templat
     "</div>");
 }]);
 
-angular.module("app/partials/modals/modal-test-setup-settings.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/modal-test-setup-settings.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/modal-test-setup-settings.html",
+  $templateCache.put("app/views/modals/modal-test-setup-settings.html",
     "<div class=\"modal-header\">\n" +
     "	<h3 class=\"modal-title\">Test Settings</h3>\n" +
     "	<span class=\"text-muted\">Manually set some parameters for the\n" +
@@ -1752,9 +1347,9 @@ angular.module("app/partials/modals/modal-test-setup-settings.html", []).run(["$
     "</form>");
 }]);
 
-angular.module("app/partials/modals/symbol-create-modal.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/symbol-create-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/symbol-create-modal.html",
+  $templateCache.put("app/views/modals/symbol-create-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
@@ -1773,9 +1368,9 @@ angular.module("app/partials/modals/symbol-create-modal.html", []).run(["$templa
     "</div>");
 }]);
 
-angular.module("app/partials/modals/symbol-edit-modal.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/symbol-edit-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/modals/symbol-edit-modal.html",
+  $templateCache.put("app/views/modals/symbol-edit-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
     "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
@@ -1793,9 +1388,421 @@ angular.module("app/partials/modals/symbol-edit-modal.html", []).run(["$template
     "</div>");
 }]);
 
-angular.module("app/partials/project-create.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/about.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/project-create.html",
+  $templateCache.put("app/views/pages/about.html",
+    "<div class=\"container\">\n" +
+    "\n" +
+    "    <h2>About</h2>\n" +
+    "    <p class=\"text-muted\">Information about this application</p>\n" +
+    "    <hr/>\n" +
+    "\n" +
+    "    <h3>Authors</h3>\n" +
+    "    <p>\n" +
+    "        <strong>Alexander Bainczyk</strong><br>\n" +
+    "        <a href=\"mailto:alexander.bainczyk@tu-dortmund.de\">\n" +
+    "            <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
+    "            alexander.bainczyk@tu-dortmund.de\n" +
+    "        </a>\n" +
+    "    </p>\n" +
+    "    <p>\n" +
+    "        <strong>Alexander Schieweck</strong><br>\n" +
+    "        <a href=\"mailto:alexander.schieweck@tu-dortmund.de\">\n" +
+    "            <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
+    "            alexander.schieweck@tu-dortmund.de\n" +
+    "        </a>\n" +
+    "    </p>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/help.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/help.html",
+    "<div class=\"container\">\n" +
+    "\n" +
+    "    <h2>Help</h2>\n" +
+    "    <p class=\"text-muted\">If you need help using this application, maybe there is some information for you here</p>\n" +
+    "    <hr/>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/home.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/home.html",
+    "<div class=\"container\">\n" +
+    "\n" +
+    "    <div class=\"list-group project-list-group\">\n" +
+    "\n" +
+    "        <div class=\"list-group-item\" ng-if=\"projects.length > 0\" ng-repeat=\"project in projects\"\n" +
+    "             ng-click=\"openProject(project)\">\n" +
+    "            <h3 class=\"list-group-item-heading\" ng-bind=\"project.name\"></h3>\n" +
+    "\n" +
+    "            <p class=\"list-group-item-text\">\n" +
+    "                <span ng-bind=\"project.baseUrl\"></span> <br>\n" +
+    "                <span class=\"text-muted\" ng-if=\"!project.description\">There is no description for this project</span>\n" +
+    "                <span class=\"text-muted\" ng-if=\"project.description\" ng-bind=\"project.description\"></span>\n" +
+    "            </p>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"container\" ng-if=\"projects.length == 0\">\n" +
+    "            <div class=\"alert alert-info\">\n" +
+    "                You haven't created a project yet. You can create a new one <a href=\"#/project/create\">here</a> and start\n" +
+    "                testing it.\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/learn-results-compare.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/learn-results-compare.html",
+    "<div panel-manager=\"panels\">\n" +
+    "\n" +
+    "    <div panel panel-index=\"$index\" ng-repeat=\"result in panels track by $index\">\n" +
+    "\n" +
+    "        <div ng-if=\"result\">\n" +
+    "            <hypothesis-slideshow-panel panel-index=\"{{$index}}\" result=\"result\"></hypothesis-slideshow-panel>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
+    "\n" +
+    "            <ul class=\"list-group\">\n" +
+    "                <li class=\"list-group-item\" ng-repeat=\"result in finalTestResults\"\n" +
+    "                    ng-click=\"fillPanel(result, $parent.$index)\">\n" +
+    "\n" +
+    "                    <strong>Test No\n" +
+    "                        <span ng-bind=\"result.testNo\"></span>\n" +
+    "                    </strong>,\n" +
+    "                    [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
+    "\n" +
+    "                    <br>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                    </p>\n" +
+    "\n" +
+    "                </li>\n" +
+    "            </ul>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"panels.length == 0\" style=\"padding-top: 30px\">\n" +
+    "        <div class=\"container\">\n" +
+    "            <div class=\"alert alert-info\">\n" +
+    "                Add a panel first\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/learn-results-statistics.html",
+    "<div class=\"container\">\n" +
+    "\n" +
+    "    <h2>Statistics</h2>\n" +
+    "\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        Have a look at some numbers we gathered for your tests\n" +
+    "    </p>\n" +
+    "    <hr>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "\n" +
+    "    <div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
+    "        </div>\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromSingleCompleteTestResult()\">\n" +
+    "                <i class=\"fa fa-line-chart fa-fw\"></i> Single Complete Test\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromMultipleFinalTestResults()\">\n" +
+    "                <i class=\"fa fa-bar-chart fa-fw\"></i> Multiple Tests\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromTwoCompleteTestResults()\">\n" +
+    "                <i class=\"fa fa-columns fa-fw\"></i> Compare Two Complete Tests\n" +
+    "            </button>\n" +
+    "        </div>\n" +
+    "        <div class=\"pull-right\">\n" +
+    "\n" +
+    "            <div class=\"btn-group btn-group-xs pull-right\" dropdown>\n" +
+    "                <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
+    "                    <i class=\"fa fa-download fa-fw\"></i> Export to CSV\n" +
+    "                </button>\n" +
+    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                    <li>\n" +
+    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
+    "                            All Final Results\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                    <li>\n" +
+    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
+    "                            A Single Complete Result\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                </ul>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-click=\"back()\">\n" +
+    "                <i class=\"fa fa-list-ul fa-fw\"></i> Test Results\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-default\" download-canvas-as-image=\"test-results-chart\">\n" +
+    "                <i class=\"fa fa-save fa-fw\"></i> Download Diagram\n" +
+    "            </button>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
+    "\n" +
+    "    <div selectable-list ng-model=\"tests\">\n" +
+    "        <div selectable-list-item ng-repeat=\"test in tests\">\n" +
+    "\n" +
+    "            <span class=\"label label-primary pull-right\">\n" +
+    "                Web\n" +
+    "            </span>\n" +
+    "\n" +
+    "            <strong>Test No\n" +
+    "                <span ng-bind=\"test.testNo\"></span>\n" +
+    "            </strong>,\n" +
+    "            [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
+    "\n" +
+    "            <br>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "            </p>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
+    "\n" +
+    "    <hr>\n" +
+    "\n" +
+    "    <div ng-if=\"chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS\">\n" +
+    "        <div test-results-chart test-results-chart-multiple-final chart-data=\"chartDataSets\"></div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT\">\n" +
+    "        <div test-results-chart test-results-chart-single-complete chart-data=\"chartDataSets\"></div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS\">\n" +
+    "        <div test-results-chart test-results-chart-two-complete chart-data=\"chartDataSets\"></div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/learn-results.html",
+    "<div class=\"container\">\n" +
+    "        <h2>Tests</h2>\n" +
+    "\n" +
+    "        <p class=\"text-muted\">\n" +
+    "            Have a look at all the tests you ran for this project\n" +
+    "        </p>\n" +
+    "        <hr>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"tests.length > 0\">\n" +
+    "        <div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "            <div class=\"container\">\n" +
+    "                <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "                    <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
+    "                </div>\n" +
+    "                <div class=\"pull-left\">\n" +
+    "                    <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteTests()\">\n" +
+    "                        Delete\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-xs btn-default\">\n" +
+    "                        Slideshow\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"container\">\n" +
+    "\n" +
+    "            <div selectable-list ng-model=\"tests\">\n" +
+    "                <div selectable-list-item ng-repeat=\"test in (tests|typeOfWeb)\">\n" +
+    "\n" +
+    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                            <i class=\"fa fa-bars\"></i>\n" +
+    "                        </button>\n" +
+    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                            <li>\n" +
+    "                                <a href=\"\" open-test-details-modal test=\"test\">\n" +
+    "                                    <i class=\"fa fa-info fa-fw\"></i>&nbsp; Details\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li>\n" +
+    "                                <a ui-sref=\"learn.results.compare({testNos: [test.testNo]})\">\n" +
+    "                                    <i class=\"fa fa-code-fork fa-fw\"></i>&nbsp; Hypotheses\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li>\n" +
+    "                                <a href=\"\" ng-click=\"deleteTest(test)\">\n" +
+    "                                    <i class=\"fa fa-trash fa-fw\"></i>&nbsp; Delete\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                        </ul>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <strong>Test No\n" +
+    "                        <span ng-bind=\"test.testNo\"></span>\n" +
+    "                    </strong>,\n" +
+    "                    [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
+    "\n" +
+    "                    <br>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                    </p>\n" +
+    "\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"container\" ng-if=\"tests.length == 0\">\n" +
+    "        <div class=\"alert alert-info\">\n" +
+    "            You have not run any tests yet or the active one is not finished.\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "");
+}]);
+
+angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/learn-setup.html",
+    "<div class=\"container\">\n" +
+    "    <h2>Test Setup - <span ng-bind=\"(type|capitalize)\"></span></h2>\n" +
+    "\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        Include or exclude Symbols you want to use for the following test\n" +
+    "    </p>\n" +
+    "    <hr>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "    <div class=\"container\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbols\">\n" +
+    "        </div>\n" +
+    "        <div class=\"pull-right\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" open-test-setup-settings-modal\n" +
+    "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
+    "                <i class=\"fa fa-gear\"></i>\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"startLearning()\">\n" +
+    "                Start Test\n" +
+    "            </button>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"container\">\n" +
+    "\n" +
+    "    <div selectable-list ng-model=\"symbols\">\n" +
+    "        <div selectable-list-item ng-repeat=\"symbol in symbols\">\n" +
+    "\n" +
+    "            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                    <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
+    "                </a>\n" +
+    "            </p>\n" +
+    "\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/learn-start.html",
+    "<div style=\"position: absolute; width: 100%; top: 50px; bottom: 0; overflow: auto;\">\n" +
+    "\n" +
+    "    <div ng-if=\"active == true\" class=\"container\" style=\"margin-top: 54px\">\n" +
+    "        <div class=\"alert alert-info\">\n" +
+    "            <i class=\"fa fa-circle-o-notch fa-spin\"></i>&nbsp; Application is learning ... <br>\n" +
+    "        </div>\n" +
+    "        <hr>\n" +
+    "        <button class=\"btn btn-default btn-xs pull-right\" ng-click=\"abort()\">\n" +
+    "            <i class=\"fa fa-close fa-fw\"></i> Abort Learning\n" +
+    "        </button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div ng-if=\"!active && test\">\n" +
+    "        <div class=\"sub-nav fixed\">\n" +
+    "            <div class=\"container-fluid\">\n" +
+    "\n" +
+    "                <div class=\"pull-left\">\n" +
+    "                    <button class=\"btn btn-xs btn-default\" open-test-details-modal test=\"test\">\n" +
+    "                        <i class=\"fa fa-info fa-fw\"></i> Details\n" +
+    "                    </button>\n" +
+    "                	<button class=\"btn btn-xs btn-default\" open-hypothesis-layout-settings-modal layout-settings=\"layoutSettings\" on-update=\"updateLayoutSettings\">\n" +
+    "                		<i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
+    "                	</button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "                <div class=\"pull-right\" ng-if=\"isEqOracleSample\">\n" +
+    "                    <button class=\"btn btn-xs btn-success\" ng-click=\"resumeLearning()\">\n" +
+    "                        Resume\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"panel-sidebar\" ng-if=\"isEqOracleSample\">\n" +
+    "\n" +
+    "            <div widget widget-title=\"Configuration\" collapsed=\"false\">\n" +
+    "                <div widget-test-resume-settings configuration=\"test.configuration\"></div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div widget widget-title=\"Counter Examples\" collapsed=\"true\">\n" +
+    "                <div widget-counter-examples counter-examples=\"test.configuration.eqOracle.counterExamples\" counter-example=\"counterExample\"></div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <hypothesis test=\"test\" counter-example=\"counterExample\" layout-settings=\"layoutSettings\"></hypothesis>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("app/views/pages/project-create.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/project-create.html",
     "<div class=\"container\">\n" +
     "\n" +
     "    <h2>Create a New Project</h2>\n" +
@@ -1808,9 +1815,9 @@ angular.module("app/partials/project-create.html", []).run(["$templateCache", fu
     "</div>");
 }]);
 
-angular.module("app/partials/project-settings.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/project-settings.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/project-settings.html",
+  $templateCache.put("app/views/pages/project-settings.html",
     "<div class=\"container\">\n" +
     "\n" +
     "    <h2>Project Settings</h2>\n" +
@@ -1822,9 +1829,9 @@ angular.module("app/partials/project-settings.html", []).run(["$templateCache", 
     "</div>");
 }]);
 
-angular.module("app/partials/project.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/project.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/project.html",
+  $templateCache.put("app/views/pages/project.html",
     "<div class=\"container\">\n" +
     "\n" +
     "    Dashboard will soon appear at this place\n" +
@@ -1833,16 +1840,15 @@ angular.module("app/partials/project.html", []).run(["$templateCache", function(
     "");
 }]);
 
-angular.module("app/partials/symbols-actions.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols-actions.html",
+  $templateCache.put("app/views/pages/symbols-actions.html",
     "<div class=\"container\">\n" +
-    "    <h2>Action Editor</h2>\n" +
+    "    <h2><span ng-bind=\"(symbol.type|capitalize)\"></span> Actions Editor</h2>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Create and manage the actions for symbol\n" +
-    "        <strong ng-bind=\"symbol.name\"></strong>\n" +
-    "        <span class=\"label label-primary\" ng-bind=\"symbol.type\"></span>\n" +
+    "        Create and manage the actions for symbol:\n" +
+    "        <strong ng-bind=\"symbol.name\"></strong> <em>[<span ng-bind=\"symbol.abbreviation\"></span>]</em>\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "</div>\n" +
@@ -1991,9 +1997,9 @@ angular.module("app/partials/symbols-actions.html", []).run(["$templateCache", f
     "");
 }]);
 
-angular.module("app/partials/symbols-export.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols-export.html",
+  $templateCache.put("app/views/pages/symbols-export.html",
     "<div class=\"container\">\n" +
     "\n" +
     "    <h2>Symbol Export</h2>\n" +
@@ -2060,9 +2066,9 @@ angular.module("app/partials/symbols-export.html", []).run(["$templateCache", fu
     "</div>");
 }]);
 
-angular.module("app/partials/symbols-history.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols-history.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols-history.html",
+  $templateCache.put("app/views/pages/symbols-history.html",
     "<div class=\"container\">\n" +
     "    <h2>Symbols History</h2>\n" +
     "\n" +
@@ -2111,9 +2117,9 @@ angular.module("app/partials/symbols-history.html", []).run(["$templateCache", f
     "</div>");
 }]);
 
-angular.module("app/partials/symbols-import.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols-import.html",
+  $templateCache.put("app/views/pages/symbols-import.html",
     "<div class=\"container\">\n" +
     "\n" +
     "        <h2>Symbol Upload</h2>\n" +
@@ -2178,9 +2184,9 @@ angular.module("app/partials/symbols-import.html", []).run(["$templateCache", fu
     "    </div>");
 }]);
 
-angular.module("app/partials/symbols-trash.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols-trash.html",
+  $templateCache.put("app/views/pages/symbols-trash.html",
     "<div class=\"container\">\n" +
     "    <h2>Symbols Trash - <span ng-bind=\"(type|capitalize)\"></span></h2>\n" +
     "\n" +
@@ -2238,9 +2244,9 @@ angular.module("app/partials/symbols-trash.html", []).run(["$templateCache", fun
     "</div>");
 }]);
 
-angular.module("app/partials/symbols.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/symbols.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/symbols.html",
+  $templateCache.put("app/views/pages/symbols.html",
     "<div class=\"container\">\n" +
     "    <h2><span ng-bind=\"(type|capitalize)\"></span> Symbol Editor</h2>\n" +
     "\n" +
@@ -2299,6 +2305,12 @@ angular.module("app/partials/symbols.html", []).run(["$templateCache", function(
     "                    </li>\n" +
     "                    <li class=\"divider\"></li>\n" +
     "                    <li>\n" +
+    "                        <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                            <i class=\"fa fa-list-ol fa-fw\"></i> Actions\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                    <li class=\"divider\"></li>\n" +
+    "                    <li>\n" +
     "                        <a ui-sref=\"symbols.history({symbolId:symbol.id})\">\n" +
     "                            <i class=\"fa fa-history fa-fw\"></i> Restore\n" +
     "                        </a>\n" +
@@ -2326,15 +2338,15 @@ angular.module("app/partials/symbols.html", []).run(["$templateCache", function(
     "");
 }]);
 
-angular.module("app/partials/tools-hypotheses-view.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/pages/tools-hypotheses-view.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/tools-hypotheses-view.html",
+  $templateCache.put("app/views/pages/tools-hypotheses-view.html",
     "drop hypothesis from json here");
 }]);
 
-angular.module("app/partials/widgets/widget-counter-examples.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/widgets/widget-counter-examples.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/widgets/widget-counter-examples.html",
+  $templateCache.put("app/views/widgets/widget-counter-examples.html",
     "<form class=\"form form-condensed\" ng-submit=\"addCounterExample()\">\n" +
     "    <div class=\"form-group\">\n" +
     "        <div class=\"input-group\">\n" +
@@ -2371,9 +2383,9 @@ angular.module("app/partials/widgets/widget-counter-examples.html", []).run(["$t
     "</ul>");
 }]);
 
-angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/partials/widgets/widget-test-resume-settings.html",
+  $templateCache.put("app/views/widgets/widget-test-resume-settings.html",
     "<form class=\"form form-condensed\">\n" +
     "\n" +
     "    <div class=\"form-group\">\n" +
@@ -2455,7 +2467,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             .state('home', {
                 url: '/home',
                 controller: 'HomeController',
-                templateUrl: paths.PARTIALS + '/home.html'
+                templateUrl: paths.views.PAGES + '/home.html'
             })
 
             // =========================================================
@@ -2466,7 +2478,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'ProjectController',
-                        templateUrl: paths.PARTIALS + '/project.html'
+                        templateUrl: paths.views.PAGES + '/project.html'
                     }
                 },
                 data: {
@@ -2478,7 +2490,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'ProjectCreateController',
-                        templateUrl: paths.PARTIALS + '/project-create.html'
+                        templateUrl: paths.views.PAGES + '/project-create.html'
                     }
                 },
                 data: {
@@ -2489,7 +2501,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 url: '/settings',
                 views: {
                     '@': {
-                        templateUrl: paths.PARTIALS + '/project-settings.html',
+                        templateUrl: paths.views.PAGES + '/project-settings.html',
                         controller: 'ProjectSettingsController'
                     }
                 }
@@ -2510,7 +2522,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'SymbolsController',
-                        templateUrl: paths.PARTIALS + '/symbols.html'
+                        templateUrl: paths.views.PAGES + '/symbols.html'
                     }
                 },
                 resolve: {
@@ -2524,7 +2536,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'SymbolsTrashController',
-                        templateUrl: paths.PARTIALS + '/symbols-trash.html'
+                        templateUrl: paths.views.PAGES + '/symbols-trash.html'
                     }
                 }
             })
@@ -2533,7 +2545,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'SymbolsController',
-                        templateUrl: paths.PARTIALS + '/symbols.html'
+                        templateUrl: paths.views.PAGES + '/symbols.html'
                     }
                 },
                 resolve: {
@@ -2547,7 +2559,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'SymbolsTrashController',
-                        templateUrl: paths.PARTIALS + '/symbols-trash.html'
+                        templateUrl: paths.views.PAGES + '/symbols-trash.html'
                     }
                 }
             })
@@ -2556,7 +2568,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'SymbolsHistoryController',
-                        templateUrl: paths.PARTIALS + '/symbols-history.html'
+                        templateUrl: paths.views.PAGES + '/symbols-history.html'
                     }
                 }
             })
@@ -2565,7 +2577,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'SymbolsActionsController',
-                        templateUrl: paths.PARTIALS + '/symbols-actions.html'
+                        templateUrl: paths.views.PAGES + '/symbols-actions.html'
                     }
                 }
 
@@ -2575,7 +2587,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'SymbolsImportController',
-                        templateUrl: paths.PARTIALS + '/symbols-import.html'
+                        templateUrl: paths.views.PAGES + '/symbols-import.html'
                     }
                 }
 
@@ -2585,7 +2597,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'SymbolsExportController',
-                        templateUrl: paths.PARTIALS + '/symbols-export.html'
+                        templateUrl: paths.views.PAGES + '/symbols-export.html'
                     }
                 }
             })
@@ -2609,7 +2621,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'LearnSetupController',
-                        templateUrl: paths.PARTIALS + '/learn-setup.html'
+                        templateUrl: paths.views.PAGES + '/learn-setup.html'
                     }
                 },
                 resolve: {
@@ -2623,7 +2635,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'LearnSetupController',
-                        templateUrl: paths.PARTIALS + '/learn-setup.html'
+                        templateUrl: paths.views.PAGES + '/learn-setup.html'
                     }
                 },
                 resolve: {
@@ -2637,7 +2649,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'LearnStartController',
-                        templateUrl: paths.PARTIALS + '/learn-start.html'
+                        templateUrl: paths.views.PAGES + '/learn-start.html'
                     }
                 }
             })
@@ -2646,7 +2658,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'LearnResultsController',
-                        templateUrl: paths.PARTIALS + '/learn-results.html'
+                        templateUrl: paths.views.PAGES + '/learn-results.html'
                     }
                 }
             })
@@ -2655,7 +2667,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'LearnResultsStatisticsController',
-                        templateUrl: paths.PARTIALS + '/learn-results-statistics.html'
+                        templateUrl: paths.views.PAGES + '/learn-results-statistics.html'
                     }
                 }
             })
@@ -2664,7 +2676,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 views: {
                     '@': {
                         controller: 'LearnResultsCompareController',
-                        templateUrl: paths.PARTIALS + '/learn-results-compare.html'
+                        templateUrl: paths.views.PAGES + '/learn-results-compare.html'
                     }
                 }
             })
@@ -2675,14 +2687,14 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
             .state('about', {
                 url: '/about',
-                templateUrl: paths.PARTIALS + '/about.html',
+                templateUrl: paths.views.PAGES + '/about.html',
                 data: {
                     requiresProject: false
                 }
             })
             .state('help', {
                 url: '/help',
-                templateUrl: paths.PARTIALS + '/help.html',
+                templateUrl: paths.views.PAGES + '/help.html',
                 data: {
                     requiresProject: false
                 }
@@ -2697,7 +2709,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             })
             .state('tools.hyotheses', {
                 url: '/tools/hypotheses/view',
-                templateUrl: paths.PARTIALS + '/tools-hypotheses-view.html',
+                templateUrl: paths.views.PAGES + '/tools-hypotheses-view.html',
                 data: {
                     requiresProject: false
                 }
@@ -2730,19 +2742,23 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
     angular
         .module('weblearner.constants')
-
-        // api related stuff
-        .constant('api', {
-            URL: '/rest',
-            PROXY_URL: '/rest/proxy?url='
-        })
+        
+        // make lodash a constant for better testing
+        .constant('_', window._)
 
         // paths that are used in the application
     	.constant('paths', {
-    		PARTIALS: 'app/partials',
-    		PARTIALS_DIRECTIVES: 'app/partials/directives',
-    		PARTIALS_MODALS: 'app/partials/modals',
-    		PARTIALS_WIDGETS: 'app/partials/widgets'
+    		views: {
+    			BASE: 'app/views',
+    			DIRECTIVES: 'app/views/directives',
+    			MODALS: 'app/views/modals',
+    			WIDGETS: 'app/views/widgets',
+                PAGES: 'app/views/pages'
+    		},
+    		api: {
+    			URL: '/rest',
+    			PROXY_URL: '/rest/proxy?url='
+    		}
     	})
 
         // web action types
@@ -2781,6 +2797,391 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             DHC: 'DHC',
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE'
         })
+}());;(function(){
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('ActionCreateModalController', [
+            '$scope', '$modalInstance', 'modalData', 'WebActionTypes', 'RestActionTypes',
+            ActionCreateModalController
+        ]);
+
+    function ActionCreateModalController ($scope, $modalInstance, modalData, WebActionTypes, RestActionTypes) {
+
+        $scope.webActionTypes = WebActionTypes;
+        $scope.restActionTypes = RestActionTypes;
+        $scope.symbol = modalData.symbol;
+
+        //////////
+
+        $scope.$on('action.created', createAction);
+
+        //////////
+
+        function createAction(evt, action) {
+            $modalInstance.close(action);
+        }
+
+        //////////
+
+        $scope.closeModal = function(){
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('ActionEditModalController', [
+            '$scope', '$modalInstance', 'modalData', 'WebActionTypes', 'RestActionTypes',
+            ActionEditModalController
+        ]);
+
+    function ActionEditModalController($scope, $modalInstance, modalData, WebActionTypes, RestActionTypes) {
+
+        $scope.webActionTypes = WebActionTypes;
+        $scope.restActionTypes = RestActionTypes;
+
+        //////////
+
+        $scope.symbol = modalData.symbol;
+        $scope.action = angular.copy(modalData.action);
+
+        //////////
+
+        $scope.$on('action.edited', updateAction);
+
+        //////////
+
+        function updateAction (evt, action) {
+            $modalInstance.close(action);
+        }
+
+        //////////
+
+        $scope.closeModal = function () {
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('ConfirmDialogController', [
+            '$scope', '$modalInstance', 'modalData',
+            ConfirmDialogController
+        ]);
+
+    /**
+     * ConfirmDialogController
+     *
+     * The controller that handles the confirm modal dialog.
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param modalData
+     * @constructor
+     */
+    function ConfirmDialogController($scope, $modalInstance, modalData) {
+
+        /** The text to be displayed **/
+        $scope.text = modalData.text;
+        $scope.regexp = modalData.regexp;
+        $scope.errorMsg = modalData.errorMsg;
+
+        //////////
+
+        /**
+         * Close the modal dialog
+         */
+        $scope.ok = function () {
+        	$modalInstance.close();
+        };
+
+        /**
+         * Close the modal dialog
+         */
+        $scope.close = function () {
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function(){
+	'use strict';
+	
+	angular
+		.module('weblearner.controller')
+		.controller('HypothesisLayoutSettingsController', [
+	         '$scope', '$modalInstance', 'modalData',
+	         HypothesisLayoutSettingsController
+       ]);
+	
+	function HypothesisLayoutSettingsController($scope, $modalInstance, modalData){
+		
+		var _defaultLayoutSetting = {
+			nodesep: 50,
+			edgesep: 25,
+			ranksep: 50,
+			multigraph: false,
+		};
+		
+		$scope.layoutSettings;
+		
+		//////////
+		
+		if (angular.isDefined(modalData.layoutSettings)) {
+			$scope.layoutSettings = angular.copy(modalData.layoutSettings);
+		} else {
+			$scope.layoutSettings = angular.copy(_defaultLayoutSetting);
+		}
+		
+		//////////
+		
+		$scope.update = function(){					
+			$modalInstance.close($scope.layoutSettings);
+		};
+		
+		$scope.close = function(){			
+			$modalInstance.dismiss();
+		};
+		
+		$scope.defaultLayoutSettings = function(){	
+			$scope.layoutSettings = angular.copy(_defaultLayoutSetting);
+		};
+	}
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('PromptDialogController', [
+            '$scope', '$modalInstance', 'modalData',
+            PromptDialogController
+        ]);
+
+    /**
+     * PromptDialogController
+     *
+     * The controller that handles the prompt modal dialog.
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param modalData
+     * @constructor
+     */
+    function PromptDialogController($scope, $modalInstance, modalData) {
+
+        /** The model for the input field for the user input **/
+        $scope.userInput;
+
+        /** The text to be displayed **/
+        $scope.text = modalData.text;
+
+        /** The regex the user input has to match **/
+        $scope.inputPattern = modalData.regexp || '';
+
+        /** the message that is shown when the user input doesn't match the regex **/
+        $scope.errorMsg = modalData.errorMsg || 'Unknown validation error';
+
+        //////////
+
+        /**
+         * Close the modal dialog and pass the user input
+         */
+        $scope.ok = function () {
+            if ($scope.prompt_form.$valid) {
+                $modalInstance.close($scope.userInput);
+            } else {
+                $scope.prompt_form.submitted = true;
+            }
+        };
+
+        /**
+         * Close the modal dialog
+         */
+        $scope.close = function () {
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('SymbolCreateModalController', [
+            '$scope', '$modalInstance', 'modalData', 'SymbolResource',
+            SymbolCreateModalController
+        ]);
+
+    /**
+     * SymbolCreateModalController
+     *
+     * Handles the behaviour of the modal to create a new symbol. The corresponding template for this modal can found
+     * under 'app/partials/modals/symbol-create-modal.html'.
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param modalData
+     * @param SymbolResource
+     * @constructor
+     */
+    function SymbolCreateModalController($scope, $modalInstance, modalData, SymbolResource) {
+
+        // the id of the project the new symbol is created for
+        var projectId = modalData.projectId;
+
+        //////////
+
+        /**
+         * The type of the symbol that should be created.
+         *
+         * @type {String}
+         */
+        $scope.type = modalData.symbolType;
+
+        //////////
+
+        // listen on the event 'symbol.created' that is emitted from a child scope
+        $scope.$on('symbol.created', createSymbol);
+
+        //////////
+
+        /**
+         * Make a request to the API and create a new symbol. Close the modal on success.
+         *
+         * @param evt - The event object
+         * @param symbol - The symbol that is created
+         */
+        function createSymbol(evt, symbol) {
+            SymbolResource.create(projectId, symbol)
+                .then(function (newSymbol) {
+                    $modalInstance.close(newSymbol);
+                })
+        }
+
+        /**
+         * Close the modal.
+         */
+        $scope.closeModal = function () {
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('SymbolEditModalController', [
+            '$scope', '$modalInstance', 'modalData', 'SymbolResource', 'SelectionService',
+            SymbolEditModalController
+        ]);
+
+    /**
+     * SymbolEditModalController
+     *
+     * Handles the behaviour of the modal to edit an existing symbol and updates the edited symbol on the server.
+     * The corresponding template for this modal can found under 'app/partials/modals/symbol-edit-modal.html'.
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param modalData
+     * @param SymbolResource
+     * @param SelectionService
+     * @constructor
+     */
+    function SymbolEditModalController($scope, $modalInstance, modalData, SymbolResource, SelectionService) {
+
+        /** The symbol that is passed to the modal. */
+        $scope.symbol = modalData.symbol;
+
+        //////////
+
+        // listen on the event 'symbol.edited' from a child scope
+        $scope.$on('symbol.edited', updateSymbol);
+
+        //////////
+
+        /**
+         * Make a request to the API in order to update the symbol. Close the modal on success.
+         *
+         * @param evt - The event from the
+         * @param symbol - The edited symbol
+         */
+        function updateSymbol(evt, symbol) {
+
+            // remove the selection from the symbol in case there is any
+            SelectionService.removeSelection(symbol);
+
+            // update the symbol
+            SymbolResource.update(symbol.project, symbol)
+                .then(function (updatedSymbol) {
+                    $modalInstance.close(updatedSymbol);
+                })
+        }
+
+        //////////
+
+        /**
+         * Close the modal dialog
+         */
+        $scope.closeModal = function () {
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('TestDetailsController', [
+            '$scope', '$modalInstance', 'modalData',
+            TestDetailsController
+        ]);
+
+    function TestDetailsController($scope, $modalInstance, modalData) {
+
+        $scope.test = modalData.test;
+
+        //////////
+
+        $scope.ok = function () {
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('TestSetupSettingsController', [
+            '$scope', '$modalInstance', 'modalData', 'EqOraclesEnum', 'LearnAlgorithmsEnum', 'EqOracleService',
+            TestSetupSettingsController
+        ]);
+
+    function TestSetupSettingsController($scope, $modalInstance, modalData, eqOracles, learnAlgorithms, EqOracleService) {
+
+        $scope.eqOracles = eqOracles;
+        $scope.learnAlgorithms = learnAlgorithms;
+        $scope.learnConfiguration = modalData.learnConfiguration;
+        
+        //////////
+                
+        $scope.$watch('learnConfiguration.eqOracle.type', function(type){
+    		$scope.learnConfiguration.eqOracle = EqOracleService.create(type);
+        });
+
+        //////////
+
+        $scope.ok = function () {
+            $modalInstance.close($scope.learnConfiguration);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss();
+        }
+    }
 }());;(function () {
     'use strict';
 
@@ -3750,393 +4151,6 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             _.forEach(selectedSymbols, $scope.recover)
         }
     }
-}());;(function(){
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('ActionCreateModalController', [
-            '$scope', '$modalInstance', 'modalData', 'WebActionTypes', 'RestActionTypes',
-            ActionCreateModalController
-        ]);
-
-    function ActionCreateModalController ($scope, $modalInstance, modalData, WebActionTypes, RestActionTypes) {
-
-        $scope.webActionTypes = WebActionTypes;
-        $scope.restActionTypes = RestActionTypes;
-        $scope.symbol = modalData.symbol;
-
-        //////////
-
-        $scope.$on('action.created', createAction);
-
-        //////////
-
-        function createAction(evt, action) {
-            $modalInstance.close(action);
-        }
-
-        //////////
-
-        $scope.closeModal = function(){
-            $modalInstance.dismiss();
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('ActionEditModalController', [
-            '$scope', '$modalInstance', 'modalData', 'WebActionTypes', 'RestActionTypes',
-            ActionEditModalController
-        ]);
-
-    function ActionEditModalController($scope, $modalInstance, modalData, WebActionTypes, RestActionTypes) {
-
-        $scope.webActionTypes = WebActionTypes;
-        $scope.restActionTypes = RestActionTypes;
-
-        //////////
-
-        $scope.symbol = modalData.symbol;
-        $scope.action = angular.copy(modalData.action);
-
-        //////////
-
-        $scope.$on('action.edited', updateAction);
-
-        //////////
-
-        function updateAction (evt, action) {
-            $modalInstance.close(action);
-        }
-
-        //////////
-
-        $scope.closeModal = function () {
-            $modalInstance.dismiss();
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('ConfirmDialogController', [
-            '$scope', '$modalInstance', 'modalData',
-            ConfirmDialogController
-        ]);
-
-    /**
-     * ConfirmDialogController
-     *
-     * The controller that handles the confirm modal dialog.
-     *
-     * @param $scope
-     * @param $modalInstance
-     * @param modalData
-     * @constructor
-     */
-    function ConfirmDialogController($scope, $modalInstance, modalData) {
-
-        /** The text to be displayed **/
-        $scope.text = modalData.text;
-        $scope.regexp = modalData.regexp;
-        $scope.errorMsg = modalData.errorMsg;
-
-        //////////
-
-        /**
-         * Close the modal dialog
-         */
-        $scope.ok = function () {
-        	$modalInstance.close();
-        };
-
-        /**
-         * Close the modal dialog
-         */
-        $scope.close = function () {
-            $modalInstance.dismiss();
-        }
-    }
-}());;(function(){
-	'use strict';
-	
-	angular
-		.module('weblearner.controller')
-		.controller('HypothesisLayoutSettingsController', [
-	         '$scope', '$modalInstance', 'modalData',
-	         HypothesisLayoutSettingsController
-       ]);
-	
-	function HypothesisLayoutSettingsController($scope, $modalInstance, modalData){
-		
-		var _defaultLayoutSetting = {
-			nodesep: 50,
-			edgesep: 25,
-			ranksep: 50
-		};
-		
-		$scope.layoutSettings;
-		
-		//////////
-		
-		if (angular.isDefined(modalData.layoutSettings)) {
-			$scope.layoutSettings = angular.copy(modalData.layoutSettings);
-		} else {
-			$scope.layoutSettings = angular.copy(_defaultLayoutSetting);
-		}
-		
-		//////////
-		
-		$scope.update = function(){
-						
-			$modalInstance.close($scope.layoutSettings);
-		}
-		
-		$scope.close = function(){
-			
-			$modalInstance.dismiss();
-		}
-		
-		$scope.defaultLayoutSettings = function(){
-			
-			$scope.layoutSettings = angular.copy(_defaultLayoutSetting);
-		}
-	}
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('PromptDialogController', [
-            '$scope', '$modalInstance', 'modalData',
-            PromptDialogController
-        ]);
-
-    /**
-     * PromptDialogController
-     *
-     * The controller that handles the prompt modal dialog.
-     *
-     * @param $scope
-     * @param $modalInstance
-     * @param modalData
-     * @constructor
-     */
-    function PromptDialogController($scope, $modalInstance, modalData) {
-
-        /** The model for the input field for the user input **/
-        $scope.userInput;
-
-        /** The text to be displayed **/
-        $scope.text = modalData.text;
-
-        /** The regex the user input has to match **/
-        $scope.inputPattern = modalData.regexp || '';
-
-        /** the message that is shown when the user input doesn't match the regex **/
-        $scope.errorMsg = modalData.errorMsg || 'Unknown validation error';
-
-        //////////
-
-        /**
-         * Close the modal dialog and pass the user input
-         */
-        $scope.ok = function () {
-            if ($scope.prompt_form.$valid) {
-                $modalInstance.close($scope.userInput);
-            } else {
-                $scope.prompt_form.submitted = true;
-            }
-        };
-
-        /**
-         * Close the modal dialog
-         */
-        $scope.close = function () {
-            $modalInstance.dismiss();
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('SymbolCreateModalController', [
-            '$scope', '$modalInstance', 'modalData', 'SymbolResource',
-            SymbolCreateModalController
-        ]);
-
-    /**
-     * SymbolCreateModalController
-     *
-     * Handles the behaviour of the modal to create a new symbol. The corresponding template for this modal can found
-     * under 'app/partials/modals/symbol-create-modal.html'.
-     *
-     * @param $scope
-     * @param $modalInstance
-     * @param modalData
-     * @param SymbolResource
-     * @constructor
-     */
-    function SymbolCreateModalController($scope, $modalInstance, modalData, SymbolResource) {
-
-        // the id of the project the new symbol is created for
-        var projectId = modalData.projectId;
-
-        //////////
-
-        /**
-         * The type of the symbol that should be created.
-         *
-         * @type {String}
-         */
-        $scope.type = modalData.symbolType;
-
-        //////////
-
-        // listen on the event 'symbol.created' that is emitted from a child scope
-        $scope.$on('symbol.created', createSymbol);
-
-        //////////
-
-        /**
-         * Make a request to the API and create a new symbol. Close the modal on success.
-         *
-         * @param evt - The event object
-         * @param symbol - The symbol that is created
-         */
-        function createSymbol(evt, symbol) {
-            SymbolResource.create(projectId, symbol)
-                .then(function (newSymbol) {
-                    $modalInstance.close(newSymbol);
-                })
-        }
-
-        /**
-         * Close the modal.
-         */
-        $scope.closeModal = function () {
-            $modalInstance.dismiss();
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('SymbolEditModalController', [
-            '$scope', '$modalInstance', 'modalData', 'SymbolResource', 'SelectionService',
-            SymbolEditModalController
-        ]);
-
-    /**
-     * SymbolEditModalController
-     *
-     * Handles the behaviour of the modal to edit an existing symbol and updates the edited symbol on the server.
-     * The corresponding template for this modal can found under 'app/partials/modals/symbol-edit-modal.html'.
-     *
-     * @param $scope
-     * @param $modalInstance
-     * @param modalData
-     * @param SymbolResource
-     * @param SelectionService
-     * @constructor
-     */
-    function SymbolEditModalController($scope, $modalInstance, modalData, SymbolResource, SelectionService) {
-
-        /** The symbol that is passed to the modal. */
-        $scope.symbol = modalData.symbol;
-
-        //////////
-
-        // listen on the event 'symbol.edited' from a child scope
-        $scope.$on('symbol.edited', updateSymbol);
-
-        //////////
-
-        /**
-         * Make a request to the API in order to update the symbol. Close the modal on success.
-         *
-         * @param evt - The event from the
-         * @param symbol - The edited symbol
-         */
-        function updateSymbol(evt, symbol) {
-
-            // remove the selection from the symbol in case there is any
-            SelectionService.removeSelection(symbol);
-
-            // update the symbol
-            SymbolResource.update(symbol.project, symbol)
-                .then(function (updatedSymbol) {
-                    $modalInstance.close(updatedSymbol);
-                })
-        }
-
-        //////////
-
-        /**
-         * Close the modal dialog
-         */
-        $scope.closeModal = function () {
-            $modalInstance.dismiss();
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('TestDetailsController', [
-            '$scope', '$modalInstance', 'modalData',
-            TestDetailsController
-        ]);
-
-    function TestDetailsController($scope, $modalInstance, modalData) {
-
-        $scope.test = modalData.test;
-
-        //////////
-
-        $scope.ok = function () {
-            $modalInstance.dismiss();
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('TestSetupSettingsController', [
-            '$scope', '$modalInstance', 'modalData', 'EqOraclesEnum', 'LearnAlgorithmsEnum', 'EqOracleService',
-            TestSetupSettingsController
-        ]);
-
-    function TestSetupSettingsController($scope, $modalInstance, modalData, eqOracles, learnAlgorithms, EqOracleService) {
-
-        $scope.eqOracles = eqOracles;
-        $scope.learnAlgorithms = learnAlgorithms;
-        $scope.learnConfiguration = modalData.learnConfiguration;
-        
-        //////////
-                
-        $scope.$watch('learnConfiguration.eqOracle.type', function(type){
-    		$scope.learnConfiguration.eqOracle = EqOracleService.create(type);
-        });
-
-        //////////
-
-        $scope.ok = function () {
-            $modalInstance.close($scope.learnConfiguration);
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.dismiss();
-        }
-    }
 }());;(function() {
 	'use strict';
 
@@ -4734,152 +4748,286 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 		}
 	}
 }());
-;(function(){
+;(function() {
 
-    angular
-        .module('weblearner.directives')
-        .directive('hypothesis', [
-            '$window',
-            hypothesis
-        ]);
+	angular.module('weblearner.directives').directive('hypothesis',
+			[ '$window', 'paths', hypothesis ]);
 
-    function hypothesis ($window) {
+	function intersectNode(node, point) {
+		return node.intersect(point);
+	}
 
-        var directive = {
-            scope: {
-                test: '=',
-                counterExample: '=',
-                layoutSettings: '='
-            },
-            templateUrl: 'app/partials/directives/hypothesis.html',
-            link: link
-        };
-        return directive;
+	function calcPoints(g, e) {
+		var edge = g.edge(e), tail = g.node(e.v), head = g.node(e.w), points = edge.points
+				.slice(1, edge.points.length - 1);
 
-        //////////
+		points.unshift(intersectNode(tail, points[0]));
+		points.push(intersectNode(head, points[points.length - 1]));
 
-        function link (scope, el, attrs) {
+		return createLine(edge, points);
+	}
 
-            var _svg;
-            var _svgGroup;
-            var _svgContainer;
-            var _graph;
-            var _renderer;
+	function createLine(edge, points) {
+		var line = d3.svg.line().x(function(d) {
+			return d.x;
+		}).y(function(d) {
+			return d.y;
+		});
 
-            //////////
+		if (_.has(edge, "lineInterpolate")) {
+			line.interpolate(edge.lineInterpolate);
+		}
 
-            scope.$watch('test', function(test){
-                if (angular.isDefined(test) && test != null) {
-                    createHypothesis();
-                }
-            });
-            
-            scope.$watch('layoutSettings', function(ls){
-            	if (angular.isDefined(ls)) {
-            		createHypothesis();
-            	}
-            })
-            
-            //////////            
+		if (_.has(edge, "lineTension")) {
+			line.tension(Number(edge.lineTension));
+		}
 
-            function createHypothesis () {
-            	clearSvg();
-                initGraph();
-                layoutGraph();
-                renderGraph();
-            }
-            
-            function clearSvg() {
-            	el.find('svg')[0].innerHTML = '';
-            }
+		return line(points);
+	}
 
-            function initGraph() {
+	function hypothesis($window, paths) {
 
-                _svg = d3.select(el.find('svg')[0]);
-                _svgGroup = _svg.append("g");
-                _svgContainer = _svg.node().parentNode;
+		var directive = {
+			scope : {
+				test : '=',
+				counterExample : '=',
+				layoutSettings : '='
+			},
+			templateUrl : paths.views.DIRECTIVES + '/hypothesis.html',
+			link : link
+		};
+		return directive;
 
-                _graph = new graphlib.Graph({
-                    directed: true,
-                    multigraph: true
-                });
-                
-                if (angular.isDefined(scope.layoutSettings)) {               	
-                	_graph.setGraph({
-                		edgesep: scope.layoutSettings.edgesep,
-                		nodesep: scope.layoutSettings.nodesep,
-                		ranksep: scope.layoutSettings.ranksep
-            		});
-                } else {
-                	_graph.setGraph({edgesep: 25});
-                }
-            }
+		//////////
 
-            function layoutGraph() {
+		function link(scope, el, attrs) {
 
-                _.forEach(scope.test.hypothesis.nodes, function (node, i) {
-                    _graph.setNode("" + i, {shape: 'circle', label: node.toString(), width: 25});
-                });
+			var _svg;
+			var _svgGroup;
+			var _svgContainer;
+			var _graph;
+			var _renderer;
 
-                _.forEach(scope.test.hypothesis.edges, function (edge, i) {
-                    var edgeName =  edge.from + "-" + edge.to + "|" + i;
-                    _graph.setEdge(edge.from, edge.to, {label: edge.input + "/" + edge.output, labeloffset: 5}, edgeName);
-                });
+			//////////
 
-                dagreD3.dagre.layout(_graph, {});
-            }
+			scope.$watch('test', function(test) {
+				if (angular.isDefined(test) && test != null) {
+					createHypothesis();
+				}
+			});
 
-            function renderGraph() {
+			scope.$watch('layoutSettings', function(ls) {
+				if (angular.isDefined(ls)) {
+					createHypothesis();
+				}
+			});
 
-                _renderer = new dagreD3.render();
-                _renderer(_svgGroup, _graph);
+			//////////
 
-                // attach click events for the selection of counter examples only if counterexamples
-                // is defined
-                if (angular.isDefined(scope.counterExample)){
-                	_svg.selectAll('.edgeLabel').on('click', function(){
+			function createHypothesis() {
+				clearSvg();
+				initGraph();
+				layout();
+				renderGraph();
+				handleEvents();
+			}
 
-                        var el = this.getElementsByTagName('tspan')[0];
-                        var label = el.innerHTML.split('/');
-                        
-                        scope.counterExample.input += (label[0] + ',');
-                        scope.counterExample.output += (label[1] + ',');
-                        scope.$apply()
-                    });
-                }
+			function clearSvg() {
+				el.find('svg')[0].innerHTML = '';
+			}
 
-                // Center graph
-                var xCenterOffset = (_svgContainer.clientWidth - _graph.graph().width) / 2;
-                _svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
+			function initGraph() {
 
-                // Create and handle zoom event
-                var zoom = d3.behavior.zoom()
-                    .scaleExtent([0.1, 10])
-                    .translate([xCenterOffset, 100])
-                    .on("zoom", zoomHandler);
+				_svg = d3.select(el.find('svg')[0]);
+				_svgGroup = _svg.append("g");
+				_svgContainer = _svg.node().parentNode;
 
-                function zoomHandler() {
-                    _svgGroup.attr('transform', 'translate(' + zoom.translate() + ')' + ' scale(' + zoom.scale() + ')');
-                }
+				_graph = new graphlib.Graph({
+					directed : true,
+					multigraph : true
+				});
 
-                // attach zoom event to svg g
-                zoom(_svg);
+				if (angular.isDefined(scope.layoutSettings)) {
+					_graph.setGraph({
+						edgesep : scope.layoutSettings.edgesep,
+						nodesep : scope.layoutSettings.nodesep,
+						ranksep : scope.layoutSettings.ranksep
+					});
+				} else {
+					_graph.setGraph({
+						edgesep : 25
+					});
+				}
+			}
+			
+			function layout() {
+				if (angular.isDefined(scope.layoutSettings)) {
+					if (scope.layoutSettings.multigraph) {
+						layoutAsMultiGraph();
+					} else {
+						layoutAsGraph();
+					}
+				} else {
+					layoutAsGraph();
+				}
+			}
 
-                function fitSize() {
-                    _svg.attr("width", _svgContainer.clientWidth);
-                    _svg.attr("height", _svgContainer.clientHeight);
-                }
+			function layoutAsMultiGraph() {
 
-                fitSize();
+				// add nodes to the graph
+				_.forEach(scope.test.hypothesis.nodes, function(node, i) {
+					_graph.setNode("" + i, {
+						shape : 'circle',
+						label : node.toString(),
+						width : 25
+					});
+				});
 
-                angular.element($window).on('resize', fitSize);
+				// add edges to the graph
+				_.forEach(scope.test.hypothesis.edges, function(edge, i) {
+					var edgeName = edge.from + "-" + edge.to + "|" + i;
+					_graph.setEdge(edge.from, edge.to, {
+						label : edge.input + "/" + edge.output,
+						labeloffset : 5,
+						lineInterpolate : 'basis'
+					}, edgeName);
+				});
 
-                window.setTimeout(function(){
-                    window.dispatchEvent(new Event('resize'));
-                }, 100);
-            }
-        }
-    }
+				// layout it
+				dagreD3.dagre.layout(_graph, {});
+			}
+
+			function layoutAsGraph() {
+
+				// another format of a graph for merged multi edges
+				// graph = {<from>: {<to>: <label[]>, ...}, ...}
+				var graph = {};
+
+				// add nodes to the rendered graph
+				_.forEach(scope.test.hypothesis.nodes, function(node, i) {
+					_graph.setNode("" + i, {
+						shape : 'circle',
+						label : node.toString(),
+						width : 25
+					});
+				});
+
+				// build data structure for the alternative representation by
+				// pushing some data
+				_.forEach(scope.test.hypothesis.edges, function(edge, i) {
+					if (!graph[edge.from]) {
+						graph[edge.from] = {};
+						graph[edge.from][edge.to] = [ edge.input + "/"
+								+ edge.output ];
+					} else {
+						if (!graph[edge.from][edge.to]) {
+							graph[edge.from][edge.to] = [ edge.input + "/"
+									+ edge.output ];
+						} else {
+							graph[edge.from][edge.to].push(edge.input + "/"
+									+ edge.output);
+						}
+					}
+				});
+
+				// add edges to the rendered graph and combine <label[]>
+				_.forEach(graph, function(k, from) {
+					_.forEach(k, function(labels, to) {
+						_graph.setEdge(from, to, {
+							label : labels.join('\n'),
+							labeloffset : 5,
+							lineInterpolate : 'basis'
+						}, (from + '' + to));
+					});
+				});
+
+				// render the graph on the svg
+				dagreD3.dagre.layout(_graph, {});
+			}
+
+			function renderGraph() {
+
+				// render the graph in the svg
+				_renderer = new dagreD3.render();
+				_renderer(_svgGroup, _graph);
+
+				// Center graph horizontally
+				var xCenterOffset = (_svgContainer.clientWidth - _graph.graph().width) / 2;
+				_svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
+			}
+			
+			function handleEvents(){
+				
+				var zoom;
+				var drag;
+				
+				// attach click events for the selection of counter examples to the edge labels
+				// only if counterExamples is defined
+				if (angular.isDefined(scope.counterExample)) {
+					_svg.selectAll('.edgeLabel tspan').on('click', function() {
+						var label = this.innerHTML.split('/');
+						scope.$apply(function(){
+							scope.counterExample.input += (label[0] + ',');
+							scope.counterExample.output += (label[1] + ',');
+						});
+					});
+				}
+				
+				// Create and handle zoom  & pan event
+				zoom = d3.behavior.zoom().scaleExtent([ 0.1, 10 ])
+						.translate([ (_svgContainer.clientWidth - _graph.graph().width) / 2, 100 ]).on("zoom", zoomHandler);
+				zoom(_svg);
+
+				function zoomHandler() {
+					_svgGroup.attr('transform', 'translate(' + zoom.translate()
+							+ ')' + ' scale(' + zoom.scale() + ')');
+				}
+				
+				// Add drag behavior for nodes
+				drag = d3.behavior.drag()
+						.origin(function(d) { return d; })
+						.on('dragstart', dragstart)
+						.on("drag", drag);
+
+				_svg.selectAll('.node')
+						.attr('cx', function(d) { return d.x; })
+						.attr('cy', function(d) { return d.y; })
+						.call(drag);
+
+				// prevent pan effect while dragging nodes
+				function dragstart(d) {
+					d3.event.sourceEvent.stopPropagation();
+				}
+
+				function drag(d) {
+					var node = d3.select(this);
+					var attrs = _graph.node(d);
+					attrs.x += d3.event.dx;
+					attrs.y += d3.event.dy;
+					node.attr('transform', 'translate(' + attrs.x + ','
+							+ attrs.y + ')');
+
+					// redraw edges
+					var paths = d3.selectAll('.path');
+					_.forEach(_graph.edges(), function(edge, i) {
+						var line = calcPoints(_graph, edge);
+						paths[0][i].setAttribute('d', line);
+					});
+				}
+				
+				angular.element($window).on('resize', fitSize);
+
+				function fitSize() {
+					_svg.attr("width", _svgContainer.clientWidth);
+					_svg.attr("height", _svgContainer.clientHeight);
+				}
+
+				window.setTimeout(function() {
+					window.dispatchEvent(new Event('resize'));
+				}, 100);
+			}
+		}
+	}
 }());;(function () {
     'use strict';
 
@@ -5001,7 +5149,9 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
         .module('weblearner.directives')
         .directive('hypothesisSlideshowPanel', hypothesisSlideshowPanel);
 
-    function hypothesisSlideshowPanel() {
+    hypothesisSlideshowPanel.$inject = ['paths'];
+
+    function hypothesisSlideshowPanel(paths) {
 
         var directive = {
             require: '^panelManager',
@@ -5009,7 +5159,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 result: '=',
                 panelIndex: '@'
             },
-            templateUrl: 'app/partials/directives/hypothesis-panel.html',
+            templateUrl: paths.views.DIRECTIVES + '/hypothesis-panel.html',
             link: link
         };
         return directive;
@@ -5126,12 +5276,14 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
     angular
         .module('weblearner.directives')
-        .directive('loadScreen', ['$http', loadScreen]);
+        .directive('loadScreen', loadScreen);
 
-    function loadScreen($http) {
+    loadScreen.$inject = ['$http', 'paths'];
+
+    function loadScreen($http, paths) {
 
         var directive = {
-            templateUrl: 'app/partials/directives/load-screen.html',
+            templateUrl: paths.views.DIRECTIVES + '/load-screen.html',
             link: link
         };
         return directive;
@@ -5158,12 +5310,15 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 	
 	angular
 		.module('weblearner.directives')
-		.directive('navigation', navigation);
+		.directive('navigation', [
+            'paths',
+            navigation
+        ]);
 	
-	function navigation() {
+	function navigation(paths) {
 		
 		var directive = {
-			templateUrl: 'app/partials/directives/navigation.html',
+			templateUrl: paths.views.DIRECTIVES + '/navigation.html',
 			link: link,
 			controller: ['$scope', '$window', '$state', 'SessionService', controller]
 		};
@@ -5332,7 +5487,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             function handleModal() {
 
                 var modal = $modal.open({
-                    templateUrl: paths.PARTIALS_MODALS + '/action-create-modal.html',
+                    templateUrl: paths.views.MODALS + '/action-create-modal.html',
                     controller: 'ActionCreateModalController',
                     resolve: {
                         modalData: function () {
@@ -5354,17 +5509,17 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             }
         }
     }
-}());;(function() {
+}());;(function () {
     'use strict';
 
     angular
         .module('weblearner.directives')
         .directive('openActionEditModal', [
-            '$modal', 'ngToast',
+            '$modal', 'ngToast', 'paths',
             openActionEditModal
         ]);
 
-    function openActionEditModal($modal, toast) {
+    function openActionEditModal($modal, toast, paths) {
         var directive = {
             restrict: 'EA',
             scope: {
@@ -5389,7 +5544,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 }
 
                 var modal = $modal.open({
-                    templateUrl: 'app/partials/modals/action-edit-modal.html',
+                    templateUrl: paths.views.MODALS + '/action-edit-modal.html',
                     controller: 'ActionEditModalController',
                     resolve: {
                         modalData: function () {
@@ -5412,37 +5567,38 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             }
         }
     }
-}());;(function(){
-	'use strict';
-		
-	angular
-		.module('weblearner.directives')
-		.directive('openHypothesisLayoutSettingsModal', [
-             '$modal', openHypothesisLayoutSettingsModal
-         ]);
+}());;(function () {
+    'use strict';
 
-	function openHypothesisLayoutSettingsModal($modal) {
-		
-		var directive = {
+    angular
+        .module('weblearner.directives')
+        .directive('openHypothesisLayoutSettingsModal', [
+            '$modal', 'paths',
+            openHypothesisLayoutSettingsModal
+        ]);
+
+    function openHypothesisLayoutSettingsModal($modal) {
+
+        var directive = {
             scope: {
-                layoutSettings: '=',
+                layoutSettings: '='
             },
             link: link
-		};
-		return directive;
-		
-		//////////
-		
-		function link(scope, el, attrs) {
-			
-			el.on('click', handleModal);
-			
-			//////////
+        };
+        return directive;
+
+        //////////
+
+        function link(scope, el, attrs) {
+
+            el.on('click', handleModal);
+
+            //////////
 
             function handleModal() {
-            	                
-            	var modal = $modal.open({
-                    templateUrl: 'app/partials/modals/modal-hypothesis-layout-settings.html',
+
+                var modal = $modal.open({
+                    templateUrl: paths.views.MODALS + '/hypothesis-layout-settings-modal.html',
                     controller: 'HypothesisLayoutSettingsController',
                     resolve: {
                         modalData: function () {
@@ -5452,24 +5608,24 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                         }
                     }
                 });
-                
+
                 modal.result.then(function (layoutSettings) {
                     scope.layoutSettings = layoutSettings
                 })
             }
-		}
-	}
+        }
+    }
 }());;(function () {
     'use strict';
 
     angular
         .module('weblearner.directives')
         .directive('openSymbolCreateModal', [
-            '$modal',
+            '$modal', 'paths',
             openSymbolCreateModal
         ]);
 
-    function openSymbolCreateModal($modal) {
+    function openSymbolCreateModal($modal, paths) {
         var directive = {
             restrict: 'EA',
             scope: {
@@ -5489,7 +5645,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
             function handleModal() {
                 var modal = $modal.open({
-                    templateUrl: 'app/partials/modals/symbol-create-modal.html',
+                    templateUrl: paths.views.MODALS + '/symbol-create-modal.html',
                     controller: 'SymbolCreateModalController',
                     resolve: {
                         modalData: function () {
@@ -5541,7 +5697,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 }
 
                 var modal = $modal.open({
-                    templateUrl: paths.PARTIALS_MODALS + '/symbol-edit-modal.html',
+                    templateUrl: paths.views.MODALS + '/symbol-edit-modal.html',
                     controller: 'SymbolEditModalController',
                     resolve: {
                         modalData: function () {
@@ -5562,11 +5718,11 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
     angular
         .module('weblearner.directives')
         .directive('openTestDetailsModal', [
-            '$modal',
+            '$modal', 'paths',
             openTestDetailsModal
         ]);
 
-    function openTestDetailsModal($modal) {
+    function openTestDetailsModal($modal, paths) {
 
         var directive = {
             scope: {
@@ -5585,7 +5741,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             function handleModal() {
                 if (angular.isDefined(scope.test)) {
                     $modal.open({
-                        templateUrl: 'app/partials/modals/modal-test-details.html',
+                        templateUrl: paths.views.MODALS + '/modal-test-details.html',
                         controller: 'TestDetailsController',
                         resolve: {
                             modalData: function () {
@@ -5605,11 +5761,11 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
     angular
         .module('weblearner.directives')
         .directive('openTestSetupSettingsModal', [
-            '$modal',
+            '$modal', 'paths',
             openTestSetupSettingsModal
         ]);
 
-    function openTestSetupSettingsModal($modal) {
+    function openTestSetupSettingsModal($modal, paths) {
 
         var directive = {
             restrict: 'EA',
@@ -5629,7 +5785,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
             function handleModal() {            	
                 var modal = $modal.open({
-                    templateUrl: 'app/partials/modals/modal-test-setup-settings.html',
+                    templateUrl: paths.views.MODALS + '/modal-test-setup-settings.html',
                     controller: 'TestSetupSettingsController',
                     resolve: {
                         modalData: function () {
@@ -5710,7 +5866,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 '$scope',
                 controller
             ],
-            templateUrl: paths.PARTIALS_DIRECTIVES + '/project-create-form.html'
+            templateUrl: paths.views.DIRECTIVES + '/project-create-form.html'
         };
         return directive;
 
@@ -5744,7 +5900,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 project: '&'
             },
             controller: ['$scope', controller],
-            templateUrl: paths.PARTIALS_DIRECTIVES + '/project-edit-form.html'
+            templateUrl: paths.views.DIRECTIVES + '/project-edit-form.html'
         };
         return directive;
 
@@ -5779,7 +5935,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             scope: {
                 action: '&'
             },
-            templateUrl: paths.PARTIALS_DIRECTIVES + '/rest-action-edit-form.html',
+            templateUrl: paths.views.DIRECTIVES + '/rest-action-edit-form.html',
             controller: [
                 '$scope', 'RestActionTypes',
                 controller
@@ -5813,7 +5969,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
         var directive = {
             scope: {},
-            templateUrl: paths.PARTIALS_DIRECTIVES + '/rest-action-create-form.html',
+            templateUrl: paths.views.DIRECTIVES + '/rest-action-create-form.html',
             controller: [
                 '$scope', 'RestActionTypes',
                 controller
@@ -5885,16 +6041,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             scope: {
                 items: '=ngModel'
             },
-            template: ' <table class="table" >' +
-            '               <thead>' +
-            '                   <tr>' +
-            '                       <th style="width: 1px"></th>' +
-            '                       <th></th>' +
-            '                   </tr>' +
-            '               </thead>' +
-            '               <tbody ng-transclude>' +
-            '               </tbody>' +
-            '           </table>',
+            template: '<div class="selectable-list" ng-transclude></div>',
             controller: ['$scope', 'SelectionService', controller]
         };
         return directive;
@@ -5920,14 +6067,12 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             require: '^selectableList',
             replace: true,
             transclude: true,
-            template: ' <tr ng-class="item._selected ? \'active\' : \'\'">' +
-            '               <td>' +
-            '                   <input type="checkbox" ng-model="item._selected"><br>' +
-            '               </td>' +
-            '               <td>' +
-            '                   <div ng-transclude></div>' +
-            '               </td>' +
-            '           </tr>',
+            template: ' <div class="selectable-list-item" ng-class="item._selected ? \'active\' : \'\'">' +
+            '               <div class="selectable-list-control">' +
+            '                   <input type="checkbox" ng-model="item._selected">' +
+            '               </div>' +
+            '               <div class="selectable-list-content" ng-transclude></div>' +
+            '           </div>',
             link: link
         };
         return directive;
@@ -5989,10 +6134,12 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
         .module('weblearner.directives')
         .directive('widgetCounterExamples', widgetCounterExamples);
 
-    function widgetCounterExamples() {
+    widgetCounterExamples.$inject = ['paths'];
+
+    function widgetCounterExamples(paths) {
 
         var directive = {
-            templateUrl: 'app/partials/widgets/widget-counter-examples.html',
+            templateUrl: paths.views.WIDGETS + '/widget-counter-examples.html',
             scope: {
                 counterExamples: '=',
                 newCounterExample: '=counterExample'
@@ -6002,15 +6149,6 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
         return directive;
 
         function controller($scope) {
-
-            //$scope.newCounterExample = {
-            //    input: '',
-            //    output: ''
-            //};
-
-            console.log($scope.newCounterExample)
-
-            //////////
 
             $scope.$watch('counterExamples.length', function (n, o) {
                 console.log(n)
@@ -6026,13 +6164,13 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 };
 
                 _.forEach($scope.newCounterExample.input.split(','), function (input) {
-                    if (input.trim() != ''){
+                    if (input.trim() != '') {
                         ce.input.push(input.trim())
                     }
                 });
 
                 _.forEach($scope.newCounterExample.output.split(','), function (output) {
-                    if (output.trim() != ''){
+                    if (output.trim() != '') {
                         ce.output.push(output.trim())
                     }
                 });
@@ -6054,10 +6192,12 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
         .module('weblearner.directives')
         .directive('widgetTestResumeSettings', widgetTestResumeSettings);
 
-    function widgetTestResumeSettings() {
+    widgetTestResumeSettings.$inject = ['paths'];
+
+    function widgetTestResumeSettings(paths) {
 
         var directive = {
-            templateUrl: 'app/partials/widgets/widget-test-resume-settings.html',
+            templateUrl: paths.views.WIDGETS + '/widget-test-resume-settings.html',
             scope: {
                 configuration: '='
             },
@@ -6071,7 +6211,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
             //////////
 
-            $scope.$watch('configuration.eqOracle.type', function(type){
+            $scope.$watch('configuration.eqOracle.type', function (type) {
                 $scope.configuration.eqOracle = EqOracleService.create(type);
             });
         }
@@ -6096,7 +6236,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 '$scope',
                 controller
             ],
-            templateUrl: paths.PARTIALS_DIRECTIVES + '/symbol-create-form.html'
+            templateUrl: paths.views.DIRECTIVES + '/symbol-create-form.html'
         };
         return directive;
 
@@ -6136,7 +6276,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 '$scope',
                 controller
             ],
-            templateUrl: paths.PARTIALS_DIRECTIVES + '/symbol-edit-form.html'
+            templateUrl: paths.views.DIRECTIVES + '/symbol-edit-form.html'
         };
         return directive;
 
@@ -6578,7 +6718,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
         var directive = {
             scope: {},
-            templateUrl: paths.PARTIALS_DIRECTIVES + '/web-action-create-form.html',
+            templateUrl: paths.views.DIRECTIVES + '/web-action-create-form.html',
             controller: [
                 '$scope', 'WebActionTypes',
                 controller
@@ -6614,7 +6754,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             scope: {
                 action: '&'
             },
-            templateUrl: paths.PARTIALS_DIRECTIVES + '/web-action-edit-form.html',
+            templateUrl: paths.views.DIRECTIVES + '/web-action-edit-form.html',
             controller: [
                 '$scope', 'WebActionTypes',
                 controller
@@ -6640,19 +6780,19 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
     angular
         .module('weblearner.directives')
         .directive('webElementPicker', [
-            '$window', 'WebElementPickerService',
+            '$window', 'WebElementPickerService', 'paths',
             webElementPicker
         ]);
 
 
-    function webElementPicker($window, WebElementPickerService) {
+    function webElementPicker($window, WebElementPickerService, paths) {
 
         var directive = {
             scope: {},
-            templateUrl: 'app/partials/directives/web-element-picker.html',
+            templateUrl: paths.views.DIRECTIVES + '/web-element-picker.html',
             link: link,
             controller: [
-                '$scope', 'SessionService', 'api',
+                '$scope', 'SessionService', 'paths',
                 controller
             ]
         };
@@ -6761,7 +6901,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
         //////////
 
-        function controller($scope, SessionService, api) {
+        function controller($scope, SessionService, paths) {
 
             $scope.show = false;
             $scope.project = SessionService.project.get();
@@ -6770,7 +6910,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             //////////
 
             if ($scope.project != null) {
-                $scope.proxyUrl = $window.location.origin + api.PROXY_URL + $scope.project.baseUrl;
+                $scope.proxyUrl = $window.location.origin + paths.api.PROXY_URL + $scope.project.baseUrl;
             }
 
             $scope.$on('webElementPicker.open', function () {
@@ -6804,7 +6944,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
     angular
         .module('weblearner.resources')
         .factory('LearnResultResource', [
-            '$http', '$q', 'api', 'ResourceResponseService',
+            '$http', '$q', 'paths', 'ResourceResponseService',
             LearnResultResource
         ]);
 
@@ -6815,12 +6955,12 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
      *
      * @param $http
      * @param $q
-     * @param api
+     * @param paths
      * @param ResourceResponseService
      * @return {{getGetAllFinal: getGetAllFinal, getFinal: getFinal, getComplete: getComplete, delete: deleteTest}}
      * @constructor
      */
-    function LearnResultResource($http, $q, api, ResourceResponseService) {
+    function LearnResultResource($http, $q, paths, ResourceResponseService) {
 
         // the service
         var service = {
@@ -6841,7 +6981,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function getAllFinal(projectId) {
-            return $http.get(api.URL + '/projects/' + projectId + '/results')
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -6854,7 +6994,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function getFinal(projectId, testNo) {
-            return $http.get(api.URL + '/projects/' + projectId + '/results/' + testNo)
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo)
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -6868,7 +7008,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          */
         function getComplete(projectId, testNo) {
 
-            return $http.get(api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -6886,7 +7026,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
         		testNo = testNo.join();
         	}
         	
-            return $http.delete(api.URL + '/projects/' + projectId + '/results/' + testNo, {})
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/results/' + testNo, {})
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -6902,7 +7042,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
     angular
         .module('weblearner.resources')
         .factory('LearnerResource', [
-            '$http', '$q', 'api', 'ResourceResponseService',
+            '$http', '$q', 'paths', 'ResourceResponseService',
             Learner
         ]);
 
@@ -6912,12 +7052,12 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
      *
      * @param $http
      * @param $q
-     * @param api
+     * @param paths
      * @param ResourceResponseService
      * @return {{start: startLearning, stop: stopLearning, resume: resumeLearning, status: getStatus, isActive: isActive}}
      * @constructor
      */
-    function Learner($http, $q, api, ResourceResponseService) {
+    function Learner($http, $q, paths, ResourceResponseService) {
 
         var service = {
             start: startLearning,
@@ -6938,7 +7078,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function startLearning(projectId, learnConfiguration) {
-            return $http.post(api.URL + '/learner/start/' + projectId, learnConfiguration)
+            return $http.post(paths.api.URL + '/learner/start/' + projectId, learnConfiguration)
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -6950,7 +7090,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function stopLearning() {
-            return $http.get(api.URL + '/learner/stop/')
+            return $http.get(paths.api.URL + '/learner/stop/')
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -6964,7 +7104,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function resumeLearning(projectId, testNo, learnConfiguration) {
-            return $http.post(api.URL + '/learner/resume/' + projectId + '/' + testNo, learnConfiguration)
+            return $http.post(paths.api.URL + '/learner/resume/' + projectId + '/' + testNo, learnConfiguration)
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -6976,7 +7116,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function getStatus() {
-            return $http.get(api.URL + '/learner/status/')
+            return $http.get(paths.api.URL + '/learner/status/')
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -6987,7 +7127,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function isActive() {
-            return $http.get(api.URL + '/learner/active')
+            return $http.get(paths.api.URL + '/learner/active')
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -6998,18 +7138,18 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
     angular
         .module('weblearner.resources')
         .factory('ProjectResource', [
-            '$http', 'api', 'ResourceResponseService',
+            '$http', 'paths', 'ResourceResponseService',
             ProjectResource
         ]);
 
     /**
      * @param $http
-     * @param api
+     * @param paths
      * @param ResourceResponseService
      * @return {{all: getAllProjects, get: getProject, create: createProject, update: updateProject, delete: deleteProject}}
      * @constructor
      */
-    function ProjectResource($http, api, ResourceResponseService) {
+    function ProjectResource($http, paths, ResourceResponseService) {
 
         var service = {
             all: getAllProjects,
@@ -7028,7 +7168,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function getAllProjects() {
-            return $http.get(api.URL + '/projects')
+            return $http.get(paths.api.URL + '/projects')
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -7040,7 +7180,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function createProject(project) {
-            return $http.post(api.URL + '/projects', project)
+            return $http.post(paths.api.URL + '/projects', project)
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -7057,7 +7197,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function getProject(id) {
-            return $http.get(api.URL + '/projects/' + id)
+            return $http.get(paths.api.URL + '/projects/' + id)
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -7069,7 +7209,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function deleteProject(project) {
-            return $http.delete(api.URL + '/projects/' + project.id)
+            return $http.delete(paths.api.URL + '/projects/' + project.id)
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -7086,7 +7226,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function updateProject(project) {
-            return $http.put(api.URL + '/projects/' + project.id, project)
+            return $http.put(paths.api.URL + '/projects/' + project.id, project)
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -7102,7 +7242,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
     angular
         .module('weblearner.resources')
         .factory('SymbolResource', [
-            '$http', '$q', 'api', 'ResourceResponseService',
+            '$http', '$q', 'paths', 'ResourceResponseService',
             SymbolResource
         ]);
 
@@ -7111,12 +7251,12 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
      *
      * @param $http
      * @param $q
-     * @param api
+     * @param paths
      * @param ResourceResponseService
      * @return {{get: getSymbol, getAll: getAllSymbols, getRevisions: getRevisions, recover: recoverSymbol, create: createSymbol, update: updateSymbol, delete: deleteSymbol, deleteSome: deleteSomeSymbols}}
      * @constructor
      */
-    function SymbolResource($http, $q, api, ResourceResponseService) {
+    function SymbolResource($http, $q, paths, ResourceResponseService) {
 
         var service = {
             get: getSymbol,
@@ -7126,7 +7266,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
             create: createSymbol,
             update: updateSymbol,
             delete: deleteSymbol,
-            deleteSome: deleteSomeSymbols,
+            deleteSome: deleteSomeSymbols
         };
         return service;
 
@@ -7141,7 +7281,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          */
         function getSymbol(projectId, symbolId) {
 
-            return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -7162,12 +7302,12 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 if (options.type) queryParams += 'type=' + options.type;
                 if (options.deleted && options.deleted === true) queryParams += '&visbility=hidden';
                 
-                return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + queryParams)
+                return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + queryParams)
                     .then(ResourceResponseService.success)
                     .catch(ResourceResponseService.fail);
 
             } else {
-                return $http.get(api.URL + '/projects/' + projectId + '/symbols')
+                return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols')
                     .then(ResourceResponseService.success)
                     .catch(ResourceResponseService.fail);
             }
@@ -7180,7 +7320,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function recoverSymbol(projectId, symbolId) {
-            return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/show', {})
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/show', {})
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }
@@ -7198,7 +7338,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
                 return createSymbols(projectId, symbol)
             }
 
-            return $http.post(api.URL + '/projects/' + projectId + '/symbols', symbol)
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols', symbol)
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -7210,7 +7350,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
         function createSymbols(projectId, symbols) {
 
-            return $http.put(api.URL + '/projects/' + projectId + '/symbols', symbols)
+            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
                 .then(success)
                 .catch(fail);
 
@@ -7233,7 +7373,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          * @return {*}
          */
         function updateSymbol(projectId, symbol) {
-            return $http.put(api.URL + '/projects/' + projectId + '/symbols/' + symbol.id, symbol)
+            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id, symbol)
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -7252,7 +7392,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
          */
         function deleteSymbol(projectId, symbolId) {
 
-            return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide')
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide')
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -7266,7 +7406,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
             symbolsIds = symbolsIds.join();
 
-            return $http.post(api.URL + '/projects/' + projectId + '/symbols/' + symbolsIds + '/hide')
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolsIds + '/hide')
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -7278,7 +7418,7 @@ angular.module("app/partials/widgets/widget-test-resume-settings.html", []).run(
 
         function getRevisions(projectId, symbolId) {
 
-            return $http.get(api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
                 .then(ResourceResponseService.success)
                 .catch(ResourceResponseService.fail);
         }

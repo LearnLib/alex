@@ -1,0 +1,151 @@
+<div class="container">
+    <h2><span ng-bind="(symbol.type|capitalize)"></span> Actions Editor</h2>
+
+    <p class="text-muted">
+        Create and manage the actions for symbol:
+        <strong ng-bind="symbol.name"></strong> <em>[<span ng-bind="symbol.abbreviation"></span>]</em>
+    </p>
+    <hr>
+</div>
+
+<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+    <div class="container">
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" select-all-items-checkbox items="symbol.actions">
+        </div>
+        <div class="pull-left">
+            <button class="btn btn-xs btn-primary" open-action-create-modal symbol="symbol" on-created="addAction">
+                Create
+            </button>
+            <button class="btn btn-xs btn-default" open-action-edit-modal symbol="symbol"
+                    action="(symbol.actions | selected | first)"
+                    on-updated="updateAction"
+                    ng-class="(symbol.actions|selected).length != 1 ? 'disabled': ''">
+                Edit
+            </button>
+            <button class="btn btn-xs btn-default" ng-click="deleteSelectedActions()"
+            		ng-class="(symbol.actions|selected).length == 0 ? 'disabled': ''">
+                Delete
+            </button>
+        </div>
+        <div class="pull-right">
+            <button class="btn btn-success btn-xs" ng-click="saveChanges()">Save</button>
+            <button class="btn btn-default btn-xs" ng-click="revertChanges()">Reset</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div ng-if="symbol.actions" as-sortable ng-model="symbol.actions">
+        <div selectable-list ng-model="symbol.actions">
+            <div selectable-list-item ng-repeat="action in symbol.actions" as-sortable-item>
+                
+                <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+	                <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+	                    <i class="fa fa-bars"></i>
+	                </button>
+	                <ul class="dropdown-menu pull-left" role="menu">
+	                    <li>
+	                        <a href open-action-edit-modal symbol="symbol" action="action" on-updated="updateAction">
+	                            <i class="fa fa-edit fa-fw"></i> Edit
+	                        </a>
+	                    </li>
+	                    <li>
+	                        <a href ng-click="deleteAction(action)">
+	                            <i class="fa fa-trash fa-fw"></i> Delete
+	                        </a>
+	                    </li>
+	                </ul>
+	            </div>
+	            
+	           <span class="text-muted pull-right" as-sortable-item-handle style="margin-right: 15px; padding: 2px;">
+                    <i class="fa fa-sort fa-fw"></i>
+                </span>
+
+                <strong ng-bind="action.type"></strong><br>
+
+                <!-- BEGIN: Display Web Actions -->
+                <div class="text-muted" ng-if="symbol.type == 'web'">
+
+                    <p ng-if="action.type == webActionTypes.SEARCH_FOR_TEXT">
+                        Search for the
+                        <span ng-show="action.regexp">regexp</span>
+                        <span ng-show="!action.regexp">string</span>
+                        "{{action.value}}" on the page
+                    </p>
+
+                    <p ng-if="action.type == webActionTypes.SEARCH_FOR_NODE">
+                        Search for the element "{{action.value}}" in the DOM tree of the page
+                    </p>
+
+                    <p ng-if="action.type == webActionTypes.CLEAR">
+                        Clear the element "{{action.node}}"
+                    </p>
+
+                    <p ng-if="action.type == webActionTypes.CLICK">
+                        Click on the element "{{action.node}}"
+                    </p>
+
+                    <p ng-if="action.type == webActionTypes.FILL">
+                        Fill the element "{{action.node}}" with "{{action.generator}}"
+                    </p>
+
+                    <p ng-if="action.type == webActionTypes.GO_TO">
+                        Go to the page with the url "{{action.url}}"
+                    </p>
+
+                    <p ng-if="action.type == webActionTypes.SUBMIT">
+                        Submit the form element "{{action.node}}"
+                    </p>
+
+                    <p ng-if="action.type == webActionTypes.WAIT">
+                        Wait for {{action.duration}} ms.
+                    </p>
+
+                </div>
+                <!-- END: Display Web Actions -->
+
+                <!-- BEGIN: Display Rest Actions -->
+                <div class="text-muted" ng-if="symbol.type == 'rest'">
+
+                    <p ng-if="action.type == restActionTypes.CALL_URL">
+                        Make a "{{action.method}}" request to "{{action.url}}"
+                    </p>
+
+                    <p ng-if="action.type == restActionTypes.CHECK_STATUS">
+                        Check http status to be "{{action.status}}"
+                    </p>
+
+                    <p ng-if="action.type == restActionTypes.CHECK_HEADER_FIELD">
+                        Check header field "{{action.key}}" to be "{{action.value}}"
+                    </p>
+
+                    <p ng-if="action.type == restActionTypes.CHECK_HTTP_BODY_TEXT">
+                        Search in the response body for "{{action.value}}"
+                    </p>
+
+                    <p ng-if="action.type == restActionTypes.CHECK_ATTRIBUTE_EXISTS">
+                        Check if response body attribute "{{action.attribute}}" exists
+                    </p>
+
+                    <p ng-if="action.type == restActionTypes.CHECK_ATTRIBUTE_VALUE">
+                        Check response body attribute "{{action.attribute}}" to be "{{action.value}}"
+                    </p>
+
+                    <p ng-if="action.type == restActionTypes.CHECK_ATTRIBUTE_TYPE">
+                        Check response body attribute "{{action.attribute}}" to be type of "{{action.jsonType}}"
+                    </p>
+
+                </div>
+                <!-- END: Display Rest Actions -->
+
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info" ng-show="symbol.actions.length == 0">
+        You haven't created any actions for this symbol yet.
+    </div>
+
+</div>
