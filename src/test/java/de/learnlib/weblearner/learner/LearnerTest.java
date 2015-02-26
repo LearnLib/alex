@@ -3,7 +3,7 @@ package de.learnlib.weblearner.learner;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.WebSymbol;
+import de.learnlib.weblearner.entities.Symbol;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +38,7 @@ public class LearnerTest {
     @Before
     public void setUp() {
         given(factory.createThread(project, learnerConfiguration)).willReturn(thread);
-        given(project.getResetSymbol(WebSymbol.class)).willReturn(mock(WebSymbol.class));
+        given(project.getResetSymbol()).willReturn(mock(Symbol.class));
 
         learner = new Learner(factory);
     }

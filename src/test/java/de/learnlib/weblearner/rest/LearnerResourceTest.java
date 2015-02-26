@@ -7,7 +7,7 @@ import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.WebSymbol;
+import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.learner.Learner;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldStartALearningProcess() {
-        given(project.getResetSymbol(WebSymbol.class)).willReturn(mock(WebSymbol.class));
+        given(project.getResetSymbol()).willReturn(mock(Symbol.class));
         given(projectDAO.getByID(PROJECT_TEST_ID, "all")).willReturn(project);
         given(learner.isActive()).willReturn(true);
         LearnerResult result = mock(LearnerResult.class);
@@ -75,7 +75,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldNotStartALearningProcessIfTheConfigurationIsInvalid() {
-        given(project.getResetSymbol(WebSymbol.class)).willReturn(mock(WebSymbol.class));
+        given(project.getResetSymbol()).willReturn(mock(Symbol.class));
         given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(project);
         willThrow(IllegalArgumentException.class).given(learner).start(any(Project.class),
                                                                        any(LearnerConfiguration.class));

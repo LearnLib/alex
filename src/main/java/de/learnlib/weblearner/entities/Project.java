@@ -13,13 +13,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -64,11 +62,10 @@ public class Project implements Serializable {
     private Set<Symbol> symbols;
 
     /** Remember the different reset symbols by their type. */
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
-    @MapKeyColumn(name = "type")
     @JsonIgnore
-    private Map<Class<? extends  Symbol>, Symbol> resetSymbols;
+    private Symbol resetSymbol;
 
     /** The next id for a symbol in this project. */
     @JsonIgnore
@@ -96,7 +93,6 @@ public class Project implements Serializable {
     public Project(long projectId) {
         this.id = projectId;
         this.symbols = new HashSet<>();
-        this.resetSymbols = new HashMap<>();
         this.nextSymbolId = 1;
     }
 
@@ -195,47 +191,25 @@ public class Project implements Serializable {
     }
 
     /**
-     * Get the map of all reset symbols by their type.
+     * Get the current reset symbol.
      *
-     * @return The Map of reset symbol.
+     * @return The current registered reset symbol or null.
      */
-    public Map<Class<? extends Symbol>, Symbol> getResetSymbols() {
-        return resetSymbols;
+    public Symbol getResetSymbol() {
+        return resetSymbol;
     }
 
     /**
      * Set a new Map of reset symbols by their type.
      *
-     * @param resetSymbols
+     * @param resetSymbol
      *         The new map of reset symbols.
      */
-    public void setResetSymbols(Map<Class<? extends Symbol>, Symbol> resetSymbols) {
-        this.resetSymbols = resetSymbols;
+    public void setResetSymbol(Symbol resetSymbol) {
+        this.resetSymbol = resetSymbol;
     }
 
-    /**
-     * Add a reset symbol. The type of the symbol is given implicit and
-     * the new symbol will replace any previous reset symbols for that type.
-     *
-     * @param symbol
-     *         The new reset symbol. null values will be ignored.
-     */
-    public void setResetSymbol(Symbol symbol) {
-        if (symbol != null) {
-            this.resetSymbols.put(symbol.getClass(), symbol);
-        }
-    }
 
-    /**
-     * Get the current reset symbol for a specific type.
-     *
-     * @param type
-     *         The type of the reset symbol
-     * @return The current registered reset symbol or null.
-     */
-    public Symbol getResetSymbol(Class<? extends  Symbol> type) {
-        return resetSymbols.get(type);
-    }
 
     /**
      * Get the next free id for a symbol in the project.

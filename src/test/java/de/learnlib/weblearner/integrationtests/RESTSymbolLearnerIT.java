@@ -3,10 +3,10 @@ package de.learnlib.weblearner.integrationtests;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
 import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolAction;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -68,18 +68,18 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         project = ProjectTest.readProject(response.readEntity(String.class));
 
         // modify reset symbol
-        String path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/2";
+        String path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/1";
         response = client.target(path).request().get();
-        RESTSymbol resetSymbol = (RESTSymbol) response.readEntity(Symbol.class);
-        List<RESTSymbolAction> restActions = resetSymbol.getActions();
-        ((CallAction) restActions.get(0)).setUrl("/reset");
+        Symbol resetSymbol = response.readEntity(Symbol.class);
+        List<SymbolAction> restActions = resetSymbol.getActions();
+        ((CallAction) restActions.get(1)).setUrl("/reset");
         client.target(path).request().put(Entity.json(resetSymbol));
 
         // create symbols
         // symbol 1
         String symbolName = "RESTSymbolLearnerIT REST Symbol 1";
         String symbolAbbr = "learnrest1";
-        json = "{\"type\": \"rest\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                     + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/\"},"
                     + "{\"type\": \"checkStatus\", \"status\" : 200}"
@@ -89,7 +89,7 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         // symbol 2
         symbolName = "RESTSymbolLearnerIT REST Symbol 2";
         symbolAbbr = "learnrest2";
-        json = "{\"type\": \"rest\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                     + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/entity\"},"
                     + "{\"type\": \"checkAttributeValue\", \"attribute\" : \"field1\", \"value\": \"Hello\"}"

@@ -2,6 +2,7 @@ package de.learnlib.weblearner.entities.WebSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.MultiConnector;
@@ -16,18 +17,8 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("web")
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(name = "checkNode", value = CheckNodeAction.class),
-        @JsonSubTypes.Type(name = "checkText", value = CheckTextWebAction.class),
-        @JsonSubTypes.Type(name = "clear", value = ClearAction.class),
-        @JsonSubTypes.Type(name = "click", value = ClickAction.class),
-        @JsonSubTypes.Type(name = "fill", value = FillAction.class),
-        @JsonSubTypes.Type(name = "goto", value = GotoAction.class),
-        @JsonSubTypes.Type(name = "submit", value = SubmitAction.class),
-        @JsonSubTypes.Type(name = "wait", value = WaitAction.class)
-})
-public abstract class WebSymbolAction extends SymbolAction<MultiConnector> {
+@JsonTypeName("web")
+public abstract class WebSymbolAction extends SymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = -1990239222213631726L;

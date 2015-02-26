@@ -4,7 +4,6 @@
     "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore",
     "symbols": [
         {
-            "type": "web",
             "id": 1,
             "revision": 1,
             "name" : "Test Symbol",

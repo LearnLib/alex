@@ -39,7 +39,7 @@ public class ProjectIT {
         assertEquals(projectName, project.getName());
         assertEquals("http://example.com", project.getBaseUrl());
         assertNotNull(project.getSymbols());
-        assertEquals(2, project.getSymbolsSize()); // only the 2 reset symbols
+        assertEquals(1, project.getSymbolsSize()); // only the reset symbol
 
         // and an other one (with symbol)
         projectName = "IT Project - CRUD";
@@ -48,7 +48,7 @@ public class ProjectIT {
         Project project2 = ProjectTest.readProject(response.readEntity(String.class));
         String symbolName = "IT Project 2 AbstractSymbol - CRUD";
         String symbolAbbr = "ip2scrud";
-        json = "{\"type\": \"web\", \"project\": " + project2.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project2.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", "
                 + "\"actions\": [{\"type\": \"wait\", \"duration\": 1000}] }";
         String path = "/projects/" + project2.getId() + "/symbols";
@@ -56,7 +56,7 @@ public class ProjectIT {
 
         response = client.target(BASE_URL + "/projects/" + project2.getId() + "/symbols").request().get();
         List<Symbol> symbolsInDB = response.readEntity(new GenericType<List<Symbol>>() { });
-        assertEquals("Symbols of the project: " + symbolsInDB, 3, symbolsInDB.size());
+        assertEquals("Symbols of the project: " + symbolsInDB, 2, symbolsInDB.size());
         assertTrue("reset symbol was not set " + symbolsInDB, symbolsInDB.get(0).isResetSymbol());
 
         // read all
@@ -76,7 +76,7 @@ public class ProjectIT {
         assertTrue(project.getId() > 0);
         assertEquals(projectName, project.getName());
         assertNotNull(project.getSymbols());
-        assertEquals(2, project.getSymbolsSize()); // only the 2 reset symbols
+        assertEquals(1, project.getSymbolsSize()); // only the reset symbol
 
         // update
         json = "{\"id\": " + project2.getId() + ", \"name\": \"" + projectName + " updated\""
@@ -89,9 +89,7 @@ public class ProjectIT {
 
         response = client.target(BASE_URL + "/projects/" + project2.getId() + "/symbols").request().get();
         symbolsInDB = response.readEntity(new GenericType<List<Symbol>>() { });
-        assertEquals("Symbols of the project: " + symbolsInDB, 3, symbolsInDB.size());
-        assertTrue("reset symbol was not set " + symbolsInDB.get(0) + " -> " + symbolsInDB,
-                symbolsInDB.get(0).isResetSymbol());
+        assertEquals("Symbols of the project: " + symbolsInDB, 2, symbolsInDB.size());
 
         // delete
         response = client.target(BASE_URL + "/projects/" + project.getId()).request().delete();

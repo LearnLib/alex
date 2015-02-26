@@ -4,9 +4,7 @@ import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.entities.LearnAlgorithms;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.WebSymbol;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,8 +33,8 @@ public class LearnerThreadFactoryTest {
 
     @Before
     public void setUp() {
-        given(project.getResetSymbol(WebSymbol.class)).willReturn(mock(WebSymbol.class));
-        given(project.getResetSymbol(RESTSymbol.class)).willReturn(mock(RESTSymbol.class));
+        given(project.getBaseUrl()).willReturn("http://localhost/");
+        given(project.getResetSymbol()).willReturn(mock(Symbol.class));
         given(learnerConfiguration.getAlgorithm()).willReturn(LearnAlgorithms.DHC);
 
         factory = new LearnerThreadFactory(learnerResultDAO);
@@ -44,7 +42,7 @@ public class LearnerThreadFactoryTest {
 
     @Test
     public void shouldCreateThreadForWebSymbols() {
-        Symbol webSymbol = new WebSymbol();
+        Symbol webSymbol = new Symbol();
         LearnerThread<?> thread = factory.createThread(project, learnerConfiguration, webSymbol);
 
         assertNotNull(thread);
@@ -52,7 +50,7 @@ public class LearnerThreadFactoryTest {
 
     @Test
     public void shouldCreateThreadForRESTSymbols() {
-        Symbol restSymbol = new RESTSymbol();
+        Symbol restSymbol = new Symbol();
         given(project.getBaseUrl()).willReturn(FAKE_URL);
         LearnerThread<?> thread = factory.createThread(project, learnerConfiguration, restSymbol);
 

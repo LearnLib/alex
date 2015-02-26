@@ -1,10 +1,8 @@
 package de.learnlib.weblearner.entities.RESTSymbolActions;
 
 import de.learnlib.weblearner.entities.ExecuteResult;
-import de.learnlib.weblearner.entities.RESTSymbol;
-import de.learnlib.weblearner.entities.WebSymbol;
+import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.learner.MultiConnector;
-import de.learnlib.weblearner.learner.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +14,7 @@ import static org.mockito.Mockito.verify;
 
 public class RESTSymbolTest {
 
-    private RESTSymbol symbol;
+    private Symbol symbol;
     private RESTSymbolAction action1;
     private RESTSymbolAction action2;
 
@@ -25,7 +23,7 @@ public class RESTSymbolTest {
         action1 = mock(RESTSymbolAction.class);
         action2 = mock(RESTSymbolAction.class);
 
-        symbol = new RESTSymbol();
+        symbol = new Symbol();
         symbol.addAction(action1);
         symbol.addAction(action2);
     }

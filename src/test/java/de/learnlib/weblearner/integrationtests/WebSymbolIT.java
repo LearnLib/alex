@@ -3,7 +3,6 @@ package de.learnlib.weblearner.integrationtests;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.WebSymbol;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,7 +49,7 @@ public class WebSymbolIT {
 
         String symbolName = "IT Web Symbol - CRUD";
         String symbolAbbr = "itwebsymbcrud";
-        String json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        String json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                         + "\", \"abbreviation\": \"" + symbolAbbr + "\", "
                         + "\"actions\": [{\"type\": \"wait\", \"duration\": 1000}] }";
 
@@ -64,11 +63,11 @@ public class WebSymbolIT {
         assertEquals(1, symbol.getRevision());
         assertEquals(symbolName, symbol.getName());
         assertEquals(symbolAbbr, symbol.getAbbreviation());
-        assertNotNull(((WebSymbol) symbol).getActions());
-        assertEquals(1, ((WebSymbol) symbol).getActions().size());
+        assertNotNull(symbol.getActions());
+        assertEquals(1, symbol.getActions().size());
 
         // and a second on
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName + "2"
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName + "2"
                 + "\", \"abbreviation\": \"" + symbolAbbr + "2\", "
                 + "\"actions\": [{\"type\": \"wait\", \"duration\": 1000}] }";
         client.target(BASE_URL + path).request().post(Entity.entity(json, MediaType.APPLICATION_JSON));
@@ -78,9 +77,9 @@ public class WebSymbolIT {
         response = client.target(BASE_URL + path).request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         List<Symbol> symbols = response.readEntity(new GenericType<List<Symbol>>() { });
-        assertEquals(2 + 2, symbols.size()); // the 2 created symbols + 2 reset symbols
+        assertEquals(2 + 1, symbols.size()); // the 2 created symbols + reset symbol
         assertTrue(project.getId() > 0);
-        symbol = symbols.get(2);
+        symbol = symbols.get(1);
         assertNotNull(symbol);
         assertEquals(1, symbol.getRevision());
         assertEquals(symbolName, symbol.getName());
@@ -95,11 +94,11 @@ public class WebSymbolIT {
         assertEquals(1, symbol.getRevision());
         assertEquals(symbolName, symbol.getName());
         assertEquals(symbolAbbr, symbol.getAbbreviation());
-        assertNotNull(((WebSymbol) symbol).getActions());
-        assertEquals(1, ((WebSymbol) symbol).getActions().size());
+        assertNotNull(symbol.getActions());
+        assertEquals(1, symbol.getActions().size());
 
         // update
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"id\": " + symbol.getId()
+        json = "{\"project\": " + project.getId() + ", \"id\": " + symbol.getId()
                 + ", \"revision\": " + symbol.getRevision() + ", \"name\": \"" + symbolName
                 + " updated\", \"abbreviation\": \"" + symbolAbbr + "n\","
                 + " \"actions\": ["
@@ -113,16 +112,16 @@ public class WebSymbolIT {
         symbol = response.readEntity(Symbol.class);
         assertEquals(symbolName + " updated", symbol.getName());
         assertEquals(symbolAbbr + "n", symbol.getAbbreviation());
-        assertNotNull(((WebSymbol) symbol).getActions());
-        assertEquals(2, ((WebSymbol) symbol).getActions().size());
+        assertNotNull(symbol.getActions());
+        assertEquals(2, symbol.getActions().size());
         // get all the Symbols to check
         path = "/projects/" + project.getId() + "/symbols/";
         response = client.target(BASE_URL + path).request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         symbols = response.readEntity(new GenericType<List<Symbol>>() { });
-        assertEquals(2 + 2, symbols.size()); // update == create a new symbol with a higher revision & hide the old one
-        symbol = symbols.get(2); // 1st symbol, 2nd revision
-        assertEquals(2, ((WebSymbol) symbol).getActions().size());
+        assertEquals(2 + 1, symbols.size()); // update == create a new symbol with a higher revision & hide the old one
+        symbol = symbols.get(1); // 1st symbol, 2nd revision
+        assertEquals(2, symbol.getActions().size());
 
         // delete
         path = "/projects/" + project.getId() + "/symbols/" + symbol.getId() + "/hide";

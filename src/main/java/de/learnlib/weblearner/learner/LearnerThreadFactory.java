@@ -1,16 +1,12 @@
 package de.learnlib.weblearner.learner;
 
 import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.LearnerResumeConfiguration;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.SymbolTypes;
-import de.learnlib.weblearner.entities.WebSymbol;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -53,25 +49,13 @@ public class LearnerThreadFactory {
 
         Map<Class<? extends Symbol>, List<Symbol>> symbolsByType = splitSymbolsByType(symbols);
         LearnerResult learnerResult = createLearnerResult(project, configuration);
-        learnerResult.setType(getTypeOf(symbolsByType));
 
         MultiContextHandler context = new MultiContextHandler();
-        for (Class<?> c : symbolsByType.keySet()) {
-            ContextExecutableInputSUL.ContextHandler<? extends Connector> newHandler;
-            if (WebSymbol.class.equals(c)) {
-                newHandler = createWebSiteContextHandler(project);
-            } else  if (RESTSymbol.class.equals(c)) {
-                newHandler = createWebServiceContextHandler(project);
-            } else {
-                return null;
-            }
-            context.addHandler(newHandler);
-        }
+        context.addHandler(createWebSiteContextHandler(project));
+        context.addHandler(createWebServiceContextHandler(project));
 
-        WebSymbol webResetSymbol = (WebSymbol) project.getResetSymbol(WebSymbol.class);
-        RESTSymbol restResetSymbol = (RESTSymbol) project.getResetSymbol(RESTSymbol.class);
-        context.addResetSymbol(webResetSymbol);
-        context.addResetSymbol(restResetSymbol);
+        Symbol resetSymbol = project.getResetSymbol();
+        context.addResetSymbol(resetSymbol);
 
         return new LearnerThread(learnerResultDAO, learnerResult, context, symbols);
     }
@@ -117,20 +101,6 @@ public class LearnerThreadFactory {
         }
 
         return resultMap;
-    }
-
-    private SymbolTypes getTypeOf(Map<Class<? extends Symbol>, List<Symbol>> symbolsByType) {
-        if (symbolsByType.keySet().size() == 1) {
-            if (symbolsByType.keySet().contains(WebSymbol.class)) {
-                return SymbolTypes.WEB;
-            } else  if (symbolsByType.keySet().contains(RESTSymbol.class)) {
-                return SymbolTypes.REST;
-            } else {
-                return null;
-            }
-        } else {
-            return SymbolTypes.UNKNOWN;
-        }
     }
 
     private LearnerResult createLearnerResult(Project project, LearnerConfiguration configuration) {

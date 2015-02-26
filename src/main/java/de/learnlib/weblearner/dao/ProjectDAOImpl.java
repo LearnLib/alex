@@ -1,10 +1,8 @@
 package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.apache.logging.log4j.LogManager;
@@ -142,18 +140,18 @@ public class ProjectDAOImpl implements ProjectDAO {
      */
     private void initLazyRelations(Project project, String... embedFields) {
         if (embedFields != null) {
-            Set<String> foobar = new HashSet<>();
+            Set<String> fieldsToLoad = new HashSet<>();
             if (embedFields.length == 1 && "all".equals(embedFields[0])) {
-                foobar.add("symbols");
-                foobar.add("resetSymbols");
-                foobar.add("testResults");
+                fieldsToLoad.add("symbols");
+                fieldsToLoad.add("resetSymbols");
+                fieldsToLoad.add("testResults");
             } else {
                 for (String field : embedFields) {
-                    foobar.add(field);
+                    fieldsToLoad.add(field);
                 }
             }
 
-            if (foobar.contains("symbols")) {
+            if (fieldsToLoad.contains("symbols")) {
                 Hibernate.initialize(project.getSymbols());
                 for (Symbol s : project.getSymbols()) {
                     s.loadLazyRelations();
@@ -162,16 +160,16 @@ public class ProjectDAOImpl implements ProjectDAO {
                 project.setSymbols(null);
             }
 
-            if (foobar.contains("resetSymbols")) {
-                Hibernate.initialize(project.getResetSymbols());
-                for (Symbol s : project.getResetSymbols().values()) {
-                    s.loadLazyRelations();
+            if (fieldsToLoad.contains("resetSymbols")) {
+                Hibernate.initialize(project.getResetSymbol());
+                if (project.getResetSymbol() != null) {
+                    project.getResetSymbol().loadLazyRelations();
                 }
             } else {
                 project.setResetSymbol(null);
             }
 
-            if (foobar.contains("testResults")) {
+            if (fieldsToLoad.contains("testResults")) {
                 Hibernate.initialize(project.getTestResults());
             } else {
                 project.setTestResults(null);
@@ -206,31 +204,25 @@ public class ProjectDAOImpl implements ProjectDAO {
         long id = project.getNextSymbolId();
 
         // WEB
-        WebSymbol webReset = new WebSymbol();
-        webReset.setId(id);
-        webReset.setRevision(1L);
-        webReset.setName("Reset");
-        webReset.setAbbreviation("reset");
+        Symbol resetSymbol = new Symbol();
+        resetSymbol.setId(id);
+        resetSymbol.setRevision(1L);
+        resetSymbol.setName("Reset");
+        resetSymbol.setAbbreviation("reset");
+
         GotoAction webResetAction = new GotoAction();
         webResetAction.setUrl("/");
-        webReset.addAction(webResetAction);
-        project.addSymbol(webReset);
-        project.setResetSymbol(webReset);
+        resetSymbol.addAction(webResetAction);
 
-        // REST
-        RESTSymbol restReset = new RESTSymbol();
-        restReset.setId(id + 1);
-        restReset.setRevision(1L);
-        restReset.setName("Reset");
-        restReset.setAbbreviation("reset");
         CallAction restResetAction = new CallAction();
         restResetAction.setUrl("/");
         restResetAction.setMethod(CallAction.Method.GET);
-        restReset.addAction(restResetAction);
-        project.addSymbol(restReset);
-        project.setResetSymbol(restReset);
+        resetSymbol.addAction(restResetAction);
 
-        project.setNextSymbolId(id + 2);
+        project.addSymbol(resetSymbol);
+        project.setResetSymbol(resetSymbol);
+
+        project.setNextSymbolId(id + 1);
     }
 
 }

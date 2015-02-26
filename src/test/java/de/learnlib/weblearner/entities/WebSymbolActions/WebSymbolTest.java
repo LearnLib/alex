@@ -9,9 +9,7 @@ import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.PropertyFilterMixIn;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.learner.MultiConnector;
-import de.learnlib.weblearner.learner.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,7 +26,7 @@ import static org.mockito.Mockito.verify;
 
 public class WebSymbolTest {
 
-    private WebSymbol symb;
+    private Symbol symb;
 
     @Before
     public void setUp() {
@@ -36,7 +34,7 @@ public class WebSymbolTest {
         project.setId(1);
         project.setName("Web Symbol Test Project");
 
-        symb = new WebSymbol();
+        symb = new Symbol();
         symb.setName("WebSymbol");
         symb.setProject(project);
         symb.setAbbreviation("symb");
@@ -67,7 +65,7 @@ public class WebSymbolTest {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symb);
 
-        Symbol symb2 = mapper.readValue(json, WebSymbol.class);
+        Symbol symb2 = mapper.readValue(json, Symbol.class);
         assertEquals(symb.getId(), symb2.getId());
         assertEquals(symb.getRevision(), symb2.getRevision());
         assertEquals(symb.getName(), symb2.getName());
@@ -77,7 +75,7 @@ public class WebSymbolTest {
 
     @Test
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
-        String expectedJson = "{\"type\":\"web\",\"abbreviation\":\"symb\",\"actions\":["
+        String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
                     + "{\"type\":\"click\",\"node\":null,\"url\":null},"
                     + "{\"type\":\"checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                     + "{\"type\":\"wait\",\"duration\":0}"
@@ -97,7 +95,7 @@ public class WebSymbolTest {
 
     @Test
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
-        String expectedJson = "{\"type\":\"web\",\"abbreviation\":\"symb\",\"actions\":["
+        String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
                                     + "{\"type\":\"click\",\"node\":null,\"url\":null},"
                                     + "{\"type\":\"checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"duration\":0}"
@@ -113,7 +111,7 @@ public class WebSymbolTest {
     public void shouldReadJSONFileCorrectly() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
         File file = new File(getClass().getResource("/entities/websymbolactions/WebSymbolTestData.json").toURI());
-        symb = mapper.readValue(file, WebSymbol.class);
+        symb = mapper.readValue(file, Symbol.class);
 
         assertEquals("Test Symbol", symb.getName());
         assertEquals("test_symb", symb.getAbbreviation());
@@ -142,7 +140,7 @@ public class WebSymbolTest {
         WebSymbolAction action2 = mock(WebSymbolAction.class);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 
-        WebSymbol symbol = new WebSymbol();
+        Symbol symbol = new Symbol();
         symbol.addAction(action1);
         symbol.addAction(action2);
 
@@ -157,7 +155,7 @@ public class WebSymbolTest {
         WebSymbolAction action2 = mock(WebSymbolAction.class);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 
-        WebSymbol symbol = new WebSymbol();
+        Symbol symbol = new Symbol();
         symbol.addAction(action1);
         symbol.addAction(action2);
 

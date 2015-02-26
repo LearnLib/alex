@@ -2,7 +2,6 @@ package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.SymbolTypes;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
@@ -155,7 +154,7 @@ public class LearnerResultDAOImplTest {
                                         + "]},"
                                     + "\"project\":" + project.getId() + ",\"sigma\":[\"0\",\"1\"],"
                                     + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"stepNo\":" + (i + 1) + ","
-                                    + "\"testNo\":" + result.getTestNo() + ",\"type\":\"web\"}";
+                                    + "\"testNo\":" + result.getTestNo() + "}";
             String resultAsJSON = resultsInDBAsJSON.get(i);
 
             assertEquals(expectedJSON, resultAsJSON);
@@ -324,8 +323,6 @@ public class LearnerResultDAOImplTest {
     }
 
     private void initLearnerResult(LearnerResult result) {
-        result.setType(SymbolTypes.WEB);
-
         Alphabet<String> sigma = new SimpleAlphabet<>();
         sigma.add("0");
         sigma.add("1");
@@ -357,7 +354,7 @@ public class LearnerResultDAOImplTest {
                 + "]},"
                 + "\"project\":" + result.getProjectId() + ",\"sigma\":[\"0\",\"1\"],"
                 + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"stepNo\":" + result.getStepNo() + ","
-                + "\"testNo\":" + result.getTestNo() + ",\"type\":\"web\"}";
+                + "\"testNo\":" + result.getTestNo() + "}";
     }
 
     private List<LearnerResult> createLearnerResultsList() {

@@ -2,10 +2,8 @@ package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
-import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.entities.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.ClearAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.ClickAction;
@@ -41,7 +39,7 @@ public class SymbolDAOImplTest {
     private static SymbolDAO symbolDAO;
 
     private Project project;
-    private WebSymbol symbol;
+    private Symbol symbol;
     private Symbol symbol2;
     private List<Symbol> symbols;
 
@@ -60,7 +58,7 @@ public class SymbolDAOImplTest {
         projectDAO.create(project);
 
         // create symbol 1
-        symbol = new WebSymbol();
+        symbol = new Symbol();
         symbol.setProject(project);
         symbol.setName("SymbolDAOImplTest Symbol - Web ");
         symbol.setAbbreviation("webtest");
@@ -83,7 +81,7 @@ public class SymbolDAOImplTest {
         symbol.addAction(a7);
 
         // create symbol 2
-        symbol2 = new WebSymbol();
+        symbol2 = new Symbol();
         symbol2.setName("SymbolDAOImplTest Symbol - Web 2");
         symbol2.setAbbreviation("webtest2");
         symbol2.setProject(project);
@@ -110,8 +108,8 @@ public class SymbolDAOImplTest {
         // then
         Symbol symbolInDB = symbolDAO.get(project.getId(), symbol.getId(), symbol.getRevision());
         assertNotNull(symbolInDB);
-        assertTrue(symbolInDB instanceof WebSymbol);
-        WebSymbol webSymbolInDB = (WebSymbol) symbolInDB;
+        assertTrue(symbolInDB instanceof Symbol);
+        Symbol webSymbolInDB = (Symbol) symbolInDB;
         Project project2 = projectDAO.getByID(symbolInDB.getProjectId());
 
         assertEquals(symbol.getName(), symbolInDB.getName());
@@ -124,8 +122,8 @@ public class SymbolDAOImplTest {
         assertNotNull(webSymbolInDB.getActions());
         assertEquals(symbol.getActions().size(), webSymbolInDB.getActions().size());
         for (int i = 0; i < symbol.getActions().size(); i++) {
-            WebSymbolAction expectedAction = symbol.getActions().get(i);
-            WebSymbolAction actualAction = webSymbolInDB.getActions().get(i);
+            WebSymbolAction expectedAction = (WebSymbolAction) symbol.getActions().get(i);
+            WebSymbolAction actualAction = (WebSymbolAction) webSymbolInDB.getActions().get(i);
             assertEquals(expectedAction, actualAction);
         }
     }
@@ -169,7 +167,7 @@ public class SymbolDAOImplTest {
     @Test(expected = ValidationException.class)
     public void shouldNotCreateWebSymbolWithNotUniqueName() {
         symbolDAO.create(symbol);
-        Symbol symb2 = new WebSymbol();
+        Symbol symb2 = new Symbol();
         symb2.setProject(symbol.getProject());
         symb2.setName(symbol.getName());
 
@@ -187,8 +185,7 @@ public class SymbolDAOImplTest {
         // then
         Symbol symbolInDB = symbolDAO.get(project.getId(), symbol.getId(), symbol.getRevision());
         assertNotNull(symbolInDB);
-        assertTrue(symbolInDB instanceof WebSymbol);
-        WebSymbol websymbolInDB = (WebSymbol) symbolInDB;
+        Symbol websymbolInDB = (Symbol) symbolInDB;
         Project project2 = projectDAO.getByID(symbolInDB.getProjectId());
 
         assertEquals(symbol.getName(), symbolInDB.getName());
@@ -201,8 +198,8 @@ public class SymbolDAOImplTest {
         assertNotNull(websymbolInDB.getActions());
         assertEquals(symbol.getActions().size(), websymbolInDB.getActions().size());
         for (int i = 0; i < symbol.getActions().size(); i++) {
-            WebSymbolAction expectedAction = symbol.getActions().get(i);
-            WebSymbolAction actualAction = websymbolInDB.getActions().get(i);
+            WebSymbolAction expectedAction = (WebSymbolAction) symbol.getActions().get(i);
+            WebSymbolAction actualAction = (WebSymbolAction) websymbolInDB.getActions().get(i);
             assertEquals(expectedAction, actualAction);
         }
     }
@@ -284,7 +281,7 @@ public class SymbolDAOImplTest {
     public void shouldNotCreateWebSymbolsWithNotUniqueName() {
         // given
         long idBefore = project.getNextSymbolId();
-        Symbol invalidSymbol = new WebSymbol();
+        Symbol invalidSymbol = new Symbol();
         invalidSymbol.setProject(symbol.getProject());
         invalidSymbol.setName(symbol.getName());
         symbolDAO.create(invalidSymbol);
@@ -301,7 +298,7 @@ public class SymbolDAOImplTest {
 
     @Test
     public void shouldBeAllowedToHaveTheSameNameAndAbbreviationInDifferentProjects() {
-        Symbol symb2 = new WebSymbol();
+        Symbol symb2 = new Symbol();
         symb2.setProject(project);
         symb2.setName(symbol.getName());
         symb2.setAbbreviation(symbol.getAbbreviation());
@@ -329,10 +326,8 @@ public class SymbolDAOImplTest {
         for (Symbol x : symbolsFromDB) {
             int index = symbolsFromDB.indexOf(x);
             assertTrue(x + " was not in the returned Symbols from the DB", index > -1);
-            if (x instanceof WebSymbol) {
-                WebSymbol webSymbolInDb = (WebSymbol) symbolsFromDB.get(index);
-                assertEquals(((WebSymbol) x).getActions().size(), webSymbolInDb.getActions().size());
-            }
+            Symbol webSymbolInDb = symbolsFromDB.get(index);
+            assertEquals(x.getActions().size(), webSymbolInDb.getActions().size());
         }
     }
 
@@ -352,15 +347,13 @@ public class SymbolDAOImplTest {
 
         List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.VISIBLE);
 
-        assertEquals(symbols.size() + 2 - 1, symbolsFromDB.size()); // +2 -> reset symbol, -1 hidden
+        assertEquals(symbols.size() + 1 - 1, symbolsFromDB.size()); // +1 -> reset symbol, -1 hidden
         for (Symbol x : symbols) {
             if (!x.isHidden()) {
                 int index = symbolsFromDB.indexOf(x);
                 assertTrue(index > -1);
-                if (x instanceof WebSymbol) {
-                    WebSymbol webSymbolInDb = (WebSymbol) symbolsFromDB.get(index);
-                    assertEquals(((WebSymbol) x).getActions().size(), webSymbolInDb.getActions().size());
-                }
+                Symbol webSymbolInDb = symbolsFromDB.get(index);
+                assertEquals(x.getActions().size(), webSymbolInDb.getActions().size());
             }
         }
     }
@@ -371,43 +364,12 @@ public class SymbolDAOImplTest {
 
         List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.ALL);
 
-        assertEquals(symbols.size() + 2, symbolsFromDB.size()); // +2 -> reset symbol
+        assertEquals(symbols.size() + 1, symbolsFromDB.size()); // +1 -> reset symbol
         for (Symbol x : symbols) {
             int index = symbolsFromDB.indexOf(x);
             assertTrue(index > -1);
-            if (x instanceof WebSymbol) {
-                WebSymbol webSymbolInDb = (WebSymbol) symbolsFromDB.get(index);
-                assertEquals(((WebSymbol) x).getActions().size(), webSymbolInDb.getActions().size());
-            }
-        }
-    }
-
-    @Test
-    public void shouldGetOnlySymbolsWithTheRequestedType() {
-        symbols = createWebSymbolTestList();
-        createRESTSymbolTestList();
-
-        List<Symbol> webSymbolsFromDB = symbolDAO.getAllWithLatestRevision(project.getId(), WebSymbol.class,
-                                                                              SymbolVisibilityLevel.ALL);
-        assertNotNull(webSymbolsFromDB);
-        for (Symbol x : webSymbolsFromDB) {
-            assertTrue(x instanceof WebSymbol);
-        }
-        for (Symbol x : symbols) {
-            int index = webSymbolsFromDB.indexOf(x);
-            assertTrue(x + " was not in the returned Symbols from the DB" , index > -1);
-            if (x instanceof WebSymbol) {
-                WebSymbol webSymbolInDb = (WebSymbol) webSymbolsFromDB.get(index);
-                assertEquals(((WebSymbol) x).getActions().size(), webSymbolInDb.getActions().size());
-            }
-        }
-
-        List<Symbol> restSymbols = symbolDAO.getAllWithLatestRevision(project.getId(),
-                                                                      RESTSymbol.class,
-                                                                      SymbolVisibilityLevel.ALL);
-        assertNotNull(restSymbols);
-        for (Symbol x : restSymbols) {
-            assertTrue(x instanceof RESTSymbol);
+            Symbol webSymbolInDb = symbolsFromDB.get(index);
+                assertEquals(x.getActions().size(), webSymbolInDb.getActions().size());
         }
     }
 
@@ -429,7 +391,7 @@ public class SymbolDAOImplTest {
     @Test
     public void shouldGetAllRevisionOfASymbol() {
         symbols = createWebSymbolTestList();
-        symbol = (WebSymbol) symbols.get(symbols.size() - 1);
+        symbol = symbols.get(symbols.size() - 1);
 
         List<Symbol> symbolRevisionInDB = symbolDAO.getWithAllRevisions(symbol.getProjectId(), symbol.getId());
         assertEquals(2, symbolRevisionInDB.size());
@@ -499,7 +461,7 @@ public class SymbolDAOImplTest {
     @Test(expected = ValidationException.class)
     public void shouldNotUpdateWebSymbolWithoutUniqueName() {
         symbolDAO.create(symbol);
-        Symbol symb2 = new WebSymbol();
+        Symbol symb2 = new Symbol();
         symb2.setProject(project);
         symb2.setName("Test Symbol - Update Without Unique Name");
         symb2.setAbbreviation("upd_uni_na");
@@ -610,12 +572,12 @@ public class SymbolDAOImplTest {
     private List<Symbol> createWebSymbolTestList() {
         List<Symbol> returnList = new LinkedList<>();
         for (int i = 0; i < SYMBOL_COUNT; i++) {
-            Symbol s = new WebSymbol();
+            Symbol s = new Symbol();
             s.setProject(project);
             project.getSymbols().add(s);
             s.setName("Test Symbol - Get All Web No. " + i);
             s.setAbbreviation("web_all_" + i);
-            ((WebSymbol) s).addAction(new WaitAction());
+            s.addAction(new WaitAction());
             if (i == SYMBOL_COUNT - 1) {
                 s.setHidden(true);
             }
@@ -624,7 +586,7 @@ public class SymbolDAOImplTest {
             if (i > SYMBOL_COUNT / 2) {
                 s.setName(s.getName() + " 2");
                 WebSymbolAction newAction = new ClearAction();
-                ((WebSymbol) s).addAction(newAction);
+                s.addAction(newAction);
                 if (i == SYMBOL_COUNT - 1) {
                     s.setHidden(true);
                 }
@@ -639,7 +601,7 @@ public class SymbolDAOImplTest {
     private List<Symbol> createRESTSymbolTestList() {
         List<Symbol> returnList = new LinkedList<>();
         for (int i = 0; i < SYMBOL_COUNT; i++) {
-            Symbol s = new RESTSymbol();
+            Symbol s = new Symbol();
             s.setProject(project);
             project.getSymbols().add(s);
             s.setName("Test Symbol - Get All REST No. " + i);

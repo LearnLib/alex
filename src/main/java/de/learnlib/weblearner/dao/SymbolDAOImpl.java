@@ -175,19 +175,13 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     public List<Symbol> getAllWithLatestRevision(long projectId, SymbolVisibilityLevel visibilityLevel) {
-        return getAllWithLatestRevision(projectId, Symbol.class, visibilityLevel);
-    }
-
-    @Override
-    public List<Symbol> getAllWithLatestRevision(long projectID, Class<? extends Symbol> type,
-                                                    SymbolVisibilityLevel visibilityLevel) {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         @SuppressWarnings("unchecked") // should return a list of Symbols
-        List<Long> ids = session.createCriteria(type)
-                                    .add(Restrictions.eq("project.id", projectID))
+        List<Long> ids = session.createCriteria(Symbol.class)
+                                    .add(Restrictions.eq("project.id", projectId))
                                     .setProjection(Projections.property("id"))
                                     .list();
 
@@ -196,7 +190,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         if (ids.isEmpty()) {
             return new LinkedList<>();
         }
-        return getByIdsWithLatestRevision(projectID, visibilityLevel, ids.toArray(new Long[ids.size()]));
+        return getByIdsWithLatestRevision(projectId, visibilityLevel, ids.toArray(new Long[ids.size()]));
     }
 
     @Override

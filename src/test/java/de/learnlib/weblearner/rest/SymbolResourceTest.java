@@ -8,10 +8,8 @@ import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.dao.ProjectDAO;
 import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
-import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.learner.Learner;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
@@ -76,13 +74,13 @@ public class SymbolResourceTest extends JerseyTest {
         project.setId(PROJECT_TEST_ID);
         given(projectDAO.getByID(project.getId())).willReturn(project);
 
-        symbol = new WebSymbol();
+        symbol = new Symbol();
         symbol.setId(SYMBOL_TEST_ID);
         symbol.setName("Symbol Resource Test Symbol");
         symbol.setAbbreviation("srts");
         symbol.setProject(project);
 
-        symbol2 = new WebSymbol();
+        symbol2 = new Symbol();
         symbol2.setId(SYMBOL_TEST_ID + 1);
         symbol2.setName("Symbol Resource Test Symbol 2");
         symbol2.setAbbreviation("srts 2");
@@ -109,7 +107,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldCreateValidSymbolWithoutProjectOrRevision() throws IOException {
-        String json = "{\"type\":\"web\",\"abbreviation\":\"srts\",\"actions\":[],\"id\":1,"
+        String json = "{\"abbreviation\":\"srts\",\"actions\":[],\"id\":1,"
                         + "\"name\":\"Symbol Resource Test Symbol\"}";
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().post(Entity.json(json));
@@ -230,79 +228,36 @@ public class SymbolResourceTest extends JerseyTest {
     @Test
     public void shouldReturnAllSymbolsThatAreVisible() {
         symbols.remove(symbol2);
-        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.VISIBLE))
+        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, SymbolVisibilityLevel.VISIBLE))
                 .willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").request().get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"type\":\"web\",\"abbreviation\":\"srts\",\"actions\":[],"
+        String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],"
                                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
                                 + "\"project\":10,\"resetSymbol\":false,\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAllWithLatestRevision(project.getId(), Symbol.class, SymbolVisibilityLevel.VISIBLE);
+        verify(symbolDAO).getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.VISIBLE);
     }
 
     @Test
     public void shouldReturnAllSymbolsIncludingHiddenOnes() {
         symbols.remove(symbol2);
-        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.ALL))
+        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, SymbolVisibilityLevel.ALL))
                 .willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("visibility", "all")
                             .request().get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"type\":\"web\",\"abbreviation\":\"srts\",\"actions\":[],"
+        String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],"
                                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
                                 + "\"project\":10,\"resetSymbol\":false,\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAllWithLatestRevision(project.getId(), Symbol.class, SymbolVisibilityLevel.ALL);
-    }
-
-    @Test
-    public void shouldReturnOnlyWebSymbols() {
-        symbols.remove(symbol2);
-        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, WebSymbol.class, SymbolVisibilityLevel.VISIBLE))
-                .willReturn(symbols);
-
-        Response response = target("/projects/" + project.getId() + "/symbols").queryParam("type", "web")
-                                .request().get();
-
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"type\":\"web\",\"abbreviation\":\"srts\",\"actions\":[],"
-                                + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                                + "\"project\":10,\"resetSymbol\":false,\"revision\":0}]";
-        assertEquals(expectedJSON, response.readEntity(String.class));
-        assertEquals("1", response.getHeaderString("X-Total-Count"));
-
-        verify(symbolDAO).getAllWithLatestRevision(project.getId(), WebSymbol.class, SymbolVisibilityLevel.VISIBLE);
-    }
-
-    @Test
-    public void shouldReturnOnlyRestSymbols() {
-        symbols = new LinkedList<>();
-        Symbol restSymbol = new RESTSymbol();
-        restSymbol.setId(SYMBOL_TEST_ID);
-        restSymbol.setName("Symbol Resource REST Test Symbol");
-        restSymbol.setAbbreviation("srrts");
-        restSymbol.setProject(project);
-        symbols.add(restSymbol);
-        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, RESTSymbol.class, SymbolVisibilityLevel.VISIBLE))
-                .willReturn(symbols);
-
-        Response response = target("/projects/" + project.getId() + "/symbols").queryParam("type", "rest")
-                                .request().get();
-
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"type\":\"rest\",\"abbreviation\":\"srrts\",\"actions\":[],"
-                                + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource REST Test Symbol\","
-                                + "\"project\":10,\"resetSymbol\":false,\"revision\":0}]";
-        assertEquals(expectedJSON, response.readEntity(String.class));
-        assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAllWithLatestRevision(project.getId(), RESTSymbol.class, SymbolVisibilityLevel.VISIBLE);
+        verify(symbolDAO).getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.ALL);
     }
 
     @Test

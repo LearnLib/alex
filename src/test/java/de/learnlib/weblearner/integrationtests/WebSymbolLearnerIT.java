@@ -4,9 +4,8 @@ import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.WebSymbol;
+import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.After;
@@ -58,8 +57,8 @@ public class WebSymbolLearnerIT {
         // modify reset symbol
         String path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/1";
         response = client.target(path).request().get();
-        WebSymbol resetSymbol = (WebSymbol) response.readEntity(Symbol.class);
-        List<WebSymbolAction> actions = resetSymbol.getActions();
+        Symbol resetSymbol = response.readEntity(Symbol.class);
+        List<SymbolAction> actions = resetSymbol.getActions();
         ((GotoAction) actions.get(0)).setUrl("/test_app.html");
         client.target(path).request().put(Entity.json(resetSymbol));
 
@@ -67,7 +66,7 @@ public class WebSymbolLearnerIT {
         // symbol 1
         String symbolName = "WebSymbolLearnerIT Web Symbol 1";
         String symbolAbbr = "learnweb1";
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                 + "{\"type\": \"checkText\", \"value\": \"Lorem Ipsum\"}"
                 + "]}";
@@ -76,7 +75,7 @@ public class WebSymbolLearnerIT {
         // symbol 2
         symbolName = "WebSymbolLearnerIT Web Symbol 2";
         symbolAbbr = "learnweb2";
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                 + "{\"type\": \"click\", \"node\" : \"#link\"}"
                 + "]}";
@@ -85,7 +84,7 @@ public class WebSymbolLearnerIT {
         // symbol 3
         symbolName = "WebSymbolLearnerIT Web Symbol 3";
         symbolAbbr = "learnweb3";
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                 + "{\"type\": \"click\", \"node\" : \"#link2\"}"
                 + "]}";
@@ -94,7 +93,7 @@ public class WebSymbolLearnerIT {
         // symbol 4
         symbolName = "WebSymbolLearnerIT Web Symbol 4";
         symbolAbbr = "learnweb4";
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                     + "{\"type\": \"checkText\", \"value\": \".*Test App - Page [0-9].*\","
                     + "\"regexp\": true}"

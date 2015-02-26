@@ -1,16 +1,12 @@
 package de.learnlib.weblearner.integrationtests;
 
-
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.WebSymbol;
+import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -73,23 +69,17 @@ public class MixedLearnerIT extends JerseyTest {
         // modify reset symbol
         String path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/1";
         response = client.target(path).request().get();
-        WebSymbol resetSymbolWeb = (WebSymbol) response.readEntity(Symbol.class);
-        List<WebSymbolAction> actions = resetSymbolWeb.getActions();
+        Symbol resetSymbol = response.readEntity(Symbol.class);
+        List<SymbolAction> actions = resetSymbol.getActions();
         ((GotoAction) actions.get(0)).setUrl("/web/reset");
-        client.target(path).request().put(Entity.json(resetSymbolWeb));
-
-        path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/2";
-        response = client.target(path).request().get();
-        RESTSymbol resetSymbolRest = (RESTSymbol) response.readEntity(Symbol.class);
-        List<RESTSymbolAction> restActions = resetSymbolRest.getActions();
-        ((CallAction) restActions.get(0)).setUrl("/test/reset");
-        client.target(path).request().put(Entity.json(resetSymbolRest));
+        ((CallAction) actions.get(1)).setUrl("/test/reset");
+        client.target(path).request().put(Entity.json(resetSymbol));
 
         // create symbols
         // rest symbol 1
         String symbolName = "MixedLearnerIT REST Symbol 1";
         String symbolAbbr = "learnrest1";
-        json = "{\"type\": \"rest\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                     + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/test\"},"
                     + "{\"type\": \"checkStatus\", \"status\" : 200}"
@@ -99,7 +89,7 @@ public class MixedLearnerIT extends JerseyTest {
         // web symbol 1
         symbolName = "MixedLearnerIT Web Symbol 1";
         symbolAbbr = "learnweb1";
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                     + "{\"type\": \"goto\", \"url\": \"/web/page1\"},"
                     + "{\"type\": \"checkText\", \"value\": \"Lorem Ipsum\"}"

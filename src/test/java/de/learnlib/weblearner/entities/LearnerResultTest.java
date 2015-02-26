@@ -37,7 +37,7 @@ public class LearnerResultTest {
                                                         + "{\"from\":1,\"input\":\"1\",\"to\":0,\"output\":\"OK\"}"
                                                 + "]},\"project\":" + PROJECT_ID + ",\"sigma\":[\"0\",\"1\"],"
                                                 + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\","
-                                                + "\"stepNo\":" + STEP_NO + ",\"testNo\":" + ID + ",\"type\":\"web\"}";
+                                                + "\"stepNo\":" + STEP_NO + ",\"testNo\":" + ID + "}";
 
     @Test
     public void shouldCreateTheCorrectJSON() throws JsonProcessingException {
@@ -65,7 +65,6 @@ public class LearnerResultTest {
         result.setDuration(TEST_DURATION);
         result.setSigma(sigma);
         result.createHypothesisFrom(hypothesis);
-        result.setType(SymbolTypes.WEB);
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(result);

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.SymbolTypes;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
 import de.learnlib.weblearner.utils.ResourceInputHelpers;
@@ -131,10 +130,6 @@ public class SymbolResource {
      *
      * @param projectId
      *         The ID of the project.
-     * @param type
-     *         Specify the type of the symbols you are interested in.
-     *         Valid values are: 'all', web, 'rest'. Default is 'all'.
-     *         Optional.
      * @param visibilityLevel
      *         Specify the visibility level of the symbols you want to get.
      *         Valid values are: 'all'/ 'unknown', 'visible', 'hidden'.
@@ -146,10 +141,9 @@ public class SymbolResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") long projectId,
-                           @QueryParam("type") @DefaultValue("UNKNOWN") SymbolTypes type,
                            @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         try {
-            List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(projectId, type.getClazz(), visibilityLevel);
+            List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(projectId, visibilityLevel);
 
             String json = createSymbolsJSON(symbols);
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();

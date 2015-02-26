@@ -2,6 +2,7 @@ package de.learnlib.weblearner.entities.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
+import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class CallActionTest {
         ObjectMapper mapper = new ObjectMapper();
 
         File file = new File(getClass().getResource("/entities/restsymbolactions/CallActionTestData.json").toURI());
-        RESTSymbolAction obj = mapper.readValue(file, RESTSymbolAction.class);
+        SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof CallAction);
         CallAction objAsAction = (CallAction) obj;

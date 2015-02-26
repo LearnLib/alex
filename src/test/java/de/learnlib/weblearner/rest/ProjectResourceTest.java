@@ -6,7 +6,6 @@ import de.learnlib.weblearner.dao.ProjectDAO;
 import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.learner.Learner;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
@@ -47,7 +46,7 @@ public class ProjectResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        Symbol symbol = new WebSymbol();
+        Symbol symbol = new Symbol();
         symbol.setName("Project Resource Test Symbol");
         symbol.setAbbreviation("prts");
 

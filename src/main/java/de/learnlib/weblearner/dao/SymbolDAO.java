@@ -60,21 +60,6 @@ public interface SymbolDAO {
     List<Symbol> getAllWithLatestRevision(long projectID, SymbolVisibilityLevel visibilityLevel);
 
     /**
-     * Get all symbols of a project which have a specific type.
-     * 
-     * @param projectId
-     *            The project the symbols should belong to.
-     * @param type
-     *            The requested type for the symbols.
-     * @param visibilityLevel
-     *         Include symbols that are currently marked as hidden?
-     * @return A list of symbols matching the project and type.
-     */
-    List<Symbol> getAllWithLatestRevision(long projectId,
-                                          Class<? extends Symbol> type,
-                                          SymbolVisibilityLevel visibilityLevel);
-
-    /**
      * Get a specific symbol by its identifying parameters.
      * 
      * @param projectId
