@@ -11,6 +11,7 @@
             'ui.ace',
             'ui.router',
             'ngToast',
+            'draganddrop',
             
             //all templates
 			'templates-all',
@@ -41,8 +42,82 @@
                 horizontalPosition: 'center',
                 maxNumber: 1
             });
-        }]);
-}());;angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/project-create-form.html', 'app/views/directives/project-edit-form.html', 'app/views/directives/rest-action-create-form.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/symbol-create-form.html', 'app/views/directives/symbol-edit-form.html', 'app/views/directives/web-action-create-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/modal-test-setup-settings.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+        }])
+        .run(['$rootScope', '_', function($rootScope, _){
+            $rootScope._ = _;
+        }])
+}());;angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-create-form.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/symbol-create-form.html', 'app/views/directives/symbol-edit-form.html', 'app/views/directives/web-action-create-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/modal-test-setup-settings.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+
+angular.module("app/views/directives/counter-example-builder.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/counter-example-builder.html",
+    "<div id=\"counter-example-builder\">\n" +
+    "	<div class=\"wrapper\">\n" +
+    "	\n" +
+    "		<nav class=\"navbar navbar-default\" role=\"navigation\">\n" +
+    "	        <div class=\"container-fluid\">\n" +
+    "	        \n" +
+    "	        	<p class=\"navbar-text\"><strong>Counter Example Builder</strong></p>\n" +
+    "	        \n" +
+    "	            <button class=\"btn btn-default navbar-btn pull-right\" ng-click=\"close()\"><i\n" +
+    "	                    class=\"fa fa-close\"></i></button>\n" +
+    "	            <button class=\"btn btn-primary navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">ok</button>\n" +
+    "	            <button class=\"btn btn-default navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
+    "	            	<i class=\"fa fa-eye\"></i>\n" +
+    "	            </button>  \n" +
+    "	        </div>\n" +
+    "	    </nav>\n" +
+    "	    \n" +
+    "	    <div class=\"available-inputs-panel\">\n" +
+    "	        <ul class=\"list-group\">\n" +
+    "	            <li class=\"list-group-item\" ng-repeat=\"input in inputs\" draggable=\"true\" effect-allowed=\"copy\"\n" +
+    "	                draggable-type=\"custom-object\" draggable-data=\"input\">{{input}}</li>\n" +
+    "	        </ul>\n" +
+    "	    </div>\n" +
+    "    \n" +
+    "    <div class=\"counter-example-panel\">\n" +
+    "\n" +
+    "		<div class=\"counter-example-list-wrapper\">\n" +
+    "            <div class=\"list-group\" as-sortable ng-model=\"ios\">\n" +
+    "                <div class=\"list-group-item\" ng-repeat=\"io in counterExample track by $index\" as-sortable-item>\n" +
+    "\n" +
+    "                    <span class=\"text-muted pull-right\" ng-click=\"remove($index)\">\n" +
+    "                        <i class=\"fa fa-trash fa-fw\"></i>\n" +
+    "                    </span>\n" +
+    "\n" +
+    "                    <span class=\"text-muted pull-right\" as-sortable-item-handle style=\"display: inline-block; margin-right: 5px\">\n" +
+    "                        <i class=\"fa fa-sort fa-fw\"></i>\n" +
+    "                    </span>\n" +
+    "\n" +
+    "                    <div class=\"container-fluid clearfix\" style=\"margin-right: 50px; padding: 0\">\n" +
+    "\n" +
+    "                        <div style=\"width: 66%; float: left\" drop=\"onDropInput($data, $event, $index)\" drop-effect=\"copy\"\n" +
+    "                             drop-accept=\"'json/custom-object'\">\n" +
+    "                            <div class=\"counter-example-input\">{{io.input}}</div>\n" +
+    "                        </div>\n" +
+    "\n" +
+    "                        <div style=\"width: 34%; float: left\">\n" +
+    "                            <select class=\"form-control\">\n" +
+    "                            	<option>OK</option>\n" +
+    "                            	<option>FAILED</option>\n" +
+    "                            </select>\n" +
+    "                        </div>\n" +
+    "\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "        	</div>\n" +
+    "        	\n" +
+    "        	<button class=\"btn btn-default btn-sm btn-block\" ng-click=\"add()\">\n" +
+    "	            Add\n" +
+    "	        </button>\n" +
+    "    	</div>\n" +
+    "		\n" +
+    "    </div>\n" +
+    "				\n" +
+    "	</div>\n" +
+    "</div>");
+}]);
 
 angular.module("app/views/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -253,119 +328,6 @@ angular.module("app/views/directives/observation-table.html", []).run(["$templat
   "use strict";
   $templateCache.put("app/views/directives/observation-table.html",
     "");
-}]);
-
-angular.module("app/views/directives/project-create-form.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/project-create-form.html",
-    "<form id=\"project-create-form\" name=\"create_form\" role=\"form\" ng-submit=\"submitForm()\">\n" +
-    "\n" +
-    "    <!-- Name -->\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Name*</label>\n" +
-    "\n" +
-    "        <p class=\"text-muted\">The name of your project</p>\n" +
-    "        <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
-    "               placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
-    "    </div>\n" +
-    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
-    "        <small ng-show=\"create_form.name.$error.required\">Name must not be empty.</small>\n" +
-    "    </div>\n" +
-    "    <!-- Name -->\n" +
-    "\n" +
-    "    <!-- Base Url -->\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Url*</label>\n" +
-    "\n" +
-    "        <p class=\"text-muted\">The url of your website</p>\n" +
-    "        <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
-    "               placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\" ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
-    "    </div>\n" +
-    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
-    "        <small ng-show=\"create_form.url.$error.required\">\n" +
-    "            Url must not be empty.\n" +
-    "        </small>\n" +
-    "        <small ng-show=\"create_form.url.$error.pattern\">\n" +
-    "            The url has to start with http(s):// and have a host name\n" +
-    "        </small>\n" +
-    "    </div>\n" +
-    "    <!-- /Base Url -->\n" +
-    "\n" +
-    "    <!-- Description -->\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Description</label>\n" +
-    "\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            If you want you can describe your new project with a few words\n" +
-    "        </p>\n" +
-    "            <textarea name=\"description\" ng-model=\"project.description\"\n" +
-    "                      placeholder=\"Enter the description for the project\"\n" +
-    "                      class=\"form-control\" rows=\"3\"></textarea>\n" +
-    "    </div>\n" +
-    "    <!-- /Description -->\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <button type=\"submit\" class=\"btn btn-sm btn-primary\">Create Project</button>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/views/directives/project-edit-form.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/project-edit-form.html",
-    "<form id=\"project-edit-form\" name=\"update_form\" role=\"form\" ng-submit=\"submitForm()\">\n" +
-    "\n" +
-    "    <!-- Name -->\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Name*</label>\n" +
-    "\n" +
-    "        <p class=\"text-muted\">The name of your project</p>\n" +
-    "        <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
-    "               placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
-    "    </div>\n" +
-    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
-    "        <small ng-show=\"create_form.name.$error.required\">Name must not be empty.</small>\n" +
-    "    </div>\n" +
-    "    <!-- Name -->\n" +
-    "\n" +
-    "    <!-- Base Url -->\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Url*</label>\n" +
-    "\n" +
-    "        <p class=\"text-muted\">The url of your website</p>\n" +
-    "        <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
-    "               placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\" ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
-    "    </div>\n" +
-    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
-    "        <small ng-show=\"create_form.url.$error.required\">\n" +
-    "            Url must not be empty.\n" +
-    "        </small>\n" +
-    "        <small ng-show=\"create_form.url.$error.pattern\">\n" +
-    "            The url has to start with http(s):// and have a host name\n" +
-    "        </small>\n" +
-    "    </div>\n" +
-    "    <!-- /Base Url -->\n" +
-    "\n" +
-    "    <!-- Description -->\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Description</label>\n" +
-    "\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            If you want you can describe your new project with a few words\n" +
-    "        </p>\n" +
-    "            <textarea name=\"description\" ng-model=\"project.description\"\n" +
-    "                      placeholder=\"Enter the description for the project\"\n" +
-    "                      class=\"form-control\" rows=\"3\"></textarea>\n" +
-    "    </div>\n" +
-    "    <!-- /Description -->\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <button type=\"submit\" class=\"btn btn-sm btn-primary\">Update</button>\n" +
-    "        <a class=\"btn btn-sm btn-default\" ng-click=\"resetForm()\">Reset</a>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</form>");
 }]);
 
 angular.module("app/views/directives/rest-action-create-form.html", []).run(["$templateCache", function($templateCache) {
@@ -1810,7 +1772,58 @@ angular.module("app/views/pages/project-create.html", []).run(["$templateCache",
     "    <p class=\"text-muted\">You can create a new project here</p>\n" +
     "    <hr/>\n" +
     "\n" +
-    "    <project-create-form></project-create-form>\n" +
+    "    <form id=\"project-create-form\" name=\"create_form\" role=\"form\" ng-submit=\"createProject()\">\n" +
+    "\n" +
+    "        <!-- Name -->\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Name*</label>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">The name of your project</p>\n" +
+    "            <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
+    "                   placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
+    "        </div>\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
+    "            <small ng-show=\"create_form.name.$error.required\">Name must not be empty.</small>\n" +
+    "        </div>\n" +
+    "        <!-- Name -->\n" +
+    "\n" +
+    "        <!-- Base Url -->\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Url*</label>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">The url of your website</p>\n" +
+    "            <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
+    "                   placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\"\n" +
+    "                   ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
+    "        </div>\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
+    "            <small ng-show=\"create_form.url.$error.required\">\n" +
+    "                Url must not be empty.\n" +
+    "            </small>\n" +
+    "            <small ng-show=\"create_form.url.$error.pattern\">\n" +
+    "                The url has to start with http(s):// and have a host name\n" +
+    "            </small>\n" +
+    "        </div>\n" +
+    "        <!-- /Base Url -->\n" +
+    "\n" +
+    "        <!-- Description -->\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Description</label>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                If you want you can describe your new project with a few words\n" +
+    "            </p>\n" +
+    "            <textarea name=\"description\" ng-model=\"project.description\"\n" +
+    "                      placeholder=\"Enter the description for the project\"\n" +
+    "                      class=\"form-control\" rows=\"3\"></textarea>\n" +
+    "        </div>\n" +
+    "        <!-- /Description -->\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <button type=\"submit\" class=\"btn btn-sm btn-primary\">Create Project</button>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </form>\n" +
     "\n" +
     "</div>");
 }]);
@@ -1824,7 +1837,58 @@ angular.module("app/views/pages/project-settings.html", []).run(["$templateCache
     "    <p class=\"text-muted\">Update your project and change settings</p>\n" +
     "    <hr>\n" +
     "\n" +
-    "    <project-edit-form project=\"project\"></project-edit-form>\n" +
+    "    <form id=\"project-edit-form\" name=\"update_form\" role=\"form\" ng-submit=\"updateProject()\">\n" +
+    "\n" +
+    "        <!-- Name -->\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Name*</label>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">The name of your project</p>\n" +
+    "            <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
+    "                   placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
+    "        </div>\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
+    "            <small ng-show=\"update_form.name.$error.required\">Name must not be empty.</small>\n" +
+    "        </div>\n" +
+    "        <!-- Name -->\n" +
+    "\n" +
+    "        <!-- Base Url -->\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Url*</label>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">The url of your website</p>\n" +
+    "            <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
+    "                   placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\" ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
+    "        </div>\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
+    "            <small ng-show=\"update_form.url.$error.required\">\n" +
+    "                Url must not be empty.\n" +
+    "            </small>\n" +
+    "            <small ng-show=\"update_form.url.$error.pattern\">\n" +
+    "                The url has to start with http(s):// and have a host name\n" +
+    "            </small>\n" +
+    "        </div>\n" +
+    "        <!-- /Base Url -->\n" +
+    "\n" +
+    "        <!-- Description -->\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label\">Description</label>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                If you want you can describe your new project with a few words\n" +
+    "            </p>\n" +
+    "            <textarea name=\"description\" ng-model=\"project.description\"\n" +
+    "                      placeholder=\"Enter the description for the project\"\n" +
+    "                      class=\"form-control\" rows=\"3\"></textarea>\n" +
+    "        </div>\n" +
+    "        <!-- /Description -->\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <button type=\"submit\" class=\"btn btn-sm btn-primary\">Update</button>\n" +
+    "            <a class=\"btn btn-sm btn-default\" ng-click=\"resetForm()\">Reset</a>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </form>\n" +
     "\n" +
     "</div>");
 }]);
@@ -2367,7 +2431,10 @@ angular.module("app/views/widgets/widget-counter-examples.html", []).run(["$temp
     "        </div>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
-    "        <button class=\"btn btn-primary btn-block btn-sm\">Add Counter Example</button>\n" +
+    "		<div class=\"btn-group btn-group-sm\">\n" +
+    "    		<button class=\"btn btn-primary\">Add Counter Example</button>\n" +
+    "    		<a href open-counter-example-builder counter-example=\"newCounterExample\" class=\"btn btn-default\">Edit</a>\n" +
+    "		</div>\n" +
     "    </div>\n" +
     "</form>\n" +
     "<hr>\n" +
@@ -2797,7 +2864,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             DHC: 'DHC',
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE'
         })
-}());;(function(){
+}());;;(function(){
     'use strict';
 
     angular
@@ -3686,17 +3753,19 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      */
     function ProjectCreateController($scope, $state, ProjectResource) {
 
-        // Listen for the event project.created from a child controller
-        $scope.$on('project.created', createProject);
+        $scope.project = {
+            name: null,
+            baseUrl: null,
+            description: null
+        };
 
         /**
          * Make a call to the API to create a new project
          *
-         * @param evt - The event object
          * @param project - The project that should be created
          */
-        function createProject(evt, project) {
-            ProjectResource.create(project)
+        $scope.createProject = function() {
+            ProjectResource.create($scope.project)
                 .then(function () {
                     $state.go('home');
                 })
@@ -3712,42 +3781,66 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             ProjectSettingsController
         ]);
 
+    /**
+     * @param $scope
+     * @param $state
+     * @param ProjectResource
+     * @param SessionService
+     * @param PromptService
+     */
     function ProjectSettingsController($scope, $state, ProjectResource, SessionService, PromptService) {
 
+        var projectCopy;
+
+        /** The project that is stored in the session **/
         $scope.project = SessionService.project.get();
+        projectCopy = angular.copy($scope.project);
 
         //////////
 
-        $scope.$on('project.edited', updateProject);
-
-        //////////
-
-        function updateProject (evt, project) {
+        /**
+         * Updates a project and saves the updated project in the sessionStorage
+         */
+        $scope.updateProject = function () {
 
             // delete this property because it is read only and the will throw an error otherwise
-        	delete project.symbolAmount;
+        	delete $scope.project.symbolAmount;
 
             // update the project on the server
-            ProjectResource.update(project)
+            ProjectResource.update($scope.project)
                 .then(function (updatedProject) {
                     SessionService.project.save(updatedProject);
                     $scope.project = updatedProject;
+                    projectCopy = angular.copy($scope.project);
                 })
         }
 
-        //////////
-
+        /**
+         * Prompts the user for confirmation and deletes the project on success. Redirects to '/home' when project
+         * was deleted and removes the project from the sessionStorage
+         */
         $scope.deleteProject = function () {
+            var message = 'Do you really want to delete this project with all its symbols and test results? This process can not be undone.';
 
-        	PromptService.confirm("Do you really want to delete this project with all its symbols and test results? This process can not be undone.")
+            // prompt the user
+        	PromptService.confirm(message)
 	        	.then(function(){
+
+	        	    // delete project from server
 	        		ProjectResource.delete($scope.project)
 		                .then(function () {
 		                    SessionService.project.remove();
 		                    $state.go('home');
 		                })
 	        	})
-        };
+        }
+
+        /**
+         * Resets the project edit form by copying the project copy back to the project under edit
+         */
+        $scope.resetForm = function() {
+            $scope.project = angular.copy(projectCopy);
+        }
     }
 }());;(function () {
     'use strict';
@@ -4151,7 +4244,52 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             _.forEach(selectedSymbols, $scope.recover)
         }
     }
-}());;(function() {
+}());;(function(){
+	'use strict';
+	
+	angular
+		.module('weblearner.directives')
+		.directive('counterExampleBuilder', counterExampleBuilder);
+	
+	counterExampleBuilder.$inject = ['paths'];
+	
+	function counterExampleBuilder(paths){
+		
+		var directive = {
+			scope: {},
+			controller: ['$scope', controller],
+			templateUrl: paths.views.DIRECTIVES + '/counter-example-builder.html'
+		}
+		return directive;
+				
+		function controller($scope){
+			
+			$scope.inputs = ['w1', 'w2', 'w3'];
+
+	        $scope.counterExample = [
+	            {input: 'w1', output: 'output1'},
+	            {input: 'w2', output: 'output2'},
+	            {input: 'w3', output: 'output3'},
+	        ]
+
+	        $scope.add = function() {
+	            $scope.counterExample.push({input: null, output: null})
+	        }
+
+	        $scope.remove = function(index) {
+	            $scope.counterExample.splice(index, 1);
+	        }
+
+	        $scope.onDropInput = function(data, evt, index){
+	            $scope.counterExample[index].input = data['json/custom-object'];
+	        }
+
+	        $scope.onDropOutput = function(data, evt, index){
+	            $scope.counterExample[index].output = data['json/custom-object'];
+	        }
+		}
+	};
+}());(function() {
 	'use strict';
 
 	angular
@@ -5567,6 +5705,37 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         }
     }
+}());;(function(){
+	
+	angular
+		.module('weblearner.directives')
+		.directive('openCounterExampleBuilder', openCounterExampleBuilder)
+		
+	openCounterExampleBuilder.$inject = ['CounterExampleBuilderService'];
+	
+	function openCounterExampleBuilder(CounterExampleBuilder) {
+		
+		var directive = {
+			scope: {
+				inputs: '=',
+				outputs: '=',
+				counterExample: '='
+			},
+			link: link
+		};
+		return directive;
+		
+		function link(scope, el, attrs) {
+			
+			el.on('click', function(){
+				CounterExampleBuilder.open({
+					inputs: angular.copy(scope.inputs),
+					outputs: angular.copy(scope.outputs),
+					counterExample: angular.copy(scope.counterExample)
+				});
+			});
+		}
+	}
 }());;(function () {
     'use strict';
 
@@ -5839,83 +6008,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             function ok(event, data) {
                 scope.url = data.url;
                 scope.selector = data.selector;
-            }
-        }
-    }
-}());;(function(){
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('projectCreateForm', [
-            'paths',
-            projectCreateForm
-        ]);
-
-    /**
-     * projectCreateForm
-     *
-     * @param paths - The constant with relevant paths
-     * @return {{scope: {}, controller: *[], templateUrl: string}}
-     */
-    function projectCreateForm(paths){
-
-        var directive = {
-            scope: {},
-            controller: [
-                '$scope',
-                controller
-            ],
-            templateUrl: paths.views.DIRECTIVES + '/project-create-form.html'
-        };
-        return directive;
-
-        function controller ($scope) {
-
-            $scope.project = {
-                name: null,
-                baseUrl: null,
-                description: null
-            };
-
-            $scope.submitForm = function() {
-                $scope.$emit('project.created', angular.copy($scope.project));
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('projectEditForm', [
-            'paths',
-            projectEditForm
-        ]);
-
-    function projectEditForm(paths) {
-
-        var directive = {
-            scope: {
-                project: '&'
-            },
-            controller: ['$scope', controller],
-            templateUrl: paths.views.DIRECTIVES + '/project-edit-form.html'
-        };
-        return directive;
-
-        function controller($scope) {
-
-            $scope.project = angular.copy($scope.project());
-            $scope.copy = angular.copy($scope.project);
-
-            $scope.submitForm = function () {
-                $scope.$emit('project.edited', $scope.project);
-                $scope.copy = angular.copy($scope.project);
-            };
-
-            $scope.resetForm = function () {
-                $scope.project = angular.copy($scope.copy);
             }
         }
     }
@@ -7423,7 +7515,36 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 .catch(ResourceResponseService.fail);
         }
     }
-}());;(function () {
+}());;(function(){
+	
+	angular
+		.module('weblearner.services')
+		.service('CounterExampleBuilderService', CounterExampleBuilderService);
+	
+	CounterExampleBuilderService.$inject = ['$rootScope'];
+	
+	function CounterExampleBuilderService($rootScope) {
+		
+		var service = {
+			open: open,
+			close: close,
+			ok: ok
+		}
+		return service;
+		
+		function open(){
+			$rootScope.$broadcast('counterExampleBuilder.open');
+		}
+		
+		function close(){
+			$rootScope.$broadcast('counterExampleBuilder.close');
+		}
+		
+		function ok(){
+			$rootScope.$broadcast('counterExampleBuilder.ok');
+		}
+	}
+}());(function () {
     'use strict';
 
     angular

@@ -20,17 +20,19 @@
      */
     function ProjectCreateController($scope, $state, ProjectResource) {
 
-        // Listen for the event project.created from a child controller
-        $scope.$on('project.created', createProject);
+        $scope.project = {
+            name: null,
+            baseUrl: null,
+            description: null
+        };
 
         /**
          * Make a call to the API to create a new project
          *
-         * @param evt - The event object
          * @param project - The project that should be created
          */
-        function createProject(evt, project) {
-            ProjectResource.create(project)
+        $scope.createProject = function() {
+            ProjectResource.create($scope.project)
                 .then(function () {
                     $state.go('home');
                 })

@@ -11,6 +11,7 @@
             'ui.ace',
             'ui.router',
             'ngToast',
+            'draganddrop',
             
             //all templates
 			'templates-all',
@@ -41,5 +42,8 @@
                 horizontalPosition: 'center',
                 maxNumber: 1
             });
-        }]);
+        }])
+        .run(['$rootScope', '_', function($rootScope, _){
+            $rootScope._ = _;
+        }])
 }());

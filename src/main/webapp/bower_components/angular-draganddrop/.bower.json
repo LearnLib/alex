@@ -1,0 +1,43 @@
+{
+  "name": "angular-draganddrop",
+  "version": "0.2.1",
+  "homepage": "https://github.com/neoziro/angular-draganddrop",
+  "authors": [
+    "Greg Bergé <neoziro@gmail.com>"
+  ],
+  "description": "Drag and drop directives for Angular using native HTML5 API.",
+  "main": "angular-draganddrop.js",
+  "keywords": [
+    "drag",
+    "drop",
+    "angular",
+    "directive"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "package.json",
+    "karma.conf.js",
+    "node_modules",
+    "bower_components",
+    "Gruntfile.js",
+    "test"
+  ],
+  "dependencies": {
+    "angular": ">=1.2.0"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.2.6",
+    "jquery": "~2.0.3"
+  },
+  "_release": "0.2.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.1",
+    "commit": "845c3c8c05a9d9a3a921b068f6b8c214e818e412"
+  },
+  "_source": "git://github.com/neoziro/angular-draganddrop.git",
+  "_target": "~0.2.1",
+  "_originalSource": "angular-draganddrop",
+  "_direct": true
+}

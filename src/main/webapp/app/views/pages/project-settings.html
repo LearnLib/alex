@@ -4,6 +4,57 @@
     <p class="text-muted">Update your project and change settings</p>
     <hr>
 
-    <project-edit-form project="project"></project-edit-form>
+    <form id="project-edit-form" name="update_form" role="form" ng-submit="updateProject()">
+
+        <!-- Name -->
+        <div class="form-group">
+            <label class="control-label">Name*</label>
+
+            <p class="text-muted">The name of your project</p>
+            <input name="name" type="text" class="form-control"
+                   placeholder="Enter a name for the project" ng-model="project.name" ng-required="true">
+        </div>
+        <div class="alert alert-danger alert-condensed" ng-show="create_form.name.$dirty && create_form.name.$invalid">
+            <small ng-show="update_form.name.$error.required">Name must not be empty.</small>
+        </div>
+        <!-- Name -->
+
+        <!-- Base Url -->
+        <div class="form-group">
+            <label class="control-label">Url*</label>
+
+            <p class="text-muted">The url of your website</p>
+            <input name="url" class="form-control" type="text"
+                   placeholder="Enter the url of the project" ng-model="project.baseUrl" ng-required="true" ng-pattern="/^(http://|https://).{1,}/">
+        </div>
+        <div class="alert alert-danger alert-condensed" ng-show="create_form.url.$dirty && create_form.url.$invalid">
+            <small ng-show="update_form.url.$error.required">
+                Url must not be empty.
+            </small>
+            <small ng-show="update_form.url.$error.pattern">
+                The url has to start with http(s):// and have a host name
+            </small>
+        </div>
+        <!-- /Base Url -->
+
+        <!-- Description -->
+        <div class="form-group">
+            <label class="control-label">Description</label>
+
+            <p class="text-muted">
+                If you want you can describe your new project with a few words
+            </p>
+            <textarea name="description" ng-model="project.description"
+                      placeholder="Enter the description for the project"
+                      class="form-control" rows="3"></textarea>
+        </div>
+        <!-- /Description -->
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+            <a class="btn btn-sm btn-default" ng-click="resetForm()">Reset</a>
+        </div>
+
+    </form>
 
 </div>
