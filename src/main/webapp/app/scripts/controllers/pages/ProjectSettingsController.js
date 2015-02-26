@@ -4,18 +4,21 @@
     angular
         .module('weblearner.controller')
         .controller('ProjectSettingsController', [
-            '$scope', '$state', 'ProjectResource', 'SessionService', 'PromptService',
+            '$scope', '$state', 'Project', 'SessionService', 'PromptService',
             ProjectSettingsController
         ]);
 
     /**
+     * The controller that handles the deleting and updating of a project. Belongs to the template at
+     * '/views/pages/project-settings.html'
+     *
      * @param $scope
      * @param $state
-     * @param ProjectResource
+     * @param Project
      * @param SessionService
      * @param PromptService
      */
-    function ProjectSettingsController($scope, $state, ProjectResource, SessionService, PromptService) {
+    function ProjectSettingsController($scope, $state, Project, SessionService, PromptService) {
 
         var projectCopy;
 
@@ -34,13 +37,13 @@
         	delete $scope.project.symbolAmount;
 
             // update the project on the server
-            ProjectResource.update($scope.project)
+            Project.Resource.update($scope.project)
                 .then(function (updatedProject) {
                     SessionService.project.save(updatedProject);
                     $scope.project = updatedProject;
                     projectCopy = angular.copy($scope.project);
                 })
-        }
+        };
 
         /**
          * Prompts the user for confirmation and deletes the project on success. Redirects to '/home' when project
@@ -54,8 +57,8 @@
 	        	.then(function(){
 
 	        	    // delete project from server
-	        		ProjectResource.delete($scope.project)
-		                .then(function () {
+	        		Project.Resource.delete($scope.project)
+		                .then(function (deletedProject) {
 		                    SessionService.project.remove();
 		                    $state.go('home');
 		                })

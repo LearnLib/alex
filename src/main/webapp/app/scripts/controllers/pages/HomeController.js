@@ -3,10 +3,9 @@
 
     angular
         .module('weblearner.controller')
-        .controller('HomeController', [
-            '$scope', '$state', 'ProjectResource', 'SessionService',
-            HomeController
-        ]);
+        .controller('HomeController', HomeController);
+
+    HomeController.$inject = ['$scope', '$state', 'Project', 'SessionService'];
 
     /**
      * HomeController
@@ -14,12 +13,12 @@
      * The controller for the landing page. It lists the projects.
      *
      * @param $scope
-     * @param $location
-     * @param ProjectResource
+     * @param $state
+     * @param Project
      * @param SessionService
      * @constructor
      */
-    function HomeController($scope, $state, ProjectResource, SessionService) {   	
+    function HomeController($scope, $state, Project, SessionService) {
 
         /** The project list */
         $scope.projects = [];
@@ -32,8 +31,8 @@
         }
 
         // get all projects from the server
-        ProjectResource.all()
-            .then(function (projects) {
+        Project.Resource.all()
+            .then(function(projects){
                 $scope.projects = projects;
             });
 
@@ -42,7 +41,7 @@
         /**
          * Open a project by saving it into the session and redirect to the projects dashboard.
          *
-         * @param project
+         * @param project - The project that should be saved in the sessionStorage
          */
         $scope.openProject = function (project) {
             SessionService.project.save(project);

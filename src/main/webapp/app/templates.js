@@ -1838,6 +1838,7 @@ angular.module("app/views/pages/project-settings.html", []).run(["$templateCache
     "        <div class=\"form-group\">\n" +
     "            <button type=\"submit\" class=\"btn btn-sm btn-primary\">Update</button>\n" +
     "            <a class=\"btn btn-sm btn-default\" ng-click=\"resetForm()\">Reset</a>\n" +
+    "            <a class=\"btn btn-sm btn-default\" ng-click=\"deleteProject()\">Delete</a>\n" +
     "        </div>\n" +
     "\n" +
     "    </form>\n" +
@@ -1860,7 +1861,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
   "use strict";
   $templateCache.put("app/views/pages/symbols-actions.html",
     "<div class=\"container\">\n" +
-    "    <h2><span ng-bind=\"(symbol.type|capitalize)\"></span> Actions Editor</h2>\n" +
+    "    <h2>Actions Editor</h2>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
     "        Create and manage the actions for symbol:\n" +
@@ -2264,10 +2265,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
   "use strict";
   $templateCache.put("app/views/pages/symbols.html",
     "<div class=\"container\">\n" +
-    "    <h2><span ng-bind=\"(type|capitalize)\"></span> Symbol Editor</h2>\n" +
+    "    <h2>Symbol Editor</h2>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Create and edit <span ng-bind=\"type\"></span> symbols and manage its actions\n" +
+    "        Create and edit symbols and manage its actions\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "</div>\n" +

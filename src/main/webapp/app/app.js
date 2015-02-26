@@ -23,7 +23,8 @@
             'weblearner.services',
             'weblearner.filters',
             'weblearner.routes',
-            'weblearner.constants'
+            'weblearner.constants',
+            'weblearner.models'
         ]);
 
     angular.module('weblearner.controller', []);
@@ -33,6 +34,7 @@
     angular.module('weblearner.filters', []);
     angular.module('weblearner.routes', ['weblearner.constants', 'templates-all', 'ui.router']);
     angular.module('weblearner.constants', []);
+    angular.module('weblearner.models', []);
 
     angular.module('weblearner')
         .config(['ngToastProvider', function(ngToastProvider){
@@ -1886,6 +1888,7 @@ angular.module("app/views/pages/project-settings.html", []).run(["$templateCache
     "        <div class=\"form-group\">\n" +
     "            <button type=\"submit\" class=\"btn btn-sm btn-primary\">Update</button>\n" +
     "            <a class=\"btn btn-sm btn-default\" ng-click=\"resetForm()\">Reset</a>\n" +
+    "            <a class=\"btn btn-sm btn-default\" ng-click=\"deleteProject()\">Delete</a>\n" +
     "        </div>\n" +
     "\n" +
     "    </form>\n" +
@@ -1908,7 +1911,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
   "use strict";
   $templateCache.put("app/views/pages/symbols-actions.html",
     "<div class=\"container\">\n" +
-    "    <h2><span ng-bind=\"(symbol.type|capitalize)\"></span> Actions Editor</h2>\n" +
+    "    <h2>Actions Editor</h2>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
     "        Create and manage the actions for symbol:\n" +
@@ -2312,10 +2315,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
   "use strict";
   $templateCache.put("app/views/pages/symbols.html",
     "<div class=\"container\">\n" +
-    "    <h2><span ng-bind=\"(type|capitalize)\"></span> Symbol Editor</h2>\n" +
+    "    <h2>Symbol Editor</h2>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Create and edit <span ng-bind=\"type\"></span> symbols and manage its actions\n" +
+    "        Create and edit symbols and manage its actions\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "</div>\n" +
@@ -2864,7 +2867,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             DHC: 'DHC',
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE'
         })
-}());;;(function(){
+}());;(function(){
     'use strict';
 
     angular
@@ -3254,10 +3257,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('HomeController', [
-            '$scope', '$state', 'ProjectResource', 'SessionService',
-            HomeController
-        ]);
+        .controller('HomeController', HomeController);
+
+    HomeController.$inject = ['$scope', '$state', 'Project', 'SessionService'];
 
     /**
      * HomeController
@@ -3265,12 +3267,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * The controller for the landing page. It lists the projects.
      *
      * @param $scope
-     * @param $location
-     * @param ProjectResource
+     * @param $state
+     * @param Project
      * @param SessionService
      * @constructor
      */
-    function HomeController($scope, $state, ProjectResource, SessionService) {   	
+    function HomeController($scope, $state, Project, SessionService) {
 
         /** The project list */
         $scope.projects = [];
@@ -3283,8 +3285,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         }
 
         // get all projects from the server
-        ProjectResource.all()
-            .then(function (projects) {
+        Project.Resource.all()
+            .then(function(projects){
                 $scope.projects = projects;
             });
 
@@ -3293,7 +3295,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         /**
          * Open a project by saving it into the session and redirect to the projects dashboard.
          *
-         * @param project
+         * @param project - The project that should be saved in the sessionStorage
          */
         $scope.openProject = function (project) {
             SessionService.project.save(project);
@@ -3720,26 +3722,31 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('ProjectController', [
-            '$scope', 'SessionService',
-            ProjectController
-        ]);
+        .controller('ProjectController', ProjectController);
 
+    ProjectController.$inject = ['$scope', 'SessionService'];
+
+    /**
+     * The controller that is responsible for the site '/project' and shows the dashboard of the project
+     *
+     * @param $scope
+     * @param SessionService
+     * @constructor
+     */
     function ProjectController($scope, SessionService) {
 
+        /** The project that is stored in the sessionStorage **/
         $scope.project = SessionService.project.get();
     }
 }());
-
 ;(function () {
     'use strict';
 
     angular
         .module('weblearner.controller')
-        .controller('ProjectCreateController', [
-            '$scope', '$state', 'ProjectResource',
-            ProjectCreateController
-        ]);
+        .controller('ProjectCreateController', ProjectCreateController);
+
+    ProjectCreateController.$inject = ['$scope', '$state', 'Project'];
 
     /**
      * ProjectCreateController
@@ -3748,16 +3755,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      *
      * @param $scope
      * @param $state
-     * @param ProjectResource
+     * @param Project
      * @constructor
      */
-    function ProjectCreateController($scope, $state, ProjectResource) {
+    function ProjectCreateController($scope, $state, Project) {
 
-        $scope.project = {
-            name: null,
-            baseUrl: null,
-            description: null
-        };
+        $scope.project = new Project();
 
         /**
          * Make a call to the API to create a new project
@@ -3765,7 +3768,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @param project - The project that should be created
          */
         $scope.createProject = function() {
-            ProjectResource.create($scope.project)
+            Project.Resource.create($scope.project)
                 .then(function () {
                     $state.go('home');
                 })
@@ -3777,18 +3780,21 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     angular
         .module('weblearner.controller')
         .controller('ProjectSettingsController', [
-            '$scope', '$state', 'ProjectResource', 'SessionService', 'PromptService',
+            '$scope', '$state', 'Project', 'SessionService', 'PromptService',
             ProjectSettingsController
         ]);
 
     /**
+     * The controller that handles the deleting and updating of a project. Belongs to the template at
+     * '/views/pages/project-settings.html'
+     *
      * @param $scope
      * @param $state
-     * @param ProjectResource
+     * @param Project
      * @param SessionService
      * @param PromptService
      */
-    function ProjectSettingsController($scope, $state, ProjectResource, SessionService, PromptService) {
+    function ProjectSettingsController($scope, $state, Project, SessionService, PromptService) {
 
         var projectCopy;
 
@@ -3807,13 +3813,13 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         	delete $scope.project.symbolAmount;
 
             // update the project on the server
-            ProjectResource.update($scope.project)
+            Project.Resource.update($scope.project)
                 .then(function (updatedProject) {
                     SessionService.project.save(updatedProject);
                     $scope.project = updatedProject;
                     projectCopy = angular.copy($scope.project);
                 })
-        }
+        };
 
         /**
          * Prompts the user for confirmation and deletes the project on success. Redirects to '/home' when project
@@ -3827,8 +3833,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 	        	.then(function(){
 
 	        	    // delete project from server
-	        		ProjectResource.delete($scope.project)
-		                .then(function () {
+	        		Project.Resource.delete($scope.project)
+		                .then(function (deletedProject) {
 		                    SessionService.project.remove();
 		                    $state.go('home');
 		                })
@@ -5351,64 +5357,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         }
     }
-}());;(function() {
-	'use strict';
-
-	angular.module('weblearner.directives').directive('ifIsTypeOfRest',
-			[ 'ngIfDirective', ifIsTypeOfRest ]);
-
-	function ifIsTypeOfRest(ngIfDirective) {
-		var ngIf = ngIfDirective[0];
-
-		var directive = {
-			transclude : ngIf.transclude,
-			priority : ngIf.priority,
-			terminal : ngIf.terminal,
-			restrict : ngIf.restrict,
-			link : link
-		};
-		return directive;
-
-		// ////////
-
-		function link(scope, el, attrs) {
-			var value = scope.$eval(attrs['ifIsTypeOfRest']);
-
-			attrs.ngIf = function() {
-				return value == 'rest';
-			};
-			ngIf.link.apply(ngIf, arguments);
-		}
-	}
-}());;(function() {
-	'use strict';
-
-	angular.module('weblearner.directives').directive('ifIsTypeOfWeb',
-			[ 'ngIfDirective', ifIsTypeOfWeb ]);
-
-	function ifIsTypeOfWeb(ngIfDirective) {
-		var ngIf = ngIfDirective[0];
-
-		var directive = {
-			transclude : ngIf.transclude,
-			priority : ngIf.priority,
-			terminal : ngIf.terminal,
-			restrict : ngIf.restrict,
-			link : link
-		};
-		return directive;
-
-		// ////////
-
-		function link(scope, el, attrs) {
-			var value = scope.$eval(attrs['ifIsTypeOfWeb']);
-
-			attrs.ngIf = function() {
-				return value == 'web';
-			};
-			ngIf.link.apply(ngIf, arguments);
-		}
-	}
 }());;(function () {
     'use strict';
 
@@ -7030,6 +6978,97 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         }
     }
+}());;(function(){
+    'use strict';
+
+    angular
+        .module('weblearner.models')
+        .factory('Project', ProjectModel);
+
+    ProjectModel.$inject = ['ProjectResource'];
+
+    /**
+     * The factory for the model of a project
+     *
+     * @param ProjectResource - The resource to fetch projects from the server
+     * @return {Project}
+     * @constructor
+     */
+    function ProjectModel(ProjectResource) {
+
+        /**
+         * The project model
+         *
+         * @param name - The name of the project
+         * @param baseUrl - The url the project can be called
+         * @param description - The description of the project
+         * @constructor
+         */
+        function Project(name, baseUrl, description) {
+            this.name = name;
+            this.baseUrl = baseUrl;
+            this.description = description;
+            this.id;
+        }
+
+        /**
+         * Create an instance of a project from an object
+         *
+         * @param data - The data the project should be build from
+         * @return {ProjectModel.Project}
+         */
+        Project.build = function(data){
+            var project = new Project(data.name, data.baseUrl, data.description);
+            project.id = data.id;
+            return project;
+        };
+
+        /**
+         * The resource object for a project
+         * @type {ProjectResource}
+         */
+        Project.Resource = new ProjectResource();
+
+        // attach the build function of the project to the resource so that it can automatically create instances
+        // of projects from http responses
+        Project.Resource.build = Project.build;
+
+        return Project;
+    }
+}());;(function(){
+    'use strict';
+
+    angular
+        .module('weblearner.models')
+        .factory('Symbol', SymbolModel);
+
+    function SymbolModel(){
+
+        function Symbol(name, abbreviation) {
+            this.name = name;
+            this.abbreviation = abbreviation;
+            this.actions = [];
+            this.id;
+            this.revision;
+            this.project;
+            this.group;
+        }
+
+        Symbol.build = function(data){
+            var symbol = new Symbol(data.name, data.abbreviation);
+            symbol.actions = data.actions;
+            symbol.id = data.id;
+            symbol.revision = data.revision;
+            symbol.project = data.project;
+            symbol.group = data.group;
+            return symbol;
+        };
+
+        Symbol.Resource = {};
+        Symbol.Resource.build = Symbol.build;
+
+        return Symbol;
+    }
 }());;(function () {
     'use strict';
 
@@ -7229,104 +7268,119 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.resources')
-        .factory('ProjectResource', [
-            '$http', 'paths', 'ResourceResponseService',
-            ProjectResource
-        ]);
+        .factory('ProjectResource', ProjectResource);
+
+    ProjectResource.$inject = ['$http', 'paths', 'ResourceResponseService', '_'];
 
     /**
-     * @param $http
-     * @param paths
+     * The resource that handles http call to the API to do CRUD operations on projects
+     *
+     * @param $http - The $http angular service
+     * @param paths - The constant with application paths
      * @param ResourceResponseService
-     * @return {{all: getAllProjects, get: getProject, create: createProject, update: updateProject, delete: deleteProject}}
+     * @param _ - Lodash
+     * @return {Resource}
      * @constructor
      */
-    function ProjectResource($http, paths, ResourceResponseService) {
-
-        var service = {
-            all: getAllProjects,
-            get: getProject,
-            create: createProject,
-            update: updateProject,
-            delete: deleteProject
-        };
-        return service;
-
-        //////////
+    function ProjectResource($http, paths, ResourceResponseService, _) {
 
         /**
-         * Get all projects from the server
+         * The resource object
+         *
+         * @constructor
+         */
+        function Resource() {}
+
+        /**
+         * Make a GET http request to /rest/projects in order to fetch all existings projects
          *
          * @return {*}
          */
-        function getAllProjects() {
+        Resource.prototype.all = function(){
+            var _this = this;
             return $http.get(paths.api.URL + '/projects')
-                .then(ResourceResponseService.success)
+                .then(function(response){
+                    var projects = [];
+                    _.forEach(response.data, function(project){
+                        projects.push(_this.build(project));
+                    });
+                    return projects;
+                })
                 .catch(ResourceResponseService.fail);
-        }
+        };
 
         /**
-         * Create a new project
+         * Make a GET http request to /rest/projects/{id} in order to fetch a single project by its id
          *
-         * @param project
+         * @param id - The id of the project that should be fetched
          * @return {*}
          */
-        function createProject(project) {
-            return $http.post(paths.api.URL + '/projects', project)
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            function success(response) {
-                var message = 'Project "' + response.data.name + '" created';
-                return ResourceResponseService.successWithToast(response, message);
-            }
-        }
-
-        /**
-         * Get a project by its id
-         *
-         * @param id
-         * @return {*}
-         */
-        function getProject(id) {
+        Resource.prototype.get = function(id){
+            var _this = this;
             return $http.get(paths.api.URL + '/projects/' + id)
-                .then(ResourceResponseService.success)
+                .then(function(response){
+                    return _this.build(response.data);
+                })
                 .catch(ResourceResponseService.fail);
-        }
+        };
 
         /**
-         * Delete an existing project from the server
+         * Make a POST http request to /rest/projects with a project object as data in order to create a new project
          *
-         * @param project
+         * @param project - The project that should be created
          * @return {*}
          */
-        function deleteProject(project) {
-            return $http.delete(paths.api.URL + '/projects/' + project.id)
-                .then(success)
+        Resource.prototype.create = function(project){
+            var _this = this;
+            return $http.post(paths.api.URL + '/projects', project)
+                .then(function(response){
+                    return _this.build(response.data);
+                })
                 .catch(ResourceResponseService.fail);
-
-            function success(response) {
-                var message = 'Project deleted';
-                return ResourceResponseService.successWithToast(response, message);
-            }
-        }
+        };
 
         /**
-         * Updates an existing project
+         * Make a PUT http request to /rest/projects with a project as data in order to update an existing project
          *
-         * @param project
+         * @param project - The updated instance of a project that should be updated on the server
          * @return {*}
          */
-        function updateProject(project) {
+        Resource.prototype.update = function(project){
+            var _this = this;
             return $http.put(paths.api.URL + '/projects/' + project.id, project)
-                .then(success)
+                .then(function(response){
+                    return _this.build(response.data);
+                })
                 .catch(ResourceResponseService.fail);
+        };
 
-            function success(response) {
-                var message = 'Project updated';
-                return ResourceResponseService.successWithToast(response, message);
-            }
-        }
+        /**
+         * Make a DELETE http request to /rest/projects in order to delete an existing project
+         *
+         * @param project - The project that should be deleted
+         * @return {*}
+         */
+        Resource.prototype.delete = function(project){
+            var _this = this;
+            return $http.delete(paths.api.URL + '/projects/' + project.id)
+                .then(function(response){
+                    return _this.build(response.data);
+                })
+                .catch(ResourceResponseService.fail);
+        };
+
+        /**
+         * The function that is called by all other request methods that should create a new instance of a project.
+         * Overwrite this method when creating an instance of ProjectResource! Or leave it as it is ...
+         *
+         * @param data - The object the project should be created from
+         * @return {*}
+         */
+        Resource.prototype.build = function(data) {
+            return data;
+        };
+
+        return Resource;
     }
 }());;(function () {
     'use strict';
@@ -7649,10 +7703,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.services')
-        .service('PromptService', [
-            '$modal',
-            PromptService
-        ]);
+        .service('PromptService', PromptService);
+
+    PromptService.$inject = ['$modal', 'paths'];
 
     /**
      * PromptService
@@ -7663,7 +7716,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @return {{prompt: prompt}}
      * @constructor
      */
-    function PromptService($modal) {
+    function PromptService($modal, paths) {
 
         var service = {
             prompt: prompt,
@@ -7683,7 +7736,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         function prompt(text, options) {
 
             var modal = $modal.open({
-                templateUrl: 'app/partials/modals/modal-prompt-dialog.html',
+                templateUrl: paths.views.MODALS + '/modal-prompt-dialog.html',
                 controller: 'PromptDialogController',
                 resolve: {
                     modalData: function () {
@@ -7707,7 +7760,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         function confirm(text) {
 
             var modal = $modal.open({
-                templateUrl: 'app/partials/modals/modal-confirm-dialog.html',
+                templateUrl: paths.views.MODALS + '/modal-confirm-dialog.html',
                 controller: 'ConfirmDialogController',
                 resolve: {
                     modalData: function () {
@@ -7905,10 +7958,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.services')
-        .factory('SessionService', [
-            '$rootScope',
-            SessionService
-        ]);
+        .factory('SessionService', SessionService);
+
+    SessionService.$inject = ['$rootScope', 'Project'];
 
     /**
      * SessionService
@@ -7921,7 +7973,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @return {{project: {get: getProject, save: saveProject, remove: removeProject}}}
      * @constructor
      */
-    function SessionService($rootScope) {
+    function SessionService($rootScope, Project) {
 
         // the service
         var service = {
@@ -7938,10 +7990,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         /**
          * Get the stored project object from the session storage
          *
-         * @return {Object|Array|string|number|*}
+         * @return {ProjectModel.Project}
          */
         function getProject() {
-            return angular.fromJson(sessionStorage.getItem('project'));
+            var project = angular.fromJson(sessionStorage.getItem('project'));
+            return project === null ? null : Project.build(project);
         }
 
         /**
