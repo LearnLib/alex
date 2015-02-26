@@ -44,14 +44,6 @@ public class LearnerTest {
         learner = new Learner(factory);
     }
 
-
-    @Test
-    public void shouldStartTheThread() {
-        learner.start(project, learnerConfiguration);
-
-        verify(thread).start();
-    }
-
     @Test(expected = IllegalStateException.class)
     public void shouldOnlyStartTheThreadOnce() {
         given(thread.isActive()).willReturn(true);

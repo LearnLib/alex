@@ -6,6 +6,8 @@ import de.learnlib.weblearner.entities.LearnerResumeConfiguration;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 
+import java.util.concurrent.Executors;
+
 /**
  * Basic class to control and monitor a learn process.
  * This class is a high level abstraction of the LearnLib.
@@ -13,19 +15,19 @@ import de.learnlib.weblearner.entities.Symbol;
 public class Learner {
 
     /** Factory to create the {@link LearnerThread LearnerThreads}. */
-    private LearnerThreadFactory threadFactory;
+    private LearnerThreadFactory learnThreadFactory;
 
     /** The current learning thread. Could be null. */
-    private LearnerThread<?> thread;
+    private LearnerThread<?> learnThread;
 
     /**
      * Constructor that initialises only the LearnerThreadFactory.
      *
-     * @param threadFactory
+     * @param learnThreadFactory
      *         The factory to use.
      */
-    public Learner(LearnerThreadFactory threadFactory) {
-        this.threadFactory = threadFactory;
+    public Learner(LearnerThreadFactory learnThreadFactory) {
+        this.learnThreadFactory = learnThreadFactory;
     }
 
     /**
@@ -50,7 +52,8 @@ public class Learner {
 
         configuration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
 
-        thread = threadFactory.createThread(project, configuration, symbols);
+        learnThread = learnThreadFactory.createThread(project, configuration, symbols);
+        Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
         thread.start();
     }
 
@@ -69,7 +72,8 @@ public class Learner {
 
         newConfiguration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
 
-        thread = threadFactory.updateThread(thread, newConfiguration);
+        learnThread = learnThreadFactory.updateThread(learnThread, newConfiguration);
+        Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
         thread.start();
     }
 
@@ -77,7 +81,7 @@ public class Learner {
      * Ends the learning process after the current step.
      */
     public void stop() {
-        thread.interrupt();
+        learnThread.interrupt();
     }
 
     /**
@@ -86,7 +90,7 @@ public class Learner {
      * @return true if the learning process is active, false otherwise.
      */
     public boolean isActive() {
-        return thread != null && thread.isActive();
+        return learnThread != null && learnThread.isActive();
     }
 
     /**
@@ -96,8 +100,8 @@ public class Learner {
      * @return The current result of the LearnerThread.
      */
     public LearnerResult getResult() {
-        if (thread != null) {
-            return thread.getResult();
+        if (learnThread != null) {
+            return learnThread.getResult();
         } else {
             return null;
         }

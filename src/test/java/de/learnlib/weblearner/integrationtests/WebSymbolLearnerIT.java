@@ -11,7 +11,6 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -26,7 +25,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
 public class WebSymbolLearnerIT {
 
     private static final int MAX_TIME_TO_WAIT_FOR_LEARNER = 180000; // three minutes !!

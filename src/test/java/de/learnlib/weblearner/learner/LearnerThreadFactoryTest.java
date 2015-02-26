@@ -8,7 +8,6 @@ import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.WebSymbol;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -63,16 +62,6 @@ public class LearnerThreadFactoryTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailWithoutSymbols() {
         factory.createThread(project, learnerConfiguration); // should fail
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    @Ignore
-    public void shouldFailOnDifferentSymbolTypes() {
-        Symbol webSymbol1 = new WebSymbol();
-        Symbol webSymbol2 = new WebSymbol();
-        Symbol restStymbol = new RESTSymbol();
-
-        factory.createThread(project, learnerConfiguration, webSymbol1, webSymbol2, restStymbol); // should fail
     }
 
 }

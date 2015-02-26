@@ -116,10 +116,12 @@ public class MixedLearnerIT extends JerseyTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
         client.target(BASE_LEARNER_URL + "/projects/" + project.getId()).request().delete();
         symbolsIdAndRevisionAsJSON = null;
         testAlphabet = null;
+
+        super.tearDown();
     }
 
     @Test(timeout = MAX_TIME_TO_WAIT_FOR_LEARNER)
