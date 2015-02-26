@@ -66,7 +66,7 @@ public class WebSymbolTest {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symb);
 
-        Symbol<?> symb2 = mapper.readValue(json, WebSymbol.class);
+        Symbol symb2 = mapper.readValue(json, WebSymbol.class);
         assertEquals(symb.getId(), symb2.getId());
         assertEquals(symb.getRevision(), symb2.getRevision());
         assertEquals(symb.getName(), symb2.getName());

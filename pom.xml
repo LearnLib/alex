@@ -10,7 +10,7 @@
 
     <name>WebLearner</name>
     <description>
-        A RESTfull application with a fancy web frontend to configure and run automata lerning alogrithms on websites and webservices.
+        A RESTful application with a fancy web frontend to configure and run automata learning algorithms on websites and webservices.
     </description>
     <developers>
         <developer>
@@ -70,11 +70,11 @@
         <checkstyle.version>2.14</checkstyle.version>
         <cobertura.version>2.6</cobertura.version>
         <findbugs.version>3.0.0</findbugs.version>
-        <pmd.version>3.3</pmd.version>
+        <pmd.version>3.4</pmd.version>
         <versions-plugin.version>2.1</versions-plugin.version>
 
         <!-- dependencies versions -->
-        <jersey.version>2.15</jersey.version>
+        <jersey.version>2.16</jersey.version>
         <hibernate.version>5.1.3.Final</hibernate.version>
         <learnlib.version>0.10.1</learnlib.version>
         <automatalib.version>0.4.1</automatalib.version>
@@ -179,7 +179,7 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.1</version>
+            <version>2.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -246,6 +246,10 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>${war-plugin.version}</version>
                     <configuration>
+                        <warSourceExcludes>
+                            **/node_modules/**,
+                            **/testsite/**
+                        </warSourceExcludes>
                         <packagingIncludes>
                             app/**,
                             index.html,
@@ -293,7 +297,7 @@
                             <docletArtifact>
                                 <groupId>com.carma</groupId>
                                 <artifactId>swagger-doclet</artifactId>
-                                <version>1.0.3</version>
+                                <version>1.0.4.1</version>
                             </docletArtifact>
                             <reportOutputDirectory>${basedir}/src/main/webapp</reportOutputDirectory>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
@@ -318,25 +322,24 @@
             </plugin>
 
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
-                <version>6.1.26</version>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.2.8.v20150217</version>
                 <configuration>
                     <scanIntervalSeconds>60</scanIntervalSeconds> <!-- reload every minute -->
-                    <contextPath>/</contextPath>
+                    <stopPort>8082</stopPort>
+                    <stopKey>stop</stopKey>
                 </configuration>
                 <executions>
                     <execution>
                         <id>start-jetty</id>
                         <phase>pre-integration-test</phase>
                         <goals>
-                            <goal>run</goal>
-                            <!--<goal>run-exploded</goal>-->
+                            <goal>start</goal>
                         </goals>
                         <configuration>
                             <useTestClasspath>true</useTestClasspath>
                             <scanIntervalSeconds>0</scanIntervalSeconds>
-                            <daemon>true</daemon>
                         </configuration>
                     </execution>
                     <execution>

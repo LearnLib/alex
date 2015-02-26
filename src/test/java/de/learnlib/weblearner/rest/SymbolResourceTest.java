@@ -57,7 +57,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     private Symbol symbol;
     private Symbol symbol2;
-    private List<Symbol<?>> symbols;
+    private List<Symbol> symbols;
 
     @Override
     protected Application configure() {
@@ -156,7 +156,7 @@ public class SymbolResourceTest extends JerseyTest {
     public void shouldCreateValidSymbols() throws IOException {
         // given
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { }).writeValueAsString(symbols);
+        String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
         // when
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
@@ -171,7 +171,7 @@ public class SymbolResourceTest extends JerseyTest {
         symbol.setProject(null);
         symbol2.setRevision(0);
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { }).writeValueAsString(symbols);
+        String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
         // when
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
@@ -185,7 +185,7 @@ public class SymbolResourceTest extends JerseyTest {
     public void shouldCreateSymbolsWithCorrectProject() throws IOException {
         // given
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { }).writeValueAsString(symbols);
+        String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
         // when
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
@@ -199,7 +199,7 @@ public class SymbolResourceTest extends JerseyTest {
     public void shouldNotCreateASymbolsWithAnWrongProject() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         symbol.setProjectId(PROJECT_TEST_ID + 1);
-        String json = mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { }).writeValueAsString(symbols);
+        String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
         given(symbolDAO.getWithLatestRevision(PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
@@ -212,7 +212,7 @@ public class SymbolResourceTest extends JerseyTest {
     public void shouldReturn400IfSymbolsCouldNotBeCreated() throws JsonProcessingException {
         willThrow(new ValidationException()).given(symbolDAO).create(symbols);
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writerWithType(new TypeReference<List<Symbol<?>>>() { }).writeValueAsString(symbols);
+        String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
 
@@ -221,7 +221,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     private void assertSymbolListCreation(Response response) {
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-        List<Symbol<?>> responseSymbols = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(symbol, responseSymbols.get(0));
         assertEquals(symbol2, responseSymbols.get(1));
         verify(symbolDAO).create(symbols);
@@ -230,7 +230,8 @@ public class SymbolResourceTest extends JerseyTest {
     @Test
     public void shouldReturnAllSymbolsThatAreVisible() {
         symbols.remove(symbol2);
-        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.VISIBLE)).willReturn(symbols);
+        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.VISIBLE))
+                .willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").request().get();
 
@@ -246,7 +247,8 @@ public class SymbolResourceTest extends JerseyTest {
     @Test
     public void shouldReturnAllSymbolsIncludingHiddenOnes() {
         symbols.remove(symbol2);
-        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.ALL)).willReturn(symbols);
+        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, Symbol.class, SymbolVisibilityLevel.ALL))
+                .willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("visibility", "all")
                             .request().get();
@@ -263,7 +265,8 @@ public class SymbolResourceTest extends JerseyTest {
     @Test
     public void shouldReturnOnlyWebSymbols() {
         symbols.remove(symbol2);
-        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, WebSymbol.class, SymbolVisibilityLevel.VISIBLE)).willReturn(symbols);
+        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, WebSymbol.class, SymbolVisibilityLevel.VISIBLE))
+                .willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("type", "web")
                                 .request().get();
@@ -281,13 +284,14 @@ public class SymbolResourceTest extends JerseyTest {
     @Test
     public void shouldReturnOnlyRestSymbols() {
         symbols = new LinkedList<>();
-        Symbol<?> restSymbol = new RESTSymbol();
+        Symbol restSymbol = new RESTSymbol();
         restSymbol.setId(SYMBOL_TEST_ID);
         restSymbol.setName("Symbol Resource REST Test Symbol");
         restSymbol.setAbbreviation("srrts");
         restSymbol.setProject(project);
         symbols.add(restSymbol);
-        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, RESTSymbol.class, SymbolVisibilityLevel.VISIBLE)).willReturn(symbols);
+        given(symbolDAO.getAllWithLatestRevision(PROJECT_TEST_ID, RESTSymbol.class, SymbolVisibilityLevel.VISIBLE))
+                .willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("type", "rest")
                                 .request().get();
@@ -328,7 +332,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        List<Symbol<?>> responseSymbols = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
         verify(symbolDAO).getWithAllRevisions(PROJECT_TEST_ID, SYMBOL_TEST_ID);
     }
@@ -404,13 +408,14 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldHideMultipleSymbols() {
-        given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId(), symbol2.getId())).willReturn(symbols);
+        given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
+                .willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "," + symbol2.getId() + "/hide";
         Response response = target(path).request().post(null);
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        List<Symbol<?>> responseSymbols = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
         verify(symbolDAO).hide(PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
     }
@@ -458,13 +463,14 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldShowMultipleSymbols() {
-        given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId(), symbol2.getId())).willReturn(symbols);
+        given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
+                .willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "," + symbol2.getId() + "/show";
         Response response = target(path).request().post(null);
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        List<Symbol<?>> responseSymbols = response.readEntity(new GenericType<List<Symbol<?>>>() { });
+        List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
         verify(symbolDAO).show(PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
     }

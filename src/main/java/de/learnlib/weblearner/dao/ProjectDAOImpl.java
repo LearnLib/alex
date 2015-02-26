@@ -40,8 +40,8 @@ public class ProjectDAOImpl implements ProjectDAO {
             HibernateUtil.commitTransaction();
 
         // error handling
-        } catch (javax.validation.ConstraintViolationException |
-                 org.hibernate.exception.ConstraintViolationException e) {
+        } catch (javax.validation.ConstraintViolationException
+                | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             throw new javax.validation.ValidationException(
                     "The Project was not created because it did not pass the validation!", e);
@@ -109,8 +109,8 @@ public class ProjectDAOImpl implements ProjectDAO {
             LOGGER.info("Project Update Failed:", e);
             HibernateUtil.rollbackTransaction();
             throw new IllegalArgumentException("could not find the project, thus it is not updated.", e);
-        } catch (javax.validation.ConstraintViolationException |
-                 org.hibernate.exception.ConstraintViolationException e) {
+        } catch (javax.validation.ConstraintViolationException
+                 | org.hibernate.exception.ConstraintViolationException e) {
             LOGGER.info("Project Update Failed:", e);
             HibernateUtil.rollbackTransaction();
             throw new javax.validation.ValidationException(
@@ -155,7 +155,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             if (foobar.contains("symbols")) {
                 Hibernate.initialize(project.getSymbols());
-                for (Symbol<?> s : project.getSymbols()) {
+                for (Symbol s : project.getSymbols()) {
                     s.loadLazyRelations();
                 }
             } else {
@@ -164,7 +164,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             if (foobar.contains("resetSymbols")) {
                 Hibernate.initialize(project.getResetSymbols());
-                for (Symbol<?> s : project.getResetSymbols().values()) {
+                for (Symbol s : project.getResetSymbols().values()) {
                     s.loadLazyRelations();
                 }
             } else {

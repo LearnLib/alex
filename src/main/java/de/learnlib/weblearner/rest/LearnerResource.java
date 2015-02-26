@@ -66,7 +66,7 @@ public class LearnerResource {
     public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration) {
         LearnerStatus status = new LearnerStatus(learner);
         try {
-            List<Symbol<?>> symbols = symbolDAO.getAll(projectId, configuration.getSymbols());
+            List<Symbol> symbols = symbolDAO.getAll(projectId, configuration.getSymbols());
             Project project = projectDAO.getByID(projectId, "all");
 
             learner.start(project, configuration, symbols.toArray(new Symbol[symbols.size()]));
@@ -119,8 +119,9 @@ public class LearnerResource {
     }
 
     /**
-     * Stop the learning.
-     * 
+     * Stop the learning after the current step.
+     * This does not stop the learning immediately!
+     *
      * @return The status of the current learn process.
      * @successResponse 200 OK
      * @responseType de.learnlib.weblearner.entities.LearnerStatus

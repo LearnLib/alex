@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 /**
  * A Wrapper/ Facade around a @{link WebTarget}.
  */
-public class WebServiceConnector {
+public class WebServiceConnector implements Connector {
 
     /** The target behind the connector. */
     private WebTarget target;

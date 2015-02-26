@@ -182,7 +182,7 @@ public class ProjectDAOImplTest {
         // test if the project has Symbols
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
-        List<Symbol<?>> symbols = session.createCriteria(Symbol.class)
+        List<Symbol> symbols = session.createCriteria(Symbol.class)
                                             .add(Restrictions.eq("project.id", project.getId()))
                                             .list();
         WebSymbolAction action = ((WebSymbol) symbols.get(0)).getActions().get(0);

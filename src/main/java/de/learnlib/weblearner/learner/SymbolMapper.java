@@ -20,24 +20,24 @@ import java.util.Map;
  * @param <CI>
  *            The type of the Concrete Input used in the Symbols to implement the execution.
  */
-public class SymbolMapper<CI> implements Mapper<String, String, ContextExecutableInput<String, CI>, String> {
+public class SymbolMapper<CI> implements Mapper<String, String, ContextExecutableInput<String, MultiConnector>, String> {
 
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /** Map to manage the symbols according to their name in the Alphabet. */
-    private Map<String, Symbol<CI>> symbols;
+    private Map<String, Symbol> symbols;
 
-    public SymbolMapper(Symbol<CI>... symbols) {
+    public SymbolMapper(Symbol... symbols) {
         this.symbols = new HashMap<>();
 
-        for (Symbol<CI> s : symbols) {
+        for (Symbol s : symbols) {
             this.symbols.put(s.getAbbreviation(), s);
         }
     }
 
     @Override
-    public ContextExecutableInput<String, CI> mapInput(String abstractInput) {
+    public ContextExecutableInput<String, MultiConnector> mapInput(String abstractInput) {
         return symbols.get(abstractInput);
     }
 
@@ -78,8 +78,8 @@ public class SymbolMapper<CI> implements Mapper<String, String, ContextExecutabl
         return sigma;
     }
 
-    public List<Symbol<CI>> getSymbols() {
-        List<Symbol<CI>> list = new LinkedList<>();
+    public List<Symbol> getSymbols() {
+        List<Symbol> list = new LinkedList<>();
         list.addAll(symbols.values());
         return list;
     }

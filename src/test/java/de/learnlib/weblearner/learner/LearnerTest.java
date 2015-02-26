@@ -12,7 +12,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LearnerTest {
@@ -42,14 +41,6 @@ public class LearnerTest {
         given(project.getResetSymbol(WebSymbol.class)).willReturn(mock(WebSymbol.class));
 
         learner = new Learner(factory);
-    }
-
-
-    @Test
-    public void shouldStartTheThread() {
-        learner.start(project, learnerConfiguration);
-
-        verify(thread).start();
     }
 
     @Test(expected = IllegalStateException.class)

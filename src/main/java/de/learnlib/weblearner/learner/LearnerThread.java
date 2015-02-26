@@ -34,10 +34,10 @@ public class LearnerThread<C> extends Thread {
     private final SymbolMapper<C> symbolMapper;
 
     /** The SUL the thread will learn. */
-    private  final SUL<ContextExecutableInput<String, C>, String> ceiSUL;
+    private  final SUL<ContextExecutableInput<String, MultiConnector>, String> ceiSUL;
 
     /** The context of the SUL. */
-    private final ContextExecutableInputSUL.ContextHandler<C> context;
+    private final ContextExecutableInputSUL.ContextHandler<MultiConnector> context;
 
     /** The System Under Learning used to do the actual learning. */
     private final SUL<String, String> sul;
@@ -59,18 +59,16 @@ public class LearnerThread<C> extends Thread {
 
     /**
      * Constructor to set the LearnerThread up.
-     *
-     * @param learnerResultDAO
+     *  @param learnerResultDAO
      *         The DAO to persists the results.
      * @param result
      *         The result to update, including the proper configuration.
      * @param context
-     *         The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
+ *         The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
      * @param symbols
-     *         The Symbols to use.
      */
     public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result,
-                         ContextExecutableInputSUL.ContextHandler<C> context, Symbol<C>... symbols) {
+                         ContextExecutableInputSUL.ContextHandler<MultiConnector> context, Symbol... symbols) {
         this.active = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
@@ -101,9 +99,11 @@ public class LearnerThread<C> extends Thread {
      * @param symbols
      *         The Symbols to use.
      */
-    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result,
-                         ContextExecutableInputSUL.ContextHandler<C> context, MealyLearner<String, String> learner,
-                         Symbol<C>... symbols) {
+    public LearnerThread(LearnerResultDAO learnerResultDAO,
+                         LearnerResult result,
+                         ContextExecutableInputSUL.ContextHandler<MultiConnector> context,
+                         MealyLearner<String, String> learner,
+                         Symbol... symbols) {
         this.active = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
@@ -142,7 +142,7 @@ public class LearnerThread<C> extends Thread {
      *
      * @return The current context.
      */
-    public ContextExecutableInputSUL.ContextHandler<C> getContext() {
+    public ContextExecutableInputSUL.ContextHandler<MultiConnector> getContext() {
         return context;
     }
 
@@ -160,7 +160,7 @@ public class LearnerThread<C> extends Thread {
      *
      * @return The Symbols used by the thread.
      */
-    public List<Symbol<C>> getSymbols() {
+    public List<Symbol> getSymbols() {
         return symbolMapper.getSymbols();
     }
 
@@ -203,7 +203,9 @@ public class LearnerThread<C> extends Thread {
 
     private boolean continueLearning(boolean shouldDoAnotherStep, long maxStepCount) {
         int maxAmountOfStepsToLearn = result.getConfiguration().getMaxAmountOfStepsToLearn();
-        return shouldDoAnotherStep && (maxAmountOfStepsToLearn == 0 || result.getStepNo() < maxStepCount);
+        return shouldDoAnotherStep
+                && (maxAmountOfStepsToLearn == 0 || result.getStepNo() < maxStepCount)
+                && !Thread.interrupted();
     }
 
     private void learnFirstHypothesis() {

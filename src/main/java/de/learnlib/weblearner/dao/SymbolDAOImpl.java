@@ -23,7 +23,7 @@ import java.util.List;
 public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
-    public void create(Symbol<?> symbol) throws ValidationException {
+    public void create(Symbol symbol) throws ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -33,8 +33,8 @@ public class SymbolDAOImpl implements SymbolDAO {
             HibernateUtil.commitTransaction();
 
         // error handling
-        } catch (javax.validation.ConstraintViolationException |
-                 org.hibernate.exception.ConstraintViolationException e) {
+        } catch (javax.validation.ConstraintViolationException
+                 | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             symbol.setId(0L);
             symbol.setRevision(0L);
@@ -43,22 +43,22 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public void create(List<Symbol<?>> symbols) throws ValidationException {
+    public void create(List<Symbol> symbols) throws ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
         try {
             // create the symbol
-            for (Symbol<?> symbol : symbols) {
+            for (Symbol symbol : symbols) {
                 create(session, symbol);
             }
             HibernateUtil.commitTransaction();
 
             // error handling
-        } catch (javax.validation.ConstraintViolationException |
-                org.hibernate.exception.ConstraintViolationException e) {
+        } catch (javax.validation.ConstraintViolationException
+                | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
-            for (Symbol<?> symbol : symbols) {
+            for (Symbol symbol : symbols) {
                 symbol.setId(0L);
                 symbol.setRevision(0L);
             }
@@ -66,7 +66,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private void create(Session session, Symbol<?> symbol) {
+    private void create(Session session, Symbol symbol) {
         // new symbols should have a project, not an id and not a revision
         if (symbol.getProject() == null || symbol.getId() > 0 || symbol.getRevision() > 0) {
             throw new ValidationException(
@@ -93,7 +93,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol<?>> getAll(long projectId, List<IdRevisionPair> idRevPairs) {
+    public List<Symbol> getAll(long projectId, List<IdRevisionPair> idRevPairs) {
         // no DB interaction if no symbols are requested
         if (idRevPairs.isEmpty()) {
             return new LinkedList<>();
@@ -118,13 +118,13 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         // get the symbols
         @SuppressWarnings("unchecked") // should return a list of Symbols
-        List<Symbol<?>> result = session.createCriteria(Symbol.class)
+        List<Symbol> result = session.createCriteria(Symbol.class)
                                         .add(Subqueries.propertyIn("symbolId", symbolIds))
                                         .addOrder(Order.asc("id"))
                                         .list();
 
         // load the lazy relations
-        for (Symbol<?> symb : result) {
+        for (Symbol symb : result) {
             symb.loadLazyRelations();
         }
 
@@ -134,12 +134,12 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol<?>> getByIdsWithLatestRevision(long projectId, Long... ids) {
+    public List<Symbol> getByIdsWithLatestRevision(long projectId, Long... ids) {
         return getByIdsWithLatestRevision(projectId, SymbolVisibilityLevel.ALL, ids);
     }
 
     @Override
-    public List<Symbol<?>> getByIdsWithLatestRevision(long projectId, SymbolVisibilityLevel visibilityLevel,
+    public List<Symbol> getByIdsWithLatestRevision(long projectId, SymbolVisibilityLevel visibilityLevel,
                                                       Long... ids) {
         // start session
         Session session = HibernateUtil.getSession();
@@ -174,12 +174,12 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol<?>> getAllWithLatestRevision(long projectId, SymbolVisibilityLevel visibilityLevel) {
+    public List<Symbol> getAllWithLatestRevision(long projectId, SymbolVisibilityLevel visibilityLevel) {
         return getAllWithLatestRevision(projectId, Symbol.class, visibilityLevel);
     }
 
     @Override
-    public List<Symbol<?>> getAllWithLatestRevision(long projectID, Class<? extends Symbol> type,
+    public List<Symbol> getAllWithLatestRevision(long projectID, Class<? extends Symbol> type,
                                                     SymbolVisibilityLevel visibilityLevel) {
         // start session
         Session session = HibernateUtil.getSession();
@@ -200,21 +200,11 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public Symbol<?> get(long projectId, long id, long revision) {
+    public Symbol get(long projectId, long id, long revision) {
         IdRevisionPair idRevisionPair = new IdRevisionPair(id, revision);
         List<IdRevisionPair> idRevisionList =  new LinkedList<>();
         idRevisionList.add(idRevisionPair);
-        List<Symbol<?>> resultList = getAll(projectId, idRevisionList);
-
-        if(resultList.isEmpty()) {
-            return null;
-        }
-        return resultList.get(0);
-    }
-
-    @Override
-    public Symbol<?> getWithLatestRevision(long projectId, long id) {
-        List<Symbol<?>> resultList = getByIdsWithLatestRevision(projectId, id);
+        List<Symbol> resultList = getAll(projectId, idRevisionList);
 
         if (resultList.isEmpty()) {
             return null;
@@ -223,7 +213,17 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol<?>> getWithAllRevisions(long projectId, long id) {
+    public Symbol getWithLatestRevision(long projectId, long id) {
+        List<Symbol> resultList = getByIdsWithLatestRevision(projectId, id);
+
+        if (resultList.isEmpty()) {
+            return null;
+        }
+        return resultList.get(0);
+    }
+
+    @Override
+    public List<Symbol> getWithAllRevisions(long projectId, long id) {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -243,19 +243,19 @@ public class SymbolDAOImpl implements SymbolDAO {
             IdRevisionPair newPair = new IdRevisionPair(id, rev);
             idRevisionList.add(newPair);
         }
-        List<Symbol<?>> resultList = getAll(projectId, idRevisionList);
+        List<Symbol> resultList = getAll(projectId, idRevisionList);
 
         return resultList;
     }
 
     @Override
-    public void update(Symbol<?> symbol) throws IllegalArgumentException, ValidationException {
+    public void update(Symbol symbol) throws IllegalArgumentException, ValidationException {
         // checks for valid symbol
         if (symbol.getProjectId() == 0) {
             throw new IllegalArgumentException("Update failed: Project unknown.");
         }
 
-        Symbol<?> symbolInDB = getWithLatestRevision(symbol.getProjectId(), symbol.getId());
+        Symbol symbolInDB = getWithLatestRevision(symbol.getProjectId(), symbol.getId());
         if (symbolInDB == null) {
             throw new IllegalArgumentException("Update failed: Symbol unknown.");
         }
@@ -287,14 +287,14 @@ public class SymbolDAOImpl implements SymbolDAO {
             HibernateUtil.commitTransaction();
 
         // error handling
-        } catch (javax.validation.ConstraintViolationException |
-                 org.hibernate.exception.ConstraintViolationException e) {
+        } catch (javax.validation.ConstraintViolationException
+                 | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("Could not update the Symbol because it is not valid.", e);
         }
     }
 
-    private void update(Session session, Symbol<?> symbol) {
+    private void update(Session session, Symbol symbol) {
         Project project = (Project) session.load(Project.class, symbol.getProjectId());
 
         // test for unique constrains
@@ -323,7 +323,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         // update
         try {
             for (Long id : ids) {
-                List<Symbol<?>> symbols = getSymbols(session, projectId, id);
+                List<Symbol> symbols = getSymbols(session, projectId, id);
 
                 hideSymbols(session, symbols);
             }
@@ -336,7 +336,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         HibernateUtil.commitTransaction();
     }
 
-    private void hideSymbols(Session session, List<Symbol<?>> symbols) throws IllegalArgumentException {
+    private void hideSymbols(Session session, List<Symbol> symbols) throws IllegalArgumentException {
         for (Symbol symbol : symbols) {
             symbol.loadLazyRelations();
             if (symbol.isResetSymbol()) {
@@ -357,7 +357,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         // update
         try {
             for (Long id : ids) {
-                List<Symbol<?>> symbols = getSymbols(session, projectId, id);
+                List<Symbol> symbols = getSymbols(session, projectId, id);
                 showSymbols(session, symbols);
             }
         } catch (IllegalArgumentException e) {
@@ -369,16 +369,16 @@ public class SymbolDAOImpl implements SymbolDAO {
         HibernateUtil.commitTransaction();
     }
 
-    private void showSymbols(Session session, List<Symbol<?>> symbols) {
+    private void showSymbols(Session session, List<Symbol> symbols) {
         for (Symbol symbol : symbols) {
             symbol.setHidden(false);
             session.update(symbol);
         }
     }
 
-    private List<Symbol<?>> getSymbols(Session session, Long projectId, Long symbolId) {
+    private List<Symbol> getSymbols(Session session, Long projectId, Long symbolId) {
         @SuppressWarnings("should return a list of Symbols")
-        List<Symbol<?>> symbols = session.createCriteria(Symbol.class)
+        List<Symbol> symbols = session.createCriteria(Symbol.class)
                                             .add(Restrictions.eq("project.id", projectId))
                                             .add(Restrictions.eq("id", symbolId))
                 .list();
@@ -401,10 +401,10 @@ public class SymbolDAOImpl implements SymbolDAO {
      * @throws IllegalArgumentException
      *             If the symbol faild the check.
      */
-    private void checkUniqueConstrains(Session session, Symbol<?> symbol) throws IllegalArgumentException {
+    private void checkUniqueConstrains(Session session, Symbol symbol) throws IllegalArgumentException {
         // put constrains into a query
         @SuppressWarnings("unchecked") // should return list of symbols
-        List<Symbol<?>> testList = session.createCriteria(symbol.getClass())
+        List<Symbol> testList = session.createCriteria(symbol.getClass())
                                             .add(Restrictions.eq("project.id", symbol.getProjectId()))
                                             .add(Restrictions.ne("id", symbol.getId()))
                                             .add(Restrictions.disjunction()

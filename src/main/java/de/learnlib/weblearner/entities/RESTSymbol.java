@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.api.SULException;
 import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
+import de.learnlib.weblearner.learner.MultiConnector;
 import de.learnlib.weblearner.learner.WebServiceConnector;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -23,7 +24,7 @@ import java.util.List;
 @Entity
 @DiscriminatorValue("rest")
 @JsonTypeName("rest")
-public class RESTSymbol extends Symbol<WebServiceConnector> implements SymbolActionHandler<RESTSymbolAction> {
+public class RESTSymbol extends Symbol implements SymbolActionHandler<RESTSymbolAction> {
 
     /** to be serializable. */
     private static final long serialVersionUID = 7534219643367558281L;
@@ -88,8 +89,12 @@ public class RESTSymbol extends Symbol<WebServiceConnector> implements SymbolAct
     }
 
     @Override
-    public String execute(WebServiceConnector context) throws SULException {
-        return actionHandler.execute(context);
+    public String execute(MultiConnector connector) throws SULException {
+        return execute((WebServiceConnector) connector.getConnector(WebServiceConnector.class));
+    }
+
+    public String execute(WebServiceConnector connector) throws SULException {
+        return actionHandler.execute(connector);
     }
 
 }

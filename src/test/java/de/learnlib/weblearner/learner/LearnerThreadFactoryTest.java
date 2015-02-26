@@ -44,7 +44,7 @@ public class LearnerThreadFactoryTest {
 
     @Test
     public void shouldCreateThreadForWebSymbols() {
-        Symbol<?> webSymbol = new WebSymbol();
+        Symbol webSymbol = new WebSymbol();
         LearnerThread<?> thread = factory.createThread(project, learnerConfiguration, webSymbol);
 
         assertNotNull(thread);
@@ -52,7 +52,7 @@ public class LearnerThreadFactoryTest {
 
     @Test
     public void shouldCreateThreadForRESTSymbols() {
-        Symbol<?> restSymbol = new RESTSymbol();
+        Symbol restSymbol = new RESTSymbol();
         given(project.getBaseUrl()).willReturn(FAKE_URL);
         LearnerThread<?> thread = factory.createThread(project, learnerConfiguration, restSymbol);
 
@@ -62,15 +62,6 @@ public class LearnerThreadFactoryTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailWithoutSymbols() {
         factory.createThread(project, learnerConfiguration); // should fail
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldFailOnDifferentSymbolTypes() {
-        Symbol<?> webSymbol1 = new WebSymbol();
-        Symbol<?> webSymbol2 = new WebSymbol();
-        Symbol<?> restStymbol = new RESTSymbol();
-
-        factory.createThread(project, learnerConfiguration, webSymbol1, webSymbol2, restStymbol); // should fail
     }
 
 }

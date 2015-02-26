@@ -61,7 +61,7 @@ public class Project implements Serializable {
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
     @JsonProperty("symbols")
-    private Set<Symbol<?>> symbols;
+    private Set<Symbol> symbols;
 
     /** Remember the different reset symbols by their type. */
     @OneToMany(fetch = FetchType.LAZY)
@@ -144,7 +144,7 @@ public class Project implements Serializable {
      * @return The Set of Symbols.
      */
     @JsonIgnore
-    public Collection<Symbol<?>> getSymbols() {
+    public Collection<Symbol> getSymbols() {
         return symbols;
     }
 
@@ -152,7 +152,7 @@ public class Project implements Serializable {
      * @param symbols
      *            the symbols to set
      */
-    public void setSymbols(Set<Symbol<?>> symbols) {
+    public void setSymbols(Set<Symbol> symbols) {
         this.symbols = symbols;
     }
 
@@ -163,7 +163,7 @@ public class Project implements Serializable {
      * 
      * @param symbol The Symbol to add.
      */
-    public void addSymbol(Symbol<?> symbol) {
+    public void addSymbol(Symbol symbol) {
         this.symbols.add(symbol);
         symbol.setProject(this);
     }
@@ -220,7 +220,7 @@ public class Project implements Serializable {
      * @param symbol
      *         The new reset symbol. null values will be ignored.
      */
-    public void setResetSymbol(Symbol<?> symbol) {
+    public void setResetSymbol(Symbol symbol) {
         if (symbol != null) {
             this.resetSymbols.put(symbol.getClass(), symbol);
         }
@@ -233,7 +233,7 @@ public class Project implements Serializable {
      *         The type of the reset symbol
      * @return The current registered reset symbol or null.
      */
-    public Symbol getResetSymbol(Class<? extends  Symbol<?>> type) {
+    public Symbol getResetSymbol(Class<? extends  Symbol> type) {
         return resetSymbols.get(type);
     }
 
