@@ -1,0 +1,103 @@
+<div class="container">
+    <h2>Symbols</h2>
+
+    <p class="text-muted">Manage all groups</p>
+    <hr>
+</div>
+
+<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+    <div class="container">
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" select-all-items-checkbox items="allSymbols">
+        </div>
+        <div class="pull-left">
+            <button class="btn btn-xs btn-primary"
+                    symbol-create-modal-handle project-id="{{project.id}}" on-created="addSymbol">
+                Create
+            </button>
+            <button class="btn btn-xs btn-default" ng-class="(allSymbols|selected).length == 1 ? '' : 'disabled'"
+                    symbol-edit-modal-handle symbol="(allSymbols | selected | first)" on-updated="updateSymbol">
+                Edit
+            </button>
+            <button class="btn btn-xs btn-default" ng-class="(allSymbols|selected).length > 0 ? '' : 'disabled'"
+                    ng-click="deleteSelectedSymbols()">
+                Delete
+            </button>
+        </div>
+        <div class="pull-right">
+            <button class="btn btn-xs btn-default" ng-click="toggleCollapseAllGroups()">Collapse All</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div ng-repeat="group in groups track by group.id">
+
+        <div class="selectable-list">
+            <div class="selectable-list-item" style="padding-top: 25px">
+                <div class="selectable-list-control">
+                    <input type="checkbox" select-all-items-checkbox items="group.symbols">
+                </div>
+                <div class="selectable-list-content">
+
+                    <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
+                        <i class="fa fa-fw" ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                    </span>
+
+                    <h3 style="margin-top: 0" ng-click="group._isCollapsed = !group._isCollapsed"
+                        ng-bind="group.name"></h3>
+
+                    <p class="text-muted"><span ng-bind="group.symbols.length"></span> Symbols</p>
+                </div>
+            </div>
+        </div>
+
+        <div collapse="group._isCollapsed">
+
+            <div selectable-list ng-model="group.symbols">
+                <div selectable-list-item ng-repeat="symbol in group.symbols">
+
+                    <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <ul class="dropdown-menu pull-left" role="menu">
+                            <li>
+                                <a href symbol-edit-modal-handle symbol="symbol" on-updated="updateSymbol">
+                                    <i class="fa fa-edit fa-fw"></i> Edit
+                                </a>
+                            </li>
+                            <li>
+                                <a href ng-click="deleteSymbol(symbol)">
+                                    <i class="fa fa-trash fa-fw"></i> Delete
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a ui-sref="symbols.actions({symbolId:symbol.id})">
+                                    <i class="fa fa-list-ol fa-fw"></i> Actions
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a ui-sref="symbols.history({symbolId:symbol.id})">
+                                    <i class="fa fa-history fa-fw"></i> Restore
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
+
+                    <p class="text-muted">
+                        <a ui-sref="symbols.actions({symbolId:symbol.id})">
+                            <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
+                        </a>
+                    </p>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

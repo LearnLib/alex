@@ -1,4 +1,4 @@
-angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-create-form.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/symbol-create-form.html', 'app/views/directives/symbol-edit-form.html', 'app/views/directives/web-action-create-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/modal-test-setup-settings.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-create-form.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-create-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/modal-test-setup-settings.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/pages/about.html', 'app/views/pages/groups-manage.html', 'app/views/pages/groups-symbols.html', 'app/views/pages/groups.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/counter-example-builder.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -211,10 +211,7 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                        <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
     "                           aria-expanded=\"false\">Symbols <span class=\"caret\"></span></a>\n" +
     "                        <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "                            <li><a ui-sref=\"symbols.web\">Web Symbol Editor</a></li>\n" +
-    "                            <li><a ui-sref=\"symbols.rest\">Rest Symbol Editor</a></li>\n" +
-    "                            <!--<li class=\"divider\"></li>-->\n" +
-    "                            <!--<li><a href=\"#/\">Text Editor</a></li>-->\n" +
+    "                            <li><a ui-sref=\"symbols\">Manage</a></li>\n" +
     "                            <li class=\"divider\"></li>\n" +
     "                            <li><a ui-sref=\"symbols.import\">Import</a></li>\n" +
     "                            <li><a ui-sref=\"symbols.export\">Export</a></li>\n" +
@@ -518,61 +515,6 @@ angular.module("app/views/directives/rest-action-edit-form.html", []).run(["$tem
     "\n" +
     "    <hr>\n" +
     "    <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update Action</button>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/views/directives/symbol-create-form.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/symbol-create-form.html",
-    "<form id=\"symbol-create-form\" name=\"create_symbol_form\" ng-submit=\"submitForm()\">\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label>Symbol Name</label>\n" +
-    "        <input class=\"form-control\" name=\"name\" type=\"text\" placeholder=\"name\" required ng-model=\"symbol.name\">\n" +
-    "    </div>\n" +
-    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_symbol_form.name.$dirty && create_symbol_form.name.$invalid\">\n" +
-    "        <small ng-show=\"create_symbol_form.name.$error.required\"> The field must not be empty. </small>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label>Symbol Abbreviation</label>\n" +
-    "        <input class=\"form-control\" name=\"abbreviation\" type=\"text\" placeholder=\"abbreviation\" required ng-model=\"symbol.abbreviation\">\n" +
-    "    </div>\n" +
-    "    <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_symbol_form.abbreviation.$dirty && create_symbol_form.abbreviation.$invalid\">\n" +
-    "        <small ng-show=\"create_symbol_form.abbreviation.$error.required\"> The field must not be empty. </small>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <button class=\"btn btn-primary\" type=\"submit\">Create Symbol</button>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/views/directives/symbol-edit-form.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/symbol-edit-form.html",
-    "<form name=\"update_symbol_form\" ng-submit=\"submitForm()\">\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label>Symbol Name</label>\n" +
-    "        <input class=\"form-control\" name=\"name\" type=\"text\" placeholder=\"name\" required ng-model=\"symbol.name\">\n" +
-    "    </div>\n" +
-    "    <div class=\"alert alert-danger alert-condensed\"\n" +
-    "         ng-show=\"update_symbol_form.name.$dirty && update_symbol_form.name.$invalid\">\n" +
-    "        <small ng-show=\"update_symbol_form.name.$error.required\"> The field must not be empty.</small>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label>Symbol Abbreviation</label>\n" +
-    "        <input class=\"form-control\" name=\"abbreviation\" type=\"text\" placeholder=\"abbreviation\" required\n" +
-    "               ng-model=\"symbol.abbreviation\">\n" +
-    "    </div>\n" +
-    "    <div class=\"alert alert-danger alert-condensed\"\n" +
-    "         ng-show=\"update_symbol_form.abbreviation.$dirty && update_symbol_form.abbreviation.$invalid\">\n" +
-    "        <small ng-show=\"update_symbol_form.abbreviation.$error.required\"> The field must not be empty.</small>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <button class=\"btn btn-sm btn-primary\" type=\"submit\">Update Symbol</button>\n" +
     "\n" +
     "</form>");
 }]);
@@ -940,14 +882,11 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "        <i class=\"fa fa-close fa-fw\"></i>\n" +
     "    </a>\n" +
     "\n" +
-    "	<h3 class=\"modal-title\">Create <span ng-bind=\"(symbol.type|capitalize)\"></span> Action</h3>\n" +
-    "	<span class=\"text-muted\">Create a new action for a <span ng-bind=\"symbol.type\"></span> symbol</span>\n" +
+    "    <h3 class=\"modal-title\">Create Action</h3>\n" +
+    "    <span class=\"text-muted\">Create a new action for a symbol</span>\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"modal-body\">\n" +
-    "\n" +
-    "    <web-action-create-form if-is-type-of-web=\"symbol.type\"></web-action-create-form>\n" +
-    "    <rest-action-create-form if-is-type-of-rest=\"symbol.type\"></rest-action-create-form>\n" +
     "\n" +
     "</div>");
 }]);
@@ -961,17 +900,12 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "        <i class=\"fa fa-close fa-fw\"></i>\n" +
     "    </a>\n" +
     "\n" +
-    "    <div>\n" +
-    "        <h3 class=\"modal-title\">Update <span ng-bind=\"(symbol.type|capitalize)\"></span> Action</h3>\n" +
-    "        <span class=\"text-muted\">Update an existing action for a <span ng-bind=\"symbol.type\"></span> symbol</span>\n" +
-    "    </div>\n" +
+    "    <h3 class=\"modal-title\">Update Action</h3>\n" +
+    "    <span class=\"text-muted\">Update an existing action for a symbol</span>\n" +
     "\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"modal-body\">\n" +
-    "\n" +
-    "    <web-action-edit-form action=\"action\" if-is-type-of-web=\"symbol.type\"></web-action-edit-form>\n" +
-    "    <rest-action-edit-form action=\"action\" if-is-type-of-rest=\"symbol.type\"></rest-action-edit-form>\n" +
     "\n" +
     "</div>");
 }]);
@@ -1270,16 +1204,49 @@ angular.module("app/views/modals/symbol-create-modal.html", []).run(["$templateC
     "        <i class=\"fa fa-close fa-fw\"></i>\n" +
     "    </a>\n" +
     "\n" +
-    "	<h3 class=\"modal-title\">Create <span ng-bind=\"(type|capitalize)\"></span> Symbol</h3>\n" +
-    "    <span class=\"text-muted\">Create a new <span ng-bind=\"type\"></span> symbol</span>\n" +
+    "    <h3 class=\"modal-title\">Create a Symbol</h3>\n" +
+    "    <span class=\"text-muted\">Create a new symbol</span>\n" +
     "\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"modal-body\">\n" +
+    "<form id=\"symbol-create-form\" name=\"create_symbol_form\" ng-submit=\"createSymbol()\">\n" +
     "\n" +
-    "    <symbol-create-form type=\"{{type}}\"></symbol-create-form>\n" +
+    "    <div class=\"modal-body\">\n" +
     "\n" +
-    "</div>");
+    "        <div class=\"form-group\">\n" +
+    "            <label>Symbol Name</label>\n" +
+    "            <input class=\"form-control\" name=\"name\" type=\"text\" placeholder=\"name\" required ng-model=\"symbol.name\">\n" +
+    "        </div>\n" +
+    "        <div class=\"alert alert-danger alert-condensed\"\n" +
+    "             ng-show=\"create_symbol_form.name.$dirty && create_symbol_form.name.$invalid\">\n" +
+    "            <small ng-show=\"create_symbol_form.name.$error.required\"> The field must not be empty.</small>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label>Symbol Abbreviation</label>\n" +
+    "            <input class=\"form-control\" name=\"abbreviation\" type=\"text\" placeholder=\"abbreviation\" required\n" +
+    "                   ng-model=\"symbol.abbreviation\">\n" +
+    "        </div>\n" +
+    "        <div class=\"alert alert-danger alert-condensed\"\n" +
+    "             ng-show=\"create_symbol_form.abbreviation.$dirty && create_symbol_form.abbreviation.$invalid\">\n" +
+    "            <small ng-show=\"create_symbol_form.abbreviation.$error.required\"> The field must not be empty.</small>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label>Group</label>\n" +
+    "            <input class=\"form-control\" type=\"text\" list=\"groupNames\" ng-model=\"selectedGroup\" placeholder=\"Group name\">\n" +
+    "            <datalist id=\"groupNames\">\n" +
+    "                <option ng-repeat=\"group in groups\" value=\"{{group.name}}\"></option>\n" +
+    "            </datalist>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "        <button class=\"btn btn-primary\" type=\"submit\">Create Symbol</button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/views/modals/symbol-edit-modal.html", []).run(["$templateCache", function($templateCache) {
@@ -1291,15 +1258,41 @@ angular.module("app/views/modals/symbol-edit-modal.html", []).run(["$templateCac
     "        <i class=\"fa fa-close fa-fw\"></i>\n" +
     "    </a>\n" +
     "\n" +
-    "	<h3 class=\"modal-title\">Update <span ng-bind=\"(symbol.type|capitalize)\"></span> Symbol</h3>\n" +
-    "	<span class=\"text-muted\">Update an existing <span ng-bind=\"symbol.type\"></span> symbol</span>\n" +
+    "    <h3 class=\"modal-title\">Update a Symbol</h3>\n" +
+    "    <span class=\"text-muted\">Update an existing symbol</span>\n" +
+    "\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"modal-body\">\n" +
+    "<form id=\"symbol-edit-form\" name=\"symbol_edit_form\" ng-submit=\"updateSymbol()\">\n" +
     "\n" +
-    "    <symbol-edit-form symbol=\"symbol\"></symbol-edit-form>\n" +
+    "    <div class=\"modal-body\">\n" +
     "\n" +
-    "</div>");
+    "        <div class=\"form-group\">\n" +
+    "            <label>Symbol Name</label>\n" +
+    "            <input class=\"form-control\" name=\"name\" type=\"text\" placeholder=\"name\" required ng-model=\"symbol.name\">\n" +
+    "        </div>\n" +
+    "        <div class=\"alert alert-danger alert-condensed\"\n" +
+    "             ng-show=\"symbol_edit_form.name.$dirty && symbol_edit_form.name.$invalid\">\n" +
+    "            <small ng-show=\"symbol_edit_form.name.$error.required\"> The field must not be empty.</small>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label>Symbol Abbreviation</label>\n" +
+    "            <input class=\"form-control\" name=\"abbreviation\" type=\"text\" placeholder=\"abbreviation\" required\n" +
+    "                   ng-model=\"symbol.abbreviation\">\n" +
+    "        </div>\n" +
+    "        <div class=\"alert alert-danger alert-condensed\"\n" +
+    "             ng-show=\"symbol_edit_form.abbreviation.$dirty && symbol_edit_form.abbreviation.$invalid\">\n" +
+    "            <small ng-show=\"symbol_edit_form.abbreviation.$error.required\"> The field must not be empty.</small>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "        <button class=\"btn btn-primary\" type=\"submit\">Update Symbol</button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/views/pages/about.html", []).run(["$templateCache", function($templateCache) {
@@ -1327,6 +1320,126 @@ angular.module("app/views/pages/about.html", []).run(["$templateCache", function
     "        </a>\n" +
     "    </p>\n" +
     "\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/pages/groups-manage.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/groups-manage.html",
+    "");
+}]);
+
+angular.module("app/views/pages/groups-symbols.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/groups-symbols.html",
+    "");
+}]);
+
+angular.module("app/views/pages/groups.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/groups.html",
+    "<div class=\"container\">\n" +
+    "    <h2>Symbols</h2>\n" +
+    "\n" +
+    "    <p class=\"text-muted\">Manage all groups</p>\n" +
+    "    <hr>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "    <div class=\"container\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" select-all-items-checkbox items=\"allSymbols\">\n" +
+    "        </div>\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\"\n" +
+    "                    symbol-create-modal-handle project-id=\"{{project.id}}\" on-created=\"addSymbol\">\n" +
+    "                Create\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length == 1 ? '' : 'disabled'\"\n" +
+    "                    symbol-edit-modal-handle symbol=\"(allSymbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
+    "                Edit\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\"\n" +
+    "                    ng-click=\"deleteSelectedSymbols()\">\n" +
+    "                Delete\n" +
+    "            </button>\n" +
+    "        </div>\n" +
+    "        <div class=\"pull-right\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-click=\"toggleCollapseAllGroups()\">Collapse All</button>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"container\">\n" +
+    "    <div ng-repeat=\"group in groups track by group.id\">\n" +
+    "\n" +
+    "        <div class=\"selectable-list\">\n" +
+    "            <div class=\"selectable-list-item\" style=\"padding-top: 25px\">\n" +
+    "                <div class=\"selectable-list-control\">\n" +
+    "                    <input type=\"checkbox\" select-all-items-checkbox items=\"group.symbols\">\n" +
+    "                </div>\n" +
+    "                <div class=\"selectable-list-content\">\n" +
+    "\n" +
+    "                    <span class=\"pull-right\" ng-click=\"group._isCollapsed = !group._isCollapsed\">\n" +
+    "                        <i class=\"fa fa-fw\" ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
+    "                    </span>\n" +
+    "\n" +
+    "                    <h3 style=\"margin-top: 0\" ng-click=\"group._isCollapsed = !group._isCollapsed\"\n" +
+    "                        ng-bind=\"group.name\"></h3>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\"><span ng-bind=\"group.symbols.length\"></span> Symbols</p>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div collapse=\"group._isCollapsed\">\n" +
+    "\n" +
+    "            <div selectable-list ng-model=\"group.symbols\">\n" +
+    "                <div selectable-list-item ng-repeat=\"symbol in group.symbols\">\n" +
+    "\n" +
+    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                            <i class=\"fa fa-bars\"></i>\n" +
+    "                        </button>\n" +
+    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                            <li>\n" +
+    "                                <a href symbol-edit-modal-handle symbol=\"symbol\" on-updated=\"updateSymbol\">\n" +
+    "                                    <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li>\n" +
+    "                                <a href ng-click=\"deleteSymbol(symbol)\">\n" +
+    "                                    <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li class=\"divider\"></li>\n" +
+    "                            <li>\n" +
+    "                                <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                                    <i class=\"fa fa-list-ol fa-fw\"></i> Actions\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li class=\"divider\"></li>\n" +
+    "                            <li>\n" +
+    "                                <a ui-sref=\"symbols.history({symbolId:symbol.id})\">\n" +
+    "                                    <i class=\"fa fa-history fa-fw\"></i> Restore\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                        </ul>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                            <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
+    "                        </a>\n" +
+    "                    </p>\n" +
+    "\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
@@ -2280,11 +2393,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "        </div>\n" +
     "        <div class=\"pull-left\">\n" +
     "            <button class=\"btn btn-xs btn-primary\"\n" +
-    "                    open-symbol-create-modal symbol-type=\"{{type}}\" project-id=\"{{project.id}}\" on-created=\"addSymbol\">\n" +
+    "                    symbol-create-modal-handle project-id=\"{{project.id}}\" on-created=\"addSymbol\">\n" +
     "                Create\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-class=\"(symbols|selected).length == 1 ? '' : 'disabled'\"\n" +
-    "                    open-symbol-edit-modal symbol=\"(symbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
+    "                    symbol-edit-modal-handle symbol=\"(symbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
     "                Edit\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-class=\"(symbols|selected).length > 0 ? '' : 'disabled'\"\n" +
@@ -2293,7 +2406,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "            </button>\n" +
     "        </div>\n" +
     "        <div class=\"pull-right\">\n" +
-    "            <a ui-sref=\"symbols.{{type}}.trash\" class=\"btn btn-xs btn-default\">\n" +
+    "            <a ui-sref=\"symbols.trash\" class=\"btn btn-xs btn-default\">\n" +
     "                <i class=\"fa fa-trash fa-fw\"></i>Trash\n" +
     "            </a>\n" +
     "        </div>\n" +
@@ -2311,7 +2424,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                </button>\n" +
     "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
     "                    <li>\n" +
-    "                        <a href open-symbol-edit-modal symbol=\"symbol\" on-updated=\"updateSymbol\">\n" +
+    "                        <a href symbol-edit-modal-handle symbol=\"symbol\" on-updated=\"updateSymbol\">\n" +
     "                            <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
     "                        </a>\n" +
     "                    </li>\n" +

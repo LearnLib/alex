@@ -3,85 +3,69 @@
 
     angular
         .module('weblearner.controller')
-        .controller('SymbolsController', [
-            '$scope', 'SessionService', 'SymbolResource', 'SelectionService', 'type',
-            SymbolsController
-        ]);
+        .controller('SymbolsController', SymbolsController);
 
-    function SymbolsController($scope, SessionService, SymbolResource, SelectionService, type) {
+    SymbolsController.$inject = ['$scope', 'SessionService', 'Symbol', 'SelectionService'];
+
+    function SymbolsController($scope, SessionService, Symbol, SelectionService) {
 
         /** the open project @type {*} */
         $scope.project = SessionService.project.get();
 
-        /** the symbol type @type {string} */
-        $scope.type = type;
-
-        /** the list of web or rest symbols @type {[]|*[]} */
+        /** The symbols from the project @type {Symbol[]} **/
         $scope.symbols = [];
 
-        //////////
-
         // load symbols from the server
-        SymbolResource.getAll($scope.project.id, {type: type})
+        Symbol.Resource.getAll($scope.project.id)
             .then(function (symbols) {
                 $scope.symbols = symbols;
             });
 
-        //////////
-
         /**
+         * Deletes a given symbol and remove it from the scope so that it will not be listed any longer
          *
-         * @param symbols
-         */
-        function removeSymbolsFromScope(symbols) {
-            if (symbols.length) {
-                _.forEach(symbols, function (symbol) {
-                    _.remove($scope.symbols, {id: symbol.id})
-                })
-            }
-        }
-
-        //////////
-
-        /**
-         *
-         * @param symbol
+         * @param symbol - The symbol that should be deleted
          */
         $scope.deleteSymbol = function (symbol) {
-            SymbolResource.delete($scope.project.id, symbol.id)
-                .then(function () {
-                    removeSymbolsFromScope([symbol])
+            Symbol.Resource.delete($scope.project.id, symbol.id)
+                .then(function (deletedSymbol) {
+                    _.remove($scope.symbols, {id: deletedSymbol.id});
                 })
         };
 
         /**
-         * Delete the symbols the user selected from the server and the scope
+         * Deletes the symbols the user selected from the server and the scope
          */
         $scope.deleteSelectedSymbols = function () {
-
             var selectedSymbols = SelectionService.getSelected($scope.symbols);
             var symbolsIds;
 
             if (selectedSymbols.length) {
+
+                // get all ids from the selected symbols
                 symbolsIds = _.pluck(selectedSymbols, 'id');
                 SymbolResource.deleteSome($scope.project.id, symbolsIds)
-                    .then(function () {
-                        removeSymbolsFromScope(selectedSymbols);
+                    .then(function (deletedSymbols) {
+                        _.forEach(deletedSymbols, function (symbol) {
+                            _.remove($scope.symbols, {id: symbol.id})
+                        })
                     });
             }
         };
 
         /**
-         * Add a symbol to the scope
-         * @param symbol
+         * Adds a symbol to the scope
+         *
+         * @param symbol {symbol} - The new symbol that should be added to the list
          */
         $scope.addSymbol = function (symbol) {
             $scope.symbols.push(symbol)
         };
 
         /**
-         * Update a symbol in the scope
-         * @param symbol
+         * Updates a symbol in the scope
+         *
+         * @param symbol {Symbol} - The symbol whose properties should be updated
          */
         $scope.updateSymbol = function (symbol) {
             var index = _.findIndex($scope.symbols, {id: symbol.id});

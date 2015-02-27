@@ -57,9 +57,6 @@
                         controller: 'ProjectCreateController',
                         templateUrl: paths.views.PAGES + '/project-create.html'
                     }
-                },
-                data: {
-                    requiresProject: false
                 }
             })
             .state('project.settings', {
@@ -73,53 +70,38 @@
             })
 
             // =========================================================
-            // symbol related routes
+            // group related routes
 
-            .state('symbols', {
-                abstract: true,
-                url: '/symbols',
+            .state('groups', {
+                url: '/groups',
+                views: {
+                    '@': {
+                        controller: 'SymbolGroupsController',
+                        templateUrl: paths.views.PAGES + '/groups.html'
+                    }
+                },
                 data: {
                     requiresProject: true
                 }
             })
-            .state('symbols.web', {
-                url: '/web',
+
+            // =========================================================
+            // symbol related routes
+
+
+            .state('symbols', {
+                url: '/symbols',
                 views: {
                     '@': {
                         controller: 'SymbolsController',
                         templateUrl: paths.views.PAGES + '/symbols.html'
                     }
                 },
-                resolve: {
-                    type: function () {
-                        return 'web'
-                    }
+                data: {
+                    requiresProject: true
                 }
             })
-            .state('symbols.web.trash', {
-                url: '/trash',
-                views: {
-                    '@': {
-                        controller: 'SymbolsTrashController',
-                        templateUrl: paths.views.PAGES + '/symbols-trash.html'
-                    }
-                }
-            })
-            .state('symbols.rest', {
-                url: '/rest',
-                views: {
-                    '@': {
-                        controller: 'SymbolsController',
-                        templateUrl: paths.views.PAGES + '/symbols.html'
-                    }
-                },
-                resolve: {
-                    type: function () {
-                        return 'rest'
-                    }
-                }
-            })
-            .state('symbols.rest.trash', {
+            .state('symbols.trash', {
                 url: '/trash',
                 views: {
                     '@': {

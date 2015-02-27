@@ -14,11 +14,11 @@
         </div>
         <div class="pull-left">
             <button class="btn btn-xs btn-primary"
-                    open-symbol-create-modal symbol-type="{{type}}" project-id="{{project.id}}" on-created="addSymbol">
+                    symbol-create-modal-handle project-id="{{project.id}}" on-created="addSymbol">
                 Create
             </button>
             <button class="btn btn-xs btn-default" ng-class="(symbols|selected).length == 1 ? '' : 'disabled'"
-                    open-symbol-edit-modal symbol="(symbols | selected | first)" on-updated="updateSymbol">
+                    symbol-edit-modal-handle symbol="(symbols | selected | first)" on-updated="updateSymbol">
                 Edit
             </button>
             <button class="btn btn-xs btn-default" ng-class="(symbols|selected).length > 0 ? '' : 'disabled'"
@@ -27,7 +27,7 @@
             </button>
         </div>
         <div class="pull-right">
-            <a ui-sref="symbols.{{type}}.trash" class="btn btn-xs btn-default">
+            <a ui-sref="symbols.trash" class="btn btn-xs btn-default">
                 <i class="fa fa-trash fa-fw"></i>Trash
             </a>
         </div>
@@ -45,7 +45,7 @@
                 </button>
                 <ul class="dropdown-menu pull-left" role="menu">
                     <li>
-                        <a href open-symbol-edit-modal symbol="symbol" on-updated="updateSymbol">
+                        <a href symbol-edit-modal-handle symbol="symbol" on-updated="updateSymbol">
                             <i class="fa fa-edit fa-fw"></i> Edit
                         </a>
                     </li>

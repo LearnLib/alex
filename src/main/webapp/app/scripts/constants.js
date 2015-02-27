@@ -23,7 +23,7 @@
     	})
 
         // web action types
-        .constant('WebActionTypes', {
+        .constant('ActionTypes', {
             SEARCH_FOR_TEXT: 'checkText',
             SEARCH_FOR_NODE: 'checkNode',
             CLEAR: 'clear',
@@ -31,11 +31,7 @@
             FILL: 'fill',
             GO_TO: 'goto',
             SUBMIT: 'submit',
-            WAIT: 'wait'
-        })
-
-        // rest action types
-        .constant('RestActionTypes', {
+            WAIT: 'wait',
             CALL_URL: 'call',
             CHECK_STATUS: 'checkStatus',
             CHECK_HEADER_FIELD: 'checkHeaderField',
