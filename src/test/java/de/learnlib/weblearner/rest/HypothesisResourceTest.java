@@ -4,6 +4,7 @@ import de.learnlib.weblearner.WeblearnerTestApplication;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.dao.ProjectDAO;
 import de.learnlib.weblearner.dao.SymbolDAO;
+import de.learnlib.weblearner.dao.SymbolGroupDAO;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.learner.Learner;
@@ -36,6 +37,9 @@ public class HypothesisResourceTest extends JerseyTest {
     private ProjectDAO projectDAO;
 
     @Mock
+    private SymbolGroupDAO symbolGroupDAO;
+
+    @Mock
     private SymbolDAO symbolDAO;
 
     @Mock
@@ -50,8 +54,8 @@ public class HypothesisResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        return new WeblearnerTestApplication(projectDAO, symbolDAO, learnerResultDAO, learner,
-                                                HypothesisResource.class);
+        return new WeblearnerTestApplication(projectDAO, symbolGroupDAO, symbolDAO,
+                                             learnerResultDAO, learner, HypothesisResource.class);
     }
 
     @Before

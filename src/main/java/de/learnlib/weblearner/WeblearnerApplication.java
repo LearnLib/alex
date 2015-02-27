@@ -6,6 +6,8 @@ import de.learnlib.weblearner.dao.ProjectDAO;
 import de.learnlib.weblearner.dao.ProjectDAOImpl;
 import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.dao.SymbolDAOImpl;
+import de.learnlib.weblearner.dao.SymbolGroupDAO;
+import de.learnlib.weblearner.dao.SymbolGroupDAOImpl;
 import de.learnlib.weblearner.learner.Learner;
 import de.learnlib.weblearner.learner.LearnerThreadFactory;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -31,6 +33,7 @@ public class WeblearnerApplication extends ResourceConfig {
                 LearnerThreadFactory threadFactory = new LearnerThreadFactory(learnerResultDAO);
 
                 bind(new ProjectDAOImpl()).to(ProjectDAO.class);
+                bind(new SymbolGroupDAOImpl()).to(SymbolGroupDAO.class);
                 bind(new SymbolDAOImpl()).to(SymbolDAO.class);
                 bind(learnerResultDAO).to(LearnerResultDAO.class);
                 bind(new Learner(threadFactory)).to(Learner.class);

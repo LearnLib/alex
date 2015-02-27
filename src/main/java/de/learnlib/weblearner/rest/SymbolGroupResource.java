@@ -1,9 +1,11 @@
 package de.learnlib.weblearner.rest;
 
+import de.learnlib.weblearner.dao.SymbolGroupDAO;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,11 +22,14 @@ import java.util.LinkedList;
 @Path("/projects/{project_id}/groups")
 public class SymbolGroupResource {
 
+    @Inject
+    private SymbolGroupDAO symbolGroupDAO;
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createSymbol(@PathParam("project_id") long projectId, SymbolGroup group) {
-        group.setId(1L);
+        symbolGroupDAO.create(group);
         return Response.status(Response.Status.CREATED).entity(group).build();
     }
 

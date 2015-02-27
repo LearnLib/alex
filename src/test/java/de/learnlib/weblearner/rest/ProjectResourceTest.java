@@ -4,6 +4,7 @@ import de.learnlib.weblearner.WeblearnerTestApplication;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.dao.ProjectDAO;
 import de.learnlib.weblearner.dao.SymbolDAO;
+import de.learnlib.weblearner.dao.SymbolGroupDAO;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.learner.Learner;
@@ -35,6 +36,9 @@ public class ProjectResourceTest extends JerseyTest {
     private ProjectDAO projectDAO;
 
     @Mock
+    private SymbolGroupDAO symbolGroupDAO;
+
+    @Mock
     private SymbolDAO symbolDAO;
 
     @Mock
@@ -58,7 +62,8 @@ public class ProjectResourceTest extends JerseyTest {
 
         Learner learner = mock(Learner.class);
 
-        return new WeblearnerTestApplication(projectDAO, symbolDAO, learnerResultDAO, learner, ProjectResource.class);
+        return new WeblearnerTestApplication(projectDAO, symbolGroupDAO, symbolDAO,
+                                             learnerResultDAO, learner, ProjectResource.class);
     }
 
     @Test

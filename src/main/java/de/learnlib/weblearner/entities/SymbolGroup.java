@@ -75,6 +75,11 @@ public class SymbolGroup {
         return project.getId();
     }
 
+    @JsonProperty("project")
+    public void setProjectId(long projectId) {
+        this.project = new Project(projectId);
+    }
+
     public String getName() {
         return name;
     }
@@ -94,6 +99,12 @@ public class SymbolGroup {
     @JsonProperty("symbolAmount")
     public int getSymbolSize() {
         return this.symbols.size();
+    }
+
+    //todo(alex.s): remove me
+    @JsonProperty("symbolAmount")
+    public void setSymbolSize(int size) {
+        // NOOOOOOOOOOOOOOOO....
     }
 
     public void addSymbol(Symbol symbol) {
@@ -123,4 +134,9 @@ public class SymbolGroup {
     }
 
     // CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber
+
+    @Override
+    public String toString() {
+        return "SymbolGroup[" + groupId + "]: (" + getProjectId() + ", " + getId() + ")";
+    }
 }
