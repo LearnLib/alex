@@ -3,7 +3,6 @@ package de.learnlib.weblearner.rest;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
-import de.learnlib.weblearner.entities.WebSymbol;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -43,7 +42,7 @@ public class SymbolGroupResource {
 
             if ("symbols".equals(embed)) {
                 for (int j = 1; j <= 10; j++) {
-                    Symbol newSymbol = new WebSymbol();
+                    Symbol newSymbol = new Symbol();
                     newSymbol.setId(j);
                     newSymbol.setName("Symbol " + j);
                     newSymbol.setAbbreviation("symb_" + j);
@@ -70,7 +69,7 @@ public class SymbolGroupResource {
     public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         LinkedList<Symbol> symbols = new LinkedList<>();
         for (int i = 1; i <= 10; i++) {
-            Symbol newSymbol = new WebSymbol();
+            Symbol newSymbol = new Symbol();
             newSymbol.setId(i);
             newSymbol.setName("Symbol " + i);
             newSymbol.setAbbreviation("symb_" + i);
