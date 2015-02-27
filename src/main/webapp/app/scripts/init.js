@@ -36,6 +36,7 @@
     angular.module('weblearner.constants', []);
     angular.module('weblearner.models', []);
 
+
     angular.module('weblearner')
         .config(['ngToastProvider', function(ngToastProvider){
         	
