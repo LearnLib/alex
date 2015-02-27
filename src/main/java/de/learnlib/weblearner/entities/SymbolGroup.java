@@ -33,7 +33,6 @@ public class SymbolGroup {
     private Long id;
 
     @OneToMany
-    @JsonIgnore
     private Set<Symbol> symbols;
 
     public SymbolGroup() {
