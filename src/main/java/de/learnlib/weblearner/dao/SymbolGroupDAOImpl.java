@@ -8,6 +8,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import javax.validation.ValidationException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
@@ -42,7 +43,16 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     @Override
     public List<SymbolGroup> getAll(long projectId) {
-        return null;
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        List<SymbolGroup> resultList = session.createCriteria(SymbolGroup.class)
+                                                .add(Restrictions.eq("project.id", projectId))
+                                                .list();
+
+        HibernateUtil.commitTransaction();
+        return resultList;
     }
 
     @Override

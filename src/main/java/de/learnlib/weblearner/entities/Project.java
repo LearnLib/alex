@@ -56,7 +56,7 @@ public class Project implements Serializable {
     private String description;
 
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.REMOVE })
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
     private Set<SymbolGroup> groups;
 
     /** The symbols used to test. */

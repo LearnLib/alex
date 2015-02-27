@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.Project;
+import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import org.junit.After;
 import org.junit.Before;
@@ -8,6 +9,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.validation.ValidationException;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -64,5 +68,22 @@ public class SymbolGroupDAOImplTest {
         group.setId(1L);
 
         symbolGroupDAO.create(group); // should fail
+    }
+
+    @Test
+    public void shouldGetAllGroupsOfOneProject() {
+        List<SymbolGroup> groups = new LinkedList<>();
+        for (int i = 1; i <= 10; i++) {
+            SymbolGroup newGroup = new SymbolGroup();
+            newGroup.setName("Group " + i);
+            newGroup.setProject(project);
+
+            symbolGroupDAO.create(newGroup);
+            groups.add(newGroup);
+        }
+
+        List<SymbolGroup> groupsInDB = symbolGroupDAO.getAll(project.getId());
+
+        assertEquals(groups.size(), groupsInDB.size());
     }
 }

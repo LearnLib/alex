@@ -141,6 +141,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         if (embedFields != null) {
             Set<String> fieldsToLoad = new HashSet<>();
             if (embedFields.length == 1 && "all".equals(embedFields[0])) {
+                fieldsToLoad.add("groups");
                 fieldsToLoad.add("symbols");
                 fieldsToLoad.add("resetSymbols");
                 fieldsToLoad.add("testResults");
@@ -148,6 +149,12 @@ public class ProjectDAOImpl implements ProjectDAO {
                 for (String field : embedFields) {
                     fieldsToLoad.add(field);
                 }
+            }
+
+            if (fieldsToLoad.contains("groups")) {
+                Hibernate.initialize(project.getGroups());
+            } else {
+                project.setGroups(null);
             }
 
             if (fieldsToLoad.contains("symbols")) {
@@ -165,9 +172,9 @@ public class ProjectDAOImpl implements ProjectDAO {
                 project.setTestResults(null);
             }
         } else {
+            project.setGroups(null);
             project.setSymbols(null);
             project.setTestResults(null);
-
         }
     }
 
