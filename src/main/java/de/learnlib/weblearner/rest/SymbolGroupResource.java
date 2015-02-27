@@ -13,6 +13,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.LinkedList;
@@ -30,7 +31,7 @@ public class SymbolGroupResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId) {
+    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         Project project = new Project();
 
         LinkedList<SymbolGroup> groups = new LinkedList<SymbolGroup>();
@@ -39,6 +40,17 @@ public class SymbolGroupResource {
             newGroup.setId((long) i);
             newGroup.setName("Gruppe " + i);
             newGroup.setProject(project);
+
+            if ("symbols".equals(embed)) {
+                for (int j = 1; j <= 10; j++) {
+                    Symbol newSymbol = new WebSymbol();
+                    newSymbol.setId(j);
+                    newSymbol.setName("Symbol " + j);
+                    newSymbol.setAbbreviation("symb_" + j);
+                    newGroup.addSymbol(newSymbol);
+                }
+            }
+
             groups.add(newGroup);
         }
 
