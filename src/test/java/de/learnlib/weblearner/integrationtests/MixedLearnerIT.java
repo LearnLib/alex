@@ -13,6 +13,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -34,6 +35,7 @@ public class MixedLearnerIT extends JerseyTest {
     private LearnerTestHelper testHelper;
     private Client client;
     private Project project;
+    private String resetSymbolIdAndRevisionAsJSON;
     private String symbolsIdAndRevisionAsJSON;
     private Alphabet<String> testAlphabet;
 
@@ -53,8 +55,8 @@ public class MixedLearnerIT extends JerseyTest {
         return testApplication;
     }
 
-    @Override
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         client = ClientBuilder.newClient();
@@ -62,20 +64,22 @@ public class MixedLearnerIT extends JerseyTest {
         // create project
         String projectName = "RestSymbolLearn IT Project";
         String json = "{\"name\": \"" + projectName + "\","
-                + "\"baseUrl\": \"" + BASE_TEST_URL + "\"}";
+                    + "\"baseUrl\": \"" + BASE_TEST_URL + "\"}";
         Response response = client.target(BASE_LEARNER_URL + "/projects").request().post(Entity.json(json));
         project = ProjectTest.readProject(response.readEntity(String.class));
 
-        // modify reset symbol
-        String path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/1";
-        response = client.target(path).request().get();
-        Symbol resetSymbol = response.readEntity(Symbol.class);
-        List<SymbolAction> actions = resetSymbol.getActions();
-        ((GotoAction) actions.get(0)).setUrl("/web/reset");
-        ((CallAction) actions.get(1)).setUrl("/test/reset");
-        client.target(path).request().put(Entity.json(resetSymbol));
+        // create the reset symbol
+        json = "{\"project\": " + project.getId() + ", \"name\": \"Reset\", \"abbreviation\": \"reset\","
+             + "\"actions\": ["
+                + "{\"type\": \"goto\", \"url\": \"/web/reset\"},"
+                + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/rest/reset\"}"
+             + "]}";
+        Symbol resetSymbol = testHelper.addSymbol(client, project, json);
+        resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevsionPairListAsJSON(resetSymbol);
 
         // create symbols
+        Symbol[] symbols = new Symbol[2];
+
         // rest symbol 1
         String symbolName = "MixedLearnerIT REST Symbol 1";
         String symbolAbbr = "learnrest1";
@@ -84,7 +88,7 @@ public class MixedLearnerIT extends JerseyTest {
                     + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/test\"},"
                     + "{\"type\": \"checkStatus\", \"status\" : 200}"
                 + "]}";
-        Symbol symbol1 = testHelper.addSymbol(client, project, json);
+        symbols[0] = testHelper.addSymbol(client, project, json);
 
         // web symbol 1
         symbolName = "MixedLearnerIT Web Symbol 1";
@@ -94,20 +98,20 @@ public class MixedLearnerIT extends JerseyTest {
                     + "{\"type\": \"goto\", \"url\": \"/web/page1\"},"
                     + "{\"type\": \"checkText\", \"value\": \"Lorem Ipsum\"}"
                 + "]}";
-        Symbol symbol2 = testHelper.addSymbol(client, project, json);
+        symbols[1] = testHelper.addSymbol(client, project, json);
 
         // remember symbol references
-        symbolsIdAndRevisionAsJSON = "{\"id\": " + symbol1.getId() + ", \"revision\": " + symbol1.getRevision() + "},"
-                                   + "{\"id\": " + symbol2.getId() + ", \"revision\": " + symbol2.getRevision() + "}";
+        symbolsIdAndRevisionAsJSON = testHelper.createIdRevsionPairListAsJSON(symbols);
 
         // remember alphabet
-        testAlphabet = new SimpleAlphabet<>();
-        testAlphabet.add(symbol1.getAbbreviation());
+        testAlphabet = testHelper.createTestAlphabet(symbols);
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         client.target(BASE_LEARNER_URL + "/projects/" + project.getId()).request().delete();
+        resetSymbolIdAndRevisionAsJSON = null;
         symbolsIdAndRevisionAsJSON = null;
         testAlphabet = null;
 
@@ -118,9 +122,10 @@ public class MixedLearnerIT extends JerseyTest {
     public void simpleLearnProcess() throws Exception {
         // start learning
         String path = "/learner/start/" + project.getId();
-        String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "], \"eqOracle\":"
-                            + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                        + "\"algorithm\": \"DISCRIMINATION_TREE\"}";
+        String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
+                    + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + ", \"eqOracle\":"
+                        + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
+                    + "\"algorithm\": \"DISCRIMINATION_TREE\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 

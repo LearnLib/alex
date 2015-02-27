@@ -42,19 +42,18 @@ public class LearnerThreadFactory {
      *         The Symbols to use during the learning
      * @return A new thread ready to use for learning.
      */
-    public LearnerThread createThread(Project project, LearnerConfiguration configuration, Symbol... symbols) {
+    public LearnerThread createThread(Project project, LearnerConfiguration configuration, Symbol resetSymbol,
+                                      Symbol... symbols) {
         if (symbols.length == 0) {
             throw new IllegalArgumentException("No Symbols found.");
         }
 
-        Map<Class<? extends Symbol>, List<Symbol>> symbolsByType = splitSymbolsByType(symbols);
         LearnerResult learnerResult = createLearnerResult(project, configuration);
 
         MultiContextHandler context = new MultiContextHandler();
         context.addHandler(createWebSiteContextHandler(project));
         context.addHandler(createWebServiceContextHandler(project));
 
-        Symbol resetSymbol = project.getResetSymbol();
         context.addResetSymbol(resetSymbol);
 
         return new LearnerThread(learnerResultDAO, learnerResult, context, symbols);
@@ -86,21 +85,6 @@ public class LearnerThreadFactory {
         leanerThread.getResult().getConfiguration().updateConfiguration(newConfiguration);
 
         return leanerThread;
-    }
-
-    private Map<Class<? extends Symbol>, List<Symbol>> splitSymbolsByType(Symbol... symbols) {
-        Map<Class<? extends Symbol>, List<Symbol>> resultMap = new HashMap<>();
-
-        for (Symbol s : symbols) {
-            List<Symbol> bucket = resultMap.get(s.getClass());
-            if (bucket == null) {
-                bucket = new LinkedList<>();
-                resultMap.put(s.getClass(), bucket);
-            }
-            bucket.add(s);
-        }
-
-        return resultMap;
     }
 
     private LearnerResult createLearnerResult(Project project, LearnerConfiguration configuration) {

@@ -34,7 +34,6 @@ public class LearnerThreadFactoryTest {
     @Before
     public void setUp() {
         given(project.getBaseUrl()).willReturn("http://localhost/");
-        given(project.getResetSymbol()).willReturn(mock(Symbol.class));
         given(learnerConfiguration.getAlgorithm()).willReturn(LearnAlgorithms.DHC);
 
         factory = new LearnerThreadFactory(learnerResultDAO);
@@ -42,24 +41,27 @@ public class LearnerThreadFactoryTest {
 
     @Test
     public void shouldCreateThreadForWebSymbols() {
+        Symbol resetSymbol = new Symbol();
         Symbol webSymbol = new Symbol();
-        LearnerThread<?> thread = factory.createThread(project, learnerConfiguration, webSymbol);
+        LearnerThread<?> thread = factory.createThread(project, learnerConfiguration, resetSymbol, webSymbol);
 
         assertNotNull(thread);
     }
 
     @Test
     public void shouldCreateThreadForRESTSymbols() {
+        Symbol resetSymbol = new Symbol();
         Symbol restSymbol = new Symbol();
         given(project.getBaseUrl()).willReturn(FAKE_URL);
-        LearnerThread<?> thread = factory.createThread(project, learnerConfiguration, restSymbol);
+        LearnerThread<?> thread = factory.createThread(project, learnerConfiguration, resetSymbol, restSymbol);
 
         assertNotNull(thread);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailWithoutSymbols() {
-        factory.createThread(project, learnerConfiguration); // should fail
+        Symbol resetSymbol = mock(Symbol.class);
+        factory.createThread(project, learnerConfiguration, resetSymbol); // should fail
     }
 
 }

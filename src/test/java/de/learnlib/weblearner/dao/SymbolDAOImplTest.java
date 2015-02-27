@@ -347,7 +347,7 @@ public class SymbolDAOImplTest {
 
         List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.VISIBLE);
 
-        assertEquals(symbols.size() + 1 - 1, symbolsFromDB.size()); // +1 -> reset symbol, -1 hidden
+        assertEquals(symbols.size() - 1, symbolsFromDB.size()); // -1: hidden
         for (Symbol x : symbols) {
             if (!x.isHidden()) {
                 int index = symbolsFromDB.indexOf(x);
@@ -364,7 +364,7 @@ public class SymbolDAOImplTest {
 
         List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.ALL);
 
-        assertEquals(symbols.size() + 1, symbolsFromDB.size()); // +1 -> reset symbol
+        assertEquals(symbols.size(), symbolsFromDB.size());
         for (Symbol x : symbols) {
             int index = symbolsFromDB.indexOf(x);
             assertTrue(index > -1);
@@ -485,22 +485,6 @@ public class SymbolDAOImplTest {
         symbolDAO.update(symb3);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotUpdateTheNameToResetSymbol() {
-        symbolDAO.create(symbol);
-
-        symbol.setName("Reset");
-        symbolDAO.update(symbol); // should fail
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotUpdateANameChangeForResetSymbols() {
-        Symbol resetSymbol = getResetSymbol();
-
-        resetSymbol.setName("Not Reset");
-        symbolDAO.update(resetSymbol); // should fail
-    }
-
     @Test
     public void shouldHideAValidSymbols() {
         symbolDAO.create(symbol);
@@ -522,13 +506,6 @@ public class SymbolDAOImplTest {
     public void shouldNotHideAnythingByInvalidID() {
         symbolDAO.create(symbol);
         symbolDAO.hide(project.getId(), -1L);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotHideAResetSymbol() {
-        Symbol resetSymbol = getResetSymbol();
-        assertTrue(resetSymbol.isResetSymbol());
-        symbolDAO.hide(project.getId(), resetSymbol.getId()); // should fail
     }
 
     @Test
@@ -553,13 +530,6 @@ public class SymbolDAOImplTest {
     public void shouldNotShowAnythingByInvalidID() {
         symbolDAO.create(symbol);
         symbolDAO.show(project.getId(), -1L);
-    }
-
-    @Test
-    public void shouldShowAResetSymbolWithoutMessage() {
-        Symbol resetSymbol = getResetSymbol();
-        System.out.println(resetSymbol.getId());
-        symbolDAO.show(project.getId(), resetSymbol.getId()); // should do nothing
     }
 
     private List<Symbol> createTestSymbolLists() {
@@ -615,16 +585,6 @@ public class SymbolDAOImplTest {
             returnList.add(s);
         }
         return returnList;
-    }
-
-    private Symbol getResetSymbol() {
-        List<Symbol> returnList = symbolDAO.getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.VISIBLE);
-        for (Symbol s : returnList) {
-            if (s.getName().equals("Reset")) {
-                return s;
-            }
-        }
-        return null;
     }
 
 }

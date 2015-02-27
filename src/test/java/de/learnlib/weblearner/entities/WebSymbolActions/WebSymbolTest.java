@@ -79,7 +79,7 @@ public class WebSymbolTest {
                     + "{\"type\":\"click\",\"node\":null,\"url\":null},"
                     + "{\"type\":\"checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                     + "{\"type\":\"wait\",\"duration\":0}"
-                + "],\"id\":0,\"name\":\"WebSymbol\",\"project\":0,\"resetSymbol\":false,\"revision\":0}";
+                + "],\"id\":0,\"name\":\"WebSymbol\",\"project\":0,\"revision\":0}";
         symb.setProject(null);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -99,8 +99,7 @@ public class WebSymbolTest {
                                     + "{\"type\":\"click\",\"node\":null,\"url\":null},"
                                     + "{\"type\":\"checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"duration\":0}"
-                                + "],\"hidden\":false,\"id\":0,\"name\":\"WebSymbol\",\"project\":1,"
-                                + "\"resetSymbol\":false,\"revision\":0}";
+                                + "],\"hidden\":false,\"id\":0,\"name\":\"WebSymbol\",\"project\":1,\"revision\":0}";
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symb);
 

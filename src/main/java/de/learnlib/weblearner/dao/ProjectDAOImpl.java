@@ -34,7 +34,6 @@ public class ProjectDAOImpl implements ProjectDAO {
 
         try {
             session.save(project);
-            createResetSymbolsFor(project);
             HibernateUtil.commitTransaction();
 
         // error handling
@@ -160,15 +159,6 @@ public class ProjectDAOImpl implements ProjectDAO {
                 project.setSymbols(null);
             }
 
-            if (fieldsToLoad.contains("resetSymbols")) {
-                Hibernate.initialize(project.getResetSymbol());
-                if (project.getResetSymbol() != null) {
-                    project.getResetSymbol().loadLazyRelations();
-                }
-            } else {
-                project.setResetSymbol(null);
-            }
-
             if (fieldsToLoad.contains("testResults")) {
                 Hibernate.initialize(project.getTestResults());
             } else {
@@ -176,7 +166,6 @@ public class ProjectDAOImpl implements ProjectDAO {
             }
         } else {
             project.setSymbols(null);
-            project.setResetSymbol(null);
             project.setTestResults(null);
 
         }
@@ -198,31 +187,6 @@ public class ProjectDAOImpl implements ProjectDAO {
                 .uniqueResult();
 
         return projectCount == 1;
-    }
-
-    private void createResetSymbolsFor(Project project) {
-        long id = project.getNextSymbolId();
-
-        // WEB
-        Symbol resetSymbol = new Symbol();
-        resetSymbol.setId(id);
-        resetSymbol.setRevision(1L);
-        resetSymbol.setName("Reset");
-        resetSymbol.setAbbreviation("reset");
-
-        GotoAction webResetAction = new GotoAction();
-        webResetAction.setUrl("/");
-        resetSymbol.addAction(webResetAction);
-
-        CallAction restResetAction = new CallAction();
-        restResetAction.setUrl("/");
-        restResetAction.setMethod(CallAction.Method.GET);
-        resetSymbol.addAction(restResetAction);
-
-        project.addSymbol(resetSymbol);
-        project.setResetSymbol(resetSymbol);
-
-        project.setNextSymbolId(id + 1);
     }
 
 }

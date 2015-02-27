@@ -61,10 +61,6 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
     @Column(nullable = false)
     protected long revision;
 
-    /** Is this symbol used as a reset symbol? */
-    @Transient
-    protected boolean resetSymbol;
-
     /**
      * The name of the symbol.
      * @requiredField
@@ -210,25 +206,6 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
     }
 
     /**
-     * Is the symbol a reset symbol in the related project.
-     *
-     * @return true, if the symbol is indeed a reset symbol; false otherwise.
-     */
-    public boolean isResetSymbol() {
-        return resetSymbol;
-    }
-
-    /**
-     * Set if the symbol is a reset symbol in the related project.
-     *
-     * @param resetSymbol
-     *         true if the symbol is a reset symbol.
-     */
-    public void setResetSymbol(boolean resetSymbol) {
-        this.resetSymbol = resetSymbol;
-    }
-
-    /**
      * Get the name of the Symbol.
      *
      * @return The name.
@@ -314,11 +291,6 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
 
     @Override
     public void loadLazyRelations() {
-        if (project.getResetSymbol() == null) {
-            resetSymbol = false;
-        } else {
-            resetSymbol = project.getResetSymbol().equals(this);
-        }
         actionHandler.loadLazyRelations();
     }
 

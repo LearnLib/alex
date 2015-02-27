@@ -77,9 +77,9 @@ public class WebSymbolIT {
         response = client.target(BASE_URL + path).request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         List<Symbol> symbols = response.readEntity(new GenericType<List<Symbol>>() { });
-        assertEquals(2 + 1, symbols.size()); // the 2 created symbols + reset symbol
+        assertEquals(2, symbols.size()); // the 2 created symbols
         assertTrue(project.getId() > 0);
-        symbol = symbols.get(1);
+        symbol = symbols.get(0);
         assertNotNull(symbol);
         assertEquals(1, symbol.getRevision());
         assertEquals(symbolName, symbol.getName());
@@ -119,8 +119,8 @@ public class WebSymbolIT {
         response = client.target(BASE_URL + path).request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         symbols = response.readEntity(new GenericType<List<Symbol>>() { });
-        assertEquals(2 + 1, symbols.size()); // update == create a new symbol with a higher revision & hide the old one
-        symbol = symbols.get(1); // 1st symbol, 2nd revision
+        assertEquals(2, symbols.size()); // update == create a new symbol with a higher revision & hide the old one
+        symbol = symbols.get(0); // 1st symbol, 2nd revision
         assertEquals(2, symbol.getActions().size());
 
         // delete

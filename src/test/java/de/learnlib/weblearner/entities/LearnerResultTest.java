@@ -28,7 +28,7 @@ public class LearnerResultTest {
                                                     + "\"algorithm\":\"EXTENSIBLE_LSTAR\",\"eqOracle\":"
                                                     + "{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,"
                                                     + "\"maxNoOfTests\":1},\"maxAmountOfStepsToLearn\":0,"
-                                                    + "\"symbols\":[]},"
+                                                    + "\"resetSymbol\":null,\"symbols\":[]},"
                                                 + "\"duration\":" + TEST_DURATION + ",\"hypothesis\":{"
                                                     + "\"nodes\":[0,1],\"initNode\":0,\"edges\":["
                                                         + "{\"from\":0,\"input\":\"0\",\"to\":0,\"output\":\"OK\"},"

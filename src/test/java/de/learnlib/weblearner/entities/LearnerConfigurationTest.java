@@ -21,7 +21,7 @@ public class LearnerConfigurationTest {
         String expectedJSON = "{\"algorithm\":\"EXTENSIBLE_LSTAR\",\"eqOracle\":"
                                     + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"maxNoOfTests\":1},"
-                                + "\"maxAmountOfStepsToLearn\":0,\"symbols\":[]}";
+                                + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]}";
 
         LearnerConfiguration configuration = new LearnerConfiguration();
 
@@ -36,7 +36,7 @@ public class LearnerConfigurationTest {
         String expectedJSON = "{\"algorithm\":\"DHC\",\"eqOracle\":"
                                 + "{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ","
                                     + "\"maxDepth\":" + EQ_MAX_VALUE + "},"
-                                + "\"maxAmountOfStepsToLearn\":0,\"symbols\":[]}";
+                                + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]}";
 
         LearnerConfiguration configuration = new LearnerConfiguration();
         configuration.setAlgorithm(LearnAlgorithms.DHC);

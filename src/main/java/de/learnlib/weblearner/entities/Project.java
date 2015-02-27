@@ -61,12 +61,6 @@ public class Project implements Serializable {
     @JsonProperty("symbols")
     private Set<Symbol> symbols;
 
-    /** Remember the different reset symbols by their type. */
-    @OneToOne(fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
-    @JsonIgnore
-    private Symbol resetSymbol;
-
     /** The next id for a symbol in this project. */
     @JsonIgnore
     private long nextSymbolId;
@@ -189,27 +183,6 @@ public class Project implements Serializable {
         // you can not change the size this way -> nothing to do here
         LOGGER.info("One tried to set the size of the symbols set.");
     }
-
-    /**
-     * Get the current reset symbol.
-     *
-     * @return The current registered reset symbol or null.
-     */
-    public Symbol getResetSymbol() {
-        return resetSymbol;
-    }
-
-    /**
-     * Set a new Map of reset symbols by their type.
-     *
-     * @param resetSymbol
-     *         The new map of reset symbols.
-     */
-    public void setResetSymbol(Symbol resetSymbol) {
-        this.resetSymbol = resetSymbol;
-    }
-
-
 
     /**
      * Get the next free id for a symbol in the project.

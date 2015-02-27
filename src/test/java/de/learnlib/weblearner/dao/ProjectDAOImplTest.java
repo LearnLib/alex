@@ -64,10 +64,9 @@ public class ProjectDAOImplTest {
         assertNotNull(p2);
         assertEquals(project.getName(), p2.getName());
         assertEquals(BASE_URL, project.getBaseUrl());
-        assertNotNull(project.getResetSymbol());
         assertEquals("Lorem Ipsum", project.getDescription());
 
-        assertEquals(1 + 1, p2.getSymbolsSize()); // +1 -> reset web & reset REST
+        assertEquals(1, p2.getSymbolsSize());
         for (Symbol s : p2.getSymbols()) {
             if (s instanceof SymbolActionHandler) {
                 assertTrue(1 <= s.getActions().size()); // all Symbols have one action
@@ -117,7 +116,12 @@ public class ProjectDAOImplTest {
             assertTrue(projectsFromDB.contains(x));
         }
         for (Project x : projectsFromDB) {
-            assertTrue(1 <= x.getSymbolsSize());
+            int symbolSize = x.getSymbolsSize();
+            if (x.equals(project)) {
+                assertEquals(1, symbolSize);
+            } else {
+                assertEquals(0, symbolSize);
+            }
         }
     }
 

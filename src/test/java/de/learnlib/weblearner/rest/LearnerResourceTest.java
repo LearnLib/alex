@@ -10,6 +10,7 @@ import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.learner.Learner;
 import org.glassfish.jersey.test.JerseyTest;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -29,6 +30,8 @@ import static org.mockito.Mockito.verify;
 public class LearnerResourceTest extends JerseyTest {
 
     private static final long PROJECT_TEST_ID = 1;
+    private static final long RESET_SYMBOL_TEST_ID = 3;
+
     @Mock
     private ProjectDAO projectDAO;
 
@@ -44,6 +47,8 @@ public class LearnerResourceTest extends JerseyTest {
     @Mock
     private Learner learner;
 
+    private Symbol resetSymbol;
+
     @Override
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
@@ -51,9 +56,16 @@ public class LearnerResourceTest extends JerseyTest {
         return new WeblearnerTestApplication(projectDAO, symbolDAO, learnerResultDAO, learner, LearnerResource.class);
     }
 
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        resetSymbol = mock(Symbol.class);
+        given(symbolDAO.get(PROJECT_TEST_ID, RESET_SYMBOL_TEST_ID, 1)).willReturn(resetSymbol);
+    }
+
     @Test
     public void shouldStartALearningProcess() {
-        given(project.getResetSymbol()).willReturn(mock(Symbol.class));
         given(projectDAO.getByID(PROJECT_TEST_ID, "all")).willReturn(project);
         given(learner.isActive()).willReturn(true);
         LearnerResult result = mock(LearnerResult.class);
@@ -62,31 +74,34 @@ public class LearnerResourceTest extends JerseyTest {
         given(learner.getResult()).willReturn(result);
 
         String json = "{\"symbols\": ["
-                            + "{\"id\": 1, \"revision\": 1},"
-                            + "{\"id\": 2, \"revision\": 4}"
-                        + "],\"algorithm\":\"DHC\", \"eqOracle\": {\"type\": \"complete\"}}";
+                        + "{\"id\": 1, \"revision\": 1},"
+                        + "{\"id\": 2, \"revision\": 4}"
+                    + "],\"resetSymbol\":{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1}"
+                    + ",\"algorithm\":\"DHC\", \"eqOracle\": {\"type\": \"complete\"}}";
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(json));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"testNo\":1}";
         assertEquals(expectedJSON, response.readEntity(String.class));
-        verify(learner).start(eq(project), any(LearnerConfiguration.class));
+        verify(learner).start(eq(project), any(LearnerConfiguration.class), eq(resetSymbol));
     }
 
     @Test
     public void shouldNotStartALearningProcessIfTheConfigurationIsInvalid() {
-        given(project.getResetSymbol()).willReturn(mock(Symbol.class));
+
         given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(project);
         willThrow(IllegalArgumentException.class).given(learner).start(any(Project.class),
-                                                                       any(LearnerConfiguration.class));
+                                                                       any(LearnerConfiguration.class),
+                                                                       any(Symbol.class));
 
         String json = "{\"symbols\": ["
                         + "{\"id\": 1, \"revision\": 1},"
                         + "{\"id\": 2, \"revision\": 4}"
-                    + "],\"algorithm\":\"DHC\", \"eqOracle\": {\"type\": \"complete\"}}";
+                    + "],\"resetSymbol\":{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
+                    + " \"algorithm\":\"DHC\",\"eqOracle\": {\"type\": \"complete\"}}";
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(json));
 
-        verify(learner).start(any(Project.class), any(LearnerConfiguration.class));
+        verify(learner).start(any(Project.class), any(LearnerConfiguration.class), any(Symbol.class));
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 

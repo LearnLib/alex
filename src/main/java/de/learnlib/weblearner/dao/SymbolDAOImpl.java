@@ -254,18 +254,6 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new IllegalArgumentException("Update failed: Symbol unknown.");
         }
 
-        if (symbolInDB.isResetSymbol() && (!symbol.getName().equals("Reset")
-                || !symbol.getAbbreviation().equals("reset"))) {
-            throw new IllegalArgumentException("Update failed: A reset symbols must have the name 'Reset' and"
-                    + "the abbreviation 'reset'.");
-        }
-
-        if (!symbolInDB.isResetSymbol() && (symbol.getName().equals("Reset")
-                || symbol.getAbbreviation().equals("reset"))) {
-            throw new IllegalArgumentException("Update failed: The name 'Reset' and the abbreviation 'reset' are"
-                    + "reserved names for a reset symbol.");
-        }
-
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -295,14 +283,9 @@ public class SymbolDAOImpl implements SymbolDAO {
         checkUniqueConstrains(session, symbol); // will throw exception if the symbol is invalid
 
         // count revision up
-        boolean resetSymbol = symbol.isResetSymbol(); // before we change anything, so that the symbol can be found
         symbol.setSymbolId(0);
         symbol.setRevision(symbol.getRevision() + 1);
         project.addSymbol(symbol);
-        if (resetSymbol) {
-            project.setResetSymbol(symbol);
-            session.update(project);
-        }
 
         symbol.beforeSave();
         session.save(symbol);
@@ -333,9 +316,6 @@ public class SymbolDAOImpl implements SymbolDAO {
     private void hideSymbols(Session session, List<Symbol> symbols) throws IllegalArgumentException {
         for (Symbol symbol : symbols) {
             symbol.loadLazyRelations();
-            if (symbol.isResetSymbol()) {
-                throw new IllegalArgumentException("A reset symbol can never be marked as hidden.");
-            }
 
             symbol.setHidden(true);
             session.update(symbol);
@@ -373,9 +353,9 @@ public class SymbolDAOImpl implements SymbolDAO {
     private List<Symbol> getSymbols(Session session, Long projectId, Long symbolId) {
         @SuppressWarnings("should return a list of Symbols")
         List<Symbol> symbols = session.createCriteria(Symbol.class)
-                                            .add(Restrictions.eq("project.id", projectId))
-                                            .add(Restrictions.eq("id", symbolId))
-                .list();
+                                        .add(Restrictions.eq("project.id", projectId))
+                                        .add(Restrictions.eq("id", symbolId))
+                                        .list();
 
         if (symbols.size() == 0) {
             throw new IllegalArgumentException("Could not mark the symbol as hidden because it was not found.");

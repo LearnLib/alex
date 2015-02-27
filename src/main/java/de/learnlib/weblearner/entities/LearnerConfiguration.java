@@ -29,6 +29,8 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     private LearnAlgorithms algorithm;
 
+    private IdRevisionPair resetSymbol;
+
     /**
      * Default constructor.
      */
@@ -74,6 +76,14 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     public void setAlgorithm(LearnAlgorithms algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public IdRevisionPair getResetSymbol() {
+        return resetSymbol;
+    }
+
+    public void setResetSymbol(IdRevisionPair resetSymbol) {
+        this.resetSymbol = resetSymbol;
     }
 
     /**
