@@ -3,10 +3,9 @@
 
     angular
         .module('weblearner.services')
-        .factory('SessionService', [
-            '$rootScope',
-            SessionService
-        ]);
+        .factory('SessionService', SessionService);
+
+    SessionService.$inject = ['$rootScope', 'Project'];
 
     /**
      * SessionService
@@ -19,7 +18,7 @@
      * @return {{project: {get: getProject, save: saveProject, remove: removeProject}}}
      * @constructor
      */
-    function SessionService($rootScope) {
+    function SessionService($rootScope, Project) {
 
         // the service
         var service = {
@@ -36,10 +35,11 @@
         /**
          * Get the stored project object from the session storage
          *
-         * @return {Object|Array|string|number|*}
+         * @return {ProjectModel.Project}
          */
         function getProject() {
-            return angular.fromJson(sessionStorage.getItem('project'));
+            var project = angular.fromJson(sessionStorage.getItem('project'));
+            return project === null ? null : Project.build(project);
         }
 
         /**

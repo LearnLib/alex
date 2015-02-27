@@ -11,6 +11,7 @@
             'ui.ace',
             'ui.router',
             'ngToast',
+            'draganddrop',
             
             //all templates
 			'templates-all',
@@ -22,7 +23,8 @@
             'weblearner.services',
             'weblearner.filters',
             'weblearner.routes',
-            'weblearner.constants'
+            'weblearner.constants',
+            'weblearner.models'
         ]);
 
     angular.module('weblearner.controller', []);
@@ -32,6 +34,8 @@
     angular.module('weblearner.filters', []);
     angular.module('weblearner.routes', ['weblearner.constants', 'templates-all', 'ui.router']);
     angular.module('weblearner.constants', []);
+    angular.module('weblearner.models', []);
+
 
     angular.module('weblearner')
         .config(['ngToastProvider', function(ngToastProvider){
@@ -41,5 +45,8 @@
                 horizontalPosition: 'center',
                 maxNumber: 1
             });
-        }]);
+        }])
+        .run(['$rootScope', '_', function($rootScope, _){
+            $rootScope._ = _;
+        }])
 }());

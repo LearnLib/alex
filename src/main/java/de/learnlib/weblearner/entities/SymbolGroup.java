@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Entity;
@@ -9,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.ws.rs.Produces;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -67,6 +67,14 @@ public class SymbolGroup {
         this.project = project;
     }
 
+    @JsonProperty("project")
+    public long getProjectId() {
+        if (project == null) {
+            return 0L;
+        }
+        return project.getId();
+    }
+
     public String getName() {
         return name;
     }
@@ -83,6 +91,7 @@ public class SymbolGroup {
         this.symbols = symbols;
     }
 
+    @JsonProperty("symbolAmount")
     public int getSymbolSize() {
         return this.symbols.size();
     }
@@ -112,7 +121,6 @@ public class SymbolGroup {
         result = 31 * result + (id != null ? id.hashCode() : 0);
         return result;
     }
-
 
     // CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber
 }

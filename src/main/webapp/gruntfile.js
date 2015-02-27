@@ -21,6 +21,7 @@ module.exports = function(grunt) {
 					src : [ 'app/scripts/init.js', 'app/templates.js', 'app/scripts/routes.js', 'app/scripts/constants.js',
 							'app/scripts/controllers/**/*.js',
 							'app/scripts/directives/*.js',
+                            'app/scripts/models/*.js',
 							'app/scripts/resources/*.js',
 							'app/scripts/services/*.js', 'app/scripts/filters/*.js'],
 					dest : './app/app.js'
@@ -41,7 +42,8 @@ module.exports = function(grunt) {
 							'bower_components/graphlib/dist/graphlib.core.min.js',
 							'bower_components/dagre/dist/dagre.core.min.js',
 							'bower_components/dagre-d3/dist/dagre-d3.core.min.js',
-							'bower_components/chartjs/Chart.min.js' ],
+							'bower_components/chartjs/Chart.min.js',
+                            'bower_components/angular-draganddrop/angular-draganddrop.min.js'],
 					dest : 'app/libs.min.js'
 				}
 			},

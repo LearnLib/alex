@@ -3,10 +3,9 @@
 
     angular
         .module('weblearner.services')
-        .service('PromptService', [
-            '$modal',
-            PromptService
-        ]);
+        .service('PromptService', PromptService);
+
+    PromptService.$inject = ['$modal', 'paths'];
 
     /**
      * PromptService
@@ -17,7 +16,7 @@
      * @return {{prompt: prompt}}
      * @constructor
      */
-    function PromptService($modal) {
+    function PromptService($modal, paths) {
 
         var service = {
             prompt: prompt,
@@ -37,7 +36,7 @@
         function prompt(text, options) {
 
             var modal = $modal.open({
-                templateUrl: 'app/partials/modals/modal-prompt-dialog.html',
+                templateUrl: paths.views.MODALS + '/modal-prompt-dialog.html',
                 controller: 'PromptDialogController',
                 resolve: {
                     modalData: function () {
@@ -61,7 +60,7 @@
         function confirm(text) {
 
             var modal = $modal.open({
-                templateUrl: 'app/partials/modals/modal-confirm-dialog.html',
+                templateUrl: paths.views.MODALS + '/modal-confirm-dialog.html',
                 controller: 'ConfirmDialogController',
                 resolve: {
                     modalData: function () {

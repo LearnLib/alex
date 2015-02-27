@@ -3,10 +3,9 @@
 
     angular
         .module('weblearner.controller')
-        .controller('ProjectCreateController', [
-            '$scope', '$state', 'ProjectResource',
-            ProjectCreateController
-        ]);
+        .controller('ProjectCreateController', ProjectCreateController);
+
+    ProjectCreateController.$inject = ['$scope', '$state', 'Project'];
 
     /**
      * ProjectCreateController
@@ -15,22 +14,20 @@
      *
      * @param $scope
      * @param $state
-     * @param ProjectResource
+     * @param Project
      * @constructor
      */
-    function ProjectCreateController($scope, $state, ProjectResource) {
+    function ProjectCreateController($scope, $state, Project) {
 
-        // Listen for the event project.created from a child controller
-        $scope.$on('project.created', createProject);
+        $scope.project = new Project();
 
         /**
          * Make a call to the API to create a new project
          *
-         * @param evt - The event object
          * @param project - The project that should be created
          */
-        function createProject(evt, project) {
-            ProjectResource.create(project)
+        $scope.createProject = function() {
+            Project.Resource.create($scope.project)
                 .then(function () {
                     $state.go('home');
                 })
