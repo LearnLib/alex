@@ -24,17 +24,17 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     public void create(LearnerResult learnerResult) throws ValidationException {
-        // new LearnerResults should have a project, not an id and not a revision
+        // new LearnerResults should have a project, not a test number not a step number
         if (learnerResult.getProject() == null || learnerResult.getTestNo() > 0 || learnerResult.getStepNo() > 0) {
             throw new ValidationException(
-                "To create a LearnResult it must have a Project but must not haven an test no. nor step no.");
+                "To create a LearnResult it must have a Project but must not have a test no. nor step no.");
         }
 
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        // get the current highest symbol id in the project and add 1 for the next id
+        // get the current highest test no in the project and add 1 for the next id
         Long maxTestNo = (Long) session.createCriteria(LearnerResult.class)
                                             .add(Restrictions.eq("project", learnerResult.getProject()))
                                             .setProjection(Projections.max("testNo"))

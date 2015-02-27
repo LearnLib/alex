@@ -11,21 +11,17 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -51,41 +47,46 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
     @JsonIgnore
-    protected Project project;
+    private Project project;
+
+    @ManyToOne
+    //@NotNull
+    @JsonIgnore
+    private SymbolGroup group;
 
     /** The ID of the symbol, unique per project. */
     @Column(nullable = false)
-    protected long id;
+    private long id;
 
     /** The current revision of the symbol. */
     @Column(nullable = false)
-    protected long revision;
+    private long revision;
 
     /**
      * The name of the symbol.
      * @requiredField
      */
     @NotBlank
-    protected String name;
+    private String name;
 
     /**
      * An abbreviation for the symbol.
      * @requiredField
      */
     @Size(min = 1, max = 15)
-    protected String abbreviation;
+    private String abbreviation;
 
     /**
      * flag to mark a symbol as hidden.
      * readonly.
      */
-    protected boolean hidden;
+    private boolean hidden;
 
     /** The actions to perform. */
     @OneToMany(fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
     @OrderBy("number ASC")
-    protected List<SymbolAction> actions;
+    private List<SymbolAction> actions;
 
     /** The actions handler. */
     @Transient
@@ -129,8 +130,19 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
     }
 
     /**
+     * Set the project the symbol belongs to.
+     *
+     * @param project
+     *            The new project.
+     */
+    @JsonIgnore
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    /**
      * Get the {@link Project} the Symbol belongs to.
-     * 
+     *
      * @return The parent Project.
      * @requiredField
      */
@@ -145,7 +157,7 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
 
     /**
      * Set the {@link Project} the Symbol belongs to.
-     * 
+     *
      * @param projectId
      *            The new parent Project.
      */
@@ -154,15 +166,25 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
         this.project = new Project(projectId);
     }
 
-    /**
-     * Set the project the symbol belongs to.
-     *
-     * @param project
-     *            The new project.
-     */
-    @JsonIgnore
-    public void setProject(Project project) {
-        this.project = project;
+    public SymbolGroup getGroup() {
+        return group;
+    }
+
+    public void setGroup(SymbolGroup group) {
+        this.group = group;
+    }
+
+    @JsonProperty("group")
+    public long getGroupId() {
+        if (group == null) {
+            return 0L;
+        } else {
+            return this.group.getId();
+        }
+    }
+
+    public void setGroupId(long groupId) {
+        this.group = new SymbolGroup(groupId);
     }
 
     /**

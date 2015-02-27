@@ -9,6 +9,7 @@ import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.PropertyFilterMixIn;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.learner.MultiConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.verify;
 
 public class WebSymbolTest {
 
-    private Symbol symb;
+    private Symbol symbol;
 
     @Before
     public void setUp() {
@@ -34,43 +35,52 @@ public class WebSymbolTest {
         project.setId(1);
         project.setName("Web Symbol Test Project");
 
-        symb = new Symbol();
-        symb.setName("WebSymbol");
-        symb.setProject(project);
-        symb.setAbbreviation("symb");
+        SymbolGroup group = new SymbolGroup();
+        group.setId(2L);
+        group.setName("Web Symbol Test Project");
+
+        symbol = new Symbol();
+        symbol.setProject(project);
+        symbol.setGroup(group);
+        symbol.setName("WebSymbol");
+        symbol.setAbbreviation("symb");
 
         WebSymbolAction a1 = new ClickAction();
-        symb.addAction(a1);
+        symbol.addAction(a1);
         CheckTextWebAction a2 = new CheckTextWebAction();
         a2.setValue("F[oO0]+");
         a2.setRegexp(true);
-        symb.addAction(a2);
+        symbol.addAction(a2);
         WebSymbolAction a3 = new WaitAction();
-        symb.addAction(a3);
+        symbol.addAction(a3);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldAddingSymbolBidirectional() {
-        symb.addAction(null);
+        symbol.addAction(null);
     }
 
     @Test
     public void shouldFailOnAddingNullSymbol() {
         WebSymbolAction a1 = mock(WebSymbolAction.class);
-        symb.addAction(a1);
+        symbol.addAction(a1);
     }
 
     @Test
     public void ensureThatSerializingAndThenDeserializingChangesNothing() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(symb);
+        String json = mapper.writeValueAsString(symbol);
 
-        Symbol symb2 = mapper.readValue(json, Symbol.class);
-        assertEquals(symb.getId(), symb2.getId());
-        assertEquals(symb.getRevision(), symb2.getRevision());
-        assertEquals(symb.getName(), symb2.getName());
-        assertEquals(symb.getProject(), symb2.getProject());
-        assertEquals(symb.getAbbreviation(), symb2.getAbbreviation());
+        Symbol symbolFromMapper = mapper.readValue(json, Symbol.class);
+        assertEquals(symbol.getProject(), symbolFromMapper.getProject());
+        assertEquals(symbol.getId(), symbolFromMapper.getId());
+        assertEquals(symbol.getRevision(), symbolFromMapper.getRevision());
+        assertEquals(symbol.getAbbreviation(), symbolFromMapper.getAbbreviation());
+        assertEquals(symbol.getName(), symbolFromMapper.getName());
+        assertEquals(symbol.getGroup().getGroupId(), symbolFromMapper.getGroup().getGroupId());
+        assertEquals(symbol.getGroup().getId(), symbolFromMapper.getGroup().getId());
+        assertEquals(symbol.getGroup().getProject(), symbolFromMapper.getGroup().getProject());
+        assertEquals(symbol.getGroup(), symbolFromMapper.getGroup());
     }
 
     @Test
@@ -79,8 +89,8 @@ public class WebSymbolTest {
                     + "{\"type\":\"click\",\"node\":null,\"url\":null},"
                     + "{\"type\":\"checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                     + "{\"type\":\"wait\",\"duration\":0}"
-                + "],\"id\":0,\"name\":\"WebSymbol\",\"project\":0,\"revision\":0}";
-        symb.setProject(null);
+                + "],\"group\":2,\"id\":0,\"name\":\"WebSymbol\",\"project\":0,\"revision\":0}";
+        symbol.setProject(null);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.addMixInAnnotations(Object.class, PropertyFilterMixIn.class);
@@ -88,7 +98,7 @@ public class WebSymbolTest {
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("hidden");
         FilterProvider filters = new SimpleFilterProvider().addFilter("filter properties by name", filter);
 
-        String json = mapper.writer(filters).writeValueAsString(symb);
+        String json = mapper.writer(filters).writeValueAsString(symbol);
 
         assertEquals(expectedJson, json);
     }
@@ -99,9 +109,10 @@ public class WebSymbolTest {
                                     + "{\"type\":\"click\",\"node\":null,\"url\":null},"
                                     + "{\"type\":\"checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"duration\":0}"
-                                + "],\"hidden\":false,\"id\":0,\"name\":\"WebSymbol\",\"project\":1,\"revision\":0}";
+                                + "],\"group\":2,\"hidden\":false,\"id\":0,\"name\":\"WebSymbol\",\"project\":1,"
+                                + "\"revision\":0}";
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(symb);
+        String json = mapper.writeValueAsString(symbol);
 
         assertEquals(expectedJson, json);
     }
@@ -110,10 +121,10 @@ public class WebSymbolTest {
     public void shouldReadJSONFileCorrectly() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
         File file = new File(getClass().getResource("/entities/websymbolactions/WebSymbolTestData.json").toURI());
-        symb = mapper.readValue(file, Symbol.class);
+        symbol = mapper.readValue(file, Symbol.class);
 
-        assertEquals("Test Symbol", symb.getName());
-        assertEquals("test_symb", symb.getAbbreviation());
+        assertEquals("Test Symbol", symbol.getName());
+        assertEquals("test_symb", symbol.getAbbreviation());
 
         Class<?>[] expectedActions = {
                 CheckNodeAction.class,
@@ -125,9 +136,9 @@ public class WebSymbolTest {
                 WaitAction.class
         };
 
-        assertEquals(expectedActions.length, symb.getActions().size());
+        assertEquals(expectedActions.length, symbol.getActions().size());
         for (int i = 0; i < expectedActions.length; i++) {
-            assertTrue(expectedActions[i].isInstance(symb.getActions().get(i)));
+            assertTrue(expectedActions[i].isInstance(symbol.getActions().get(i)));
         }
     }
 

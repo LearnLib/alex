@@ -12,6 +12,7 @@ import de.learnlib.weblearner.entities.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolAction;
+import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.ClearAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.ClickAction;
@@ -48,6 +49,7 @@ public final class HibernateUtil {
 
             // the entity classes
             configuration.addAnnotatedClass(Project.class);
+            configuration.addAnnotatedClass(SymbolGroup.class);
             configuration.addAnnotatedClass(Symbol.class);
             configuration.addAnnotatedClass(SymbolAction.class);
             // Web Symbols & Actions

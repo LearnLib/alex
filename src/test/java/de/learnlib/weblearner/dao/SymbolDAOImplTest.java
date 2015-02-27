@@ -3,6 +3,7 @@ package de.learnlib.weblearner.dao;
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.entities.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.ClearAction;
@@ -39,6 +40,7 @@ public class SymbolDAOImplTest {
     private static SymbolDAO symbolDAO;
 
     private Project project;
+    private SymbolGroup group;
     private Symbol symbol;
     private Symbol symbol2;
     private List<Symbol> symbols;
@@ -56,6 +58,10 @@ public class SymbolDAOImplTest {
         project.setName("SymbolDAO - Test Project");
         project.setBaseUrl("http://example.com/");
         projectDAO.create(project);
+
+        // create group
+        group = new SymbolGroup();
+        group.setName("Symbol");
 
         // create symbol 1
         symbol = new Symbol();

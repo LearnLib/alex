@@ -62,7 +62,7 @@ public class LearnerResultDAOImplTest {
         assertTrue(learnerResult.getStepNo() == 1);
 
         String jsonFromDB = learnerResultDAO.getAsJSON(project.getId(), learnerResult.getTestNo(),
-                                                        learnerResult.getStepNo());
+                                                       learnerResult.getStepNo());
         String expectedJSON = generateExpectedJSON(learnerResult);
 
         assertEquals(expectedJSON, jsonFromDB);

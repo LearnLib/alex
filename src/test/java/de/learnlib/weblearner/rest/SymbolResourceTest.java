@@ -9,6 +9,7 @@ import de.learnlib.weblearner.dao.ProjectDAO;
 import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.learner.Learner;
 import org.glassfish.jersey.test.JerseyTest;
@@ -52,6 +53,7 @@ public class SymbolResourceTest extends JerseyTest {
     private LearnerResultDAO learnerResultDAO;
 
     private Project project;
+    private SymbolGroup group;
 
     private Symbol symbol;
     private Symbol symbol2;
@@ -74,17 +76,22 @@ public class SymbolResourceTest extends JerseyTest {
         project.setId(PROJECT_TEST_ID);
         given(projectDAO.getByID(project.getId())).willReturn(project);
 
+        group = new SymbolGroup();
+        group.setName("Symbol Resource Test Group");
+
         symbol = new Symbol();
         symbol.setId(SYMBOL_TEST_ID);
         symbol.setName("Symbol Resource Test Symbol");
         symbol.setAbbreviation("srts");
         symbol.setProject(project);
+        symbol.setGroup(group);
 
         symbol2 = new Symbol();
         symbol2.setId(SYMBOL_TEST_ID + 1);
         symbol2.setName("Symbol Resource Test Symbol 2");
         symbol2.setAbbreviation("srts 2");
         symbol2.setProject(project);
+        symbol2.getGroup();
 
         symbols = new LinkedList<>();
         symbols.add(symbol);
@@ -234,7 +241,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target("/projects/" + project.getId() + "/symbols").request().get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],"
+        String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],\"group\":0,"
                                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
                                 + "\"project\":10,\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
@@ -252,7 +259,7 @@ public class SymbolResourceTest extends JerseyTest {
                             .request().get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],"
+        String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],\"group\":0,"
                                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
                                 + "\"project\":10,\"revision\":0}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
