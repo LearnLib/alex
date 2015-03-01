@@ -45,10 +45,11 @@
                 maxNumber: 1
             });
         }])
-        .run(['$rootScope', '_', function($rootScope, _){
+        .run(['$rootScope', '_', 'SelectionService', function ($rootScope, _, SelectionService) {
             $rootScope._ = _;
+            $rootScope.selection = SelectionService;
         }])
-}());;angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-create-form.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-create-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/modal-test-setup-settings.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/pages/about.html', 'app/views/pages/groups-manage.html', 'app/views/pages/groups-symbols.html', 'app/views/pages/groups.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+}());;angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-create-form.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-create-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/modal-test-setup-settings.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/groups.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/counter-example-builder.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -215,53 +216,72 @@ angular.module("app/views/directives/load-screen.html", []).run(["$templateCache
 angular.module("app/views/directives/navigation.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/directives/navigation.html",
-    "<nav class=\"app-navigation navbar navbar-default navbar-fixed-top navbar-application\" role=\"navigation\">\n" +
+    "<nav class=\"navbar navbar-application navbar-fixed-top\" role=\"navigation\">\n" +
     "\n" +
     "    <div class=\"container-fluid\">\n" +
     "\n" +
     "        <div class=\"navbar-header\">\n" +
-    "            <a class=\"navbar-brand\" href=\"#/\"><strong>Wl</strong></a>\n" +
+    "            <a class=\"navbar-brand\" ui-sref=\"home\"><strong>Wl</strong></a>\n" +
     "        </div>\n" +
     "\n" +
-    "        <ul class=\"nav navbar-nav navbar-left navbar-menu\">\n" +
+    "        <ul class=\"nav navbar-nav navbar-left navbar-menu-handle\">\n" +
     "            <li>\n" +
-    "                <a href=\"\" class=\"off-screen-navigation-handle\"><i class=\"fa fa-bars\"></i>&nbsp; Menu</a>\n" +
+    "                <a href=\"#\">\n" +
+    "                    <i class=\"fa fa-fw fa-bars\"></i> Menu\n" +
+    "                </a>\n" +
     "            </li>\n" +
     "        </ul>\n" +
     "\n" +
-    "        <div class=\"app-navigation-wrapper\">\n" +
+    "        <div class=\"navbar-offscreen\">\n" +
     "\n" +
-    "            <button class=\"btn btn-default navbar-menu navbar-menu-close\">\n" +
-    "                <i class=\"fa fa-close\"></i>\n" +
-    "            </button>\n" +
+    "            <div class=\"navbar-offscreen-header\">\n" +
+    "                <a href class=\"pull-right navbar-menu-handle\">\n" +
+    "                    <i class=\"fa fa-close\" style=\"color: #fff\"></i>\n" +
+    "                </a>\n" +
+    "            </div>\n" +
     "\n" +
-    "            <ul class=\"nav navbar-nav navbar-left\">\n" +
-    "                <li class=\"dropdown\" dropdown dropdown-navigation>\n" +
-    "                    <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
-    "                       aria-expanded=\"false\">\n" +
-    "                        <span ng-if=\"!project\">Project</span>\n" +
-    "                        <strong ng-if=\"project\" ng-bind=\"project.name\" style=\"text-decoration: underline\"></strong>\n" +
-    "                        <span class=\"caret\"></span>\n" +
-    "                    </a>\n" +
-    "                    <ul class=\"dropdown-menu\" role=\"menu\" ng-if=\"project\">\n" +
-    "                        <li><a class=\"disabled\" ui-sref=\"project\">Overview</a></li>\n" +
-    "                        <li><a ui-sref=\"project.settings\">Settings</a></li>\n" +
-    "                        <li class=\"divider\"></li>\n" +
-    "                        <li><a href=\"#/\" ng-click=\"closeProject()\">Close</a></li>\n" +
-    "                    </ul>\n" +
-    "                    <ul class=\"dropdown-menu\" role=\"menu\" ng-if=\"!project\">\n" +
-    "                        <li><a ui-sref=\"project.create\">Create a new project</a></li>\n" +
-    "                    </ul>\n" +
-    "                </li>\n" +
-    "            </ul>\n" +
+    "            <div ng-if=\"!project\">\n" +
+    "\n" +
+    "                <ul class=\"nav navbar-nav navbar-left\">\n" +
+    "                    <li class=\"dropdown\" dropdown dropdown-navigation>\n" +
+    "                        <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
+    "                           aria-expanded=\"false\">\n" +
+    "                            <span>Project</span>\n" +
+    "                            <span class=\"caret\"></span>\n" +
+    "                        </a>\n" +
+    "                        <ul class=\"dropdown-menu\" role=\"menu\" ng-if=\"!project\">\n" +
+    "                            <li><a ui-sref=\"project.create\">Create a new project</a></li>\n" +
+    "                        </ul>\n" +
+    "                    </li>\n" +
+    "                </ul>\n" +
+    "\n" +
+    "            </div>\n" +
     "\n" +
     "            <div ng-if=\"project\">\n" +
+    "\n" +
+    "                <ul class=\"nav navbar-nav navbar-left\">\n" +
+    "                    <li class=\"dropdown\" dropdown dropdown-navigation>\n" +
+    "                        <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
+    "                           aria-expanded=\"false\">\n" +
+    "                            <strong ng-bind=\"project.name\"></strong>\n" +
+    "                            <span class=\"caret\"></span>\n" +
+    "                        </a>\n" +
+    "                        <ul class=\"dropdown-menu\" role=\"menu\" ng-if=\"project\">\n" +
+    "                            <li><a class=\"disabled\" ui-sref=\"project\">Overview</a></li>\n" +
+    "                            <li><a ui-sref=\"project.settings\">Settings</a></li>\n" +
+    "                            <li class=\"divider\"></li>\n" +
+    "                            <li><a href=\"#/\" ng-click=\"closeProject()\">Close</a></li>\n" +
+    "                        </ul>\n" +
+    "                    </li>\n" +
+    "                </ul>\n" +
+    "\n" +
     "                <ul class=\"nav navbar-nav navbar-left\">\n" +
     "                    <li class=\"dropdown\" dropdown dropdown-navigation>\n" +
     "                        <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
     "                           aria-expanded=\"false\">Symbols <span class=\"caret\"></span></a>\n" +
     "                        <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "                            <li><a ui-sref=\"symbols\">Manage</a></li>\n" +
+    "                            <li><a ui-sref=\"symbols\">Manage Symbols</a></li>\n" +
+    "                            <li><a ui-sref=\"groups\">Manage Groups</a></li>\n" +
     "                            <li class=\"divider\"></li>\n" +
     "                            <li><a ui-sref=\"symbols.import\">Import</a></li>\n" +
     "                            <li><a ui-sref=\"symbols.export\">Export</a></li>\n" +
@@ -270,13 +290,9 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                </ul>\n" +
     "\n" +
     "                <ul class=\"nav navbar-nav navbar-left\">\n" +
-    "                    <li class=\"dropdown\" dropdown dropdown-navigation>\n" +
-    "                        <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
-    "                           aria-expanded=\"false\">Learn <span class=\"caret\"></span></a>\n" +
-    "                        <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "                            <li><a ui-sref=\"learn.setup.web\">Web Application</a></li>\n" +
-    "                            <li><a ui-sref=\"learn.setup.rest\">Rest Interface</a></li>\n" +
-    "                        </ul>\n" +
+    "                    <li>\n" +
+    "                        <a href=\"#\" ui-sref=\"learn.setup\" role=\"button\"\n" +
+    "                           aria-expanded=\"false\">Learn </a>\n" +
     "                    </li>\n" +
     "                </ul>\n" +
     "\n" +
@@ -291,6 +307,7 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                        </ul>\n" +
     "                    </li>\n" +
     "                </ul>\n" +
+    "\n" +
     "            </div>\n" +
     "\n" +
     "            <ul class=\"nav navbar-nav navbar-right\">\n" +
@@ -298,8 +315,6 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                    <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
     "                       aria-expanded=\"false\">App <span class=\"caret\"></span></a>\n" +
     "                    <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "                        <!--  <li><a href=\"#/\">Settings</a></li>  -->\n" +
-    "                        <!--  <li class=\"divider\"></li> -->\n" +
     "                        <li><a ui-sref=\"about\">About</a></li>\n" +
     "                        <li><a ui-sref=\"help\">Help</a></li>\n" +
     "                    </ul>\n" +
@@ -319,6 +334,7 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
+    "\n" +
     "</nav>\n" +
     "");
 }]);
@@ -1345,150 +1361,116 @@ angular.module("app/views/modals/symbol-edit-modal.html", []).run(["$templateCac
     "</form>");
 }]);
 
+angular.module("app/views/modals/symbol-move-modal.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/modals/symbol-move-modal.html",
+    "<div class=\"modal-header\">\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
+    "    <h3 class=\"modal-title\">Move Symbols</h3>\n" +
+    "    <span class=\"text-muted\">Move Symbols into another group</span>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-body\">\n" +
+    "\n" +
+    "    <div class=\"alert alert-info alert-condensed\">\n" +
+    "        <span ng-bind=\"symbols.length\"></span> symbols selected\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <ul class=\"list-group\" style=\"margin-bottom: 0\">\n" +
+    "        <li class=\"list-group-item\" ng-repeat=\"group in groups\"\n" +
+    "            ng-class=\"selectedGroup.name === group.name ? 'active': ''\"\n" +
+    "            ng-click=\"selectGroup(group)\">\n" +
+    "            <span class=\"label label-default pull-right\" ng-bind=\"group.symbols.length\"></span>\n" +
+    "            <span ng-bind=\"group.name\"></span>\n" +
+    "        </li>\n" +
+    "    </ul>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-footer\">\n" +
+    "    <button class=\"btn btn-sm btn-primary\" ng-click=\"moveSymbols()\">Move Symbols</button>\n" +
+    "</div>\n" +
+    "\n" +
+    "");
+}]);
+
 angular.module("app/views/pages/about.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/about.html",
-    "<div class=\"container\">\n" +
+    "<div view-heading\n" +
+    "     title=\"About\"\n" +
+    "     sub-title=\"Information about this application\">\n" +
+    "</div>\n" +
     "\n" +
-    "    <h2>About</h2>\n" +
-    "    <p class=\"text-muted\">Information about this application</p>\n" +
-    "    <hr/>\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "    <h3>Authors</h3>\n" +
-    "    <p>\n" +
-    "        <strong>Alexander Bainczyk</strong><br>\n" +
-    "        <a href=\"mailto:alexander.bainczyk@tu-dortmund.de\">\n" +
-    "            <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
-    "            alexander.bainczyk@tu-dortmund.de\n" +
-    "        </a>\n" +
-    "    </p>\n" +
-    "    <p>\n" +
-    "        <strong>Alexander Schieweck</strong><br>\n" +
-    "        <a href=\"mailto:alexander.schieweck@tu-dortmund.de\">\n" +
-    "            <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
-    "            alexander.schieweck@tu-dortmund.de\n" +
-    "        </a>\n" +
-    "    </p>\n" +
+    "        <h3>Authors</h3>\n" +
     "\n" +
+    "        <p>\n" +
+    "            <strong>Alexander Bainczyk</strong><br>\n" +
+    "            <a href=\"mailto:alexander.bainczyk@tu-dortmund.de\">\n" +
+    "                <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
+    "                alexander.bainczyk@tu-dortmund.de\n" +
+    "            </a>\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <p>\n" +
+    "            <strong>Alexander Schieweck</strong><br>\n" +
+    "            <a href=\"mailto:alexander.schieweck@tu-dortmund.de\">\n" +
+    "                <i class=\"fa fa-envelope-o fa-fw\"></i>&nbsp;\n" +
+    "                alexander.schieweck@tu-dortmund.de\n" +
+    "            </a>\n" +
+    "        </p>\n" +
+    "\n" +
+    "    </div>\n" +
     "</div>");
-}]);
-
-angular.module("app/views/pages/groups-manage.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/pages/groups-manage.html",
-    "");
-}]);
-
-angular.module("app/views/pages/groups-symbols.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/pages/groups-symbols.html",
-    "");
 }]);
 
 angular.module("app/views/pages/groups.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/groups.html",
-    "<div class=\"container\">\n" +
-    "    <h2>Symbols</h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">Manage all groups</p>\n" +
-    "    <hr>\n" +
+    "<div view-heading\n" +
+    "     title=\"Symbol Groups\"\n" +
+    "     sub-title=\"Manage all symbol groups\">\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"allSymbols\">\n" +
-    "        </div>\n" +
+    "\n" +
     "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-primary\"\n" +
-    "                    symbol-create-modal-handle project-id=\"{{project.id}}\" on-created=\"addSymbol\">\n" +
+    "            <button class=\"btn btn-primary btn-xs\">\n" +
     "                Create\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length == 1 ? '' : 'disabled'\"\n" +
-    "                    symbol-edit-modal-handle symbol=\"(allSymbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
+    "            <button class=\"btn btn-xs btn-default\">\n" +
     "                Edit\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\"\n" +
-    "                    ng-click=\"deleteSelectedSymbols()\">\n" +
+    "            <button class=\"btn btn-xs btn-default\">\n" +
     "                Delete\n" +
     "            </button>\n" +
     "        </div>\n" +
-    "        <div class=\"pull-right\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"toggleCollapseAllGroups()\">Collapse All</button>\n" +
-    "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"container\">\n" +
-    "    <div ng-repeat=\"group in groups track by group.id\">\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"selectable-list\">\n" +
-    "            <div class=\"selectable-list-item\" style=\"padding-top: 25px\">\n" +
-    "                <div class=\"selectable-list-control\">\n" +
-    "                    <input type=\"checkbox\" select-all-items-checkbox items=\"group.symbols\">\n" +
-    "                </div>\n" +
-    "                <div class=\"selectable-list-content\">\n" +
+    "        <div ng-repeat=\"group in groups track by $index\">\n" +
+    "            {{group.name}}\n" +
     "\n" +
-    "                    <span class=\"pull-right\" ng-click=\"group._isCollapsed = !group._isCollapsed\">\n" +
-    "                        <i class=\"fa fa-fw\" ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
-    "                    </span>\n" +
-    "\n" +
-    "                    <h3 style=\"margin-top: 0\" ng-click=\"group._isCollapsed = !group._isCollapsed\"\n" +
-    "                        ng-bind=\"group.name\"></h3>\n" +
-    "\n" +
-    "                    <p class=\"text-muted\"><span ng-bind=\"group.symbols.length\"></span> Symbols</p>\n" +
-    "                </div>\n" +
-    "            </div>\n" +
+    "            <ul>\n" +
+    "                <li ng-repeat=\"symbol in group.symbols track by symbol.id\">\n" +
+    "                    {{symbol.name}}\n" +
+    "                </li>\n" +
+    "            </ul>\n" +
     "        </div>\n" +
     "\n" +
-    "        <div collapse=\"group._isCollapsed\">\n" +
-    "\n" +
-    "            <div selectable-list ng-model=\"group.symbols\">\n" +
-    "                <div selectable-list-item ng-repeat=\"symbol in group.symbols\">\n" +
-    "\n" +
-    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                            <i class=\"fa fa-bars\"></i>\n" +
-    "                        </button>\n" +
-    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                            <li>\n" +
-    "                                <a href symbol-edit-modal-handle symbol=\"symbol\" on-updated=\"updateSymbol\">\n" +
-    "                                    <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a href ng-click=\"deleteSymbol(symbol)\">\n" +
-    "                                    <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li class=\"divider\"></li>\n" +
-    "                            <li>\n" +
-    "                                <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                                    <i class=\"fa fa-list-ol fa-fw\"></i> Actions\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li class=\"divider\"></li>\n" +
-    "                            <li>\n" +
-    "                                <a ui-sref=\"symbols.history({symbolId:symbol.id})\">\n" +
-    "                                    <i class=\"fa fa-history fa-fw\"></i> Restore\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                        </ul>\n" +
-    "                    </div>\n" +
-    "\n" +
-    "                    <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
-    "\n" +
-    "                    <p class=\"text-muted\">\n" +
-    "                        <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                            <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                        </a>\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                </div>\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
     "    </div>\n" +
     "</div>");
 }]);
@@ -1496,42 +1478,48 @@ angular.module("app/views/pages/groups.html", []).run(["$templateCache", functio
 angular.module("app/views/pages/help.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/help.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <h2>Help</h2>\n" +
-    "    <p class=\"text-muted\">If you need help using this application, maybe there is some information for you here</p>\n" +
-    "    <hr/>\n" +
-    "\n" +
+    "<div view-heading\n" +
+    "     title=\"Help\"\n" +
+    "     sub-title=\"If you need help using this application, maybe there is some information for you here\">\n" +
     "</div>");
 }]);
 
 angular.module("app/views/pages/home.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/home.html",
-    "<div class=\"container\">\n" +
+    "<div view-heading\n" +
+    "     title=\"Home\"\n" +
+    "     sub-title=\"Hello! Choose a project or create one and start learning.\">\n" +
+    "</div>\n" +
     "\n" +
-    "    <div class=\"list-group project-list-group\">\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"list-group-item\" ng-if=\"projects.length > 0\" ng-repeat=\"project in projects\"\n" +
-    "             ng-click=\"openProject(project)\">\n" +
-    "            <h3 class=\"list-group-item-heading\" ng-bind=\"project.name\"></h3>\n" +
+    "        <div class=\"list-group project-list-group\">\n" +
     "\n" +
-    "            <p class=\"list-group-item-text\">\n" +
-    "                <span ng-bind=\"project.baseUrl\"></span> <br>\n" +
-    "                <span class=\"text-muted\" ng-if=\"!project.description\">There is no description for this project</span>\n" +
-    "                <span class=\"text-muted\" ng-if=\"project.description\" ng-bind=\"project.description\"></span>\n" +
-    "            </p>\n" +
-    "        </div>\n" +
+    "            <div class=\"list-group-item\" ng-if=\"projects.length > 0\" ng-repeat=\"project in projects\"\n" +
+    "                 ng-click=\"openProject(project)\">\n" +
+    "                <h3 class=\"list-group-item-heading\" ng-bind=\"project.name\"></h3>\n" +
     "\n" +
-    "        <div class=\"container\" ng-if=\"projects.length == 0\">\n" +
-    "            <div class=\"alert alert-info\">\n" +
-    "                You haven't created a project yet. You can create a new one <a href=\"#/project/create\">here</a> and start\n" +
-    "                testing it.\n" +
+    "                <p class=\"list-group-item-text\">\n" +
+    "                    <span ng-bind=\"project.baseUrl\"></span> <br>\n" +
+    "                    <span class=\"text-muted\"\n" +
+    "                          ng-if=\"!project.description\">There is no description for this project</span>\n" +
+    "                    <span class=\"text-muted\" ng-if=\"project.description\" ng-bind=\"project.description\"></span>\n" +
+    "                </p>\n" +
     "            </div>\n" +
+    "\n" +
+    "            <div class=\"container\" ng-if=\"projects.length == 0\">\n" +
+    "                <div class=\"alert alert-info\">\n" +
+    "                    You haven't created a project yet. You can create a new one <a href=\"#/project/create\">here</a> and\n" +
+    "                    start\n" +
+    "                    testing it.\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
-    "\n" +
     "</div>");
 }]);
 
@@ -1584,36 +1572,45 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
 angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/learn-results-statistics.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <h2>Statistics</h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Have a look at some numbers we gathered for your tests\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
+    "<div view-heading\n" +
+    "     title=\"Statistics\"\n" +
+    "     sub-title=\"Have a look at some numbers we gathered for your tests\">\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
-    "\n" +
     "    <div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
+    "\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
     "            <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
     "        </div>\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromSingleCompleteTestResult()\">\n" +
-    "                <i class=\"fa fa-line-chart fa-fw\"></i> Single Complete Test\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromMultipleFinalTestResults()\">\n" +
-    "                <i class=\"fa fa-bar-chart fa-fw\"></i> Multiple Tests\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"chartFromTwoCompleteTestResults()\">\n" +
-    "                <i class=\"fa fa-columns fa-fw\"></i> Compare Two Complete Tests\n" +
-    "            </button>\n" +
-    "        </div>\n" +
-    "        <div class=\"pull-right\">\n" +
     "\n" +
-    "            <div class=\"btn-group btn-group-xs pull-right\" dropdown>\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <div class=\"btn-group btn-group-xs\" dropdown dropdown-hover>\n" +
+    "                <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
+    "                    Charts\n" +
+    "                </button>\n" +
+    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                    <li>\n" +
+    "                        <a href ng-click=\"chartFromSingleCompleteTestResult()\">\n" +
+    "                            <i class=\"fa fa-line-chart fa-fw\"></i> Single Complete Test\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                    <li>\n" +
+    "                        <a href ng-click=\"chartFromMultipleFinalTestResults()\">\n" +
+    "                            <i class=\"fa fa-bar-chart fa-fw\"></i> Multiple Tests\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                    <li>\n" +
+    "                        <a href ng-click=\"chartFromTwoCompleteTestResults()\">\n" +
+    "                            <i class=\"fa fa-columns fa-fw\"></i> Compare Two Complete Tests\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                </ul>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"pull-right\">\n" +
+    "            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
     "                <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
     "                    <i class=\"fa fa-download fa-fw\"></i> Export to CSV\n" +
     "                </button>\n" +
@@ -1630,11 +1627,14 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "                    </li>\n" +
     "                </ul>\n" +
     "            </div>\n" +
-    "\n" +
     "        </div>\n" +
-    "    </div>\n" +
     "\n" +
+    "    </div>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"view-body\">\n" +
     "    <div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
+    "\n" +
     "        <div class=\"pull-left\">\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-click=\"back()\">\n" +
     "                <i class=\"fa fa-list-ul fa-fw\"></i> Test Results\n" +
@@ -1643,82 +1643,81 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "                <i class=\"fa fa-save fa-fw\"></i> Download Diagram\n" +
     "            </button>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
+    "    <div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
     "\n" +
-    "</div>\n" +
+    "        <div selectable-list ng-model=\"tests\">\n" +
+    "            <div selectable-list-item ng-repeat=\"test in tests\">\n" +
     "\n" +
-    "<div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
+    "                <span class=\"label label-primary pull-right\">\n" +
+    "                    Web\n" +
+    "                </span>\n" +
     "\n" +
-    "    <div selectable-list ng-model=\"tests\">\n" +
-    "        <div selectable-list-item ng-repeat=\"test in tests\">\n" +
+    "                <strong>Test No\n" +
+    "                    <span ng-bind=\"test.testNo\"></span>\n" +
+    "                </strong>,\n" +
+    "                [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
     "\n" +
-    "            <span class=\"label label-primary pull-right\">\n" +
-    "                Web\n" +
-    "            </span>\n" +
+    "                <br>\n" +
     "\n" +
-    "            <strong>Test No\n" +
-    "                <span ng-bind=\"test.testNo\"></span>\n" +
-    "            </strong>,\n" +
-    "            [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "            <br>\n" +
-    "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "            </p>\n" +
+    "                <p class=\"text-muted\">\n" +
+    "                    Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                </p>\n" +
+    "            </div>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
+    "    <div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
     "\n" +
-    "</div>\n" +
+    "        <hr>\n" +
     "\n" +
-    "<div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
+    "        <div ng-if=\"chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS\">\n" +
+    "            <div test-results-chart test-results-chart-multiple-final chart-data=\"chartDataSets\"></div>\n" +
+    "        </div>\n" +
     "\n" +
-    "    <hr>\n" +
+    "        <div ng-if=\"chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT\">\n" +
+    "            <div test-results-chart test-results-chart-single-complete chart-data=\"chartDataSets\"></div>\n" +
+    "        </div>\n" +
     "\n" +
-    "    <div ng-if=\"chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS\">\n" +
-    "        <div test-results-chart test-results-chart-multiple-final chart-data=\"chartDataSets\"></div>\n" +
+    "        <div ng-if=\"chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS\">\n" +
+    "            <div test-results-chart test-results-chart-two-complete chart-data=\"chartDataSets\"></div>\n" +
+    "        </div>\n" +
+    "\n" +
     "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT\">\n" +
-    "        <div test-results-chart test-results-chart-single-complete chart-data=\"chartDataSets\"></div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS\">\n" +
-    "        <div test-results-chart test-results-chart-two-complete chart-data=\"chartDataSets\"></div>\n" +
-    "    </div>\n" +
-    "\n" +
     "</div>");
 }]);
 
 angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/learn-results.html",
-    "<div class=\"container\">\n" +
-    "        <h2>Tests</h2>\n" +
+    "<div view-heading\n" +
+    "     title=\"Tests\"\n" +
+    "     sub-title=\"Have a look at all the tests you ran for this project\">\n" +
+    "</div>\n" +
     "\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Have a look at all the tests you ran for this project\n" +
-    "        </p>\n" +
-    "        <hr>\n" +
-    "    </div>\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "    <div ng-if=\"tests.length > 0\">\n" +
-    "        <div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
-    "            <div class=\"container\">\n" +
-    "                <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "                    <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
-    "                </div>\n" +
-    "                <div class=\"pull-left\">\n" +
-    "                    <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteTests()\">\n" +
-    "                        Delete\n" +
-    "                    </button>\n" +
-    "                    <button class=\"btn btn-xs btn-default\">\n" +
-    "                        Slideshow\n" +
-    "                    </button>\n" +
-    "                </div>\n" +
-    "            </div>\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
     "        </div>\n" +
     "\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteTests()\">\n" +
+    "                Delete\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-default\">\n" +
+    "                Slideshow\n" +
+    "            </button>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"view-body\">\n" +
+    "\n" +
+    "    <div ng-if=\"tests.length > 0\">\n" +
     "        <div class=\"container\">\n" +
     "\n" +
     "            <div selectable-list ng-model=\"tests\">\n" +
@@ -1769,25 +1768,22 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "            You have not run any tests yet or the active one is not finished.\n" +
     "        </div>\n" +
     "    </div>\n" +
-    "");
+    "\n" +
+    "</div>");
 }]);
 
 angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/learn-setup.html",
-    "<div class=\"container\">\n" +
-    "    <h2>Test Setup - <span ng-bind=\"(type|capitalize)\"></span></h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Include or exclude Symbols you want to use for the following test\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
+    "<div view-heading\n" +
+    "     title=\"Learn Setup\"\n" +
+    "     sub-title=\"Include or exclude symbols & groups you want to use for the following test\">\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbols\">\n" +
+    "            <input type=\"checkbox\" select-all-items-checkbox items=\"allSymbols\">\n" +
     "        </div>\n" +
     "        <div class=\"pull-right\">\n" +
     "            <button class=\"btn btn-xs btn-default\" open-test-setup-settings-modal\n" +
@@ -1801,22 +1797,53 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "    </div>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"container\">\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container symbol-group-list\">\n" +
+    "        <div ng-repeat=\"group in groups track by group.id\" class=\"symbol-group\">\n" +
     "\n" +
-    "    <div selectable-list ng-model=\"symbols\">\n" +
-    "        <div selectable-list-item ng-repeat=\"symbol in symbols\">\n" +
+    "            <div class=\"selectable-list symbol-group-header\">\n" +
+    "                <div class=\"selectable-list-heading\">\n" +
+    "                    <div class=\"selectable-list-control\">\n" +
+    "                        <input type=\"checkbox\" select-all-items-checkbox items=\"group.symbols\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"selectable-list-content\">\n" +
     "\n" +
-    "            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "                    <span class=\"pull-right\" ng-click=\"group._isCollapsed = !group._isCollapsed\">\n" +
+    "                        <i class=\"fa fa-fw\" ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
+    "                    </span>\n" +
     "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                    <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                </a>\n" +
-    "            </p>\n" +
+    "                        <h3 class=\"symbol-group-title\" ng-bind=\"group.name\"\n" +
+    "                            ng-click=\"group._isCollapsed = !group._isCollapsed\"></h3>\n" +
     "\n" +
+    "                        <p class=\"text-muted\">\n" +
+    "                            <span ng-bind=\"group.symbols.length\"></span> Symbols\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\">\n" +
+    "\n" +
+    "                <div selectable-list ng-model=\"group.symbols\">\n" +
+    "                    <div selectable-list-item ng-repeat=\"symbol in group.symbols\">\n" +
+    "\n" +
+    "                        <a class=\"pull-right\" ng-click=\"resetSymbol = symbol\">\n" +
+    "                            <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-star' : 'fa-star-o'\"></i>\n" +
+    "                        </a>\n" +
+    "\n" +
+    "                        <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
+    "\n" +
+    "                        <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                            <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
+    "                        </a>\n" +
+    "\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
-    "\n" +
     "</div>");
 }]);
 
@@ -1880,142 +1907,159 @@ angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", fu
 angular.module("app/views/pages/project-create.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/project-create.html",
-    "<div class=\"container\">\n" +
+    "<div view-heading\n" +
+    "     title=\"Create Project\"\n" +
+    "     sub-title=\"Create a new project\">\n" +
+    "</div>\n" +
     "\n" +
-    "    <h2>Create a New Project</h2>\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "    <p class=\"text-muted\">You can create a new project here</p>\n" +
-    "    <hr/>\n" +
+    "        <form id=\"project-create-form\" name=\"create_form\" role=\"form\" ng-submit=\"createProject()\">\n" +
     "\n" +
-    "    <form id=\"project-create-form\" name=\"create_form\" role=\"form\" ng-submit=\"createProject()\">\n" +
+    "            <!-- Name -->\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">Name*</label>\n" +
     "\n" +
-    "        <!-- Name -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Name*</label>\n" +
+    "                <p class=\"text-muted\">The name of your project</p>\n" +
+    "                <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
+    "                       placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
+    "            </div>\n" +
+    "            <div class=\"alert alert-danger alert-condensed\"\n" +
+    "                 ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
+    "                <small ng-show=\"create_form.name.$error.required\">Name must not be empty.</small>\n" +
+    "            </div>\n" +
+    "            <!-- Name -->\n" +
     "\n" +
-    "            <p class=\"text-muted\">The name of your project</p>\n" +
-    "            <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
-    "                   placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
-    "            <small ng-show=\"create_form.name.$error.required\">Name must not be empty.</small>\n" +
-    "        </div>\n" +
-    "        <!-- Name -->\n" +
+    "            <!-- Base Url -->\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">Url*</label>\n" +
     "\n" +
-    "        <!-- Base Url -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Url*</label>\n" +
+    "                <p class=\"text-muted\">The url of your website</p>\n" +
+    "                <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
+    "                       placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\"\n" +
+    "                       ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
+    "            </div>\n" +
+    "            <div class=\"alert alert-danger alert-condensed\"\n" +
+    "                 ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
+    "                <small ng-show=\"create_form.url.$error.required\">\n" +
+    "                    Url must not be empty.\n" +
+    "                </small>\n" +
+    "                <small ng-show=\"create_form.url.$error.pattern\">\n" +
+    "                    The url has to start with http(s):// and have a host name\n" +
+    "                </small>\n" +
+    "            </div>\n" +
+    "            <!-- /Base Url -->\n" +
     "\n" +
-    "            <p class=\"text-muted\">The url of your website</p>\n" +
-    "            <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
-    "                   placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\"\n" +
-    "                   ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
-    "            <small ng-show=\"create_form.url.$error.required\">\n" +
-    "                Url must not be empty.\n" +
-    "            </small>\n" +
-    "            <small ng-show=\"create_form.url.$error.pattern\">\n" +
-    "                The url has to start with http(s):// and have a host name\n" +
-    "            </small>\n" +
-    "        </div>\n" +
-    "        <!-- /Base Url -->\n" +
+    "            <!-- Description -->\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">Description</label>\n" +
     "\n" +
-    "        <!-- Description -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Description</label>\n" +
-    "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                If you want you can describe your new project with a few words\n" +
-    "            </p>\n" +
+    "                <p class=\"text-muted\">\n" +
+    "                    If you want you can describe your new project with a few words\n" +
+    "                </p>\n" +
     "            <textarea name=\"description\" ng-model=\"project.description\"\n" +
     "                      placeholder=\"Enter the description for the project\"\n" +
     "                      class=\"form-control\" rows=\"3\"></textarea>\n" +
-    "        </div>\n" +
-    "        <!-- /Description -->\n" +
+    "            </div>\n" +
+    "            <!-- /Description -->\n" +
     "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <button type=\"submit\" class=\"btn btn-sm btn-primary\">Create Project</button>\n" +
-    "        </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <button type=\"submit\" class=\"btn btn-sm btn-primary\">Create Project</button>\n" +
+    "            </div>\n" +
     "\n" +
-    "    </form>\n" +
+    "        </form>\n" +
     "\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
 angular.module("app/views/pages/project-settings.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/project-settings.html",
-    "<div class=\"container\">\n" +
+    "<div view-heading\n" +
+    "     title=\"Project Settings\"\n" +
+    "     sub-title=\"Update your project and change settings\">\n" +
+    "</div>\n" +
     "\n" +
-    "    <h2>Project Settings</h2>\n" +
-    "    <p class=\"text-muted\">Update your project and change settings</p>\n" +
-    "    <hr>\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "    <form id=\"project-edit-form\" name=\"update_form\" role=\"form\" ng-submit=\"updateProject()\">\n" +
+    "        <form id=\"project-edit-form\" name=\"update_form\" role=\"form\" ng-submit=\"updateProject()\">\n" +
     "\n" +
-    "        <!-- Name -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Name*</label>\n" +
+    "            <!-- Name -->\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">Name*</label>\n" +
     "\n" +
-    "            <p class=\"text-muted\">The name of your project</p>\n" +
-    "            <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
-    "                   placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
-    "            <small ng-show=\"update_form.name.$error.required\">Name must not be empty.</small>\n" +
-    "        </div>\n" +
-    "        <!-- Name -->\n" +
+    "                <p class=\"text-muted\">The name of your project</p>\n" +
+    "                <input name=\"name\" type=\"text\" class=\"form-control\"\n" +
+    "                       placeholder=\"Enter a name for the project\" ng-model=\"project.name\" ng-required=\"true\">\n" +
+    "            </div>\n" +
+    "            <div class=\"alert alert-danger alert-condensed\"\n" +
+    "                 ng-show=\"create_form.name.$dirty && create_form.name.$invalid\">\n" +
+    "                <small ng-show=\"update_form.name.$error.required\">Name must not be empty.</small>\n" +
+    "            </div>\n" +
+    "            <!-- Name -->\n" +
     "\n" +
-    "        <!-- Base Url -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Url*</label>\n" +
+    "            <!-- Base Url -->\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">Url*</label>\n" +
     "\n" +
-    "            <p class=\"text-muted\">The url of your website</p>\n" +
-    "            <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
-    "                   placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\" ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
-    "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
-    "            <small ng-show=\"update_form.url.$error.required\">\n" +
-    "                Url must not be empty.\n" +
-    "            </small>\n" +
-    "            <small ng-show=\"update_form.url.$error.pattern\">\n" +
-    "                The url has to start with http(s):// and have a host name\n" +
-    "            </small>\n" +
-    "        </div>\n" +
-    "        <!-- /Base Url -->\n" +
+    "                <p class=\"text-muted\">The url of your website</p>\n" +
+    "                <input name=\"url\" class=\"form-control\" type=\"text\"\n" +
+    "                       placeholder=\"Enter the url of the project\" ng-model=\"project.baseUrl\" ng-required=\"true\"\n" +
+    "                       ng-pattern=\"/^(http://|https://).{1,}/\">\n" +
+    "            </div>\n" +
+    "            <div class=\"alert alert-danger alert-condensed\"\n" +
+    "                 ng-show=\"create_form.url.$dirty && create_form.url.$invalid\">\n" +
+    "                <small ng-show=\"update_form.url.$error.required\">\n" +
+    "                    Url must not be empty.\n" +
+    "                </small>\n" +
+    "                <small ng-show=\"update_form.url.$error.pattern\">\n" +
+    "                    The url has to start with http(s):// and have a host name\n" +
+    "                </small>\n" +
+    "            </div>\n" +
+    "            <!-- /Base Url -->\n" +
     "\n" +
-    "        <!-- Description -->\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Description</label>\n" +
+    "            <!-- Description -->\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">Description</label>\n" +
     "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                If you want you can describe your new project with a few words\n" +
-    "            </p>\n" +
+    "                <p class=\"text-muted\">\n" +
+    "                    If you want you can describe your new project with a few words\n" +
+    "                </p>\n" +
     "            <textarea name=\"description\" ng-model=\"project.description\"\n" +
     "                      placeholder=\"Enter the description for the project\"\n" +
     "                      class=\"form-control\" rows=\"3\"></textarea>\n" +
-    "        </div>\n" +
-    "        <!-- /Description -->\n" +
+    "            </div>\n" +
+    "            <!-- /Description -->\n" +
     "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <button type=\"submit\" class=\"btn btn-sm btn-primary\">Update</button>\n" +
-    "            <a class=\"btn btn-sm btn-default\" ng-click=\"resetForm()\">Reset</a>\n" +
-    "            <a class=\"btn btn-sm btn-default\" ng-click=\"deleteProject()\">Delete</a>\n" +
-    "        </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <button type=\"submit\" class=\"btn btn-sm btn-primary\">Update</button>\n" +
+    "                <a class=\"btn btn-sm btn-default\" ng-click=\"resetForm()\">Reset</a>\n" +
+    "                <a class=\"btn btn-sm btn-default\" ng-click=\"deleteProject()\">Delete</a>\n" +
+    "            </div>\n" +
     "\n" +
-    "    </form>\n" +
+    "        </form>\n" +
     "\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
 angular.module("app/views/pages/project.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/project.html",
-    "<div class=\"container\">\n" +
+    "<div view-heading\n" +
+    "     title=\"{{project.name}} Dashboard\"\n" +
+    "     sub-title=\"asdasdasd\">\n" +
+    "</div>\n" +
     "\n" +
-    "    Dashboard will soon appear at this place\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
+    "        Dashboard will soon appear at this place\n" +
+    "\n" +
+    "    </div>\n" +
     "</div>\n" +
     "");
 }]);
@@ -2023,17 +2067,18 @@ angular.module("app/views/pages/project.html", []).run(["$templateCache", functi
 angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/symbols-actions.html",
-    "<div class=\"container\">\n" +
-    "    <h2>Actions Editor</h2>\n" +
+    "<div class=\"view-heading\">\n" +
+    "    <div class=\"container\">\n" +
+    "        <h2 class=\"view-heading-title\">Actions</h2>\n" +
     "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Create and manage the actions for symbol:\n" +
-    "        <strong ng-bind=\"symbol.name\"></strong> <em>[<span ng-bind=\"symbol.abbreviation\"></span>]</em>\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
+    "        <p class=\"view-heading-sub-title\">\n" +
+    "            Create and manage the actions for symbol:\n" +
+    "            <strong ng-bind=\"symbol.name\"></strong> <em>[<span ng-bind=\"symbol.abbreviation\"></span>]</em>\n" +
+    "        </p>\n" +
+    "    </div>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
     "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbol.actions\">\n" +
@@ -2049,7 +2094,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "                Edit\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-click=\"deleteSelectedActions()\"\n" +
-    "            		ng-class=\"(symbol.actions|selected).length == 0 ? 'disabled': ''\">\n" +
+    "                    ng-class=\"(symbol.actions|selected).length == 0 ? 'disabled': ''\">\n" +
     "                Delete\n" +
     "            </button>\n" +
     "        </div>\n" +
@@ -2060,141 +2105,137 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "    </div>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"container\">\n" +
+    "<div class=\"view-body\">\n" +
     "\n" +
-    "    <div ng-if=\"symbol.actions\" as-sortable ng-model=\"symbol.actions\">\n" +
-    "        <div selectable-list ng-model=\"symbol.actions\">\n" +
-    "            <div selectable-list-item ng-repeat=\"action in symbol.actions\" as-sortable-item>\n" +
-    "                \n" +
-    "                <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "	                <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "	                    <i class=\"fa fa-bars\"></i>\n" +
-    "	                </button>\n" +
-    "	                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "	                    <li>\n" +
-    "	                        <a href open-action-edit-modal symbol=\"symbol\" action=\"action\" on-updated=\"updateAction\">\n" +
-    "	                            <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
-    "	                        </a>\n" +
-    "	                    </li>\n" +
-    "	                    <li>\n" +
-    "	                        <a href ng-click=\"deleteAction(action)\">\n" +
-    "	                            <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
-    "	                        </a>\n" +
-    "	                    </li>\n" +
-    "	                </ul>\n" +
-    "	            </div>\n" +
+    "    <div class=\"container\">\n" +
+    "\n" +
+    "        <div ng-if=\"symbol.actions\" as-sortable ng-model=\"symbol.actions\">\n" +
+    "            <div selectable-list ng-model=\"symbol.actions\">\n" +
+    "                <div selectable-list-item ng-repeat=\"action in symbol.actions\" as-sortable-item>\n" +
+    "\n" +
+    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                            <i class=\"fa fa-bars\"></i>\n" +
+    "                        </button>\n" +
+    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                            <li>\n" +
+    "                                <a href open-action-edit-modal symbol=\"symbol\" action=\"action\"\n" +
+    "                                   on-updated=\"updateAction\">\n" +
+    "                                    <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li>\n" +
+    "                                <a href ng-click=\"deleteAction(action)\">\n" +
+    "                                    <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                        </ul>\n" +
+    "                    </div>\n" +
     "	            \n" +
     "	           <span class=\"text-muted pull-right\" as-sortable-item-handle style=\"margin-right: 15px; padding: 2px;\">\n" +
     "                    <i class=\"fa fa-sort fa-fw\"></i>\n" +
     "                </span>\n" +
     "\n" +
-    "                <strong ng-bind=\"action.type\"></strong><br>\n" +
+    "                    <strong ng-bind=\"action.type\"></strong><br>\n" +
     "\n" +
-    "                <!-- BEGIN: Display Web Actions -->\n" +
-    "                <div class=\"text-muted\" ng-if=\"symbol.type == 'web'\">\n" +
+    "                    <!-- BEGIN: Display Web Actions -->\n" +
+    "                    <div class=\"text-muted\" ng-if=\"symbol.type == 'web'\">\n" +
     "\n" +
-    "                    <p ng-if=\"action.type == webActionTypes.SEARCH_FOR_TEXT\">\n" +
-    "                        Search for the\n" +
-    "                        <span ng-show=\"action.regexp\">regexp</span>\n" +
-    "                        <span ng-show=\"!action.regexp\">string</span>\n" +
-    "                        \"{{action.value}}\" on the page\n" +
-    "                    </p>\n" +
+    "                        <p ng-if=\"action.type == webActionTypes.SEARCH_FOR_TEXT\">\n" +
+    "                            Search for the\n" +
+    "                            <span ng-show=\"action.regexp\">regexp</span>\n" +
+    "                            <span ng-show=\"!action.regexp\">string</span>\n" +
+    "                            \"{{action.value}}\" on the page\n" +
+    "                        </p>\n" +
     "\n" +
-    "                    <p ng-if=\"action.type == webActionTypes.SEARCH_FOR_NODE\">\n" +
-    "                        Search for the element \"{{action.value}}\" in the DOM tree of the page\n" +
-    "                    </p>\n" +
+    "                        <p ng-if=\"action.type == webActionTypes.SEARCH_FOR_NODE\">\n" +
+    "                            Search for the element \"{{action.value}}\" in the DOM tree of the page\n" +
+    "                        </p>\n" +
     "\n" +
-    "                    <p ng-if=\"action.type == webActionTypes.CLEAR\">\n" +
-    "                        Clear the element \"{{action.node}}\"\n" +
-    "                    </p>\n" +
+    "                        <p ng-if=\"action.type == webActionTypes.CLEAR\">\n" +
+    "                            Clear the element \"{{action.node}}\"\n" +
+    "                        </p>\n" +
     "\n" +
-    "                    <p ng-if=\"action.type == webActionTypes.CLICK\">\n" +
-    "                        Click on the element \"{{action.node}}\"\n" +
-    "                    </p>\n" +
+    "                        <p ng-if=\"action.type == webActionTypes.CLICK\">\n" +
+    "                            Click on the element \"{{action.node}}\"\n" +
+    "                        </p>\n" +
     "\n" +
-    "                    <p ng-if=\"action.type == webActionTypes.FILL\">\n" +
-    "                        Fill the element \"{{action.node}}\" with \"{{action.generator}}\"\n" +
-    "                    </p>\n" +
+    "                        <p ng-if=\"action.type == webActionTypes.FILL\">\n" +
+    "                            Fill the element \"{{action.node}}\" with \"{{action.generator}}\"\n" +
+    "                        </p>\n" +
     "\n" +
-    "                    <p ng-if=\"action.type == webActionTypes.GO_TO\">\n" +
-    "                        Go to the page with the url \"{{action.url}}\"\n" +
-    "                    </p>\n" +
+    "                        <p ng-if=\"action.type == webActionTypes.GO_TO\">\n" +
+    "                            Go to the page with the url \"{{action.url}}\"\n" +
+    "                        </p>\n" +
     "\n" +
-    "                    <p ng-if=\"action.type == webActionTypes.SUBMIT\">\n" +
-    "                        Submit the form element \"{{action.node}}\"\n" +
-    "                    </p>\n" +
+    "                        <p ng-if=\"action.type == webActionTypes.SUBMIT\">\n" +
+    "                            Submit the form element \"{{action.node}}\"\n" +
+    "                        </p>\n" +
     "\n" +
-    "                    <p ng-if=\"action.type == webActionTypes.WAIT\">\n" +
-    "                        Wait for {{action.duration}} ms.\n" +
-    "                    </p>\n" +
+    "                        <p ng-if=\"action.type == webActionTypes.WAIT\">\n" +
+    "                            Wait for {{action.duration}} ms.\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                    </div>\n" +
+    "                    <!-- END: Display Web Actions -->\n" +
+    "\n" +
+    "                    <!-- BEGIN: Display Rest Actions -->\n" +
+    "                    <div class=\"text-muted\" ng-if=\"symbol.type == 'rest'\">\n" +
+    "\n" +
+    "                        <p ng-if=\"action.type == restActionTypes.CALL_URL\">\n" +
+    "                            Make a \"{{action.method}}\" request to \"{{action.url}}\"\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                        <p ng-if=\"action.type == restActionTypes.CHECK_STATUS\">\n" +
+    "                            Check http status to be \"{{action.status}}\"\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                        <p ng-if=\"action.type == restActionTypes.CHECK_HEADER_FIELD\">\n" +
+    "                            Check header field \"{{action.key}}\" to be \"{{action.value}}\"\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                        <p ng-if=\"action.type == restActionTypes.CHECK_HTTP_BODY_TEXT\">\n" +
+    "                            Search in the response body for \"{{action.value}}\"\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                        <p ng-if=\"action.type == restActionTypes.CHECK_ATTRIBUTE_EXISTS\">\n" +
+    "                            Check if response body attribute \"{{action.attribute}}\" exists\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                        <p ng-if=\"action.type == restActionTypes.CHECK_ATTRIBUTE_VALUE\">\n" +
+    "                            Check response body attribute \"{{action.attribute}}\" to be \"{{action.value}}\"\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                        <p ng-if=\"action.type == restActionTypes.CHECK_ATTRIBUTE_TYPE\">\n" +
+    "                            Check response body attribute \"{{action.attribute}}\" to be type of \"{{action.jsonType}}\"\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                    </div>\n" +
+    "                    <!-- END: Display Rest Actions -->\n" +
     "\n" +
     "                </div>\n" +
-    "                <!-- END: Display Web Actions -->\n" +
-    "\n" +
-    "                <!-- BEGIN: Display Rest Actions -->\n" +
-    "                <div class=\"text-muted\" ng-if=\"symbol.type == 'rest'\">\n" +
-    "\n" +
-    "                    <p ng-if=\"action.type == restActionTypes.CALL_URL\">\n" +
-    "                        Make a \"{{action.method}}\" request to \"{{action.url}}\"\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                    <p ng-if=\"action.type == restActionTypes.CHECK_STATUS\">\n" +
-    "                        Check http status to be \"{{action.status}}\"\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                    <p ng-if=\"action.type == restActionTypes.CHECK_HEADER_FIELD\">\n" +
-    "                        Check header field \"{{action.key}}\" to be \"{{action.value}}\"\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                    <p ng-if=\"action.type == restActionTypes.CHECK_HTTP_BODY_TEXT\">\n" +
-    "                        Search in the response body for \"{{action.value}}\"\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                    <p ng-if=\"action.type == restActionTypes.CHECK_ATTRIBUTE_EXISTS\">\n" +
-    "                        Check if response body attribute \"{{action.attribute}}\" exists\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                    <p ng-if=\"action.type == restActionTypes.CHECK_ATTRIBUTE_VALUE\">\n" +
-    "                        Check response body attribute \"{{action.attribute}}\" to be \"{{action.value}}\"\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                    <p ng-if=\"action.type == restActionTypes.CHECK_ATTRIBUTE_TYPE\">\n" +
-    "                        Check response body attribute \"{{action.attribute}}\" to be type of \"{{action.jsonType}}\"\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                </div>\n" +
-    "                <!-- END: Display Rest Actions -->\n" +
-    "\n" +
     "            </div>\n" +
     "        </div>\n" +
-    "    </div>\n" +
     "\n" +
-    "    <div class=\"alert alert-info\" ng-show=\"symbol.actions.length == 0\">\n" +
-    "        You haven't created any actions for this symbol yet.\n" +
-    "    </div>\n" +
+    "        <div class=\"alert alert-info\" ng-show=\"symbol.actions.length == 0\">\n" +
+    "            You haven't created any actions for this symbol yet.\n" +
+    "        </div>\n" +
     "\n" +
-    "</div>\n" +
-    "");
+    "    </div>\n" +
+    "</div>");
 }]);
 
 angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/symbols-export.html",
-    "<div class=\"container\">\n" +
-    "\n" +
-    "    <h2>Symbol Export</h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">Export your web and rest symbols as a json file</p>\n" +
-    "    <hr>\n" +
-    "\n" +
+    "<div view-heading\n" +
+    "     title=\"Symbols Export\"\n" +
+    "     sub-title=\"Export your symbols as *.json\">\n" +
     "</div>\n" +
     "\n" +
-    "<!--\n" +
-    "BEGIN: Sub Navigation\n" +
-    "contains call to action buttons to create update & delete symbols\n" +
-    "-->\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
+    "\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
     "            <label>\n" +
     "                <input type=\"checkbox\" select-all-items-checkbox items=\"symbols.web\"> Web\n" +
@@ -2204,45 +2245,48 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "                <input type=\"checkbox\" select-all-items-checkbox items=\"symbols.rest\"> Rest\n" +
     "            </label>\n" +
     "        </div>\n" +
+    "\n" +
     "        <div class=\"pull-right\">\n" +
     "            <button class=\"btn btn-xs btn-primary\" download-as-json data=\"getSelectedSymbols\">\n" +
     "                <i class=\"fa fa-download fa-fw\"></i> Download\n" +
     "            </button>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>\n" +
-    "<!-- END: Sub Navigation -->\n" +
     "\n" +
-    "<div class=\"container\">\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "    <div selectable-list ng-model=\"symbols.web\">\n" +
-    "        <div selectable-list-item ng-repeat=\"symbol in symbols.web\">\n" +
+    "        <div selectable-list ng-model=\"symbols.web\">\n" +
+    "            <div selectable-list-item ng-repeat=\"symbol in symbols.web\">\n" +
     "\n" +
-    "            <span class=\"label label-primary pull-right\" ng-bind=\"symbol.type\"></span>\n" +
+    "                <span class=\"label label-primary pull-right\" ng-bind=\"symbol.type\"></span>\n" +
     "\n" +
-    "            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "                <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
     "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                <span ng-bind=\"symbol.actions.length\"></span> Actions\n" +
-    "            </p>\n" +
+    "                <p class=\"text-muted\">\n" +
+    "                    <span ng-bind=\"symbol.actions.length\"></span> Actions\n" +
+    "                </p>\n" +
     "\n" +
+    "            </div>\n" +
     "        </div>\n" +
-    "    </div>\n" +
     "\n" +
-    "    <div selectable-list ng-model=\"symbols.rest\">\n" +
-    "        <div selectable-list-item ng-repeat=\"symbol in symbols.rest\">\n" +
+    "        <div selectable-list ng-model=\"symbols.rest\">\n" +
+    "            <div selectable-list-item ng-repeat=\"symbol in symbols.rest\">\n" +
     "\n" +
-    "            <span class=\"label label-warning pull-right\" ng-bind=\"symbol.type\"></span>\n" +
+    "                <span class=\"label label-warning pull-right\" ng-bind=\"symbol.type\"></span>\n" +
     "\n" +
-    "            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "                <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
     "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                <span ng-bind=\"symbol.actions.length\"></span> Actions\n" +
-    "            </p>\n" +
+    "                <p class=\"text-muted\">\n" +
+    "                    <span ng-bind=\"symbol.actions.length\"></span> Actions\n" +
+    "                </p>\n" +
     "\n" +
+    "            </div>\n" +
     "        </div>\n" +
-    "    </div>\n" +
     "\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
@@ -2300,44 +2344,36 @@ angular.module("app/views/pages/symbols-history.html", []).run(["$templateCache"
 angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/symbols-import.html",
-    "<div class=\"container\">\n" +
+    "<div view-heading\n" +
+    "     title=\"Symbol Upload\"\n" +
+    "     sub-title=\"If you already have a *.json file with symbols, you can import them here to this project\">\n" +
+    "</div>\n" +
     "\n" +
-    "        <h2>Symbol Upload</h2>\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\"\n" +
+    "     ng-if=\"symbols.web.length > 0 || symbols.rest.length > 0\">\n" +
+    "    <div class=\"container\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <label>\n" +
+    "                <input type=\"checkbox\" select-all-items-checkbox items=\"symbols.web\"> Web\n" +
+    "            </label>\n" +
+    "            &nbsp;\n" +
+    "            <label>\n" +
+    "                <input type=\"checkbox\" select-all-items-checkbox items=\"symbols.rest\"> Rest\n" +
+    "            </label>\n" +
+    "        </div>\n" +
+    "        <div class=\"pull-right\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"uploadSymbols()\">Upload</button>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "</div>\n" +
     "\n" +
-    "        <p class=\"text-muted\">If you already have a *.json file with symbols, you can import them here to this\n" +
-    "            project</p>\n" +
-    "        <hr>\n" +
+    "<div class=\"view-body\">\n" +
+    "\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
     "        <div file-dropzone on-loaded=\"fileLoaded\" class=\"alert alert-info\">\n" +
     "            Drag and drop *.json file here\n" +
     "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <!--\n" +
-    "    BEGIN: Sub Navigation\n" +
-    "    contains call to action buttons to create update & delete symbols\n" +
-    "    -->\n" +
-    "    <div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\"\n" +
-    "         ng-if=\"symbols.web.length > 0 || symbols.rest.length > 0\">\n" +
-    "        <div class=\"container\">\n" +
-    "            <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "                <label>\n" +
-    "                    <input type=\"checkbox\" select-all-items-checkbox items=\"symbols.web\"> Web\n" +
-    "                </label>\n" +
-    "                &nbsp;\n" +
-    "                <label>\n" +
-    "                    <input type=\"checkbox\" select-all-items-checkbox items=\"symbols.rest\"> Rest\n" +
-    "                </label>\n" +
-    "            </div>\n" +
-    "            <div class=\"pull-right\">\n" +
-    "                <button class=\"btn btn-xs btn-primary\" ng-click=\"uploadSymbols()\">Upload</button>\n" +
-    "            </div>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: Sub Navigation -->\n" +
-    "\n" +
-    "    <div class=\"container\">\n" +
     "\n" +
     "        <div ng-if=\"symbols.web.length > 0\" selectable-list ng-model=\"symbols.web\">\n" +
     "            <div selectable-list-item ng-repeat=\"symbol in symbols.web\">\n" +
@@ -2361,7 +2397,11 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
-    "    </div>");
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"container\">");
 }]);
 
 angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", function($templateCache) {
@@ -2427,95 +2467,125 @@ angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", 
 angular.module("app/views/pages/symbols.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/symbols.html",
-    "<div class=\"container\">\n" +
-    "    <h2>Symbol Editor</h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Create and edit symbols and manage its actions\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
+    "<div view-heading\n" +
+    "     title=\"Symbols\"\n" +
+    "     sub-title=\"Manage all symbols of the project\">\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbols\">\n" +
+    "            <input type=\"checkbox\" select-all-items-checkbox items=\"allSymbols\">\n" +
     "        </div>\n" +
     "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-primary\"\n" +
-    "                    symbol-create-modal-handle project-id=\"{{project.id}}\" on-created=\"addSymbol\">\n" +
+    "\n" +
+    "            <button type=\"button\" class=\"btn btn-primary btn-xs\" symbol-create-modal-handle project-id=\"{{project.id}}\"\n" +
+    "                    on-created=\"\">\n" +
     "                Create\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(symbols|selected).length == 1 ? '' : 'disabled'\"\n" +
-    "                    symbol-edit-modal-handle symbol=\"(symbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length == 1 ? '' : 'disabled'\"\n" +
+    "                    symbol-edit-modal-handle symbol=\"(allSymbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
     "                Edit\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(symbols|selected).length > 0 ? '' : 'disabled'\"\n" +
+    "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\"\n" +
+    "                    ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\">\n" +
+    "                Move\n" +
+    "            </button>\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\"\n" +
     "                    ng-click=\"deleteSelectedSymbols()\">\n" +
     "                Delete\n" +
     "            </button>\n" +
+    "\n" +
     "        </div>\n" +
     "        <div class=\"pull-right\">\n" +
-    "            <a ui-sref=\"symbols.trash\" class=\"btn btn-xs btn-default\">\n" +
-    "                <i class=\"fa fa-trash fa-fw\"></i>Trash\n" +
-    "            </a>\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-click=\"toggleCollapseAllGroups()\">\n" +
+    "                <i class=\"fa fa-fw\" ng-class=\"collapseAll ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
+    "            </button>\n" +
     "        </div>\n" +
     "    </div>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"container\">\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container symbol-group-list\">\n" +
+    "        <div ng-repeat=\"group in groups track by group.id\" class=\"symbol-group\"\n" +
+    "             ng-class=\"group._isCollapsed ? 'collapsed' :''\">\n" +
     "\n" +
-    "    <div selectable-list ng-model=\"symbols\">\n" +
-    "        <div selectable-list-item ng-repeat=\"symbol in symbols\">\n" +
+    "            <div class=\"selectable-list symbol-group-header\">\n" +
+    "                <div class=\"selectable-list-heading\">\n" +
+    "                    <div class=\"selectable-list-control\">\n" +
+    "                        <input type=\"checkbox\" select-all-items-checkbox items=\"group.symbols\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"selectable-list-content\">\n" +
     "\n" +
-    "            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                    <i class=\"fa fa-bars\"></i>\n" +
-    "                </button>\n" +
-    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                    <li>\n" +
-    "                        <a href symbol-edit-modal-handle symbol=\"symbol\" on-updated=\"updateSymbol\">\n" +
-    "                            <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                    <li>\n" +
-    "                        <a href ng-click=\"deleteSymbol(symbol)\">\n" +
-    "                            <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                    <li class=\"divider\"></li>\n" +
-    "                    <li>\n" +
-    "                        <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                            <i class=\"fa fa-list-ol fa-fw\"></i> Actions\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                    <li class=\"divider\"></li>\n" +
-    "                    <li>\n" +
-    "                        <a ui-sref=\"symbols.history({symbolId:symbol.id})\">\n" +
-    "                            <i class=\"fa fa-history fa-fw\"></i> Restore\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                </ul>\n" +
+    "                    <span class=\"pull-right\" ng-click=\"group._isCollapsed = !group._isCollapsed\">\n" +
+    "                        <i class=\"fa fa-fw\" ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
+    "                    </span>\n" +
+    "\n" +
+    "                        <h3 class=\"symbol-group-title\" ng-bind=\"group.name\"\n" +
+    "                            ng-click=\"group._isCollapsed = !group._isCollapsed\"></h3>\n" +
+    "\n" +
+    "                        <p class=\"text-muted\">\n" +
+    "                            <span ng-bind=\"group.symbols.length\"></span> Symbols\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
     "            </div>\n" +
     "\n" +
-    "            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\">\n" +
     "\n" +
-    "            <p class=\"text-muted\">\n" +
-    "                <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                    <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                </a>\n" +
-    "            </p>\n" +
+    "                <div selectable-list ng-model=\"group.symbols\">\n" +
+    "                    <div selectable-list-item ng-repeat=\"symbol in group.symbols\">\n" +
     "\n" +
+    "                        <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                            <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                                <i class=\"fa fa-bars\"></i>\n" +
+    "                            </button>\n" +
+    "                            <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                                <li>\n" +
+    "                                    <a href symbol-edit-modal-handle symbol=\"symbol\" on-updated=\"updateSymbol\">\n" +
+    "                                        <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
+    "                                    </a>\n" +
+    "                                </li>\n" +
+    "                                <li>\n" +
+    "                                    <a href ng-click=\"\">\n" +
+    "                                        <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
+    "                                    </a>\n" +
+    "                                </li>\n" +
+    "                                <li>\n" +
+    "                                    <a href ng-click=\"deleteSymbol(symbol)\" symbol-move-modal-handle groups=\"groups\">\n" +
+    "                                        <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+    "                                    </a>\n" +
+    "                                </li>\n" +
+    "                                <li class=\"divider\"></li>\n" +
+    "                                <li>\n" +
+    "                                    <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                                        <i class=\"fa fa-list-ol fa-fw\"></i> Actions\n" +
+    "                                    </a>\n" +
+    "                                </li>\n" +
+    "                                <li class=\"divider\"></li>\n" +
+    "                                <li>\n" +
+    "                                    <a ui-sref=\"symbols.history({symbolId:symbol.id})\">\n" +
+    "                                        <i class=\"fa fa-history fa-fw\"></i> Restore\n" +
+    "                                    </a>\n" +
+    "                                </li>\n" +
+    "                            </ul>\n" +
+    "                        </div>\n" +
+    "\n" +
+    "                        <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
+    "\n" +
+    "                        <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                            <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
+    "                        </a>\n" +
+    "\n" +
+    "\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
-    "\n" +
-    "    <div class=\"alert alert-info\" ng-show=\"symbols.length == 0\">\n" +
-    "        You haven't created any symbols yet.\n" +
-    "    </div>\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "");
+    "</div>");
 }]);
 
 angular.module("app/views/pages/tools-hypotheses-view.html", []).run(["$templateCache", function($templateCache) {
@@ -2675,6 +2745,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                         controller: 'ProjectCreateController',
                         templateUrl: paths.views.PAGES + '/project-create.html'
                     }
+                },
+                data: {
+                    requiresProject: false
                 }
             })
             .state('project.settings', {
@@ -2694,7 +2767,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 url: '/groups',
                 views: {
                     '@': {
-                        controller: 'SymbolGroupsController',
+                        controller: 'GroupsController',
                         templateUrl: paths.views.PAGES + '/groups.html'
                     }
                 },
@@ -2778,34 +2851,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 }
             })
             .state('learn.setup', {
-                abstract: true,
-                url: '/setup'
-            })
-            .state('learn.setup.web', {
-                url: '/web',
+                url: '/setup',
                 views: {
                     '@': {
                         controller: 'LearnSetupController',
                         templateUrl: paths.views.PAGES + '/learn-setup.html'
-                    }
-                },
-                resolve: {
-                    type: function () {
-                        return 'web'
-                    }
-                }
-            })
-            .state('learn.setup.rest', {
-                url: '/rest',
-                views: {
-                    '@': {
-                        controller: 'LearnSetupController',
-                        templateUrl: paths.views.PAGES + '/learn-setup.html'
-                    }
-                },
-                resolve: {
-                    type: function () {
-                        return 'rest'
                     }
                 }
             })
@@ -3284,6 +3334,44 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
+        .controller('SymbolMoveModalController', SymbolMoveModalController);
+
+    SymbolMoveModalController.$inject = [
+        '$scope', '$modalInstance', 'modalData', 'Symbol'
+    ];
+
+    function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol) {
+
+        $scope.symbols = modalData.symbols;
+        $scope.groups = modalData.groups;
+        $scope.selectedGroup = null;
+
+        $scope.moveSymbols = function () {
+            if ($scope.selectedGroup !== null) {
+                // TODO: update logic
+            }
+        };
+
+        $scope.selectGroup = function (group) {
+            if ($scope.selectedGroup.name == group.name) {
+                $scope.selectedGroup = null;
+            } else {
+                $scope.selectedGroup = group;
+            }
+        };
+
+        /**
+         * Close the modal dialog
+         */
+        $scope.closeModal = function () {
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
         .controller('TestDetailsController', [
             '$scope', '$modalInstance', 'modalData',
             TestDetailsController
@@ -3329,6 +3417,36 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         $scope.cancel = function () {
             $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+
+    angular
+        .module('weblearner.controller')
+        .controller('GroupsController', GroupsController);
+
+    GroupsController.$inject = ['$scope', 'SessionService', 'SymbolGroup', '_'];
+
+    function GroupsController($scope, Session, SymbolGroup, _) {
+
+        $scope.project = Session.project.get();
+        $scope.groups = [];
+        $scope.allSymbols = [];
+        $scope.collapseAll = false;
+
+        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+            .then(function (groups) {
+                $scope.groups = groups;
+                $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
+            });
+
+        $scope.addGroup = function () {
+        };
+
+        $scope.deleteGroup = function () {
+        };
+
+        $scope.updateGroup = function () {
         }
     }
 }());;(function () {
@@ -3601,17 +3719,18 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     angular
         .module('weblearner.controller')
         .controller('LearnSetupController', [
-            '$scope', '$state', 'SymbolResource', 'SessionService', 'SelectionService', 'type', 'EqOraclesEnum',
+            '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'EqOraclesEnum',
             'LearnAlgorithmsEnum', 'LearnerResource', 'ngToast',
             LearnSetupController
         ]);
 
-    function LearnSetupController($scope, $state, SymbolResource, SessionService, SelectionService, type, EqOracles,
-                                 LearnAlgorithms, LearnerResource, toast) {
+    function LearnSetupController($scope, $state, SymbolGroup, SessionService, SelectionService, EqOracles,
+                                  LearnAlgorithms, LearnerResource, toast) {
 
         $scope.project = SessionService.project.get();
-        $scope.symbols = [];
-        $scope.type = type;
+        $scope.groups = [];
+        $scope.allSymbols = [];
+        $scope.collapseAll = false;
 
         $scope.learnConfiguration = {
             symbols: [],
@@ -3630,7 +3749,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             .then(function (data) {
                 if (data.active) {
                     if (data.project == $scope.project.id) {
-                    	$state.go('learn.start');
+                        $state.go('learn.start');
                     } else {
                         toast.create({
                             class: 'danger',
@@ -3639,18 +3758,19 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                         });
                     }
                 } else {
-                    SymbolResource.getAll($scope.project.id, {type:type})
-                        .then(function(symbols){
-                            $scope.symbols = symbols;
-                        })
+                    SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+                        .then(function (groups) {
+                            $scope.groups = groups;
+                            $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
+                        });
                 }
             });
 
         //////////
 
         $scope.startLearning = function () {
-            var selectedSymbols = SelectionService.getSelected($scope.symbols);
-            
+            var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
+
             // make sure there are selected symbols
             if (selectedSymbols.length) {
 
@@ -3928,32 +4048,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         }
     }
 }());;(function () {
-
-    angular
-        .module('weblearner.controller')
-        .controller('SymbolGroupsController', SymbolGroupsController);
-
-    SymbolGroupsController.$inject = ['$scope', 'SessionService', 'SymbolGroup', '_'];
-
-    function SymbolGroupsController($scope, Session, SymbolGroup, _) {
-
-        $scope.project = Session.project.get();
-        $scope.groups = [];
-        $scope.allSymbols = [];
-
-        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
-            .then(function (groups) {
-                $scope.groups = groups;
-                $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
-            });
-
-        $scope.toggleCollapseAllGroups = function () {
-            _.forEach($scope.groups, function (group) {
-                group._isCollapsed = !group._isCollapsed;
-            })
-        }
-    }
-}());;(function () {
     'use strict';
 
     angular
@@ -4064,21 +4158,31 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('SymbolsController', SymbolsController);
 
-    SymbolsController.$inject = ['$scope', 'SessionService', 'Symbol', 'SelectionService'];
+    SymbolsController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService'];
 
-    function SymbolsController($scope, SessionService, Symbol, SelectionService) {
+    function SymbolsController($scope, Session, SymbolGroup, SelectionService) {
 
-        /** the open project @type {*} */
-        $scope.project = SessionService.project.get();
+        $scope.project = Session.project.get();
+        $scope.groups = [];
+        $scope.allSymbols = [];
+        $scope.collapseAll = false;
 
-        /** The symbols from the project @type {Symbol[]} **/
-        $scope.symbols = [];
-
-        // load symbols from the server
-        Symbol.Resource.getAll($scope.project.id)
-            .then(function (symbols) {
-                $scope.symbols = symbols;
+        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+            .then(function (groups) {
+                $scope.groups = groups;
+                $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
             });
+
+        $scope.addSymbol = function (symbol) {
+            $scope.groups[0].symbols.push(symbol);
+        };
+
+        $scope.toggleCollapseAllGroups = function () {
+            $scope.collapseAll = !$scope.collapseAll;
+            _.forEach($scope.groups, function (group) {
+                group._isCollapsed = $scope.collapseAll;
+            })
+        };
 
         /**
          * Deletes a given symbol and remove it from the scope so that it will not be listed any longer
@@ -4093,6 +4197,22 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
 
         /**
+         * Moves the selected symbols to a new group
+         *
+         * @param group - The group where the selected symbols should be moved into
+         */
+        $scope.moveSelectedSymbolsTo = function (group) {
+            var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
+
+            SelectionService.removeSelection(selectedSymbols);
+            _.forEach(selectedSymbols, function (symbol) {
+                symbol.group = group.id;
+                group.push(symbol);
+            });
+        };
+
+
+        /**
          * Deletes the symbols the user selected from the server and the scope
          */
         $scope.deleteSelectedSymbols = function () {
@@ -4103,7 +4223,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
                 // get all ids from the selected symbols
                 symbolsIds = _.pluck(selectedSymbols, 'id');
-                SymbolResource.deleteSome($scope.project.id, symbolsIds)
+                Symbol.Resource.deleteSome($scope.project.id, symbolsIds)
                     .then(function (deletedSymbols) {
                         _.forEach(deletedSymbols, function (symbol) {
                             _.remove($scope.symbols, {id: symbol.id})
@@ -4112,27 +4232,28 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         };
 
-        /**
-         * Adds a symbol to the scope
-         *
-         * @param symbol {symbol} - The new symbol that should be added to the list
-         */
-        $scope.addSymbol = function (symbol) {
-            $scope.symbols.push(symbol)
-        };
-
-        /**
-         * Updates a symbol in the scope
-         *
-         * @param symbol {Symbol} - The symbol whose properties should be updated
-         */
-        $scope.updateSymbol = function (symbol) {
-            var index = _.findIndex($scope.symbols, {id: symbol.id});
-            if (index > -1) {
-                SelectionService.select(symbol);
-                $scope.symbols[index] = symbol;
-            }
-        };
+        //
+        ///**
+        // * Adds a symbol to the scope
+        // *
+        // * @param symbol {symbol} - The new symbol that should be added to the list
+        // */
+        //$scope.addSymbol = function (symbol) {
+        //    $scope.symbols.push(symbol)
+        //};
+        //
+        ///**
+        // * Updates a symbol in the scope
+        // *
+        // * @param symbol {Symbol} - The symbol whose properties should be updated
+        // */
+        //$scope.updateSymbol = function (symbol) {
+        //    var index = _.findIndex($scope.symbols, {id: symbol.id});
+        //    if (index > -1) {
+        //        SelectionService.select(symbol);
+        //        $scope.symbols[index] = symbol;
+        //    }
+        //};
     }
 }());;(function () {
     'use strict';
@@ -5476,155 +5597,153 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     }
 }());;(function(){
 	'use strict';
-	
+
 	angular
 		.module('weblearner.directives')
 		.directive('navigation', [
             'paths',
             navigation
         ]);
-	
+
 	function navigation(paths) {
-		
+
 		var directive = {
 			templateUrl: paths.views.DIRECTIVES + '/navigation.html',
 			link: link,
-			controller: ['$scope', '$window', '$state', 'SessionService', controller]
+            controller: [
+                '$scope', '$window', '$state', 'SessionService',
+                controller
+            ]
 		};
 		return directive;
-		
+    }
+
 		//////////
-		
+
 		function link(scope, el, attrs) {
 
-            var menuButton = angular.element(el[0].getElementsByClassName('navbar-menu'));
-            var wrapper = angular.element(el[0].getElementsByClassName('app-navigation-wrapper'));
-            var view = angular.element(document.getElementById('view'));
-            var cssClass = 'has-off-screen-navigation';
+            var handle = angular.element(el[0].getElementsByClassName('navbar-menu-handle'));
+            var offscreen = angular.element(el[0].getElementsByClassName('navbar-offscreen'));
+            var offscreenClass = 'show';
 
-			menuButton.on('click', toggleNavigation);
+            handle.on('click', toggleNavigation);
 
             function toggleNavigation(e) {
                 e.stopPropagation();
-
-                if (wrapper.hasClass(cssClass)) {
-                    wrapper.removeClass(cssClass);
-                } else {
-                    wrapper.addClass(cssClass);
-                    wrapper.on('click', hideNavigation);
-                }
+                offscreen.toggleClass(offscreenClass);
             }
 
             function hideNavigation(e) {
                 if (e.target.tagName == 'A' && e.target.getAttribute('href') != '#') {
-                    wrapper.removeClass(cssClass);
-                    wrapper.off('click', hideNavigation);
+                    offscreen.removeClass(offscreenClass);
                 }
             }
         }
-		
-		//////////
-		
-		function controller($scope, $window, $state, SessionService){
 
-			var mediaQuery;
-
-			//////////
-			
-			/** the project */
-	        $scope.project = SessionService.project.get();
-			$scope.hover = false;
-			$scope.offScreen = false;
-
-	        //////////
-
-			this.setHover = function(hover){
-				$scope.hover = hover;
-			};
-
-			this.isHover = function(){
-				return $scope.hover;
-			};
-
-			this.isOffScreen = function(){
-				return $scope.offScreen;
-			};
-
-			//////////
-
+    //
+    //	//////////
+    //
+    function controller($scope, $window, $state, Session) {
+        //
+        //		var mediaQuery;
+        //
+        //		//////////
+        //
+        //		/** the project */
+        $scope.project = Session.project.get();
+        //		$scope.hover = false;
+        //		$scope.offScreen = false;
+        //
+        //        //////////
+        //
+        //		this.setHover = function(hover){
+        //			$scope.hover = hover;
+        //		};
+        //
+        //		this.isHover = function(){
+        //			return $scope.hover;
+        //		};
+        //
+        //		this.isOffScreen = function(){
+        //			return $scope.offScreen;
+        //		};
+        //
+        //		//////////
+        //
 	        // load project into scope when projectOpened is emitted
 	        $scope.$on('project.opened', function () {
-	            $scope.project = SessionService.project.get();
+                $scope.project = Session.project.get();
 	        });
 
 	        // delete project from scope when projectOpened is emitted
 	        $scope.$on('project.closed', function () {
 	            $scope.project = null;
 	        });
-
-			// watch for media query event
-			mediaQuery = window.matchMedia('screen and (max-width: 768px)');
-			mediaQuery.addListener(mediaQueryMatches);
-			mediaQueryMatches(null, mediaQuery.matches);
-
-			//////////
-
-			function mediaQueryMatches(evt, matches){
-				if (evt === null) {
-					$scope.offScreen = matches ? true : false;
-				} else {
-					$scope.offScreen = evt.matches;
-				}
-			}
-
-	        //////////
-
+        //
+        //		// watch for media query event
+        //		mediaQuery = window.matchMedia('screen and (max-width: 768px)');
+        //		mediaQuery.addListener(mediaQueryMatches);
+        //		mediaQueryMatches(null, mediaQuery.matches);
+        //
+        //		//////////
+        //
+        //		function mediaQueryMatches(evt, matches){
+        //			if (evt === null) {
+        //				$scope.offScreen = matches ? true : false;
+        //			} else {
+        //				$scope.offScreen = evt.matches;
+        //			}
+        //		}
+        //
+        //        //////////
+        //
 	        /**
 	         * remove the project object from the session and redirect to the start page
 	         */
 	        $scope.closeProject = function () {
-	        	SessionService.project.remove();
+                Session.project.remove();
 	            $state.go('home');
 	        }
 		}
-	}
 
-	angular
-		.module('weblearner.directives')
-		.directive('dropdownNavigation', ['$document', dropdownNavigation]);
-
-	function dropdownNavigation($document){
-		return {
-			require: ['dropdown', '^navigation'],
-			link: function(scope, el, attrs, ctrls) {
-
-				var dropDownCtrl = ctrls[0];
-				var navigationCtrl = ctrls[1];
-
-				el.on('click', function(e){
-					e.stopPropagation();
-
-					if (!navigationCtrl.isOffScreen()){
-						if (!navigationCtrl.isHover()){
-							navigationCtrl.setHover(true);
-							$document.on('click', closeDropDown);
-						}
-					}
-				}).on('mouseenter', function(){
-					if (navigationCtrl.isHover()){
-						scope.$apply(function(){
-							dropDownCtrl.toggle(true);
-						})
-					}
-				});
-
-				function closeDropDown() {
-					navigationCtrl.setHover(false);
-					$document.off('click', closeDropDown);
-				}
-			}
-		}
-	}
+    //}
+    //
+    //angular
+    //	.module('weblearner.directives')
+    //	.directive('dropdownNavigation', ['$document', dropdownNavigation]);
+    //
+    //function dropdownNavigation($document){
+    //	return {
+    //		require: ['dropdown', '^navigation'],
+    //		link: function(scope, el, attrs, ctrls) {
+    //
+    //			var dropDownCtrl = ctrls[0];
+    //			var navigationCtrl = ctrls[1];
+    //
+    //			el.on('click', function(e){
+    //				e.stopPropagation();
+    //
+    //				if (!navigationCtrl.isOffScreen()){
+    //					if (!navigationCtrl.isHover()){
+    //						navigationCtrl.setHover(true);
+    //						$document.on('click', closeDropDown);
+    //					}
+    //				}
+    //			}).on('mouseenter', function(){
+    //				if (navigationCtrl.isHover()){
+    //					scope.$apply(function(){
+    //						dropDownCtrl.toggle(true);
+    //					})
+    //				}
+    //			});
+    //
+    //			function closeDropDown() {
+    //				navigationCtrl.setHover(false);
+    //				$document.off('click', closeDropDown);
+    //			}
+    //		}
+    //	}
+    //}
 }());;(function () {
     'use strict';
 
@@ -5990,7 +6109,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         var directive = {
             transclude: true,
-            replace: true,
             require: 'ngModel',
             scope: {
                 items: '=ngModel'
@@ -6019,7 +6137,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         var directive = {
             require: '^selectableList',
-            replace: true,
             transclude: true,
             template: ' <div class="selectable-list-item" ng-class="item._selected ? \'active\' : \'\'">' +
             '               <div class="selectable-list-control">' +
@@ -6289,6 +6406,51 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 });
                 modal.result.then(function (symbol) {
                     scope.onUpdated()(symbol);
+                })
+            }
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('symbolMoveModalHandle', symbolMoveModalHandle);
+
+    symbolMoveModalHandle.$inject = ['$modal', 'paths'];
+
+    function symbolMoveModalHandle($modal, paths) {
+
+        var directive = {
+            scope: {
+                symbols: '=',
+                groups: '=',
+                onMoved: '&'
+            },
+            link: link
+        };
+        return directive;
+
+        function link(scope, el, attrs) {
+
+            el.on('click', handleModal);
+
+            function handleModal() {
+                var modal = $modal.open({
+                    templateUrl: paths.views.MODALS + '/symbol-move-modal.html',
+                    controller: 'SymbolMoveModalController',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                symbols: scope.symbols,
+                                groups: scope.groups
+                            }
+                        }
+                    }
+                });
+
+                modal.result.then(function (groups) {
+                    scope.onMoved()(groups);
                 })
             }
         }
@@ -6703,6 +6865,31 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 });
                 chart.update();
             }
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('viewHeading', viewHeading);
+
+    function viewHeading() {
+
+        var template = '' +
+            '<div class="view-heading">' +
+            '   <div class="container">' +
+            '       <h2 class="view-heading-title" ng-bind="::title"></h2>' +
+            '       <p class="view-heading-sub-title" ng-bind="::subTitle"></p>' +
+            '   </div>' +
+            '</div>';
+
+        return {
+            scope: {
+                title: '@',
+                subTitle: '@'
+            },
+            template: template
         }
     }
 }());;(function () {

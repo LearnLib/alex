@@ -1,33 +1,42 @@
-<div class="container">
-
-    <h2>Statistics</h2>
-
-    <p class="text-muted">
-        Have a look at some numbers we gathered for your tests
-    </p>
-    <hr>
+<div view-heading
+     title="Statistics"
+     sub-title="Have a look at some numbers we gathered for your tests">
 </div>
 
 <div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
-
     <div class="container" ng-if="chartDataSets.length == 0">
+
         <div class="pull-left" style="margin-right: 16px">
             <input type="checkbox" select-all-items-checkbox items="tests">
         </div>
-        <div class="pull-left">
-            <button class="btn btn-xs btn-default" ng-click="chartFromSingleCompleteTestResult()">
-                <i class="fa fa-line-chart fa-fw"></i> Single Complete Test
-            </button>
-            <button class="btn btn-xs btn-default" ng-click="chartFromMultipleFinalTestResults()">
-                <i class="fa fa-bar-chart fa-fw"></i> Multiple Tests
-            </button>
-            <button class="btn btn-xs btn-default" ng-click="chartFromTwoCompleteTestResults()">
-                <i class="fa fa-columns fa-fw"></i> Compare Two Complete Tests
-            </button>
-        </div>
-        <div class="pull-right">
 
-            <div class="btn-group btn-group-xs pull-right" dropdown>
+        <div class="pull-left">
+            <div class="btn-group btn-group-xs" dropdown dropdown-hover>
+                <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+                    Charts
+                </button>
+                <ul class="dropdown-menu pull-left" role="menu">
+                    <li>
+                        <a href ng-click="chartFromSingleCompleteTestResult()">
+                            <i class="fa fa-line-chart fa-fw"></i> Single Complete Test
+                        </a>
+                    </li>
+                    <li>
+                        <a href ng-click="chartFromMultipleFinalTestResults()">
+                            <i class="fa fa-bar-chart fa-fw"></i> Multiple Tests
+                        </a>
+                    </li>
+                    <li>
+                        <a href ng-click="chartFromTwoCompleteTestResults()">
+                            <i class="fa fa-columns fa-fw"></i> Compare Two Complete Tests
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="pull-right">
+            <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
                 <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
                     <i class="fa fa-download fa-fw"></i> Export to CSV
                 </button>
@@ -44,11 +53,14 @@
                     </li>
                 </ul>
             </div>
-
         </div>
-    </div>
 
+    </div>
+</div>
+
+<div class="view-body">
     <div class="container" ng-if="chartDataSets.length > 0">
+
         <div class="pull-left">
             <button class="btn btn-xs btn-default" ng-click="back()">
                 <i class="fa fa-list-ul fa-fw"></i> Test Results
@@ -57,48 +69,46 @@
                 <i class="fa fa-save fa-fw"></i> Download Diagram
             </button>
         </div>
+
     </div>
+    <div class="container" ng-if="chartDataSets.length == 0">
 
-</div>
+        <div selectable-list ng-model="tests">
+            <div selectable-list-item ng-repeat="test in tests">
 
-<div class="container" ng-if="chartDataSets.length == 0">
+                <span class="label label-primary pull-right">
+                    Web
+                </span>
 
-    <div selectable-list ng-model="tests">
-        <div selectable-list-item ng-repeat="test in tests">
+                <strong>Test No
+                    <span ng-bind="test.testNo"></span>
+                </strong>,
+                [<span ng-bind="test.configuration.algorithm"></span>]
 
-            <span class="label label-primary pull-right">
-                Web
-            </span>
+                <br>
 
-            <strong>Test No
-                <span ng-bind="test.testNo"></span>
-            </strong>,
-            [<span ng-bind="test.configuration.algorithm"></span>]
-
-            <br>
-
-            <p class="text-muted">
-                Started: <span ng-bind="(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
-            </p>
+                <p class="text-muted">
+                    Started: <span ng-bind="(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+                </p>
+            </div>
         </div>
+
     </div>
+    <div class="container" ng-if="chartDataSets.length > 0">
 
-</div>
+        <hr>
 
-<div class="container" ng-if="chartDataSets.length > 0">
+        <div ng-if="chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS">
+            <div test-results-chart test-results-chart-multiple-final chart-data="chartDataSets"></div>
+        </div>
 
-    <hr>
+        <div ng-if="chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT">
+            <div test-results-chart test-results-chart-single-complete chart-data="chartDataSets"></div>
+        </div>
 
-    <div ng-if="chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS">
-        <div test-results-chart test-results-chart-multiple-final chart-data="chartDataSets"></div>
+        <div ng-if="chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS">
+            <div test-results-chart test-results-chart-two-complete chart-data="chartDataSets"></div>
+        </div>
+
     </div>
-
-    <div ng-if="chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT">
-        <div test-results-chart test-results-chart-single-complete chart-data="chartDataSets"></div>
-    </div>
-
-    <div ng-if="chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS">
-        <div test-results-chart test-results-chart-two-complete chart-data="chartDataSets"></div>
-    </div>
-
 </div>

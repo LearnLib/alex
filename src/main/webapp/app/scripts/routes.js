@@ -57,6 +57,9 @@
                         controller: 'ProjectCreateController',
                         templateUrl: paths.views.PAGES + '/project-create.html'
                     }
+                },
+                data: {
+                    requiresProject: false
                 }
             })
             .state('project.settings', {
@@ -76,7 +79,7 @@
                 url: '/groups',
                 views: {
                     '@': {
-                        controller: 'SymbolGroupsController',
+                        controller: 'GroupsController',
                         templateUrl: paths.views.PAGES + '/groups.html'
                     }
                 },
@@ -160,34 +163,11 @@
                 }
             })
             .state('learn.setup', {
-                abstract: true,
-                url: '/setup'
-            })
-            .state('learn.setup.web', {
-                url: '/web',
+                url: '/setup',
                 views: {
                     '@': {
                         controller: 'LearnSetupController',
                         templateUrl: paths.views.PAGES + '/learn-setup.html'
-                    }
-                },
-                resolve: {
-                    type: function () {
-                        return 'web'
-                    }
-                }
-            })
-            .state('learn.setup.rest', {
-                url: '/rest',
-                views: {
-                    '@': {
-                        controller: 'LearnSetupController',
-                        templateUrl: paths.views.PAGES + '/learn-setup.html'
-                    }
-                },
-                resolve: {
-                    type: function () {
-                        return 'rest'
                     }
                 }
             })

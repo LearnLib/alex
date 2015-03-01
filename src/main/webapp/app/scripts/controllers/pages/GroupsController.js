@@ -2,15 +2,16 @@
 
     angular
         .module('weblearner.controller')
-        .controller('SymbolGroupsController', SymbolGroupsController);
+        .controller('GroupsController', GroupsController);
 
-    SymbolGroupsController.$inject = ['$scope', 'SessionService', 'SymbolGroup', '_'];
+    GroupsController.$inject = ['$scope', 'SessionService', 'SymbolGroup', '_'];
 
-    function SymbolGroupsController($scope, Session, SymbolGroup, _) {
+    function GroupsController($scope, Session, SymbolGroup, _) {
 
         $scope.project = Session.project.get();
         $scope.groups = [];
         $scope.allSymbols = [];
+        $scope.collapseAll = false;
 
         SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
             .then(function (groups) {
@@ -18,10 +19,13 @@
                 $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
             });
 
-        $scope.toggleCollapseAllGroups = function () {
-            _.forEach($scope.groups, function (group) {
-                group._isCollapsed = !group._isCollapsed;
-            })
+        $scope.addGroup = function () {
+        };
+
+        $scope.deleteGroup = function () {
+        };
+
+        $scope.updateGroup = function () {
         }
     }
 }());

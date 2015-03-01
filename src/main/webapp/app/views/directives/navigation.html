@@ -1,50 +1,69 @@
-<nav class="app-navigation navbar navbar-default navbar-fixed-top navbar-application" role="navigation">
+<nav class="navbar navbar-application navbar-fixed-top" role="navigation">
 
     <div class="container-fluid">
 
         <div class="navbar-header">
-            <a class="navbar-brand" href="#/"><strong>Wl</strong></a>
+            <a class="navbar-brand" ui-sref="home"><strong>Wl</strong></a>
         </div>
 
-        <ul class="nav navbar-nav navbar-left navbar-menu">
+        <ul class="nav navbar-nav navbar-left navbar-menu-handle">
             <li>
-                <a href="" class="off-screen-navigation-handle"><i class="fa fa-bars"></i>&nbsp; Menu</a>
+                <a href="#">
+                    <i class="fa fa-fw fa-bars"></i> Menu
+                </a>
             </li>
         </ul>
 
-        <div class="app-navigation-wrapper">
+        <div class="navbar-offscreen">
 
-            <button class="btn btn-default navbar-menu navbar-menu-close">
-                <i class="fa fa-close"></i>
-            </button>
+            <div class="navbar-offscreen-header">
+                <a href class="pull-right navbar-menu-handle">
+                    <i class="fa fa-close" style="color: #fff"></i>
+                </a>
+            </div>
 
-            <ul class="nav navbar-nav navbar-left">
-                <li class="dropdown" dropdown dropdown-navigation>
-                    <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
-                       aria-expanded="false">
-                        <span ng-if="!project">Project</span>
-                        <strong ng-if="project" ng-bind="project.name" style="text-decoration: underline"></strong>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu" ng-if="project">
-                        <li><a class="disabled" ui-sref="project">Overview</a></li>
-                        <li><a ui-sref="project.settings">Settings</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#/" ng-click="closeProject()">Close</a></li>
-                    </ul>
-                    <ul class="dropdown-menu" role="menu" ng-if="!project">
-                        <li><a ui-sref="project.create">Create a new project</a></li>
-                    </ul>
-                </li>
-            </ul>
+            <div ng-if="!project">
+
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown" dropdown dropdown-navigation>
+                        <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">
+                            <span>Project</span>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" ng-if="!project">
+                            <li><a ui-sref="project.create">Create a new project</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
 
             <div ng-if="project">
+
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown" dropdown dropdown-navigation>
+                        <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">
+                            <strong ng-bind="project.name"></strong>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" ng-if="project">
+                            <li><a class="disabled" ui-sref="project">Overview</a></li>
+                            <li><a ui-sref="project.settings">Settings</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#/" ng-click="closeProject()">Close</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
                 <ul class="nav navbar-nav navbar-left">
                     <li class="dropdown" dropdown dropdown-navigation>
                         <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-expanded="false">Symbols <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a ui-sref="symbols">Manage</a></li>
+                            <li><a ui-sref="symbols">Manage Symbols</a></li>
+                            <li><a ui-sref="groups">Manage Groups</a></li>
                             <li class="divider"></li>
                             <li><a ui-sref="symbols.import">Import</a></li>
                             <li><a ui-sref="symbols.export">Export</a></li>
@@ -53,13 +72,9 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-left">
-                    <li class="dropdown" dropdown dropdown-navigation>
-                        <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false">Learn <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a ui-sref="learn.setup.web">Web Application</a></li>
-                            <li><a ui-sref="learn.setup.rest">Rest Interface</a></li>
-                        </ul>
+                    <li>
+                        <a href="#" ui-sref="learn.setup" role="button"
+                           aria-expanded="false">Learn </a>
                     </li>
                 </ul>
 
@@ -74,6 +89,7 @@
                         </ul>
                     </li>
                 </ul>
+
             </div>
 
             <ul class="nav navbar-nav navbar-right">
@@ -81,8 +97,6 @@
                     <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
                        aria-expanded="false">App <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-                        <!--  <li><a href="#/">Settings</a></li>  -->
-                        <!--  <li class="divider"></li> -->
                         <li><a ui-sref="about">About</a></li>
                         <li><a ui-sref="help">Help</a></li>
                     </ul>
@@ -102,4 +116,5 @@
         </div>
 
     </div>
+
 </nav>
