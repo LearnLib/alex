@@ -1,13 +1,10 @@
 package de.learnlib.weblearner.entities.RESTSymbolActions;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.MultiConnector;
 import de.learnlib.weblearner.learner.WebServiceConnector;
-import de.learnlib.weblearner.learner.WebSiteConnector;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

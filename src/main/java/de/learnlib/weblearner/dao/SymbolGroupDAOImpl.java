@@ -1,7 +1,7 @@
 package de.learnlib.weblearner.dao;
 
-import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
+import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Session;
@@ -9,7 +9,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import javax.validation.ValidationException;
-import java.util.LinkedList;
 import java.util.List;
 
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
@@ -26,19 +25,24 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        // get the current highest group id in the project and add 1 for the next id
-        Long highestId = (Long) session.createCriteria(SymbolGroup.class)
-                                        .add(Restrictions.eq("project", group.getProject()))
-                                        .setProjection(Projections.max("id"))
-                                        .uniqueResult();
-        if (highestId == null) {
-            highestId = 0L;
-        }
-        Long nextId = highestId + 1;
-
-        group.setId(nextId);
-
         Project project = (Project) session.load(Project.class, group.getProjectId());
+
+        List<SymbolGroup> constrainsTestList = session.createCriteria(SymbolGroup.class)
+                                                        .add(Restrictions.eq("project", group.getProject()))
+                                                        .add(Restrictions.eq("name", group.getName()))
+                                                        .list();
+
+        if (!constrainsTestList.isEmpty()) {
+            HibernateUtil.rollbackTransaction();
+            throw new ValidationException("The group name must be unique per project.");
+        }
+
+        // get the current highest group id in the project and add 1 for the next id
+        long id = project.getNextGroupId();
+        project.setNextGroupId(id + 1);
+        session.update(project);
+
+        group.setId(id);
         project.addGroup(group);
 
         session.save(group);
@@ -80,6 +84,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
+        session.update(group);
 
         HibernateUtil.commitTransaction();
     }
@@ -91,8 +96,19 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         HibernateUtil.beginTransaction();
 
         SymbolGroup group = get(projectId, groupId);
-        session.delete(group);
+        Project project = (Project) session.load(Project.class, projectId);
 
+        if (group.equals(project.getDefaultGroup())) {
+            HibernateUtil.rollbackTransaction();
+            throw new IllegalArgumentException("you can not delete the default group of a project.");
+        }
+
+        for (Symbol symbol : group.getSymbols()) {
+            symbol.setGroup(project.getDefaultGroup());
+            session.update(symbol);
+        }
+
+        session.delete(group);
         HibernateUtil.commitTransaction();
     }
 }

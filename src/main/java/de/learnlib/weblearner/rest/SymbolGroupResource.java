@@ -15,13 +15,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.LinkedList;
 import java.util.List;
 
 @Path("/projects/{project_id}/groups")
 public class SymbolGroupResource {
+
+    /** Context information about the URI. */
+    @Context
+    private UriInfo uri;
 
     @Inject
     private SymbolGroupDAO symbolGroupDAO;
@@ -29,17 +35,20 @@ public class SymbolGroupResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSymbol(@PathParam("project_id") long projectId, SymbolGroup group) {
+    public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) {
         symbolGroupDAO.create(group);
-        return Response.status(Response.Status.CREATED).entity(group).build();
+
+        String groupURL = uri.getBaseUri() + "projects/" + group.getProjectId() + "/groups/" + group.getId();
+        return Response.status(Response.Status.CREATED).header("Location", groupURL).entity(group).build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
-        Project project = new Project();
+        System.out.println("fjdfgjdflkg");
 
         List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId);
+        System.out.println(groups);
 
         return Response.ok(groups).build();
     }

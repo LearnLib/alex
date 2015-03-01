@@ -1,10 +1,8 @@
 package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
-import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +32,12 @@ public class ProjectDAOImpl implements ProjectDAO {
         HibernateUtil.beginTransaction();
 
         try {
+            SymbolGroup defaultGroup = new SymbolGroup();
+            defaultGroup.setName("Default Group");
+            defaultGroup.setProject(project);
+            project.addGroup(defaultGroup);
+            project.setDefaultGroup(defaultGroup);
+
             session.save(project);
             HibernateUtil.commitTransaction();
 

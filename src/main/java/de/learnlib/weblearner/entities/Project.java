@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -60,6 +61,13 @@ public class Project implements Serializable {
     @JsonProperty("groups")
     private Set<SymbolGroup> groups;
 
+    @OneToOne
+    @JsonIgnore
+    private SymbolGroup defaultGroup;
+
+    @JsonIgnore
+    private long nextGroupId;
+
     /** The symbols used to test. */
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
@@ -92,6 +100,7 @@ public class Project implements Serializable {
     public Project(long projectId) {
         this.id = projectId;
         this.groups = new HashSet<>();
+        this.nextGroupId = 1;
         this.symbols = new HashSet<>();
         this.nextSymbolId = 1;
     }
@@ -184,6 +193,22 @@ public class Project implements Serializable {
     public void addGroup(SymbolGroup group) {
         this.groups.add(group);
         group.setProject(this);
+    }
+
+    public SymbolGroup getDefaultGroup() {
+        return defaultGroup;
+    }
+
+    public void setDefaultGroup(SymbolGroup defaultGroup) {
+        this.defaultGroup = defaultGroup;
+    }
+
+    public long getNextGroupId() {
+        return nextGroupId;
+    }
+
+    public void setNextGroupId(long nextGroupId) {
+        this.nextGroupId = nextGroupId;
     }
 
     /**

@@ -3,17 +3,12 @@ package de.learnlib.weblearner.integrationtests;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.SymbolAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
 import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.SimpleAlphabet;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -21,7 +16,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 

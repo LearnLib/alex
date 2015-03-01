@@ -6,7 +6,6 @@ import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
@@ -101,8 +100,9 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                     .add(Restrictions.eq("id", symbol.getGroupId()))
                                                     .uniqueResult();
         if (group != null) {
-            group.addSymbol(symbol);
+            group = project.getDefaultGroup();
         }
+        group.addSymbol(symbol);
 
         symbol.beforeSave();
         session.save(symbol);

@@ -4,13 +4,9 @@ import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.SymbolAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
 import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -20,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

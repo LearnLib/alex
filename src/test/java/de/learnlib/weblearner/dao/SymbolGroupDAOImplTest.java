@@ -1,7 +1,6 @@
 package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import org.junit.After;
 import org.junit.Before;
@@ -9,7 +8,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.validation.ValidationException;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -70,6 +68,16 @@ public class SymbolGroupDAOImplTest {
         symbolGroupDAO.create(group); // should fail
     }
 
+    @Test(expected = ValidationException.class)
+    public void shouldNotCreateTwoGroupsWithTheSameNameInOneProject() {
+        symbolGroupDAO.create(group);
+        SymbolGroup group2 = new SymbolGroup();
+        group2.setName(group.getName());
+        group2.setProject(project);
+
+        symbolGroupDAO.create(group2); // should fail
+    }
+
     @Test
     public void shouldGetAllGroupsOfOneProject() {
         List<SymbolGroup> groups = new LinkedList<>();
@@ -88,6 +96,28 @@ public class SymbolGroupDAOImplTest {
 
         List<SymbolGroup> groupsInDB = symbolGroupDAO.getAll(project.getId());
 
-        assertEquals(groups.size(), groupsInDB.size());
+        assertEquals(groups.size() + 1, groupsInDB.size()); // +1: default group
+    }
+
+    @Test
+    public void shouldGetTheRightGroup() {
+        List<SymbolGroup> groups = new LinkedList<>();
+        for (int i = 1; i <= 10; i++) {
+            SymbolGroup newGroup = new SymbolGroup();
+            newGroup.setName("Group " + i);
+            newGroup.setProject(project);
+
+            symbolGroupDAO.create(newGroup);
+
+            assertEquals(project, newGroup.getProject());
+            assertTrue(newGroup.getId() > 0);
+
+            groups.add(newGroup);
+        }
+
+        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), 1L);
+
+        assertEquals(project, groupInDB.getProject());
+        assertEquals("Group 1", groupInDB.getName());
     }
 }

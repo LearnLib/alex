@@ -66,13 +66,10 @@ public class ProjectDAOImplTest {
         assertEquals(BASE_URL, project.getBaseUrl());
         assertEquals("Lorem Ipsum", project.getDescription());
 
+        assertEquals(1, p2.getGroups().size());
+
         assertEquals(1, p2.getSymbolsSize());
-        for (Symbol s : p2.getSymbols()) {
-            if (s instanceof SymbolActionHandler) {
-                assertTrue(1 <= s.getActions().size()); // all Symbols have one action
-                assertTrue(s.getActions().size() <= 2); // except the reset symbol, which has 2
-            }
-        }
+        assertEquals(1, p2.getSymbols().iterator().next().getActions().size());
     }
 
     @Test(expected = ValidationException.class)
