@@ -18,6 +18,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.LinkedList;
+import java.util.List;
 
 @Path("/projects/{project_id}/groups")
 public class SymbolGroupResource {
@@ -38,25 +39,7 @@ public class SymbolGroupResource {
     public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         Project project = new Project();
 
-        LinkedList<SymbolGroup> groups = new LinkedList<SymbolGroup>();
-        for (int i = 1; i <= 10; i++) {
-            SymbolGroup newGroup = new SymbolGroup();
-            newGroup.setId((long) i);
-            newGroup.setName("Gruppe " + i);
-            newGroup.setProject(project);
-
-            if ("symbols".equals(embed)) {
-                for (int j = 1; j <= 10; j++) {
-                    Symbol newSymbol = new Symbol();
-                    newSymbol.setId(j);
-                    newSymbol.setName("Symbol " + j);
-                    newSymbol.setAbbreviation("symb_" + j);
-                    newGroup.addSymbol(newSymbol);
-                }
-            }
-
-            groups.add(newGroup);
-        }
+        List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId);
 
         return Response.ok(groups).build();
     }
@@ -65,7 +48,8 @@ public class SymbolGroupResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
-        return Response.ok(new SymbolGroup()).build();
+        SymbolGroup group = symbolGroupDAO.get(projectId, id);
+        return Response.ok(group).build();
     }
 
     @GET
@@ -89,6 +73,7 @@ public class SymbolGroupResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group) {
+        symbolGroupDAO.update(group);
         return Response.ok(group).build();
     }
 
@@ -96,6 +81,7 @@ public class SymbolGroupResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteAResultSet(@PathParam("project_id") long projectId,  @PathParam("id") Long id) {
+        symbolGroupDAO.delete(projectId, id);
         return Response.noContent().build();
     }
 }

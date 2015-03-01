@@ -57,6 +57,7 @@ public class Project implements Serializable {
 
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
+    @JsonProperty("groups")
     private Set<SymbolGroup> groups;
 
     /** The symbols used to test. */
@@ -90,6 +91,7 @@ public class Project implements Serializable {
      */
     public Project(long projectId) {
         this.id = projectId;
+        this.groups = new HashSet<>();
         this.symbols = new HashSet<>();
         this.nextSymbolId = 1;
     }
@@ -181,6 +183,7 @@ public class Project implements Serializable {
 
     public void addGroup(SymbolGroup group) {
         this.groups.add(group);
+        group.setProject(this);
     }
 
     /**

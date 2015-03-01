@@ -184,7 +184,8 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
     }
 
     public void setGroupId(long groupId) {
-        this.group = new SymbolGroup(groupId);
+        this.group = new SymbolGroup();
+        this.group.setId(groupId);
     }
 
     /**

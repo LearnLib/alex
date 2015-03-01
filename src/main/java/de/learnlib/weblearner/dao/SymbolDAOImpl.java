@@ -3,8 +3,10 @@ package de.learnlib.weblearner.dao;
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
@@ -21,6 +23,12 @@ import java.util.List;
  * Implementation of a SymbolDAO using Hibernate.
  */
 public class SymbolDAOImpl implements SymbolDAO {
+
+    private final SymbolGroupDAO symbolGroupDAO;
+
+    public SymbolDAOImpl(SymbolGroupDAO symbolGroupDAO) {
+        this.symbolGroupDAO = symbolGroupDAO;
+    }
 
     @Override
     public void create(Symbol symbol) throws ValidationException {
@@ -87,6 +95,14 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.setId(id);
         symbol.setRevision(1L);
         project.addSymbol(symbol);
+
+        SymbolGroup group = (SymbolGroup) session.createCriteria(SymbolGroup.class)
+                                                    .add(Restrictions.eq("project.id", project.getId()))
+                                                    .add(Restrictions.eq("id", symbol.getGroupId()))
+                                                    .uniqueResult();
+        if (group != null) {
+            group.addSymbol(symbol);
+        }
 
         symbol.beforeSave();
         session.save(symbol);

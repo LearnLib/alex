@@ -3,6 +3,7 @@ package de.learnlib.weblearner.dao;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.apache.logging.log4j.LogManager;
@@ -153,6 +154,12 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             if (fieldsToLoad.contains("groups")) {
                 Hibernate.initialize(project.getGroups());
+                for (SymbolGroup group : project.getGroups()) {
+                    Hibernate.initialize(group);
+                    for (Symbol symbol : group.getSymbols()) {
+                        symbol.loadLazyRelations();
+                    }
+                }
             } else {
                 project.setGroups(null);
             }

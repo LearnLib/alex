@@ -37,6 +37,7 @@ public class SymbolDAOImplTest {
     private static final int SYMBOL_COUNT = 5;
 
     private static ProjectDAO projectDAO;
+    private static SymbolGroupDAOImpl symbolGroupDAO;
     private static SymbolDAO symbolDAO;
 
     private Project project;
@@ -48,7 +49,8 @@ public class SymbolDAOImplTest {
     @BeforeClass
     public static void beforeClass() {
         projectDAO = new ProjectDAOImpl();
-        symbolDAO = new SymbolDAOImpl();
+        symbolGroupDAO = new SymbolGroupDAOImpl();
+        symbolDAO = new SymbolDAOImpl(symbolGroupDAO);
     }
 
     @Before
@@ -62,10 +64,13 @@ public class SymbolDAOImplTest {
         // create group
         group = new SymbolGroup();
         group.setName("Symbol");
+        group.setProject(project);
+        symbolGroupDAO.create(group);
 
         // create symbol 1
         symbol = new Symbol();
         symbol.setProject(project);
+        symbol.setGroup(group);
         symbol.setName("SymbolDAOImplTest Symbol - Web ");
         symbol.setAbbreviation("webtest");
 

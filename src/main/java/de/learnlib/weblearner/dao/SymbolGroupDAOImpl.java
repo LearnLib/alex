@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.LearnerResult;
+import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Session;
@@ -26,7 +27,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         HibernateUtil.beginTransaction();
 
         // get the current highest group id in the project and add 1 for the next id
-        Long highestId = (Long) session.createCriteria(LearnerResult.class)
+        Long highestId = (Long) session.createCriteria(SymbolGroup.class)
                                         .add(Restrictions.eq("project", group.getProject()))
                                         .setProjection(Projections.max("id"))
                                         .uniqueResult();
@@ -36,6 +37,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Long nextId = highestId + 1;
 
         group.setId(nextId);
+
+        Project project = (Project) session.load(Project.class, group.getProjectId());
+        project.addGroup(group);
 
         session.save(group);
         HibernateUtil.commitTransaction();
@@ -57,16 +61,38 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     @Override
     public SymbolGroup get(long projectId, Long groupId) {
-        return null;
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        SymbolGroup result = (SymbolGroup) session.createCriteria(SymbolGroup.class)
+                                                    .add(Restrictions.eq("project.id", projectId))
+                                                    .add(Restrictions.eq("id", groupId))
+                                                    .uniqueResult();
+
+        HibernateUtil.commitTransaction();
+        return result;
     }
 
     @Override
     public void update(SymbolGroup group) throws IllegalArgumentException, ValidationException {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
 
+
+        HibernateUtil.commitTransaction();
     }
 
     @Override
     public void delete(long projectId, Long groupId) throws IllegalArgumentException {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
 
+        SymbolGroup group = get(projectId, groupId);
+        session.delete(group);
+
+        HibernateUtil.commitTransaction();
     }
 }

@@ -79,6 +79,10 @@ public class SymbolGroupDAOImplTest {
             newGroup.setProject(project);
 
             symbolGroupDAO.create(newGroup);
+
+            assertEquals(project, newGroup.getProject());
+            assertTrue(newGroup.getId() > 0);
+
             groups.add(newGroup);
         }
 
