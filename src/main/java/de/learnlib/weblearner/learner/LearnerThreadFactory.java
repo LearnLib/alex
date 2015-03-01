@@ -1,21 +1,14 @@
 package de.learnlib.weblearner.learner;
 
 import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.LearnerResumeConfiguration;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.SymbolTypes;
-import de.learnlib.weblearner.entities.WebSymbol;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Factory to create a {@link LearnerThread} for the given Symbols.
@@ -46,27 +39,19 @@ public class LearnerThreadFactory {
      *         The Symbols to use during the learning
      * @return A new thread ready to use for learning.
      */
-    public LearnerThread createThread(Project project, LearnerConfiguration configuration, Symbol... symbols) {
+    public LearnerThread createThread(Project project, LearnerConfiguration configuration, Symbol resetSymbol,
+                                      Symbol... symbols) {
         if (symbols.length == 0) {
             throw new IllegalArgumentException("No Symbols found.");
         }
 
-        Map<Class<? extends Symbol>, List<Symbol>> symbolsByType = splitSymbolsByType(symbols);
         LearnerResult learnerResult = createLearnerResult(project, configuration);
-        learnerResult.setType(getTypeOf(symbolsByType));
 
         MultiContextHandler context = new MultiContextHandler();
-        for (Class<?> c : symbolsByType.keySet()) {
-            ContextExecutableInputSUL.ContextHandler<? extends Connector> newHandler;
-            if (WebSymbol.class.equals(c)) {
-                newHandler = createWebSiteContextHandler(project);
-            } else  if (RESTSymbol.class.equals(c)) {
-                newHandler = createWebServiceContextHandler(project);
-            } else {
-                return null;
-            }
-            context.addHandler(newHandler);
-        }
+        context.addHandler(createWebSiteContextHandler(project));
+        context.addHandler(createWebServiceContextHandler(project));
+
+        context.addResetSymbol(resetSymbol);
 
         return new LearnerThread(learnerResultDAO, learnerResult, context, symbols);
     }
@@ -99,35 +84,6 @@ public class LearnerThreadFactory {
         return leanerThread;
     }
 
-    private Map<Class<? extends Symbol>, List<Symbol>> splitSymbolsByType(Symbol... symbols) {
-        Map<Class<? extends Symbol>, List<Symbol>> resultMap = new HashMap<>();
-
-        for (Symbol s : symbols) {
-            List<Symbol> bucket = resultMap.get(s.getClass());
-            if (bucket == null) {
-                bucket = new LinkedList<>();
-                resultMap.put(s.getClass(), bucket);
-            }
-            bucket.add(s);
-        }
-
-        return resultMap;
-    }
-
-    private SymbolTypes getTypeOf(Map<Class<? extends Symbol>, List<Symbol>> symbolsByType) {
-        if (symbolsByType.keySet().size() == 1) {
-            if (symbolsByType.keySet().contains(WebSymbol.class)) {
-                return SymbolTypes.WEB;
-            } else  if (symbolsByType.keySet().contains(RESTSymbol.class)) {
-                return SymbolTypes.REST;
-            } else {
-                return null;
-            }
-        } else {
-            return SymbolTypes.UNKNOWN;
-        }
-    }
-
     private LearnerResult createLearnerResult(Project project, LearnerConfiguration configuration) {
         LearnerResult learnerResult = new LearnerResult();
         learnerResult.setConfiguration(configuration);
@@ -137,13 +93,11 @@ public class LearnerThreadFactory {
     }
 
     private WebSiteContextHandler createWebSiteContextHandler(Project project) {
-        WebSymbol resetSymbol = (WebSymbol) project.getResetSymbol(WebSymbol.class);
-        return new WebSiteContextHandler(project.getBaseUrl(), resetSymbol);
+        return new WebSiteContextHandler(project.getBaseUrl());
     }
 
     private WebServiceContextHandler createWebServiceContextHandler(Project project) {
-        RESTSymbol resetSymbol = (RESTSymbol) project.getResetSymbol(RESTSymbol.class);
-        return new WebServiceContextHandler(project.getBaseUrl(), resetSymbol);
+        return new WebServiceContextHandler(project.getBaseUrl());
     }
 
 }

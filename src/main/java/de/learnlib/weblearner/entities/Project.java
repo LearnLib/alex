@@ -13,13 +13,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -57,18 +56,23 @@ public class Project implements Serializable {
     /** A text to describe the Project. */
     private String description;
 
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
+    @JsonProperty("groups")
+    private Set<SymbolGroup> groups;
+
+    @OneToOne
+    @JsonIgnore
+    private SymbolGroup defaultGroup;
+
+    @JsonIgnore
+    private long nextGroupId;
+
     /** The symbols used to test. */
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
     @JsonProperty("symbols")
     private Set<Symbol> symbols;
-
-    /** Remember the different reset symbols by their type. */
-    @OneToMany(fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
-    @MapKeyColumn(name = "type")
-    @JsonIgnore
-    private Map<Class<? extends  Symbol>, Symbol> resetSymbols;
 
     /** The next id for a symbol in this project. */
     @JsonIgnore
@@ -95,8 +99,9 @@ public class Project implements Serializable {
      */
     public Project(long projectId) {
         this.id = projectId;
+        this.groups = new HashSet<>();
+        this.nextGroupId = 1;
         this.symbols = new HashSet<>();
-        this.resetSymbols = new HashMap<>();
         this.nextSymbolId = 1;
     }
 
@@ -136,6 +141,74 @@ public class Project implements Serializable {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Get the root URL of the Project.
+     *
+     * @return The base URl.
+     */
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    /**
+     * Set the base URL of the Project.
+     *
+     * @param baseUrl
+     *            The new base URL.
+     */
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    /**
+     * Get the description of the Project.
+     *
+     * @return The Project description.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Set the description of this project.
+     *
+     * @param description
+     *            The new description.
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @JsonIgnore
+    public Set<SymbolGroup> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<SymbolGroup> groups) {
+        this.groups = groups;
+    }
+
+    public void addGroup(SymbolGroup group) {
+        this.groups.add(group);
+        group.setProject(this);
+    }
+
+    public SymbolGroup getDefaultGroup() {
+        return defaultGroup;
+    }
+
+    public void setDefaultGroup(SymbolGroup defaultGroup) {
+        this.defaultGroup = defaultGroup;
+    }
+
+    public long getNextGroupId() {
+        return nextGroupId;
+    }
+
+    public void setNextGroupId(long nextGroupId) {
+        this.nextGroupId = nextGroupId;
     }
 
     /**
@@ -195,49 +268,6 @@ public class Project implements Serializable {
     }
 
     /**
-     * Get the map of all reset symbols by their type.
-     *
-     * @return The Map of reset symbol.
-     */
-    public Map<Class<? extends Symbol>, Symbol> getResetSymbols() {
-        return resetSymbols;
-    }
-
-    /**
-     * Set a new Map of reset symbols by their type.
-     *
-     * @param resetSymbols
-     *         The new map of reset symbols.
-     */
-    public void setResetSymbols(Map<Class<? extends Symbol>, Symbol> resetSymbols) {
-        this.resetSymbols = resetSymbols;
-    }
-
-    /**
-     * Add a reset symbol. The type of the symbol is given implicit and
-     * the new symbol will replace any previous reset symbols for that type.
-     *
-     * @param symbol
-     *         The new reset symbol. null values will be ignored.
-     */
-    public void setResetSymbol(Symbol symbol) {
-        if (symbol != null) {
-            this.resetSymbols.put(symbol.getClass(), symbol);
-        }
-    }
-
-    /**
-     * Get the current reset symbol for a specific type.
-     *
-     * @param type
-     *         The type of the reset symbol
-     * @return The current registered reset symbol or null.
-     */
-    public Symbol getResetSymbol(Class<? extends  Symbol> type) {
-        return resetSymbols.get(type);
-    }
-
-    /**
      * Get the next free id for a symbol in the project.
      *
      * @return The next symbol id.
@@ -275,44 +305,6 @@ public class Project implements Serializable {
     @JsonIgnore
     public void setTestResults(Set<LearnerResult> testResults) {
         this.testResults = testResults;
-    }
-
-    /**
-     * Get the root URL of the Project.
-     * 
-     * @return The base URl.
-     */
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    /**
-     * Set the base URL of the Project.
-     * 
-     * @param baseUrl
-     *            The new base URL.
-     */
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    /**
-     * Get the description of the Project.
-     * 
-     * @return The Project description.
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Set the description of this project.
-     * 
-     * @param description
-     *            The new description.
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     //CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber - auto generated by Eclipse

@@ -3,6 +3,7 @@ package de.learnlib.weblearner.dao;
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Session;
@@ -21,6 +22,12 @@ import java.util.List;
  * Implementation of a SymbolDAO using Hibernate.
  */
 public class SymbolDAOImpl implements SymbolDAO {
+
+    private final SymbolGroupDAO symbolGroupDAO;
+
+    public SymbolDAOImpl(SymbolGroupDAO symbolGroupDAO) {
+        this.symbolGroupDAO = symbolGroupDAO;
+    }
 
     @Override
     public void create(Symbol symbol) throws ValidationException {
@@ -87,6 +94,15 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.setId(id);
         symbol.setRevision(1L);
         project.addSymbol(symbol);
+
+        SymbolGroup group = (SymbolGroup) session.createCriteria(SymbolGroup.class)
+                                                    .add(Restrictions.eq("project.id", project.getId()))
+                                                    .add(Restrictions.eq("id", symbol.getGroupId()))
+                                                    .uniqueResult();
+        if (group != null) {
+            group = project.getDefaultGroup();
+        }
+        group.addSymbol(symbol);
 
         symbol.beforeSave();
         session.save(symbol);
@@ -175,19 +191,13 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     public List<Symbol> getAllWithLatestRevision(long projectId, SymbolVisibilityLevel visibilityLevel) {
-        return getAllWithLatestRevision(projectId, Symbol.class, visibilityLevel);
-    }
-
-    @Override
-    public List<Symbol> getAllWithLatestRevision(long projectID, Class<? extends Symbol> type,
-                                                    SymbolVisibilityLevel visibilityLevel) {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         @SuppressWarnings("unchecked") // should return a list of Symbols
-        List<Long> ids = session.createCriteria(type)
-                                    .add(Restrictions.eq("project.id", projectID))
+        List<Long> ids = session.createCriteria(Symbol.class)
+                                    .add(Restrictions.eq("project.id", projectId))
                                     .setProjection(Projections.property("id"))
                                     .list();
 
@@ -196,7 +206,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         if (ids.isEmpty()) {
             return new LinkedList<>();
         }
-        return getByIdsWithLatestRevision(projectID, visibilityLevel, ids.toArray(new Long[ids.size()]));
+        return getByIdsWithLatestRevision(projectId, visibilityLevel, ids.toArray(new Long[ids.size()]));
     }
 
     @Override
@@ -260,18 +270,6 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new IllegalArgumentException("Update failed: Symbol unknown.");
         }
 
-        if (symbolInDB.isResetSymbol() && (!symbol.getName().equals("Reset")
-                || !symbol.getAbbreviation().equals("reset"))) {
-            throw new IllegalArgumentException("Update failed: A reset symbols must have the name 'Reset' and"
-                    + "the abbreviation 'reset'.");
-        }
-
-        if (!symbolInDB.isResetSymbol() && (symbol.getName().equals("Reset")
-                || symbol.getAbbreviation().equals("reset"))) {
-            throw new IllegalArgumentException("Update failed: The name 'Reset' and the abbreviation 'reset' are"
-                    + "reserved names for a reset symbol.");
-        }
-
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -301,14 +299,9 @@ public class SymbolDAOImpl implements SymbolDAO {
         checkUniqueConstrains(session, symbol); // will throw exception if the symbol is invalid
 
         // count revision up
-        boolean resetSymbol = symbol.isResetSymbol(); // before we change anything, so that the symbol can be found
         symbol.setSymbolId(0);
         symbol.setRevision(symbol.getRevision() + 1);
         project.addSymbol(symbol);
-        if (resetSymbol) {
-            project.setResetSymbol(symbol);
-            session.update(project);
-        }
 
         symbol.beforeSave();
         session.save(symbol);
@@ -339,9 +332,6 @@ public class SymbolDAOImpl implements SymbolDAO {
     private void hideSymbols(Session session, List<Symbol> symbols) throws IllegalArgumentException {
         for (Symbol symbol : symbols) {
             symbol.loadLazyRelations();
-            if (symbol.isResetSymbol()) {
-                throw new IllegalArgumentException("A reset symbol can never be marked as hidden.");
-            }
 
             symbol.setHidden(true);
             session.update(symbol);
@@ -379,9 +369,9 @@ public class SymbolDAOImpl implements SymbolDAO {
     private List<Symbol> getSymbols(Session session, Long projectId, Long symbolId) {
         @SuppressWarnings("should return a list of Symbols")
         List<Symbol> symbols = session.createCriteria(Symbol.class)
-                                            .add(Restrictions.eq("project.id", projectId))
-                                            .add(Restrictions.eq("id", symbolId))
-                .list();
+                                        .add(Restrictions.eq("project.id", projectId))
+                                        .add(Restrictions.eq("id", symbolId))
+                                        .list();
 
         if (symbols.size() == 0) {
             throw new IllegalArgumentException("Could not mark the symbol as hidden because it was not found.");

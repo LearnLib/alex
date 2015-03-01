@@ -2,7 +2,6 @@ package de.learnlib.weblearner.utils;
 
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeExistsAction;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeTypeAction;
@@ -13,7 +12,7 @@ import de.learnlib.weblearner.entities.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolAction;
-import de.learnlib.weblearner.entities.WebSymbol;
+import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.ClearAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.ClickAction;
@@ -50,10 +49,10 @@ public final class HibernateUtil {
 
             // the entity classes
             configuration.addAnnotatedClass(Project.class);
+            configuration.addAnnotatedClass(SymbolGroup.class);
             configuration.addAnnotatedClass(Symbol.class);
             configuration.addAnnotatedClass(SymbolAction.class);
             // Web Symbols & Actions
-            configuration.addAnnotatedClass(WebSymbol.class);
             configuration.addAnnotatedClass(WebSymbolAction.class);
             configuration.addAnnotatedClass(CheckTextWebAction.class);
             configuration.addAnnotatedClass(ClearAction.class);
@@ -63,7 +62,6 @@ public final class HibernateUtil {
             configuration.addAnnotatedClass(SubmitAction.class);
             configuration.addAnnotatedClass(WaitAction.class);
             // REST Symbols & Actions
-            configuration.addAnnotatedClass(RESTSymbol.class);
             configuration.addAnnotatedClass(RESTSymbolAction.class);
             configuration.addAnnotatedClass(CallAction.class);
             configuration.addAnnotatedClass(CheckAttributeExistsAction.class);

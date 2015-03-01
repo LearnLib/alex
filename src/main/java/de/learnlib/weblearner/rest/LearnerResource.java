@@ -66,10 +66,19 @@ public class LearnerResource {
     public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration) {
         LearnerStatus status = new LearnerStatus(learner);
         try {
-            List<Symbol> symbols = symbolDAO.getAll(projectId, configuration.getSymbols());
             Project project = projectDAO.getByID(projectId, "all");
+            //TODO(alex.s): add get(projectID, pair) to SymbolDAO
+            if (configuration.getResetSymbol() == null) {
+                throw new IllegalArgumentException("No reset symbol specified!");
+            }
+            Symbol resetSymbol = symbolDAO.get(projectId, configuration.getResetSymbol().getId(), configuration.getResetSymbol().getRevision());
+            if (resetSymbol == null) {
+                throw new IllegalArgumentException("No reset symbol found!");
+            }
 
-            learner.start(project, configuration, symbols.toArray(new Symbol[symbols.size()]));
+            List<Symbol> symbols = symbolDAO.getAll(projectId, configuration.getSymbols());
+
+            learner.start(project, configuration, resetSymbol, symbols.toArray(new Symbol[symbols.size()]));
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
             LOGGER.info("tried to start the learning again.");

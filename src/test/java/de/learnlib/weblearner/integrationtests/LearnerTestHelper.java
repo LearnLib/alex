@@ -9,6 +9,7 @@ import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.util.automata.equivalence.DeterministicEquivalenceTest;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
+import net.automatalib.words.impl.SimpleAlphabet;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -36,6 +37,29 @@ public class LearnerTestHelper {
         String path = "/projects/" + project.getId() + "/symbols";
         Response response = client.target(learnerUrl + path).request().post(Entity.json(json));
         return response.readEntity(Symbol.class);
+    }
+
+    public String createIdRevsionPairListAsJSON(Symbol... symbols) {
+        StringBuilder builder = new StringBuilder();
+
+        for (Symbol symbol : symbols) {
+            builder.append("{");
+            builder.append("\"id\":" + symbol.getId() + ",");
+            builder.append("\"revision\": " + symbol.getRevision());
+            builder.append("},");
+        }
+
+        builder.setLength(builder.length() - 1); // remove last ','
+
+        return builder.toString();
+    }
+
+    public Alphabet createTestAlphabet(Symbol... symbols) {
+        Alphabet sigma = new SimpleAlphabet<>();
+        for (Symbol symbol : symbols) {
+            sigma.add(symbol.getAbbreviation());
+        }
+        return sigma;
     }
 
     public void waitForLearner(Client client) throws InterruptedException {

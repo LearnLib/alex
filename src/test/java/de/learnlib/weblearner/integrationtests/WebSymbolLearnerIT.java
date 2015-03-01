@@ -4,11 +4,7 @@ import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.WebSymbol;
-import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
 import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -36,6 +31,7 @@ public class WebSymbolLearnerIT {
     private LearnerTestHelper testHelper;
     private Client client;
     private Project project;
+    private String resetSymbolIdAndRevisionAsJSON;
     private String symbolsIdAndRevisionAsJSON;
     private Alphabet<String> testAlphabet;
 
@@ -49,75 +45,71 @@ public class WebSymbolLearnerIT {
 
         // create project
         String projectName = "WebSymbolLearn IT Project";
-        String json =  "{\"name\": \"" + projectName + "\","
-                        + "\"baseUrl\": \"" + BASE_TEST_URL + "\"}";
+        String json = "{\"name\": \"" + projectName + "\","
+                    + "\"baseUrl\": \"" + BASE_TEST_URL + "\"}";
         Response response = client.target(BASE_LEARNER_URL + "/projects").request().post(
                 Entity.entity(json, MediaType.APPLICATION_JSON));
         project = ProjectTest.readProject(response.readEntity(String.class));
 
-        // modify reset symbol
-        String path = BASE_LEARNER_URL + "/projects/" + project.getId() + "/symbols/1";
-        response = client.target(path).request().get();
-        WebSymbol resetSymbol = (WebSymbol) response.readEntity(Symbol.class);
-        List<WebSymbolAction> actions = resetSymbol.getActions();
-        ((GotoAction) actions.get(0)).setUrl("/test_app.html");
-        client.target(path).request().put(Entity.json(resetSymbol));
+        // create the reset symbol
+        json = "{\"project\": " + project.getId() + ", \"name\": \"Reset\", \"abbreviation\": \"reset\","
+             + "\"actions\": ["
+                + "{\"type\": \"goto\", \"url\": \"/test_app.html\"}"
+             + "]}";
+        Symbol resetSymbol = testHelper.addSymbol(client, project, json);
+        resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevsionPairListAsJSON(resetSymbol);
 
         // create symbols
+        Symbol[] symbols = new Symbol[4];
+
         // symbol 1
         String symbolName = "WebSymbolLearnerIT Web Symbol 1";
         String symbolAbbr = "learnweb1";
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                 + "{\"type\": \"checkText\", \"value\": \"Lorem Ipsum\"}"
                 + "]}";
-        Symbol symbol1 = testHelper.addSymbol(client, project, json);
+        symbols[0] = testHelper.addSymbol(client, project, json);
 
         // symbol 2
         symbolName = "WebSymbolLearnerIT Web Symbol 2";
         symbolAbbr = "learnweb2";
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                 + "{\"type\": \"click\", \"node\" : \"#link\"}"
                 + "]}";
-        Symbol symbol2 = testHelper.addSymbol(client, project, json);
+        symbols[1] = testHelper.addSymbol(client, project, json);
 
         // symbol 3
         symbolName = "WebSymbolLearnerIT Web Symbol 3";
         symbolAbbr = "learnweb3";
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                 + "{\"type\": \"click\", \"node\" : \"#link2\"}"
                 + "]}";
-        Symbol symbol3 = testHelper.addSymbol(client, project, json);
+        symbols[2] = testHelper.addSymbol(client, project, json);
 
         // symbol 4
         symbolName = "WebSymbolLearnerIT Web Symbol 4";
         symbolAbbr = "learnweb4";
-        json = "{\"type\": \"web\", \"project\": " + project.getId() + ", \"name\": \"" + symbolName
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                     + "{\"type\": \"checkText\", \"value\": \".*Test App - Page [0-9].*\","
                     + "\"regexp\": true}"
                 + "]}";
-        Symbol symbol4 = testHelper.addSymbol(client, project, json);
+        symbols[3] = testHelper.addSymbol(client, project, json);
 
         // remember symbol references
-        symbolsIdAndRevisionAsJSON = "{\"id\": " + symbol1.getId() + ", \"revision\": " + symbol1.getRevision() + "},"
-                                   + "{\"id\": " + symbol2.getId() + ", \"revision\": " + symbol2.getRevision() + "},"
-                                   + "{\"id\": " + symbol3.getId() + ", \"revision\": " + symbol3.getRevision() + "},"
-                                   + "{\"id\": " + symbol4.getId() + ", \"revision\": " + symbol4.getRevision() + "}";
+        symbolsIdAndRevisionAsJSON = testHelper.createIdRevsionPairListAsJSON(symbols);
 
         // remember alphabet
-        testAlphabet = new SimpleAlphabet<>();
-        testAlphabet.add(symbol1.getAbbreviation());
-        testAlphabet.add(symbol2.getAbbreviation());
-        testAlphabet.add(symbol3.getAbbreviation());
-        testAlphabet.add(symbol4.getAbbreviation());
+        testAlphabet = testHelper.createTestAlphabet(symbols);
     }
 
     @After
     public void tearDown() {
         client.target(BASE_LEARNER_URL + "/projects/" + project.getId()).request().delete();
+        resetSymbolIdAndRevisionAsJSON = null;
         symbolsIdAndRevisionAsJSON = null;
         testAlphabet = null;
     }
@@ -126,9 +118,10 @@ public class WebSymbolLearnerIT {
     public void simpleLearnProcess() throws InterruptedException {
         // start learning
         String path = "/learner/start/" + project.getId();
-        String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "], \"eqOracle\":"
-                            + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                        + "\"algorithm\": \"DISCRIMINATION_TREE\"}";
+        String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
+                    + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + ", \"eqOracle\":"
+                        + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
+                    + "\"algorithm\": \"DISCRIMINATION_TREE\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
@@ -152,9 +145,10 @@ public class WebSymbolLearnerIT {
     public void learnProcessInSteps() throws InterruptedException {
         // start learning
         String path = "/learner/start/" + project.getId();
-        String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "], \"eqOracle\":"
-                            + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                        + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"EXTENSIBLE_LSTAR\"}";
+        String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
+                    + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + ", \"eqOracle\":"
+                        + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
+                    + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"EXTENSIBLE_LSTAR\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
@@ -185,9 +179,10 @@ public class WebSymbolLearnerIT {
     public void learnProcessInStepsWithManualCounterExample() throws InterruptedException {
         // start learning
         String path = "/learner/start/" + project.getId();
-        String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "], \"eqOracle\":"
-                            + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                        + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"DHC\"}";
+        String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
+                    + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + ", \"eqOracle\":"
+                        + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
+                    + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"DHC\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 

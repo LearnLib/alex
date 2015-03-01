@@ -1,8 +1,8 @@
 package de.learnlib.weblearner.entities.RESTSymbolActions;
 
 import de.learnlib.weblearner.entities.ExecuteResult;
-import de.learnlib.weblearner.entities.RESTSymbol;
-import de.learnlib.weblearner.learner.WebServiceConnector;
+import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.learner.MultiConnector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 
 public class RESTSymbolTest {
 
-    private RESTSymbol symbol;
+    private Symbol symbol;
     private RESTSymbolAction action1;
     private RESTSymbolAction action2;
 
@@ -23,14 +23,14 @@ public class RESTSymbolTest {
         action1 = mock(RESTSymbolAction.class);
         action2 = mock(RESTSymbolAction.class);
 
-        symbol = new RESTSymbol();
+        symbol = new Symbol();
         symbol.addAction(action1);
         symbol.addAction(action2);
     }
 
     @Test
     public void shouldReturnOkIfAllActionsRunSuccessfully() throws Exception {
-        WebServiceConnector connector = mock(WebServiceConnector.class);
+        MultiConnector connector = mock(MultiConnector.class);
         given(action1.execute(connector)).willReturn(ExecuteResult.OK);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 
@@ -41,7 +41,7 @@ public class RESTSymbolTest {
 
     @Test
     public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
-        WebServiceConnector connector = mock(WebServiceConnector.class);
+        MultiConnector connector = mock(MultiConnector.class);
         given(action1.execute(connector)).willReturn(ExecuteResult.FAILED);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 
@@ -53,7 +53,7 @@ public class RESTSymbolTest {
 
     @Test
     public void shouldReturnFailedIfOneActionsThrowsAnException() throws Exception {
-        WebServiceConnector connector = mock(WebServiceConnector.class);
+        MultiConnector connector = mock(MultiConnector.class);
         given(action1.execute(connector)).willThrow(IllegalStateException.class);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 

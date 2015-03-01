@@ -112,7 +112,7 @@ public class CallAction extends RESTSymbolAction {
             doRequest(target);
             return ExecuteResult.OK;
         } catch (Exception e) {
-            LOGGER.info("Could not goto " + url, e);
+            LOGGER.info("Could not call " + url, e);
             return ExecuteResult.FAILED;
         }
     }

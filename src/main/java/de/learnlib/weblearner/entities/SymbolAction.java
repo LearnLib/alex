@@ -1,6 +1,26 @@
 package de.learnlib.weblearner.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
+import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeExistsAction;
+import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeTypeAction;
+import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeValueAction;
+import de.learnlib.weblearner.entities.RESTSymbolActions.CheckHeaderFieldAction;
+import de.learnlib.weblearner.entities.RESTSymbolActions.CheckStatusAction;
+import de.learnlib.weblearner.entities.RESTSymbolActions.CheckTextRestAction;
+import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
+import de.learnlib.weblearner.entities.WebSymbolActions.CheckNodeAction;
+import de.learnlib.weblearner.entities.WebSymbolActions.CheckTextWebAction;
+import de.learnlib.weblearner.entities.WebSymbolActions.ClearAction;
+import de.learnlib.weblearner.entities.WebSymbolActions.ClickAction;
+import de.learnlib.weblearner.entities.WebSymbolActions.FillAction;
+import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
+import de.learnlib.weblearner.entities.WebSymbolActions.SubmitAction;
+import de.learnlib.weblearner.entities.WebSymbolActions.WaitAction;
+import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
+import de.learnlib.weblearner.learner.MultiConnector;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -16,15 +36,35 @@ import java.io.Serializable;
 
 /**
  * Abstract super type of how a Action for Symbols should look & work like.
- *
- * @param <C> The type used to implement the actions the Symbol will use during the learning process.
  */
 @Entity
 @Table(name = "ACTIONS")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("SUPER")
-public abstract class SymbolAction<C> implements Serializable {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+        // Web Actions
+        @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
+        @JsonSubTypes.Type(name = "checkNode", value = CheckNodeAction.class),
+        @JsonSubTypes.Type(name = "checkText", value = CheckTextWebAction.class),
+        @JsonSubTypes.Type(name = "clear", value = ClearAction.class),
+        @JsonSubTypes.Type(name = "click", value = ClickAction.class),
+        @JsonSubTypes.Type(name = "fill", value = FillAction.class),
+        @JsonSubTypes.Type(name = "goto", value = GotoAction.class),
+        @JsonSubTypes.Type(name = "submit", value = SubmitAction.class),
+        @JsonSubTypes.Type(name = "wait", value = WaitAction.class),
+        // REST Actions
+        @JsonSubTypes.Type(name = "REST", value = RESTSymbolAction.class),
+        @JsonSubTypes.Type(name = "call", value = CallAction.class),
+        @JsonSubTypes.Type(name = "checkAttributeExists", value = CheckAttributeExistsAction.class),
+        @JsonSubTypes.Type(name = "checkAttributeType", value = CheckAttributeTypeAction.class),
+        @JsonSubTypes.Type(name = "checkAttributeValue", value = CheckAttributeValueAction.class),
+        @JsonSubTypes.Type(name = "checkForText", value = CheckTextRestAction.class),
+        @JsonSubTypes.Type(name = "checkHeaderField", value = CheckHeaderFieldAction.class),
+        @JsonSubTypes.Type(name = "checkStatus", value = CheckStatusAction.class),
+})
+public abstract class SymbolAction implements Serializable {
 
     /** The ID of the Action in the DB. */
     @Id
@@ -81,5 +121,5 @@ public abstract class SymbolAction<C> implements Serializable {
      * @return An {@link ExecuteResult} to indicate if the action
      *          run successfully or not.
      */
-    public abstract ExecuteResult execute(C target);
+    public abstract ExecuteResult execute(MultiConnector target);
 }

@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.entities;
 
 import de.learnlib.api.SULException;
+import de.learnlib.weblearner.learner.MultiConnector;
 import org.hibernate.Hibernate;
 
 import java.util.List;
@@ -9,9 +10,8 @@ import java.util.List;
  * Default implementation of the SymbolActionHandler using a LinkedList and Hibernate.
  *
  * @param <A> The Type of Action to handle.
- * @param <C> The type used to implement the actions the Symbol will use during the learning process.
  */
-public class DefaultSymbolActionHandler<A extends SymbolAction, C> implements SymbolActionHandler<A> {
+public class DefaultSymbolActionHandler<A extends SymbolAction> implements SymbolActionHandler<A> {
 
     /** Back reference to the caller. */
     private SymbolActionHandler<A> symbol;
@@ -71,7 +71,7 @@ public class DefaultSymbolActionHandler<A extends SymbolAction, C> implements Sy
      *          run successfully or not.
      * @throws SULException If something related to the learning went wrong.
      */
-    public String execute(C context) throws SULException {
+    public String execute(MultiConnector context) throws SULException {
         actions = symbol.getActions();
         ExecuteResult result = ExecuteResult.OK;
 
@@ -85,7 +85,7 @@ public class DefaultSymbolActionHandler<A extends SymbolAction, C> implements Sy
         return result.toString();
     }
 
-    private ExecuteResult executeAction(A action, C context) {
+    private ExecuteResult executeAction(A action, MultiConnector context) {
         try {
             return action.execute(context);
         } catch (IllegalStateException e) {

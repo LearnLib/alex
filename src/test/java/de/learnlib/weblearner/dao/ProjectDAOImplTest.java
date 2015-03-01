@@ -2,10 +2,9 @@ package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.RESTSymbol;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.entities.SymbolActionHandler;
-import de.learnlib.weblearner.entities.WebSymbol;
 import de.learnlib.weblearner.entities.WebSymbolActions.WaitAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
 import de.learnlib.weblearner.utils.HibernateUtil;
@@ -39,7 +38,7 @@ public class ProjectDAOImplTest {
         project.setBaseUrl(BASE_URL);
         project.setDescription("Lorem Ipsum");
 
-        WebSymbol symbol = new WebSymbol();
+        Symbol symbol = new Symbol();
         symbol.setName("ProjectDAOImplTest Project - Symbol 1");
         symbol.setAbbreviation("tpts1");
         symbol.addAction(new WaitAction());
@@ -65,16 +64,12 @@ public class ProjectDAOImplTest {
         assertNotNull(p2);
         assertEquals(project.getName(), p2.getName());
         assertEquals(BASE_URL, project.getBaseUrl());
-        assertNotNull(project.getResetSymbol(WebSymbol.class));
-        assertNotNull(project.getResetSymbol(RESTSymbol.class));
         assertEquals("Lorem Ipsum", project.getDescription());
 
-        assertEquals(1 + 2, p2.getSymbolsSize()); // +2 -> reset web & reset REST
-        for (Symbol s : p2.getSymbols()) {
-            if (s instanceof SymbolActionHandler) {
-                assertEquals(1, ((SymbolActionHandler) s).getActions().size());
-            }
-        }
+        assertEquals(1, p2.getGroups().size());
+
+        assertEquals(1, p2.getSymbolsSize());
+        assertEquals(1, p2.getSymbols().iterator().next().getActions().size());
     }
 
     @Test(expected = ValidationException.class)
@@ -118,7 +113,12 @@ public class ProjectDAOImplTest {
             assertTrue(projectsFromDB.contains(x));
         }
         for (Project x : projectsFromDB) {
-            assertTrue(2 <= x.getSymbolsSize());
+            int symbolSize = x.getSymbolsSize();
+            if (x.equals(project)) {
+                assertEquals(1, symbolSize);
+            } else {
+                assertEquals(0, symbolSize);
+            }
         }
     }
 
@@ -185,7 +185,7 @@ public class ProjectDAOImplTest {
         List<Symbol> symbols = session.createCriteria(Symbol.class)
                                             .add(Restrictions.eq("project.id", project.getId()))
                                             .list();
-        WebSymbolAction action = ((WebSymbol) symbols.get(0)).getActions().get(0);
+        SymbolAction action = (symbols.get(0)).getActions().get(0);
         HibernateUtil.commitTransaction();
 
         assertTrue(symbols.size() > 0);

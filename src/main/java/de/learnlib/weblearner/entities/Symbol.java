@@ -3,44 +3,35 @@ package de.learnlib.weblearner.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.weblearner.learner.MultiConnector;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Basic class for the different symbols.
  */
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue("SYMBOL")
 @JsonPropertyOrder(alphabetic = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-@JsonSubTypes({
-    @Type(name = "rest", value = RESTSymbol.class),
-    @Type(name = "web", value = WebSymbol.class)
-})
-public abstract class Symbol implements ContextExecutableInput<String, MultiConnector>, Serializable {
+public class Symbol implements ContextExecutableInput<String, MultiConnector>, Serializable, SymbolActionHandler<SymbolAction> {
 
     /** to be serializable. */
     private static final long serialVersionUID = 7987585761829495962L;
@@ -55,39 +46,59 @@ public abstract class Symbol implements ContextExecutableInput<String, MultiConn
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
     @JsonIgnore
-    protected Project project;
+    private Project project;
+
+    @ManyToOne
+    //@NotNull
+    @JsonIgnore
+    private SymbolGroup group;
 
     /** The ID of the symbol, unique per project. */
     @Column(nullable = false)
-    protected long id;
+    private long id;
 
     /** The current revision of the symbol. */
     @Column(nullable = false)
-    protected long revision;
-
-    /** Is this symbol used as a reset symbol? */
-    @Transient
-    protected boolean resetSymbol;
+    private long revision;
 
     /**
      * The name of the symbol.
      * @requiredField
      */
     @NotBlank
-    protected String name;
+    private String name;
 
     /**
      * An abbreviation for the symbol.
      * @requiredField
      */
     @Size(min = 1, max = 15)
-    protected String abbreviation;
+    private String abbreviation;
 
     /**
      * flag to mark a symbol as hidden.
      * readonly.
      */
-    protected boolean hidden;
+    private boolean hidden;
+
+    /** The actions to perform. */
+    @OneToMany(fetch = FetchType.LAZY)
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
+    @OrderBy("number ASC")
+    private List<SymbolAction> actions;
+
+    /** The actions handler. */
+    @Transient
+    @JsonIgnore
+    private transient DefaultSymbolActionHandler<SymbolAction> actionHandler;
+
+    /**
+     * Default constructor.
+     */
+    public Symbol() {
+        this.actions = new LinkedList<>();
+        this.actionHandler = new DefaultSymbolActionHandler<>(this, actions);
+    }
 
     /**
      * Get the ID of Symbol used in the DB.
@@ -118,8 +129,19 @@ public abstract class Symbol implements ContextExecutableInput<String, MultiConn
     }
 
     /**
+     * Set the project the symbol belongs to.
+     *
+     * @param project
+     *            The new project.
+     */
+    @JsonIgnore
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    /**
      * Get the {@link Project} the Symbol belongs to.
-     * 
+     *
      * @return The parent Project.
      * @requiredField
      */
@@ -134,7 +156,7 @@ public abstract class Symbol implements ContextExecutableInput<String, MultiConn
 
     /**
      * Set the {@link Project} the Symbol belongs to.
-     * 
+     *
      * @param projectId
      *            The new parent Project.
      */
@@ -143,15 +165,26 @@ public abstract class Symbol implements ContextExecutableInput<String, MultiConn
         this.project = new Project(projectId);
     }
 
-    /**
-     * Set the project the symbol belongs to.
-     *
-     * @param project
-     *            The new project.
-     */
-    @JsonIgnore
-    public void setProject(Project project) {
-        this.project = project;
+    public SymbolGroup getGroup() {
+        return group;
+    }
+
+    public void setGroup(SymbolGroup group) {
+        this.group = group;
+    }
+
+    @JsonProperty("group")
+    public long getGroupId() {
+        if (group == null) {
+            return 0L;
+        } else {
+            return this.group.getId();
+        }
+    }
+
+    public void setGroupId(long groupId) {
+        this.group = new SymbolGroup();
+        this.group.setId(groupId);
     }
 
     /**
@@ -192,25 +225,6 @@ public abstract class Symbol implements ContextExecutableInput<String, MultiConn
      */
     public void setRevision(long revision) {
         this.revision = revision;
-    }
-
-    /**
-     * Is the symbol a reset symbol in the related project.
-     *
-     * @return true, if the symbol is indeed a reset symbol; false otherwise.
-     */
-    public boolean isResetSymbol() {
-        return resetSymbol;
-    }
-
-    /**
-     * Set if the symbol is a reset symbol in the related project.
-     *
-     * @param resetSymbol
-     *         true if the symbol is a reset symbol.
-     */
-    public void setResetSymbol(boolean resetSymbol) {
-        this.resetSymbol = resetSymbol;
     }
 
     /**
@@ -269,14 +283,50 @@ public abstract class Symbol implements ContextExecutableInput<String, MultiConn
     }
 
     /**
-     * The method loads all the lazy relations if they are needed.
+     * Get the Actions related to the Symbol.
+     *
+     * @return The actions of this Symbol
      */
-    public abstract void loadLazyRelations();
+    public List<SymbolAction> getActions() {
+        return actions;
+    }
 
     /**
-     * Called shortly before the Symbol will be saved, so that e.g. relations could be updated.
+     * Set a new List of Actions related to the Symbol.
+     *
+     * @param actions
+     *         The new list of SymbolActions
      */
-    public abstract void beforeSave();
+    public void setActions(List<SymbolAction> actions) {
+        this.actions = actions;
+    }
+
+    /**
+     * Add one action to the end of the Action List.
+     *
+     * @param action
+     *         The SymbolAction to add.
+     */
+    public void addAction(SymbolAction action) {
+        actionHandler.addAction(action);
+    }
+
+    @Override
+    public void loadLazyRelations() {
+        actionHandler.loadLazyRelations();
+    }
+
+    @Override
+    public void beforeSave() {
+        actionHandler.beforeSave();
+    }
+
+    @Override
+    public String execute(MultiConnector connector) throws SULException {
+        return actionHandler.execute(connector);
+    }
+
+
 
     //CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber - auto generated by Eclipse
 

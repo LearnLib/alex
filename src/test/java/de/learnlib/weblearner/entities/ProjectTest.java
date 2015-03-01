@@ -62,7 +62,6 @@ public class ProjectTest {
 
         assertEquals("Test Project", p.getName());
         assertEquals("http://example.com", p.getBaseUrl());
-        assertEquals(null, p.getResetSymbol(WebSymbol.class)); //TODO
         assertEquals(LOREM_IPSUM, p.getDescription());
         assertTrue(p.getSymbols() != null);
         assertEquals(1, p.getSymbolsSize());

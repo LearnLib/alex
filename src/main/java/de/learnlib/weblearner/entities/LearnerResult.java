@@ -1,6 +1,5 @@
 package de.learnlib.weblearner.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -62,9 +61,6 @@ public class LearnerResult implements Serializable {
 
     /** The LearnerConfiguration which was used to create the result. */
     private LearnerConfiguration configuration;
-
-    /** The type of the symbols used for the learning. */
-    private SymbolTypes type;
 
     /** Date and Time when the learning step was started. The format is conform with the ISO 8601 (JavaScript-Style). */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
@@ -224,26 +220,6 @@ public class LearnerResult implements Serializable {
     @JsonProperty("configuration")
     public void setConfiguration(LearnerConfiguration configuration) {
         this.configuration = configuration;
-        this.jsonChanged = true;
-    }
-
-    /**
-     * Get the type of the symbols used while learning.
-     *
-     * @return The 'type*' of the learning process.
-     */
-    public SymbolTypes getType() {
-        return type;
-    }
-
-    /**
-     * Set the type of the symbols used while learning.
-     *
-     * @param type
-     *         The new 'type' of the learning process.
-     */
-    public void setType(SymbolTypes type) {
-        this.type = type;
         this.jsonChanged = true;
     }
 
@@ -426,7 +402,6 @@ public class LearnerResult implements Serializable {
             setProject(newResult.getProject());
             setTestNo(newResult.getTestNo());
             setStepNo(newResult.getStepNo());
-            setType(newResult.type);
             setStartTime(newResult.startTime);
             setDuration(newResult.duration);
             setAmountOfResets(newResult.amountOfResets);

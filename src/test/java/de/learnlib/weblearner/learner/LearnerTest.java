@@ -3,7 +3,7 @@ package de.learnlib.weblearner.learner;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.WebSymbol;
+import de.learnlib.weblearner.entities.Symbol;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +33,13 @@ public class LearnerTest {
     @Mock
     private LearnerResultDAO learnerResultDAO;
 
+    private Symbol resetSymbol;
     private Learner learner;
 
     @Before
     public void setUp() {
-        given(factory.createThread(project, learnerConfiguration)).willReturn(thread);
-        given(project.getResetSymbol(WebSymbol.class)).willReturn(mock(WebSymbol.class));
+        resetSymbol = mock(Symbol.class);
+        given(factory.createThread(project, learnerConfiguration, resetSymbol)).willReturn(thread);
 
         learner = new Learner(factory);
     }
@@ -46,9 +47,9 @@ public class LearnerTest {
     @Test(expected = IllegalStateException.class)
     public void shouldOnlyStartTheThreadOnce() {
         given(thread.isActive()).willReturn(true);
-        learner.start(project, learnerConfiguration);
+        learner.start(project, learnerConfiguration, resetSymbol);
 
-        learner.start(project, learnerConfiguration); // should fail
+        learner.start(project, learnerConfiguration, resetSymbol); // should fail
     }
 
 }
