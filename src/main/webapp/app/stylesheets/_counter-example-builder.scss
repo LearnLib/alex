@@ -1,7 +1,6 @@
 #counter-example-builder {
 
-  display: none;
-
+  display: block;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -41,11 +40,7 @@
       }
     }
   }
-  
-  .available-outputs-panel {
-    left: 280px;
-  }
-  
+
   .counter-example-panel {
     left: 280px; 
     right: 0;
@@ -60,20 +55,15 @@
       max-width: 800px
     }
   }
-  
-  .counter-example-input,
-  .counter-example-output {
+
+  .counter-example-input {
     padding: 6px 6px;
     margin: 0 5px;
     min-height: 30px;
     border-radius: 3px;
   }
   .counter-example-input {
-    background: rgba(255,0,0,0.3);
-    border: 1px solid darken(rgba(255,0,0,0.3), 10);
-  }
-  .counter-example-output {
     background: rgba(0,0,255,0.2);
-    border: 1px solid darken(rgba(0,0,255,0.2), 10);
+    border: 1px solid darken(rgba(0, 0, 255, 0.3), 10);
   }
 }

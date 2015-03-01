@@ -4,13 +4,10 @@
         <i class="fa fa-close fa-fw"></i>
     </a>
 
-	<h3 class="modal-title">Create <span ng-bind="(symbol.type|capitalize)"></span> Action</h3>
-	<span class="text-muted">Create a new action for a <span ng-bind="symbol.type"></span> symbol</span>
+    <h3 class="modal-title">Create Action</h3>
+    <span class="text-muted">Create a new action for a symbol</span>
 </div>
 
 <div class="modal-body">
-
-    <web-action-create-form if-is-type-of-web="symbol.type"></web-action-create-form>
-    <rest-action-create-form if-is-type-of-rest="symbol.type"></rest-action-create-form>
 
 </div>

@@ -3,186 +3,255 @@
 
     angular
         .module('weblearner.resources')
-        .factory('SymbolResource', [
-            '$http', '$q', 'paths', 'ResourceResponseService',
-            SymbolResource
-        ]);
+        .factory('SymbolResource', Resource);
 
+    Resource.$inject = ['$http', 'paths', 'ResourceResponseService'];
 
     /**
+     * The resource that handles http requests to the API to do CRUD operations on symbols
      *
-     * @param $http
-     * @param $q
-     * @param paths
+     * @param $http - The angular $http service
+     * @param paths - The constant with application paths
      * @param ResourceResponseService
-     * @return {{get: getSymbol, getAll: getAllSymbols, getRevisions: getRevisions, recover: recoverSymbol, create: createSymbol, update: updateSymbol, delete: deleteSymbol, deleteSome: deleteSomeSymbols}}
+     * @returns {SymbolResource}
      * @constructor
      */
-    function SymbolResource($http, $q, paths, ResourceResponseService) {
-
-        var service = {
-            get: getSymbol,
-            getAll: getAllSymbols,
-            getRevisions: getRevisions,
-            recover: recoverSymbol,
-            create: createSymbol,
-            update: updateSymbol,
-            delete: deleteSymbol,
-            deleteSome: deleteSomeSymbols
-        };
-        return service;
-
-        // ////////
+    function Resource($http, paths, ResourceResponseService) {
 
         /**
-         * get a specific web or rest symbol by its id
-         *
-         * @param projectId
-         * @param symbolId
-         * @return {*}
+         * The resource object for a symbol
+         * @constructor
          */
-        function getSymbol(projectId, symbolId) {
+        function SymbolResource() {
 
+        }
+
+        /**
+         * Make a GET request to /rest/projects/{projectId}/symbols/{symbolId} in order to fetch the latest revision of
+         * a symbol.
+         *
+         * @param projectId - The id of the project the symbol belongs to
+         * @param symbolId - The id of the symbol that should be fetched
+         */
+        SymbolResource.prototype.get = function (projectId, symbolId) {
+            var _this = this;
+
+            // make the request
             return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
-                .then(ResourceResponseService.success)
+                .then(success)
                 .catch(ResourceResponseService.fail);
-        }
 
-        /**
-         * get all rest and web symbols of a project by the projects id
-         *
-         * @param projectId
-         * @param options
-         * @return {*}
-         */
-        function getAllSymbols(projectId, options) {
-
-            var queryParams = '?';
-
-            if (options) {
-
-                if (options.type) queryParams += 'type=' + options.type;
-                if (options.deleted && options.deleted === true) queryParams += '&visbility=hidden';
-                
-                return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + queryParams)
-                    .then(ResourceResponseService.success)
-                    .catch(ResourceResponseService.fail);
-
-            } else {
-                return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols')
-                    .then(ResourceResponseService.success)
-                    .catch(ResourceResponseService.fail);
+            // build a symbol instance from the response
+            function success(response) {
+                return _this.build(response.data);
             }
-        }
+        };
 
         /**
+         * Make a GET request to /rest/projects/{projectId}/symbols in oder to fetch all symbols, that means all latest
+         * revisions from symbols.
          *
-         * @param projectId
-         * @param symbolId
-         * @return {*}
-         */
-        function recoverSymbol(projectId, symbolId) {
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/show', {})
-                .then(ResourceResponseService.success)
-                .catch(ResourceResponseService.fail);
-        }
-
-        /**
-         * create a new symbol
+         * As options, you can pass an object {deleted: true} which will get all latest revisions from deleted symbols.
          *
-         * @param projectId
-         * @param symbol
-         * @return {*}
+         * @param projectId - The id of the project the symbols belong to
+         * @param options - The query options as described in the functions description
+         * @returns {*}
          */
-        function createSymbol(projectId, symbol) {
+        SymbolResource.prototype.getAll = function (projectId, options) {
+            var _this = this;
+            var query;
 
-            if (angular.isArray(symbol)) {
-                return createSymbols(projectId, symbol)
+            // check if options are defined and build a query
+            if (options && options.deleted && options.deleted === true) {
+                query = '?visbility=hidden';
             }
 
+            // make the request with the query
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols' + (query ? query : ''))
+                .then(success)
+                .catch(ResourceResponseService.fail);
+
+            // build an array of symbol instances from the response
+            function success(response) {
+                return _this.buildSome(response.data);
+            }
+        };
+
+        /**
+         * Make a GET request to /rest/projects/{projectId}/symbols/{symbolId}/complete in order to fetch all revisions.
+         * of a symbol
+         *
+         * @param projectId - The id of the project the symbol belongs to
+         * @param symbolId - The id of the symbol whose revisions should be fetched
+         * @returns {*}
+         */
+        SymbolResource.prototype.getRevisions = function (projectId, symbolId) {
+            var _this = this;
+
+            // make the request
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
+                .then(success)
+                .catch(ResourceResponseService.fail);
+
+            // build an instance of a symbol from the http response
+            function success(response) {
+                return _this.buildSome(response.data);
+            }
+        };
+
+        /**
+         * Make a POST request to /rest/projects/{projectId}/symbols in order to create a new symbol.
+         *
+         * @param projectId - The id of the project the symbol should belong to
+         * @param symbol - The symbol that should be created
+         */
+        SymbolResource.prototype.create = function (projectId, symbol) {
+            var _this = this;
+
+            // make the request
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols', symbol)
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
+            // build an instance of a symbol from the http response
             function success(response) {
-                var message = 'Symbol ' + response.data.name + ' created';
-                return ResourceResponseService.successWithToast(response, message);
+                return _this.build(response.data);
             }
-        }
-
-        function createSymbols(projectId, symbols) {
-
-            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
-                .then(success)
-                .catch(fail);
-
-            function success(response) {
-                var message = 'Symbols created';
-                return ResourceResponseService.successWithToast(response, message);
-            }
-
-            function fail(response) {
-                var message = 'Upload failed. Some symbols already exist or existed in this project';
-                return ResourceResponseService.failWithToast(response, message);
-            }
-        }
+        };
 
         /**
-         * update an existing symbol
+         * Make a POST request to /rest/projects/{projectId}/symbols in order to create multiple symbols at once.
          *
-         * @param projectId
-         * @param symbol
-         * @return {*}
+         * @param projectId - The id of the project the symbols should belong to
+         * @param symbols - The array of symbols that should be created
+         * @returns {*}
          */
-        function updateSymbol(projectId, symbol) {
+        SymbolResource.prototype.createSome = function (projectId, symbols) {
+            var _this = this;
+
+            // make the request
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
+                .then(success)
+                .catch(ResourceResponseService.fail);
+
+            // build an array of symbol instances from the response
+            function success(response) {
+                return _this.buildSome(response.data);
+            }
+        };
+
+        /**
+         * Make a PUT request to /rest/projects/{projectId}/symbols in order to update a single symbol.
+         *
+         * @param projectId - The id of the project the symbol belongs to
+         * @param symbol - The updated symbol
+         * @returns {*}
+         */
+        SymbolResource.prototype.update = function (projectId, symbol) {
+            var _this = this;
+
+            // make the request
             return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id, symbol)
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
+            // build an instance of the updated symbol
             function success(response) {
-                var message = 'Symbol "' + response.data.name + '" updated';
-                return ResourceResponseService.successWithToast(response, message);
+                return _this.build(response.data);
             }
-        }
+        };
 
         /**
-         * delete an existing symbol
+         * Make a DELETE request to /rest/projects/{projectId}/symbols/hide in order to delete a single symbol. The
+         * Symbol will not be deleted permanently, it will be just hidden and ignored when you call getAll().
          *
-         * @param projectId
-         * @param symbolId
-         * @return {*}
+         * @param projectId - The id of the project the symbol belongs to
+         * @param symbolId - The id of the symbol that should be deleted
+         * @returns {*}
          */
-        function deleteSymbol(projectId, symbolId) {
+        SymbolResource.prototype.delete = function (projectId, symbolId) {
+            var _this = this;
 
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide')
+            // make the request
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide', {})
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
-            function success(response) {
-                var message = 'Symbol deleted';
-                return ResourceResponseService.successWithToast(response, message);
+            // build an instance of the deleted symbol
+            function success(resonse) {
+                return _this.build(resonse.data);
             }
-        }
+        };
 
-        function deleteSomeSymbols(projectId, symbolsIds) {
+        /**
+         * Make a DELETE request to /rest/projects/{projectId}/symbols/hide in order to delete multiple symbols at once.
+         * Symbols will not be deleted permanently but stay hidden.
+         *
+         * @param projectId - The id of the projects the symbols belong to
+         * @param symbolIds - The array of ids from the symbols that should be deleted
+         * @returns {*}
+         */
+        SymbolResource.prototype.deleteSome = function (projectId, symbolIds) {
+            var _this = this;
 
-            symbolsIds = symbolsIds.join();
+            // create a string from the ids array for the request path
+            symbolIds = symbolIds.join(',');
 
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolsIds + '/hide')
+            // make the request
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolsIds + '/hide', {})
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
+            // build an array of instances from the deleted symbols
             function success(response) {
-                var message = 'Symbols deleted';
-                return ResourceResponseService.successWithToast(response, message);
+                return _this.buildSome(response.data);
             }
-        }
+        };
 
-        function getRevisions(projectId, symbolId) {
+        /**
+         * Make a POST request to /rest/projects/{projectId}/symbols/symbolId/show in order to revert the deleting
+         * of a symbol.
+         *
+         * @param projectId - The id of the project the symbol belongs to
+         * @param symbolId - The id of the symbol that should be made visible again
+         * @returns {*}
+         */
+        SymbolResource.prototype.recover = function (projectId, symbolId) {
+            var _this = this;
 
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
-                .then(ResourceResponseService.success)
+            // make the request
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/show', {})
+                .then(success)
                 .catch(ResourceResponseService.fail);
-        }
+
+            // build and instance of the visible symbol
+            function success(response) {
+                return _this.build(response.data);
+            }
+        };
+
+        /**
+         * Overwrite this method in order to create an instance of a symbol. This method will be called on every
+         * successful http request where a single symbol is involved.
+         *
+         * @param data - The data the symbol instance should be build from
+         * @returns {*}
+         */
+        SymbolResource.prototype.build = function (data) {
+            return data;
+        };
+
+        /**
+         * Overwrite this method in order to create an array of symbols. This method will be called on every successful
+         * http request where multiple symbols are involved.
+         *
+         * @param data - The data the symbol instances should be build from
+         * @returns {*}
+         */
+        SymbolResource.prototype.buildSome = function (data) {
+            return data;
+        };
+
+        return SymbolResource;
     }
 }());

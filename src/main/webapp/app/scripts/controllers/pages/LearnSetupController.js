@@ -4,17 +4,18 @@
     angular
         .module('weblearner.controller')
         .controller('LearnSetupController', [
-            '$scope', '$state', 'SymbolResource', 'SessionService', 'SelectionService', 'type', 'EqOraclesEnum',
+            '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'EqOraclesEnum',
             'LearnAlgorithmsEnum', 'LearnerResource', 'ngToast',
             LearnSetupController
         ]);
 
-    function LearnSetupController($scope, $state, SymbolResource, SessionService, SelectionService, type, EqOracles,
-                                 LearnAlgorithms, LearnerResource, toast) {
+    function LearnSetupController($scope, $state, SymbolGroup, SessionService, SelectionService, EqOracles,
+                                  LearnAlgorithms, LearnerResource, toast) {
 
         $scope.project = SessionService.project.get();
-        $scope.symbols = [];
-        $scope.type = type;
+        $scope.groups = [];
+        $scope.allSymbols = [];
+        $scope.collapseAll = false;
 
         $scope.learnConfiguration = {
             symbols: [],
@@ -33,7 +34,7 @@
             .then(function (data) {
                 if (data.active) {
                     if (data.project == $scope.project.id) {
-                    	$state.go('learn.start');
+                        $state.go('learn.start');
                     } else {
                         toast.create({
                             class: 'danger',
@@ -42,18 +43,19 @@
                         });
                     }
                 } else {
-                    SymbolResource.getAll($scope.project.id, {type:type})
-                        .then(function(symbols){
-                            $scope.symbols = symbols;
-                        })
+                    SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+                        .then(function (groups) {
+                            $scope.groups = groups;
+                            $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
+                        });
                 }
             });
 
         //////////
 
         $scope.startLearning = function () {
-            var selectedSymbols = SelectionService.getSelected($scope.symbols);
-            
+            var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
+
             // make sure there are selected symbols
             if (selectedSymbols.length) {
 

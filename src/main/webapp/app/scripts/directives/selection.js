@@ -44,7 +44,6 @@
 
         var directive = {
             transclude: true,
-            replace: true,
             require: 'ngModel',
             scope: {
                 items: '=ngModel'
@@ -73,7 +72,6 @@
 
         var directive = {
             require: '^selectableList',
-            replace: true,
             transclude: true,
             template: ' <div class="selectable-list-item" ng-class="item._selected ? \'active\' : \'\'">' +
             '               <div class="selectable-list-control">' +

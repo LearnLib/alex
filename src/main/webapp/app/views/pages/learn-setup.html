@@ -1,16 +1,12 @@
-<div class="container">
-    <h2>Test Setup - <span ng-bind="(type|capitalize)"></span></h2>
-
-    <p class="text-muted">
-        Include or exclude Symbols you want to use for the following test
-    </p>
-    <hr>
+<div view-heading
+     title="Learn Setup"
+     sub-title="Include or exclude symbols & groups you want to use for the following test">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+<div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
     <div class="container">
         <div class="pull-left" style="margin-right: 16px">
-            <input type="checkbox" select-all-items-checkbox items="symbols">
+            <input type="checkbox" select-all-items-checkbox items="allSymbols">
         </div>
         <div class="pull-right">
             <button class="btn btn-xs btn-default" open-test-setup-settings-modal
@@ -24,20 +20,51 @@
     </div>
 </div>
 
-<div class="container">
+<div class="view-body">
+    <div class="container symbol-group-list">
+        <div ng-repeat="group in groups track by group.id" class="symbol-group">
 
-    <div selectable-list ng-model="symbols">
-        <div selectable-list-item ng-repeat="symbol in symbols">
+            <div class="selectable-list symbol-group-header">
+                <div class="selectable-list-heading">
+                    <div class="selectable-list-control">
+                        <input type="checkbox" select-all-items-checkbox items="group.symbols">
+                    </div>
+                    <div class="selectable-list-content">
 
-            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
+                    <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
+                        <i class="fa fa-fw" ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                    </span>
 
-            <p class="text-muted">
-                <a ui-sref="symbols.actions({symbolId:symbol.id})">
-                    <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
-                </a>
-            </p>
+                        <h3 class="symbol-group-title" ng-bind="group.name"
+                            ng-click="group._isCollapsed = !group._isCollapsed"></h3>
 
+                        <p class="text-muted">
+                            <span ng-bind="group.symbols.length"></span> Symbols
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="symbol-group-body" collapse="group._isCollapsed">
+
+                <div selectable-list ng-model="group.symbols">
+                    <div selectable-list-item ng-repeat="symbol in group.symbols">
+
+                        <a class="pull-right" ng-click="resetSymbol = symbol">
+                            <i class="fa" ng-class="resetSymbol == symbol ? 'fa-star' : 'fa-star-o'"></i>
+                        </a>
+
+                        <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
+
+                        <a ui-sref="symbols.actions({symbolId:symbol.id})">
+                            <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
-
 </div>

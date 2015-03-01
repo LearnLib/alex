@@ -36,7 +36,6 @@
     angular.module('weblearner.constants', []);
     angular.module('weblearner.models', []);
 
-
     angular.module('weblearner')
         .config(['ngToastProvider', function(ngToastProvider){
         	
@@ -46,7 +45,8 @@
                 maxNumber: 1
             });
         }])
-        .run(['$rootScope', '_', function($rootScope, _){
+        .run(['$rootScope', '_', 'SelectionService', function ($rootScope, _, SelectionService) {
             $rootScope._ = _;
+            $rootScope.selection = SelectionService;
         }])
 }());

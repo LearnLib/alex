@@ -1,18 +1,11 @@
-<div class="container">
-
-    <h2>Symbol Export</h2>
-
-    <p class="text-muted">Export your web and rest symbols as a json file</p>
-    <hr>
-
+<div view-heading
+     title="Symbols Export"
+     sub-title="Export your symbols as *.json">
 </div>
 
-<!--
-BEGIN: Sub Navigation
-contains call to action buttons to create update & delete symbols
--->
 <div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
     <div class="container">
+
         <div class="pull-left" style="margin-right: 16px">
             <label>
                 <input type="checkbox" select-all-items-checkbox items="symbols.web"> Web
@@ -22,43 +15,46 @@ contains call to action buttons to create update & delete symbols
                 <input type="checkbox" select-all-items-checkbox items="symbols.rest"> Rest
             </label>
         </div>
+
         <div class="pull-right">
             <button class="btn btn-xs btn-primary" download-as-json data="getSelectedSymbols">
                 <i class="fa fa-download fa-fw"></i> Download
             </button>
         </div>
+
     </div>
 </div>
-<!-- END: Sub Navigation -->
 
-<div class="container">
+<div class="view-body">
+    <div class="container">
 
-    <div selectable-list ng-model="symbols.web">
-        <div selectable-list-item ng-repeat="symbol in symbols.web">
+        <div selectable-list ng-model="symbols.web">
+            <div selectable-list-item ng-repeat="symbol in symbols.web">
 
-            <span class="label label-primary pull-right" ng-bind="symbol.type"></span>
+                <span class="label label-primary pull-right" ng-bind="symbol.type"></span>
 
-            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
+                <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
 
-            <p class="text-muted">
-                <span ng-bind="symbol.actions.length"></span> Actions
-            </p>
+                <p class="text-muted">
+                    <span ng-bind="symbol.actions.length"></span> Actions
+                </p>
 
+            </div>
         </div>
-    </div>
 
-    <div selectable-list ng-model="symbols.rest">
-        <div selectable-list-item ng-repeat="symbol in symbols.rest">
+        <div selectable-list ng-model="symbols.rest">
+            <div selectable-list-item ng-repeat="symbol in symbols.rest">
 
-            <span class="label label-warning pull-right" ng-bind="symbol.type"></span>
+                <span class="label label-warning pull-right" ng-bind="symbol.type"></span>
 
-            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
+                <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
 
-            <p class="text-muted">
-                <span ng-bind="symbol.actions.length"></span> Actions
-            </p>
+                <p class="text-muted">
+                    <span ng-bind="symbol.actions.length"></span> Actions
+                </p>
 
+            </div>
         </div>
-    </div>
 
+    </div>
 </div>

@@ -1,0 +1,32 @@
+<div class="modal-header">
+
+    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+    <h3 class="modal-title">Move Symbols</h3>
+    <span class="text-muted">Move Symbols into another group</span>
+
+</div>
+
+<div class="modal-body">
+
+    <div class="alert alert-info alert-condensed">
+        <span ng-bind="symbols.length"></span> symbols selected
+    </div>
+
+    <ul class="list-group" style="margin-bottom: 0">
+        <li class="list-group-item" ng-repeat="group in groups"
+            ng-class="selectedGroup.name === group.name ? 'active': ''"
+            ng-click="selectGroup(group)">
+            <span class="label label-default pull-right" ng-bind="group.symbols.length"></span>
+            <span ng-bind="group.name"></span>
+        </li>
+    </ul>
+
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-sm btn-primary" ng-click="moveSymbols()">Move Symbols</button>
+</div>
+

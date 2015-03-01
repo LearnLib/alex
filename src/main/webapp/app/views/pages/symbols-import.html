@@ -1,41 +1,33 @@
+<div view-heading
+     title="Symbol Upload"
+     sub-title="If you already have a *.json file with symbols, you can import them here to this project">
+</div>
+
+<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}"
+     ng-if="symbols.web.length > 0 || symbols.rest.length > 0">
     <div class="container">
+        <div class="pull-left" style="margin-right: 16px">
+            <label>
+                <input type="checkbox" select-all-items-checkbox items="symbols.web"> Web
+            </label>
+            &nbsp;
+            <label>
+                <input type="checkbox" select-all-items-checkbox items="symbols.rest"> Rest
+            </label>
+        </div>
+        <div class="pull-right">
+            <button class="btn btn-xs btn-primary" ng-click="uploadSymbols()">Upload</button>
+        </div>
+    </div>
+</div>
 
-        <h2>Symbol Upload</h2>
+<div class="view-body">
 
-        <p class="text-muted">If you already have a *.json file with symbols, you can import them here to this
-            project</p>
-        <hr>
+    <div class="container">
 
         <div file-dropzone on-loaded="fileLoaded" class="alert alert-info">
             Drag and drop *.json file here
         </div>
-
-    </div>
-
-    <!--
-    BEGIN: Sub Navigation
-    contains call to action buttons to create update & delete symbols
-    -->
-    <div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}"
-         ng-if="symbols.web.length > 0 || symbols.rest.length > 0">
-        <div class="container">
-            <div class="pull-left" style="margin-right: 16px">
-                <label>
-                    <input type="checkbox" select-all-items-checkbox items="symbols.web"> Web
-                </label>
-                &nbsp;
-                <label>
-                    <input type="checkbox" select-all-items-checkbox items="symbols.rest"> Rest
-                </label>
-            </div>
-            <div class="pull-right">
-                <button class="btn btn-xs btn-primary" ng-click="uploadSymbols()">Upload</button>
-            </div>
-        </div>
-    </div>
-    <!-- END: Sub Navigation -->
-
-    <div class="container">
 
         <div ng-if="symbols.web.length > 0" selectable-list ng-model="symbols.web">
             <div selectable-list-item ng-repeat="symbol in symbols.web">
@@ -60,3 +52,7 @@
         </div>
 
     </div>
+
+</div>
+
+<div class="container">
