@@ -1,5 +1,5 @@
 {
-    "type": "click",
+    "type": "web_click",
     "node": "#node",
     "url":  "http://example.com"
 }

@@ -1,5 +1,5 @@
 {
-    "type" : "fill",
+    "type" : "web_fill",
     "node" : "#input",
     "url" : "http://example.com",
     "generator" : "none"

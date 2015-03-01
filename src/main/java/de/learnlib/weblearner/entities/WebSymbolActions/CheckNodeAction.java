@@ -13,7 +13,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("web_checkNode")
-@JsonTypeName("checkNode")
+@JsonTypeName("web_checkNode")
 public class CheckNodeAction extends WebSymbolAction {
 
     /** to be serializable. */

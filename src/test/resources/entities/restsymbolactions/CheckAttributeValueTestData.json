@@ -1,5 +1,5 @@
 {
-  "type": "checkAttributeValue",
+  "type": "rest_checkAttributeValue",
   "attribute": "object.attribute",
   "value": "FooBar Lorem",
   "regexp": true

@@ -14,7 +14,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("web_goto")
-@JsonTypeName("goto")
+@JsonTypeName("web_goto")
 public class GotoAction extends WebSymbolAction {
 
     /** to be serializable. */

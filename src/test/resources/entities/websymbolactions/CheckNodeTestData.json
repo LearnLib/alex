@@ -1,5 +1,5 @@
 {
-    "type": "checkNode",
+    "type": "web_checkNode",
     "value": "#node",
     "url": "http://example.com"
 }

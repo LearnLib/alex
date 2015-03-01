@@ -13,7 +13,7 @@ import javax.persistence.Entity;
  * Action to wait for a specifiy amount of time.
  */
 @Entity
-@DiscriminatorValue("web_wait")
+@DiscriminatorValue("wait")
 @JsonTypeName("wait")
 public class WaitAction extends WebSymbolAction {
 

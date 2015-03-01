@@ -13,7 +13,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("web_click")
-@JsonTypeName("click")
+@JsonTypeName("web_click")
 public class ClickAction extends WebSymbolAction {
 
     /** to be serializable. */

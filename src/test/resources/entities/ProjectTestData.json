@@ -10,33 +10,33 @@
             "abbreviation" : "test_symb",
             "actions" : [
                 {
-                    "type": "checkNode",
+                    "type": "web_checkNode",
                     "value": "#node",
                     "url": "http://example.com"
                 },
                 {
-                    "type": "checkText",
+                    "type": "web_checkText",
                     "value": "Lorem Ipsum",
                     "url": "http://example.com"
                 },
                 {
-                    "type": "clear",
+                    "type": "web_clear",
                     "node": "#node",
                     "url":  "http://example.com"
                 },
                 {
-                    "type": "click",
+                    "type": "web_click",
                     "node": "#node",
                     "url":  "http://example.com"
                 },
                 {
-                    "type" : "fill",
+                    "type" : "web_fill",
                     "node" : "#input",
                     "url" : "http://example.com",
                     "generator" : "none"
                 },
                 {
-                    "type": "submit",
+                    "type": "web_submit",
                     "node": "#node",
                     "url":  "http://example.com"
                 },

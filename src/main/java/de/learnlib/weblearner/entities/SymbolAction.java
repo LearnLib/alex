@@ -46,23 +46,23 @@ import java.io.Serializable;
 @JsonSubTypes({
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
-        @JsonSubTypes.Type(name = "checkNode", value = CheckNodeAction.class),
-        @JsonSubTypes.Type(name = "checkText", value = CheckTextWebAction.class),
-        @JsonSubTypes.Type(name = "clear", value = ClearAction.class),
-        @JsonSubTypes.Type(name = "click", value = ClickAction.class),
-        @JsonSubTypes.Type(name = "fill", value = FillAction.class),
-        @JsonSubTypes.Type(name = "goto", value = GotoAction.class),
-        @JsonSubTypes.Type(name = "submit", value = SubmitAction.class),
+        @JsonSubTypes.Type(name = "web_checkNode", value = CheckNodeAction.class),
+        @JsonSubTypes.Type(name = "web_checkText", value = CheckTextWebAction.class),
+        @JsonSubTypes.Type(name = "web_clear", value = ClearAction.class),
+        @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
+        @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
+        @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
+        @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
         @JsonSubTypes.Type(name = "wait", value = WaitAction.class),
         // REST Actions
-        @JsonSubTypes.Type(name = "REST", value = RESTSymbolAction.class),
-        @JsonSubTypes.Type(name = "call", value = CallAction.class),
-        @JsonSubTypes.Type(name = "checkAttributeExists", value = CheckAttributeExistsAction.class),
-        @JsonSubTypes.Type(name = "checkAttributeType", value = CheckAttributeTypeAction.class),
-        @JsonSubTypes.Type(name = "checkAttributeValue", value = CheckAttributeValueAction.class),
-        @JsonSubTypes.Type(name = "checkForText", value = CheckTextRestAction.class),
-        @JsonSubTypes.Type(name = "checkHeaderField", value = CheckHeaderFieldAction.class),
-        @JsonSubTypes.Type(name = "checkStatus", value = CheckStatusAction.class),
+        @JsonSubTypes.Type(name = "rest", value = RESTSymbolAction.class),
+        @JsonSubTypes.Type(name = "rest_call", value = CallAction.class),
+        @JsonSubTypes.Type(name = "rest_checkAttributeExists", value = CheckAttributeExistsAction.class),
+        @JsonSubTypes.Type(name = "rest_checkAttributeType", value = CheckAttributeTypeAction.class),
+        @JsonSubTypes.Type(name = "rest_checkAttributeValue", value = CheckAttributeValueAction.class),
+        @JsonSubTypes.Type(name = "rest_checkForText", value = CheckTextRestAction.class),
+        @JsonSubTypes.Type(name = "rest_checkHeaderField", value = CheckHeaderFieldAction.class),
+        @JsonSubTypes.Type(name = "rest_checkStatus", value = CheckStatusAction.class),
 })
 public abstract class SymbolAction implements Serializable {
 

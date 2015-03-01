@@ -13,8 +13,8 @@ import javax.persistence.Entity;
  * Base class for all the REST specific actions.
  */
 @Entity
-@DiscriminatorValue("REST")
-@JsonTypeName("REST")
+@DiscriminatorValue("rest")
+@JsonTypeName("rest")
 public abstract class RESTSymbolAction extends SymbolAction {
 
     /** to be serializable. */

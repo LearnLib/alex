@@ -1,4 +1,4 @@
 {
-  "type": "checkStatus",
+  "type": "rest_checkStatus",
   "status": 200
 }

@@ -13,7 +13,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("web_submit")
-@JsonTypeName("submit")
+@JsonTypeName("web_submit")
 public class SubmitAction extends WebSymbolAction {
 
     /** to be serializable. */

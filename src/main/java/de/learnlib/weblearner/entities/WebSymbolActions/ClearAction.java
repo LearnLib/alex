@@ -13,7 +13,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("web_clear")
-@JsonTypeName("clear")
+@JsonTypeName("web_clear")
 public class ClearAction extends WebSymbolAction {
 
     /** to be serializable. */

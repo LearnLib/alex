@@ -1,5 +1,5 @@
 {
-    "type": "clear",
+    "type": "web_clear",
     "node": "#node",
     "url":  "http://example.com"
 }

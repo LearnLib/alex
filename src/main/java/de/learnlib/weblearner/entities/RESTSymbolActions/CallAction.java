@@ -13,8 +13,8 @@ import javax.persistence.Entity;
  * RESTSymbolAction to make a request to the API.
  */
 @Entity
-@DiscriminatorValue("call")
-@JsonTypeName("call")
+@DiscriminatorValue("rest_call")
+@JsonTypeName("rest_call")
 public class CallAction extends RESTSymbolAction {
 
     /** to be serializable. */

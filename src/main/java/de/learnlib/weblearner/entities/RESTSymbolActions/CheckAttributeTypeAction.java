@@ -14,7 +14,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("checkAttributeType")
-@JsonTypeName("checkAttributeType")
+@JsonTypeName("rest_checkAttributeType")
 public class CheckAttributeTypeAction extends  RESTSymbolAction {
 
     /** to be serializable. */

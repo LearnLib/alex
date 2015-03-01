@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Entity
 @DiscriminatorValue("checkHeaderField")
-@JsonTypeName("checkHeaderField")
+@JsonTypeName("rest_checkHeaderField")
 public class CheckHeaderFieldAction extends RESTSymbolAction {
 
     /** to be serializable. */

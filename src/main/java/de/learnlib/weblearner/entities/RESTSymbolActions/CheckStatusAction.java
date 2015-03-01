@@ -12,7 +12,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("checkStatus")
-@JsonTypeName("checkStatus")
+@JsonTypeName("rest_checkStatus")
 public class CheckStatusAction extends RESTSymbolAction {
 
     /** to be serializable. */

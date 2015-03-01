@@ -1,4 +1,4 @@
 {
-  "type": "checkAttributeExists",
+  "type": "rest_checkAttributeExists",
   "attribute": "object.attribute"
 }

@@ -13,7 +13,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("web_fill")
-@JsonTypeName("fill")
+@JsonTypeName("web_fill")
 public class FillAction extends WebSymbolAction {
 
     /** to be serializable. */
