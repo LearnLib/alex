@@ -36,6 +36,7 @@ public class SymbolGroupResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) {
+        group.setProjectId(projectId);
         symbolGroupDAO.create(group);
 
         String groupURL = uri.getBaseUri() + "projects/" + group.getProjectId() + "/groups/" + group.getId();
