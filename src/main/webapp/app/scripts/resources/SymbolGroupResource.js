@@ -61,16 +61,16 @@
         SymbolGroupResource.prototype.update = function (projectId, group) {
             var _this = this;
 
-            return $http.put(paths.api.URL + '/projects/' + projectId + '/groups', group)
+            return $http.put(paths.api.URL + '/projects/' + projectId + '/groups/' + group.id, group)
                 .then(function (response) {
                     return _this.build(response.data);
                 })
         };
 
-        SymbolGroupResource.prototype.delete = function (projectId, groupId) {
+        SymbolGroupResource.prototype.delete = function (projectId, group) {
             var _this = this;
 
-            return $http.delete(paths.api.URL + '/projects/' + projectId + '/groups')
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/groups/' + group.id)
                 .then(function (response) {
                     return _this.build(response.data);
                 })

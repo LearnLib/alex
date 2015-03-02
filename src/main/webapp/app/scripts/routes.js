@@ -73,22 +73,6 @@
             })
 
             // =========================================================
-            // group related routes
-
-            .state('groups', {
-                url: '/groups',
-                views: {
-                    '@': {
-                        controller: 'GroupsController',
-                        templateUrl: paths.views.PAGES + '/groups.html'
-                    }
-                },
-                data: {
-                    requiresProject: true
-                }
-            })
-
-            // =========================================================
             // symbol related routes
 
 

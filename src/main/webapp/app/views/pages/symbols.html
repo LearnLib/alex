@@ -10,10 +10,22 @@
         </div>
         <div class="pull-left">
 
-            <button type="button" class="btn btn-primary btn-xs" symbol-create-modal-handle project-id="{{project.id}}"
-                    on-created="">
-                Create
-            </button>
+            <div class="btn-group btn-group-xs" dropdown dropdown-hover>
+                <button class="btn btn-primary">
+                    Create
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li>
+                        <a href symbol-create-modal-handle project-id="{{project.id}}" on-created="addSymbol">
+                            Symbol
+                        </a>
+                        <a href symbol-group-create-modal-handle project-id="{{project.id}}" on-created="addGroup">
+                            Group
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             <button class="btn btn-xs btn-default" ng-class="(allSymbols|selected).length == 1 ? '' : 'disabled'"
                     symbol-edit-modal-handle symbol="(allSymbols | selected | first)" on-updated="updateSymbol">
                 Edit
@@ -38,6 +50,7 @@
 
 <div class="view-body">
     <div class="container symbol-group-list">
+
         <div ng-repeat="group in groups track by group.id" class="symbol-group"
              ng-class="group._isCollapsed ? 'collapsed' :''">
 
@@ -48,9 +61,15 @@
                     </div>
                     <div class="selectable-list-content">
 
-                    <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
-                        <i class="fa fa-fw" ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
-                    </span>
+                        <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
+                            <i class="fa fa-fw"
+                               ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                        </span>
+
+                        <a href class="pull-right" style="margin-right: 15px" symbol-group-edit-modal-handle
+                           group="group" on-updated="updateGroup" on-deleted="deleteGroup">
+                            <i class="fa fa-fw fa-gear"></i>
+                        </a>
 
                         <h3 class="symbol-group-title" ng-bind="group.name"
                             ng-click="group._isCollapsed = !group._isCollapsed"></h3>

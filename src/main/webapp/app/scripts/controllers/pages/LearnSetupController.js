@@ -16,6 +16,7 @@
         $scope.groups = [];
         $scope.allSymbols = [];
         $scope.collapseAll = false;
+        $scope.resetSymbol;
 
         $scope.learnConfiguration = {
             symbols: [],
@@ -53,11 +54,15 @@
 
         //////////
 
+        $scope.setResetSymbol = function (symbol) {
+            $scope.resetSymbol = symbol;
+        };
+
         $scope.startLearning = function () {
             var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
 
             // make sure there are selected symbols
-            if (selectedSymbols.length) {
+            if (selectedSymbols.length && $scope.resetSymbol) {
 
                 // get id:revision pair from each selected symbol and add it to the learn configuration
                 _.forEach(selectedSymbols, function (symbol) {
@@ -66,6 +71,11 @@
                         revision: symbol.revision
                     });
                 });
+
+                $scope.learnConfiguration.resetSymbol = {
+                    id: $scope.resetSymbol.id,
+                    revision: $scope.resetSymbol.revision
+                };
 
                 // start learning and go to the load page
                 LearnerResource.start($scope.project.id, $scope.learnConfiguration)

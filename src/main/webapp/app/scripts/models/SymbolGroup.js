@@ -9,11 +9,15 @@
     function SymbolGroupModel(SymbolGroupResource, Symbol) {
 
         function SymbolGroup(name) {
-            this.name = name;
+            this.name = name || null;
             this.id;
             this.project;
             this.symbols;
         }
+
+        SymbolGroup.prototype.copy = function () {
+            return SymbolGroup.build(angular.copy(this));
+        };
 
         SymbolGroup.build = function (data) {
             var group = new SymbolGroup(data.name);

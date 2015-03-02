@@ -1,0 +1,38 @@
+<div class="modal-header">
+
+    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+    <h3 class="modal-title">Update a Symbol Group</h3>
+    <span class="text-muted">Update or delete a symbol group</span>
+
+</div>
+
+<form id="symbol-group-edit-form" name="create_symbol_edit_form" ng-submit="updateGroup()">
+
+    <div class="modal-body">
+
+        <div class="form-group">
+            <label>Symbol Group Name</label>
+            <input class="form-control" name="name" type="text" placeholder="name" required ng-model="group.name">
+        </div>
+        <div class="alert alert-danger alert-condensed"
+             ng-show="create_symbol_group_form.name.$dirty && create_symbol_group_form.name.$invalid">
+            <small ng-show="create_symbol_group_form.name.$error.required"> The field must not be empty.</small>
+        </div>
+        <div class="alert alert-danger alert-condensed" ng-show="groupExists">
+            <small>
+                There is already a symbol group with the name "<strong ng-bind="group.name"></strong>". Please choose
+                another one.
+            </small>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <a href class="btn btn-default" ng-if="group.id !== 0" ng-click="deleteGroup()">Delete</a>
+        <button class="btn btn-primary" type="submit">Update Symbol Group</button>
+    </div>
+
+</form>

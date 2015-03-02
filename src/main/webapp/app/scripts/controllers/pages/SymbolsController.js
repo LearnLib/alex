@@ -5,9 +5,9 @@
         .module('weblearner.controller')
         .controller('SymbolsController', SymbolsController);
 
-    SymbolsController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService'];
+    SymbolsController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService', '_'];
 
-    function SymbolsController($scope, Session, SymbolGroup, SelectionService) {
+    function SymbolsController($scope, Session, SymbolGroup, SelectionService, _) {
 
         $scope.project = Session.project.get();
         $scope.groups = [];
@@ -19,10 +19,6 @@
                 $scope.groups = groups;
                 $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
             });
-
-        $scope.addSymbol = function (symbol) {
-            $scope.groups[0].symbols.push(symbol);
-        };
 
         $scope.toggleCollapseAllGroups = function () {
             $scope.collapseAll = !$scope.collapseAll;
@@ -79,27 +75,47 @@
             }
         };
 
-        //
-        ///**
-        // * Adds a symbol to the scope
-        // *
-        // * @param symbol {symbol} - The new symbol that should be added to the list
-        // */
-        //$scope.addSymbol = function (symbol) {
-        //    $scope.symbols.push(symbol)
-        //};
-        //
-        ///**
-        // * Updates a symbol in the scope
-        // *
-        // * @param symbol {Symbol} - The symbol whose properties should be updated
-        // */
-        //$scope.updateSymbol = function (symbol) {
-        //    var index = _.findIndex($scope.symbols, {id: symbol.id});
-        //    if (index > -1) {
-        //        SelectionService.select(symbol);
-        //        $scope.symbols[index] = symbol;
-        //    }
-        //};
+        /**
+         * Adds a symbol to to its corresponding group the scope
+         *
+         * @param symbol {Symbol} - The new symbol that should be added to the list
+         */
+        $scope.addSymbol = function (symbol) {
+
+            console.log(symbol);
+
+            var index = _.findIndex($scope.groups, {id: symbol.group});
+            if (index > -1) {
+                $scope.groups[index].symbols.push(symbol);
+                $scope.allSymbols.push(symbol);
+            }
+        };
+
+        /**
+         * Adds a group to the scope
+         *
+         * @param group {SymbolGroup} - The new group that should be added to the list
+         */
+        $scope.addGroup = function (group) {
+            $scope.groups.push(group);
+        };
+
+        $scope.updateSymbol = function (symbol) {
+            // TODO
+        };
+
+        $scope.updateGroup = function (group) {
+            var g = _.find($scope.groups, {id: group.id});
+            if (angular.isDefined(g)) {
+                g.name = group.name;
+            }
+        };
+
+        $scope.deleteGroup = function (group) {
+            _.forEach(group.symbols, function (symbol) {
+                _.remove($scope.allSymbols, {id: symbol.id})
+            });
+            _.remove($scope.groups, {id: group.id});
+        };
     }
 }());

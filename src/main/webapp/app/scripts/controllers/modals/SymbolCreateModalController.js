@@ -40,13 +40,13 @@
          */
         $scope.createSymbol = function () {
 
-            // TODO: Delete this when merging is over
-            $scope.symbol.type = 'web';
+            var group = _.find($scope.groups, {name: $scope.selectedGroup});
 
-            // TODO: uncomment this when merging is over
-            //if (_.findIndex($scope.groups, {name: $scope.selectedGroup}) >= 0) {
-            //    .....
-            //}
+            if (angular.isDefined(group)) {
+                $scope.symbol.group = group.id;
+            } else {
+                // TODO: ask the user to create a new group
+            }
 
             Symbol.Resource.create(projectId, $scope.symbol)
                 .then(function (newSymbol) {
