@@ -99,7 +99,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                     .add(Restrictions.eq("project.id", project.getId()))
                                                     .add(Restrictions.eq("id", symbol.getGroupId()))
                                                     .uniqueResult();
-        if (group != null) {
+        if (group == null) {
             group = project.getDefaultGroup();
         }
         group.addSymbol(symbol);
