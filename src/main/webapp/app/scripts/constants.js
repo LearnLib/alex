@@ -23,33 +23,39 @@
     	})
 
         // web action types
-        .constant('ActionTypes', {
-            SEARCH_FOR_TEXT: 'checkText',
-            SEARCH_FOR_NODE: 'checkNode',
-            CLEAR: 'clear',
-            CLICK: 'click',
-            FILL: 'fill',
-            GO_TO: 'goto',
-            SUBMIT: 'submit',
-            WAIT: 'wait',
-            CALL_URL: 'call',
-            CHECK_STATUS: 'checkStatus',
-            CHECK_HEADER_FIELD: 'checkHeaderField',
-            CHECK_HTTP_BODY_TEXT: 'checkForText',
-            CHECK_ATTRIBUTE_EXISTS: 'checkAttributeExists',
-            CHECK_ATTRIBUTE_VALUE: 'checkAttributeValue',
-            CHECK_ATTRIBUTE_TYPE: 'checkAttributeType'
+        .constant('actionTypes', {
+            web: {
+                SEARCH_FOR_TEXT: 'web_checkForText',
+                SEARCH_FOR_NODE: 'web_checkForNode',
+                CLEAR: 'web_clear',
+                CLICK: 'web_click',
+                FILL: 'web_fill',
+                GO_TO: 'web_goto',
+                SUBMIT: 'web_submit'
+            },
+            rest: {
+                CALL_URL: 'rest_call',
+                CHECK_STATUS: 'rest_checkStatus',
+                CHECK_HEADER_FIELD: 'rest_checkHeaderField',
+                CHECK_HTTP_BODY_TEXT: 'rest_checkForText',
+                CHECK_ATTRIBUTE_EXISTS: 'rest_checkAttributeExists',
+                CHECK_ATTRIBUTE_VALUE: 'rest_checkAttributeValue',
+                CHECK_ATTRIBUTE_TYPE: 'rest_checkAttributeType'
+            },
+            other: {
+                WAIT: 'wait'
+            }
         })
 
         // eq oracles
-        .constant('EqOraclesEnum', {
+        .constant('eqOracles', {
             RANDOM: 'random_word',
             COMPLETE: 'complete',
             SAMPLE: 'sample'
         })
 
         // learn algorithms
-        .constant('LearnAlgorithmsEnum', {
+        .constant('learnAlgorithms', {
             EXTENSIBLE_LSTAR: 'EXTENSIBLE_LSTAR',
             DHC: 'DHC',
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE'

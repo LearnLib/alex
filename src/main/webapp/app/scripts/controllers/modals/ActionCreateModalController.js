@@ -1,32 +1,29 @@
-(function(){
+(function () {
     'use strict';
 
     angular
         .module('weblearner.controller')
         .controller('ActionCreateModalController', [
-            '$scope', '$modalInstance', 'modalData', 'WebActionTypes', 'RestActionTypes',
+            '$scope', '$modalInstance', 'modalData', 'actionTypes',
             ActionCreateModalController
         ]);
 
-    function ActionCreateModalController ($scope, $modalInstance, modalData, WebActionTypes, RestActionTypes) {
+    function ActionCreateModalController($scope, $modalInstance, modalData, actionTypes) {
 
-        $scope.webActionTypes = WebActionTypes;
-        $scope.restActionTypes = RestActionTypes;
+        $scope.actionTypes = actionTypes;
+        $scope.selectedActionType;
         $scope.symbol = modalData.symbol;
+        $scope.action;
 
-        //////////
+        console.log($scope.actionTypes);
 
-        $scope.$on('action.created', createAction);
-
-        //////////
-
-        function createAction(evt, action) {
+        $scope.createAction = function (action) {
             $modalInstance.close(action);
-        }
+        };
 
         //////////
 
-        $scope.closeModal = function(){
+        $scope.closeModal = function () {
             $modalInstance.dismiss();
         }
     }

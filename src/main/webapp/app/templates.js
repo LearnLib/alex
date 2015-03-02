@@ -900,9 +900,29 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "    <span class=\"text-muted\">Create a new action for a symbol</span>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"modal-body\">\n" +
+    "<form ng-submit=\"createAction()\">\n" +
     "\n" +
-    "</div>");
+    "    <div class=\"modal-body\">\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <select class=\"form-control\" ng-model=\"selectedActionType\" ng-options=\"k for (k,v) in actionTypes.web\"></select>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <select class=\"form-control\" ng-model=\"selectedActionType\" ng-options=\"k for (k,v) in actionTypes.rest\"></select>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <select class=\"form-control\" ng-model=\"selectedActionType\" ng-options=\"k for (k,v) in actionTypes.other\"></select>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCache", function($templateCache) {

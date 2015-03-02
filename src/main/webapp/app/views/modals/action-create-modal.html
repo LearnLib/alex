@@ -8,6 +8,29 @@
     <span class="text-muted">Create a new action for a symbol</span>
 </div>
 
-<div class="modal-body">
+<form ng-submit="createAction()">
 
-</div>
+    <div class="modal-body">
+
+        <div class="form-group">
+            <select class="form-control" ng-model="selectedActionType"
+                    ng-options="k for (k,v) in actionTypes.web"></select>
+        </div>
+
+        <div class="form-group">
+            <select class="form-control" ng-model="selectedActionType"
+                    ng-options="k for (k,v) in actionTypes.rest"></select>
+        </div>
+
+        <div class="form-group">
+            <select class="form-control" ng-model="selectedActionType"
+                    ng-options="k for (k,v) in actionTypes.other"></select>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+    </div>
+
+</form>

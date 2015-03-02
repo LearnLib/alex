@@ -951,9 +951,29 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "    <span class=\"text-muted\">Create a new action for a symbol</span>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"modal-body\">\n" +
+    "<form ng-submit=\"createAction()\">\n" +
     "\n" +
-    "</div>");
+    "    <div class=\"modal-body\">\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <select class=\"form-control\" ng-model=\"selectedActionType\" ng-options=\"k for (k,v) in actionTypes.web\"></select>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <select class=\"form-control\" ng-model=\"selectedActionType\" ng-options=\"k for (k,v) in actionTypes.rest\"></select>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <select class=\"form-control\" ng-model=\"selectedActionType\" ng-options=\"k for (k,v) in actionTypes.other\"></select>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCache", function($templateCache) {
@@ -3064,66 +3084,71 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     	})
 
         // web action types
-        .constant('ActionTypes', {
-            SEARCH_FOR_TEXT: 'checkText',
-            SEARCH_FOR_NODE: 'checkNode',
-            CLEAR: 'clear',
-            CLICK: 'click',
-            FILL: 'fill',
-            GO_TO: 'goto',
-            SUBMIT: 'submit',
-            WAIT: 'wait',
-            CALL_URL: 'call',
-            CHECK_STATUS: 'checkStatus',
-            CHECK_HEADER_FIELD: 'checkHeaderField',
-            CHECK_HTTP_BODY_TEXT: 'checkForText',
-            CHECK_ATTRIBUTE_EXISTS: 'checkAttributeExists',
-            CHECK_ATTRIBUTE_VALUE: 'checkAttributeValue',
-            CHECK_ATTRIBUTE_TYPE: 'checkAttributeType'
+        .constant('actionTypes', {
+            web: {
+                SEARCH_FOR_TEXT: 'web_checkForText',
+                SEARCH_FOR_NODE: 'web_checkForNode',
+                CLEAR: 'web_clear',
+                CLICK: 'web_click',
+                FILL: 'web_fill',
+                GO_TO: 'web_goto',
+                SUBMIT: 'web_submit'
+            },
+            rest: {
+                CALL_URL: 'rest_call',
+                CHECK_STATUS: 'rest_checkStatus',
+                CHECK_HEADER_FIELD: 'rest_checkHeaderField',
+                CHECK_HTTP_BODY_TEXT: 'rest_checkForText',
+                CHECK_ATTRIBUTE_EXISTS: 'rest_checkAttributeExists',
+                CHECK_ATTRIBUTE_VALUE: 'rest_checkAttributeValue',
+                CHECK_ATTRIBUTE_TYPE: 'rest_checkAttributeType'
+            },
+            other: {
+                WAIT: 'wait'
+            }
         })
 
         // eq oracles
-        .constant('EqOraclesEnum', {
+        .constant('eqOracles', {
             RANDOM: 'random_word',
             COMPLETE: 'complete',
             SAMPLE: 'sample'
         })
 
         // learn algorithms
-        .constant('LearnAlgorithmsEnum', {
+        .constant('learnAlgorithms', {
             EXTENSIBLE_LSTAR: 'EXTENSIBLE_LSTAR',
             DHC: 'DHC',
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE'
         })
-}());;(function(){
+}());
+;
+(function () {
     'use strict';
 
     angular
         .module('weblearner.controller')
         .controller('ActionCreateModalController', [
-            '$scope', '$modalInstance', 'modalData', 'WebActionTypes', 'RestActionTypes',
+            '$scope', '$modalInstance', 'modalData', 'actionTypes',
             ActionCreateModalController
         ]);
 
-    function ActionCreateModalController ($scope, $modalInstance, modalData, WebActionTypes, RestActionTypes) {
+    function ActionCreateModalController($scope, $modalInstance, modalData, actionTypes) {
 
-        $scope.webActionTypes = WebActionTypes;
-        $scope.restActionTypes = RestActionTypes;
+        $scope.actionTypes = actionTypes;
+        $scope.selectedActionType;
         $scope.symbol = modalData.symbol;
+        $scope.action;
 
-        //////////
+        console.log($scope.actionTypes);
 
-        $scope.$on('action.created', createAction);
-
-        //////////
-
-        function createAction(evt, action) {
+        $scope.createAction = function (action) {
             $modalInstance.close(action);
-        }
+        };
 
         //////////
 
-        $scope.closeModal = function(){
+        $scope.closeModal = function () {
             $modalInstance.dismiss();
         }
     }
@@ -7359,7 +7384,95 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     function ActionModel() {
 
     }
-}());;;;(function () {
+}());
+;
+(function () {
+
+    angular
+        .module('weblearner.models')
+        .factory('EqOracle', EqOracleModel);
+
+    EqOracleModel.$inject = ['eqOracles'];
+
+    function EqOracleModel(eqOracles) {
+
+        var EqOracle = {
+            Random: Random,
+            Complete: Complete,
+            Sample: Sample,
+            build: build
+        };
+        return EqOracle;
+
+        function Random(minLength, maxLength) {
+            this.type = eqOracles.RANDOM;
+            this.minLength = minLength || 1;
+            this.maxLength = maxLength || 1;
+        }
+
+        function Complete(minDepth, maxDepth) {
+            this.type = eqOracles.COMPLETE;
+            this.minDepth = minDepth || 1;
+            this.maxDepth = maxDepth || 1;
+        }
+
+        function Sample() {
+            this.type = eqOracles.SAMPLE;
+        }
+
+        function build(data) {
+            var eqOracle;
+
+            switch (data.type) {
+                case eqOracles.RANDOM:
+                    eqOracle = new Random(data.minLength, data.maxLength);
+                    break;
+                case eqOracles.COMPLETE:
+                    eqOracle = new Complete(data.minDepth, data.maxDepth);
+                    break;
+                case eqOracles.SAMPLE:
+                    eqOracle = new Sample();
+                    break;
+                default :
+                    break;
+            }
+        }
+    }
+}());
+;
+(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.models')
+        .factory('LearnConfiguration', LearnConfigurationModel);
+
+    LearnConfigurationModel.$inject = ['learnAlgorithms', 'EqOracle'];
+
+    function LearnConfigurationModel(learnAlgorithms, EqOracle) {
+
+        function LearnConfiguration() {
+            this.symbols = [];
+            this.maxAmountOfStepsToLearn = 0;
+            this.eqOracle = new EqOracle.Complete();
+            this.algorithm = learnAlgorithms.EXTENSIBLE_LSTAR;
+        }
+
+        LearnConfiguration.build = function (data) {
+            var learnConfiguration = new LearnConfiguration();
+            learnConfiguration.symbols = data.symbols;
+            learnConfiguration.maxAmountOfStepsToLearn = data.maxAmountOfStepsToLearn;
+            learnConfiguration.algorithm = data.algorithm;
+            learnConfiguration.eqOracle = data.eqOracle;
+            return learnConfiguration;
+        };
+
+        return LearnConfiguration;
+    }
+}());
+;
+;
+(function () {
     'use strict';
 
     angular
