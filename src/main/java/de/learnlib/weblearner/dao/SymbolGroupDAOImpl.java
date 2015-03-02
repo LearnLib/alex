@@ -4,8 +4,8 @@ import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.utils.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import javax.validation.ValidationException;
@@ -59,6 +59,13 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                                 .add(Restrictions.eq("project.id", projectId))
                                                 .list();
 
+        for (SymbolGroup group : resultList) {
+            Hibernate.initialize(group.getSymbols());
+            for (Symbol symbol : group.getSymbols()) {
+                symbol.loadLazyRelations();
+            }
+        }
+
         HibernateUtil.commitTransaction();
         return resultList;
     }
@@ -73,6 +80,11 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                                     .add(Restrictions.eq("project.id", projectId))
                                                     .add(Restrictions.eq("id", groupId))
                                                     .uniqueResult();
+
+        Hibernate.initialize(result.getSymbols());
+        for (Symbol symbol : result.getSymbols()) {
+            symbol.loadLazyRelations();
+        }
 
         HibernateUtil.commitTransaction();
         return result;
