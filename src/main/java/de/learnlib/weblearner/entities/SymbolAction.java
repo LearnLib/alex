@@ -61,7 +61,6 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "setVariableByHTML", value = SetVariableByNodeAction.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
-        @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
         @JsonSubTypes.Type(name = "web_checkNode", value = CheckNodeAction.class),
         @JsonSubTypes.Type(name = "web_checkText", value = CheckTextWebAction.class),
         @JsonSubTypes.Type(name = "web_clear", value = ClearAction.class),

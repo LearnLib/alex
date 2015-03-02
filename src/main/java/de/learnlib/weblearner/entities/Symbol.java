@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
@@ -314,6 +315,7 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
     @Override
     public void loadLazyRelations() {
         actionHandler.loadLazyRelations();
+        Hibernate.initialize(getGroup());
     }
 
     @Override

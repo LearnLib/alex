@@ -120,12 +120,13 @@ public class SymbolDAOImplTest {
         Symbol symbolInDB = symbolDAO.get(project.getId(), symbol.getId(), symbol.getRevision());
         assertNotNull(symbolInDB);
         assertTrue(symbolInDB instanceof Symbol);
-        Symbol webSymbolInDB = (Symbol) symbolInDB;
+        Symbol webSymbolInDB = symbolInDB;
         Project project2 = projectDAO.getByID(symbolInDB.getProjectId());
 
         assertEquals(symbol.getName(), symbolInDB.getName());
         assertEquals(symbol.getAbbreviation(), symbolInDB.getAbbreviation());
         assertEquals(symbol.getRevision(), symbolInDB.getRevision());
+        assertEquals(group, symbol.getGroup());
         assertEquals(symbol.getProject(), symbolInDB.getProject());
         assertEquals(project, project2);
         assertEquals(idBefore + 1, project2.getNextSymbolId());
@@ -137,6 +138,18 @@ public class SymbolDAOImplTest {
             WebSymbolAction actualAction = (WebSymbolAction) webSymbolInDB.getActions().get(i);
             assertEquals(expectedAction, actualAction);
         }
+    }
+
+    @Test
+    public void shouldCreateAValidSymbolWithoutAGroup() {
+        // when
+        symbolDAO.create(symbol2);
+
+        // then
+        Symbol symbolInDB = symbolDAO.get(project.getId(), symbol2.getId(), symbol2.getRevision());
+        assertNotNull(symbolInDB);
+
+        assertEquals(project.getDefaultGroup(), symbolInDB.getGroup());
     }
 
     @Test(expected = ValidationException.class)

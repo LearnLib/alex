@@ -27,15 +27,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         Project project = (Project) session.load(Project.class, group.getProjectId());
 
-        List<SymbolGroup> constrainsTestList = session.createCriteria(SymbolGroup.class)
-                                                        .add(Restrictions.eq("project", group.getProject()))
-                                                        .add(Restrictions.eq("name", group.getName()))
-                                                        .list();
-
-        if (!constrainsTestList.isEmpty()) {
-            HibernateUtil.rollbackTransaction();
-            throw new ValidationException("The group name must be unique per project.");
-        }
+        checkConstrains(session, group); // will throw an ValidationException, if something is wrong
 
         // get the current highest group id in the project and add 1 for the next id
         long id = project.getNextGroupId();
@@ -81,9 +73,11 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                                     .add(Restrictions.eq("id", groupId))
                                                     .uniqueResult();
 
-        Hibernate.initialize(result.getSymbols());
-        for (Symbol symbol : result.getSymbols()) {
-            symbol.loadLazyRelations();
+        if (result != null) {
+            Hibernate.initialize(result.getSymbols());
+            for (Symbol symbol : result.getSymbols()) {
+                symbol.loadLazyRelations();
+            }
         }
 
         HibernateUtil.commitTransaction();
@@ -96,6 +90,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
+        checkConstrains(session, group); // will throw an ValidationException, if something is wrong
+
         session.update(group);
 
         HibernateUtil.commitTransaction();
@@ -103,11 +99,12 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     @Override
     public void delete(long projectId, Long groupId) throws IllegalArgumentException {
+        SymbolGroup group = get(projectId, groupId);
+
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        SymbolGroup group = get(projectId, groupId);
         Project project = (Project) session.load(Project.class, projectId);
 
         if (group.equals(project.getDefaultGroup())) {
@@ -122,5 +119,17 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         session.delete(group);
         HibernateUtil.commitTransaction();
+    }
+
+    private void checkConstrains(Session session, SymbolGroup group) throws ValidationException {
+        List<SymbolGroup> constrainsTestList = session.createCriteria(SymbolGroup.class)
+                                                        .add(Restrictions.eq("project", group.getProject()))
+                                                        .add(Restrictions.eq("name", group.getName()))
+                                                        .list();
+
+        if (!constrainsTestList.isEmpty()) {
+            HibernateUtil.rollbackTransaction();
+            throw new ValidationException("The group name must be unique per project.");
+        }
     }
 }

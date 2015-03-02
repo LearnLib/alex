@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.Project;
+import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import org.junit.After;
 import org.junit.Before;
@@ -12,20 +13,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class SymbolGroupDAOImplTest {
 
     private static ProjectDAO projectDAO;
     private static SymbolGroupDAO symbolGroupDAO;
+    private static SymbolDAO symbolDAO;
+
 
     private Project project;
     private SymbolGroup group;
+    private SymbolGroup group2;
+    private Symbol symbol;
 
     @BeforeClass
     public static void beforeClass() {
         projectDAO = new ProjectDAOImpl();
         symbolGroupDAO = new SymbolGroupDAOImpl();
+        symbolDAO = new SymbolDAOImpl(symbolGroupDAO);
     }
 
     @Before
@@ -38,6 +45,17 @@ public class SymbolGroupDAOImplTest {
         group = new SymbolGroup();
         group.setProject(project);
         group.setName("SymbolGroupDAO - Test Group");
+
+        group2 = new SymbolGroup();
+        group2.setProject(project);
+        group2.setName("SymbolGroupDAO - Test Group 2");
+
+        symbol = new Symbol();
+        symbol.setName("SymbolGroupDAOImpl - Test Symbol");
+        symbol.setAbbreviation("test2");
+        symbol.setProject(project);
+        symbol.setGroup(group);
+        symbolDAO.create(symbol);
     }
 
     @After
@@ -71,9 +89,7 @@ public class SymbolGroupDAOImplTest {
     @Test(expected = ValidationException.class)
     public void shouldNotCreateTwoGroupsWithTheSameNameInOneProject() {
         symbolGroupDAO.create(group);
-        SymbolGroup group2 = new SymbolGroup();
         group2.setName(group.getName());
-        group2.setProject(project);
 
         symbolGroupDAO.create(group2); // should fail
     }
@@ -95,7 +111,6 @@ public class SymbolGroupDAOImplTest {
         }
 
         List<SymbolGroup> groupsInDB = symbolGroupDAO.getAll(project.getId());
-
         assertEquals(groups.size() + 1, groupsInDB.size()); // +1: default group
     }
 
@@ -116,8 +131,43 @@ public class SymbolGroupDAOImplTest {
         }
 
         SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), 1L);
-
         assertEquals(project, groupInDB.getProject());
         assertEquals("Group 1", groupInDB.getName());
+    }
+
+    @Test
+    public void shouldUpdateAGroup() {
+        symbolGroupDAO.create(group);
+
+        group.setName("New Name");
+        symbolGroupDAO.update(group);
+
+        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId());
+        assertEquals("New Name", groupInDB.getName());
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldNotUpdateIfNameConflictsOccur() {
+        symbolGroupDAO.create(group);
+        symbolGroupDAO.create(group2);
+
+        group2.setName(group.getName());
+        symbolGroupDAO.update(group2); // should fail
+    }
+
+    @Test
+    public void shouldDeleteAGroup() {
+        symbolGroupDAO.create(group);
+
+        symbolGroupDAO.delete(project.getId(), group.getId());
+
+        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId());
+        assertNull(groupInDB);
+        assertEquals(project.getDefaultGroup(), symbol.getGroup());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotDeleteTheDefaultGroupOfAProject() {
+        symbolGroupDAO.delete(project.getId(), project.getDefaultGroup().getId());
     }
 }
