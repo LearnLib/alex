@@ -114,6 +114,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         for (Symbol symbol : group.getSymbols()) {
             symbol.setGroup(project.getDefaultGroup());
+            symbol.setHidden(true);
             session.update(symbol);
         }
 

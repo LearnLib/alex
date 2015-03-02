@@ -42,7 +42,7 @@ public class SymbolGroup implements Serializable {
     private Long id;
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
+    @Cascade({ CascadeType.SAVE_UPDATE })
     private Set<Symbol> symbols;
 
     public SymbolGroup() {

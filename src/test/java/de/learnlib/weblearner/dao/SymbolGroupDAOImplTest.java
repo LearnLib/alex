@@ -52,7 +52,7 @@ public class SymbolGroupDAOImplTest {
 
         symbol = new Symbol();
         symbol.setName("SymbolGroupDAOImpl - Test Symbol");
-        symbol.setAbbreviation("test2");
+        symbol.setAbbreviation("test");
         symbol.setProject(project);
         symbol.setGroup(group);
         symbolDAO.create(symbol);
@@ -158,12 +158,17 @@ public class SymbolGroupDAOImplTest {
     @Test
     public void shouldDeleteAGroup() {
         symbolGroupDAO.create(group);
+        symbol.setGroup(group);
+        symbolDAO.update(symbol);
 
         symbolGroupDAO.delete(project.getId(), group.getId());
 
         SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId());
         assertNull(groupInDB);
-        assertEquals(project.getDefaultGroup(), symbol.getGroup());
+        Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol.getId());
+        System.out.println(symbolInDB);
+        assertEquals(project.getDefaultGroup(), symbolInDB.getGroup());
+        assertTrue(symbolInDB.isHidden());
     }
 
     @Test(expected = IllegalArgumentException.class)

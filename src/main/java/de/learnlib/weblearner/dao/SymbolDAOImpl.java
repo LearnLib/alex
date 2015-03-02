@@ -6,6 +6,7 @@ import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
@@ -270,6 +271,10 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new IllegalArgumentException("Update failed: Symbol unknown.");
         }
 
+        SymbolGroup oldGroup = symbolGroupDAO.get(symbolInDB.getProjectId(), symbolInDB.getGroupId());
+        SymbolGroup newGroup = symbolGroupDAO.get(symbol.getProjectId(), symbol.getGroupId());
+        List<Symbol> symbols = getWithAllRevisions(symbol.getProjectId(), symbol.getId());
+
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -282,6 +287,15 @@ public class SymbolDAOImpl implements SymbolDAO {
         // update
         try {
             update(session, symbol);
+            if (!newGroup.equals(oldGroup)) {
+                System.out.println("#############");
+                oldGroup.getSymbols().removeAll(symbols);
+                session.update(oldGroup);
+                for (Symbol s : symbols) {
+                    s.setGroup(newGroup);
+                    session.update(s);
+                }
+            }
             HibernateUtil.commitTransaction();
 
         // error handling
@@ -293,15 +307,12 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     private void update(Session session, Symbol symbol) {
-        Project project = (Project) session.load(Project.class, symbol.getProjectId());
-
         // test for unique constrains
         checkUniqueConstrains(session, symbol); // will throw exception if the symbol is invalid
 
         // count revision up
         symbol.setSymbolId(0);
         symbol.setRevision(symbol.getRevision() + 1);
-        project.addSymbol(symbol);
 
         symbol.beforeSave();
         session.save(symbol);
