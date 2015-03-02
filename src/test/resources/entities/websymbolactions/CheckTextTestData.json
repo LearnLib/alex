@@ -1,5 +1,5 @@
 {
-    "type": "web_checkText",
+    "type": "web_checkForText",
     "value": "Lorem Ipsum",
     "url": "http://example.com"
 }

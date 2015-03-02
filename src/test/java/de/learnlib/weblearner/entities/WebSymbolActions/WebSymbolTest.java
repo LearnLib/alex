@@ -87,7 +87,7 @@ public class WebSymbolTest {
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
                     + "{\"type\":\"web_click\",\"node\":null,\"url\":null},"
-                    + "{\"type\":\"web_checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
+                    + "{\"type\":\"web_checkForText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                     + "{\"type\":\"wait\",\"duration\":0}"
                 + "],\"group\":2,\"id\":0,\"name\":\"WebSymbol\",\"project\":0,\"revision\":0}";
         symbol.setProject(null);
@@ -107,7 +107,7 @@ public class WebSymbolTest {
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
                                     + "{\"type\":\"web_click\",\"node\":null,\"url\":null},"
-                                    + "{\"type\":\"web_checkText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
+                                    + "{\"type\":\"web_checkForText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"duration\":0}"
                                 + "],\"group\":2,\"hidden\":false,\"id\":0,\"name\":\"WebSymbol\",\"project\":1,"
                                 + "\"revision\":0}";

@@ -5,12 +5,12 @@
     "abbreviation" : "test_symb",
     "actions" : [
         {
-            "type": "web_checkNode",
+            "type": "web_checkForNode",
             "value": "#node",
             "url": "http://example.com"
         },
         {
-            "type": "web_checkText",
+            "type": "web_checkForText",
             "value": "Lorem Ipsum",
             "url": "http://example.com"
         },
