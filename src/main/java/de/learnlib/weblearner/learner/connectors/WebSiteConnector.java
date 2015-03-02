@@ -1,6 +1,7 @@
-package de.learnlib.weblearner.learner;
+package de.learnlib.weblearner.learner.connectors;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import de.learnlib.weblearner.learner.BaseUrlManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;

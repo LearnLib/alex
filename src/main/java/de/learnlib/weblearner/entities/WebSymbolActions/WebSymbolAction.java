@@ -3,8 +3,8 @@ package de.learnlib.weblearner.entities.WebSymbolActions;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.SymbolAction;
-import de.learnlib.weblearner.learner.MultiConnector;
-import de.learnlib.weblearner.learner.WebSiteConnector;
+import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -22,8 +22,8 @@ public abstract class WebSymbolAction extends SymbolAction {
     private static final long serialVersionUID = -1990239222213631726L;
 
     @Override
-    public ExecuteResult execute(MultiConnector target) {
-        return execute((WebSiteConnector) target.getConnector(WebSiteConnector.class));
+    public ExecuteResult execute(MultiConnector connector) {
+        return execute(connector.getConnector(WebSiteConnector.class));
     }
 
     protected abstract ExecuteResult execute(WebSiteConnector connector);

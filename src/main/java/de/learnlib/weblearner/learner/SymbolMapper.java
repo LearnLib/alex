@@ -4,6 +4,7 @@ import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.mapper.api.Mapper;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.learner.connectors.MultiConnector;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;

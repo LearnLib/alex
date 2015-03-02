@@ -1,7 +1,7 @@
 package de.learnlib.weblearner.entities;
 
 import de.learnlib.api.SULException;
-import de.learnlib.weblearner.learner.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.MultiConnector;
 import org.hibernate.Hibernate;
 
 import java.util.List;

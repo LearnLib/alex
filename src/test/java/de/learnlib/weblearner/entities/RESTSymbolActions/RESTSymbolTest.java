@@ -2,7 +2,7 @@ package de.learnlib.weblearner.entities.RESTSymbolActions;
 
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.learner.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.MultiConnector;
 import org.junit.Before;
 import org.junit.Test;
 

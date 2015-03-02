@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
-import de.learnlib.weblearner.learner.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.MultiConnector;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;

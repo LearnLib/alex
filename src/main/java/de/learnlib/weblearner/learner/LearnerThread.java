@@ -12,7 +12,8 @@ import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.entities.LearnAlgorithms;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.utils.Counter;
+import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.MultiContextHandler;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
@@ -231,8 +232,8 @@ public class LearnerThread<C> extends Thread {
         long startTime = result.getStartTime().getTime();
         long currentTime = new Date().getTime();
         result.setDuration(currentTime - startTime);
-        if (context instanceof Counter) {
-            result.setAmountOfResets(((Counter) context).getCounter() - result.getAmountOfResets());
+        if (context instanceof MultiContextHandler) {
+            result.setAmountOfResets(((MultiContextHandler) context).getCounter() - result.getAmountOfResets());
         } else {
             result.setAmountOfResets(-1);
         }

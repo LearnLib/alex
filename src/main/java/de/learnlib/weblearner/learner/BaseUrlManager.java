@@ -3,7 +3,7 @@ package de.learnlib.weblearner.learner;
 /**
  * Class to mange a URL and get URL based on this.
  */
-class BaseUrlManager {
+public class BaseUrlManager {
 
     /** The base url of the connection. All other urls just extends this. */
     protected String baseUrl;

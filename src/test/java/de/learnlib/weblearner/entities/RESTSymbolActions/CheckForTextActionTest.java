@@ -2,7 +2,7 @@ package de.learnlib.weblearner.entities.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
-import de.learnlib.weblearner.learner.WebServiceConnector;
+import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

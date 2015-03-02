@@ -1,9 +1,11 @@
-package de.learnlib.weblearner.learner;
+package de.learnlib.weblearner.learner.connectors;
+
+import de.learnlib.mapper.ContextExecutableInputSUL;
 
 /**
  * Class to deal with the context of a classical web site.
  */
-public class WebSiteContextHandler extends AbstractContextHandlerWithCounter<WebSiteConnector> {
+public class WebSiteContextHandler implements ContextExecutableInputSUL.ContextHandler<WebSiteConnector> {
 
     /** The connector to use to the world. */
     private WebSiteConnector connector;
@@ -15,13 +17,11 @@ public class WebSiteContextHandler extends AbstractContextHandlerWithCounter<Web
      *         The base URL of the SUL used by the connector. All other paths will treated as suffix to this.
      */
     public WebSiteContextHandler(String baseUrl) {
-        resetCounter();
         this.connector = new WebSiteConnector(baseUrl);
     }
 
     @Override
     public WebSiteConnector createContext() {
-        incrementCounter();
         this.connector.clearBrowserData();
         return connector;
     }

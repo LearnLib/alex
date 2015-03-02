@@ -10,7 +10,7 @@ import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.PropertyFilterMixIn;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
-import de.learnlib.weblearner.learner.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.MultiConnector;
 import org.junit.Before;
 import org.junit.Test;
 

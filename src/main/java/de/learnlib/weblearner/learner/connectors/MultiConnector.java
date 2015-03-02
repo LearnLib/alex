@@ -1,4 +1,4 @@
-package de.learnlib.weblearner.learner;
+package de.learnlib.weblearner.learner.connectors;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +15,8 @@ public class MultiConnector {
         this.connectors.put(type, connector);
     }
 
-    public Connector getConnector(Class<?> type) {
-        return this.connectors.get(type);
+    public <T> T getConnector(Class<T> type) {
+        return (T) this.connectors.get(type);
     }
 
     public void clear() {

@@ -1,4 +1,6 @@
-package de.learnlib.weblearner.learner;
+package de.learnlib.weblearner.learner.connectors;
+
+import de.learnlib.weblearner.learner.BaseUrlManager;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -52,7 +54,7 @@ public class WebServiceConnector implements Connector {
      * @param resetUrl
      *         The url to reset the SUL. This URL is relative to the base URL.
      */
-     WebServiceConnector(WebTarget target, String baseUrl, String resetUrl) {
+     public WebServiceConnector(WebTarget target, String baseUrl, String resetUrl) {
         this.baseUrl = new BaseUrlManager(baseUrl);
 
         this.target = target;

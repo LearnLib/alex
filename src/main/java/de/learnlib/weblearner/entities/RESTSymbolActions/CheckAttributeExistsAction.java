@@ -2,7 +2,7 @@ package de.learnlib.weblearner.entities.RESTSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
-import de.learnlib.weblearner.learner.WebServiceConnector;
+import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
 import de.learnlib.weblearner.utils.JSONHelpers;
 
 import javax.persistence.DiscriminatorValue;

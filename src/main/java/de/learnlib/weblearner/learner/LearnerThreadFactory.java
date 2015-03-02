@@ -7,6 +7,12 @@ import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.LearnerResumeConfiguration;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.learner.connectors.CounterStoreContextHandler;
+import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.MultiContextHandler;
+import de.learnlib.weblearner.learner.connectors.VariableStoreContextHandler;
+import de.learnlib.weblearner.learner.connectors.WebServiceContextHandler;
+import de.learnlib.weblearner.learner.connectors.WebSiteContextHandler;
 
 import java.util.List;
 
@@ -50,6 +56,8 @@ public class LearnerThreadFactory {
         MultiContextHandler context = new MultiContextHandler();
         context.addHandler(createWebSiteContextHandler(project));
         context.addHandler(createWebServiceContextHandler(project));
+        context.addHandler(new VariableStoreContextHandler());
+        context.addHandler(new CounterStoreContextHandler());
 
         context.addResetSymbol(resetSymbol);
 

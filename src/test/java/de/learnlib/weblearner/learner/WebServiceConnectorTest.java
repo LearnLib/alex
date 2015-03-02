@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.learner;
 
+import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;

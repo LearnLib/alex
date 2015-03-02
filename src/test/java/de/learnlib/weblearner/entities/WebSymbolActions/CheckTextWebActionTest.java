@@ -1,7 +1,7 @@
 package de.learnlib.weblearner.entities.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.weblearner.learner.WebSiteConnector;
+import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 

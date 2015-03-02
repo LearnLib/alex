@@ -2,7 +2,7 @@ package de.learnlib.weblearner.entities.RESTSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
-import de.learnlib.weblearner.learner.WebServiceConnector;
+import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -1,4 +1,4 @@
-package de.learnlib.weblearner.learner;
+package de.learnlib.weblearner.learner.connectors;
 
 import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.weblearner.entities.Symbol;
@@ -6,13 +6,16 @@ import de.learnlib.weblearner.entities.Symbol;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MultiContextHandler extends AbstractContextHandlerWithCounter<MultiConnector> {
+public class MultiContextHandler implements ContextExecutableInputSUL.ContextHandler<MultiConnector> {
 
     private List<ContextExecutableInputSUL.ContextHandler<? extends Connector>> handlers;
 
     private List<Symbol> resetSymbols;
 
     private MultiConnector connectors;
+
+    /** Keep track of the amount of learn iterations. Could also be used for a virtual reset. */
+    protected int counter;
 
     public MultiContextHandler() {
         this.handlers = new LinkedList<>();
@@ -67,4 +70,17 @@ public class MultiContextHandler extends AbstractContextHandlerWithCounter<Multi
 //            }
 //        }
     }
+
+    public int getCounter() {
+        return counter;
+    }
+
+    public void resetCounter() {
+        counter = 0;
+    }
+
+    public int incrementCounter() {
+        return ++counter;
+    }
+
 }
