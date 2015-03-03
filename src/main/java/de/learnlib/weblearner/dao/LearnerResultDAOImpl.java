@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.LearnerResult;
+import de.learnlib.weblearner.learner.Learner;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -14,6 +15,7 @@ import javax.validation.ValidationException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -25,7 +27,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Override
     public void create(LearnerResult learnerResult) throws ValidationException {
         // new LearnerResults should have a project, not a test number not a step number
-        if (learnerResult.getProject() == null || learnerResult.getTestNo() > 0 || learnerResult.getStepNo() > 0) {
+        if (learnerResult.getProject() == null
+                || learnerResult.getTestNo() != null
+                || learnerResult.getStepNo() != null) {
             throw new ValidationException(
                 "To create a LearnResult it must have a Project but must not have a test no. nor step no.");
         }
@@ -36,9 +40,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         // get the current highest test no in the project and add 1 for the next id
         Long maxTestNo = (Long) session.createCriteria(LearnerResult.class)
-                                            .add(Restrictions.eq("project", learnerResult.getProject()))
-                                            .setProjection(Projections.max("testNo"))
-                                            .uniqueResult();
+                                        .add(Restrictions.eq("project", learnerResult.getProject()))
+                                        .setProjection(Projections.max("testNo"))
+                                        .uniqueResult();
         if (maxTestNo == null) {
             maxTestNo = 0L;
         }
@@ -53,7 +57,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public List<String> getAllAsJSON(long projectId) throws IllegalArgumentException {
+    public List<String> getAllAsJSON(Long projectId) throws IllegalArgumentException {
         // subquery preparation to get a list of ids combined with their highest step no
         DetachedCriteria maxStepNumbers = DetachedCriteria.forClass(LearnerResult.class)
                                                             .add(Restrictions.eq("project.id", projectId))
@@ -67,7 +71,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         HibernateUtil.beginTransaction();
 
         if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
-            throw new IllegalArgumentException("The project id is invalid.");
+            throw new NoSuchElementException("The project with the id " + projectId + " was not found.");
         }
 
         // fetch the LearnerResults of the project with the the highest step no.
@@ -85,13 +89,14 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public List<String> getAllAsJSON(long projectId, long testNo) throws IllegalArgumentException {
+    public List<String> getAllAsJSON(Long projectId, Long testNo)
+            throws IllegalArgumentException, NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
-            throw new IllegalArgumentException("The project id is invalid.");
+            throw new NoSuchElementException("The project with the id " + projectId + " was not found.");
         }
 
         // fetch the LearnerResults of the project with the the highest step no.
@@ -104,7 +109,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                                         .list();
 
         if (result.isEmpty()) {
-            throw new IllegalArgumentException("The test no. is invalid.");
+            throw new NoSuchElementException("No result with the test no. " + testNo + " was found.");
         }
 
         // done
@@ -113,13 +118,13 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public LearnerResult get(long projectId, long testNo) throws IllegalArgumentException {
+    public LearnerResult get(Long projectId, Long testNo) throws NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
-            throw new IllegalArgumentException("The project id is invalid.");
+            throw new NoSuchElementException("The project with the id " + projectId + " was not found.");
         }
 
         Long latestStepNo = getHighestStepNumber(session, projectId, testNo);
@@ -136,13 +141,13 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public String getAsJSON(long projectId, long testNo) throws IllegalArgumentException {
+    public String getAsJSON(Long projectId, Long testNo) throws NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
-            throw new IllegalArgumentException("The project id is invalid.");
+            throw new NoSuchElementException("The project with the id " + projectId + " was not found.");
         }
 
         Long latestStepNo = getHighestStepNumber(session, projectId, testNo);
@@ -155,19 +160,20 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public String getAsJSON(long projectId, long testNo, long stepNo) throws IllegalArgumentException {
+    public String getAsJSON(Long projectId, Long testNo, Long stepNo) throws IllegalArgumentException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
-            throw new IllegalArgumentException("The project id is invalid.");
+            throw new NoSuchElementException("The project with the id " + projectId + " was not found.");
         }
 
         String result = getAsJSON(session, projectId, testNo, stepNo);
 
         if (result == null) {
-            throw new IllegalArgumentException("The test no. or step no. is invalid.");
+            throw new NoSuchElementException("The result with the test no. " + testNo
+                                                     + " and the step no. " + stepNo  +"  was not found.");
         }
 
         // done
@@ -190,7 +196,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public void delete(long projectId, Long... testNo) {
+    public void delete(Long projectId, Long... testNo) throws NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -200,14 +206,14 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         if (diffSet.size() > 0) {
             String errorMessage = "The result with the number " + diffSet + " was not found, thus nothing could"
                                     + "be deleted";
-            throw new IllegalArgumentException(errorMessage);
+            throw new NoSuchElementException(errorMessage);
         }
 
         @SuppressWarnings("unchecked") // should always return a list of LernerResults
         List<LearnerResult> results = session.createCriteria(LearnerResult.class)
-                                                    .add(Restrictions.eq("project.id", projectId))
-                                                    .add(Restrictions.in("testNo", testNo))
-                                                    .list();
+                                                .add(Restrictions.eq("project.id", projectId))
+                                                .add(Restrictions.in("testNo", testNo))
+                                                .list();
         for (LearnerResult r : results) {
             session.delete(r);
         }
@@ -218,31 +224,31 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     private String getAsJSON(Session session, long projectId, long testNo, long stepNo) {
         return (String) session.createCriteria(LearnerResult.class)
-                .add(Restrictions.eq("project.id", projectId))
-                .add(Restrictions.eq("testNo", testNo))
-                .add(Restrictions.eq("stepNo", stepNo))
-                .setProjection(Projections.property("JSON"))
-                .uniqueResult();
+                                .add(Restrictions.eq("project.id", projectId))
+                                .add(Restrictions.eq("testNo", testNo))
+                                .add(Restrictions.eq("stepNo", stepNo))
+                                .setProjection(Projections.property("JSON"))
+                                .uniqueResult();
     }
 
     private Long getHighestStepNumber(Session session, long projectId, long testNo) {
         Long latestStepNo = (Long) session.createCriteria(LearnerResult.class)
-                .add(Restrictions.eq("project.id", projectId))
-                .add(Restrictions.eq("testNo", testNo))
-                .setProjection(Projections.max("stepNo"))
-                .uniqueResult();
+                                            .add(Restrictions.eq("project.id", projectId))
+                                            .add(Restrictions.eq("testNo", testNo))
+                                            .setProjection(Projections.max("stepNo"))
+                                            .uniqueResult();
         if (latestStepNo == null) {
-            throw new IllegalArgumentException("The test no. is invalid.");
+            throw new NoSuchElementException("No result with the test no. " + testNo + " was found.");
         }
         return latestStepNo;
     }
 
     private List<Long> getTestNumbersInDB(Session session, Long projectId, Long... testNo) {
         return session.createCriteria(LearnerResult.class)
-                                    .add(Restrictions.eq("project.id", projectId))
-                                    .add(Restrictions.in("testNo", testNo))
-                                    .setProjection(Projections.distinct(Projections.property("testNo")))
-                                    .list();
+                        .add(Restrictions.eq("project.id", projectId))
+                        .add(Restrictions.in("testNo", testNo))
+                        .setProjection(Projections.distinct(Projections.property("testNo")))
+                        .list();
     }
 
     private Set<Long> setDifference(Collection<Long> collectionA, Collection<Long> collectionB) {

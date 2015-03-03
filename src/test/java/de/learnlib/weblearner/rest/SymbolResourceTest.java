@@ -87,6 +87,7 @@ public class SymbolResourceTest extends JerseyTest {
 
         symbol = new Symbol();
         symbol.setId(SYMBOL_TEST_ID);
+        symbol.setRevision(1L);
         symbol.setName("Symbol Resource Test Symbol");
         symbol.setAbbreviation("srts");
         symbol.setProject(project);
@@ -94,6 +95,7 @@ public class SymbolResourceTest extends JerseyTest {
 
         symbol2 = new Symbol();
         symbol2.setId(SYMBOL_TEST_ID + 1);
+        symbol2.setRevision(1L);
         symbol2.setName("Symbol Resource Test Symbol 2");
         symbol2.setAbbreviation("srts 2");
         symbol2.setProject(project);
@@ -124,7 +126,7 @@ public class SymbolResourceTest extends JerseyTest {
                         + "\"name\":\"Symbol Resource Test Symbol\"}";
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().post(Entity.json(json));
-        given(symbolDAO.getWithLatestRevision(0, SYMBOL_TEST_ID)).willReturn(symbol);
+        given(symbolDAO.getWithLatestRevision(0L, SYMBOL_TEST_ID)).willReturn(symbol);
 
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
     }
@@ -180,7 +182,7 @@ public class SymbolResourceTest extends JerseyTest {
     public void shouldCreateValidSymbolsWithoutProjectOrRevision() throws IOException {
         // given
         symbol.setProject(null);
-        symbol2.setRevision(0);
+        symbol2.setRevision(0L);
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
@@ -249,7 +251,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],\"group\":0,"
                                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                                + "\"project\":10,\"revision\":0}]";
+                                + "\"project\":10,\"revision\":1}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.VISIBLE);
@@ -267,7 +269,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],\"group\":0,"
                                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                                + "\"project\":10,\"revision\":0}]";
+                                + "\"project\":10,\"revision\":1}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.ALL);

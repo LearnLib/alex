@@ -4,6 +4,7 @@ import de.learnlib.weblearner.entities.LearnerResult;
 
 import javax.validation.ValidationException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Interface to describe how to deal with LearnerResult.
@@ -27,10 +28,10 @@ public interface LearnerResultDAO {
      * @param projectId
      *         The project id of the test run.
      * @return A list of LearnerResults as JSON data.
-     * @throws IllegalArgumentException
+     * @throws NoSuchElementException
      *         If the project id was invalid.
      */
-    List<String> getAllAsJSON(long projectId) throws IllegalArgumentException;
+    List<String> getAllAsJSON(Long projectId) throws NoSuchElementException;
 
     /**
      * Get a list of JSON data containing all the steps of a given TestRun for a given Project.
@@ -40,10 +41,10 @@ public interface LearnerResultDAO {
      * @param testNo
      *         The test no. of the test run.
      * @return A list of LearnerResults as JSON data.
-     * @throws IllegalArgumentException
+     * @throws NoSuchElementException
      *         If the project id or test no. was invalid.
      */
-    List<String> getAllAsJSON(long projectId, long testNo) throws IllegalArgumentException;
+    List<String> getAllAsJSON(Long projectId, Long testNo) throws NoSuchElementException;
 
     /**
      * Get a the last / final LearnerResult of one test run.
@@ -53,10 +54,10 @@ public interface LearnerResultDAO {
      * @param testRunNo
      *         The test no. of the test run.
      * @return The LearnerResult you are looking for, if it exists.
-     * @throws IllegalArgumentException
+     * @throws NoSuchElementException
      *         If the project id or test no. was invalid.
      */
-    LearnerResult get(long projectId, long testRunNo) throws IllegalArgumentException;
+    LearnerResult get(Long projectId, Long testRunNo) throws NoSuchElementException;
 
     /**
      * Get the latest LearnerResult of a given test run as JSON data, e.g. the final result.
@@ -66,10 +67,10 @@ public interface LearnerResultDAO {
      * @param testNo
      *         The test no. of the test run.
      * @return The latest LearnerResult, i.e. the one with the highest step no., for the given test run.
-     * @throws IllegalArgumentException
+     * @throws NoSuchElementException
      *         If the project id or test no. was invalid.
      */
-    String getAsJSON(long projectId, long testNo) throws IllegalArgumentException;
+    String getAsJSON(Long projectId, Long testNo) throws NoSuchElementException;
 
     /**
      * Get a specific LearnerResult as JSON data.
@@ -81,10 +82,10 @@ public interface LearnerResultDAO {
      * @param stepNo
      *         The step no. of the test run / LearnerResult.
      * @return The LearnerResult as JSON data.
-     * @throws IllegalArgumentException
+     * @throws java.util.NoSuchElementException
      *         If the project id, test no. or step no. was invalid.
      */
-    String getAsJSON(long projectId, long testNo, long stepNo) throws IllegalArgumentException;
+    String getAsJSON(Long projectId, Long testNo, Long stepNo) throws NoSuchElementException;
 
     /**
      * Update a given LearnResult. Update means here, to save a new LearnerResult with an increased step no.
@@ -105,8 +106,8 @@ public interface LearnerResultDAO {
      *         The project id.
      * @param testNo
      *         The test numbers to delete.
-     * @throws IllegalArgumentException
+     * @throws NoSuchElementException
      *         If the project id or test no. was invalid.
      */
-    void delete(long projectId, Long... testNo) throws  IllegalArgumentException;
+    void delete(Long projectId, Long... testNo) throws  NoSuchElementException;
 }

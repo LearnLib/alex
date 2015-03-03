@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 
 public class ProjectResourceTest extends JerseyTest {
 
-    private static final int PROJECT_TEST_ID = 1;
+    private static final Long PROJECT_TEST_ID = 1L;
 
     @Mock
     private ProjectDAO projectDAO;

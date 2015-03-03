@@ -6,10 +6,11 @@ import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -67,8 +68,8 @@ public class SymbolDAOImpl implements SymbolDAO {
                 | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             for (Symbol symbol : symbols) {
-                symbol.setId(0L);
-                symbol.setRevision(0L);
+                symbol.setId(null);
+                symbol.setRevision(null);
             }
             throw new ValidationException("Could not create symbol because it was invalid.", e);
         }
@@ -76,7 +77,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     private void create(Session session, Symbol symbol) {
         // new symbols should have a project, not an id and not a revision
-        if (symbol.getProject() == null || symbol.getId() > 0 || symbol.getRevision() > 0) {
+        if (symbol.getProject() == null || symbol.getId() != null || symbol.getRevision() != null) {
             throw new ValidationException(
                     "To create a symbols it must have a Project but not haven an ID or and revision");
         }
@@ -96,10 +97,10 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.setRevision(1L);
         project.addSymbol(symbol);
 
-        SymbolGroup group = (SymbolGroup) session.createCriteria(SymbolGroup.class)
-                                                    .add(Restrictions.eq("project.id", project.getId()))
-                                                    .add(Restrictions.eq("id", symbol.getGroupId()))
-                                                    .uniqueResult();
+        SymbolGroup group = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("project", project)
+                                                    .using("id", symbol.getGroupId())
+                                                    .load();
         if (group == null) {
             group = project.getDefaultGroup();
         }
@@ -110,7 +111,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol> getAll(long projectId, List<IdRevisionPair> idRevPairs) {
+    public List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs) {
         // no DB interaction if no symbols are requested
         if (idRevPairs.isEmpty()) {
             return new LinkedList<>();
@@ -151,12 +152,12 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol> getByIdsWithLatestRevision(long projectId, Long... ids) {
+    public List<Symbol> getByIdsWithLatestRevision(Long projectId, Long... ids) {
         return getByIdsWithLatestRevision(projectId, SymbolVisibilityLevel.ALL, ids);
     }
 
     @Override
-    public List<Symbol> getByIdsWithLatestRevision(long projectId, SymbolVisibilityLevel visibilityLevel,
+    public List<Symbol> getByIdsWithLatestRevision(Long projectId, SymbolVisibilityLevel visibilityLevel,
                                                       Long... ids) {
         // start session
         Session session = HibernateUtil.getSession();
@@ -191,7 +192,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol> getAllWithLatestRevision(long projectId, SymbolVisibilityLevel visibilityLevel) {
+    public List<Symbol> getAllWithLatestRevision(Long projectId, SymbolVisibilityLevel visibilityLevel) {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -211,7 +212,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public Symbol get(long projectId, long id, long revision) {
+    public Symbol get(Long projectId, Long id, Long revision) {
         IdRevisionPair idRevisionPair = new IdRevisionPair(id, revision);
         List<IdRevisionPair> idRevisionList =  new LinkedList<>();
         idRevisionList.add(idRevisionPair);
@@ -224,7 +225,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public Symbol getWithLatestRevision(long projectId, long id) {
+    public Symbol getWithLatestRevision(Long projectId, Long id) {
         List<Symbol> resultList = getByIdsWithLatestRevision(projectId, id);
 
         if (resultList.isEmpty()) {
@@ -234,7 +235,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol> getWithAllRevisions(long projectId, long id) {
+    public List<Symbol> getWithAllRevisions(Long projectId, Long id) {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -288,7 +289,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         try {
             update(session, symbol);
             if (!newGroup.equals(oldGroup)) {
-                System.out.println("#############");
                 oldGroup.getSymbols().removeAll(symbols);
                 session.update(oldGroup);
                 for (Symbol s : symbols) {
@@ -311,7 +311,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         checkUniqueConstrains(session, symbol); // will throw exception if the symbol is invalid
 
         // count revision up
-        symbol.setSymbolId(0);
+        symbol.setSymbolId(0L);
         symbol.setRevision(symbol.getRevision() + 1);
 
         symbol.beforeSave();
@@ -319,7 +319,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public void hide(long projectId, Long... ids) throws IllegalArgumentException {
+    public void hide(Long projectId, Long... ids) throws IllegalArgumentException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -350,7 +350,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public void show(long projectId, Long... ids) throws IllegalArgumentException {
+    public void show(Long projectId, Long... ids) throws IllegalArgumentException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -404,13 +404,18 @@ public class SymbolDAOImpl implements SymbolDAO {
      */
     private void checkUniqueConstrains(Session session, Symbol symbol) throws IllegalArgumentException {
         // put constrains into a query
+        Junction restrictions = Restrictions.conjunction()
+                                    .add(Restrictions.eq("project", symbol.getProject()))
+                                    .add(Restrictions.disjunction()
+                                                 .add(Restrictions.eq("name", symbol.getName()))
+                                                 .add(Restrictions.eq("abbreviation", symbol.getAbbreviation())));
+        if (symbol.getId() != null) {
+            restrictions = restrictions.add(Restrictions.ne("id", symbol.getId()));
+        }
+
         @SuppressWarnings("unchecked") // should return list of symbols
         List<Symbol> testList = session.createCriteria(symbol.getClass())
-                                            .add(Restrictions.eq("project.id", symbol.getProjectId()))
-                                            .add(Restrictions.ne("id", symbol.getId()))
-                                            .add(Restrictions.disjunction()
-                                                    .add(Restrictions.eq("name", symbol.getName()))
-                                                    .add(Restrictions.eq("abbreviation", symbol.getAbbreviation())))
+                                            .add(restrictions)
                                             .list();
 
         // if the query result is not empty, the constrains are violated.

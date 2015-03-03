@@ -32,7 +32,7 @@ public class WebSymbolTest {
     @Before
     public void setUp() {
         Project project = new Project();
-        project.setId(1);
+        project.setId(1L);
         project.setName("Web Symbol Test Project");
 
         SymbolGroup group = new SymbolGroup();
@@ -77,7 +77,7 @@ public class WebSymbolTest {
         assertEquals(symbol.getRevision(), symbolFromMapper.getRevision());
         assertEquals(symbol.getAbbreviation(), symbolFromMapper.getAbbreviation());
         assertEquals(symbol.getName(), symbolFromMapper.getName());
-        assertEquals(symbol.getGroup().getGroupId(), symbolFromMapper.getGroup().getGroupId());
+        assertEquals(symbol.getGroup(), symbolFromMapper.getGroup());
         assertEquals(symbol.getGroup().getId(), symbolFromMapper.getGroup().getId());
         assertEquals(symbol.getGroup().getProject(), symbolFromMapper.getGroup().getProject());
         assertEquals(symbol.getGroup(), symbolFromMapper.getGroup());
@@ -89,7 +89,7 @@ public class WebSymbolTest {
                     + "{\"type\":\"web_click\",\"node\":null,\"url\":null},"
                     + "{\"type\":\"web_checkForText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                     + "{\"type\":\"wait\",\"duration\":0}"
-                + "],\"group\":2,\"id\":0,\"name\":\"WebSymbol\",\"project\":0,\"revision\":0}";
+                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":0,\"revision\":null}";
         symbol.setProject(null);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -109,8 +109,8 @@ public class WebSymbolTest {
                                     + "{\"type\":\"web_click\",\"node\":null,\"url\":null},"
                                     + "{\"type\":\"web_checkForText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"duration\":0}"
-                                + "],\"group\":2,\"hidden\":false,\"id\":0,\"name\":\"WebSymbol\",\"project\":1,"
-                                + "\"revision\":0}";
+                                + "],\"group\":2,\"hidden\":false,\"id\":null,\"name\":\"WebSymbol\",\"project\":1,"
+                                + "\"revision\":null}";
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symbol);
 

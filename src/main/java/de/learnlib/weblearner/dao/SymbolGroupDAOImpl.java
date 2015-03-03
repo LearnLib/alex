@@ -76,10 +76,11 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        SymbolGroup result = (SymbolGroup) session.createCriteria(SymbolGroup.class)
-                                                    .add(Restrictions.eq("project.id", projectId))
-                                                    .add(Restrictions.eq("id", groupId))
-                                                    .uniqueResult();
+        Project project = (Project) session.load(Project.class, projectId);
+        SymbolGroup result = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("project", project)
+                                                    .using("id", groupId)
+                                                    .load();
 
         if (result == null) {
             HibernateUtil.rollbackTransaction();
@@ -104,10 +105,10 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         checkConstrains(session, group); // will throw an ValidationException, if something is wrong
 
-        SymbolGroup groupInDB = (SymbolGroup) session.createCriteria(SymbolGroup.class)
-                                                        .add(Restrictions.eq("project.id", group.getProjectId()))
-                                                        .add(Restrictions.eq("id", group.getId()))
-                                                        .uniqueResult();
+        SymbolGroup groupInDB = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                        .using("project", group.getProject())
+                                                        .using("id", group.getId())
+                                                        .load();
         if (groupInDB == null) {
             HibernateUtil.rollbackTransaction();
             throw new IllegalStateException("You can only update existing groups!");

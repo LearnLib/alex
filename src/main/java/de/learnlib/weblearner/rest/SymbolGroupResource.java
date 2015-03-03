@@ -15,7 +15,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -26,6 +25,7 @@ import java.util.NoSuchElementException;
 
 /**
  * REST API to manage groups.
+ * @resourcePath groups
  * @resourceDescription Operations for groups
  */
 @Path("/projects/{project_id}/groups")
@@ -125,7 +125,7 @@ public class SymbolGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         LinkedList<Symbol> symbols = new LinkedList<>();
-        for (int i = 1; i <= 10; i++) {
+        for (long i = 1; i <= 10; i++) {
             Symbol newSymbol = new Symbol();
             newSymbol.setId(i);
             newSymbol.setName("Symbol " + i);

@@ -18,9 +18,9 @@ import static org.mockito.Mockito.mock;
 
 public class LearnerResultTest {
 
-    private static final long PROJECT_ID = 3;
-    private static final long ID = 3;
-    private static final long STEP_NO = 3;
+    private static final Long PROJECT_ID = 3L;
+    private static final Long ID = 3L;
+    private static final Long STEP_NO = 3L;
     private static final Date TEST_DATE = new Date(0);
     private static final long TEST_DURATION = 9001;
     public static final int TEST_RESET_AMOUNT = 123;

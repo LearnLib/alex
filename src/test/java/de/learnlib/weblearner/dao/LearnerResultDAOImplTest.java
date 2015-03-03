@@ -17,6 +17,7 @@ import org.junit.Test;
 import javax.validation.ValidationException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -103,14 +104,14 @@ public class LearnerResultDAOImplTest {
 
     @Test(expected = ValidationException.class)
     public void shouldNotSaveALearnResultsWithAnId() {
-        learnerResult.setTestNo(1);
+        learnerResult.setTestNo(1L);
 
         learnerResultDAO.create(learnerResult); // should fail
     }
 
     @Test(expected = ValidationException.class)
     public void shouldNotSaveALearnResultsWithAStepNo() {
-        learnerResult.setStepNo(1);
+        learnerResult.setStepNo(1L);
 
         learnerResultDAO.create(learnerResult); // should fail
     }
@@ -129,9 +130,9 @@ public class LearnerResultDAOImplTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingAllFinalResultsThrowsAnExceptionIfTheProjectIdIsInvalid() {
-        learnerResultDAO.getAllAsJSON(-1); // should fail
+        learnerResultDAO.getAllAsJSON(-1L); // should fail
     }
 
     @Test
@@ -161,15 +162,15 @@ public class LearnerResultDAOImplTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingAllResultsThrowsAnExceptionIfTheProjectIdIsInvalid() {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.getAllAsJSON(-1, learnerResult.getTestNo()); // should fail
+        learnerResultDAO.getAllAsJSON(-1L, learnerResult.getTestNo()); // should fail
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingAllResultsThrowsAnExceptionIfTheResultIdIsInvalid() {
-        learnerResultDAO.getAllAsJSON(project.getId(), -1); // should fail
+        learnerResultDAO.getAllAsJSON(project.getId(), -1L); // should fail
     }
 
     @Test
@@ -183,15 +184,15 @@ public class LearnerResultDAOImplTest {
         assertEquals(learnerResult, resultInDB);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingOneFinalResultThrowsAnExceptionIfTheProjectIdIsInvalid() {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.get(-1, learnerResult.getTestNo()); // should fail
+        learnerResultDAO.get(-1L, learnerResult.getTestNo()); // should fail
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingOneFinalResultThrowsAnExceptionIfTheResultIdIsInvalid() {
-        learnerResultDAO.get(project.getId(), -1); // should fail
+        learnerResultDAO.get(project.getId(), -1L); // should fail
     }
 
     @Test
@@ -205,15 +206,15 @@ public class LearnerResultDAOImplTest {
         assertEquals(learnerResult.getJSON(), jsonInDB);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingOneFinalResultAsJSONThrowsAnExceptionIfTheProjectIdIsInvalid() {
     learnerResultDAO.create(learnerResult);
-    learnerResultDAO.getAsJSON(-1, learnerResult.getTestNo()); // should fail
+    learnerResultDAO.getAsJSON(-1L, learnerResult.getTestNo()); // should fail
 }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingOneFinalResultAsJSONThrowsAnExceptionIfTheResultIdIsInvalid() {
-        learnerResultDAO.getAsJSON(project.getId(), -1); // should
+        learnerResultDAO.getAsJSON(project.getId(), -1L); // should
     }
 
     @Test
@@ -228,37 +229,37 @@ public class LearnerResultDAOImplTest {
             learnerResultDAO.update(learnerResult);
         }
 
-        String jsonInDB = learnerResultDAO.getAsJSON(project.getId(), learnerResult.getTestNo(), RESULTS_AMOUNT / 2);
+        String jsonInDB = learnerResultDAO.getAsJSON(project.getId(), learnerResult.getTestNo(), RESULTS_AMOUNT / 2L);
         assertEquals(middleResult, jsonInDB);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheProjectIdIsInvalid() {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.getAsJSON(-1, learnerResult.getTestNo(), 0); // should fail
+        learnerResultDAO.getAsJSON(-1L, learnerResult.getTestNo(), 0L); // should fail
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheResultIdIsInvalid() {
-        learnerResultDAO.getAsJSON(project.getId(), -1, 0); // should fail
+        learnerResultDAO.getAsJSON(project.getId(), -1L, 0L); // should fail
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheStepNoIsInvalid() {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.getAsJSON(project.getId(), learnerResult.getTestNo(), -1); // should fail
+        learnerResultDAO.getAsJSON(project.getId(), learnerResult.getTestNo(), -1L); // should fail
     }
 
     @Test
     public void shouldUpdateValidLearnResults() {
         learnerResultDAO.create(learnerResult);
-        long oldId = learnerResult.getTestNo();
-        long oldStepNo = learnerResult.getStepNo();
+        Long oldId = learnerResult.getTestNo();
+        Long oldStepNo = learnerResult.getStepNo();
 
         learnerResultDAO.update(learnerResult);
         assertEquals(project.getId(), learnerResult.getProject().getId());
         assertEquals(oldId, learnerResult.getTestNo());
-        assertEquals(oldStepNo + 1, learnerResult.getStepNo());
+        assertEquals(new Long(oldStepNo + 1L), learnerResult.getStepNo());
     }
 
     @Test
@@ -309,7 +310,7 @@ public class LearnerResultDAOImplTest {
         assertEquals(0L, resultCounter.longValue());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void shouldThrowAnExceptionIfTheTestResultToDeleteWasNotFound() {
         List<LearnerResult> learnerResults = createLearnerResultsList();
 

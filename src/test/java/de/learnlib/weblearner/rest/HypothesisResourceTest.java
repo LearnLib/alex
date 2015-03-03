@@ -21,6 +21,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -69,7 +70,7 @@ public class HypothesisResourceTest extends JerseyTest {
     @Test
     public void shouldReturnAllFinalResults() {
         List<String> results = new LinkedList<>();
-        for (int i = 0; i < TEST_RESULT_AMOUNT; i++) {
+        for (long i = 0; i < TEST_RESULT_AMOUNT; i++) {
             Alphabet<String> sigma = new SimpleAlphabet<>();
             sigma.add("0");
             sigma.add("1");
@@ -94,7 +95,7 @@ public class HypothesisResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatGettingAllFinalResultsReturns404IfTheProjectIdIsInvalid() {
-        given(learnerResultDAO.getAllAsJSON(PROJECT_ID)).willThrow(IllegalArgumentException.class);
+        given(learnerResultDAO.getAllAsJSON(PROJECT_ID)).willThrow(NoSuchElementException.class);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").request().get();
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
@@ -103,7 +104,7 @@ public class HypothesisResourceTest extends JerseyTest {
     @Test
     public void shouldReturnAllResultSteps() {
         List<String> results = new LinkedList<>();
-        for (int i = 0; i < TEST_RESULT_AMOUNT; i++) {
+        for (long i = 0; i < TEST_RESULT_AMOUNT; i++) {
             Alphabet<String> sigma = new SimpleAlphabet<>();
             sigma.add("0");
             sigma.add("1");
@@ -129,7 +130,7 @@ public class HypothesisResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatGettingAllResultsOfOneRunReturns404IfTheProjectIdIsInvalid() {
-        given(learnerResultDAO.getAllAsJSON(PROJECT_ID, RESULT_ID)).willThrow(IllegalArgumentException.class);
+        given(learnerResultDAO.getAllAsJSON(PROJECT_ID, RESULT_ID)).willThrow(NoSuchElementException.class);
 
         String path = "/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "/complete";
         Response response = target(path).request().get();
@@ -184,7 +185,7 @@ public class HypothesisResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnInvalidTestNo() {
-        willThrow(IllegalArgumentException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NoSuchElementException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
                             .request().delete();

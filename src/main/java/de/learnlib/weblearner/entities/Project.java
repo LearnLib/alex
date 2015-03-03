@@ -36,7 +36,7 @@ public class Project implements Serializable {
     /** The project ID. */
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
     /**
      * The name of the project. This property is required & must be unique.
@@ -66,7 +66,7 @@ public class Project implements Serializable {
     private SymbolGroup defaultGroup;
 
     @JsonIgnore
-    private long nextGroupId;
+    private Long nextGroupId;
 
     /** The symbols used to test. */
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
@@ -76,7 +76,7 @@ public class Project implements Serializable {
 
     /** The next id for a symbol in this project. */
     @JsonIgnore
-    private long nextSymbolId;
+    private Long nextSymbolId;
 
     /** The results of the test for the project. */
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
@@ -88,7 +88,7 @@ public class Project implements Serializable {
      * Default constructor.
      */
     public Project() {
-        this(0);
+        this(0L);
     }
 
     /**
@@ -97,12 +97,12 @@ public class Project implements Serializable {
      * @param projectId
      *            The ID.
      */
-    public Project(long projectId) {
+    public Project(Long projectId) {
         this.id = projectId;
         this.groups = new HashSet<>();
-        this.nextGroupId = 1;
+        this.nextGroupId = 1L;
         this.symbols = new HashSet<>();
-        this.nextSymbolId = 1;
+        this.nextSymbolId = 1L;
     }
 
     /**
@@ -110,7 +110,7 @@ public class Project implements Serializable {
      * 
      * @return The ID.
      */
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -120,7 +120,7 @@ public class Project implements Serializable {
      * @param id
      *            The new ID.
      */
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -203,11 +203,11 @@ public class Project implements Serializable {
         this.defaultGroup = defaultGroup;
     }
 
-    public long getNextGroupId() {
+    public Long getNextGroupId() {
         return nextGroupId;
     }
 
-    public void setNextGroupId(long nextGroupId) {
+    public void setNextGroupId(Long nextGroupId) {
         this.nextGroupId = nextGroupId;
     }
 
@@ -272,7 +272,7 @@ public class Project implements Serializable {
      *
      * @return The next symbol id.
      */
-    public long getNextSymbolId() {
+    public Long getNextSymbolId() {
         return nextSymbolId;
     }
 
@@ -282,7 +282,7 @@ public class Project implements Serializable {
      * @param nextSymbolId
      *         The next free id for a symbol.
      */
-    public void setNextSymbolId(long nextSymbolId) {
+    public void setNextSymbolId(Long nextSymbolId) {
         this.nextSymbolId = nextSymbolId;
     }
 
@@ -311,18 +311,18 @@ public class Project implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Project)) return false;
 
         Project project = (Project) o;
 
-        if (id != project.id) return false;
+        if (id != null ? !id.equals(project.getId()) : project.getId() != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        return id != null ? id.hashCode() : 0;
     }
     //CHECKSTYLE.ON: AvoidInlineConditionals|MagicNumber
 

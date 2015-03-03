@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
@@ -34,18 +35,20 @@ public class SymbolGroup implements Serializable {
     @JsonIgnore
     private Long groupId;
 
-    /** The name of the group. */
-    @NotBlank
-    private String name;
-
     /** The related project. */
+    @NaturalId
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
     private Project project;
 
     /** The ID of the group within the project. */
+    @NaturalId
     @Column(nullable = false)
     private Long id;
+
+    /** The name of the group. */
+    @NotBlank
+    private String name;
 
     /** The Symbols manged by this group. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
@@ -59,14 +62,6 @@ public class SymbolGroup implements Serializable {
         this.groupId = 0L;
         this.id = 0L;
         this.symbols = new HashSet<>();
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
     }
 
     public Long getId() {
@@ -128,20 +123,20 @@ public class SymbolGroup implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof SymbolGroup)) return false;
 
-        SymbolGroup group = (SymbolGroup) o;
+        SymbolGroup that = (SymbolGroup) o;
 
-        if (!id.equals(group.id)) return false;
-        if (getProjectId() != group.getProjectId()) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (project != null ? !project.equals(that.project) : that.project != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = project.hashCode();
-        result = 31 * result + id.hashCode();
+        int result = project != null ? project.hashCode() : 0;
+        result = 31 * result + (id != null ? id.hashCode() : 0);
         return result;
     }
     // CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber

@@ -42,11 +42,11 @@ public interface SymbolDAO {
      *            A list of pairs of an ID and revisions to specify the expected symbols.
      * @return A list of symbols matching the project and list of IDs and revisions.
      */
-    List<Symbol> getAll(long projectId, List<IdRevisionPair> idRevPairs);
+    List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs);
 
-    List<Symbol> getByIdsWithLatestRevision(long projectId, Long... ids);
+    List<Symbol> getByIdsWithLatestRevision(Long projectId, Long... ids);
 
-    List<Symbol> getByIdsWithLatestRevision(long projectId, SymbolVisibilityLevel visibilityLevel, Long... ids);
+    List<Symbol> getByIdsWithLatestRevision(Long projectId, SymbolVisibilityLevel visibilityLevel, Long... ids);
 
     /**
      * Get all symbols of a project.
@@ -57,7 +57,7 @@ public interface SymbolDAO {
      *         Include symbols that are currently marked as hidden?
      * @return A list of symbols belonging to the project.
      */
-    List<Symbol> getAllWithLatestRevision(long projectID, SymbolVisibilityLevel visibilityLevel);
+    List<Symbol> getAllWithLatestRevision(Long projectID, SymbolVisibilityLevel visibilityLevel);
 
     /**
      * Get a specific symbol by its identifying parameters.
@@ -70,7 +70,7 @@ public interface SymbolDAO {
      *            The wanted revision of the symbol.
      * @return The Symbol or null.
      */
-    Symbol get(long projectId, long id, long revision);
+    Symbol get(Long projectId, Long id, Long revision);
 
     /**
      * Get a specific symbol by its identifying parameters and the last
@@ -82,9 +82,9 @@ public interface SymbolDAO {
      *            The ID of the symbol itself in the project.
      * @return The Symbol or null.
      */
-    Symbol getWithLatestRevision(long projectId, long id);
+    Symbol getWithLatestRevision(Long projectId, Long id);
 
-    List<Symbol> getWithAllRevisions(long projectId, long id);
+    List<Symbol> getWithAllRevisions(Long projectId, Long id);
 
     /**
      * Update a symbol.
@@ -108,7 +108,7 @@ public interface SymbolDAO {
      * @throws IllegalArgumentException
      *             When the Symbol was not found.
      */
-    void hide(long projectId, Long... ids) throws IllegalArgumentException;
+    void hide(Long projectId, Long... ids) throws IllegalArgumentException;
 
     /**
      * Revive a symbol from the hidden state.
@@ -120,6 +120,6 @@ public interface SymbolDAO {
      * @throws IllegalArgumentException
      *             When the Symbol was not found.
      */
-    void show(long projectId, Long... ids) throws IllegalArgumentException;
+    void show(Long projectId, Long... ids) throws IllegalArgumentException;
 
 }

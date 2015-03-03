@@ -70,11 +70,11 @@ public class ProjectTest {
     @Test
     public void ensureThatEqualsAndHashAreWorking() {
         Project p1 = new Project();
-        p1.setId(0);
+        p1.setId(0L);
         p1.setName("Test Project");
 
         Project p2 = new Project();
-        p2.setId(1);
+        p2.setId(1L);
         p2.setName("Test Project");
 
         assertTrue(p1.equals(p1));

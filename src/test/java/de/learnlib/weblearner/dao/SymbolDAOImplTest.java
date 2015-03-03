@@ -129,7 +129,7 @@ public class SymbolDAOImplTest {
         assertEquals(group, symbol.getGroup());
         assertEquals(symbol.getProject(), symbolInDB.getProject());
         assertEquals(project, project2);
-        assertEquals(idBefore + 1, project2.getNextSymbolId());
+        assertEquals(new Long(idBefore + 1), project2.getNextSymbolId());
 
         assertNotNull(webSymbolInDB.getActions());
         assertEquals(symbol.getActions().size(), webSymbolInDB.getActions().size());
@@ -182,8 +182,8 @@ public class SymbolDAOImplTest {
             symbolDAO.create(symbol); // should fail
             fail("creation didn't fail.");
         } catch (ValidationException e) {
-            assertEquals(0, symbol.getId());
-            assertEquals(0, symbol.getRevision());
+            assertEquals(new Long(0), symbol.getId());
+            assertEquals(new Long(0), symbol.getRevision());
         }
 
     }
@@ -217,7 +217,7 @@ public class SymbolDAOImplTest {
         assertEquals(symbol.getRevision(), symbolInDB.getRevision());
         assertEquals(symbol.getProject(), symbolInDB.getProject());
         assertEquals(project, project2);
-        assertEquals(idBefore + 2, project2.getNextSymbolId());
+        assertEquals(new Long(idBefore + 2), project2.getNextSymbolId());
 
         assertNotNull(websymbolInDB.getActions());
         assertEquals(symbol.getActions().size(), websymbolInDB.getActions().size());
@@ -231,62 +231,64 @@ public class SymbolDAOImplTest {
     @Test
     public void shouldNotCreateWebSymbolsWithID() {
         // given
-        long idBefore = project.getNextSymbolId();
+        Long idBefore = project.getNextSymbolId();
         symbol.setId(1L);
 
         try {
             symbolDAO.create(symbols); // should fail
             fail("creation didn't fail.");
         } catch (ValidationException e) {
-            assertEquals(idBefore, project.getNextSymbolId());
-            assertEquals(1, symbol.getId());
-            assertEquals(0, symbol.getRevision());
-            assertEquals(0, symbol2.getId());
-            assertEquals(0, symbol2.getRevision());
+            // creation failed -> success
         }
+        assertEquals(idBefore, project.getNextSymbolId());
+        assertEquals(new Long(1), symbol.getId());
+        assertEquals(null, symbol.getRevision());
+        assertEquals(null, symbol2.getId());
+        assertEquals(null, symbol2.getRevision());
     }
 
     @Test
     public void shouldNotCreateWebSymbolsWithRev() {
         // given
-        long idBefore = project.getNextSymbolId();
-        symbol.setId(0L);
+        Long idBefore = project.getNextSymbolId();
         symbol.setRevision(1L);
 
         try {
             symbolDAO.create(symbols); // should fail
             fail("creation didn't fail.");
         } catch (ValidationException e) {
-            assertEquals(idBefore, project.getNextSymbolId());
-            assertEquals(0, symbol.getId());
-            assertEquals(1, symbol.getRevision());
-            assertEquals(0, symbol2.getId());
-            assertEquals(0, symbol2.getRevision());
+            // creation failed -> success
         }
+        assertEquals(idBefore, project.getNextSymbolId());
+        assertEquals(null, symbol.getId());
+        assertEquals(new Long(1), symbol.getRevision());
+        assertEquals(null, symbol2.getId());
+        assertEquals(null, symbol2.getRevision());
     }
 
     @Test
     public void shouldNotCreateWebSymbolsWithoutProject() {
         // given
-        long idBefore = project.getNextSymbolId();
+        Long idBefore = project.getNextSymbolId();
         symbol.setProject(null);
 
         try {
             symbolDAO.create(symbols); // should fail
             fail("creation didn't fail.");
         } catch (ValidationException e) {
-            assertEquals(idBefore, project.getNextSymbolId());
-            assertEquals(0, symbol.getId());
-            assertEquals(0, symbol.getRevision());
-            assertEquals(0, symbol2.getId());
-            assertEquals(0, symbol2.getRevision());
+            // creation failed -> success
         }
+        assertEquals(idBefore, project.getNextSymbolId());
+        assertEquals(null, symbol.getId());
+        assertEquals(null, symbol.getRevision());
+        assertEquals(null, symbol2.getId());
+        assertEquals(null, symbol2.getRevision());
     }
 
     @Test
     public void shouldNotCreateWebSymbolsWithoutName() {
         // given
-        long idBefore = project.getNextSymbolId();
+        Long idBefore = project.getNextSymbolId();
         symbol.setName("");
 
         try {
@@ -294,17 +296,17 @@ public class SymbolDAOImplTest {
             fail("creation didn't fail.");
         } catch (ValidationException e) {
             assertEquals(idBefore, project.getNextSymbolId());
-            assertEquals(0, symbol.getId());
-            assertEquals(0, symbol.getRevision());
-            assertEquals(0, symbol2.getId());
-            assertEquals(0, symbol2.getRevision());
+            assertEquals(null, symbol.getId());
+            assertEquals(null, symbol.getRevision());
+            assertEquals(null, symbol2.getId());
+            assertEquals(null, symbol2.getRevision());
         }
     }
 
     @Test
     public void shouldNotCreateWebSymbolsWithNotUniqueName() {
         // given
-        long idBefore = project.getNextSymbolId();
+        Long idBefore = project.getNextSymbolId();
         Symbol invalidSymbol = new Symbol();
         invalidSymbol.setProject(symbol.getProject());
         invalidSymbol.setName(symbol.getName());
@@ -314,10 +316,11 @@ public class SymbolDAOImplTest {
             symbolDAO.create(symbols); // should fail
             fail("creation didn't fail.");
         } catch (ValidationException e) {
-            assertEquals(idBefore, project.getNextSymbolId());
-            assertEquals(0, symbol2.getId());
-            assertEquals(0, symbol2.getRevision());
+            // creation failed -> success
         }
+        assertEquals(idBefore, project.getNextSymbolId());
+        assertEquals(null, symbol2.getId());
+        assertEquals(null, symbol2.getRevision());
     }
 
     @Test
@@ -423,7 +426,7 @@ public class SymbolDAOImplTest {
 
     @Test
     public void shouldReturnAnEmptyListIfYouTryToGetAllRevisionOfANotExistingSymbol() {
-        List<Symbol> symbolRevisionInDB = symbolDAO.getWithAllRevisions(symbol.getProjectId(), -1);
+        List<Symbol> symbolRevisionInDB = symbolDAO.getWithAllRevisions(symbol.getProjectId(), -1L);
 
         assertTrue(symbolRevisionInDB.isEmpty());
     }
@@ -438,7 +441,7 @@ public class SymbolDAOImplTest {
 
         Symbol symb2 = symbolDAO.getWithLatestRevision(symbol.getProject().getId(), symbol.getId());
         assertEquals(symbol.getId(), symb2.getId());
-        assertEquals(oldRevision + 1, symb2.getRevision());
+        assertEquals(new Long(oldRevision + 1), symb2.getRevision());
         assertEquals(symbol.getName(), symb2.getName());
         assertEquals(group, symb2.getGroup());
 
@@ -484,7 +487,7 @@ public class SymbolDAOImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailOnUpdateByInvalidID() {
         symbolDAO.create(symbol);
-        symbol.setId(-1);
+        symbol.setId(-1L);
 
         symbolDAO.update(symbol); // should fail
     }
@@ -533,11 +536,11 @@ public class SymbolDAOImplTest {
 
         symbolDAO.hide(symbol.getProject().getId(), symbol.getId());
 
-        Symbol symbolRev1 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 1);
+        Symbol symbolRev1 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 1L);
         assertNotNull(symbolRev1);
         assertTrue(symbolRev1.isHidden());
 
-        Symbol symbolRev2 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 2);
+        Symbol symbolRev2 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 2L);
         assertNotNull(symbolRev2);
         assertTrue(symbolRev2.isHidden());
     }
@@ -557,11 +560,11 @@ public class SymbolDAOImplTest {
         symbolDAO.hide(symbol.getProject().getId(), symbol.getId());
         symbolDAO.show(symbol.getProject().getId(), symbol.getId());
 
-        Symbol symbolRev1 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 1);
+        Symbol symbolRev1 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 1L);
         assertNotNull(symbolRev1);
         assertFalse(symbolRev1.isHidden());
 
-        Symbol symbolRev2 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 2);
+        Symbol symbolRev2 = symbolDAO.get(symbol.getProject().getId(), symbol.getId(), 2L);
         assertNotNull(symbolRev2);
         assertFalse(symbolRev2.isHidden());
     }

@@ -70,6 +70,7 @@ public class SymbolGroupDAOImplTest {
         symbolGroupDAO.create(group);
 
         assertTrue(group.getId() > 0);
+        assertTrue(group.getProject().getId() > 0);
         assertTrue(group.getSymbols().isEmpty());
         assertEquals(0, group.getSymbolSize());
     }

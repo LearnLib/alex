@@ -135,7 +135,7 @@ public class ProjectDAOImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailOnUpdateByInvalidID() {
-        project.setId(-1);
+        project.setId(-1L);
         project.setName("An other Test Project");
 
         dao.update(project); // should fail

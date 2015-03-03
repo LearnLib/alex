@@ -38,6 +38,14 @@ public class ProjectDAOImpl implements ProjectDAO {
             project.addGroup(defaultGroup);
             project.setDefaultGroup(defaultGroup);
 
+            for (Symbol symbol : project.getSymbols()) {
+                long nextSymbolId = project.getNextSymbolId();
+                symbol.setId(nextSymbolId);
+                symbol.setRevision(0L);
+                symbol.setProject(project);
+                project.setNextSymbolId(nextSymbolId + 1);
+            }
+
             session.save(project);
             HibernateUtil.commitTransaction();
 

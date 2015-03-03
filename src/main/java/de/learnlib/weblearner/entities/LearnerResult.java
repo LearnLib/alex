@@ -12,6 +12,7 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,16 +42,16 @@ public class LearnerResult implements Serializable {
     private static final Logger LOGGER = LogManager.getLogger("server");
 
     /** The id of the LearnerResult in the DB. */
-    private long id;
+    private Long id;
 
     /** The reference to the Project the test run belongs to. */
     private Project project;
 
     /** The test no. within a Project which lead to the result. */
-    private long testNo;
+    private Long testNo;
 
     /** The step no. within a test run which lead to the result. */
-    private long stepNo;
+    private Long stepNo;
 
     /** Buffer for the JSON which represents the result. */
     private String json;
@@ -95,7 +96,7 @@ public class LearnerResult implements Serializable {
     @Id
     @GeneratedValue
     @JsonIgnore
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -105,7 +106,7 @@ public class LearnerResult implements Serializable {
      * @param id
      *         The new ID for the result.
      */
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
         this.jsonChanged = true;
     }
@@ -115,6 +116,7 @@ public class LearnerResult implements Serializable {
      *
      * @return The connected Project.
      */
+    @NaturalId
     @ManyToOne
     //@JoinColumn(name = "projectId")
     @JsonIgnore
@@ -140,9 +142,9 @@ public class LearnerResult implements Serializable {
      */
     @Transient
     @JsonProperty("project")
-    public long getProjectId() {
+    public Long getProjectId() {
         if (project == null) {
-            return 0;
+            return 0L;
         } else {
             return project.getId();
         }
@@ -155,7 +157,7 @@ public class LearnerResult implements Serializable {
      *         The id of the new Project.
      */
     @JsonProperty("project")
-    public void setProjectId(long projectId) {
+    public void setProjectId(Long projectId) {
         this.project = new Project(projectId);
         this.jsonChanged = true;
     }
@@ -165,7 +167,9 @@ public class LearnerResult implements Serializable {
      *
      * @return The no. of the related test run.
      */
-    public long getTestNo() {
+    @NaturalId
+    @Column(nullable = false)
+    public Long getTestNo() {
         return testNo;
     }
 
@@ -175,7 +179,7 @@ public class LearnerResult implements Serializable {
      * @param testNo
      *         The new no. of the test run.
      */
-    public void setTestNo(long testNo) {
+    public void setTestNo(Long testNo) {
         this.testNo = testNo;
         this.jsonChanged = true;
     }
@@ -185,7 +189,9 @@ public class LearnerResult implements Serializable {
      *
      * @return The step no. of the result within the test run.
      */
-    public long getStepNo() {
+    @NaturalId
+    @Column(nullable = false)
+    public Long getStepNo() {
         return stepNo;
     }
 
@@ -195,7 +201,7 @@ public class LearnerResult implements Serializable {
      * @param stepNo
      *         The new step no. of the result within the test run.
      */
-    public void setStepNo(long stepNo) {
+    public void setStepNo(Long stepNo) {
         this.stepNo = stepNo;
         this.jsonChanged = true;
     }

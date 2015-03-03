@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * REST API to fetch the test results.
@@ -47,7 +48,7 @@ public class HypothesisResource {
                             .header("X-Total-Count", resultsAsJSON.size())
                             .entity(json)
                     .build();
-        } catch (IllegalArgumentException e) {
+        } catch (NoSuchElementException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getAllFinalResults",
                                                                 Response.Status.NOT_FOUND,
                                                                 e);
@@ -78,7 +79,7 @@ public class HypothesisResource {
                             .header("X-Total-Count", resultsAsJSON.size())
                             .entity(json)
                     .build();
-        } catch (IllegalArgumentException e) {
+        } catch (NoSuchElementException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getAllOfOneRun",
                                                                 Response.Status.NOT_FOUND,  e);
         }
@@ -103,7 +104,7 @@ public class HypothesisResource {
         try {
             String json = learnerResultDAO.getAsJSON(projectId, testNo);
             return Response.ok(json).build();
-        } catch (IllegalArgumentException e) {
+        } catch (NoSuchElementException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getOneFinalResult",
                                                                 Response.Status.NOT_FOUND,  e);
         }
@@ -141,7 +142,7 @@ public class HypothesisResource {
             learnerResultDAO.delete(projectId, numbersLongArray);
             return Response.status(Response.Status.NO_CONTENT).build();
 
-        }  catch (IllegalArgumentException e) {
+        }  catch (NoSuchElementException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
                                                                 Response.Status.NOT_FOUND,  e);
         }

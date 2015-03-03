@@ -87,7 +87,7 @@ public abstract class SymbolAction implements Serializable {
     @JsonIgnore
     protected long id;
 
-    /** The position the action has in the actions list of the {@link Symbol}. */
+    /** The position the action has in the actions list of the Symbol. */
     @JsonIgnore
     protected int number;
 
