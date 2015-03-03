@@ -72,7 +72,7 @@
 
             return $http.delete(paths.api.URL + '/projects/' + projectId + '/groups/' + group.id)
                 .then(function (response) {
-                    return _this.build(response.data);
+                    return response.data;
                 })
         };
 

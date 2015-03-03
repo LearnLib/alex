@@ -49,7 +49,7 @@
             $rootScope._ = _;
             $rootScope.selection = SelectionService;
         }])
-}());;angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-create-form.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-create-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/modal-test-setup-settings.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/groups.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+}());;angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/groups.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/counter-example-builder.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -344,130 +344,6 @@ angular.module("app/views/directives/observation-table.html", []).run(["$templat
     "");
 }]);
 
-angular.module("app/views/directives/rest-action-create-form.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/rest-action-create-form.html",
-    "<form id=\"rest-action-create-form\" ng-submit=\"submitForm()\">\n" +
-    "\n" +
-    "    <select class=\"form-control\" ng-model=\"action.type\" ng-options=\"k for (k,v) in actionTypes\">\n" +
-    "        <option value=\"\" disabled>Select an action you want to create</option>\n" +
-    "    </select>\n" +
-    "\n" +
-    "    <p></p>\n" +
-    "\n" +
-    "    <!-- BEGIN: CALL_URL -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CALL_URL\">\n" +
-    "        <p class=\"text-muted\">Make a HTTP request to an URL (relative to your projects base url)</p>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
-    "        </div>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <select class=\"form-control\" ng-options=\"m for m in ['DELETE', 'GET', 'POST', 'PUT']\" ng-model=\"action.method\">\n" +
-    "                <option value=\"\" disabled>Select a Method</option>\n" +
-    "            </select>\n" +
-    "        </div>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label>Data</label>\n" +
-    "            <div ng-model=\"action.data\" style=\"border-radius: 4px; width: 100%; height: 150px; border: 1px solid #ccc\" ui-ace=\"{useWrapMode : true, showGutter: true, theme:'eclipse', mode: 'json'}\"></div>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: CALL_URL -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CHECK_ATTRIBUTE_EXISTS -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CHECK_ATTRIBUTE_EXISTS\">\n" +
-    "        <p class=\"text-muted\">Check if a JSON attribute exists in the response body</p>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: CHECK_ATTRIBUTE_EXISTS -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CHECK_ATTRIBUTE_TYPE -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CHECK_ATTRIBUTE_TYPE\">\n" +
-    "        <p class=\"text-muted\">Check if a JSON attribute in the response body has a specific type</p>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
-    "        </div>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <select class=\"form-control\" ng-model=\"action.jsonType\" ng-options=\"t as t for t in ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']\">\n" +
-    "                <option value=\"\" disabled>Choose a JavaScript type</option>\n" +
-    "            </select>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: CHECK_ATTRIBUTE_TYPE -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CHECK_ATTRIBUTE_VALUE -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CHECK_ATTRIBUTE_VALUE\">\n" +
-    "        <p class=\"text-muted\">Check a JSON attribute of the response body to be a specific value</p>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\" ng-model=\"action.attribute\">\n" +
-    "        </div>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"the attribute value\" ng-model=\"action.value\">\n" +
-    "        </div>\n" +
-    "        <div class=\"checkbox\">\n" +
-    "            <label>\n" +
-    "                <input type=\"checkbox\" ng-model=\"action.regexp\"> is regular expression\n" +
-    "            </label>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: CHECK_ATTRIBUTE_VALUE -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CHECK_HEADER_FIELD -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CHECK_HEADER_FIELD\">\n" +
-    "        <p class=\"text-muted\">Check a HTTP response header field to have a specific value</p>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"http header field, e.g. Content-Type\" ng-model=\"action.key\">\n" +
-    "        </div>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"http header field value, e.g. application/json\" ng-model=\"action.value\">\n" +
-    "        </div>\n" +
-    "        <div class=\"checkbox\">\n" +
-    "            <label>\n" +
-    "                <input type=\"checkbox\" ng-model=\"action.regexp\">is regular expression\n" +
-    "            </label>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: CHECK_HEADER_FIELD -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CHECK_HTTP_BODY_TEXT -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CHECK_HTTP_BODY_TEXT\">\n" +
-    "        <p class=\"text-muted\">Search for a string or a regular express in the response body of a request</p>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"value to search for\" ng-model=\"action.value\">\n" +
-    "        </div>\n" +
-    "        <div class=\"checkbox\">\n" +
-    "            <label>\n" +
-    "                <input type=\"checkbox\" ng-model=\"action.regexp\">\n" +
-    "                is regular expression\n" +
-    "            </label>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: CHECK_HTTP_BODY_TEXT -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CHECK_STATUS -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CHECK_STATUS\">\n" +
-    "        <p class=\"text-muted\">Check the HTTP response to have a specific status</p>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <input class=\"form-control\" type=\"number\" placeholder=\"e.g. 200, 404 ...\" ng-model=\"action.status\">\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: CHECK_STATUS -->\n" +
-    "\n" +
-    "    <div ng-if=\"action.type\">\n" +
-    "        <hr>\n" +
-    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Create Action</button>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
 angular.module("app/views/directives/rest-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/directives/rest-action-edit-form.html",
@@ -580,164 +456,6 @@ angular.module("app/views/directives/rest-action-edit-form.html", []).run(["$tem
     "\n" +
     "    <hr>\n" +
     "    <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update Action</button>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/views/directives/web-action-create-form.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/web-action-create-form.html",
-    "<form id=\"web-action-create-form\" ng-submit=\"submitForm()\">\n" +
-    "\n" +
-    "    <select class=\"form-control\" ng-model=\"action.type\" ng-options=\"k for (k,v) in actionTypes\">\n" +
-    "        <option value=\"\" disabled>Select an action you want to create</option>\n" +
-    "    </select>\n" +
-    "\n" +
-    "    <p></p>\n" +
-    "\n" +
-    "    <!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.SEARCH_FOR_TEXT\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Search on a page for a piece of text or a regular expression\n" +
-    "        </p>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Value</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
-    "        </div>\n" +
-    "        <div class=\"checkbox\">\n" +
-    "            <label>\n" +
-    "                <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
-    "            </label>\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: SEARCH_FOR_TEXT -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: SEARCH_FOR_NODE -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.SEARCH_FOR_NODE\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Search an HTML element in the DOM tree of a page\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: SEARCH_FOR_NODE -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CLEAR -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CLEAR\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Clear an element (eg. input or contenteditable element)\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: CLEAR -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CLICK -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CLICK\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Click on an element\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: CLICK -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: FILL -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.FILL\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Fill an element with content (eg. input or contenteditable element)\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">The value to fill the element with</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: FILL -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: GO_TO -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.GO_TO\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Go to a url that is <strong>relative</strong> to your projects' base url\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Url</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: GO_TO -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: SUBMIT -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.SUBMIT\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Submit a form\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: SUBMIT -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: WAIT -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.WAIT\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Wait for a specified amount of time before the next action will be executed\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Time to wait (in ms)</label>\n" +
-    "            <input class=\"form-control\" type=\"number\" placeholder=\"time in ms\" ng-model=\"action.duration\">\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: WAIT -->\n" +
-    "\n" +
-    "    <div ng-if=\"action.type\">\n" +
-    "        <hr>\n" +
-    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Create Action</button>\n" +
-    "    </div>\n" +
     "\n" +
     "</form>");
 }]);
@@ -951,26 +669,370 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "    <span class=\"text-muted\">Create a new action for a symbol</span>\n" +
     "</div>\n" +
     "\n" +
-    "<form ng-submit=\"createAction()\">\n" +
+    "<form ng-submit=\"createAction()\" id=\"action-create-form\">\n" +
     "\n" +
     "    <div class=\"modal-body\">\n" +
+    "        <div class=\"row\">\n" +
+    "            <div class=\"col-xs-5\">\n" +
     "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <select class=\"form-control\" ng-model=\"selectedActionType\" ng-options=\"k for (k,v) in actionTypes.web\"></select>\n" +
+    "                <accordion close-others=\"true\" class=\"action-types-accordion\">\n" +
+    "                    <accordion-group heading=\"Web\" is-open=\"true\">\n" +
+    "                        <a href ng-repeat=\"(k,v) in actionTypes.web\" ng-click=\"selectNewActionType(v)\"\n" +
+    "                           ng-bind=\"::(k|formatEnumKey)\"></a>\n" +
+    "                    </accordion-group>\n" +
+    "                    <accordion-group heading=\"Rest\">\n" +
+    "                        <a href ng-repeat=\"(k,v) in actionTypes.rest\" ng-click=\"selectNewActionType(v)\"\n" +
+    "                           ng-bind=\"::(k|formatEnumKey)\"></a>\n" +
+    "                    </accordion-group>\n" +
+    "                    <accordion-group heading=\"Other\">\n" +
+    "                        <a href ng-repeat=\"(k,v) in actionTypes.other\" ng-click=\"selectNewActionType(v)\"\n" +
+    "                           ng-bind=\"::(k|formatEnumKey)\"></a>\n" +
+    "                    </accordion-group>\n" +
+    "                </accordion>\n" +
+    "\n" +
+    "            </div>\n" +
+    "            <div class=\"col-xs-7\">\n" +
+    "\n" +
+    "                <div class=\"alert alert-info alert-condensed\" ng-show=\"action === null\">\n" +
+    "                    Please select an action type\n" +
+    "                </div>\n" +
+    "\n" +
+    "                <!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
+    "                <div ng-if=\"action.type === actionTypes.web.SEARCH_FOR_TEXT\">\n" +
+    "\n" +
+    "                    <h4><strong>Search for Text</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Search on a page for a piece of text or a regular expression\n" +
+    "                    </p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label class=\"control-label\">Value</label>\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"checkbox\">\n" +
+    "                        <label>\n" +
+    "                            <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
+    "                        </label>\n" +
+    "                    </div>\n" +
+    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
+    "                            selector=\"action.value\">\n" +
+    "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "                    </button>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: SEARCH_FOR_TEXT -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: SEARCH_FOR_NODE -->\n" +
+    "                <div ng-if=\"action.type === actionTypes.web.SEARCH_FOR_NODE\">\n" +
+    "\n" +
+    "                    <h4><strong>Search for Node</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Search an HTML element in the DOM tree of a page\n" +
+    "                    </p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label class=\"control-label\">CSS selector</label>\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
+    "                            selector=\"action.value\">\n" +
+    "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "                    </button>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: SEARCH_FOR_NODE -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: CLEAR -->\n" +
+    "                <div ng-if=\"action.type === actionTypes.web.CLEAR\">\n" +
+    "\n" +
+    "                    <h4><strong>Clear Node</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Clear an element (eg. input or contenteditable element)\n" +
+    "                    </p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label class=\"control-label\">CSS selector</label>\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
+    "                            selector=\"action.node\">\n" +
+    "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "                    </button>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: CLEAR -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: CLICK -->\n" +
+    "                <div ng-if=\"action.type === actionTypes.web.CLICK\">\n" +
+    "\n" +
+    "                    <h4><strong>Click</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Click on an element\n" +
+    "                    </p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label class=\"control-label\">CSS selector</label>\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "                    </div>\n" +
+    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
+    "                            selector=\"action.node\">\n" +
+    "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "                    </button>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: CLICK -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: FILL -->\n" +
+    "                <div ng-if=\"action.type === actionTypes.web.FILL\">\n" +
+    "\n" +
+    "                    <h4><strong>Fill Node</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Fill an element with content (eg. input or contenteditable element)\n" +
+    "                    </p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label class=\"control-label\">CSS selector</label>\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label class=\"control-label\">The value to fill the element with</label>\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
+    "                    </div>\n" +
+    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
+    "                            selector=\"action.node\">\n" +
+    "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "                    </button>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: FILL -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: GO_TO -->\n" +
+    "                <div ng-if=\"action.type === actionTypes.web.GO_TO\">\n" +
+    "\n" +
+    "                    <h4><strong>Go to URL</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Go to a url that is <strong>relative</strong> to your projects' base url\n" +
+    "                    </p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label class=\"control-label\">Url</label>\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: GO_TO -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: SUBMIT -->\n" +
+    "                <div ng-if=\"action.type === actionTypes.web.SUBMIT\">\n" +
+    "\n" +
+    "                    <h4><strong>Submit Form</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">\n" +
+    "                        Submit a form\n" +
+    "                    </p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label class=\"control-label\">CSS selector</label>\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "                    </div>\n" +
+    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
+    "                            selector=\"action.node\">\n" +
+    "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "                    </button>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: SUBMIT -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: CALL_URL -->\n" +
+    "                <div ng-if=\"action.type == actionTypes.rest.CALL_URL\">\n" +
+    "\n" +
+    "                    <h4><strong>Call Url</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">Make a HTTP request to an URL (relative to your projects base url)</p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <select class=\"form-control\" ng-options=\"m for m in ['DELETE', 'GET', 'POST', 'PUT']\"\n" +
+    "                                ng-model=\"action.method\">\n" +
+    "                            <option value=\"\" disabled>Select a Method</option>\n" +
+    "                        </select>\n" +
+    "                    </div>\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label>Data</label>\n" +
+    "\n" +
+    "                        <div ng-model=\"action.data\"\n" +
+    "                             style=\"border-radius: 4px; width: 100%; height: 150px; border: 1px solid #ccc\"\n" +
+    "                             ui-ace=\"{useWrapMode : true, showGutter: true, theme:'eclipse', mode: 'json'}\"></div>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: CALL_URL -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: CHECK_ATTRIBUTE_EXISTS -->\n" +
+    "                <div ng-if=\"action.type == actionTypes.rest.CHECK_ATTRIBUTE_EXISTS\">\n" +
+    "\n" +
+    "                    <h4><strong>Check Attribute Exists</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">Check if a JSON attribute exists in the response body</p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\"\n" +
+    "                               ng-model=\"action.attribute\">\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: CHECK_ATTRIBUTE_EXISTS -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: CHECK_ATTRIBUTE_TYPE -->\n" +
+    "                <div ng-if=\"action.type == actionTypes.rest.CHECK_ATTRIBUTE_TYPE\">\n" +
+    "\n" +
+    "                    <h4><strong>Check Attribute Type</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">Check if a JSON attribute in the response body has a specific type</p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\"\n" +
+    "                               ng-model=\"action.attribute\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <select class=\"form-control\" ng-model=\"action.jsonType\"\n" +
+    "                                ng-options=\"t as t for t in ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']\">\n" +
+    "                            <option value=\"\" disabled>Choose a JavaScript type</option>\n" +
+    "                        </select>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: CHECK_ATTRIBUTE_TYPE -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: CHECK_ATTRIBUTE_VALUE -->\n" +
+    "                <div ng-if=\"action.type == actionTypes.rest.CHECK_ATTRIBUTE_VALUE\">\n" +
+    "\n" +
+    "                    <h4><strong>Check Attribute Value</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">Check a JSON attribute of the response body to be a specific value</p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\"\n" +
+    "                               ng-model=\"action.attribute\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"the attribute value\"\n" +
+    "                               ng-model=\"action.value\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"checkbox\">\n" +
+    "                        <label>\n" +
+    "                            <input type=\"checkbox\" ng-model=\"action.regexp\"> is regular expression\n" +
+    "                        </label>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: CHECK_ATTRIBUTE_VALUE -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: CHECK_HEADER_FIELD -->\n" +
+    "                <div ng-if=\"action.type == actionTypes.rest.CHECK_HEADER_FIELD\">\n" +
+    "\n" +
+    "                    <h4><strong>Check Header Field</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">Check a HTTP response header field to have a specific value</p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"http header field, e.g. Content-Type\"\n" +
+    "                               ng-model=\"action.key\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <input class=\"form-control\" type=\"text\"\n" +
+    "                               placeholder=\"http header field value, e.g. application/json\" ng-model=\"action.value\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"checkbox\">\n" +
+    "                        <label>\n" +
+    "                            <input type=\"checkbox\" ng-model=\"action.regexp\">is regular expression\n" +
+    "                        </label>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: CHECK_HEADER_FIELD -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: CHECK_HTTP_BODY_TEXT -->\n" +
+    "                <div ng-if=\"action.type == actionTypes.rest.CHECK_HTTP_BODY_TEXT\">\n" +
+    "\n" +
+    "                    <h4><strong>Check HTTP Body Text</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">Search for a string or a regular express in the response body of a request</p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"value to search for\"\n" +
+    "                               ng-model=\"action.value\">\n" +
+    "                    </div>\n" +
+    "                    <div class=\"checkbox\">\n" +
+    "                        <label>\n" +
+    "                            <input type=\"checkbox\" ng-model=\"action.regexp\">\n" +
+    "                            is regular expression\n" +
+    "                        </label>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: CHECK_HTTP_BODY_TEXT -->\n" +
+    "\n" +
+    "\n" +
+    "                <!-- BEGIN: CHECK_STATUS -->\n" +
+    "                <div ng-if=\"action.type == actionTypes.rest.CHECK_STATUS\">\n" +
+    "\n" +
+    "                    <h4><strong>Check Status</strong></h4>\n" +
+    "\n" +
+    "                    <p class=\"text-muted\">Check the HTTP response to have a specific status</p>\n" +
+    "                    <hr>\n" +
+    "\n" +
+    "                    <label>HTTP Status</label>\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <input class=\"form-control\" type=\"number\" placeholder=\"e.g. 200, 404 ...\"\n" +
+    "                               ng-model=\"action.status\">\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <!-- END: CHECK_STATUS -->\n" +
+    "\n" +
+    "            </div>\n" +
     "        </div>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <select class=\"form-control\" ng-model=\"selectedActionType\" ng-options=\"k for (k,v) in actionTypes.rest\"></select>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <select class=\"form-control\" ng-model=\"selectedActionType\" ng-options=\"k for (k,v) in actionTypes.other\"></select>\n" +
-    "        </div>\n" +
-    "\n" +
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
-    "\n" +
+    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Create</button>\n" +
     "    </div>\n" +
     "\n" +
     "</form>");
@@ -1040,6 +1102,143 @@ angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run
     "    <button class=\"btn btn-primary btn-sm\" ng-click=\"update()\">Update</button>\n" +
     "    <button class=\"btn btn-warning btn-sm\" ng-click=\"close()\">Cancel</button>\n" +
     "</div>");
+}]);
+
+angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/modals/learn-setup-settings-modal.html",
+    "<div class=\"modal-header\">\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"closeModal()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
+    "    <h3 class=\"modal-title\">Test Settings</h3>\n" +
+    "	<span class=\"text-muted\">Manually set some parameters for the\n" +
+    "		Test</span>\n" +
+    "</div>\n" +
+    "\n" +
+    "<form name=\"learn_config_form\" ng-submit=\"ok()\">\n" +
+    "\n" +
+    "	<div class=\"modal-body\">\n" +
+    "\n" +
+    "		<div class=\"form-group\">\n" +
+    "			<label class=\"control-label\">Algorithm</label><br> <span\n" +
+    "				class=\"text-muted\">Select an algorithm that will be used for\n" +
+    "				the learn process (default is L*)</span> <select class=\"form-control\"\n" +
+    "				ng-model=\"learnConfiguration.algorithm\"\n" +
+    "				ng-options=\"k for (k,v) in learnAlgorithms\">\n" +
+    "				<option value=\"\" disabled>select an algorithm</option>\n" +
+    "			</select>\n" +
+    "		</div>\n" +
+    "\n" +
+    "		<div class=\"form-group\">\n" +
+    "			<label class=\"control-label\">EQ Oracle</label><br> <span\n" +
+    "				class=\"text-muted\">Select how counter examples should be\n" +
+    "				found (default is COMPLETE)</span> <select class=\"form-control\"\n" +
+    "                                                           ng-model=\"selectedEqOracle\"\n" +
+    "				ng-options=\"v for (k,v) in eqOracles\">\n" +
+    "				<option value=\"\" disabled>select a method</option>\n" +
+    "			</select>\n" +
+    "		</div>\n" +
+    "\n" +
+    "		<div class=\"form-group\">\n" +
+    "\n" +
+    "			<!-- BEGIN: EQ Oracle: RANDOM -->\n" +
+    "			<div ng-if=\"learnConfiguration.eqOracle.type == eqOracles.RANDOM\">\n" +
+    "				<p>\n" +
+    "					<input class=\"form-control\" name=\"eq_oracle_random_min_length\"\n" +
+    "						ng-model=\"learnConfiguration.eqOracle.minLength\" type=\"number\"\n" +
+    "						required min=\"0\" style=\"display: inline; width: auto\"\n" +
+    "						placeholder=\"0\"> min length\n" +
+    "				</p>\n" +
+    "				<div class=\"alert alert-danger alert-condensed\"\n" +
+    "					ng-show=\"learn_config_form.eq_oracle_random_min_length.$dirty && learn_config_form.eq_oracle_random_min_length.$invalid\">\n" +
+    "					<small\n" +
+    "						ng-show=\"learn_config_form.eq_oracle_complete_min_depth.$error.required\">\n" +
+    "						The field must not be empty. </small>\n" +
+    "				</div>\n" +
+    "\n" +
+    "				<p>\n" +
+    "					<input class=\"form-control\" name=\"eq_oracle_random_max_length\"\n" +
+    "						ng-model=\"learnConfiguration.eqOracle.maxLength\" type=\"number\"\n" +
+    "						required min=\"0\" style=\"display: inline; width: auto\"\n" +
+    "						placeholder=\"0\"> max length\n" +
+    "				</p>\n" +
+    "				<div class=\"alert alert-danger alert-condensed\"\n" +
+    "					ng-show=\"learn_config_form.eq_oracle_random_max_length.$dirty && learn_config_form.eq_oracle_random_max_length.$invalid\">\n" +
+    "					<small\n" +
+    "						ng-show=\"learn_config_form.eq_oracle_random_max_length.$error.required\">\n" +
+    "						The field must not be empty. </small>\n" +
+    "				</div>\n" +
+    "\n" +
+    "				<p>\n" +
+    "					<input class=\"form-control\" name=\"eq_oracle_random_no_words\"\n" +
+    "						ng-model=\"learnConfiguration.eqOracle.maxNoOfTests\" type=\"number\"\n" +
+    "						required min=\"0\" style=\"display: inline; width: auto\"\n" +
+    "						placeholder=\"0\"> no of random words to be generated\n" +
+    "				</p>\n" +
+    "				<div class=\"alert alert-danger alert-condensed\"\n" +
+    "					ng-show=\"learn_config_form.eq_oracle_random_no_words.$dirty && learn_config_form.eq_oracle_random_no_words.$invalid\">\n" +
+    "					<small\n" +
+    "						ng-show=\"learn_config_form.eq_oracle_random_no_words.$error.required\">\n" +
+    "						The field must not be empty. </small>\n" +
+    "				</div>\n" +
+    "			</div>\n" +
+    "			<!-- END: EQ Oracle: RANDOM -->\n" +
+    "\n" +
+    "			<!-- BEGIN: EQ Oracle: COMPLETE -->\n" +
+    "			<div ng-if=\"learnConfiguration.eqOracle.type == eqOracles.COMPLETE\">\n" +
+    "				<p>\n" +
+    "					<input class=\"form-control\" name=\"eq_oracle_complete_min_depth\"\n" +
+    "						ng-model=\"learnConfiguration.eqOracle.minDepth\" type=\"number\"\n" +
+    "						required min=\"0\" style=\"display: inline; width: auto\"\n" +
+    "						placeholder=\"0\"> min depth\n" +
+    "				</p>\n" +
+    "				<div class=\"alert alert-danger alert-condensed\"\n" +
+    "					ng-show=\"learn_config_form.eq_oracle_complete_min_depth.$dirty && learn_config_form.eq_oracle_complete_min_depth.$invalid\">\n" +
+    "					<small\n" +
+    "						ng-show=\"learn_config_form.eq_oracle_complete_min_depth.$error.required\">\n" +
+    "						The field must not be empty. </small>\n" +
+    "				</div>\n" +
+    "\n" +
+    "				<p>\n" +
+    "					<input class=\"form-control\" name=\"eq_oracle_complete_max_depth\"\n" +
+    "						ng-model=\"learnConfiguration.eqOracle.maxDepth\" type=\"number\"\n" +
+    "						required min=\"0\" style=\"display: inline; width: auto\"\n" +
+    "						placeholder=\"0\"> max depth\n" +
+    "				</p>\n" +
+    "				<div class=\"alert alert-danger alert-condensed\"\n" +
+    "					ng-show=\"learn_config_form.eq_oracle_complete_max_depth.$dirty && learn_config_form.eq_oracle_complete_max_depth.$invalid\">\n" +
+    "					<small\n" +
+    "						ng-show=\"learn_config_form.eq_oracle_complete_max_depth.$error.required\">\n" +
+    "						The field must not be empty. </small>\n" +
+    "				</div>\n" +
+    "\n" +
+    "			</div>\n" +
+    "			<!-- END: EQ Oracle: COMPLETE -->\n" +
+    "\n" +
+    "		</div>\n" +
+    "\n" +
+    "		<div class=\"form-group\">\n" +
+    "			<label class=\"control-label\">Max Amount of Steps to Learn (0\n" +
+    "				:= never stop)</label> <input name=\"max_steps\" required min=\"0\"\n" +
+    "				ng-model=\"learnConfiguration.maxAmountOfStepsToLearn\"\n" +
+    "				class=\"form-control\" type=\"number\" placeholder=\"0\">\n" +
+    "		</div>\n" +
+    "		<div class=\"alert alert-danger alert-condensed\"\n" +
+    "			ng-show=\"learn_config_form.max_steps.$dirty && learn_config_form.max_steps.$invalid\">\n" +
+    "			<small ng-show=\"learn_config_form.max_steps.$error.required\">\n" +
+    "				The field must not be empty. </small>\n" +
+    "		</div>\n" +
+    "\n" +
+    "	</div>\n" +
+    "\n" +
+    "	<div class=\"modal-footer\">\n" +
+    "        <button class=\"btn btn-primary\" type=\"submit\">Ok</button>\n" +
+    "	</div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/views/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
@@ -1145,139 +1344,6 @@ angular.module("app/views/modals/modal-test-details.html", []).run(["$templateCa
     "<div class=\"modal-footer\">\n" +
     "    <button class=\"btn btn-primary\" ng-click=\"ok()\">Ok</button>\n" +
     "</div>");
-}]);
-
-angular.module("app/views/modals/modal-test-setup-settings.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/modals/modal-test-setup-settings.html",
-    "<div class=\"modal-header\">\n" +
-    "	<h3 class=\"modal-title\">Test Settings</h3>\n" +
-    "	<span class=\"text-muted\">Manually set some parameters for the\n" +
-    "		Test</span>\n" +
-    "</div>\n" +
-    "\n" +
-    "<form name=\"learn_config_form\" ng-submit=\"ok()\">\n" +
-    "\n" +
-    "	<div class=\"modal-body\">\n" +
-    "\n" +
-    "		<div class=\"form-group\">\n" +
-    "			<label class=\"control-label\">Algorithm</label><br> <span\n" +
-    "				class=\"text-muted\">Select an algorithm that will be used for\n" +
-    "				the learn process (default is L*)</span> <select class=\"form-control\"\n" +
-    "				ng-model=\"learnConfiguration.algorithm\"\n" +
-    "				ng-options=\"k for (k,v) in learnAlgorithms\">\n" +
-    "				<option value=\"\" disabled>select an algorithm</option>\n" +
-    "			</select>\n" +
-    "		</div>\n" +
-    "\n" +
-    "		<div class=\"form-group\">\n" +
-    "			<label class=\"control-label\">EQ Oracle</label><br> <span\n" +
-    "				class=\"text-muted\">Select how counter examples should be\n" +
-    "				found (default is COMPLETE)</span> <select class=\"form-control\"\n" +
-    "				ng-model=\"learnConfiguration.eqOracle.type\"\n" +
-    "				ng-options=\"v for (k,v) in eqOracles\">\n" +
-    "				<option value=\"\" disabled>select a method</option>\n" +
-    "			</select>\n" +
-    "		</div>\n" +
-    "\n" +
-    "		<div class=\"form-group\">\n" +
-    "\n" +
-    "			<!-- BEGIN: EQ Oracle: RANDOM -->\n" +
-    "			<div ng-if=\"learnConfiguration.eqOracle.type == eqOracles.RANDOM\">\n" +
-    "				<p>\n" +
-    "					<input class=\"form-control\" name=\"eq_oracle_random_min_length\"\n" +
-    "						ng-model=\"learnConfiguration.eqOracle.minLength\" type=\"number\"\n" +
-    "						required min=\"0\" style=\"display: inline; width: auto\"\n" +
-    "						placeholder=\"0\"> min length\n" +
-    "				</p>\n" +
-    "				<div class=\"alert alert-danger alert-condensed\"\n" +
-    "					ng-show=\"learn_config_form.eq_oracle_random_min_length.$dirty && learn_config_form.eq_oracle_random_min_length.$invalid\">\n" +
-    "					<small\n" +
-    "						ng-show=\"learn_config_form.eq_oracle_complete_min_depth.$error.required\">\n" +
-    "						The field must not be empty. </small>\n" +
-    "				</div>\n" +
-    "\n" +
-    "				<p>\n" +
-    "					<input class=\"form-control\" name=\"eq_oracle_random_max_length\"\n" +
-    "						ng-model=\"learnConfiguration.eqOracle.maxLength\" type=\"number\"\n" +
-    "						required min=\"0\" style=\"display: inline; width: auto\"\n" +
-    "						placeholder=\"0\"> max length\n" +
-    "				</p>\n" +
-    "				<div class=\"alert alert-danger alert-condensed\"\n" +
-    "					ng-show=\"learn_config_form.eq_oracle_random_max_length.$dirty && learn_config_form.eq_oracle_random_max_length.$invalid\">\n" +
-    "					<small\n" +
-    "						ng-show=\"learn_config_form.eq_oracle_random_max_length.$error.required\">\n" +
-    "						The field must not be empty. </small>\n" +
-    "				</div>\n" +
-    "\n" +
-    "				<p>\n" +
-    "					<input class=\"form-control\" name=\"eq_oracle_random_no_words\"\n" +
-    "						ng-model=\"learnConfiguration.eqOracle.maxNoOfTests\" type=\"number\"\n" +
-    "						required min=\"0\" style=\"display: inline; width: auto\"\n" +
-    "						placeholder=\"0\"> no of random words to be generated\n" +
-    "				</p>\n" +
-    "				<div class=\"alert alert-danger alert-condensed\"\n" +
-    "					ng-show=\"learn_config_form.eq_oracle_random_no_words.$dirty && learn_config_form.eq_oracle_random_no_words.$invalid\">\n" +
-    "					<small\n" +
-    "						ng-show=\"learn_config_form.eq_oracle_random_no_words.$error.required\">\n" +
-    "						The field must not be empty. </small>\n" +
-    "				</div>\n" +
-    "			</div>\n" +
-    "			<!-- END: EQ Oracle: RANDOM -->\n" +
-    "\n" +
-    "			<!-- BEGIN: EQ Oracle: COMPLETE -->\n" +
-    "			<div ng-if=\"learnConfiguration.eqOracle.type == eqOracles.COMPLETE\">\n" +
-    "				<p>\n" +
-    "					<input class=\"form-control\" name=\"eq_oracle_complete_min_depth\"\n" +
-    "						ng-model=\"learnConfiguration.eqOracle.minDepth\" type=\"number\"\n" +
-    "						required min=\"0\" style=\"display: inline; width: auto\"\n" +
-    "						placeholder=\"0\"> min depth\n" +
-    "				</p>\n" +
-    "				<div class=\"alert alert-danger alert-condensed\"\n" +
-    "					ng-show=\"learn_config_form.eq_oracle_complete_min_depth.$dirty && learn_config_form.eq_oracle_complete_min_depth.$invalid\">\n" +
-    "					<small\n" +
-    "						ng-show=\"learn_config_form.eq_oracle_complete_min_depth.$error.required\">\n" +
-    "						The field must not be empty. </small>\n" +
-    "				</div>\n" +
-    "\n" +
-    "				<p>\n" +
-    "					<input class=\"form-control\" name=\"eq_oracle_complete_max_depth\"\n" +
-    "						ng-model=\"learnConfiguration.eqOracle.maxDepth\" type=\"number\"\n" +
-    "						required min=\"0\" style=\"display: inline; width: auto\"\n" +
-    "						placeholder=\"0\"> max depth\n" +
-    "				</p>\n" +
-    "				<div class=\"alert alert-danger alert-condensed\"\n" +
-    "					ng-show=\"learn_config_form.eq_oracle_complete_max_depth.$dirty && learn_config_form.eq_oracle_complete_max_depth.$invalid\">\n" +
-    "					<small\n" +
-    "						ng-show=\"learn_config_form.eq_oracle_complete_max_depth.$error.required\">\n" +
-    "						The field must not be empty. </small>\n" +
-    "				</div>\n" +
-    "\n" +
-    "			</div>\n" +
-    "			<!-- END: EQ Oracle: COMPLETE -->\n" +
-    "\n" +
-    "		</div>\n" +
-    "\n" +
-    "		<div class=\"form-group\">\n" +
-    "			<label class=\"control-label\">Max Amount of Steps to Learn (0\n" +
-    "				:= never stop)</label> <input name=\"max_steps\" required min=\"0\"\n" +
-    "				ng-model=\"learnConfiguration.maxAmountOfStepsToLearn\"\n" +
-    "				class=\"form-control\" type=\"number\" placeholder=\"0\">\n" +
-    "		</div>\n" +
-    "		<div class=\"alert alert-danger alert-condensed\"\n" +
-    "			ng-show=\"learn_config_form.max_steps.$dirty && learn_config_form.max_steps.$invalid\">\n" +
-    "			<small ng-show=\"learn_config_form.max_steps.$error.required\">\n" +
-    "				The field must not be empty. </small>\n" +
-    "		</div>\n" +
-    "\n" +
-    "	</div>\n" +
-    "\n" +
-    "	<div class=\"modal-footer\">\n" +
-    "		<button class=\"btn btn-default\" type=\"submit\">Ok</button>\n" +
-    "		<a class=\"btn btn-warning\" ng-click=\"cancel()\">Cancel</a>\n" +
-    "	</div>\n" +
-    "\n" +
-    "</form>");
 }]);
 
 angular.module("app/views/modals/symbol-create-modal.html", []).run(["$templateCache", function($templateCache) {
@@ -1487,7 +1553,7 @@ angular.module("app/views/modals/symbol-move-modal.html", []).run(["$templateCac
     "\n" +
     "    <ul class=\"list-group\" style=\"margin-bottom: 0\">\n" +
     "        <li class=\"list-group-item\" ng-repeat=\"group in groups\"\n" +
-    "            ng-class=\"selectedGroup.name === group.name ? 'active': ''\"\n" +
+    "            ng-class=\"selectedGroup === group ? 'active': ''\"\n" +
     "            ng-click=\"selectGroup(group)\">\n" +
     "            <span class=\"label label-default pull-right\" ng-bind=\"group.symbols.length\"></span>\n" +
     "            <span ng-bind=\"group.name\"></span>\n" +
@@ -1890,7 +1956,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "            <input type=\"checkbox\" select-all-items-checkbox items=\"allSymbols\">\n" +
     "        </div>\n" +
     "        <div class=\"pull-right\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" open-test-setup-settings-modal\n" +
+    "            <button class=\"btn btn-xs btn-default\" open-learn-setup-settings-modal\n" +
     "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
     "                <i class=\"fa fa-gear\"></i>\n" +
     "            </button>\n" +
@@ -2215,7 +2281,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "\n" +
     "        <div ng-if=\"symbol.actions\" as-sortable ng-model=\"symbol.actions\">\n" +
     "            <div selectable-list ng-model=\"symbol.actions\">\n" +
-    "                <div selectable-list-item ng-repeat=\"action in symbol.actions\" as-sortable-item>\n" +
+    "                <div selectable-list-item ng-repeat=\"action in symbol.actions track by $index\" as-sortable-item>\n" +
     "\n" +
     "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
     "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
@@ -2235,87 +2301,13 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "                            </li>\n" +
     "                        </ul>\n" +
     "                    </div>\n" +
-    "	            \n" +
-    "	           <span class=\"text-muted pull-right\" as-sortable-item-handle style=\"margin-right: 15px; padding: 2px;\">\n" +
-    "                    <i class=\"fa fa-sort fa-fw\"></i>\n" +
-    "                </span>\n" +
     "\n" +
-    "                    <strong ng-bind=\"action.type\"></strong><br>\n" +
+    "                    <span class=\"text-muted pull-right\" as-sortable-item-handle\n" +
+    "                          style=\"margin-right: 15px; padding: 2px;\">\n" +
+    "                        <i class=\"fa fa-sort fa-fw\"></i>\n" +
+    "                    </span>\n" +
     "\n" +
-    "                    <!-- BEGIN: Display Web Actions -->\n" +
-    "                    <div class=\"text-muted\" ng-if=\"symbol.type == 'web'\">\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == webActionTypes.SEARCH_FOR_TEXT\">\n" +
-    "                            Search for the\n" +
-    "                            <span ng-show=\"action.regexp\">regexp</span>\n" +
-    "                            <span ng-show=\"!action.regexp\">string</span>\n" +
-    "                            \"{{action.value}}\" on the page\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == webActionTypes.SEARCH_FOR_NODE\">\n" +
-    "                            Search for the element \"{{action.value}}\" in the DOM tree of the page\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == webActionTypes.CLEAR\">\n" +
-    "                            Clear the element \"{{action.node}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == webActionTypes.CLICK\">\n" +
-    "                            Click on the element \"{{action.node}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == webActionTypes.FILL\">\n" +
-    "                            Fill the element \"{{action.node}}\" with \"{{action.generator}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == webActionTypes.GO_TO\">\n" +
-    "                            Go to the page with the url \"{{action.url}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == webActionTypes.SUBMIT\">\n" +
-    "                            Submit the form element \"{{action.node}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == webActionTypes.WAIT\">\n" +
-    "                            Wait for {{action.duration}} ms.\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                    </div>\n" +
-    "                    <!-- END: Display Web Actions -->\n" +
-    "\n" +
-    "                    <!-- BEGIN: Display Rest Actions -->\n" +
-    "                    <div class=\"text-muted\" ng-if=\"symbol.type == 'rest'\">\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == restActionTypes.CALL_URL\">\n" +
-    "                            Make a \"{{action.method}}\" request to \"{{action.url}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == restActionTypes.CHECK_STATUS\">\n" +
-    "                            Check http status to be \"{{action.status}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == restActionTypes.CHECK_HEADER_FIELD\">\n" +
-    "                            Check header field \"{{action.key}}\" to be \"{{action.value}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == restActionTypes.CHECK_HTTP_BODY_TEXT\">\n" +
-    "                            Search in the response body for \"{{action.value}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == restActionTypes.CHECK_ATTRIBUTE_EXISTS\">\n" +
-    "                            Check if response body attribute \"{{action.attribute}}\" exists\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == restActionTypes.CHECK_ATTRIBUTE_VALUE\">\n" +
-    "                            Check response body attribute \"{{action.attribute}}\" to be \"{{action.value}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                        <p ng-if=\"action.type == restActionTypes.CHECK_ATTRIBUTE_TYPE\">\n" +
-    "                            Check response body attribute \"{{action.attribute}}\" to be type of \"{{action.jsonType}}\"\n" +
-    "                        </p>\n" +
-    "\n" +
-    "                    </div>\n" +
-    "                    <!-- END: Display Rest Actions -->\n" +
+    "                    <span ng-bind=\"action.toString()\"></span>\n" +
     "\n" +
     "                </div>\n" +
     "            </div>\n" +
@@ -3104,7 +3096,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 CHECK_ATTRIBUTE_TYPE: 'rest_checkAttributeType'
             },
             other: {
-                WAIT: 'wait'
+                WAIT: 'wait',
+                DECLARE_COUNTER: 'declareCounter',
+                DECLARE_VARIABLE: 'declareVariable',
+                INCREMENT_COUNTER: 'incrementCounter',
+                SET_COUNTER: 'setCounter',
+                SET_VARIABLE: 'setVariable',
+                SET_VARIABLE_BY_JSON_ATTRIBUTE: 'setVariableByJSON',
+                SET_VARIABLE_BY_NODE: 'setVariableByHTML'
             }
         })
 
@@ -3121,36 +3120,32 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             DHC: 'DHC',
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE'
         })
-}());
-;
-(function () {
+}());;(function () {
     'use strict';
 
     angular
         .module('weblearner.controller')
-        .controller('ActionCreateModalController', [
-            '$scope', '$modalInstance', 'modalData', 'actionTypes',
-            ActionCreateModalController
-        ]);
+        .controller('ActionCreateModalController', ActionCreateModalController);
 
-    function ActionCreateModalController($scope, $modalInstance, modalData, actionTypes) {
+    ActionCreateModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action'];
+
+    function ActionCreateModalController($scope, $modalInstance, modalData, actionTypes, Action) {
 
         $scope.actionTypes = actionTypes;
-        $scope.selectedActionType;
         $scope.symbol = modalData.symbol;
-        $scope.action;
+        $scope.action = null;
 
-        console.log($scope.actionTypes);
-
-        $scope.createAction = function (action) {
-            $modalInstance.close(action);
+        $scope.selectNewActionType = function (type) {
+            $scope.action = Action.createByType(type);
         };
 
-        //////////
+        $scope.createAction = function () {
+            $modalInstance.close($scope.action);
+        };
 
         $scope.closeModal = function () {
             $modalInstance.dismiss();
-        }
+        };
     }
 }());;(function () {
     'use strict';
@@ -3274,6 +3269,75 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 			$scope.layoutSettings = angular.copy(_defaultLayoutSetting);
 		};
 	}
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('LearnSetupSettingsModalController', LearnSetupSettingsModalController);
+
+    LearnSetupSettingsModalController.$inject = [
+        '$scope', '$modalInstance', 'modalData', 'eqOracles', 'learnAlgorithms', 'EqOracle'
+    ];
+
+    /**
+     * The controller for the modal dialog where you can set the settings for an upcoming test run. Handles the template
+     * under 'views/modals/learn-setup-settings-modal.html'. Passes the edited instance of a LearnConfiguration on
+     * success.
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param modalData - The data that is passed to the controller. Must be an object with the property 'learnConfiguration'
+     * @param eqOracles - The constants for eqOracles types
+     * @param learnAlgorithms - The constants for learnAlgorithm names
+     * @param EqOracle - The model for an EqOracle
+     * @constructor
+     */
+    function LearnSetupSettingsModalController($scope, $modalInstance, modalData, eqOracles, learnAlgorithms, EqOracle) {
+
+        /**
+         * The constants for eqOracles types
+         */
+        $scope.eqOracles = eqOracles;
+
+        /**
+         * The model for the select input that holds a type for an eqOracle
+         */
+        $scope.selectedEqOracle = modalData.learnConfiguration.eqOracle.type;
+
+        /**
+         * The constants for learnAlgorithm names
+         */
+        $scope.learnAlgorithms = learnAlgorithms;
+
+        /**
+         * The LearnConfiguration to be edited
+         *
+         * @type {LearnConfiguration}
+         */
+        $scope.learnConfiguration = modalData.learnConfiguration;
+
+        // watch for the select input to change and create a new EqOracle based on the type
+        $scope.$watch('selectedEqOracle', function (type) {
+            if (type) {
+                $scope.learnConfiguration.eqOracle = EqOracle.createFromType(type);
+            }
+        });
+
+        /**
+         * Close the modal dialog and pass the edited learn configuration instance.
+         */
+        $scope.ok = function () {
+            $modalInstance.close($scope.learnConfiguration);
+        };
+
+        /**
+         * Close the modal dialog.
+         */
+        $scope.closeModal = function () {
+            $modalInstance.dismiss();
+        }
+    }
 }());;(function () {
     'use strict';
 
@@ -3517,7 +3581,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             SymbolGroup.Resource.delete($scope.group.project, $scope.group)
                 .then(function () {
                     $modalInstance.close({
-                        status: 'updated',
+                        status: 'deleted',
                         group: $scope.group
                     });
                 });
@@ -3549,16 +3613,15 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         $scope.moveSymbols = function () {
             if ($scope.selectedGroup !== null) {
-                // TODO: update logic
+                _.forEach($scope.symbols, function (symbol) {
+                    $scope.symbol.group = $scope.selectedGroup.id;
+                    Symbol.Resource.update($scope.selectedGroup.project, symbol);
+                })
             }
         };
 
         $scope.selectGroup = function (group) {
-            if ($scope.selectedGroup.name == group.name) {
-                $scope.selectedGroup = null;
-            } else {
-                $scope.selectedGroup = group;
-            }
+            $scope.selectedGroup = $scope.selectedGroup === group ? null : group;
         };
 
         /**
@@ -3585,38 +3648,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         //////////
 
         $scope.ok = function () {
-            $modalInstance.dismiss();
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
-        .controller('TestSetupSettingsController', [
-            '$scope', '$modalInstance', 'modalData', 'EqOraclesEnum', 'LearnAlgorithmsEnum', 'EqOracleService',
-            TestSetupSettingsController
-        ]);
-
-    function TestSetupSettingsController($scope, $modalInstance, modalData, eqOracles, learnAlgorithms, EqOracleService) {
-
-        $scope.eqOracles = eqOracles;
-        $scope.learnAlgorithms = learnAlgorithms;
-        $scope.learnConfiguration = modalData.learnConfiguration;
-        
-        //////////
-                
-        $scope.$watch('learnConfiguration.eqOracle.type', function(type){
-    		$scope.learnConfiguration.eqOracle = EqOracleService.create(type);
-        });
-
-        //////////
-
-        $scope.ok = function () {
-            $modalInstance.close($scope.learnConfiguration);
-        };
-
-        $scope.cancel = function () {
             $modalInstance.dismiss();
         }
     }
@@ -3920,30 +3951,19 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     angular
         .module('weblearner.controller')
         .controller('LearnSetupController', [
-            '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'EqOraclesEnum',
-            'LearnAlgorithmsEnum', 'LearnerResource', 'ngToast',
+            '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'LearnConfiguration',
+            'LearnerResource', 'ngToast',
             LearnSetupController
         ]);
 
-    function LearnSetupController($scope, $state, SymbolGroup, SessionService, SelectionService, EqOracles,
-                                  LearnAlgorithms, LearnerResource, toast) {
+    function LearnSetupController($scope, $state, SymbolGroup, SessionService, SelectionService, LearnConfiguration,
+                                  LearnerResource, toast) {
 
         $scope.project = SessionService.project.get();
         $scope.groups = [];
         $scope.allSymbols = [];
-        $scope.collapseAll = false;
+        $scope.learnConfiguration = new LearnConfiguration();
         $scope.resetSymbol;
-
-        $scope.learnConfiguration = {
-            symbols: [],
-            algorithm: LearnAlgorithms.EXTENSIBLE_LSTAR,
-            eqOracle: {
-                type: EqOracles.COMPLETE,
-                minDepth: 1,
-                maxDepth: 1
-            },
-            maxAmountOfStepsToLearn: 0
-        };
 
         //////////
 
@@ -3977,23 +3997,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         $scope.startLearning = function () {
             var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
 
-            // make sure there are selected symbols
             if (selectedSymbols.length && $scope.resetSymbol) {
 
-                // get id:revision pair from each selected symbol and add it to the learn configuration
                 _.forEach(selectedSymbols, function (symbol) {
-                    $scope.learnConfiguration.symbols.push({
-                        id: symbol.id,
-                        revision: symbol.revision
-                    });
+                    $scope.learnConfiguration.addSymbol(symbol)
                 });
 
-                $scope.learnConfiguration.resetSymbol = {
-                    id: $scope.resetSymbol.id,
-                    revision: $scope.resetSymbol.revision
-                };
+                $scope.learnConfiguration.setResetSymbol($scope.resetSymbol);
 
-                // start learning and go to the load page
                 LearnerResource.start($scope.project.id, $scope.learnConfiguration)
                     .then(function () {
                         $state.go('learn.start')
@@ -4281,13 +4292,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         /** a copy of $scope.symbol to revert unsaved changes */
         $scope.symbolCopy;
 
-        //////////
-
         // load all actions from the symbol
         Symbol.Resource.get($scope.project.id, $stateParams.symbolId)
             .then(init);
-
-        //////////
 
         function init(symbol) {
 
@@ -4300,8 +4307,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             $scope.symbol = symbol;
             $scope.symbolCopy = symbol.copy();
         }
-
-        //////////
 
         /**
          * delete the actions that the user selected from the scope
@@ -4377,6 +4382,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         $scope.groups = [];
         $scope.allSymbols = [];
         $scope.collapseAll = false;
+        $scope.selectedSymbols = [];
 
         SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
             .then(function (groups) {
@@ -4481,6 +4487,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             });
             _.remove($scope.groups, {id: group.id});
         };
+
+        $scope.getSelectedSymbols = function () {
+            return SelectionService.getSelected($scope.allSymbols);
+        }
     }
 }());;(function () {
     'use strict';
@@ -6118,12 +6128,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.directives')
-        .directive('openHypothesisLayoutSettingsModal', [
-            '$modal', 'paths',
-            openHypothesisLayoutSettingsModal
-        ]);
+        .directive('openHypothesisLayoutSettingsModal', openHypothesisLayoutSettingsModal);
 
-    function openHypothesisLayoutSettingsModal($modal) {
+    openHypothesisLayoutSettingsModal.$inject = ['$modal', 'paths'];
+
+    function openHypothesisLayoutSettingsModal($modal, paths) {
 
         var directive = {
             scope: {
@@ -6158,6 +6167,53 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 modal.result.then(function (layoutSettings) {
                     scope.layoutSettings = layoutSettings
                 })
+            }
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('openLearnSetupSettingsModal', openLearnSetupSettingsModal);
+
+    openLearnSetupSettingsModal.$inject = ['$modal', 'paths'];
+
+    function openLearnSetupSettingsModal($modal, paths) {
+
+        var directive = {
+            restrict: 'EA',
+            scope: {
+                learnConfiguration: '=',
+                onOk: '&'
+            },
+            link: link
+        };
+        return directive;
+
+        //////////
+
+        function link(scope, el, attr) {
+
+            el.on('click', handleModal);
+
+            function handleModal() {
+                var modal = $modal.open({
+                    templateUrl: paths.views.MODALS + '/learn-setup-settings-modal.html',
+                    controller: 'LearnSetupSettingsModalController',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                learnConfiguration: scope.learnConfiguration.copy()
+                            };
+                        }
+                    }
+                });
+
+                // when successfully creating a symbol at the new to the list
+                modal.result.then(function (learnConfiguration) {
+                    scope.onOk()(learnConfiguration);
+                });
             }
         }
     }
@@ -6200,54 +6256,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                         }
                     })
                 }
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('openTestSetupSettingsModal', [
-            '$modal', 'paths',
-            openTestSetupSettingsModal
-        ]);
-
-    function openTestSetupSettingsModal($modal, paths) {
-
-        var directive = {
-            restrict: 'EA',
-            scope: {
-                learnConfiguration: '=',
-                onOk: '&'
-            },
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attr) {
-
-            el.on('click', handleModal);
-
-            function handleModal() {            	
-                var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/modal-test-setup-settings.html',
-                    controller: 'TestSetupSettingsController',
-                    resolve: {
-                        modalData: function () {
-                            return {
-                                learnConfiguration: angular.copy(scope.learnConfiguration)
-                            };
-                        }
-                    }
-                });
-
-                // when successfully creating a symbol at the new to the list
-                modal.result.then(function (learnConfiguration) {
-                    scope.onOk()(learnConfiguration);
-                });
             }
         }
     }
@@ -6499,18 +6507,18 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             scope: {
                 configuration: '='
             },
-            controller: ['$scope', 'EqOraclesEnum', 'EqOracleService', controller]
+            controller: ['$scope', 'eqOracles', 'EqOracle', controller]
         };
         return directive;
 
-        function controller($scope, EqOraclesEnum, EqOracleService) {
+        function controller($scope, eqOracles, EqOracle) {
 
-            $scope.eqOracles = EqOraclesEnum;
+            $scope.eqOracles = eqOracles;
 
             //////////
 
             $scope.$watch('configuration.eqOracle.type', function (type) {
-                $scope.configuration.eqOracle = EqOracleService.create(type);
+                $scope.configuration.eqOracle = EqOracle.createFromType(type);
             });
         }
     }
@@ -7381,12 +7389,329 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.models')
         .factory('Action', ActionModel);
 
-    function ActionModel() {
+    ActionModel.$inject = ['actionTypes'];
 
+    function ActionModel(actionTypes) {
+
+        function Action() {
+        }
+
+        Action.Web = function () {
+        };
+
+        Action.Web.SearchForText = function (value, isRegexp) {
+            this.type = actionTypes.web.SEARCH_FOR_TEXT;
+            this.value = value || null;
+            this.regexp = isRegexp || false;
+        };
+
+        Action.Web.SearchForText.prototype.toString = function () {
+            return 'Search for ' + (this.regexp ? 'regexp' : 'string') + '"' + this.value + '"';
+        };
+
+        Action.Web.SearchForNode = function (value, isRegexp) {
+            this.type = actionTypes.web.SEARCH_FOR_NODE;
+            this.value = value || null;
+            this.regexp = isRegexp || false
+        };
+
+        Action.Web.SearchForText.prototype.toString = function () {
+            return 'Search for node "' + this.value + '"' + (this.regexp ? 'as regexp' : '');
+        };
+
+        Action.Web.Clear = function (node) {
+            this.type = actionTypes.web.CLEAR;
+            this.node = node || null;
+        };
+
+        Action.Web.Clear.prototype.toString = function () {
+            return 'Clear element "' + this.node + '"';
+        };
+
+        Action.Web.Click = function (node) {
+            this.type = actionTypes.web.CLICK;
+            this.node = node || null;
+        };
+
+        Action.Web.Click.prototype.toString = function () {
+            return 'Click on element "' + this.node + '"';
+        };
+
+        Action.Web.Fill = function (node, value) {
+            this.type = actionTypes.web.FILL;
+            this.node = node || null;
+            this.generator = value || null
+        };
+
+        Action.Web.Fill.prototype.toString = function () {
+            return 'Fill element "' + this.node + '" with "' + this.generator + '"';
+        };
+
+        Action.Web.GoTo = function (url) {
+            this.type = actionTypes.web.GO_TO;
+            this.url = url || null;
+        };
+
+        Action.Web.GoTo.prototype.toString = function () {
+            return 'Go to URL "' + this.url + '"';
+        };
+
+        Action.Web.Submit = function (node) {
+            this.type = actionTypes.web.SUBMIT;
+            this.node = node || null;
+        };
+
+        Action.Web.Submit.prototype.toString = function () {
+            return 'Submit element "' + this.node + '"';
+        };
+
+        //////////
+
+        Action.Rest = function () {
+        };
+
+        Action.Rest.Call = function (method, url, data) {
+            this.type = actionTypes.rest.CALL_URL;
+            this.method = method || null;
+            this.url = url || null;
+            this.data = data || null;
+        };
+
+        Action.Rest.Call.prototype.toString = function () {
+            return 'Make a "' + this.method + '" request to "' + this.url + '"';
+        };
+
+        Action.Rest.CheckStatus = function (statusCode) {
+            this.type = actionTypes.rest.CHECK_STATUS;
+            this.status = statusCode || null;
+        };
+
+        Action.Rest.CheckStatus.prototype.toString = function () {
+            return 'Check HTTP response status to be "' + this.status + '"'
+        };
+
+        Action.Rest.CheckHeaderField = function (key, value, isRegexp) {
+            this.type = actionTypes.rest.CHECK_HEADER_FIELD;
+            this.key = key || null;
+            this.value = value || null;
+            this.regexp = isRegexp || false;
+        };
+
+        Action.Rest.CheckHeaderField.prototype.toString = function () {
+            return 'Check HTTP response header field "' + this.key + '" to be' + (this.regexp ? ' like ' : ' ') + '"' + this.value + '"';
+        };
+
+        Action.Rest.CheckHttpBodyText = function (value, isRegexp) {
+            this.type = actionTypes.rest.CHECK_HTTP_BODY_TEXT;
+            this.value = value || null;
+            this.regexp = isRegexp || false;
+        };
+
+        Action.Rest.CheckHttpBodyText.toString = function () {
+            return 'Search in the HTTP response body for ' + (this.regexp ? 'regexp' : 'string') + ' "' + this.value + '"';
+        };
+
+        Action.Rest.CheckAttributeExists = function (attribute) {
+            this.type = actionTypes.rest.CHECK_ATTRIBUTE_EXISTS;
+            this.attribute = this.attribute = attribute || null;
+        };
+
+        Action.Rest.CheckAttributeExists.prototype.toString = function () {
+            return 'Check if the JSON of a HTTP response has attribute "' + this.attribute + '"';
+        };
+
+        Action.Rest.CheckAttributeValue = function (attribute, value, isRegexp) {
+            this.type = actionTypes.rest.CHECK_ATTRIBUTE_VALUE;
+            this.attribute = attribute || null;
+            this.value = value || null;
+            this.regexp = isRegexp || false
+        };
+
+        Action.Rest.CheckAttributeValue.prototype.toString = function () {
+            return 'Check the JSON of a HTTP response to have attribute "' + this.attribute + '" to be' + (this.regexp ? ' like ' : ' ') + '"' + this.value + '"';
+        };
+
+        Action.Rest.CheckAttributeType = function (attribute, jsonType) {
+            this.type = actionTypes.rest.CHECK_ATTRIBUTE_TYPE;
+            this.attribute = attribute || null;
+            this.jsonType = jsonType || null;
+        };
+
+        Action.Rest.CheckAttributeType.prototype.toString = function () {
+            return 'Check the JSON attribute "' + this.attribute + '" of a HTTP response to be type of "' + this.jsonType + '"';
+        };
+
+        //////////
+
+        Action.Other = function () {
+        };
+
+        Action.Other.Wait = function (duration) {
+            this.type = actionTypes.other.WAIT;
+            this.duration = duration || 0;
+        };
+
+        Action.Other.Wait.prototype.toString = function () {
+            return 'Wait for ' + this.duration + 'ms'
+        };
+
+        Action.Other.DeclareCounter = function (name) {
+            this.type = actionTypes.other.DECLARE_COUNTER;
+            this.name = name || null;
+        };
+
+        Action.Other.DeclareCounter.prototype.toString = function () {
+            return 'Declare counter "' + this.name + '"';
+        };
+
+        Action.Other.DeclareVariable = function (name) {
+            this.type = actionTypes.other.DECLARE_VARIABLE;
+            this.name = name || null;
+        };
+
+        Action.Other.DeclareVariable.prototype.toString = function () {
+            return 'Declare variable "' + this.name + '"';
+        };
+
+        Action.Other.IncrementCounter = function (name) {
+            this.type = actionTypes.other.INCREMENT_COUNTER;
+            this.name = name || null;
+        };
+
+        Action.Other.IncrementCounter.prototype.toString = function () {
+            return 'Increment counter "' + this.name + '"';
+        };
+
+        Action.Other.SetCounter = function (name, value) {
+            this.type = actionTypes.other.SET_COUNTER;
+            this.name = name || null;
+            this.value = value || null;
+        };
+
+        Action.Other.SetCounter.prototype.toString = function () {
+            return 'Set counter "' + this.name + '" to "' + this.value + '"';
+        };
+
+        Action.Other.SetVariable = function (name, value) {
+            this.type = actionTypes.other.SET_VARIABLE;
+        };
+
+        Action.Other.SetVariable.prototype.toString = function () {
+            return 'Set variable "' + this.name + '" to "' + this.value + '"';
+        };
+
+        Action.Other.SetVariableByJSONAttribute = function (name, jsonAttribute) {
+            this.type = actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE;
+            this.name = name || null;
+            this.value = jsonAttribute;
+        };
+
+        Action.Other.SetVariableByJSONAttribute.prototype.toString = function () {
+            return 'Set variable "' + this.name + '" to the value of the JSON attribute "' + this.value + '"';
+        };
+
+        Action.Other.SetVariableByNode = function (name, xPath) {
+            this.type = actionTypes.other.SET_VARIABLE_BY_NODE;
+            this.name = name || null;
+            this.value = xPath;
+        };
+
+        Action.Other.SetVariableByNode.prototype.toString = function () {
+            return 'Set variable "' + this.name + '" to the value of the element "' + this.value + '"';
+        };
+
+        Action.build = function (data) {
+
+            switch (data.type) {
+
+                // web actions
+                case actionTypes.web.SEARCH_FOR_TEXT:
+                    return new Action.Web.SearchForText(data.value, data.regexp);
+                    break;
+                case actionTypes.web.SEARCH_FOR_NODE:
+                    return new Action.Web.SearchForNode(data.value, data.regexp);
+                    break;
+                case actionTypes.web.CLEAR:
+                    return new Action.Web.Clear(data.node);
+                    break;
+                case actionTypes.web.CLICK:
+                    return new Action.Web.Click(data.node);
+                    break;
+                case actionTypes.web.FILL:
+                    return new Action.Web.Fill(data.node, data.generator);
+                    break;
+                case actionTypes.web.GO_TO:
+                    return new Action.Web.GoTo(data.url);
+                    break;
+                case actionTypes.web.SUBMIT:
+                    return new Action.Web.Submit(data.node);
+                    break;
+
+                // rest actions
+                case actionTypes.rest.CALL_URL:
+                    return new Action.Rest.Call(data.method, data.url, data.data);
+                    break;
+                case actionTypes.rest.CHECK_STATUS:
+                    return new Action.Rest.CheckStatus(data.status);
+                    break;
+                case actionTypes.rest.CHECK_HEADER_FIELD:
+                    return new Action.Rest.CheckHeaderField(data.key, data.value, data.regexp);
+                    break;
+                case actionTypes.rest.CHECK_HTTP_BODY_TEXT:
+                    return new Action.Rest.CheckHttpBodyText(data.value, data.regexp);
+                    break;
+                case actionTypes.rest.CHECK_ATTRIBUTE_EXISTS:
+                    return new Action.Rest.CheckAttributeExists(data.attribute);
+                    break;
+                case actionTypes.rest.CHECK_ATTRIBUTE_VALUE:
+                    return new Action.Rest.CheckAttributeValue(data.attribute, data.value, data.regexp);
+                    break;
+                case actionTypes.rest.CHECK_ATTRIBUTE_TYPE:
+                    return new Action.Rest.CheckAttributeType(data.attribute, data.jsonType);
+                    break;
+
+                // other actions
+                case actionTypes.other.WAIT:
+                    return new Action.Other.Wait(data.duration);
+                    break;
+                case actionTypes.other.DECLARE_COUNTER:
+                    return new Action.Other.DeclareCounter(data.name);
+                    break;
+                case actionTypes.other.DECLARE_VARIABLE:
+                    return new Action.Other.DeclareVariable(data.name);
+                    break;
+                case actionTypes.other.INCREMENT_COUNTER:
+                    return new Action.Other.IncrementCounter(data.name);
+                    break;
+                case actionTypes.other.SET_COUNTER:
+                    return new Action.Other.SetCounter(data.name, data.value);
+                    break;
+                case actionTypes.other.SET_VARIABLE:
+                    return new Action.Other.SetVariable(data.name, data.value);
+                    break;
+                case actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE:
+                    return new Action.Other.SetVariableByJSONAttribute(data.name, data.value);
+                    break;
+                case actionTypes.other.SET_VARIABLE_BY_NODE:
+                    return new Action.Other.SetVariableByNode(data.name, data.value);
+                    break;
+
+                default:
+                    return null;
+                    break;
+            }
+
+        };
+
+        Action.createByType = function (type) {
+            return Action.build({
+                type: type
+            })
+        };
+
+        return Action;
     }
-}());
-;
-(function () {
+}());;(function () {
 
     angular
         .module('weblearner.models')
@@ -7394,32 +7719,69 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     EqOracleModel.$inject = ['eqOracles'];
 
+    /**
+     * The factory that holds the models for an eq oracle
+     *
+     * @param eqOracles - The constants for eq oracle types
+     * @returns {{Random: Random, Complete: Complete, Sample: Sample, build: build, createFromType: createFromType}}
+     * @constructor
+     */
     function EqOracleModel(eqOracles) {
 
         var EqOracle = {
             Random: Random,
             Complete: Complete,
             Sample: Sample,
-            build: build
+            build: build,
+            createFromType: createFromType
         };
         return EqOracle;
 
-        function Random(minLength, maxLength) {
+        /**
+         * The model for an eq oracle that searches randomly for counter examples
+         *
+         * @param minLength - The minimum length of a word that should be created
+         * @param maxLength - The maximum length of a word that should be created
+         * @param maxNoOfTests - The maximum number of words that are generated
+         * @constructor
+         */
+        function Random(minLength, maxLength, maxNoOfTests) {
             this.type = eqOracles.RANDOM;
             this.minLength = minLength || 1;
             this.maxLength = maxLength || 1;
+            this.maxNoOfTests = maxNoOfTests || 1;
         }
 
+        /**
+         * The model for an eq oracle that searches in the hypothesis for counter examples starting from the start
+         * state
+         *
+         * @param minDepth - The minimum depth
+         * @param maxDepth - The maximum depth
+         * @constructor
+         */
         function Complete(minDepth, maxDepth) {
             this.type = eqOracles.COMPLETE;
             this.minDepth = minDepth || 1;
             this.maxDepth = maxDepth || 1;
         }
 
+        /**
+         * The model for an eq oracle where counter examples are chosen manually
+         *
+         * @constructor
+         */
         function Sample() {
             this.type = eqOracles.SAMPLE;
+            this.counterExamples = [];
         }
 
+        /**
+         * Creates an instance of an eqOracle from data
+         *
+         * @param data
+         * @returns {*}
+         */
         function build(data) {
             var eqOracle;
 
@@ -7436,11 +7798,23 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 default :
                     break;
             }
+
+            return eqOracle;
+        }
+
+        /**
+         * Creates a new instance of an EqOracle given a specific type
+         *
+         * @param type
+         * @returns {*}
+         */
+        function createFromType(type) {
+            return build({
+                type: type
+            })
         }
     }
-}());
-;
-(function () {
+}());;(function () {
     'use strict';
 
     angular
@@ -7449,30 +7823,77 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     LearnConfigurationModel.$inject = ['learnAlgorithms', 'EqOracle'];
 
+    /**
+     * The model for setting parameters for a learn process.
+     *
+     * @param learnAlgorithms
+     * @param EqOracle
+     * @returns {LearnConfiguration}
+     * @constructor
+     */
     function LearnConfigurationModel(learnAlgorithms, EqOracle) {
 
+        /**
+         *
+         * @constructor
+         */
         function LearnConfiguration() {
             this.symbols = [];
             this.maxAmountOfStepsToLearn = 0;
             this.eqOracle = new EqOracle.Complete();
             this.algorithm = learnAlgorithms.EXTENSIBLE_LSTAR;
+            this.resetSymbol;
         }
 
+        /**
+         *
+         * @param symbol
+         */
+        LearnConfiguration.prototype.setResetSymbol = function (symbol) {
+            this.resetSymbol = {
+                id: symbol.id,
+                revision: symbol.revision
+            };
+        };
+
+        /**
+         *
+         * @param symbol
+         */
+        LearnConfiguration.prototype.addSymbol = function (symbol) {
+            this.symbols.push({
+                id: symbol.id,
+                revision: symbol.revision
+            });
+        };
+
+        /**
+         *
+         * @returns {*}
+         */
+        LearnConfiguration.prototype.copy = function () {
+            return LearnConfiguration.build(angular.copy(this));
+        };
+
+
+        /**
+         *
+         * @param data
+         * @returns {LearnConfigurationModel.LearnConfiguration}
+         */
         LearnConfiguration.build = function (data) {
             var learnConfiguration = new LearnConfiguration();
             learnConfiguration.symbols = data.symbols;
             learnConfiguration.maxAmountOfStepsToLearn = data.maxAmountOfStepsToLearn;
             learnConfiguration.algorithm = data.algorithm;
-            learnConfiguration.eqOracle = data.eqOracle;
+            learnConfiguration.eqOracle = EqOracle.build(data.eqOracle);
+            learnConfiguration.resetSymbol = data.resetSymbol;
             return learnConfiguration;
         };
 
         return LearnConfiguration;
     }
-}());
-;
-;
-(function () {
+}());;;(function () {
     'use strict';
 
     angular
@@ -8072,7 +8493,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             return $http.delete(paths.api.URL + '/projects/' + projectId + '/groups/' + group.id)
                 .then(function (response) {
-                    return _this.build(response.data);
+                    return response.data;
                 })
         };
 
@@ -8249,6 +8670,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         };
 
+        SymbolResource.prototype.updateSome = function (projectId, symbols) {
+            // TODO
+        };
+
         /**
          * Make a DELETE request to /rest/projects/{projectId}/symbols/hide in order to delete a single symbol. The
          * Symbol will not be deleted permanently, it will be just hidden and ignored when you call getAll().
@@ -8372,62 +8797,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 		}
 	}
 }());(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.services')
-        .factory('EqOracleService', [
-            'EqOraclesEnum',
-            EqOracleService
-        ]);
-
-    function EqOracleService(EqOraclesEnum) {
-
-        var _eqOracleComplete = {
-            type: EqOraclesEnum.COMPLETE,
-            minDepth: 1,
-            maxDepth: 1
-        };
-
-        var _eqOracleRandom = {
-            type: EqOraclesEnum.RANDOM,
-            minLength: 1,
-            maxLength: 1,
-            maxNoOfTests: 1
-        };
-
-        var _eqOracleSample = {
-            type: EqOraclesEnum.SAMPLE,
-            counterExamples: []
-        };
-
-        //////////
-
-        var service = {
-            create: create
-        };
-        return service;
-
-        //////////
-
-        function create(eqOracleType) {
-            switch (eqOracleType) {
-                case EqOraclesEnum.COMPLETE:
-                    return angular.copy(_eqOracleComplete);
-                    break;
-                case EqOraclesEnum.RANDOM:
-                    return angular.copy(_eqOracleRandom);
-                    break;
-                case EqOraclesEnum.SAMPLE:
-                    return angular.copy(_eqOracleSample);
-                    break;
-                default:
-                    return angular.copy(_eqOracleRandom);
-                    break;
-            }
-        }
-    }
-}());;(function () {
     'use strict';
 
     angular
@@ -9067,6 +9436,18 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     function capitalize() {
         return function (string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    }
+
+    angular
+        .module('weblearner.filters')
+        .filter('formatEnumKey', formatEnumKey);
+
+    function formatEnumKey() {
+        return function (string) {
+            return string.toLowerCase().split('_').join(' ').replace(/\w\S*/g, function (txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            })
         }
     }
 }());;(function() {

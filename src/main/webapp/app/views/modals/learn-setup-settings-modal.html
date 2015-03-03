@@ -1,5 +1,10 @@
 <div class="modal-header">
-	<h3 class="modal-title">Test Settings</h3>
+
+    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+    <h3 class="modal-title">Test Settings</h3>
 	<span class="text-muted">Manually set some parameters for the
 		Test</span>
 </div>
@@ -22,7 +27,7 @@
 			<label class="control-label">EQ Oracle</label><br> <span
 				class="text-muted">Select how counter examples should be
 				found (default is COMPLETE)</span> <select class="form-control"
-				ng-model="learnConfiguration.eqOracle.type"
+                                                           ng-model="selectedEqOracle"
 				ng-options="v for (k,v) in eqOracles">
 				<option value="" disabled>select a method</option>
 			</select>
@@ -121,8 +126,7 @@
 	</div>
 
 	<div class="modal-footer">
-		<button class="btn btn-default" type="submit">Ok</button>
-		<a class="btn btn-warning" ng-click="cancel()">Cancel</a>
+        <button class="btn btn-primary" type="submit">Ok</button>
 	</div>
 
 </form>

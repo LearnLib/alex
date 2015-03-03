@@ -13,6 +13,7 @@
         $scope.groups = [];
         $scope.allSymbols = [];
         $scope.collapseAll = false;
+        $scope.selectedSymbols = [];
 
         SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
             .then(function (groups) {
@@ -117,5 +118,9 @@
             });
             _.remove($scope.groups, {id: group.id});
         };
+
+        $scope.getSelectedSymbols = function () {
+            return SelectionService.getSelected($scope.allSymbols);
+        }
     }
 }());

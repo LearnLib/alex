@@ -3,12 +3,11 @@
 
     angular
         .module('weblearner.directives')
-        .directive('openTestSetupSettingsModal', [
-            '$modal', 'paths',
-            openTestSetupSettingsModal
-        ]);
+        .directive('openLearnSetupSettingsModal', openLearnSetupSettingsModal);
 
-    function openTestSetupSettingsModal($modal, paths) {
+    openLearnSetupSettingsModal.$inject = ['$modal', 'paths'];
+
+    function openLearnSetupSettingsModal($modal, paths) {
 
         var directive = {
             restrict: 'EA',
@@ -26,14 +25,14 @@
 
             el.on('click', handleModal);
 
-            function handleModal() {            	
+            function handleModal() {
                 var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/modal-test-setup-settings.html',
-                    controller: 'TestSetupSettingsController',
+                    templateUrl: paths.views.MODALS + '/learn-setup-settings-modal.html',
+                    controller: 'LearnSetupSettingsModalController',
                     resolve: {
                         modalData: function () {
                             return {
-                                learnConfiguration: angular.copy(scope.learnConfiguration)
+                                learnConfiguration: scope.learnConfiguration.copy()
                             };
                         }
                     }

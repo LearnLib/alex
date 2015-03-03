@@ -32,7 +32,7 @@
             SymbolGroup.Resource.delete($scope.group.project, $scope.group)
                 .then(function () {
                     $modalInstance.close({
-                        status: 'updated',
+                        status: 'deleted',
                         group: $scope.group
                     });
                 });

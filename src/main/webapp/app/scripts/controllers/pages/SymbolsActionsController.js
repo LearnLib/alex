@@ -21,13 +21,9 @@
         /** a copy of $scope.symbol to revert unsaved changes */
         $scope.symbolCopy;
 
-        //////////
-
         // load all actions from the symbol
         Symbol.Resource.get($scope.project.id, $stateParams.symbolId)
             .then(init);
-
-        //////////
 
         function init(symbol) {
 
@@ -40,8 +36,6 @@
             $scope.symbol = symbol;
             $scope.symbolCopy = symbol.copy();
         }
-
-        //////////
 
         /**
          * delete the actions that the user selected from the scope

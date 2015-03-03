@@ -33,6 +33,8 @@ module.exports = function(grunt) {
 							'bower_components/angular-animate/angular-animate.min.js',
 							'bower_components/lodash/lodash.min.js',
 							'bower_components/ng-sortable/dist/ng-sortable.min.js',
+                        'bower_components/ace-builds/src-min/theme-eclipse.js',
+                        'bower_components/ace-builds/src-min/mode-json.js',
 							'bower_components/angular-ui-ace/ui-ace.min.js',
 							'bower_components/ace-builds/src-min/ace.js',
 							'bower_components/ngtoast/dist/ngToast.min.js',

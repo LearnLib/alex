@@ -17,16 +17,15 @@
 
         $scope.moveSymbols = function () {
             if ($scope.selectedGroup !== null) {
-                // TODO: update logic
+                _.forEach($scope.symbols, function (symbol) {
+                    $scope.symbol.group = $scope.selectedGroup.id;
+                    Symbol.Resource.update($scope.selectedGroup.project, symbol);
+                })
             }
         };
 
         $scope.selectGroup = function (group) {
-            if ($scope.selectedGroup.name == group.name) {
-                $scope.selectedGroup = null;
-            } else {
-                $scope.selectedGroup = group;
-            }
+            $scope.selectedGroup = $scope.selectedGroup === group ? null : group;
         };
 
         /**

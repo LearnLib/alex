@@ -4,30 +4,19 @@
     angular
         .module('weblearner.controller')
         .controller('LearnSetupController', [
-            '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'EqOraclesEnum',
-            'LearnAlgorithmsEnum', 'LearnerResource', 'ngToast',
+            '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'LearnConfiguration',
+            'LearnerResource', 'ngToast',
             LearnSetupController
         ]);
 
-    function LearnSetupController($scope, $state, SymbolGroup, SessionService, SelectionService, EqOracles,
-                                  LearnAlgorithms, LearnerResource, toast) {
+    function LearnSetupController($scope, $state, SymbolGroup, SessionService, SelectionService, LearnConfiguration,
+                                  LearnerResource, toast) {
 
         $scope.project = SessionService.project.get();
         $scope.groups = [];
         $scope.allSymbols = [];
-        $scope.collapseAll = false;
+        $scope.learnConfiguration = new LearnConfiguration();
         $scope.resetSymbol;
-
-        $scope.learnConfiguration = {
-            symbols: [],
-            algorithm: LearnAlgorithms.EXTENSIBLE_LSTAR,
-            eqOracle: {
-                type: EqOracles.COMPLETE,
-                minDepth: 1,
-                maxDepth: 1
-            },
-            maxAmountOfStepsToLearn: 0
-        };
 
         //////////
 
@@ -61,23 +50,14 @@
         $scope.startLearning = function () {
             var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
 
-            // make sure there are selected symbols
             if (selectedSymbols.length && $scope.resetSymbol) {
 
-                // get id:revision pair from each selected symbol and add it to the learn configuration
                 _.forEach(selectedSymbols, function (symbol) {
-                    $scope.learnConfiguration.symbols.push({
-                        id: symbol.id,
-                        revision: symbol.revision
-                    });
+                    $scope.learnConfiguration.addSymbol(symbol)
                 });
 
-                $scope.learnConfiguration.resetSymbol = {
-                    id: $scope.resetSymbol.id,
-                    revision: $scope.resetSymbol.revision
-                };
+                $scope.learnConfiguration.setResetSymbol($scope.resetSymbol);
 
-                // start learning and go to the load page
                 LearnerResource.start($scope.project.id, $scope.learnConfiguration)
                     .then(function () {
                         $state.go('learn.start')

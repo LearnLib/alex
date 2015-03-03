@@ -3,12 +3,11 @@
 
     angular
         .module('weblearner.directives')
-        .directive('openHypothesisLayoutSettingsModal', [
-            '$modal', 'paths',
-            openHypothesisLayoutSettingsModal
-        ]);
+        .directive('openHypothesisLayoutSettingsModal', openHypothesisLayoutSettingsModal);
 
-    function openHypothesisLayoutSettingsModal($modal) {
+    openHypothesisLayoutSettingsModal.$inject = ['$modal', 'paths'];
+
+    function openHypothesisLayoutSettingsModal($modal, paths) {
 
         var directive = {
             scope: {

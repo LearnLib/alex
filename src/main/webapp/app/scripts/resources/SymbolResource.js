@@ -161,6 +161,10 @@
             }
         };
 
+        SymbolResource.prototype.updateSome = function (projectId, symbols) {
+            // TODO
+        };
+
         /**
          * Make a DELETE request to /rest/projects/{projectId}/symbols/hide in order to delete a single symbol. The
          * Symbol will not be deleted permanently, it will be just hidden and ignored when you call getAll().

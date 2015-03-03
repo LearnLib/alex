@@ -43,7 +43,14 @@
                 CHECK_ATTRIBUTE_TYPE: 'rest_checkAttributeType'
             },
             other: {
-                WAIT: 'wait'
+                WAIT: 'wait',
+                DECLARE_COUNTER: 'declareCounter',
+                DECLARE_VARIABLE: 'declareVariable',
+                INCREMENT_COUNTER: 'incrementCounter',
+                SET_COUNTER: 'setCounter',
+                SET_VARIABLE: 'setVariable',
+                SET_VARIABLE_BY_JSON_ATTRIBUTE: 'setVariableByJSON',
+                SET_VARIABLE_BY_NODE: 'setVariableByHTML'
             }
         })
 

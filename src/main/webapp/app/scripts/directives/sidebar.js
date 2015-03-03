@@ -115,18 +115,18 @@
             scope: {
                 configuration: '='
             },
-            controller: ['$scope', 'EqOraclesEnum', 'EqOracleService', controller]
+            controller: ['$scope', 'eqOracles', 'EqOracle', controller]
         };
         return directive;
 
-        function controller($scope, EqOraclesEnum, EqOracleService) {
+        function controller($scope, eqOracles, EqOracle) {
 
-            $scope.eqOracles = EqOraclesEnum;
+            $scope.eqOracles = eqOracles;
 
             //////////
 
             $scope.$watch('configuration.eqOracle.type', function (type) {
-                $scope.configuration.eqOracle = EqOracleService.create(type);
+                $scope.configuration.eqOracle = EqOracle.createFromType(type);
             });
         }
     }

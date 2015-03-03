@@ -76,7 +76,8 @@
   position: absolute;
   top: 70px;
   bottom: 0;
-  left: 0; right: 0;
+  left: 0;
+  right: 0;
   animation: scaleUp 0.2s both ease-in;
   z-index: 8888;
 }
@@ -86,11 +87,11 @@
   position: absolute;
   top: 70px;
   bottom: 0;
-  left: 0; right: 0;
+  left: 0;
+  right: 0;
   animation: fadeOut 0.2s both ease-in;
   z-index: 9999;
 }
-
 
 /* Bootstrap Extensions & Modifications
 ============================================================================== */
@@ -146,8 +147,6 @@ form {
   padding: 24px 0;
 }
 
-
-
 .ng-toast {
   margin-top: 75px;
   .alert {
@@ -156,13 +155,9 @@ form {
   }
 }
 
-
-
 .alert-condensed {
   padding: 5px 15px;
 }
-
-
 
 .panel-sidebar {
   position: absolute;
@@ -193,7 +188,6 @@ form {
   }
 }
 
-
 .btn {
   &.btn-icon {
     background: none;
@@ -209,10 +203,10 @@ form {
   }
 }
 
-
 .panel {
   border-right: 1px solid #e7e7e7
 }
+
 .hypothesis-panel-container {
   position: absolute;
   top: 0px;
@@ -227,8 +221,6 @@ form {
     background: #fff;
   }
 }
-
-
 
 .selectable-list {
   .selectable-list-heading, .selectable-list-item {
@@ -278,3 +270,26 @@ form {
   }
 }
 
+.action-types-accordion {
+  margin-bottom: 0;
+
+  .panel-title {
+    font-size: 12px;
+  }
+  .panel-body {
+    padding: 0;
+
+    a {
+      display: block;
+      padding: 5px 15px;
+      color: $text-color;
+      border-bottom: 1px solid #eee;
+
+      &:hover {
+        background: #f2f2f2;
+        text-decoration: none;
+        border-bottom: 1px solid #ddd;
+      }
+    }
+  }
+}
