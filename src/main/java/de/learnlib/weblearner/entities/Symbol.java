@@ -28,7 +28,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Basic class for the different symbols.
+ * Representation of a symbol for the learning process.
+ * A Symbol is one unit which will be executed and it is made of a sequence of actions.
  */
 @Entity
 @JsonPropertyOrder(alphabetic = true)

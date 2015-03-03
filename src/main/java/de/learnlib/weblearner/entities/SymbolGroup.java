@@ -19,6 +19,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Entity to organize symbols.
+ */
 @Entity
 public class SymbolGroup implements Serializable {
 
@@ -31,20 +34,27 @@ public class SymbolGroup implements Serializable {
     @JsonIgnore
     private Long groupId;
 
+    /** The name of the group. */
     @NotBlank
     private String name;
 
+    /** The related project. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
     private Project project;
 
+    /** The ID of the group within the project. */
     @Column(nullable = false)
     private Long id;
 
+    /** The Symbols manged by this group. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE })
     private Set<Symbol> symbols;
 
+    /**
+     * Default constructor.
+     */
     public SymbolGroup() {
         this.groupId = 0L;
         this.id = 0L;
@@ -107,12 +117,6 @@ public class SymbolGroup implements Serializable {
     @JsonProperty("symbolAmount")
     public int getSymbolSize() {
         return this.symbols.size();
-    }
-
-    //todo(alex.s): remove me
-    @JsonProperty("symbolAmount")
-    public void setSymbolSize(int size) {
-        // NOOOOOOOOOOOOOOOO....
     }
 
     public void addSymbol(Symbol symbol) {

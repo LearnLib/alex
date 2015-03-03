@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 
 import javax.validation.ValidationException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
@@ -42,13 +43,20 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public List<SymbolGroup> getAll(long projectId) {
+    public List<SymbolGroup> getAll(long projectId) throws NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
+        Project project = (Project) session.load(Project.class, projectId);
+
+        if(project == null) {
+            HibernateUtil.rollbackTransaction();
+            throw new NoSuchElementException("The project with the id " + projectId + " was not found.");
+        }
+
         List<SymbolGroup> resultList = session.createCriteria(SymbolGroup.class)
-                                                .add(Restrictions.eq("project.id", projectId))
+                                                .add(Restrictions.eq("project", project))
                                                 .list();
 
         for (SymbolGroup group : resultList) {
@@ -63,7 +71,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public SymbolGroup get(long projectId, Long groupId) {
+    public SymbolGroup get(long projectId, Long groupId) throws NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -73,11 +81,15 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                                     .add(Restrictions.eq("id", groupId))
                                                     .uniqueResult();
 
-        if (result != null) {
-            Hibernate.initialize(result.getSymbols());
-            for (Symbol symbol : result.getSymbols()) {
-                symbol.loadLazyRelations();
-            }
+        if (result == null) {
+            HibernateUtil.rollbackTransaction();
+            throw new NoSuchElementException("Could not find a group with the id " + groupId
+                                                     + " in the project "+ projectId + ".");
+        }
+
+        Hibernate.initialize(result.getSymbols());
+        for (Symbol symbol : result.getSymbols()) {
+            symbol.loadLazyRelations();
         }
 
         HibernateUtil.commitTransaction();
@@ -85,15 +97,24 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public void update(SymbolGroup group) throws IllegalArgumentException, ValidationException {
+    public void update(SymbolGroup group) throws ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         checkConstrains(session, group); // will throw an ValidationException, if something is wrong
 
-        session.update(group);
+        SymbolGroup groupInDB = (SymbolGroup) session.createCriteria(SymbolGroup.class)
+                                                        .add(Restrictions.eq("project.id", group.getProjectId()))
+                                                        .add(Restrictions.eq("id", group.getId()))
+                                                        .uniqueResult();
+        if (groupInDB == null) {
+            HibernateUtil.rollbackTransaction();
+            throw new IllegalStateException("You can only update existing groups!");
+        }
 
+        // apply changes
+        session.merge(group);
         HibernateUtil.commitTransaction();
     }
 

@@ -1,11 +1,12 @@
 package de.learnlib.weblearner.rest;
 
 import de.learnlib.weblearner.dao.SymbolGroupDAO;
-import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
+import de.learnlib.weblearner.utils.ResourceErrorHandler;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,7 +22,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+/**
+ * REST API to manage groups.
+ * @resourceDescription Operations for groups
+ */
 @Path("/projects/{project_id}/groups")
 public class SymbolGroupResource {
 
@@ -32,36 +38,88 @@ public class SymbolGroupResource {
     @Inject
     private SymbolGroupDAO symbolGroupDAO;
 
+    /**
+     * Create a new group.
+     *
+     * @param group
+     *            The group to create.
+     * @return On success the added group (enhanced with information from the DB); an error message on failure.
+     * @responseType    de.learnlib.weblearner.entities.SymbolGroup
+     * @successResponse 201 created
+     * @errorResponse   400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) {
-        group.setProjectId(projectId);
-        symbolGroupDAO.create(group);
+        try {
+            group.setProjectId(projectId);
+            symbolGroupDAO.create(group);
 
-        String groupURL = uri.getBaseUri() + "projects/" + group.getProjectId() + "/groups/" + group.getId();
-        return Response.status(Response.Status.CREATED).header("Location", groupURL).entity(group).build();
+            String groupURL = uri.getBaseUri() + "projects/" + group.getProjectId() + "/groups/" + group.getId();
+            return Response.status(Response.Status.CREATED).header("Location", groupURL).entity(group).build();
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.create",
+                                                               Response.Status.BAD_REQUEST, e);
+        }
     }
 
+    /**
+     * Get a list of all groups within on projects.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @return All groups in a list. If the project contains no groups the list will be empty.
+     * @responseType java.util.List<de.learnlib.weblearner.entities.SymbolGroup>
+     * @successResponse 200 OK
+     * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
-        System.out.println("fjdfgjdflkg");
-
-        List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId);
-        System.out.println(groups);
-
-        return Response.ok(groups).build();
+    public Response getAll(@PathParam("project_id") long projectId) {
+        try {
+            List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId);
+            return Response.ok(groups).build();
+        } catch (NoSuchElementException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
+                                                               Response.Status.NOT_FOUND, e);
+        }
     }
 
+    /**
+     * Get a one group.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param id
+     *            The ID of the group within the project.
+     * @return The project or an error message.
+     * @responseType de.learnlib.weblearner.entities.SymbolGroup
+     * @successResponse 200 OK
+     * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
-        SymbolGroup group = symbolGroupDAO.get(projectId, id);
-        return Response.ok(group).build();
+        try {
+            SymbolGroup group = symbolGroupDAO.get(projectId, id);
+            return Response.ok(group).build();
+        } catch (NoSuchElementException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get", Response.Status.NOT_FOUND, e);
+        }
     }
 
+    /**
+     * Not implemented yet.
+     * Returns just dummy values.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param id
+     *         The ID of the group within the project.
+     * @return
+     */
     @GET
     @Path("/{id}/symbols")
     @Produces(MediaType.APPLICATION_JSON)
@@ -78,20 +136,59 @@ public class SymbolGroupResource {
         return Response.ok(symbols).build();
     }
 
+    /**
+     * Update a group.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param id
+     *         The ID of the group within the project.
+     * @param group
+     *         The new values
+     * @return On success the updated group (enhanced with information from the DB); an error message on failure.
+     * @responseType de.learnlib.weblearner.entities.SymbolGroup
+     * @successResponse 200 OK
+     * @errorResponse 400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group) {
-        symbolGroupDAO.update(group);
-        return Response.ok(group).build();
+        try {
+            symbolGroupDAO.update(group);
+            return Response.ok(group).build();
+        } catch (NoSuchElementException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
+                                                               Response.Status.NOT_FOUND, e);
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
+                                                               Response.Status.BAD_REQUEST, e);
+        }
     }
 
+    /**
+     * Delete a group.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param id
+     *         The ID of the group within the project.
+     * @return On success no content will be returned; an error message on failure.
+     * @successResponse 204 OK & no content
+     * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteAResultSet(@PathParam("project_id") long projectId,  @PathParam("id") Long id) {
-        symbolGroupDAO.delete(projectId, id);
-        return Response.noContent().build();
+        try {
+            symbolGroupDAO.delete(projectId, id);
+            return Response.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
+                                                               Response.Status.BAD_REQUEST, e);
+        }
     }
 }

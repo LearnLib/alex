@@ -11,10 +11,12 @@ import org.junit.Test;
 import javax.validation.ValidationException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class SymbolGroupDAOImplTest {
 
@@ -115,6 +117,11 @@ public class SymbolGroupDAOImplTest {
     }
 
     @Test
+    public void shouldThrowAnExceptionIfYouWantToGetAllGroupsOfANonExistingProject() {
+        symbolGroupDAO.getAll(-1L);
+    }
+
+    @Test
     public void shouldGetTheRightGroup() {
         List<SymbolGroup> groups = new LinkedList<>();
         for (int i = 1; i <= 10; i++) {
@@ -133,6 +140,11 @@ public class SymbolGroupDAOImplTest {
         SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), 1L);
         assertEquals(project, groupInDB.getProject());
         assertEquals("Group 1", groupInDB.getName());
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void shouldThrowAnExceptionIfTheGroupWasNotFound() {
+        symbolGroupDAO.get(-1L, -1L); // should fail
     }
 
     @Test
@@ -163,10 +175,13 @@ public class SymbolGroupDAOImplTest {
 
         symbolGroupDAO.delete(project.getId(), group.getId());
 
-        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId());
-        assertNull(groupInDB);
+        try {
+            SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId()); // should fail
+            fail("After deleting a group, it was still in the DB.");
+        } catch (NoSuchElementException e) {
+            // Symbol was not found -> It was deleted -> success
+        }
         Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol.getId());
-        System.out.println(symbolInDB);
         assertEquals(project.getDefaultGroup(), symbolInDB.getGroup());
         assertTrue(symbolInDB.isHidden());
     }
