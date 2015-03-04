@@ -3,47 +3,59 @@
 
     angular
         .module('weblearner.controller')
-        .controller('SymbolsImportController', [
-            '$scope', 'SessionService', 'SymbolResource', 'SelectionService',
-            SymbolsImportController
-        ]);
+        .controller('SymbolsImportController', SymbolsImportController);
 
-    function SymbolsImportController($scope, SessionService, SymbolResource, SelectionService) {
+    SymbolsImportController.$inject = ['$scope', 'SessionService', 'Symbol', 'SelectionService', '_'];
 
-        var _project = SessionService.project.get();
+    /**
+     * Handles the import of symbols from a *.json file. The corresponding template for this controller is at
+     * 'views/pages/symbols-import.html'
+     *
+     * @param $scope
+     * @param Session
+     * @param Symbol
+     * @param SelectionService
+     * @constructor
+     */
+    function SymbolsImportController($scope, Session, Symbol, SelectionService) {
 
-        ////////////
+        // The project that is saved in the sessionStorage
+        var _project = Session.project.get();
 
-        $scope.symbols = {
-            web: [],
-            rest: []
-        };
+        /**
+         * The symbols that will be uploaded
+         *
+         * @type {Symbol[]}
+         */
+        $scope.symbols = [];
 
-        ////////////
-
+        /**
+         * Creates instances of Symbols from the json string from the *.json file and puts them in the scope
+         *
+         * @param data - The json string of loaded symbols
+         */
         $scope.fileLoaded = function (data) {
-
-            var symbols = angular.fromJson(data);
-
-            _.forEach($scope.symbols, function (symbol) {
-                symbol.project = _project.id;
-            });
-
-            $scope.$apply(function(){
-            	$scope.symbols.web = _.filter(symbols, {type: 'web'});
-                $scope.symbols.rest = _.filter(symbols, {type: 'rest'});
+            var symbols = Symbol.buildSome(angular.fromJson(data));
+            $scope.$apply(function () {
+                $scope.symbols = symbols;
             });
         };
 
-        $scope.uploadSymbols = function () {
-
-            var selectedWebSymbols = SelectionService.getSelected($scope.symbols.web);
-            var selectedRestSymbols = SelectionService.getSelected($scope.symbols.rest);
-            var selectedSymbols = selectedWebSymbols.concat(selectedRestSymbols);
-
-            SelectionService.removeSelection(selectedSymbols);
-                       
-            SymbolResource.create(_project.id, selectedSymbols);
-        }
+        /**
+         * Makes an API request in order to create the selected symbols. Removes successfully created symbols from the
+         * scope
+         */
+        $scope.uploadSelectedSymbols = function () {
+            var selectedSymbols = angular.copy(SelectionService.getSelected($scope.symbols));
+            if (selectedSymbols.length > 0) {
+                SelectionService.removeSelection(selectedSymbols);
+                Symbol.Resource.create(_project.id, selectedSymbols)
+                    .then(function (createdSymbols) {
+                        _.forEach(createdSymbols, function (symbol) {
+                            _.remove($scope.symbols, {name: symbol.name})
+                        })
+                    })
+            }
+        };
     }
 }());

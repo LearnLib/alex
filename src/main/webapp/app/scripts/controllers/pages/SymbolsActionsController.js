@@ -6,11 +6,10 @@
         .controller('SymbolsActionsController', SymbolsActionsController);
 
     SymbolsActionsController.$inject = [
-        '$scope', '$stateParams', 'Symbol', 'SessionService', 'SelectionService',
-        'ngToast'
+        '$scope', '$stateParams', 'Symbol', 'SessionService', 'SelectionService'
     ];
 
-    function SymbolsActionsController($scope, $stateParams, Symbol, SessionService, SelectionService, toast) {
+    function SymbolsActionsController($scope, $stateParams, Symbol, SessionService, SelectionService) {
 
         /** the open project */
         $scope.project = SessionService.project.get();

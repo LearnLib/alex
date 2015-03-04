@@ -31,7 +31,7 @@
         /**
          * Deletes a given symbol and remove it from the scope so that it will not be listed any longer
          *
-         * @param symbol - The symbol that should be deleted
+         * @param symbol {Symbol} - The symbol that should be deleted
          */
         $scope.deleteSymbol = function (symbol) {
             Symbol.Resource.delete($scope.project.id, symbol.id)
@@ -43,7 +43,7 @@
         /**
          * Moves the selected symbols to a new group
          *
-         * @param group - The group where the selected symbols should be moved into
+         * @param group {SymbolGroup} - The group where the selected symbols should be moved into
          */
         $scope.moveSelectedSymbolsTo = function (group) {
             var selectedSymbols = SelectionService.getSelected($scope.allSymbols);

@@ -15,10 +15,10 @@
      * @param $scope
      * @param $interval
      * @param SessionService
-     * @param Learner
+     * @param LearnerResource
      * @constructor
      */
-    function LearnStartController($scope, $stateParams, $interval, SessionService, LearnerResource) {
+    function LearnStartController($scope, $interval, SessionService, LearnerResource) {
 
         var _project = SessionService.project.get();
         var _interval = null;
@@ -92,8 +92,6 @@
 
         /**
          * Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample'
-         *
-         * @param config
          */
         $scope.resumeLearning = function () {
 
@@ -105,7 +103,7 @@
                 .then(function () {
                     _poll();
                 })
-        }
+        };
 
         $scope.abort = function () {
 

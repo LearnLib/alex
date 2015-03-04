@@ -5,9 +5,11 @@
 
 <div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
     <div class="container">
-        <div class="pull-left" style="margin-right: 16px">
-            <input type="checkbox" select-all-items-checkbox items="allSymbols">
+
+        <div class="pull-left" style="margin-right: 16px" selectable items="allSymbols">
+            <input type="checkbox" selectable-item-checkbox>
         </div>
+
         <div class="pull-left">
 
             <div class="btn-group btn-group-xs" dropdown dropdown-hover>
@@ -40,11 +42,13 @@
             </button>
 
         </div>
+
         <div class="pull-right">
             <button class="btn btn-xs btn-default" ng-click="toggleCollapseAllGroups()">
                 <i class="fa fa-fw" ng-class="collapseAll ? 'fa-chevron-down': 'fa-chevron-right'"></i>
             </button>
         </div>
+
     </div>
 </div>
 
@@ -56,8 +60,8 @@
 
             <div class="selectable-list symbol-group-header">
                 <div class="selectable-list-heading">
-                    <div class="selectable-list-control">
-                        <input type="checkbox" select-all-items-checkbox items="group.symbols">
+                    <div class="selectable-list-control" selectable items="group.symbols">
+                        <input type="checkbox" selectable-item-checkbox>
                     </div>
                     <div class="selectable-list-content">
 
@@ -84,51 +88,52 @@
 
             <div class="symbol-group-body" collapse="group._isCollapsed">
 
-                <div selectable-list ng-model="group.symbols">
-                    <div selectable-list-item ng-repeat="symbol in group.symbols">
+                <div selectable items="group.symbols">
+                    <div selectable-list>
+                        <div selectable-list-item item="symbol" ng-repeat="symbol in group.symbols">
 
-                        <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
-                            <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
-                                <i class="fa fa-bars"></i>
-                            </button>
-                            <ul class="dropdown-menu pull-left" role="menu">
-                                <li>
-                                    <a href symbol-edit-modal-handle symbol="symbol" on-updated="updateSymbol">
-                                        <i class="fa fa-edit fa-fw"></i> Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href ng-click="">
-                                        <i class="fa fa-exchange fa-fw"></i> Move
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href ng-click="deleteSymbol(symbol)" symbol-move-modal-handle groups="groups">
-                                        <i class="fa fa-trash fa-fw"></i> Delete
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a ui-sref="symbols.actions({symbolId:symbol.id})">
-                                        <i class="fa fa-list-ol fa-fw"></i> Actions
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a ui-sref="symbols.history({symbolId:symbol.id})">
-                                        <i class="fa fa-history fa-fw"></i> Restore
-                                    </a>
-                                </li>
-                            </ul>
+                            <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+                                <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                                    <i class="fa fa-bars"></i>
+                                </button>
+                                <ul class="dropdown-menu pull-left" role="menu">
+                                    <li>
+                                        <a href symbol-edit-modal-handle symbol="symbol" on-updated="updateSymbol">
+                                            <i class="fa fa-edit fa-fw"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href ng-click="">
+                                            <i class="fa fa-exchange fa-fw"></i> Move
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href ng-click="deleteSymbol(symbol)" symbol-move-modal-handle groups="groups">
+                                            <i class="fa fa-trash fa-fw"></i> Delete
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a ui-sref="symbols.actions({symbolId:symbol.id})">
+                                            <i class="fa fa-list-ol fa-fw"></i> Actions
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a ui-sref="symbols.history({symbolId:symbol.id})">
+                                            <i class="fa fa-history fa-fw"></i> Restore
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
+
+                            <a ui-sref="symbols.actions({symbolId:symbol.id})">
+                                <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
+                            </a>
+
                         </div>
-
-                        <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
-
-                        <a ui-sref="symbols.actions({symbolId:symbol.id})">
-                            <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
-                        </a>
-
-
                     </div>
                 </div>
 

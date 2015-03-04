@@ -1,9 +1,9 @@
-(function(){
+(function () {
     'use strict';
 
     angular
         .module('weblearner', [
-                               
+
             // modules from external libraries
             'ngAnimate',
             'ui.sortable',
@@ -12,10 +12,10 @@
             'ui.router',
             'ngToast',
             'draganddrop',
-            
+
             //all templates
-			'templates-all',
-            
+            'templates-all',
+
             // application specific modules
             'weblearner.controller',
             'weblearner.resources',
@@ -37,8 +37,7 @@
     angular.module('weblearner.models', []);
 
     angular.module('weblearner')
-        .config(['ngToastProvider', function(ngToastProvider){
-        	
+        .config(['ngToastProvider', function (ngToastProvider) {
             ngToastProvider.configure({
                 verticalPosition: 'top',
                 horizontalPosition: 'center',

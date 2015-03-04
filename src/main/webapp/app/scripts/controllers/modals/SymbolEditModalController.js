@@ -23,6 +23,9 @@
         /** The symbol that is passed to the modal. @type {Symbol} */
         $scope.symbol = modalData.symbol;
 
+        // The copy of the symbol that will be passed back together with the updated one
+        var copy = $scope.symbol.copy();
+
         /**
          * Make a request to the API in order to update the symbol. Close the modal on success.
          */
@@ -37,7 +40,10 @@
             // update the symbol and close the modal dialog on success with the updated symbol
             Symbol.Resource.update($scope.symbol.project, $scope.symbol)
                 .then(function (updatedSymbol) {
-                    $modalInstance.close(updatedSymbol);
+                    $modalInstance.close({
+                        new: updatedSymbol,
+                        old: copy
+                    });
                 })
         };
 

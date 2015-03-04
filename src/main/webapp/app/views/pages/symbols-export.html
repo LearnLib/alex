@@ -1,19 +1,13 @@
 <div view-heading
-     title="Symbols Export"
-     sub-title="Export your symbols as *.json">
+     title="Export Symbols"
+     sub-title="Select symbols you want to download as *.json">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+<div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
     <div class="container">
 
-        <div class="pull-left" style="margin-right: 16px">
-            <label>
-                <input type="checkbox" select-all-items-checkbox items="symbols.web"> Web
-            </label>
-            &nbsp;
-            <label>
-                <input type="checkbox" select-all-items-checkbox items="symbols.rest"> Rest
-            </label>
+        <div class="pull-left" style="margin-right: 16px" selectable items="allSymbols">
+            <input type="checkbox" selectable-item-checkbox>
         </div>
 
         <div class="pull-right">
@@ -26,35 +20,51 @@
 </div>
 
 <div class="view-body">
-    <div class="container">
+    <div class="container symbol-group-list">
 
-        <div selectable-list ng-model="symbols.web">
-            <div selectable-list-item ng-repeat="symbol in symbols.web">
+        <div ng-repeat="group in groups track by group.id" class="symbol-group"
+             ng-class="group._isCollapsed ? 'collapsed' :''">
 
-                <span class="label label-primary pull-right" ng-bind="symbol.type"></span>
+            <div class="selectable-list symbol-group-header">
+                <div class="selectable-list-heading">
+                    <div class="selectable-list-control" selectable items="group.symbols">
+                        <input type="checkbox" selectable-item-checkbox>
+                    </div>
+                    <div class="selectable-list-content">
 
-                <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
+                        <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
+                            <i class="fa fa-fw"
+                               ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                        </span>
 
-                <p class="text-muted">
-                    <span ng-bind="symbol.actions.length"></span> Actions
-                </p>
+                        <h3 class="symbol-group-title" ng-bind="group.name"
+                            ng-click="group._isCollapsed = !group._isCollapsed"></h3>
+
+                        <p class="text-muted">
+                            <span ng-bind="group.symbols.length"></span> Symbols
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="symbol-group-body" collapse="group._isCollapsed">
+
+                <div selectable items="group.symbols">
+                    <div selectable-list>
+                        <div selectable-list-item item="symbol" ng-repeat="symbol in group.symbols">
+
+                            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
+
+                            <a ui-sref="symbols.actions({symbolId:symbol.id})">
+                                <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>
-
-        <div selectable-list ng-model="symbols.rest">
-            <div selectable-list-item ng-repeat="symbol in symbols.rest">
-
-                <span class="label label-warning pull-right" ng-bind="symbol.type"></span>
-
-                <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
-
-                <p class="text-muted">
-                    <span ng-bind="symbol.actions.length"></span> Actions
-                </p>
-
-            </div>
-        </div>
-
     </div>
 </div>

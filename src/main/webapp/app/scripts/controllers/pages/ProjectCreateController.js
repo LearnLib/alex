@@ -23,8 +23,6 @@
 
         /**
          * Make a call to the API to create a new project
-         *
-         * @param project - The project that should be created
          */
         $scope.createProject = function() {
             Project.Resource.create($scope.project)

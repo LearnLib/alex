@@ -205,7 +205,7 @@
 
 
                 <!-- BEGIN: CALL_URL -->
-                <div ng-if="action.type == actionTypes.rest.CALL_URL">
+                <div ng-if="action.type === actionTypes.rest.CALL_URL">
 
                     <h4><strong>Call Url</strong></h4>
 
@@ -234,7 +234,7 @@
 
 
                 <!-- BEGIN: CHECK_ATTRIBUTE_EXISTS -->
-                <div ng-if="action.type == actionTypes.rest.CHECK_ATTRIBUTE_EXISTS">
+                <div ng-if="action.type === actionTypes.rest.CHECK_ATTRIBUTE_EXISTS">
 
                     <h4><strong>Check Attribute Exists</strong></h4>
 
@@ -251,7 +251,7 @@
 
 
                 <!-- BEGIN: CHECK_ATTRIBUTE_TYPE -->
-                <div ng-if="action.type == actionTypes.rest.CHECK_ATTRIBUTE_TYPE">
+                <div ng-if="action.type === actionTypes.rest.CHECK_ATTRIBUTE_TYPE">
 
                     <h4><strong>Check Attribute Type</strong></h4>
 
@@ -274,7 +274,7 @@
 
 
                 <!-- BEGIN: CHECK_ATTRIBUTE_VALUE -->
-                <div ng-if="action.type == actionTypes.rest.CHECK_ATTRIBUTE_VALUE">
+                <div ng-if="action.type === actionTypes.rest.CHECK_ATTRIBUTE_VALUE">
 
                     <h4><strong>Check Attribute Value</strong></h4>
 
@@ -300,7 +300,7 @@
 
 
                 <!-- BEGIN: CHECK_HEADER_FIELD -->
-                <div ng-if="action.type == actionTypes.rest.CHECK_HEADER_FIELD">
+                <div ng-if="action.type === actionTypes.rest.CHECK_HEADER_FIELD">
 
                     <h4><strong>Check Header Field</strong></h4>
 
@@ -326,7 +326,7 @@
 
 
                 <!-- BEGIN: CHECK_HTTP_BODY_TEXT -->
-                <div ng-if="action.type == actionTypes.rest.CHECK_HTTP_BODY_TEXT">
+                <div ng-if="action.type === actionTypes.rest.CHECK_HTTP_BODY_TEXT">
 
                     <h4><strong>Check HTTP Body Text</strong></h4>
 
@@ -349,7 +349,7 @@
 
 
                 <!-- BEGIN: CHECK_STATUS -->
-                <div ng-if="action.type == actionTypes.rest.CHECK_STATUS">
+                <div ng-if="action.type === actionTypes.rest.CHECK_STATUS">
 
                     <h4><strong>Check Status</strong></h4>
 
@@ -365,6 +365,171 @@
 
                 </div>
                 <!-- END: CHECK_STATUS -->
+
+
+                <!-- BEGIN: WAIT -->
+                <div ng-if="action.type === actionTypes.other.WAIT">
+                    <h4><strong>Wait</strong></h4>
+
+                    <p class="text-muted">
+                        Wait for a specified amount of time in ms.
+                    </p>
+                    <hr>
+
+                    <label>Duration</label>
+
+                    <div class="form-group">
+                        <input type="number" class="form-control" min="0" ng-model="action.duration" placeholder="0">
+                    </div>
+                </div>
+                <!-- END: WAIT -->
+
+
+                <!-- BEGIN: DECLARE_COUNTER -->
+                <div ng-if="action.type === actionTypes.other.DECLARE_COUNTER">
+                    <h4><strong>Declare Counter</strong></h4>
+
+                    <p class="text-muted">
+                        Declare a counter variable that can be used in other actions
+                    </p>
+                    <hr>
+                    <label>Name</label>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="action.name"
+                               placeholder="The name of the counter">
+                    </div>
+                </div>
+                <!-- END: DECLARE_COUNTER -->
+
+
+                <!-- BEGIN: DECLARE_VARIABLE -->
+                <div ng-if="action.type === actionTypes.other.DECLARE_VARIABLE">
+                    <h4><strong>Declare Variable</strong></h4>
+
+                    <p class="text-muted">
+                        Declare a variable that can be used in other actions
+                    </p>
+                    <hr>
+                    <label>Name</label>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="action.name"
+                               placeholder="The name of the variable">
+                    </div>
+                </div>
+                <!-- END: DECLARE_VARIABLE -->
+
+
+                <!-- BEGIN: INCREMENT_COUNTER -->
+                <div ng-if="action.type === actionTypes.other.INCREMENT_COUNTER">
+                    <h4><strong>Increment Counter</strong></h4>
+
+                    <p class="text-muted">
+                        Increment an <strong>already declared</strong> counter variable
+                    </p>
+                    <hr>
+                    <label>Name</label>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="action.name"
+                               placeholder="The name of the counter">
+                    </div>
+                </div>
+                <!-- END: INCREMENT_COUNTER -->
+
+
+                <!-- BEGIN: SET_COUNTER -->
+                <div ng-if="action.type === actionTypes.other.SET_COUNTER">
+                    <h4><strong>Set Counter</strong></h4>
+
+                    <p class="text-muted">
+                        Set the value of an <strong>already declared</strong> counter variable
+                    </p>
+                    <hr>
+                    <label>Name</label>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="action.name"
+                               placeholder="The name of the counter">
+                    </div>
+                    <label>Value</label>
+
+                    <div class="form-group">
+                        <input type="number" class="form-control" ng-model="action.value" placeholder="0">
+                    </div>
+                </div>
+                <!-- END: SET_COUNTER -->
+
+
+                <!-- BEGIN: SET_VARIABLE -->
+                <div ng-if="action.type === actionTypes.other.SET_VARIABLE">
+                    <h4><strong>Set Variable</strong></h4>
+
+                    <p class="text-muted">
+                        Set the value of an <strong>already declared</strong> variable
+                    </p>
+                    <hr>
+                    <label>Name</label>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="action.name"
+                               placeholder="The name of the variable">
+                    </div>
+                    <label>Value</label>
+
+                    <div class="form-group">
+                        <input class="form-control" ng-model="action.value" placeholder="The value of the variable">
+                    </div>
+                </div>
+                <!-- END: SET_VARIABLE -->
+
+
+                <!-- BEGIN: SET_VARIABLE_BY_JSON_ATTRIBUTE -->
+                <div ng-if="action.type === actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE">
+                    <h4><strong>Set Variable By JSON Attribute</strong></h4>
+
+                    <p class="text-muted">
+                        Set the value of an <strong>already declared</strong> variable to the content of a JSON
+                        attribute
+                    </p>
+                    <hr>
+                    <label>Name</label>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="action.name"
+                               placeholder="The name of the variable">
+                    </div>
+                    <label>Attribute</label>
+
+                    <div class="form-group">
+                        <input class="form-control" ng-model="action.value" placeholder="The JSON attribute">
+                    </div>
+                </div>
+                <!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->
+
+
+                <!-- BEGIN: SET_VARIABLE_BY_NODE -->
+                <div ng-if="action.type === actionTypes.other.SET_VARIABLE_BY_NODE">
+                    <h4><strong>Set Variable By Node Value</strong></h4>
+
+                    <p class="text-muted">
+                        Set the value of an <strong>already declared</strong> variable to the content of a HTML element
+                    </p>
+                    <hr>
+                    <label>Name</label>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="action.name"
+                               placeholder="The name of the variable">
+                    </div>
+                    <label>XPath</label>
+
+                    <div class="form-group">
+                        <input class="form-control" ng-model="action.value" placeholder="The CSS3 XPath to the element">
+                    </div>
+                </div>
+                <!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->
 
             </div>
         </div>

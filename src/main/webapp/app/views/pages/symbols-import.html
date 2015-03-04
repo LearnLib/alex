@@ -3,56 +3,46 @@
      sub-title="If you already have a *.json file with symbols, you can import them here to this project">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}"
-     ng-if="symbols.web.length > 0 || symbols.rest.length > 0">
+<div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}" ng-if="symbols.length > 0">
     <div class="container">
-        <div class="pull-left" style="margin-right: 16px">
-            <label>
-                <input type="checkbox" select-all-items-checkbox items="symbols.web"> Web
-            </label>
-            &nbsp;
-            <label>
-                <input type="checkbox" select-all-items-checkbox items="symbols.rest"> Rest
-            </label>
+
+        <div class="pull-left" style="margin-right: 16px" selectable items="symbols">
+            <input type="checkbox" selectable-item-checkbox>
         </div>
+
         <div class="pull-right">
-            <button class="btn btn-xs btn-primary" ng-click="uploadSymbols()">Upload</button>
+            <button class="btn btn-xs btn-primary" ng-click="uploadSelectedSymbols()">
+                <i class="fa fa-upload fa-fw"></i> Upload
+            </button>
         </div>
+
     </div>
 </div>
 
 <div class="view-body">
-
     <div class="container">
 
         <div file-dropzone on-loaded="fileLoaded" class="alert alert-info">
             Drag and drop *.json file here
         </div>
 
-        <div ng-if="symbols.web.length > 0" selectable-list ng-model="symbols.web">
-            <div selectable-list-item ng-repeat="symbol in symbols.web">
+        <hr>
 
-                <span class="label label-primary pull-right" ng-bind="symbol.type"></span>
+        <div selectable items="symbols" ng-if="symbols.length > 0">
+            <div selectable-list>
+                <div selectable-list-item ng-repeat="symbol in symbols">
 
-                <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
-                <br>
+                    <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
 
-            </div>
-        </div>
+                    <div class="text-muted">
+                        <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
+                    </div>
 
-        <div ng-if="symbols.rest.length > 0" selectable-list ng-model="symbols.rest">
-            <div selectable-list-item ng-repeat="symbol in symbols.rest">
-
-                <span class="label label-warning pull-right" ng-bind="symbol.type"></span>
-
-                <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
-                <br>
-
+                </div>
             </div>
         </div>
 
     </div>
-
 </div>
 
 <div class="container">

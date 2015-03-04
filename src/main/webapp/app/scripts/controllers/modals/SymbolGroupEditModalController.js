@@ -5,9 +5,9 @@
         .module('weblearner.controller')
         .controller('SymbolGroupEditModalController', SymbolGroupEditModalController);
 
-    SymbolGroupEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'SymbolGroup', '_'];
+    SymbolGroupEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'SymbolGroup'];
 
-    function SymbolGroupEditModalController($scope, $modalInstance, modalData, SymbolGroup, _) {
+    function SymbolGroupEditModalController($scope, $modalInstance, modalData, SymbolGroup) {
 
         $scope.groupExists = false;
         $scope.group = modalData.group.copy();

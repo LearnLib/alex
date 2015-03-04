@@ -15,7 +15,7 @@
      *
      * @param $scope
      * @param SessionService
-     * @param TestResource
+     * @param LearnResultResource
      * @param TestResultsChartService
      * @param SelectionService
      * @constructor

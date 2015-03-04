@@ -11,7 +11,7 @@
 	 * Directive that can be applied to any element as an attribute that downloads an object or an array as
 	 * a *.json file. 
 	 * 
-	 * Attribute 'data' has to be defined in order to work and has to be type of object, array or a function 
+	 * Attribute 'data' has to be defined in order to work and has to be type of object, array or a function
 	 * that returns an object or an array
 	 * 
 	 * @param PromptService
@@ -27,9 +27,9 @@
 			link: link
 		}
 		return directive;
-		
+
 		//////////
-		
+
 		/**
 		 * @param scope
 		 * @param el
@@ -38,9 +38,9 @@
 		function link(scope, el, attrs) {
 			
 			el.on('click', promptFilename);
-			
+
 			//////////
-						
+
 			/**
 			 * Open a modal dialog that prompts the user for a file name
 			 */

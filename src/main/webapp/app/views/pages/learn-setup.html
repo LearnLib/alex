@@ -5,18 +5,21 @@
 
 <div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
     <div class="container">
-        <div class="pull-left" style="margin-right: 16px">
-            <input type="checkbox" select-all-items-checkbox items="allSymbols">
+
+        <div class="pull-left" style="margin-right: 16px" selectable items="allSymbols">
+            <input type="checkbox" selectable-item-checkbox>
         </div>
+
         <div class="pull-right">
             <button class="btn btn-xs btn-default" open-learn-setup-settings-modal
                     learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
                 <i class="fa fa-gear"></i>
             </button>
             <button class="btn btn-xs btn-primary" ng-click="startLearning()">
-                Start Test
+                Start Learning
             </button>
         </div>
+
     </div>
 </div>
 
@@ -26,14 +29,17 @@
 
             <div class="selectable-list symbol-group-header">
                 <div class="selectable-list-heading">
-                    <div class="selectable-list-control">
-                        <input type="checkbox" select-all-items-checkbox items="group.symbols">
+
+                    <div class="selectable-list-control" selectable items="group.symbols">
+                        <input type="checkbox" selectable-item-checkbox>
                     </div>
+
                     <div class="selectable-list-content">
 
-                    <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
-                        <i class="fa fa-fw" ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
-                    </span>
+                        <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
+                            <i class="fa fa-fw"
+                               ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                        </span>
 
                         <h3 class="symbol-group-title" ng-bind="group.name"
                             ng-click="group._isCollapsed = !group._isCollapsed"></h3>
@@ -43,12 +49,13 @@
                         </p>
 
                     </div>
+
                 </div>
             </div>
 
-            <div class="symbol-group-body" collapse="group._isCollapsed">
+            <div class="symbol-group-body" collapse="group._isCollapsed" selectable items="group.symbols">
 
-                <div selectable-list ng-model="group.symbols">
+                <div selectable-list>
                     <div selectable-list-item ng-repeat="symbol in group.symbols">
 
                         <a class="pull-right" ng-click="setResetSymbol(symbol)">

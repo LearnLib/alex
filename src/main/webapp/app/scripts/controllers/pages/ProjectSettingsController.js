@@ -58,12 +58,12 @@
 
 	        	    // delete project from server
 	        		Project.Resource.delete($scope.project)
-		                .then(function (deletedProject) {
+		                .then(function () {
 		                    SessionService.project.remove();
 		                    $state.go('home');
 		                })
 	        	})
-        }
+        };
 
         /**
          * Resets the project edit form by copying the project copy back to the project under edit

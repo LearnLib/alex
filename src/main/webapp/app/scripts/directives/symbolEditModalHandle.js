@@ -53,7 +53,7 @@
                     }
                 });
                 modal.result.then(function (symbol) {
-                    scope.onUpdated()(symbol);
+                    scope.onUpdated()(symbol.new, symbol.old);
                 })
             }
         }

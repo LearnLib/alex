@@ -14,7 +14,7 @@
 			nodesep: 50,
 			edgesep: 25,
 			ranksep: 50,
-			multigraph: false,
+			multigraph: false
 		};
 		
 		$scope.layoutSettings;
