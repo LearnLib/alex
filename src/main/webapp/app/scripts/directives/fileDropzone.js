@@ -6,8 +6,6 @@
         .directive('fileDropzone', fileDropzone);
 
     /**
-     * fileDropzone
-     *
      * This directives makes any element a place to drop files from the local pc. Currently this directive only
      * supports to read files as a text.
      *
@@ -24,8 +22,6 @@
         };
         return directive;
 
-        //////////
-
         /**
          * @param scope
          * @param el
@@ -35,14 +31,10 @@
 
             var _reader = new FileReader();
 
-            //////////
-
-            // call function that was passed as onLoaded with the result of the FileReader
             _reader.onload = function (e) {
                 scope.onLoaded()(e.target.result);
             };
 
-            // add dragover event
             el.on('dragover', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -50,29 +42,27 @@
             });
 
             el.on('dragenter', function(){
-                el[0].style.outline = '4px solid rgba(0,0,0,0.2)'
+                el[0].style.outline = '2px solid rgba(0,0,0,0.2)'
             }).on('dragleave', function(){
                 el[0].style.outline = '0'
             });
 
-            // add drop event and read files
             el.on('drop', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                readFiles(e.dataTransfer.files);
                 el[0].style.outline = '0'
+                readFiles(e.dataTransfer.files);
             });
-
-            //////////
 
             /**
              * Read files as a text file
+             *
              * @param files
              */
             function readFiles(files) {
-                _.forEach(files, function (file) {
-                    _reader.readAsText(file);
-                })
+                for (var i = 0; i < files.length; i++) {
+                    _reader.readAsText(files[i]);
+                }
             }
         }
     }

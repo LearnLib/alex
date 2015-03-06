@@ -15,9 +15,10 @@
      * @param Session
      * @param Symbol
      * @param SelectionService
+     * @param _
      * @constructor
      */
-    function SymbolsImportController($scope, Session, Symbol, SelectionService) {
+    function SymbolsImportController($scope, Session, Symbol, SelectionService, _) {
 
         // The project that is saved in the sessionStorage
         var _project = Session.project.get();
@@ -35,10 +36,14 @@
          * @param data - The json string of loaded symbols
          */
         $scope.fileLoaded = function (data) {
-            var symbols = Symbol.buildSome(angular.fromJson(data));
-            $scope.$apply(function () {
-                $scope.symbols = symbols;
-            });
+            try {
+                var symbols = angular.fromJson(data);
+                $scope.$apply(function () {
+                    $scope.symbols = $scope.symbols.concat(symbols);
+                });
+            } catch(e) {
+                console.error(e);
+            }
         };
 
         /**
@@ -49,7 +54,7 @@
             var selectedSymbols = angular.copy(SelectionService.getSelected($scope.symbols));
             if (selectedSymbols.length > 0) {
                 SelectionService.removeSelection(selectedSymbols);
-                Symbol.Resource.create(_project.id, selectedSymbols)
+                Symbol.Resource.createSome(_project.id, selectedSymbols)
                     .then(function (createdSymbols) {
                         _.forEach(createdSymbols, function (symbol) {
                             _.remove($scope.symbols, {name: symbol.name})

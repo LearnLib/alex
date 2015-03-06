@@ -63,7 +63,7 @@
 
             // check if options are defined and build a query
             if (options && options.deleted && options.deleted === true) {
-                query = '?visbility=hidden';
+                query = '?visibility=hidden';
             }
 
             // make the request with the query
@@ -120,7 +120,7 @@
         };
 
         /**
-         * Make a POST request to /rest/projects/{projectId}/symbols in order to create multiple symbols at once.
+         * Make a PUT request to /rest/projects/{projectId}/symbols in order to create multiple symbols at once.
          *
          * @param projectId - The id of the project the symbols should belong to
          * @param symbols - The array of symbols that should be created
@@ -130,7 +130,7 @@
             var _this = this;
 
             // make the request
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
+            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -202,7 +202,7 @@
             symbolIds = symbolIds.join(',');
 
             // make the request
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolsIds + '/hide', {})
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolIds + '/hide', {})
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -217,14 +217,14 @@
          * of a symbol.
          *
          * @param projectId - The id of the project the symbol belongs to
-         * @param symbolId - The id of the symbol that should be made visible again
+         * @param symbol - The symbol that should be made visible again
          * @returns {*}
          */
-        SymbolResource.prototype.recover = function (projectId, symbolId) {
+        SymbolResource.prototype.recover = function (projectId, symbol) {
             var _this = this;
 
             // make the request
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/show', {})
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id + '/show', {})
                 .then(success)
                 .catch(ResourceResponseService.fail);
 

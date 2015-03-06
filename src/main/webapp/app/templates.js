@@ -1,4 +1,4 @@
-angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/groups.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/counter-example-builder.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -149,6 +149,33 @@ angular.module("app/views/directives/hypothesis.html", []).run(["$templateCache"
   $templateCache.put("app/views/directives/hypothesis.html",
     "<div style=\"position: absolute; top: 0; width: 100%; bottom: 0; overflow: hidden; background: #fff;\">\n" +
     "    <svg class=\"hypothesis\"></svg>\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/directives/learner-result-chart-multiple-final.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/learner-result-chart-multiple-final.html",
+    "<div id=\"learn-result-chart\">\n" +
+    "    <linechart data=\"dataSets\" options=\"options\" mode=\"\" width=\"\" height=\"500\"></linechart>\n" +
+    "    <hr>\n" +
+    "\n" +
+    "    <div class=\"text-center\">\n" +
+    "        <button class=\"btn btn-xs\"\n" +
+    "                ng-class=\"selectedMode === modes.RESETS ? 'btn-primary':'btn-default'\"\n" +
+    "                ng-click=\"selectedMode = modes.RESETS\">\n" +
+    "            #Resets\n" +
+    "        </button>\n" +
+    "        <button class=\"btn btn-xs\"\n" +
+    "                ng-class=\"selectedMode === modes.SYMBOLS ? 'btn-primary':'btn-default'\"\n" +
+    "                ng-click=\"selectedMode = modes.SYMBOLS\">\n" +
+    "            #Symbols\n" +
+    "        </button>\n" +
+    "        <button class=\"btn btn-xs\"\n" +
+    "                ng-class=\"selectedMode === modes.DURATION ? 'btn-primary':'btn-default'\"\n" +
+    "                ng-click=\"selectedMode = modes.DURATION\">\n" +
+    "            Duration\n" +
+    "        </button>\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
@@ -1716,49 +1743,6 @@ angular.module("app/views/pages/about.html", []).run(["$templateCache", function
     "</div>");
 }]);
 
-angular.module("app/views/pages/groups.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/pages/groups.html",
-    "<div view-heading\n" +
-    "     title=\"Symbol Groups\"\n" +
-    "     sub-title=\"Manage all symbol groups\">\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
-    "    <div class=\"container\">\n" +
-    "\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-primary btn-xs\">\n" +
-    "                Create\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\">\n" +
-    "                Edit\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\">\n" +
-    "                Delete\n" +
-    "            </button>\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"view-body\">\n" +
-    "    <div class=\"container\">\n" +
-    "\n" +
-    "        <div ng-repeat=\"group in groups track by $index\">\n" +
-    "            {{group.name}}\n" +
-    "\n" +
-    "            <ul>\n" +
-    "                <li ng-repeat=\"symbol in group.symbols track by symbol.id\">\n" +
-    "                    {{symbol.name}}\n" +
-    "                </li>\n" +
-    "            </ul>\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "</div>");
-}]);
-
 angular.module("app/views/pages/help.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/help.html",
@@ -1862,110 +1846,110 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "</div>\n" +
     "\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
-    "        </div>\n" +
+    "        <div ng-if=\"selectedChartMode === null\">\n" +
     "\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <div class=\"btn-group btn-group-xs\" dropdown dropdown-hover>\n" +
-    "                <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
-    "                    Charts\n" +
+    "            <div class=\"pull-left\" selectable items=\"results\" style=\"margin-right: 16px\">\n" +
+    "                <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div class=\"btn-group btn-group-xs pull-left\" dropdown dropdown-hover>\n" +
+    "                <button class=\"btn btn-primary\">\n" +
+    "                    Create Chart\n" +
     "                </button>\n" +
-    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                <ul class=\"dropdown-menu\" role=\"menu\">\n" +
     "                    <li>\n" +
-    "                        <a href ng-click=\"chartFromSingleCompleteTestResult()\">\n" +
-    "                            <i class=\"fa fa-line-chart fa-fw\"></i> Single Complete Test\n" +
+    "                        <a href ng-click=\"createChartFromFinalResults()\">\n" +
+    "                            <i class=\"fa fa-fw fa-bar-chart\"></i> Final Results\n" +
     "                        </a>\n" +
     "                    </li>\n" +
     "                    <li>\n" +
-    "                        <a href ng-click=\"chartFromMultipleFinalTestResults()\">\n" +
-    "                            <i class=\"fa fa-bar-chart fa-fw\"></i> Multiple Tests\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                    <li>\n" +
-    "                        <a href ng-click=\"chartFromTwoCompleteTestResults()\">\n" +
-    "                            <i class=\"fa fa-columns fa-fw\"></i> Compare Two Complete Tests\n" +
+    "                        <a href ng-click=\"createChartFromCompleteResults()\">\n" +
+    "                            <i class=\"fa fa-fw fa-area-chart\"></i> Complete Results\n" +
     "                        </a>\n" +
     "                    </li>\n" +
     "                </ul>\n" +
     "            </div>\n" +
-    "        </div>\n" +
     "\n" +
-    "        <div class=\"pull-right\">\n" +
     "            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
-    "                    <i class=\"fa fa-download fa-fw\"></i> Export to CSV\n" +
+    "                <button class=\"btn btn-default\">\n" +
+    "                    <i class=\"fa fa-fw fa-download\"></i> Download as *.csv\n" +
     "                </button>\n" +
-    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                <ul class=\"dropdown-menu\" role=\"menu\">\n" +
     "                    <li>\n" +
-    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
+    "                        <a href download-learner-results-as-csv results=\"results\">\n" +
     "                            All Final Results\n" +
     "                        </a>\n" +
     "                    </li>\n" +
-    "                    <li>\n" +
-    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
-    "                            A Single Complete Result\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
     "                </ul>\n" +
     "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div ng-if=\"selectedChartMode !== null\">\n" +
+    "\n" +
+    "            <div class=\"pull-left\">\n" +
+    "                <button class=\"btn btn-default btn-xs\" ng-click=\"back()\">\n" +
+    "                    <i class=\"fa fa-reply fa-fw\"></i> Back\n" +
+    "                </button>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div class=\"pull-right\">\n" +
+    "                <button class=\"btn btn-default btn-xs\" download-svg=\"#learn-result-chart\">\n" +
+    "                    <i class=\"fa fa-download fa-fw\"></i> Download as *.svg\n" +
+    "                </button>\n" +
+    "            </div>\n" +
+    "\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"back()\">\n" +
-    "                <i class=\"fa fa-list-ul fa-fw\"></i> Test Results\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" download-canvas-as-image=\"test-results-chart\">\n" +
-    "                <i class=\"fa fa-save fa-fw\"></i> Download Diagram\n" +
-    "            </button>\n" +
-    "        </div>\n" +
+    "        <div selectable items=\"results\" ng-if=\"selectedChartMode === null\">\n" +
+    "            <div selectable-list>\n" +
+    "                <div selectable-list-item ng-repeat=\"result in results track by $index\">\n" +
     "\n" +
-    "    </div>\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
+    "                    <strong>Test No\n" +
+    "                        <span ng-bind=\"result.testNo\"></span>\n" +
+    "                    </strong>,\n" +
+    "                    [<span ng-bind=\"(result.configuration.algorithm|formatEnumKey)\"></span>]\n" +
     "\n" +
-    "        <div selectable-list ng-model=\"tests\">\n" +
-    "            <div selectable-list-item ng-repeat=\"test in tests\">\n" +
+    "                    <div class=\"text-muted\">\n" +
+    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                    </div>\n" +
     "\n" +
-    "                <span class=\"label label-primary pull-right\">\n" +
-    "                    Web\n" +
-    "                </span>\n" +
-    "\n" +
-    "                <strong>Test No\n" +
-    "                    <span ng-bind=\"test.testNo\"></span>\n" +
-    "                </strong>,\n" +
-    "                [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                <br>\n" +
-    "\n" +
-    "                <p class=\"text-muted\">\n" +
-    "                    Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                </p>\n" +
+    "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
-    "    </div>\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
+    "        <div ng-if=\"selectedChartMode !== null && chartData.data !== null && chartData.options !== null\"\n" +
+    "             id=\"learn-result-chart\">\n" +
     "\n" +
-    "        <hr>\n" +
+    "            <linechart data=\"chartData.data\" options=\"chartData.options\" mode=\"\" width=\"\" height=\"500\"></linechart>\n" +
+    "            <hr>\n" +
     "\n" +
-    "        <div ng-if=\"chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS\">\n" +
-    "            <div test-results-chart test-results-chart-multiple-final chart-data=\"chartDataSets\"></div>\n" +
-    "        </div>\n" +
+    "            <div class=\"text-center\">\n" +
+    "                <button class=\"btn btn-xs\"\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.RESETS ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.RESETS)\">\n" +
+    "                    #Resets\n" +
+    "                </button>\n" +
+    "                <button class=\"btn btn-xs\"\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.SYMBOLS ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.SYMBOLS)\">\n" +
+    "                    #Symbols\n" +
+    "                </button>\n" +
+    "                <button class=\"btn btn-xs\"\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.DURATION ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.DURATION)\">\n" +
+    "                    Duration\n" +
+    "                </button>\n" +
+    "            </div>\n" +
     "\n" +
-    "        <div ng-if=\"chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT\">\n" +
-    "            <div test-results-chart test-results-chart-single-complete chart-data=\"chartDataSets\"></div>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div ng-if=\"chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS\">\n" +
-    "            <div test-results-chart test-results-chart-two-complete chart-data=\"chartDataSets\"></div>\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
@@ -2624,60 +2608,53 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
 angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/symbols-trash.html",
-    "<div class=\"container\">\n" +
-    "    <h2>Symbols Trash - <span ng-bind=\"(type|capitalize)\"></span></h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        View deleted <span ng-bind=\"type\"></span> symbols and recover them\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <hr>\n" +
+    "<div view-heading\n" +
+    "     title=\"Symbol Trash\"\n" +
+    "     sub-title=\"Restore deleted symbols\">\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbols\">\n" +
+    "\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"symbols\">\n" +
+    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
     "        </div>\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(symbols|selected).length > 0 ? '' : 'disabled'\"\n" +
-    "                    ng-click=\"recoverSelected()\">\n" +
+    "\n" +
+    "        <div class=\"pull-right\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"recoverSelectedSymbols()\">\n" +
     "                <i class=\"fa fa-rotate-left fa-fw\"></i> Recover\n" +
     "            </button>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"container\">\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "    <div selectable-list ng-model=\"symbols\">\n" +
-    "        <div selectable-list-item ng-repeat=\"symbol in symbols\">\n" +
+    "        <div selectable items=\"symbols\" ng-if=\"symbols.length > 0\">\n" +
+    "            <div selectable-list>\n" +
+    "                <div selectable-list-item ng-repeat=\"symbol in symbols track by $index\">\n" +
     "\n" +
-    "            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                    <i class=\"fa fa-bars\"></i>\n" +
-    "                </button>\n" +
-    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                    <li>\n" +
-    "                        <a href ng-click=\"recover(symbol)\">\n" +
-    "                            <i class=\"fa fa-rotate-left fa-fw\"></i> Recover\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                </ul>\n" +
+    "                    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"recoverSymbol(symbol)\">\n" +
+    "                        <i class=\"fa fa-rotate-left fa-fw\"></i>\n" +
+    "                    </a>\n" +
+    "\n" +
+    "                    <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "\n" +
+    "                    <div class=\"text-muted\">\n" +
+    "                        <span ng-bind=\"symbol.actions.length\"></span> Actions\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
     "            </div>\n" +
-    "\n" +
-    "            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
-    "            <span class=\"text-muted\">Rev. <span ng-bind=\"symbol.revision\"></span></span>\n" +
-    "            <p class=\"text-muted\">\n" +
-    "            	<span ng-bind=\"symbol.actions.length\"></span> Actions\n" +
-    "            </p>\n" +
     "        </div>\n" +
-    "    </div>\n" +
     "\n" +
-    "    <div class=\"alert alert-info\" ng-show=\"symbols.length == 0\">\n" +
-    "        There are no symbols in the trash\n" +
-    "    </div>\n" +
+    "        <div class=\"alert alert-info\" ng-if=\"symbols.length === 0\">\n" +
+    "            There are no deleted symbols\n" +
+    "        </div>\n" +
     "\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
@@ -2707,6 +2684,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                        <a href symbol-create-modal-handle project-id=\"{{project.id}}\" on-created=\"addSymbol\">\n" +
     "                            Symbol\n" +
     "                        </a>\n" +
+    "                    </li>\n" +
+    "                    <li>\n" +
     "                        <a href symbol-group-create-modal-handle project-id=\"{{project.id}}\" on-created=\"addGroup\">\n" +
     "                            Group\n" +
     "                        </a>\n" +
@@ -2789,12 +2768,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                                        </a>\n" +
     "                                    </li>\n" +
     "                                    <li>\n" +
-    "                                        <a href ng-click=\"\">\n" +
+    "                                        <a href symbol-move-modal-handle groups=\"groups\">\n" +
     "                                            <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +
     "                                    <li>\n" +
-    "                                        <a href ng-click=\"deleteSymbol(symbol)\" symbol-move-modal-handle groups=\"groups\">\n" +
+    "                                        <a href ng-click=\"deleteSymbol(symbol)\">\n" +
     "                                            <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +

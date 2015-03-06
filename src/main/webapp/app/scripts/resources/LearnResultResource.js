@@ -42,7 +42,164 @@
          */
         function getAllFinal(projectId) {
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
-                .then(ResourceResponseService.success)
+                .then(function(){
+                    return [{
+                        "amountOfResets": 111,
+                        "configuration": {
+                            "algorithm": "EXTENSIBLE_LSTAR",
+                            "eqOracle": {
+                                "type": "sample",
+                                "counterExamples": [{"input": ["w2", "w2", "w3"], "output": ["OK", "OK", "OK"]}]
+                            },
+                            "maxAmountOfStepsToLearn": 0,
+                            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
+                                "id": 4,
+                                "revision": 2
+                            }, {"id": 5, "revision": 2}, {"id": 6, "revision": 2}]
+                        },
+                        "duration": 40759,
+                        "hypothesis": {
+                            "nodes": [0, 1, 2],
+                            "initNode": 0,
+                            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w1",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 0, "input": "w2", "to": 2, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w3",
+                                "to": 0,
+                                "output": "FAILED"
+                            }, {"from": 0, "input": "w4", "to": 0, "output": "OK"}, {
+                                "from": 1,
+                                "input": "reset",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 1, "input": "w1", "to": 1, "output": "OK"}, {
+                                "from": 1,
+                                "input": "w2",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 1, "input": "w3", "to": 2, "output": "OK"}, {
+                                "from": 1,
+                                "input": "w4",
+                                "to": 1,
+                                "output": "FAILED"
+                            }, {"from": 2, "input": "reset", "to": 0, "output": "OK"}, {
+                                "from": 2,
+                                "input": "w1",
+                                "to": 2,
+                                "output": "OK"
+                            }, {"from": 2, "input": "w2", "to": 1, "output": "OK"}, {
+                                "from": 2,
+                                "input": "w3",
+                                "to": 2,
+                                "output": "FAILED"
+                            }, {"from": 2, "input": "w4", "to": 2, "output": "OK"}]
+                        },
+                        "project": 1,
+                        "sigma": ["reset", "w1", "w2", "w3", "w4"],
+                        "startTime": "2015-03-05T09:19:02.250+00:00",
+                        "stepNo": 2,
+                        "testNo": 1,
+                        "type": "web"
+                    }, {
+                        "amountOfResets": 41,
+                        "configuration": {
+                            "algorithm": "DISCRIMINATION_TREE",
+                            "eqOracle": {
+                                "type": "sample",
+                                "counterExamples": [{"input": ["w2", "w2", "w3"], "output": ["OK", "OK", "OK"]}]
+                            },
+                            "maxAmountOfStepsToLearn": 0,
+                            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
+                                "id": 4,
+                                "revision": 2
+                            }, {"id": 5, "revision": 2}, {"id": 6, "revision": 2}]
+                        },
+                        "duration": 26402,
+                        "hypothesis": {
+                            "nodes": [0, 2, 1],
+                            "initNode": 0,
+                            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w1",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 0, "input": "w2", "to": 1, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w3",
+                                "to": 0,
+                                "output": "FAILED"
+                            }, {"from": 0, "input": "w4", "to": 0, "output": "OK"}, {
+                                "from": 1,
+                                "input": "reset",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 1, "input": "w1", "to": 1, "output": "OK"}, {
+                                "from": 1,
+                                "input": "w2",
+                                "to": 2,
+                                "output": "OK"
+                            }, {"from": 1, "input": "w3", "to": 1, "output": "FAILED"}, {
+                                "from": 1,
+                                "input": "w4",
+                                "to": 1,
+                                "output": "OK"
+                            }, {"from": 2, "input": "reset", "to": 0, "output": "OK"}, {
+                                "from": 2,
+                                "input": "w1",
+                                "to": 2,
+                                "output": "OK"
+                            }, {"from": 2, "input": "w2", "to": 0, "output": "OK"}, {
+                                "from": 2,
+                                "input": "w3",
+                                "to": 1,
+                                "output": "OK"
+                            }, {"from": 2, "input": "w4", "to": 2, "output": "FAILED"}]
+                        },
+                        "project": 1,
+                        "sigma": ["reset", "w1", "w2", "w3", "w4"],
+                        "startTime": "2015-03-05T09:21:02.962+00:00",
+                        "stepNo": 2,
+                        "testNo": 2,
+                        "type": "web"
+                    }, {
+                        "amountOfResets": 20,
+                        "configuration": {
+                            "algorithm": "DHC",
+                            "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 2, "maxNoOfTests": 1},
+                            "maxAmountOfStepsToLearn": 0,
+                            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
+                                "id": 4,
+                                "revision": 2
+                            }, {"id": 5, "revision": 2}]
+                        },
+                        "duration": 9208,
+                        "hypothesis": {
+                            "nodes": [0],
+                            "initNode": 0,
+                            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w1",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 0, "input": "w2", "to": 0, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w3",
+                                "to": 0,
+                                "output": "FAILED"
+                            }]
+                        },
+                        "project": 1,
+                        "sigma": ["reset", "w1", "w2", "w3"],
+                        "startTime": "2015-03-05T12:29:19.995+00:00",
+                        "stepNo": 1,
+                        "testNo": 3,
+                        "type": "web"
+                    }];
+                })
                 .catch(ResourceResponseService.fail);
         }
 

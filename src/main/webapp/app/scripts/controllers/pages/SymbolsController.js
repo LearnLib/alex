@@ -5,9 +5,9 @@
         .module('weblearner.controller')
         .controller('SymbolsController', SymbolsController);
 
-    SymbolsController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService', '_'];
+    SymbolsController.$inject = ['$scope', 'SessionService', 'Symbol', 'SymbolGroup', 'SelectionService', '_'];
 
-    function SymbolsController($scope, Session, SymbolGroup, SelectionService, _) {
+    function SymbolsController($scope, Session, Symbol, SymbolGroup, SelectionService, _) {
 
         $scope.project = Session.project.get();
         $scope.groups = [];
@@ -28,6 +28,14 @@
             })
         };
 
+        function removeSymbolsFromScope(symbols) {
+            _.forEach(symbols, function(symbol){
+                var index = _.findIndex($scope.groups, {id: symbol.group});
+                _.remove($scope.groups[index].symbols, {id: symbol.id});
+                _.remove($scope.symbols, {id: symbol.id});
+            })
+        }
+
         /**
          * Deletes a given symbol and remove it from the scope so that it will not be listed any longer
          *
@@ -35,8 +43,8 @@
          */
         $scope.deleteSymbol = function (symbol) {
             Symbol.Resource.delete($scope.project.id, symbol.id)
-                .then(function (deletedSymbol) {
-                    _.remove($scope.symbols, {id: deletedSymbol.id});
+                .then(function () {
+                    removeSymbolsFromScope([symbol]);
                 })
         };
 
@@ -60,19 +68,13 @@
          * Deletes the symbols the user selected from the server and the scope
          */
         $scope.deleteSelectedSymbols = function () {
-            var selectedSymbols = SelectionService.getSelected($scope.symbols);
+            var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
             var symbolsIds;
 
-            if (selectedSymbols.length) {
-
-                // get all ids from the selected symbols
+            if (selectedSymbols.length > 0) {
                 symbolsIds = _.pluck(selectedSymbols, 'id');
                 Symbol.Resource.deleteSome($scope.project.id, symbolsIds)
-                    .then(function (deletedSymbols) {
-                        _.forEach(deletedSymbols, function (symbol) {
-                            _.remove($scope.symbols, {id: symbol.id})
-                        })
-                    });
+                    .then(removeSymbolsFromScope);
             }
         };
 
@@ -82,9 +84,6 @@
          * @param symbol {Symbol} - The new symbol that should be added to the list
          */
         $scope.addSymbol = function (symbol) {
-
-            console.log(symbol);
-
             var index = _.findIndex($scope.groups, {id: symbol.group});
             if (index > -1) {
                 $scope.groups[index].symbols.push(symbol);
@@ -113,9 +112,7 @@
         };
 
         $scope.deleteGroup = function (group) {
-            _.forEach(group.symbols, function (symbol) {
-                _.remove($scope.allSymbols, {id: symbol.id})
-            });
+            removeSymbolsFromScope(group.symbols);
             _.remove($scope.groups, {id: group.id});
         };
 

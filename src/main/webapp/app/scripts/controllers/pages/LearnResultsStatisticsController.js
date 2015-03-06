@@ -3,106 +3,155 @@
 
     angular
         .module('weblearner.controller')
-        .controller('LearnResultsStatisticsController', [
-            '$scope', 'SessionService', 'LearnResultResource', 'TestResultsChartService', 'SelectionService',
-            LearnResultsStatisticsController
-        ]);
+        .controller('LearnResultsStatisticsController', LearnResultsStatisticsController);
+
+    LearnResultsStatisticsController.$inject = [
+        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'LearnerResultChartService'
+    ];
 
     /**
-     * LearnResultsStatisticsController
      *
-     * The controller that is used for the statistics page
+     *
+     * The corresponding template can be found under 'views/pages/learn-results-statistics.html'.
      *
      * @param $scope
-     * @param SessionService
+     * @param Session
      * @param LearnResultResource
-     * @param TestResultsChartService
      * @param SelectionService
+     * @param LearnerResultChartService
      * @constructor
      */
-    function LearnResultsStatisticsController($scope, SessionService, LearnResultResource, TestResultsChartService, SelectionService) {
+    function LearnResultsStatisticsController($scope, Session, LearnResultResource, SelectionService,
+                                              LearnerResultChartService) {
 
-        /** The open project */
-        $scope.project = SessionService.project.get();
+        // The project that is stored in the session
+        var project = Session.project.get();
 
-        /** The tests of the project @type {Array} */
-        $scope.tests = [];
-
-        /** Enum for the kind of chart that will be displayed **/
+        /**
+         * The enum that indicates which kind of chart should be displayed
+         * @type {{MULTIPLE_FINAL: number, MULTIPLE_COMPLETE: number}}
+         */
         $scope.chartModes = {
-            SINGLE_COMPLETE_TEST_RESULT: 0,
-            MULTIPLE_FINAL_TEST_RESULTS: 1,
-            TWO_COMPLETE_TEST_RESULTS: 2
+            MULTIPLE_FINAL: 0,
+            MULTIPLE_COMPLETE: 1
         };
 
-        /** The active mode **/
-        $scope.chartMode;
+        /**
+         * The map that indicated from which property of a Learner Result a chart should be created
+         * @type {{RESETS: string, SYMBOLS: string, DURATION: string}}
+         */
+        $scope.chartProperties = LearnerResultChartService.properties;
 
-        /** The sets of chart data that is displayed on the chart **/
-        $scope.chartDataSets = [];
+        /**
+         * All final Learn Results from the project
+         * @type {Array}
+         */
+        $scope.results = [];
 
-        //////////
+        /**
+         * The mode of the displayed chart
+         * @type {null|number}
+         */
+        $scope.selectedChartMode = null;
 
-        // get all final tests of the project
-        LearnResultResource.getAllFinal($scope.project.id)
-            .then(function (tests) {
-                $scope.tests = tests;
+        /**
+         * The property of a learner result that is displayed in the chart
+         * @type {string}
+         */
+        $scope.selectedChartProperty = $scope.chartProperties.RESETS;
+
+        /**
+         * The n3 chart data for the directive
+         * @type {{data: null|Array, options: null|{}}}
+         */
+        $scope.chartData = {
+            data: null,
+            options: null
+        };
+
+        // get all final learn results of the project
+        LearnResultResource.getAllFinal(project.id)
+            .then(function (results) {
+                $scope.results = results;
             });
 
-        //////////
-
         /**
-         * Create chart data from multiple selected final test results
+         * Sets the selected learner result property from which the chart data should be created. Calls the methods
+         * to create the chart data based on the selected chart mode.
+         *
+         * @param property - The learner result property
          */
-        $scope.chartFromMultipleFinalTestResults = function () {
-            var tests = SelectionService.getSelected($scope.tests);
-            if (tests.length > 0) {
-                $scope.chartMode = $scope.chartModes.MULTIPLE_FINAL_TEST_RESULTS;
-                $scope.chartDataSets = [TestResultsChartService.createChartDataFromMultipleTestResults(tests)];
+        $scope.selectChartProperty = function (property) {
+            $scope.selectedChartProperty = property;
+            if ($scope.selectedChartMode === $scope.chartModes.MULTIPLE_FINAL) {
+                $scope.createChartFromFinalResults();
+            } else if ($scope.selectedChartMode === $scope.chartModes.MULTIPLE_COMPLETE) {
+                $scope.createChartFromCompleteResults();
             }
         };
 
         /**
-         * Create chart data for a single complete test result with all intermediate steps. Therefore fetch all
-         * intermediate steps first
+         * Creates n3 line chart data from the selected final learner results and saves it into the scope. Sets the
+         * displayable chart mode to MULTIPLE_FINAL
          */
-        $scope.chartFromSingleCompleteTestResult = function () {
-            var tests = SelectionService.getSelected($scope.tests);
-            if (tests.length == 1) {
-            	LearnResultResource.getComplete($scope.project.id, tests[0].testNo)
-                    .then(function (results) {
-                        $scope.chartMode = $scope.chartModes.SINGLE_COMPLETE_TEST_RESULT;
-                        $scope.chartDataSets = [TestResultsChartService.createChartDataFromSingleCompleteTestResult(results)];
-                    });
+        $scope.createChartFromFinalResults = function () {
+            var selectedResults = SelectionService.getSelected($scope.results);
+            var chartData;
+
+            if (selectedResults.length > 0) {
+                chartData =
+                    LearnerResultChartService
+                        .createDataFromMultipleFinalResults(selectedResults, $scope.selectedChartProperty);
+
+                $scope.chartData = {
+                    data: chartData.data,
+                    options: chartData.options
+                };
+
+                $scope.selectedChartMode = $scope.chartModes.MULTIPLE_FINAL;
             }
         };
 
         /**
-         * Create chart data for two complete test result with all intermediate steps. Therefore fetch all
-         * intermediate steps for both selected tests first
+         * Creates n3 area chart data from the selected learner results. Therefore makes an API request to fetch the
+         * complete data from each selected learner result and saves the chart data into the scope. Sets the
+         * displayable chart mode to MULTIPLE_COMPLETE
          */
-        $scope.chartFromTwoCompleteTestResults = function () {
-            var tests = SelectionService.getSelected($scope.tests);
-            var dataSets = [];
-            if (tests.length == 2) {
-            	LearnResultResource.getComplete($scope.project.id, tests[0].testNo)
-                    .then(function (results) {
-                        dataSets.push(TestResultsChartService.createChartDataFromSingleCompleteTestResult(results));
-                        LearnResultResource.getComplete($scope.project.id, tests[1].testNo)
-                            .then(function (results) {
-                                dataSets.push(TestResultsChartService.createChartDataFromSingleCompleteTestResult(results));
-                                $scope.chartMode = $scope.chartModes.TWO_COMPLETE_TEST_RESULTS;
-                                $scope.chartDataSets = dataSets;
-                            })
-                    })
+        $scope.createChartFromCompleteResults = function () {
+            var selectedResults = SelectionService.getSelected($scope.results);
+            var chartData;
+
+            if (selectedResults.length > 0) {
+
+                // TODO: dummy values, fill with data from the server
+                var selectedResults = [];
+                selectedResults.push([$scope.results[0], $scope.results[1]]);
+                selectedResults.push([$scope.results[2], $scope.results[0], $scope.results[1]]);
+                selectedResults.push([$scope.results[1], $scope.results[2]]);
+
+                chartData =
+                    LearnerResultChartService
+                        .createDataFromMultipleCompleteResults(selectedResults, $scope.selectedChartProperty);
+
+                $scope.chartData = {
+                    data: chartData.data,
+                    options: chartData.options
+                };
+
+                $scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
             }
         };
 
         /**
-         * Make the list of final test results visible again and remove the chart
+         * Resets the chart data and removes the selected chart mode so that the chart disappears and the list of
+         * learner results will be shown again
          */
         $scope.back = function () {
-            $scope.chartDataSets = [];
-        };
+            $scope.selectedChartMode = null;
+            $scope.chartData = {
+                data: null,
+                options: null
+            };
+        }
     }
 }());

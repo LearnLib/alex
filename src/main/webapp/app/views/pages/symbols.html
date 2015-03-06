@@ -21,6 +21,8 @@
                         <a href symbol-create-modal-handle project-id="{{project.id}}" on-created="addSymbol">
                             Symbol
                         </a>
+                    </li>
+                    <li>
                         <a href symbol-group-create-modal-handle project-id="{{project.id}}" on-created="addGroup">
                             Group
                         </a>
@@ -103,12 +105,12 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href ng-click="">
+                                        <a href symbol-move-modal-handle groups="groups">
                                             <i class="fa fa-exchange fa-fw"></i> Move
                                         </a>
                                     </li>
                                     <li>
-                                        <a href ng-click="deleteSymbol(symbol)" symbol-move-modal-handle groups="groups">
+                                        <a href ng-click="deleteSymbol(symbol)">
                                             <i class="fa fa-trash fa-fw"></i> Delete
                                         </a>
                                     </li>

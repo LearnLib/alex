@@ -12,6 +12,7 @@
             'ui.router',
             'ngToast',
             'draganddrop',
+            'n3-line-chart',
 
             //all templates
             'templates-all',
@@ -48,7 +49,7 @@
             $rootScope._ = _;
             $rootScope.selection = SelectionService;
         }])
-}());;angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/groups.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+}());;angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/counter-example-builder.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -199,6 +200,33 @@ angular.module("app/views/directives/hypothesis.html", []).run(["$templateCache"
   $templateCache.put("app/views/directives/hypothesis.html",
     "<div style=\"position: absolute; top: 0; width: 100%; bottom: 0; overflow: hidden; background: #fff;\">\n" +
     "    <svg class=\"hypothesis\"></svg>\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/directives/learner-result-chart-multiple-final.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/learner-result-chart-multiple-final.html",
+    "<div id=\"learn-result-chart\">\n" +
+    "    <linechart data=\"dataSets\" options=\"options\" mode=\"\" width=\"\" height=\"500\"></linechart>\n" +
+    "    <hr>\n" +
+    "\n" +
+    "    <div class=\"text-center\">\n" +
+    "        <button class=\"btn btn-xs\"\n" +
+    "                ng-class=\"selectedMode === modes.RESETS ? 'btn-primary':'btn-default'\"\n" +
+    "                ng-click=\"selectedMode = modes.RESETS\">\n" +
+    "            #Resets\n" +
+    "        </button>\n" +
+    "        <button class=\"btn btn-xs\"\n" +
+    "                ng-class=\"selectedMode === modes.SYMBOLS ? 'btn-primary':'btn-default'\"\n" +
+    "                ng-click=\"selectedMode = modes.SYMBOLS\">\n" +
+    "            #Symbols\n" +
+    "        </button>\n" +
+    "        <button class=\"btn btn-xs\"\n" +
+    "                ng-class=\"selectedMode === modes.DURATION ? 'btn-primary':'btn-default'\"\n" +
+    "                ng-click=\"selectedMode = modes.DURATION\">\n" +
+    "            Duration\n" +
+    "        </button>\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
@@ -1766,49 +1794,6 @@ angular.module("app/views/pages/about.html", []).run(["$templateCache", function
     "</div>");
 }]);
 
-angular.module("app/views/pages/groups.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/pages/groups.html",
-    "<div view-heading\n" +
-    "     title=\"Symbol Groups\"\n" +
-    "     sub-title=\"Manage all symbol groups\">\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
-    "    <div class=\"container\">\n" +
-    "\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-primary btn-xs\">\n" +
-    "                Create\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\">\n" +
-    "                Edit\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\">\n" +
-    "                Delete\n" +
-    "            </button>\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"view-body\">\n" +
-    "    <div class=\"container\">\n" +
-    "\n" +
-    "        <div ng-repeat=\"group in groups track by $index\">\n" +
-    "            {{group.name}}\n" +
-    "\n" +
-    "            <ul>\n" +
-    "                <li ng-repeat=\"symbol in group.symbols track by symbol.id\">\n" +
-    "                    {{symbol.name}}\n" +
-    "                </li>\n" +
-    "            </ul>\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "</div>");
-}]);
-
 angular.module("app/views/pages/help.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/help.html",
@@ -1912,110 +1897,110 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "</div>\n" +
     "\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
-    "        </div>\n" +
+    "        <div ng-if=\"selectedChartMode === null\">\n" +
     "\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <div class=\"btn-group btn-group-xs\" dropdown dropdown-hover>\n" +
-    "                <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
-    "                    Charts\n" +
+    "            <div class=\"pull-left\" selectable items=\"results\" style=\"margin-right: 16px\">\n" +
+    "                <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div class=\"btn-group btn-group-xs pull-left\" dropdown dropdown-hover>\n" +
+    "                <button class=\"btn btn-primary\">\n" +
+    "                    Create Chart\n" +
     "                </button>\n" +
-    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                <ul class=\"dropdown-menu\" role=\"menu\">\n" +
     "                    <li>\n" +
-    "                        <a href ng-click=\"chartFromSingleCompleteTestResult()\">\n" +
-    "                            <i class=\"fa fa-line-chart fa-fw\"></i> Single Complete Test\n" +
+    "                        <a href ng-click=\"createChartFromFinalResults()\">\n" +
+    "                            <i class=\"fa fa-fw fa-bar-chart\"></i> Final Results\n" +
     "                        </a>\n" +
     "                    </li>\n" +
     "                    <li>\n" +
-    "                        <a href ng-click=\"chartFromMultipleFinalTestResults()\">\n" +
-    "                            <i class=\"fa fa-bar-chart fa-fw\"></i> Multiple Tests\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                    <li>\n" +
-    "                        <a href ng-click=\"chartFromTwoCompleteTestResults()\">\n" +
-    "                            <i class=\"fa fa-columns fa-fw\"></i> Compare Two Complete Tests\n" +
+    "                        <a href ng-click=\"createChartFromCompleteResults()\">\n" +
+    "                            <i class=\"fa fa-fw fa-area-chart\"></i> Complete Results\n" +
     "                        </a>\n" +
     "                    </li>\n" +
     "                </ul>\n" +
     "            </div>\n" +
-    "        </div>\n" +
     "\n" +
-    "        <div class=\"pull-right\">\n" +
     "            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
-    "                    <i class=\"fa fa-download fa-fw\"></i> Export to CSV\n" +
+    "                <button class=\"btn btn-default\">\n" +
+    "                    <i class=\"fa fa-fw fa-download\"></i> Download as *.csv\n" +
     "                </button>\n" +
-    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                <ul class=\"dropdown-menu\" role=\"menu\">\n" +
     "                    <li>\n" +
-    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
+    "                        <a href download-learner-results-as-csv results=\"results\">\n" +
     "                            All Final Results\n" +
     "                        </a>\n" +
     "                    </li>\n" +
-    "                    <li>\n" +
-    "                        <a href=\"\" download-test-results-as-csv test-results=\"tests\">\n" +
-    "                            A Single Complete Result\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
     "                </ul>\n" +
     "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div ng-if=\"selectedChartMode !== null\">\n" +
+    "\n" +
+    "            <div class=\"pull-left\">\n" +
+    "                <button class=\"btn btn-default btn-xs\" ng-click=\"back()\">\n" +
+    "                    <i class=\"fa fa-reply fa-fw\"></i> Back\n" +
+    "                </button>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div class=\"pull-right\">\n" +
+    "                <button class=\"btn btn-default btn-xs\" download-svg=\"#learn-result-chart\">\n" +
+    "                    <i class=\"fa fa-download fa-fw\"></i> Download as *.svg\n" +
+    "                </button>\n" +
+    "            </div>\n" +
+    "\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-click=\"back()\">\n" +
-    "                <i class=\"fa fa-list-ul fa-fw\"></i> Test Results\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" download-canvas-as-image=\"test-results-chart\">\n" +
-    "                <i class=\"fa fa-save fa-fw\"></i> Download Diagram\n" +
-    "            </button>\n" +
-    "        </div>\n" +
+    "        <div selectable items=\"results\" ng-if=\"selectedChartMode === null\">\n" +
+    "            <div selectable-list>\n" +
+    "                <div selectable-list-item ng-repeat=\"result in results track by $index\">\n" +
     "\n" +
-    "    </div>\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length == 0\">\n" +
+    "                    <strong>Test No\n" +
+    "                        <span ng-bind=\"result.testNo\"></span>\n" +
+    "                    </strong>,\n" +
+    "                    [<span ng-bind=\"(result.configuration.algorithm|formatEnumKey)\"></span>]\n" +
     "\n" +
-    "        <div selectable-list ng-model=\"tests\">\n" +
-    "            <div selectable-list-item ng-repeat=\"test in tests\">\n" +
+    "                    <div class=\"text-muted\">\n" +
+    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                    </div>\n" +
     "\n" +
-    "                <span class=\"label label-primary pull-right\">\n" +
-    "                    Web\n" +
-    "                </span>\n" +
-    "\n" +
-    "                <strong>Test No\n" +
-    "                    <span ng-bind=\"test.testNo\"></span>\n" +
-    "                </strong>,\n" +
-    "                [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                <br>\n" +
-    "\n" +
-    "                <p class=\"text-muted\">\n" +
-    "                    Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                </p>\n" +
+    "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
-    "    </div>\n" +
-    "    <div class=\"container\" ng-if=\"chartDataSets.length > 0\">\n" +
+    "        <div ng-if=\"selectedChartMode !== null && chartData.data !== null && chartData.options !== null\"\n" +
+    "             id=\"learn-result-chart\">\n" +
     "\n" +
-    "        <hr>\n" +
+    "            <linechart data=\"chartData.data\" options=\"chartData.options\" mode=\"\" width=\"\" height=\"500\"></linechart>\n" +
+    "            <hr>\n" +
     "\n" +
-    "        <div ng-if=\"chartMode == chartModes.MULTIPLE_FINAL_TEST_RESULTS\">\n" +
-    "            <div test-results-chart test-results-chart-multiple-final chart-data=\"chartDataSets\"></div>\n" +
-    "        </div>\n" +
+    "            <div class=\"text-center\">\n" +
+    "                <button class=\"btn btn-xs\"\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.RESETS ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.RESETS)\">\n" +
+    "                    #Resets\n" +
+    "                </button>\n" +
+    "                <button class=\"btn btn-xs\"\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.SYMBOLS ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.SYMBOLS)\">\n" +
+    "                    #Symbols\n" +
+    "                </button>\n" +
+    "                <button class=\"btn btn-xs\"\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.DURATION ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.DURATION)\">\n" +
+    "                    Duration\n" +
+    "                </button>\n" +
+    "            </div>\n" +
     "\n" +
-    "        <div ng-if=\"chartMode == chartModes.SINGLE_COMPLETE_TEST_RESULT\">\n" +
-    "            <div test-results-chart test-results-chart-single-complete chart-data=\"chartDataSets\"></div>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div ng-if=\"chartMode == chartModes.TWO_COMPLETE_TEST_RESULTS\">\n" +
-    "            <div test-results-chart test-results-chart-two-complete chart-data=\"chartDataSets\"></div>\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
@@ -2674,60 +2659,53 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
 angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/symbols-trash.html",
-    "<div class=\"container\">\n" +
-    "    <h2>Symbols Trash - <span ng-bind=\"(type|capitalize)\"></span></h2>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        View deleted <span ng-bind=\"type\"></span> symbols and recover them\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <hr>\n" +
+    "<div view-heading\n" +
+    "     title=\"Symbol Trash\"\n" +
+    "     sub-title=\"Restore deleted symbols\">\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbols\">\n" +
+    "\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"symbols\">\n" +
+    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
     "        </div>\n" +
-    "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(symbols|selected).length > 0 ? '' : 'disabled'\"\n" +
-    "                    ng-click=\"recoverSelected()\">\n" +
+    "\n" +
+    "        <div class=\"pull-right\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"recoverSelectedSymbols()\">\n" +
     "                <i class=\"fa fa-rotate-left fa-fw\"></i> Recover\n" +
     "            </button>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"container\">\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "    <div selectable-list ng-model=\"symbols\">\n" +
-    "        <div selectable-list-item ng-repeat=\"symbol in symbols\">\n" +
+    "        <div selectable items=\"symbols\" ng-if=\"symbols.length > 0\">\n" +
+    "            <div selectable-list>\n" +
+    "                <div selectable-list-item ng-repeat=\"symbol in symbols track by $index\">\n" +
     "\n" +
-    "            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                    <i class=\"fa fa-bars\"></i>\n" +
-    "                </button>\n" +
-    "                <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                    <li>\n" +
-    "                        <a href ng-click=\"recover(symbol)\">\n" +
-    "                            <i class=\"fa fa-rotate-left fa-fw\"></i> Recover\n" +
-    "                        </a>\n" +
-    "                    </li>\n" +
-    "                </ul>\n" +
+    "                    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"recoverSymbol(symbol)\">\n" +
+    "                        <i class=\"fa fa-rotate-left fa-fw\"></i>\n" +
+    "                    </a>\n" +
+    "\n" +
+    "                    <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "\n" +
+    "                    <div class=\"text-muted\">\n" +
+    "                        <span ng-bind=\"symbol.actions.length\"></span> Actions\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                </div>\n" +
     "            </div>\n" +
-    "\n" +
-    "            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
-    "            <span class=\"text-muted\">Rev. <span ng-bind=\"symbol.revision\"></span></span>\n" +
-    "            <p class=\"text-muted\">\n" +
-    "            	<span ng-bind=\"symbol.actions.length\"></span> Actions\n" +
-    "            </p>\n" +
     "        </div>\n" +
-    "    </div>\n" +
     "\n" +
-    "    <div class=\"alert alert-info\" ng-show=\"symbols.length == 0\">\n" +
-    "        There are no symbols in the trash\n" +
-    "    </div>\n" +
+    "        <div class=\"alert alert-info\" ng-if=\"symbols.length === 0\">\n" +
+    "            There are no deleted symbols\n" +
+    "        </div>\n" +
     "\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
@@ -2757,6 +2735,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                        <a href symbol-create-modal-handle project-id=\"{{project.id}}\" on-created=\"addSymbol\">\n" +
     "                            Symbol\n" +
     "                        </a>\n" +
+    "                    </li>\n" +
+    "                    <li>\n" +
     "                        <a href symbol-group-create-modal-handle project-id=\"{{project.id}}\" on-created=\"addGroup\">\n" +
     "                            Group\n" +
     "                        </a>\n" +
@@ -2839,12 +2819,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                                        </a>\n" +
     "                                    </li>\n" +
     "                                    <li>\n" +
-    "                                        <a href ng-click=\"\">\n" +
+    "                                        <a href symbol-move-modal-handle groups=\"groups\">\n" +
     "                                            <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +
     "                                    <li>\n" +
-    "                                        <a href ng-click=\"deleteSymbol(symbol)\" symbol-move-modal-handle groups=\"groups\">\n" +
+    "                                        <a href ng-click=\"deleteSymbol(symbol)\">\n" +
     "                                            <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +
@@ -3834,36 +3814,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         }
     }
 }());;(function () {
-
-    angular
-        .module('weblearner.controller')
-        .controller('GroupsController', GroupsController);
-
-    GroupsController.$inject = ['$scope', 'SessionService', 'SymbolGroup', '_'];
-
-    function GroupsController($scope, Session, SymbolGroup, _) {
-
-        $scope.project = Session.project.get();
-        $scope.groups = [];
-        $scope.allSymbols = [];
-        $scope.collapseAll = false;
-
-        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
-            .then(function (groups) {
-                $scope.groups = groups;
-                $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
-            });
-
-        $scope.addGroup = function () {
-        };
-
-        $scope.deleteGroup = function () {
-        };
-
-        $scope.updateGroup = function () {
-        }
-    }
-}());;(function () {
     'use strict';
 
     angular
@@ -4025,107 +3975,156 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('LearnResultsStatisticsController', [
-            '$scope', 'SessionService', 'LearnResultResource', 'TestResultsChartService', 'SelectionService',
-            LearnResultsStatisticsController
-        ]);
+        .controller('LearnResultsStatisticsController', LearnResultsStatisticsController);
+
+    LearnResultsStatisticsController.$inject = [
+        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'LearnerResultChartService'
+    ];
 
     /**
-     * LearnResultsStatisticsController
      *
-     * The controller that is used for the statistics page
+     *
+     * The corresponding template can be found under 'views/pages/learn-results-statistics.html'.
      *
      * @param $scope
-     * @param SessionService
+     * @param Session
      * @param LearnResultResource
-     * @param TestResultsChartService
      * @param SelectionService
+     * @param LearnerResultChartService
      * @constructor
      */
-    function LearnResultsStatisticsController($scope, SessionService, LearnResultResource, TestResultsChartService, SelectionService) {
+    function LearnResultsStatisticsController($scope, Session, LearnResultResource, SelectionService,
+                                              LearnerResultChartService) {
 
-        /** The open project */
-        $scope.project = SessionService.project.get();
+        // The project that is stored in the session
+        var project = Session.project.get();
 
-        /** The tests of the project @type {Array} */
-        $scope.tests = [];
-
-        /** Enum for the kind of chart that will be displayed **/
+        /**
+         * The enum that indicates which kind of chart should be displayed
+         * @type {{MULTIPLE_FINAL: number, MULTIPLE_COMPLETE: number}}
+         */
         $scope.chartModes = {
-            SINGLE_COMPLETE_TEST_RESULT: 0,
-            MULTIPLE_FINAL_TEST_RESULTS: 1,
-            TWO_COMPLETE_TEST_RESULTS: 2
+            MULTIPLE_FINAL: 0,
+            MULTIPLE_COMPLETE: 1
         };
 
-        /** The active mode **/
-        $scope.chartMode;
+        /**
+         * The map that indicated from which property of a Learner Result a chart should be created
+         * @type {{RESETS: string, SYMBOLS: string, DURATION: string}}
+         */
+        $scope.chartProperties = LearnerResultChartService.properties;
 
-        /** The sets of chart data that is displayed on the chart **/
-        $scope.chartDataSets = [];
+        /**
+         * All final Learn Results from the project
+         * @type {Array}
+         */
+        $scope.results = [];
 
-        //////////
+        /**
+         * The mode of the displayed chart
+         * @type {null|number}
+         */
+        $scope.selectedChartMode = null;
 
-        // get all final tests of the project
-        LearnResultResource.getAllFinal($scope.project.id)
-            .then(function (tests) {
-                $scope.tests = tests;
+        /**
+         * The property of a learner result that is displayed in the chart
+         * @type {string}
+         */
+        $scope.selectedChartProperty = $scope.chartProperties.RESETS;
+
+        /**
+         * The n3 chart data for the directive
+         * @type {{data: null|Array, options: null|{}}}
+         */
+        $scope.chartData = {
+            data: null,
+            options: null
+        };
+
+        // get all final learn results of the project
+        LearnResultResource.getAllFinal(project.id)
+            .then(function (results) {
+                $scope.results = results;
             });
 
-        //////////
-
         /**
-         * Create chart data from multiple selected final test results
+         * Sets the selected learner result property from which the chart data should be created. Calls the methods
+         * to create the chart data based on the selected chart mode.
+         *
+         * @param property - The learner result property
          */
-        $scope.chartFromMultipleFinalTestResults = function () {
-            var tests = SelectionService.getSelected($scope.tests);
-            if (tests.length > 0) {
-                $scope.chartMode = $scope.chartModes.MULTIPLE_FINAL_TEST_RESULTS;
-                $scope.chartDataSets = [TestResultsChartService.createChartDataFromMultipleTestResults(tests)];
+        $scope.selectChartProperty = function (property) {
+            $scope.selectedChartProperty = property;
+            if ($scope.selectedChartMode === $scope.chartModes.MULTIPLE_FINAL) {
+                $scope.createChartFromFinalResults();
+            } else if ($scope.selectedChartMode === $scope.chartModes.MULTIPLE_COMPLETE) {
+                $scope.createChartFromCompleteResults();
             }
         };
 
         /**
-         * Create chart data for a single complete test result with all intermediate steps. Therefore fetch all
-         * intermediate steps first
+         * Creates n3 line chart data from the selected final learner results and saves it into the scope. Sets the
+         * displayable chart mode to MULTIPLE_FINAL
          */
-        $scope.chartFromSingleCompleteTestResult = function () {
-            var tests = SelectionService.getSelected($scope.tests);
-            if (tests.length == 1) {
-            	LearnResultResource.getComplete($scope.project.id, tests[0].testNo)
-                    .then(function (results) {
-                        $scope.chartMode = $scope.chartModes.SINGLE_COMPLETE_TEST_RESULT;
-                        $scope.chartDataSets = [TestResultsChartService.createChartDataFromSingleCompleteTestResult(results)];
-                    });
+        $scope.createChartFromFinalResults = function () {
+            var selectedResults = SelectionService.getSelected($scope.results);
+            var chartData;
+
+            if (selectedResults.length > 0) {
+                chartData =
+                    LearnerResultChartService
+                        .createDataFromMultipleFinalResults(selectedResults, $scope.selectedChartProperty);
+
+                $scope.chartData = {
+                    data: chartData.data,
+                    options: chartData.options
+                };
+
+                $scope.selectedChartMode = $scope.chartModes.MULTIPLE_FINAL;
             }
         };
 
         /**
-         * Create chart data for two complete test result with all intermediate steps. Therefore fetch all
-         * intermediate steps for both selected tests first
+         * Creates n3 area chart data from the selected learner results. Therefore makes an API request to fetch the
+         * complete data from each selected learner result and saves the chart data into the scope. Sets the
+         * displayable chart mode to MULTIPLE_COMPLETE
          */
-        $scope.chartFromTwoCompleteTestResults = function () {
-            var tests = SelectionService.getSelected($scope.tests);
-            var dataSets = [];
-            if (tests.length == 2) {
-            	LearnResultResource.getComplete($scope.project.id, tests[0].testNo)
-                    .then(function (results) {
-                        dataSets.push(TestResultsChartService.createChartDataFromSingleCompleteTestResult(results));
-                        LearnResultResource.getComplete($scope.project.id, tests[1].testNo)
-                            .then(function (results) {
-                                dataSets.push(TestResultsChartService.createChartDataFromSingleCompleteTestResult(results));
-                                $scope.chartMode = $scope.chartModes.TWO_COMPLETE_TEST_RESULTS;
-                                $scope.chartDataSets = dataSets;
-                            })
-                    })
+        $scope.createChartFromCompleteResults = function () {
+            var selectedResults = SelectionService.getSelected($scope.results);
+            var chartData;
+
+            if (selectedResults.length > 0) {
+
+                // TODO: dummy values, fill with data from the server
+                var selectedResults = [];
+                selectedResults.push([$scope.results[0], $scope.results[1]]);
+                selectedResults.push([$scope.results[2], $scope.results[0], $scope.results[1]]);
+                selectedResults.push([$scope.results[1], $scope.results[2]]);
+
+                chartData =
+                    LearnerResultChartService
+                        .createDataFromMultipleCompleteResults(selectedResults, $scope.selectedChartProperty);
+
+                $scope.chartData = {
+                    data: chartData.data,
+                    options: chartData.options
+                };
+
+                $scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
             }
         };
 
         /**
-         * Make the list of final test results visible again and remove the chart
+         * Resets the chart data and removes the selected chart mode so that the chart disappears and the list of
+         * learner results will be shown again
          */
         $scope.back = function () {
-            $scope.chartDataSets = [];
-        };
+            $scope.selectedChartMode = null;
+            $scope.chartData = {
+                data: null,
+                options: null
+            };
+        }
     }
 }());;(function () {
     'use strict';
@@ -4551,9 +4550,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('SymbolsController', SymbolsController);
 
-    SymbolsController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService', '_'];
+    SymbolsController.$inject = ['$scope', 'SessionService', 'Symbol', 'SymbolGroup', 'SelectionService', '_'];
 
-    function SymbolsController($scope, Session, SymbolGroup, SelectionService, _) {
+    function SymbolsController($scope, Session, Symbol, SymbolGroup, SelectionService, _) {
 
         $scope.project = Session.project.get();
         $scope.groups = [];
@@ -4574,6 +4573,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             })
         };
 
+        function removeSymbolsFromScope(symbols) {
+            _.forEach(symbols, function(symbol){
+                var index = _.findIndex($scope.groups, {id: symbol.group});
+                _.remove($scope.groups[index].symbols, {id: symbol.id});
+                _.remove($scope.symbols, {id: symbol.id});
+            })
+        }
+
         /**
          * Deletes a given symbol and remove it from the scope so that it will not be listed any longer
          *
@@ -4581,8 +4588,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         $scope.deleteSymbol = function (symbol) {
             Symbol.Resource.delete($scope.project.id, symbol.id)
-                .then(function (deletedSymbol) {
-                    _.remove($scope.symbols, {id: deletedSymbol.id});
+                .then(function () {
+                    removeSymbolsFromScope([symbol]);
                 })
         };
 
@@ -4606,19 +4613,13 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * Deletes the symbols the user selected from the server and the scope
          */
         $scope.deleteSelectedSymbols = function () {
-            var selectedSymbols = SelectionService.getSelected($scope.symbols);
+            var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
             var symbolsIds;
 
-            if (selectedSymbols.length) {
-
-                // get all ids from the selected symbols
+            if (selectedSymbols.length > 0) {
                 symbolsIds = _.pluck(selectedSymbols, 'id');
                 Symbol.Resource.deleteSome($scope.project.id, symbolsIds)
-                    .then(function (deletedSymbols) {
-                        _.forEach(deletedSymbols, function (symbol) {
-                            _.remove($scope.symbols, {id: symbol.id})
-                        })
-                    });
+                    .then(removeSymbolsFromScope);
             }
         };
 
@@ -4628,9 +4629,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @param symbol {Symbol} - The new symbol that should be added to the list
          */
         $scope.addSymbol = function (symbol) {
-
-            console.log(symbol);
-
             var index = _.findIndex($scope.groups, {id: symbol.group});
             if (index > -1) {
                 $scope.groups[index].symbols.push(symbol);
@@ -4659,9 +4657,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
 
         $scope.deleteGroup = function (group) {
-            _.forEach(group.symbols, function (symbol) {
-                _.remove($scope.allSymbols, {id: symbol.id})
-            });
+            removeSymbolsFromScope(group.symbols);
             _.remove($scope.groups, {id: group.id});
         };
 
@@ -4790,9 +4786,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param Session
      * @param Symbol
      * @param SelectionService
+     * @param _
      * @constructor
      */
-    function SymbolsImportController($scope, Session, Symbol, SelectionService) {
+    function SymbolsImportController($scope, Session, Symbol, SelectionService, _) {
 
         // The project that is saved in the sessionStorage
         var _project = Session.project.get();
@@ -4810,10 +4807,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @param data - The json string of loaded symbols
          */
         $scope.fileLoaded = function (data) {
-            var symbols = Symbol.buildSome(angular.fromJson(data));
-            $scope.$apply(function () {
-                $scope.symbols = symbols;
-            });
+            try {
+                var symbols = angular.fromJson(data);
+                $scope.$apply(function () {
+                    $scope.symbols = $scope.symbols.concat(symbols);
+                });
+            } catch(e) {
+                console.error(e);
+            }
         };
 
         /**
@@ -4824,7 +4825,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             var selectedSymbols = angular.copy(SelectionService.getSelected($scope.symbols));
             if (selectedSymbols.length > 0) {
                 SelectionService.removeSelection(selectedSymbols);
-                Symbol.Resource.create(_project.id, selectedSymbols)
+                Symbol.Resource.createSome(_project.id, selectedSymbols)
                     .then(function (createdSymbols) {
                         _.forEach(createdSymbols, function (symbol) {
                             _.remove($scope.symbols, {name: symbol.name})
@@ -4838,67 +4839,64 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('SymbolsTrashController', [
-            '$scope', 'type', 'SessionService', 'SymbolResource', 'SelectionService',
-            SymbolsTrashController
-        ]);
+        .controller('SymbolsTrashController', SymbolsTrashController);
+
+    SymbolsTrashController.$inject = ['$scope', 'SessionService', 'Symbol', 'SelectionService', '_'];
 
     /**
-     * SymbolsTrashController
+     * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
+     * of these symbols. By default, recovered symbols will be moved in the default group with the id 0.
      *
      * @param $scope
-     * @param type
-     * @param SessionService
-     * @param SymbolResource
+     * @param Session
+     * @param Symbol
      * @param SelectionService
      * @constructor
      */
-    function SymbolsTrashController($scope, type, SessionService, SymbolResource, SelectionService) {
+    function SymbolsTrashController($scope, Session, Symbol, SelectionService, _) {
 
-        /**
-         * The open project
-         */
-        $scope.project = SessionService.project.get();
+        // The project that is saved in the sessionStorage
+        var project = Session.project.get();
 
         /**
          * The list of deleted symbols
-         * @type {Array}
+         *
+         * @type {Symbol[]}
          */
         $scope.symbols = [];
 
-        /**
-         * The type of the symbols
-         * @type {String}
-         */
-        $scope.type = type;
-
-        //////////
-
-        // load all deleted symbols into scope
-        SymbolResource.getAll($scope.project.id, {type:type, deleted: true})
+        // fetch all deleted symbols and save them in scope
+        Symbol.Resource.getAll(project.id, {deleted: true})
             .then(function (symbols) {
                 $scope.symbols = symbols;
             });
 
-        //////////
-
         /**
-         * Recover a deleted symbol and remove it from the scope
-         * @param {Object} symbol
+         * Recovers a deleted symbol by calling the API and removes the recovered symbol from the symbol list on success
+         *
+         * @param symbol {Symbol} - The symbol that should be recovered from the trash
          */
-        $scope.recover = function (symbol) {
-            SymbolResource.recover($scope.project.id, symbol.id)
-                .then(function () {
-                    _.remove($scope.symbols, {id: symbol.id});
+        $scope.recoverSymbol = function (symbol) {
+
+            // create a copy so that the selection won't be removed in case the API call fails
+            var s = symbol.copy();
+            SelectionService.removeSelection(s);
+
+            Symbol.Resource.recover(project.id, symbol)
+                .then(function (recoveredSymbol) {
+                    _.remove($scope.symbols, {id: recoveredSymbol.id});
                 })
         };
 
         /**
-         * Recover the symbols that were selected
+         * Recovers all symbols that were selected and calls $scope.recoverSymbol for each one
          */
-        $scope.recoverSelected = function () {
+        $scope.recoverSelectedSymbols = function () {
             var selectedSymbols = SelectionService.getSelected($scope.symbols);
-            _.forEach(selectedSymbols, $scope.recover)
+
+            if (selectedSymbols.length > 0) {
+                _.forEach(selectedSymbols, $scope.recoverSymbol);
+            }
         }
     }
 }());;(function(){
@@ -5206,93 +5204,204 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         }
     }
-}());;(function() {
+}());;(function () {
+    'use strict';
 
-	angular
-		.module('weblearner.directives')
-		.directive('downloadTestResultsAsCsv', [ 
-             'PromptService', downloadTestResultsAsCsv 
-         ]);
+    angular
+        .module('weblearner.directives')
+        .directive('downloadLearnerResultsAsCsv', downloadLearnerResultsAsCsv);
 
-	function downloadTestResultsAsCsv(PromptService) {
-		
-		var directive = {
-			restrict: 'A',
-			scope: {
-				testResults: '='
-			},
-			link: link
-		};
-		return directive;
-		
-		//////////
-		
-		function link(scope, el, attrs) {
-						
-			el.on('click', promptFilename);
-			
-			//////////
-			
-			function promptFilename() {
-				if (angular.isDefined(scope.testResults)) {
-	                PromptService.prompt('Enter a name for the csv file.', {
-	                    regexp: /^[a-zA-Z0-9\.\-,_]+$/,
-	                    errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
-	                }).then(download);
-				}
-			}
-			
-			function download(filename) {
-				
-				var csv = 'data:text/csv;charset=utf-8,';
-				var a;
-				var results;
+    downloadLearnerResultsAsCsv.$inject = ['PromptService', '_'];
 
-				if (angular.isDefined(scope.testResults)){
+    /**
+     * @param PromptService
+     * @param _ - Lodash
+     * @returns {{restrict: string, scope: {results: string}, link: link}}
+     */
+    function downloadLearnerResultsAsCsv(PromptService, _) {
 
-					if (angular.isArray(scope.testResults)) {
-						results = scope.testResults;
-					} else {
-						return;
-					}
-					
-					csv += testResultsToCSV(results);
-					
-					// create new link element with downloadable csv
-					a = document.createElement('a');
-					a.style.display = 'none';
-					a.setAttribute('href', csv);
-					a.setAttribute('target', '_blank');
-	                a.setAttribute('download', filename + '.csv');
-          	        
-	                // append link to the dom, fire click event and remove it
-	                document.body.appendChild(a);
-          	        a.click();
-          	        document.body.removeChild(a);
-				}
-			}
-			
-			function testResultsToCSV(testResults) {
-				
-				var csv = '"Type";"Project";"TestNo";"StepNo";"Algorithm";"EqOracle";"Sybols";"Resets";"Duration (ms)"%0A';
-								
-				_.forEach(testResults, function(result){
+        var directive = {
+            restrict: 'A',
+            scope: {
+                results: '='
+            },
+            link: link
+        };
+        return directive;
+        
+        function link(scope, el, attrs) {
 
-					csv += '"' + result.type + '";';
-					csv += '"' + result.project + '";';
-					csv += '"' + result.testNo + '";';
-					csv += '"' + result.stepNo + '";';
-					csv += '"' + result.configuration.algorithm + '";';
-					csv += '"' + result.configuration.eqOracle.type + '";';
-					csv += '"' + result.sigma.length + '";';
-					csv += '"' + result.amountOfResets + '";';
-					csv += '"' + result.duration + '"%0A';
-				});
-				
-				return csv;
-			}
-		}
-	}
+            el.on('click', handleDirectiveBehavior);
+
+            /**
+             * Prompts for a filename of the csv file and calls the method to download the file on success
+             */
+            function handleDirectiveBehavior() {
+                var csvData = '';
+
+                if (angular.isDefined(scope.results)) {
+                    csvData = createCsvData(scope.results);
+                    PromptService.prompt('Enter a name for the csv file.', {
+                        regexp: /^[a-zA-Z0-9\.\-,_]+$/,
+                        errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
+                    }).then(function (filename) {
+                        download(csvData, filename)
+                    });
+                }
+            }
+
+            /**
+             * Creates a csv string from learner results
+             *
+             * @param results - The learner results
+             * @returns {string} - The csv string from learner results
+             */
+            function createCsvData(results) {
+                var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,Symbols,Resets,Duration (ms)\n';
+
+                _.forEach(results, function (result) {
+                    csv += result.project + ',';
+                    csv += result.testNo + ',';
+                    csv += '"' + result.startTime + '",';
+                    csv += result.stepNo + ',';
+                    csv += result.configuration.algorithm + ',';
+                    csv += result.configuration.eqOracle.type + ',';
+                    csv += result.sigma.length + ',';
+                    csv += result.amountOfResets + ',';
+                    csv += result.duration + '\n';
+                });
+
+                return csv;
+            }
+
+            /**
+             * Downloads the csv file with learner results
+             *
+             * @param csv - The csv that should be downloaded
+             * @param filename - The name of the csv file
+             */
+            function download(csv, filename) {
+
+                // create new link element with downloadable csv
+                var a = document.createElement('a');
+                a.style.display = 'none';
+                a.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
+                a.setAttribute('target', '_blank');
+                a.setAttribute('download', filename + '.csv');
+
+                // append link to the dom, fire click event and remove it
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+    }
+}());;(function () {
+
+    angular
+        .module('weblearner.directives')
+        .directive('downloadSvg', downloadSvg);
+
+    downloadSvg.$inject = ['PromptService'];
+
+    /**
+     * The directive that lets you directly download a svg element from the html page into a file. It attaches a click
+     * event to the element it was used on, that first prompts you for a filename and then downloads the svg.
+     *
+     * It can only be used as an attribute and the value of the attribute should be a css selector that leads either
+     * directly to svg or to a parent element of the svg. When the selector point the the parent and the parent has
+     * multiple svg children, only the first one will be downloaded.
+     *
+     * Use the directive for example like this: '<button download-svg="#svg">download</button>'.
+     *
+     * @param PromptService - The service for prompting a user input
+     * @returns {{restrict: string, link: link}}
+     */
+    function downloadSvg(PromptService) {
+
+        var directive = {
+            restrict: 'A',
+            link: link
+        };
+        return directive;
+
+        function link(scope, el, attrs) {
+
+            el.on('click', handleDirectiveBehavior);
+
+            /**
+             * Makes sure that the required attribute has a value and that a svg element actually exists. Prompts the
+             * user to enter a filename and calls the download function on success
+             */
+            function handleDirectiveBehavior() {
+                var svg = null;
+
+                if (angular.isDefined(attrs.downloadSvg)) {
+                    svg = findSvg(attrs.downloadSvg);
+
+                    if (svg !== null) {
+                        PromptService.prompt('Enter a name for the svg file.', {
+                            regexp: /^[a-zA-Z0-9\.\-,_]+$/,
+                            errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
+                        }).then(function (filename) {
+                            download(svg, filename);
+                        });
+                    }
+                }
+            }
+
+            /**
+             * Checks if the element of the passed selector already is a svg element and if not, searches for a svg
+             * element in the dom tree below the element and returns the first occurrence.
+             *
+             * @param selector - The selector where a svg element should be looked for
+             * @returns {*|null} - The first occurrence of an svg
+             */
+            function findSvg(selector) {
+                var svg = document.querySelector(selector);
+                if (svg !== null) {
+                    if (svg.nodeName.toLowerCase() !== 'svg') {
+                        svg = svg.querySelector('svg')
+                    }
+                    if (svg !== null) {
+                        return svg;
+                    }
+                }
+                return null;
+            }
+
+            /**
+             * Directly downloads a svg element
+             *
+             * @param svg - The svg element that should be downloaded
+             * @param filename - The name the file should have
+             */
+            function download(svg, filename) {
+
+                // set proper xml attributes for downloadable file
+                svg.setAttribute('version', '1.1');
+                svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+                // create serialized string from svg element and encode it in
+                // base64 otherwise the file will not be completely downloaded
+                // what results in errors opening the file
+                var svgString = new XMLSerializer().serializeToString(svg);
+                var encodedSvgString = window.btoa(svgString);
+
+                // create new link element with image data
+                var a = document.createElement('a');
+                a.style.display = 'none';
+                a.setAttribute('href', 'data:image/svg+xml;base64,\n' + encodedSvgString);
+                a.setAttribute('target', '_blank');
+                a.setAttribute('download', filename + '.svg');
+
+                // append link to the dom, fire click event and remove it
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+    }
 }());;(function(){
     'use strict';
 
@@ -5342,8 +5451,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .directive('fileDropzone', fileDropzone);
 
     /**
-     * fileDropzone
-     *
      * This directives makes any element a place to drop files from the local pc. Currently this directive only
      * supports to read files as a text.
      *
@@ -5360,8 +5467,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
         return directive;
 
-        //////////
-
         /**
          * @param scope
          * @param el
@@ -5371,14 +5476,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             var _reader = new FileReader();
 
-            //////////
-
-            // call function that was passed as onLoaded with the result of the FileReader
             _reader.onload = function (e) {
                 scope.onLoaded()(e.target.result);
             };
 
-            // add dragover event
             el.on('dragover', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -5386,29 +5487,27 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             });
 
             el.on('dragenter', function(){
-                el[0].style.outline = '4px solid rgba(0,0,0,0.2)'
+                el[0].style.outline = '2px solid rgba(0,0,0,0.2)'
             }).on('dragleave', function(){
                 el[0].style.outline = '0'
             });
 
-            // add drop event and read files
             el.on('drop', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                readFiles(e.dataTransfer.files);
                 el[0].style.outline = '0'
+                readFiles(e.dataTransfer.files);
             });
-
-            //////////
 
             /**
              * Read files as a text file
+             *
              * @param files
              */
             function readFiles(files) {
-                _.forEach(files, function (file) {
-                    _reader.readAsText(file);
-                })
+                for (var i = 0; i < files.length; i++) {
+                    _reader.readAsText(files[i]);
+                }
             }
         }
     }
@@ -6987,418 +7086,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.directives')
-        .directive('testResultsChart', testResultsChart);
-
-    /**
-     * testResultsChart
-     *
-     * The directive that is placed somewhere in your html markup in order to display the charts for displaying
-     * the statistics of some test results.
-     *
-     * Use the attribute 'chart-data' on the element of the directive to pass the data that should be plotted
-     *
-     * @return {{scope: {chartData: string}, controller: *[], template: string}}
-     */
-    function testResultsChart() {
-
-        var template = '' +
-            '<div>' +
-            '   <canvas id="test-results-chart" width="800" height="400"></canvas>' +
-            '   <hr>' +
-            '   <div class="text-center">' +
-            '       <button class="btn btn-default btn-sm" ng-class="visibleChartProperty == chartProperties.DURATION ? \'active\' : \'\'" ng-click="showDuration()">Duration</button>' +
-            '       <button class="btn btn-default btn-sm" ng-class="visibleChartProperty == chartProperties.AMOUNT_OF_RESETS ? \'active\' : \'\'" ng-click="showResets()">#Resets</button>' +
-            '       <button class="btn btn-default btn-sm" ng-class="visibleChartProperty == chartProperties.AMOUNT_OF_SYMBOLS ? \'active\' : \'\'" ng-click="showSymbols()">#Symbols</button>' +
-            '   </div>' +
-            '</div>';
-
-        //////////
-
-        var directive = {
-            scope: {
-                chartData: '='
-            },
-            controller: [
-                '$scope', '$element', 'TestResultsChartService',
-                controller
-            ],
-            template: template
-        };
-        return directive;
-
-        //////////
-
-        /**
-         * The controller for the directive testResultsChart that can be required by other directives
-         *
-         * @param $scope - the current scope
-         * @param $element - the root element of the directive
-         */
-        function controller($scope, $element, TestResultsChartService) {
-
-            // The canvas on which the charts will be drawn
-            var canvas = $element.find('canvas')[0].getContext('2d');
-
-            // The chart.js Chart object
-            var chart;
-
-            // The update method that is dynamically set by other directives in order to update the canvas
-            var update;
-
-            //////////
-
-            $scope.chartProperties = TestResultsChartService.chartProperties;
-            
-            $scope.visibleChartProperty = $scope.chartProperties.AMOUNT_OF_SYMBOLS;
-
-            //////////
-
-            /**
-             * Draw a bar chart on the canvas from data
-             * @param data - the data in the format that is expected by chart.js
-             */
-            this.createBarChart = function (data) {
-                chart = new Chart(canvas).Bar(data, {responsive: true});
-            };
-
-            /**
-             * Draw a line chart on the canvas from data
-             * @param data - the data in the format that is expected by chart.js
-             */
-            this.createLineChart = function (data) {
-                chart = new Chart(canvas).Line(data, {responsive: true});
-            };
-
-            /**
-             * Returns the data that was passed as an argument to the directive
-             * @return {string|chartData}
-             */
-            this.getChartData = function () {
-                return $scope.chartData;
-            };
-
-            /**
-             * Set the method that is called to update the chart on the canvas
-             * @param f - the update function with to params (chart, property)
-             */
-            this.setUpdate = function (f) {
-                update = f;
-            };
-
-            //////////
-
-            /**
-             * Update the canvas and show the statistics for the duration of test results
-             */
-            $scope.showDuration = function () {
-                update(chart, $scope.chartProperties.DURATION);
-                $scope.visibleChartProperty = $scope.chartProperties.DURATION;
-            };
-
-            /**
-             * Update the canvas and show the statistics for the number of resets of test results
-             */
-            $scope.showResets = function () {
-                update(chart, $scope.chartProperties.AMOUNT_OF_RESETS);
-                $scope.visibleChartProperty = $scope.chartProperties.AMOUNT_OF_RESETS
-            };
-
-            /**
-             * Update the canvas and show the statistics for the number of symbols of test results
-             */
-            $scope.showSymbols = function () {
-                update(chart, $scope.chartProperties.AMOUNT_OF_SYMBOLS);
-                $scope.visibleChartProperty = $scope.chartProperties.AMOUNT_OF_SYMBOLS
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('testResultsChartMultipleFinal', testResultsChartMultipleFinal);
-
-    /**
-     * testResultsChartMultipleFinal
-     *
-     * The directive that should be applied to the element where the chart for the comparison of multiple final test
-     * results should be displayed. Requires that the directive 'testResultsChart' is applied to the element as well
-     * because it works with it.
-     *
-     * Displays a bar chart.
-     *
-     * @return {{require: string, link: link}}
-     */
-    function testResultsChartMultipleFinal() {
-
-        var directive = {
-            require: 'testResultsChart',
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         * @param ctrl - the controller from 'testResultsChart'
-         */
-        function link(scope, el, attrs, ctrl) {
-
-            // The cache that holds all chart.js data sets for a set of results
-            var datasets;
-
-            // get the chart data from the parent directive controller and initialize this directive
-            scope.chartData = ctrl.getChartData();
-            scope.$watch('chartData', init);
-
-            //////////
-
-            /**
-             * Initialize the directive
-             *
-             * @param data - the data in the format of a chart.js bar chart
-             */
-            function init(data) {
-                if (angular.isDefined(data)) {
-                    data = data[0];
-
-                    // save all data sets for later manipulation
-                    datasets = angular.copy(data.datasets);
-                    // show a single value
-                    data.datasets = [datasets[0]];
-
-                    ctrl.createBarChart(data);
-                    ctrl.setUpdate(update)
-                }
-            }
-
-            /**
-             * The method that updates the chart. It is called when the user wants to see another value of the test
-             *
-             * @param chart - the chart.js object
-             * @param property - the property that should be plotted on the canvas
-             */
-            function update(chart, property) {
-                _.forEach(datasets[property].data, function (value, i) {
-                    chart.datasets[0].bars[i].value = value;
-                });
-                chart.update();
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('testResultsChartSingleComplete', testResultsChartSingleComplete);
-
-    /**
-     * testResultsChartSingleComplete
-     *
-     * The directive that should be applied to the element where the chart for a single complete test result should be
-     * displayed. Requires that the directive 'testResultsChart' is applied to the element as well because it works with
-     * it.
-     *
-     * Displays a line chart if there are at least two steps from the test results to display, otherwise a bar chart
-     *
-     * @return {{require: string, link: link}}
-     */
-    function testResultsChartSingleComplete() {
-
-        var directive = {
-            require: 'testResultsChart',
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         * @param ctrl - the controller from 'testResultsChart'
-         */
-        function link(scope, el, attrs, ctrl) {
-
-            var datasets;
-
-            // get the chart data from the paren directive
-            scope.chartData = ctrl.getChartData();
-            scope.$watch('chartData', init);
-
-            //////////
-
-            /**
-             * Initialize the directive
-             * @param data
-             */
-            function init(data) {
-                if (angular.isDefined(data)) {
-                    data = data[0];
-
-                    datasets = angular.copy(data.datasets);
-                    data.datasets = [datasets[0]];
-
-                    if (data.datasets[0].data.length == 1) {
-                        ctrl.createBarChart(data);
-                        ctrl.setUpdate(updateBarChart)
-
-                    } else {
-                        ctrl.createLineChart(data);
-                        ctrl.setUpdate(updateLineChart)
-                    }
-                }
-            }
-
-            /**
-             * Update the displayable values of another property and update the chart when displaying a bar chart
-             *
-             * @param chart
-             * @param property
-             */
-            function updateBarChart(chart, property) {
-                _.forEach(datasets[property].data, function (value, i) {
-                    chart.datasets[0].bars[i].value = value;
-                });
-                chart.update();
-            }
-
-            /**
-             * Update the displayable values of another property and update the chart when displaying a line chart
-             *
-             * @param chart
-             * @param property
-             */
-            function updateLineChart(chart, property) {
-                _.forEach(datasets[property].data, function (value, i) {
-                    chart.datasets[0].points[i].value = value;
-                });
-                chart.update();
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('testResultsChartTwoComplete', testResultsChartTwoComplete);
-
-    /**
-     * testResultsChartTwoComplete
-     *
-     * The directive that should be applied to the element where the chart for the comparison of two complete test
-     * results should be displayed. Requires that the directive 'testResultsChart' is applied to the element as well
-     * because it works with it.
-     *
-     * Displays a line chart if there are at least two steps from the test results to display, otherwise a bar chart
-     *
-     * @return {{require: string, link: link}}
-     */
-    function testResultsChartTwoComplete() {
-
-        var directive = {
-            require: 'testResultsChart',
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         * @param ctrl - the controller from 'testResultsChart'
-         */
-        function link(scope, el, attrs, ctrl) {
-
-            var datasets0;
-            var datasets1;
-
-            // get chart data from the parent directive
-            scope.chartData = ctrl.getChartData();
-            scope.$watch('chartData', init);
-
-            //////////
-
-            /**
-             * Initialize the directive
-             * @param data
-             */
-            function init(data) {
-                if (angular.isDefined(data)) {
-
-                    // save the chart data for both complete test results separately
-                    datasets0 = angular.copy(data[0].datasets);
-                    datasets1 = angular.copy(data[1].datasets);
-
-                    // remodel the data for the chart, take the one with most steps
-                    if (data[1].labels.length > data[0].labels.length) {
-                        data[0].labels = data[1].labels;
-                    }
-                    data = data[0];
-                    // create the chart.js data sets for a single property for both tests
-                    data.datasets = [
-                        datasets0[0],
-                        datasets1[0]
-                    ];
-
-                    // create a bar or a line chart
-                    if (data.labels.length == 1) {
-                        ctrl.createBarChart(data);
-                        ctrl.setUpdate(updateBarChart);
-                    } else if (data.labels.length > 1) {
-                        ctrl.createLineChart(data);
-                        ctrl.setUpdate(updateLineChart);
-                    }
-                }
-            }
-
-            /**
-             * Update the displayable values of another property and update the chart when displaying a bar chart
-             *
-             * @param chart
-             * @param property
-             */
-            function updateBarChart(chart, property) {
-                _.forEach(datasets0[property].data, function (value, i) {
-                    chart.datasets[0].bars[i].value = value;
-                });
-                _.forEach(datasets1[property].data, function (value, i) {
-                    chart.datasets[1].bars[i].value = value;
-                });
-                chart.update();
-            }
-
-            /**
-             * Update the displayable values of another property and update the chart when displaying a line chart
-             *
-             * @param chart
-             * @param property
-             */
-            function updateLineChart(chart, property) {
-                _.forEach(datasets0[property].data, function (value, i) {
-                    chart.datasets[0].points[i].value = value;
-                });
-                _.forEach(datasets1[property].data, function (value, i) {
-                    chart.datasets[1].points[i].value = value;
-                });
-                chart.update();
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
         .directive('viewHeading', viewHeading);
 
     function viewHeading() {
@@ -8343,7 +8030,164 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         function getAllFinal(projectId) {
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
-                .then(ResourceResponseService.success)
+                .then(function(){
+                    return [{
+                        "amountOfResets": 111,
+                        "configuration": {
+                            "algorithm": "EXTENSIBLE_LSTAR",
+                            "eqOracle": {
+                                "type": "sample",
+                                "counterExamples": [{"input": ["w2", "w2", "w3"], "output": ["OK", "OK", "OK"]}]
+                            },
+                            "maxAmountOfStepsToLearn": 0,
+                            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
+                                "id": 4,
+                                "revision": 2
+                            }, {"id": 5, "revision": 2}, {"id": 6, "revision": 2}]
+                        },
+                        "duration": 40759,
+                        "hypothesis": {
+                            "nodes": [0, 1, 2],
+                            "initNode": 0,
+                            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w1",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 0, "input": "w2", "to": 2, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w3",
+                                "to": 0,
+                                "output": "FAILED"
+                            }, {"from": 0, "input": "w4", "to": 0, "output": "OK"}, {
+                                "from": 1,
+                                "input": "reset",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 1, "input": "w1", "to": 1, "output": "OK"}, {
+                                "from": 1,
+                                "input": "w2",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 1, "input": "w3", "to": 2, "output": "OK"}, {
+                                "from": 1,
+                                "input": "w4",
+                                "to": 1,
+                                "output": "FAILED"
+                            }, {"from": 2, "input": "reset", "to": 0, "output": "OK"}, {
+                                "from": 2,
+                                "input": "w1",
+                                "to": 2,
+                                "output": "OK"
+                            }, {"from": 2, "input": "w2", "to": 1, "output": "OK"}, {
+                                "from": 2,
+                                "input": "w3",
+                                "to": 2,
+                                "output": "FAILED"
+                            }, {"from": 2, "input": "w4", "to": 2, "output": "OK"}]
+                        },
+                        "project": 1,
+                        "sigma": ["reset", "w1", "w2", "w3", "w4"],
+                        "startTime": "2015-03-05T09:19:02.250+00:00",
+                        "stepNo": 2,
+                        "testNo": 1,
+                        "type": "web"
+                    }, {
+                        "amountOfResets": 41,
+                        "configuration": {
+                            "algorithm": "DISCRIMINATION_TREE",
+                            "eqOracle": {
+                                "type": "sample",
+                                "counterExamples": [{"input": ["w2", "w2", "w3"], "output": ["OK", "OK", "OK"]}]
+                            },
+                            "maxAmountOfStepsToLearn": 0,
+                            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
+                                "id": 4,
+                                "revision": 2
+                            }, {"id": 5, "revision": 2}, {"id": 6, "revision": 2}]
+                        },
+                        "duration": 26402,
+                        "hypothesis": {
+                            "nodes": [0, 2, 1],
+                            "initNode": 0,
+                            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w1",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 0, "input": "w2", "to": 1, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w3",
+                                "to": 0,
+                                "output": "FAILED"
+                            }, {"from": 0, "input": "w4", "to": 0, "output": "OK"}, {
+                                "from": 1,
+                                "input": "reset",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 1, "input": "w1", "to": 1, "output": "OK"}, {
+                                "from": 1,
+                                "input": "w2",
+                                "to": 2,
+                                "output": "OK"
+                            }, {"from": 1, "input": "w3", "to": 1, "output": "FAILED"}, {
+                                "from": 1,
+                                "input": "w4",
+                                "to": 1,
+                                "output": "OK"
+                            }, {"from": 2, "input": "reset", "to": 0, "output": "OK"}, {
+                                "from": 2,
+                                "input": "w1",
+                                "to": 2,
+                                "output": "OK"
+                            }, {"from": 2, "input": "w2", "to": 0, "output": "OK"}, {
+                                "from": 2,
+                                "input": "w3",
+                                "to": 1,
+                                "output": "OK"
+                            }, {"from": 2, "input": "w4", "to": 2, "output": "FAILED"}]
+                        },
+                        "project": 1,
+                        "sigma": ["reset", "w1", "w2", "w3", "w4"],
+                        "startTime": "2015-03-05T09:21:02.962+00:00",
+                        "stepNo": 2,
+                        "testNo": 2,
+                        "type": "web"
+                    }, {
+                        "amountOfResets": 20,
+                        "configuration": {
+                            "algorithm": "DHC",
+                            "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 2, "maxNoOfTests": 1},
+                            "maxAmountOfStepsToLearn": 0,
+                            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
+                                "id": 4,
+                                "revision": 2
+                            }, {"id": 5, "revision": 2}]
+                        },
+                        "duration": 9208,
+                        "hypothesis": {
+                            "nodes": [0],
+                            "initNode": 0,
+                            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w1",
+                                "to": 0,
+                                "output": "OK"
+                            }, {"from": 0, "input": "w2", "to": 0, "output": "OK"}, {
+                                "from": 0,
+                                "input": "w3",
+                                "to": 0,
+                                "output": "FAILED"
+                            }]
+                        },
+                        "project": 1,
+                        "sigma": ["reset", "w1", "w2", "w3"],
+                        "startTime": "2015-03-05T12:29:19.995+00:00",
+                        "stepNo": 1,
+                        "testNo": 3,
+                        "type": "web"
+                    }];
+                })
                 .catch(ResourceResponseService.fail);
         }
 
@@ -8772,7 +8616,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             // check if options are defined and build a query
             if (options && options.deleted && options.deleted === true) {
-                query = '?visbility=hidden';
+                query = '?visibility=hidden';
             }
 
             // make the request with the query
@@ -8829,7 +8673,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
 
         /**
-         * Make a POST request to /rest/projects/{projectId}/symbols in order to create multiple symbols at once.
+         * Make a PUT request to /rest/projects/{projectId}/symbols in order to create multiple symbols at once.
          *
          * @param projectId - The id of the project the symbols should belong to
          * @param symbols - The array of symbols that should be created
@@ -8839,7 +8683,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             var _this = this;
 
             // make the request
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
+            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -8911,7 +8755,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             symbolIds = symbolIds.join(',');
 
             // make the request
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolsIds + '/hide', {})
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolIds + '/hide', {})
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -8926,14 +8770,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * of a symbol.
          *
          * @param projectId - The id of the project the symbol belongs to
-         * @param symbolId - The id of the symbol that should be made visible again
+         * @param symbol - The symbol that should be made visible again
          * @returns {*}
          */
-        SymbolResource.prototype.recover = function (projectId, symbolId) {
+        SymbolResource.prototype.recover = function (projectId, symbol) {
             var _this = this;
 
             // make the request
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/show', {})
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id + '/show', {})
                 .then(success)
                 .catch(ResourceResponseService.fail);
 
@@ -8997,6 +8841,207 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 		}
 	}
 }());(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.services')
+        .factory('LearnerResultChartService', LearnerResultChartService);
+
+    LearnerResultChartService.$inject = ['_'];
+
+    /**
+     * The service to create n3 line chart data from learner results. Can create bar chart data from multiple final
+     * learner results and area chart data from multiple complete learner results.
+     *
+     * @param _ - The Lodash library
+     * @returns {{createDataFromMultipleFinalResults: createDataFromMultipleFinalResults, createDataFromMultipleCompleteResults: createDataFromMultipleCompleteResults, properties: {RESETS: string, SYMBOLS: string, DURATION: string}}}
+     * @constructor
+     */
+    function LearnerResultChartService(_) {
+
+        // The learner result properties
+        var properties = {
+            RESETS: 'amountOfResets',
+            SYMBOLS: 'sigma',
+            DURATION: 'duration'
+        };
+
+        // The available service data
+        var service = {
+            createDataFromMultipleFinalResults: createDataFromMultipleFinalResults,
+            createDataFromMultipleCompleteResults: createDataFromMultipleCompleteResults,
+            properties: properties
+        };
+        return service;
+
+        /**
+         * Creates bar chart data from a list of final learner results which includes the data itself and options.
+         *
+         * @param results - The learner results from that the chart data should be created
+         * @param property - The learner results property from that the data should be used
+         * @returns {{data: Array, options: {series: {y: string, color: string, type: string, axis: string, id: string}[], stacks: Array, axes: {x: {type: string, key: string}, y: {type: string, min: number}}, lineMode: string, tension: number, tooltip: {mode: string}, drawLegend: boolean, drawDots: boolean, columnsHGap: number}}}
+         */
+        function createDataFromMultipleFinalResults(results, property) {
+
+            var dataSets = [];
+            var dataValues = [];
+            var options = {
+                series: [
+                    {
+                        y: "val_0",
+                        color: "#2ca02c",
+                        type: "column",
+                        axis: "y",
+                        id: "series_0"
+                    }
+                ],
+                stacks: [],
+                axes: {x: {type: "linear", key: "x"}, y: {type: "linear", min: 0}},
+                lineMode: "linear",
+                tension: 0.7,
+                tooltip: {mode: "scrubber"},
+                drawLegend: false,
+                drawDots: true,
+                columnsHGap: 3
+            };
+
+            // extract values from learner results by a property
+            switch (property) {
+                case properties.RESETS:
+                    dataValues = _.pluck(results, properties.RESETS);
+                    break;
+                case properties.SYMBOLS:
+                    dataValues = _.map(_.pluck(results, properties.SYMBOLS), function (n) {
+                        return n.length
+                    });
+                    break;
+                case properties.DURATION:
+                    dataValues = _.pluck(results, properties.DURATION);
+                    break;
+                default :
+                    break;
+            }
+
+            // create n3 line chart dataSets from extracted values
+            for (var i = 0; i < dataValues.length; i++) {
+                dataSets.push({
+                    x: i,
+                    val_0: dataValues[i]
+                });
+            }
+
+            // create x axis labels for each test result
+            options.axes.x.labelFunction = function (l) {
+                if (l % 1 == 0 && l >= 0 && l < results.length) {
+                    return 'Test ' + results[l].testNo;
+                }
+            };
+
+            return {
+                data: dataSets,
+                options: options
+            };
+        }
+
+        /**
+         * Creates area chart data from a list of complete learner results which includes the data itself and options.
+         *
+         * @param results - A list of complete learner results
+         * @param property - The learner result property from which the chart data should be created
+         * @returns {{data: Array, options: {series: Array, stacks: Array, axes: {x: {type: string, key: string}, y: {type: string, min: number}}, lineMode: string, tension: number, tooltip: {mode: string}, drawLegend: boolean, drawDots: boolean, columnsHGap: number}}}
+         */
+        function createDataFromMultipleCompleteResults(results, property) {
+
+            var dataSets = [];
+            var dataValues = [];
+            var maxSteps = 0;
+            var options = {
+                series: [],
+                stacks: [],
+                axes: {x: {type: "linear", key: "x"}, y: {type: "linear", min: 0}},
+                lineMode: "linear",
+                tension: 0.7,
+                tooltip: {mode: "scrubber"},
+                drawLegend: true,
+                drawDots: true,
+                columnsHGap: 3
+            };
+            var i, j;
+
+            // extract values from learner results by a property
+            switch (property) {
+                case properties.RESETS:
+                    _.forEach(results, function (result) {
+                        dataValues.push(_.pluck(result, properties.RESETS));
+                    });
+                    break;
+                case properties.SYMBOLS:
+                    _.forEach(results, function (result) {
+                        dataValues.push(_.map(_.pluck(result, properties.SYMBOLS), function (n) {
+                            return n.length;
+                        }));
+                    });
+                    break;
+                case properties.DURATION:
+                    _.forEach(results, function (result) {
+                        dataValues.push(_.pluck(result, properties.DURATION));
+                    });
+                    break;
+                default :
+                    break;
+            }
+
+            // find value from test results where #steps is max
+            for (i = 0; i < dataValues.length; i++) {
+                if (dataValues[i].length > maxSteps) {
+                    maxSteps = dataValues[i].length;
+                }
+            }
+
+            // fill all other values with zeroes
+            for (i = 0; i < dataValues.length; i++) {
+                if (dataValues[i].length < maxSteps) {
+                    for (j = dataValues[i].length; j < maxSteps; j++) {
+                        dataValues[i][j] = 0;
+                    }
+                }
+            }
+
+            // create data sets
+            for (i = 0; i < dataValues.length; i++) {
+                var data = {x: i};
+                for (j = 0; j < maxSteps; j++) {
+                    data['val_' + j] = dataValues[j][i];
+                }
+                dataSets.push(data);
+            }
+
+            // create options for each test
+            for (i = 0; i < dataSets.length; i++) {
+                options.series.push({
+                    y: 'val_' + i,
+                    color: 'rgba(0,255,0,' + (0.2 * (i + 1)) + ')',
+                    type: 'area',
+                    axis: 'y',
+                    id: 'series_' + i,
+                    label: 'Test ' + results[i][0].testNo
+                })
+            }
+
+            // create customs x axis labels
+            options.axes.x.labelFunction = function (l) {
+                if (l % 1 == 0 && l >= 0 && l < maxSteps) {
+                    return 'Step ' + (l + 1);
+                }
+            };
+
+            return {
+                data: dataSets,
+                options: options
+            }
+        }
+    }
+}());;(function () {
     'use strict';
 
     angular
@@ -9362,116 +9407,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.services')
-        .service('TestResultsChartService', TestResultsChartService);
-
-    /**
-     * @return {{createChartDataFromMultipleTestResults: createChartDataFromMultipleTestResults, createChartDataFromSingleCompleteTestResult: createChartDataFromSingleCompleteTestResult}}
-     * @constructor
-     */
-    function TestResultsChartService() {
-
-        var chartProperties = {
-            AMOUNT_OF_SYMBOLS: 0,
-            DURATION: 1,
-            AMOUNT_OF_RESETS: 2
-        };
-
-        var service = {
-            createChartDataFromMultipleTestResults: createChartDataFromMultipleTestResults,
-            createChartDataFromSingleCompleteTestResult: createChartDataFromSingleCompleteTestResult,
-            chartProperties: chartProperties
-        };
-        return service;
-
-        //////////
-
-        /**
-         * Create a chart.js conform dataset for a line or a bar chart
-         *
-         * @param label
-         * @param data
-         * @return {{label: *, fillColor: string, strokeColor: string, pointColor: string, pointStrokeColor: string, pointHighlightFill: string, pointHighlightStroke: string, data: *}}
-         * @private
-         */
-        function _createDataSet(label, data) {
-
-            var dataSet = {
-                label: label,
-                fillColor: "rgba(220,220,220,0.2)",
-                strokeColor: "rgba(220,220,220,1)",
-                pointColor: "rgba(220,220,220,1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(220,220,220,1)",
-                data: data
-            };
-            return dataSet;
-        }
-
-        //////////
-
-        /**
-         * @param results
-         * @return {{labels: Array, datasets: *[]}}
-         */
-        function createChartDataFromMultipleTestResults(results) {
-
-            var chartData = {
-                labels: [],
-                datasets: [
-                    _createDataSet('Symbols', []),
-                    _createDataSet('Duration', []),
-                    _createDataSet('Resets', [])
-                ]
-            };
-
-            _.forEach(results, function (result) {
-                chartData.labels.push('Test ' + result.testNo);
-                chartData.datasets[chartProperties.AMOUNT_OF_SYMBOLS]
-                    .data.push(result.sigma.length);
-                chartData.datasets[chartProperties.DURATION]
-                    .data.push(result.duration);
-                chartData.datasets[chartProperties.AMOUNT_OF_RESETS]
-                    .data.push(result.amountOfResets);
-            });
-
-            return chartData;
-        }
-
-        /**
-         * @param results
-         * @return {{labels: Array, datasets: *[]}}
-         */
-        function createChartDataFromSingleCompleteTestResult(results) {
-
-            var chartData = {
-                labels: [],
-                datasets: [
-                    _createDataSet('Symbols', []),
-                    _createDataSet('Duration', []),
-                    _createDataSet('Resets', [])
-                ]
-            };
-
-            _.forEach(results, function (result) {
-                chartData.labels.push('Step ' + result.stepNo);
-                chartData.datasets[chartProperties.AMOUNT_OF_SYMBOLS]
-                    .data.push(result.sigma.length);
-                chartData.datasets[chartProperties.DURATION]
-                    .data.push(result.duration);
-                chartData.datasets[chartProperties.AMOUNT_OF_RESETS]
-                    .data.push(result.amountOfResets);
-            });
-
-            return chartData;
-        }
-    }
-}());
-;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.services')
         .factory('WebElementPickerService', [
             '$rootScope',
             WebElementPickerService
@@ -9545,64 +9480,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         }
     }
-}());;(function () {
-    'use strict';
-
-    // nice names for learnAlgorithms
-    // nice names for web and rest actions
-
-    angular
-        .module('weblearner.filters')
-        .filter('niceEqOracleName', [
-            'EqOraclesEnum',
-            niceEqOracleName
-        ]);
-
-    function niceEqOracleName(EqOraclesEnum) {
-        return function (eqOracleType) {
-            switch (eqOracleType) {
-                case EqOraclesEnum.COMPLETE:
-                    return 'Complete';
-                    break;
-                case EqOraclesEnum.RANDOM:
-                    return 'Random';
-                    break;
-                case  EqOraclesEnum.SAMPLE:
-                    return 'Manual';
-                    break;
-                default :
-                    return '';
-                    break;
-            }
-        }
-    }
-
-    angular
-        .module('weblearner.filters')
-        .filter('niceLearnAlgorithmName', [
-            'LearnAlgorithmsEnum',
-            niceLearnAlgorithmName
-        ]);
-
-    function niceLearnAlgorithmName(LearnAlgorithmsEnum) {
-        return function (algorithm) {
-            switch (algorithm) {
-                case LearnAlgorithmsEnum.DHC:
-                    return 'DHC';
-                    break;
-                case LearnAlgorithmsEnum.EXTENSIBLE_LSTAR:
-                    return 'L*';
-                    break;
-                case LearnAlgorithmsEnum.DISCRIMINATION_TREE:
-                    return 'Discrimination Tree';
-                    break;
-                default :
-                    return '';
-                    break;
-            }
-        }
-    }
-
 }());;(function () {
     'use strict';
 

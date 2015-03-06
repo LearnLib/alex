@@ -12,6 +12,7 @@
             'ui.router',
             'ngToast',
             'draganddrop',
+            'n3-line-chart',
 
             //all templates
             'templates-all',
