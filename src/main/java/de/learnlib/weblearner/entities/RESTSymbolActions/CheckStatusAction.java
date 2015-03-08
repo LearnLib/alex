@@ -11,7 +11,7 @@ import javax.persistence.Entity;
  * RESTSymbolAction to check if the last call returned a specific status code.
  */
 @Entity
-@DiscriminatorValue("checkStatus")
+@DiscriminatorValue("rest_checkStatus")
 @JsonTypeName("rest_checkStatus")
 public class CheckStatusAction extends RESTSymbolAction {
 

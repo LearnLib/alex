@@ -13,7 +13,7 @@ import java.util.List;
  * RESTSymbolAction to check the HTTP Header fields of the last request.
  */
 @Entity
-@DiscriminatorValue("checkHeaderField")
+@DiscriminatorValue("rest_checkHeaderField")
 @JsonTypeName("rest_checkHeaderField")
 public class CheckHeaderFieldAction extends RESTSymbolAction {
 

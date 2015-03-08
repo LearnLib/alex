@@ -54,7 +54,7 @@ public class WebSymbolLearnerIT {
         // create the reset symbol
         json = "{\"project\": " + project.getId() + ", \"name\": \"Reset\", \"abbreviation\": \"reset\","
              + "\"actions\": ["
-                + "{\"type\": \"goto\", \"url\": \"/test_app.html\"}"
+                + "{\"type\": \"web_goto\", \"url\": \"/test_app.html\"}"
              + "]}";
         Symbol resetSymbol = testHelper.addSymbol(client, project, json);
         resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevsionPairListAsJSON(resetSymbol);
@@ -67,7 +67,7 @@ public class WebSymbolLearnerIT {
         String symbolAbbr = "learnweb1";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                + "{\"type\": \"checkText\", \"value\": \"Lorem Ipsum\"}"
+                    + "{\"type\": \"web_checkForText\", \"value\": \"Lorem Ipsum\"}"
                 + "]}";
         symbols[0] = testHelper.addSymbol(client, project, json);
 
@@ -76,7 +76,7 @@ public class WebSymbolLearnerIT {
         symbolAbbr = "learnweb2";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                + "{\"type\": \"click\", \"node\" : \"#link\"}"
+                + "{\"type\": \"web_click\", \"node\" : \"#link\"}"
                 + "]}";
         symbols[1] = testHelper.addSymbol(client, project, json);
 
@@ -85,7 +85,7 @@ public class WebSymbolLearnerIT {
         symbolAbbr = "learnweb3";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                + "{\"type\": \"click\", \"node\" : \"#link2\"}"
+                + "{\"type\": \"web_click\", \"node\" : \"#link2\"}"
                 + "]}";
         symbols[2] = testHelper.addSymbol(client, project, json);
 
@@ -94,7 +94,7 @@ public class WebSymbolLearnerIT {
         symbolAbbr = "learnweb4";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                    + "{\"type\": \"checkText\", \"value\": \".*Test App - Page [0-9].*\","
+                    + "{\"type\": \"web_checkForText\", \"value\": \".*Test App - Page [0-9].*\","
                     + "\"regexp\": true}"
                 + "]}";
         symbols[3] = testHelper.addSymbol(client, project, json);

@@ -9,6 +9,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -65,8 +66,8 @@ public class MixedLearnerIT extends JerseyTest {
         // create the reset symbol
         json = "{\"project\": " + project.getId() + ", \"name\": \"Reset\", \"abbreviation\": \"reset\","
              + "\"actions\": ["
-                + "{\"type\": \"goto\", \"url\": \"/web/reset\"},"
-                + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/rest/reset\"}"
+                + "{\"type\": \"web_goto\", \"url\": \"/web/reset\"},"
+                + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/rest/reset\"}"
              + "]}";
         Symbol resetSymbol = testHelper.addSymbol(client, project, json);
         resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevsionPairListAsJSON(resetSymbol);
@@ -79,8 +80,8 @@ public class MixedLearnerIT extends JerseyTest {
         String symbolAbbr = "learnrest1";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                    + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/test\"},"
-                    + "{\"type\": \"checkStatus\", \"status\" : 200}"
+                    + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/test\"},"
+                    + "{\"type\": \"rest_checkStatus\", \"status\" : 200}"
                 + "]}";
         symbols[0] = testHelper.addSymbol(client, project, json);
 
@@ -89,8 +90,8 @@ public class MixedLearnerIT extends JerseyTest {
         symbolAbbr = "learnweb1";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                    + "{\"type\": \"goto\", \"url\": \"/web/page1\"},"
-                    + "{\"type\": \"checkText\", \"value\": \"Lorem Ipsum\"}"
+                    + "{\"type\": \"web_goto\", \"url\": \"/web/page1\"},"
+                    + "{\"type\": \"web_checkForText\", \"value\": \"Lorem Ipsum\"}"
                 + "]}";
         symbols[1] = testHelper.addSymbol(client, project, json);
 

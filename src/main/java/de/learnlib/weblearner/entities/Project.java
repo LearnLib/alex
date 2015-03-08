@@ -62,6 +62,7 @@ public class Project implements Serializable {
     private Set<SymbolGroup> groups;
 
     @OneToOne
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
     @JsonIgnore
     private SymbolGroup defaultGroup;
 
@@ -253,18 +254,6 @@ public class Project implements Serializable {
         } else {
             return symbols.size();
         }
-    }
-
-    /**
-     * DO NOT USE! Dummy method that does nothing but enables proper JSON support.
-     * 
-     * @param size
-     *            Irrelevant.
-     */
-    @JsonIgnore
-    public void setSymbolsSize(int size) {
-        // you can not change the size this way -> nothing to do here
-        LOGGER.info("One tried to set the size of the symbols set.");
     }
 
     /**

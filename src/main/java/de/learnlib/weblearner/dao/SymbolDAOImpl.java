@@ -39,6 +39,13 @@ public class SymbolDAOImpl implements SymbolDAO {
         try {
             // create the symbol
             create(session, symbol);
+
+            System.out.println("----------------");
+            for (int i = 0; i < symbol.getActions().size(); i++) {
+                System.out.println(symbol.getActions().get(i));
+            }
+            System.out.println("----------------");
+
             HibernateUtil.commitTransaction();
 
         // error handling
@@ -105,6 +112,12 @@ public class SymbolDAOImpl implements SymbolDAO {
             group = project.getDefaultGroup();
         }
         group.addSymbol(symbol);
+
+        if (symbol.getActions() != null) {
+            for (int i = 0; i < symbol.getActions().size(); i++) {
+                symbol.getActions().get(0).setNumber(i);
+            }
+        }
 
         symbol.beforeSave();
         session.save(symbol);
@@ -275,6 +288,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         SymbolGroup oldGroup = symbolGroupDAO.get(symbolInDB.getProjectId(), symbolInDB.getGroupId());
         SymbolGroup newGroup = symbolGroupDAO.get(symbol.getProjectId(), symbol.getGroupId());
         List<Symbol> symbols = getWithAllRevisions(symbol.getProjectId(), symbol.getId());
+        System.out.println("%%%%% " + newGroup);
 
         // start session
         Session session = HibernateUtil.getSession();
@@ -287,15 +301,8 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         // update
         try {
-            update(session, symbol);
-            if (!newGroup.equals(oldGroup)) {
-                oldGroup.getSymbols().removeAll(symbols);
-                session.update(oldGroup);
-                for (Symbol s : symbols) {
-                    s.setGroup(newGroup);
-                    session.update(s);
-                }
-            }
+            update(session, symbol, oldGroup);
+
             HibernateUtil.commitTransaction();
 
         // error handling
@@ -306,16 +313,44 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private void update(Session session, Symbol symbol) {
+    private void update(Session session, Symbol symbol, SymbolGroup oldGroup) {
         // test for unique constrains
         checkUniqueConstrains(session, symbol); // will throw exception if the symbol is invalid
+
+        System.out.println("==============================");
+        SymbolGroup newGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("project", symbol.getProject())
+                                                    .using("id", symbol.getGroupId())
+                                                    .load();
+        System.out.println("$$$$$$ " + newGroup.getName());
 
         // count revision up
         symbol.setSymbolId(0L);
         symbol.setRevision(symbol.getRevision() + 1);
+        symbol.setGroup(newGroup);
 
         symbol.beforeSave();
         session.save(symbol);
+
+        System.out.println("==============================");
+
+        if (!newGroup.equals(oldGroup)) {
+//                oldGroup.getSymbols().removeAll(symbols);
+//                session.update(oldGroup);
+            System.out.println("$$$$$$ " + newGroup.getName());
+            List<Symbol> symbols = session.createCriteria(Symbol.class)
+                                            .add(Restrictions.eq("project", symbol.getProject()))
+                                            .add(Restrictions.eq("id", symbol.getId()))
+                                            .list();
+            symbols.remove(symbol);
+
+            for (Symbol s : symbols) {
+//                    s.setGroup(newGroup);
+                newGroup.addSymbol(s);
+//                    session.update(s);
+            }
+//                session.update(newGroup);
+        }
     }
 
     @Override
@@ -420,6 +455,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         // if the query result is not empty, the constrains are violated.
         if (testList.size() > 0) {
+            System.out.println("checkUniqueConstrains();");
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("The name or the abbreviation of the symbol is already used in the project.");
         }

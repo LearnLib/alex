@@ -66,16 +66,15 @@ public class LearnerThread<C> extends Thread {
      *         The result to update, including the proper configuration.
      * @param context
  *         The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
-     * @param symbols
      */
     public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result,
-                         ContextExecutableInputSUL.ContextHandler<MultiConnector> context, Symbol... symbols) {
+                         ContextExecutableInputSUL.ContextHandler<MultiConnector> context) {
         this.active = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
         this.ceiSUL = new ContextExecutableInputSUL<>(context);
         this.context = context;
-        this.symbolMapper = new SymbolMapper<>(symbols);
+        this.symbolMapper = new SymbolMapper<>(result.getConfiguration().getSymbols().toArray(new Symbol[result.getConfiguration().getSymbols().size()]));
         this.sul = Mappers.apply(symbolMapper, ceiSUL);
 
         this.sigma = symbolMapper.getAlphabet();
@@ -174,7 +173,8 @@ public class LearnerThread<C> extends Thread {
 
     private void learn() {
         int maxAmountOfStepsToLearn = result.getConfiguration().getMaxAmountOfStepsToLearn();
-        long maxStepCount = result.getStepNo() + maxAmountOfStepsToLearn;
+        long currentStepNo = result.getStepNo() == null ? 0L : result.getStepNo();
+        long maxStepCount =  currentStepNo + maxAmountOfStepsToLearn;
         boolean shouldDoAnotherStep;
 
         do {
@@ -187,7 +187,7 @@ public class LearnerThread<C> extends Thread {
 
         result.setStartTime(new Date());
 
-        if (result.getStepNo() == 0) {
+        if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
             learnFirstHypothesis();
             shouldDoAnotherStep = true;
         } else {

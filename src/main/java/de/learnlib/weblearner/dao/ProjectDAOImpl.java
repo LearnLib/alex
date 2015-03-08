@@ -43,6 +43,10 @@ public class ProjectDAOImpl implements ProjectDAO {
                 symbol.setId(nextSymbolId);
                 symbol.setRevision(0L);
                 symbol.setProject(project);
+                //todo(alex.s): allow getGroupId to return null.
+//                if (symbol.getGroupId() == null) {
+                    symbol.setGroup(defaultGroup);
+//                }
                 project.setNextSymbolId(nextSymbolId + 1);
             }
 
@@ -137,6 +141,12 @@ public class ProjectDAOImpl implements ProjectDAO {
             Session session = HibernateUtil.getSession();
             HibernateUtil.beginTransaction();
 
+            for(SymbolGroup group : project.getGroups()) {
+                for (Symbol symbol : group.getSymbols()) {
+                    session.delete(symbol);
+                }
+            }
+
             session.delete(project);
             HibernateUtil.commitTransaction();
         } else {
@@ -155,8 +165,8 @@ public class ProjectDAOImpl implements ProjectDAO {
             Set<String> fieldsToLoad = new HashSet<>();
             if (embedFields.length == 1 && "all".equals(embedFields[0])) {
                 fieldsToLoad.add("groups");
+                fieldsToLoad.add("defaultGroup");
                 fieldsToLoad.add("symbols");
-                fieldsToLoad.add("resetSymbols");
                 fieldsToLoad.add("testResults");
             } else {
                 for (String field : embedFields) {
@@ -174,6 +184,18 @@ public class ProjectDAOImpl implements ProjectDAO {
                 }
             } else {
                 project.setGroups(null);
+            }
+
+            if (fieldsToLoad.contains("defaultGroup")) {
+                Hibernate.initialize(project.getDefaultGroup());
+                if (project.getDefaultGroup() != null) {
+                    Hibernate.initialize(project.getDefaultGroup().getSymbols());
+                    for (Symbol symbol : project.getDefaultGroup().getSymbols()) {
+                        symbol.loadLazyRelations();
+                    }
+                }
+            } else {
+                project.setDefaultGroup(null);
             }
 
             if (fieldsToLoad.contains("symbols")) {

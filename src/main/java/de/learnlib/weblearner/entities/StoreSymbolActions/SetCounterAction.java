@@ -16,7 +16,7 @@ public class SetCounterAction extends SymbolAction{
 
     private String name;
 
-    private Integer value;
+    private Integer counterValue;
 
     public String getName() {
         return name;
@@ -27,18 +27,18 @@ public class SetCounterAction extends SymbolAction{
     }
 
     public Integer getValue() {
-        return value;
+        return counterValue;
     }
 
     public void setValue(Integer value) {
-        this.value = value;
+        this.counterValue = value;
     }
 
     @Override
     public ExecuteResult execute(MultiConnector connector) {
         CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
         try {
-            storeConnector.set(name, value);
+            storeConnector.set(name, counterValue);
             return ExecuteResult.OK;
         } catch (IllegalStateException e) {
             return ExecuteResult.FAILED;

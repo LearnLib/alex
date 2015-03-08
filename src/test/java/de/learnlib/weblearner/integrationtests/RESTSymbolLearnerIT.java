@@ -9,6 +9,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -66,7 +67,7 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         // create the reset symbol
         json = "{\"project\": " + project.getId() + ", \"name\": \"Reset\", \"abbreviation\": \"reset\","
              + "\"actions\": ["
-                + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/reset\"}"
+                + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/reset\"}"
              + "]}";
         Symbol resetSymbol = testHelper.addSymbol(client, project, json);
         resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevsionPairListAsJSON(resetSymbol);
@@ -79,8 +80,8 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         String symbolAbbr = "learnrest1";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                    + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/\"},"
-                    + "{\"type\": \"checkStatus\", \"status\" : 200}"
+                    + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/\"},"
+                    + "{\"type\": \"rest_checkStatus\", \"status\" : 200}"
                 + "]}";
         symbols[0] = testHelper.addSymbol(client, project, json);
 
@@ -89,8 +90,8 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         symbolAbbr = "learnrest2";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                    + "{\"type\": \"call\", \"method\" : \"GET\", \"url\": \"/entity\"},"
-                    + "{\"type\": \"checkAttributeValue\", \"attribute\" : \"field1\", \"value\": \"Hello\"}"
+                    + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/entity\"},"
+                    + "{\"type\": \"rest_checkAttributeValue\", \"attribute\": \"field1\", \"value\": \"Hello\"}"
                 + "]}";
         symbols[1] = testHelper.addSymbol(client, project, json);
 

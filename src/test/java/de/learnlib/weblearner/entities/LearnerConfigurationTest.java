@@ -60,8 +60,8 @@ public class LearnerConfigurationTest {
 
         assertEquals(LearnAlgorithms.DHC, configuration.getAlgorithm());
         assertTrue(configuration.getEqOracle() instanceof CompleteExplorationEQOracleProxy);
-        assertEquals(2, configuration.getSymbols().size());
-        assertEquals(1, configuration.getSymbols().get(0).getId());
-        assertEquals(1, configuration.getSymbols().get(0).getRevision());
+        assertEquals(2, configuration.getSymbolsAsIdRevisionPairs().size());
+        assertEquals(1, configuration.getSymbolsAsIdRevisionPairs().get(0).getId());
+        assertEquals(1, configuration.getSymbolsAsIdRevisionPairs().get(0).getRevision());
     }
 }

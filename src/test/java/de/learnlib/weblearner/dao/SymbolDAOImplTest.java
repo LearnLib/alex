@@ -439,11 +439,11 @@ public class SymbolDAOImplTest {
         symbol.setName("Test Symbol - Updated Valid Name");
         symbolDAO.update(symbol);
 
-        Symbol symb2 = symbolDAO.getWithLatestRevision(symbol.getProject().getId(), symbol.getId());
-        assertEquals(symbol.getId(), symb2.getId());
-        assertEquals(new Long(oldRevision + 1), symb2.getRevision());
-        assertEquals(symbol.getName(), symb2.getName());
-        assertEquals(group, symb2.getGroup());
+        Symbol symbolInDB = symbolDAO.getWithLatestRevision(symbol.getProject().getId(), symbol.getId());
+        assertEquals(symbol.getId(), symbolInDB.getId());
+        assertEquals(new Long(oldRevision + 1), symbolInDB.getRevision());
+        assertEquals(symbol.getName(), symbolInDB.getName());
+        assertEquals(group, symbolInDB.getGroup());
 
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -474,6 +474,21 @@ public class SymbolDAOImplTest {
         assertEquals(groupInDB, symbolInDB.getGroup());
         assertEquals(0, defaultGroupInDB.getSymbolSize());
         assertEquals(2, groupInDB.getSymbolSize());
+    }
+
+    @Test
+    public void shouldUpdateTheSymbolGroup2() {
+        symbolDAO.create(symbol);
+
+        symbol.setGroup(project.getDefaultGroup());
+        symbolDAO.update(symbol);
+
+        Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol.getId());
+        SymbolGroup defaultGroupInDB = symbolGroupDAO.get(project.getId(), project.getDefaultGroup().getId());
+        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId());
+        assertEquals(defaultGroupInDB, symbolInDB.getGroup());
+        assertEquals(2, defaultGroupInDB.getSymbolSize());
+        assertEquals(0, groupInDB.getSymbolSize());
     }
 
     @Test(expected = ValidationException.class)

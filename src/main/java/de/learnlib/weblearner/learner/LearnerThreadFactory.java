@@ -41,13 +41,10 @@ public class LearnerThreadFactory {
      *         The Project of the test run.
      * @param configuration
      *         The LearnerConfiguration to use for the learning.
-     * @param symbols
-     *         The Symbols to use during the learning
      * @return A new thread ready to use for learning.
      */
-    public LearnerThread createThread(Project project, LearnerConfiguration configuration, Symbol resetSymbol,
-                                      Symbol... symbols) {
-        if (symbols.length == 0) {
+    public LearnerThread createThread(Project project, LearnerConfiguration configuration) {
+        if (configuration.getSymbols().isEmpty()) {
             throw new IllegalArgumentException("No Symbols found.");
         }
 
@@ -59,9 +56,9 @@ public class LearnerThreadFactory {
         context.addHandler(new VariableStoreContextHandler());
         context.addHandler(new CounterStoreContextHandler());
 
-        context.addResetSymbol(resetSymbol);
+        context.addResetSymbol(configuration.getResetSymbol());
 
-        return new LearnerThread(learnerResultDAO, learnerResult, context, symbols);
+        return new LearnerThread(learnerResultDAO, learnerResult, context);
     }
 
     /**

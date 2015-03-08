@@ -13,7 +13,7 @@ import javax.persistence.Entity;
  * RESTSymbolAction to check if the request body of the last request has a JSON Attribute with a specific value.
  */
 @Entity
-@DiscriminatorValue("checkAttributeValue")
+@DiscriminatorValue("rest_checkAttributeValue")
 @JsonTypeName("rest_checkAttributeValue")
 public class CheckAttributeValueAction extends RESTSymbolAction {
 

@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -21,7 +22,21 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * Link to the Symbols that are must be used during the learning.
      * @requiredField
      */
-    private List<IdRevisionPair> symbols;
+    @Transient
+    @JsonProperty("symbols")
+    private List<IdRevisionPair> symbolsAsIdRevisionPairs;
+
+    @Transient
+    @JsonIgnore
+    private List<Symbol> symbols;
+
+    @Transient
+    @JsonProperty("resetSymbol")
+    private IdRevisionPair resetSymbolAsIdRevisionPair;
+
+    @Transient
+    @JsonIgnore
+    private Symbol resetSymbol;
 
     /**
      * The algorithm to be used during the learning.
@@ -29,14 +44,12 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     private LearnAlgorithms algorithm;
 
-    private IdRevisionPair resetSymbol;
-
     /**
      * Default constructor.
      */
     public LearnerConfiguration() {
         super();
-        this.symbols = new LinkedList<>();
+        this.symbolsAsIdRevisionPairs = new LinkedList<>();
         this.algorithm = LearnAlgorithms.EXTENSIBLE_LSTAR;
     }
 
@@ -45,19 +58,25 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return A List of IdRevisionPair referring to symbols that must be used during the learning.
      */
-    @Transient
-    public List<IdRevisionPair> getSymbols() {
-        return symbols;
+    public List<IdRevisionPair> getSymbolsAsIdRevisionPairs() {
+        return symbolsAsIdRevisionPairs;
     }
 
     /**
      * Set a List of IdRevisionPairs to find all the symbols that must be used during a learning process.
      *
-     * @param symbols
+     * @param symbolsAsIdRevisionPairs
      *         The List of IdRevisionPairs to refer to symbols that must be used during the learning.
      */
-    @JsonProperty
-    public void setSymbols(List<IdRevisionPair> symbols) {
+    public void setSymbolsAsIdRevisionPairs(List<IdRevisionPair> symbolsAsIdRevisionPairs) {
+        this.symbolsAsIdRevisionPairs = symbolsAsIdRevisionPairs;
+    }
+
+    public List<Symbol> getSymbols() {
+        return symbols;
+    }
+
+    public void setSymbols(List<Symbol> symbols) {
         this.symbols = symbols;
     }
 
@@ -70,20 +89,28 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         return algorithm;
     }
 
+    public IdRevisionPair getResetSymbolAsIdRevisionPair() {
+        return resetSymbolAsIdRevisionPair;
+    }
+
+    public void setResetSymbolAsIdRevisionPair(IdRevisionPair resetSymbolAsIdRevisionPair) {
+        this.resetSymbolAsIdRevisionPair = resetSymbolAsIdRevisionPair;
+    }
+
+    public Symbol getResetSymbol() {
+        return resetSymbol;
+    }
+
+    public void setResetSymbol(Symbol resetSymbol) {
+        this.resetSymbol = resetSymbol;
+    }
+
     /**
      * Set a new LearnerAlgorithm to use for the learning.
      * @param algorithm The new algorithm to be used.
      */
     public void setAlgorithm(LearnAlgorithms algorithm) {
         this.algorithm = algorithm;
-    }
-
-    public IdRevisionPair getResetSymbol() {
-        return resetSymbol;
-    }
-
-    public void setResetSymbol(IdRevisionPair resetSymbol) {
-        this.resetSymbol = resetSymbol;
     }
 
     /**

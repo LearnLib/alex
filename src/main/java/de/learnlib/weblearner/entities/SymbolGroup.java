@@ -39,6 +39,7 @@ public class SymbolGroup implements Serializable {
     @NaturalId
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
+    @JsonIgnore
     private Project project;
 
     /** The ID of the group within the project. */
@@ -46,7 +47,10 @@ public class SymbolGroup implements Serializable {
     @Column(nullable = false)
     private Long id;
 
-    /** The name of the group. */
+    /**
+     * The name of the group.
+     * @requiredField
+     */
     @NotBlank
     private String name;
 
@@ -143,6 +147,6 @@ public class SymbolGroup implements Serializable {
 
     @Override
     public String toString() {
-        return "SymbolGroup[" + groupId + "]: (" + project + ", " + id + ")";
+        return "SymbolGroup[" + groupId + "] (" + project + ", " + id + "): " + name;
     }
 }

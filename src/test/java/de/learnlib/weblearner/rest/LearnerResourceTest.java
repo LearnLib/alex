@@ -88,16 +88,14 @@ public class LearnerResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"testNo\":1}";
         assertEquals(expectedJSON, response.readEntity(String.class));
-        verify(learner).start(eq(project), any(LearnerConfiguration.class), eq(resetSymbol));
+        verify(learner).start(eq(project), any(LearnerConfiguration.class));
     }
 
     @Test
     public void shouldNotStartALearningProcessIfTheConfigurationIsInvalid() {
-
         given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(project);
         willThrow(IllegalArgumentException.class).given(learner).start(any(Project.class),
-                                                                       any(LearnerConfiguration.class),
-                                                                       any(Symbol.class));
+                                                                       any(LearnerConfiguration.class));
 
         String json = "{\"symbols\": ["
                         + "{\"id\": 1, \"revision\": 1},"
@@ -106,7 +104,7 @@ public class LearnerResourceTest extends JerseyTest {
                     + " \"algorithm\":\"DHC\",\"eqOracle\": {\"type\": \"complete\"}}";
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(json));
 
-        verify(learner).start(any(Project.class), any(LearnerConfiguration.class), any(Symbol.class));
+        verify(learner).start(any(Project.class), any(LearnerConfiguration.class));
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 

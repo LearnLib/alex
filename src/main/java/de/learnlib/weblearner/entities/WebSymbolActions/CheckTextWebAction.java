@@ -12,7 +12,7 @@ import javax.persistence.Entity;
  * Action to check for a specific element/ a specific text.
  */
 @Entity
-@DiscriminatorValue("web_checkText")
+@DiscriminatorValue("web_checkForText")
 @JsonTypeName("web_checkForText")
 public class CheckTextWebAction extends WebSymbolAction {
 
@@ -25,8 +25,10 @@ public class CheckTextWebAction extends WebSymbolAction {
     /** The URL of the site. */
     private String url;
 
-    /** Field to determine if the search string is a regular expression.
-     * Only works while searching for text. */
+    /**
+     * Field to determine if the search string is a regular expression.
+     * Only works while searching for text.
+     */
     private boolean regexp;
 
     /**

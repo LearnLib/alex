@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.integrationtests;
 
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
@@ -21,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class LearnerTestHelper {
@@ -33,10 +35,15 @@ public class LearnerTestHelper {
         this.learnerUrl = learnerUrl;
     }
 
-    public Symbol addSymbol(Client client, Project project, String json) {
+    public Symbol addSymbol(Client client, Project project, String json) throws IOException {
         String path = "/projects/" + project.getId() + "/symbols";
         Response response = client.target(learnerUrl + path).request().post(Entity.json(json));
-        return response.readEntity(Symbol.class);
+        String responseJSON = response.readEntity(String.class);
+        System.out.println("web symbol in response: " + responseJSON);
+
+        assertEquals(responseJSON, Response.Status.CREATED.getStatusCode(), response.getStatus());
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(responseJSON, Symbol.class);
     }
 
     public String createIdRevsionPairListAsJSON(Symbol... symbols) {

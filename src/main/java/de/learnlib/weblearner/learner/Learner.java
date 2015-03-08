@@ -37,14 +37,10 @@ public class Learner {
      *         The project the learning process runs in.
      * @param configuration
      *         The configuration to use for the learning process.
-     * @param resetSymbol
-     *@param symbols
-     *         The Symbols to use.  @throws IllegalArgumentException
-     *         If the configuration is invalid.
      * @throws IllegalStateException
      *         If a learning process is already active.
      */
-    public void start(Project project, LearnerConfiguration configuration, Symbol resetSymbol, Symbol... symbols)
+    public void start(Project project, LearnerConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException {
         if (isActive()) {
             throw new IllegalStateException("You can only start the learning if no other learning is active");
@@ -52,7 +48,7 @@ public class Learner {
 
         configuration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
 
-        learnThread = learnThreadFactory.createThread(project, configuration, resetSymbol, symbols);
+        learnThread = learnThreadFactory.createThread(project, configuration);
         Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
         thread.start();
     }

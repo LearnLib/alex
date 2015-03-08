@@ -12,7 +12,7 @@ import javax.persistence.Entity;
  * RESTSymbolAction to check if the response body of the last request contains a certain text.
  */
 @Entity
-@DiscriminatorValue("rest_checkText")
+@DiscriminatorValue("rest_checkForText")
 @JsonTypeName("rest_checkForText")
 public class CheckTextRestAction extends RESTSymbolAction {
 

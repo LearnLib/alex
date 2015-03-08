@@ -99,12 +99,13 @@ public class WebSymbolIT {
 
         // update
         json = "{\"project\": " + project.getId() + ", \"id\": " + symbol.getId()
-                + ", \"revision\": " + symbol.getRevision() + ", \"name\": \"" + symbolName
+                + ", \"revision\": " + symbol.getRevision() + ", \"group\": 0, \"name\": \"" + symbolName
                 + " updated\", \"abbreviation\": \"" + symbolAbbr + "n\","
                 + " \"actions\": ["
-                    + "{\"type\": \"click\"},"
+                    + "{\"type\": \"web_click\"},"
                     + "{\"type\": \"wait\", \"duration\": 1000}"
                 + "]}";
+        System.out.println("$$$$$ " + json);
         path = "/projects/" + project.getId() + "/symbols/" + symbol.getId();
         response = client.target(BASE_URL + path).request().put(Entity.entity(json, MediaType.APPLICATION_JSON));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());

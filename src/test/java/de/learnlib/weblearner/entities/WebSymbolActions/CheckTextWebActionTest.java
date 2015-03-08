@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.entities.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class CheckTextWebActionTest {
     public void testJSON() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(checkText);
-        CheckTextWebAction c2 = mapper.readValue(json, CheckTextWebAction.class);
+        CheckTextWebAction c2 = (CheckTextWebAction) mapper.readValue(json, SymbolAction.class);
 
         assertEquals(checkText.getValue(), c2.getValue());
         assertEquals(checkText.getUrl(), c2.getUrl());
@@ -43,7 +44,7 @@ public class CheckTextWebActionTest {
         ObjectMapper mapper = new ObjectMapper();
 
         File file = new File(getClass().getResource("/entities/websymbolactions/CheckTextTestData.json").toURI());
-        WebSymbolAction obj = mapper.readValue(file, WebSymbolAction.class);
+        SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof CheckTextWebAction);
         CheckTextWebAction c = (CheckTextWebAction) obj;
