@@ -92,10 +92,10 @@ angular.module("app/views/directives/hypothesis-panel.html", []).run(["$template
     "                        </li>\n" +
     "                        <li class=\"divider\"></li>\n" +
     "                        <li>\n" +
-    "                            <a href=\"\" download-hypothesis-as-svg=\"#hypothesis-{{index}}\">\n" +
+    "                            <a href download-svg=\"#hypothesis-{{index}}\">\n" +
     "                                <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
     "                            </a>\n" +
-    "                            <a href=\"\" download-as-json data=\"getCurrentStep().hypothesis\">\n" +
+    "                            <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
     "                                <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.json\n" +
     "                            </a>\n" +
     "                        </li>\n" +
@@ -1203,10 +1203,12 @@ angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run
   $templateCache.put("app/views/modals/hypothesis-layout-settings-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
-    "    <div>\n" +
-    "        <h3 class=\"modal-title\">Hypothesis Layout Settings</h3>\n" +
-    "        <span class=\"text-muted\">Edit the settings for the presentation of the hypothesis</span>\n" +
-    "    </div>\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"close()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
+    "    <h3 class=\"modal-title\">Hypothesis Layout Settings</h3>\n" +
+    "    <span class=\"text-muted\">Edit the settings for the presentation of the hypothesis</span>\n" +
     "\n" +
     "</div>\n" +
     "\n" +
@@ -1241,7 +1243,6 @@ angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run
     "<div class=\"modal-footer\">\n" +
     "	<button class=\"btn btn-default btn-sm\" ng-click=\"defaultLayoutSettings()\">Default</button>\n" +
     "    <button class=\"btn btn-primary btn-sm\" ng-click=\"update()\">Update</button>\n" +
-    "    <button class=\"btn btn-warning btn-sm\" ng-click=\"close()\">Cancel</button>\n" +
     "</div>");
 }]);
 
@@ -1455,7 +1456,7 @@ angular.module("app/views/modals/modal-test-details.html", []).run(["$templateCa
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>Started</td>\n" +
-    "            <td format-data-time=\"test.startDate\"></td>\n" +
+    "            <td ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>Duration</td>\n" +
@@ -1805,7 +1806,7 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
     "        <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
     "\n" +
     "            <ul class=\"list-group\">\n" +
-    "                <li class=\"list-group-item\" ng-repeat=\"result in finalTestResults\"\n" +
+    "                <li class=\"list-group-item\" ng-repeat=\"result in results\"\n" +
     "                    ng-click=\"fillPanel(result, $parent.$index)\">\n" +
     "\n" +
     "                    <strong>Test No\n" +
@@ -1829,7 +1830,7 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
     "    <div ng-if=\"panels.length == 0\" style=\"padding-top: 30px\">\n" +
     "        <div class=\"container\">\n" +
     "            <div class=\"alert alert-info\">\n" +
-    "                Add a panel first\n" +
+    "                Add a panel by clicking on the grey area on the right and select a test.\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
@@ -1848,7 +1849,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div ng-if=\"selectedChartMode === null\">\n" +
+    "        <div  ng-show=\"selectedChartMode === null\">\n" +
     "\n" +
     "            <div class=\"pull-left\" selectable items=\"results\" style=\"margin-right: 16px\">\n" +
     "                <input type=\"checkbox\" selectable-item-checkbox>\n" +
@@ -1887,7 +1888,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "\n" +
     "        </div>\n" +
     "\n" +
-    "        <div ng-if=\"selectedChartMode !== null\">\n" +
+    "        <div ng-show=\"selectedChartMode !== null\">\n" +
     "\n" +
     "            <div class=\"pull-left\">\n" +
     "                <button class=\"btn btn-default btn-xs\" ng-click=\"back()\">\n" +
@@ -1899,6 +1900,9 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "                <button class=\"btn btn-default btn-xs\" download-svg=\"#learn-result-chart\">\n" +
     "                    <i class=\"fa fa-download fa-fw\"></i> Download as *.svg\n" +
     "                </button>\n" +
+    "                <button class=\"btn btn-default btn-xs\" ng-click=\"fullWidth = !fullWidth\" dispatch-resize=\"20\">\n" +
+    "                    <i class=\"fa fa-fw\" ng-class=\"fullWidth ? 'fa-compress' : 'fa-expand'\"></i>\n" +
+    "                </button>\n" +
     "            </div>\n" +
     "\n" +
     "        </div>\n" +
@@ -1907,7 +1911,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
-    "    <div class=\"container\">\n" +
+    "    <div class=\"container\" ng-style=\"fullWidth ? {'width':'100%'} : {}\">\n" +
     "\n" +
     "        <div selectable items=\"results\" ng-if=\"selectedChartMode === null\">\n" +
     "            <div selectable-list>\n" +
@@ -1960,23 +1964,20 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
   "use strict";
   $templateCache.put("app/views/pages/learn-results.html",
     "<div view-heading\n" +
-    "     title=\"Tests\"\n" +
+    "     title=\"Test Results\"\n" +
     "     sub-title=\"Have a look at all the tests you ran for this project\">\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"results\">\n" +
+    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteTests()\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteResults()\">\n" +
     "                Delete\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\">\n" +
-    "                Slideshow\n" +
     "            </button>\n" +
     "        </div>\n" +
     "\n" +
@@ -1984,57 +1985,50 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
+    "    <div class=\"container\" selectable items=\"results\">\n" +
     "\n" +
-    "    <div ng-if=\"tests.length > 0\">\n" +
-    "        <div class=\"container\">\n" +
+    "        <div selectable-list>\n" +
+    "            <div selectable-list-item ng-repeat=\"result in results track by $index\">\n" +
     "\n" +
-    "            <div selectable-list ng-model=\"tests\">\n" +
-    "                <div selectable-list-item ng-repeat=\"test in (tests|typeOfWeb)\">\n" +
-    "\n" +
-    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                            <i class=\"fa fa-bars\"></i>\n" +
-    "                        </button>\n" +
-    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                            <li>\n" +
-    "                                <a href=\"\" open-test-details-modal test=\"test\">\n" +
-    "                                    <i class=\"fa fa-info fa-fw\"></i>&nbsp; Details\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a ui-sref=\"learn.results.compare({testNos: [test.testNo]})\">\n" +
-    "                                    <i class=\"fa fa-code-fork fa-fw\"></i>&nbsp; Hypotheses\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a href=\"\" ng-click=\"deleteTest(test)\">\n" +
-    "                                    <i class=\"fa fa-trash fa-fw\"></i>&nbsp; Delete\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                        </ul>\n" +
-    "                    </div>\n" +
-    "\n" +
-    "                    <strong>Test No\n" +
-    "                        <span ng-bind=\"test.testNo\"></span>\n" +
-    "                    </strong>,\n" +
-    "                    [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                    <br>\n" +
-    "\n" +
-    "                    <p class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                    </p>\n" +
-    "\n" +
+    "                <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                    <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                        <i class=\"fa fa-bars\"></i>\n" +
+    "                    </button>\n" +
+    "                    <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                        <li>\n" +
+    "                            <a href=\"\" open-test-details-modal test=\"result\">\n" +
+    "                                <i class=\"fa fa-info fa-fw\"></i> Details\n" +
+    "                            </a>\n" +
+    "                        </li>\n" +
+    "                        <li>\n" +
+    "                            <a ui-sref=\"learn.results.compare({testNos: [result.testNo]})\">\n" +
+    "                                <i class=\"fa fa-code-fork fa-fw\"></i> Hypotheses\n" +
+    "                            </a>\n" +
+    "                        </li>\n" +
+    "                        <li>\n" +
+    "                            <a href=\"\" ng-click=\"deleteResult(result)\">\n" +
+    "                                <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+    "                            </a>\n" +
+    "                        </li>\n" +
+    "                    </ul>\n" +
     "                </div>\n" +
-    "            </div>\n" +
     "\n" +
+    "                <strong>Test No\n" +
+    "                    <span ng-bind=\"result.testNo\"></span>\n" +
+    "                </strong>,\n" +
+    "                [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
+    "\n" +
+    "                <div class=\"text-muted\">\n" +
+    "                    Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "\n" +
-    "    <div class=\"container\" ng-if=\"tests.length == 0\">\n" +
-    "        <div class=\"alert alert-info\">\n" +
-    "            You have not run any tests yet or the active one is not finished.\n" +
-    "        </div>\n" +
+    "    <div class=\"alert alert-info\" ng-if=\"results.length === 0\">\n" +
+    "        You have not run any tests yet or the active one is not finished.\n" +
     "    </div>\n" +
     "\n" +
     "</div>");

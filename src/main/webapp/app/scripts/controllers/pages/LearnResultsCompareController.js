@@ -11,15 +11,15 @@
     function LearnResultsCompareController($scope, $stateParams, SessionService, LearnResultResource) {
 
         $scope.project = SessionService.project.get();
-        $scope.finalTestResults = [];
+        $scope.results = [];
         $scope.panels = [];
         $scope.layoutSettings = [];
 
         //////////
 
         LearnResultResource.getAllFinal($scope.project.id)
-            .then(function (finalTestResults) {
-                $scope.finalTestResults = finalTestResults;
+            .then(function (results) {
+                $scope.results = results;
                 return $stateParams.testNos;
             })
             .then(loadComplete);

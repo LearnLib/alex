@@ -22,7 +22,7 @@
         </tr>
         <tr>
             <td>Started</td>
-            <td format-data-time="test.startDate"></td>
+            <td ng-bind="(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></td>
         </tr>
         <tr>
             <td>Duration</td>

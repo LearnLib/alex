@@ -143,10 +143,10 @@ angular.module("app/views/directives/hypothesis-panel.html", []).run(["$template
     "                        </li>\n" +
     "                        <li class=\"divider\"></li>\n" +
     "                        <li>\n" +
-    "                            <a href=\"\" download-hypothesis-as-svg=\"#hypothesis-{{index}}\">\n" +
+    "                            <a href download-svg=\"#hypothesis-{{index}}\">\n" +
     "                                <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
     "                            </a>\n" +
-    "                            <a href=\"\" download-as-json data=\"getCurrentStep().hypothesis\">\n" +
+    "                            <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
     "                                <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.json\n" +
     "                            </a>\n" +
     "                        </li>\n" +
@@ -1254,10 +1254,12 @@ angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run
   $templateCache.put("app/views/modals/hypothesis-layout-settings-modal.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
-    "    <div>\n" +
-    "        <h3 class=\"modal-title\">Hypothesis Layout Settings</h3>\n" +
-    "        <span class=\"text-muted\">Edit the settings for the presentation of the hypothesis</span>\n" +
-    "    </div>\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"close()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
+    "    <h3 class=\"modal-title\">Hypothesis Layout Settings</h3>\n" +
+    "    <span class=\"text-muted\">Edit the settings for the presentation of the hypothesis</span>\n" +
     "\n" +
     "</div>\n" +
     "\n" +
@@ -1292,7 +1294,6 @@ angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run
     "<div class=\"modal-footer\">\n" +
     "	<button class=\"btn btn-default btn-sm\" ng-click=\"defaultLayoutSettings()\">Default</button>\n" +
     "    <button class=\"btn btn-primary btn-sm\" ng-click=\"update()\">Update</button>\n" +
-    "    <button class=\"btn btn-warning btn-sm\" ng-click=\"close()\">Cancel</button>\n" +
     "</div>");
 }]);
 
@@ -1506,7 +1507,7 @@ angular.module("app/views/modals/modal-test-details.html", []).run(["$templateCa
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>Started</td>\n" +
-    "            <td format-data-time=\"test.startDate\"></td>\n" +
+    "            <td ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>Duration</td>\n" +
@@ -1856,7 +1857,7 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
     "        <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
     "\n" +
     "            <ul class=\"list-group\">\n" +
-    "                <li class=\"list-group-item\" ng-repeat=\"result in finalTestResults\"\n" +
+    "                <li class=\"list-group-item\" ng-repeat=\"result in results\"\n" +
     "                    ng-click=\"fillPanel(result, $parent.$index)\">\n" +
     "\n" +
     "                    <strong>Test No\n" +
@@ -1880,7 +1881,7 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
     "    <div ng-if=\"panels.length == 0\" style=\"padding-top: 30px\">\n" +
     "        <div class=\"container\">\n" +
     "            <div class=\"alert alert-info\">\n" +
-    "                Add a panel first\n" +
+    "                Add a panel by clicking on the grey area on the right and select a test.\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
@@ -1899,7 +1900,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div ng-if=\"selectedChartMode === null\">\n" +
+    "        <div  ng-show=\"selectedChartMode === null\">\n" +
     "\n" +
     "            <div class=\"pull-left\" selectable items=\"results\" style=\"margin-right: 16px\">\n" +
     "                <input type=\"checkbox\" selectable-item-checkbox>\n" +
@@ -1938,7 +1939,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "\n" +
     "        </div>\n" +
     "\n" +
-    "        <div ng-if=\"selectedChartMode !== null\">\n" +
+    "        <div ng-show=\"selectedChartMode !== null\">\n" +
     "\n" +
     "            <div class=\"pull-left\">\n" +
     "                <button class=\"btn btn-default btn-xs\" ng-click=\"back()\">\n" +
@@ -1950,6 +1951,9 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "                <button class=\"btn btn-default btn-xs\" download-svg=\"#learn-result-chart\">\n" +
     "                    <i class=\"fa fa-download fa-fw\"></i> Download as *.svg\n" +
     "                </button>\n" +
+    "                <button class=\"btn btn-default btn-xs\" ng-click=\"fullWidth = !fullWidth\" dispatch-resize=\"20\">\n" +
+    "                    <i class=\"fa fa-fw\" ng-class=\"fullWidth ? 'fa-compress' : 'fa-expand'\"></i>\n" +
+    "                </button>\n" +
     "            </div>\n" +
     "\n" +
     "        </div>\n" +
@@ -1958,7 +1962,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
-    "    <div class=\"container\">\n" +
+    "    <div class=\"container\" ng-style=\"fullWidth ? {'width':'100%'} : {}\">\n" +
     "\n" +
     "        <div selectable items=\"results\" ng-if=\"selectedChartMode === null\">\n" +
     "            <div selectable-list>\n" +
@@ -2011,23 +2015,20 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
   "use strict";
   $templateCache.put("app/views/pages/learn-results.html",
     "<div view-heading\n" +
-    "     title=\"Tests\"\n" +
+    "     title=\"Test Results\"\n" +
     "     sub-title=\"Have a look at all the tests you ran for this project\">\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"tests\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"results\">\n" +
+    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteTests()\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteResults()\">\n" +
     "                Delete\n" +
-    "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\">\n" +
-    "                Slideshow\n" +
     "            </button>\n" +
     "        </div>\n" +
     "\n" +
@@ -2035,57 +2036,50 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
+    "    <div class=\"container\" selectable items=\"results\">\n" +
     "\n" +
-    "    <div ng-if=\"tests.length > 0\">\n" +
-    "        <div class=\"container\">\n" +
+    "        <div selectable-list>\n" +
+    "            <div selectable-list-item ng-repeat=\"result in results track by $index\">\n" +
     "\n" +
-    "            <div selectable-list ng-model=\"tests\">\n" +
-    "                <div selectable-list-item ng-repeat=\"test in (tests|typeOfWeb)\">\n" +
-    "\n" +
-    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                            <i class=\"fa fa-bars\"></i>\n" +
-    "                        </button>\n" +
-    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                            <li>\n" +
-    "                                <a href=\"\" open-test-details-modal test=\"test\">\n" +
-    "                                    <i class=\"fa fa-info fa-fw\"></i>&nbsp; Details\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a ui-sref=\"learn.results.compare({testNos: [test.testNo]})\">\n" +
-    "                                    <i class=\"fa fa-code-fork fa-fw\"></i>&nbsp; Hypotheses\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a href=\"\" ng-click=\"deleteTest(test)\">\n" +
-    "                                    <i class=\"fa fa-trash fa-fw\"></i>&nbsp; Delete\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                        </ul>\n" +
-    "                    </div>\n" +
-    "\n" +
-    "                    <strong>Test No\n" +
-    "                        <span ng-bind=\"test.testNo\"></span>\n" +
-    "                    </strong>,\n" +
-    "                    [<span ng-bind=\"test.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                    <br>\n" +
-    "\n" +
-    "                    <p class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                    </p>\n" +
-    "\n" +
+    "                <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                    <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                        <i class=\"fa fa-bars\"></i>\n" +
+    "                    </button>\n" +
+    "                    <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                        <li>\n" +
+    "                            <a href=\"\" open-test-details-modal test=\"result\">\n" +
+    "                                <i class=\"fa fa-info fa-fw\"></i> Details\n" +
+    "                            </a>\n" +
+    "                        </li>\n" +
+    "                        <li>\n" +
+    "                            <a ui-sref=\"learn.results.compare({testNos: [result.testNo]})\">\n" +
+    "                                <i class=\"fa fa-code-fork fa-fw\"></i> Hypotheses\n" +
+    "                            </a>\n" +
+    "                        </li>\n" +
+    "                        <li>\n" +
+    "                            <a href=\"\" ng-click=\"deleteResult(result)\">\n" +
+    "                                <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+    "                            </a>\n" +
+    "                        </li>\n" +
+    "                    </ul>\n" +
     "                </div>\n" +
-    "            </div>\n" +
     "\n" +
+    "                <strong>Test No\n" +
+    "                    <span ng-bind=\"result.testNo\"></span>\n" +
+    "                </strong>,\n" +
+    "                [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
+    "\n" +
+    "                <div class=\"text-muted\">\n" +
+    "                    Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "\n" +
-    "    <div class=\"container\" ng-if=\"tests.length == 0\">\n" +
-    "        <div class=\"alert alert-info\">\n" +
-    "            You have not run any tests yet or the active one is not finished.\n" +
-    "        </div>\n" +
+    "    <div class=\"alert alert-info\" ng-if=\"results.length === 0\">\n" +
+    "        You have not run any tests yet or the active one is not finished.\n" +
     "    </div>\n" +
     "\n" +
     "</div>");
@@ -3876,15 +3870,15 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     function LearnResultsCompareController($scope, $stateParams, SessionService, LearnResultResource) {
 
         $scope.project = SessionService.project.get();
-        $scope.finalTestResults = [];
+        $scope.results = [];
         $scope.panels = [];
         $scope.layoutSettings = [];
 
         //////////
 
         LearnResultResource.getAllFinal($scope.project.id)
-            .then(function (finalTestResults) {
-                $scope.finalTestResults = finalTestResults;
+            .then(function (results) {
+                $scope.results = results;
                 return $stateParams.testNos;
             })
             .then(loadComplete);
@@ -3917,55 +3911,75 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('LearnResultsController', [
-            '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService',
-            LearnResultsController
-        ]);
+        .controller('LearnResultsController', LearnResultsController);
 
-    function LearnResultsController($scope, SessionService, LearnResultResource, SelectionService, PromptService) {
+    LearnResultsController.$inject = [
+        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService'
+    ];
 
-        $scope.project = SessionService.project.get();
-        $scope.tests = [];
+    /**
+     * The controller for listing all final test results.
+     *
+     * The template can be found at 'views/pages/learn-results.html'
+     *
+     * @param $scope
+     * @param Session
+     * @param LearnResultResource
+     * @param SelectionService
+     * @param PromptService
+     * @constructor
+     */
+    function LearnResultsController($scope, Session, LearnResultResource, SelectionService, PromptService) {
 
-        //////////
+        // The project that is saved in the session
+        var project = Session.project.get();
 
+        /**
+         * All final test results of a project
+         *
+         * @type {Array}
+         */
+        $scope.results = [];
+
+        // get all final test results
         LearnResultResource.getAllFinal($scope.project.id)
-            .then(function (tests) {
-                $scope.tests = tests;
+            .then(function (results) {
+                $scope.results = results;
             });
 
-        //////////
-
-        $scope.deleteTest = function (test) {
-
-            SelectionService.removeSelection(test);
-
+        /**
+         * Deletes a test result from the server after prompting the user for confirmation
+         *
+         * @param result - The test result that should be deleted
+         */
+        $scope.deleteResult = function (result) {
             PromptService.confirm("Do you want to permanently delete this result?")
-	            .then(function(){
-	            	LearnResultResource.delete($scope.project.id, test.testNo)
-	                .then(function () {
-	                    _.remove($scope.tests, {testNo: test.testNo});
-	                })
-	            })
+                .then(function () {
+                    LearnResultResource.delete(project.id, result.testNo)
+                        .then(function () {
+                            _.remove($scope.results, {testNo: result.testNo});
+                        })
+                })
         };
 
-        $scope.deleteTests = function () {
-
-            var selectedTests = SelectionService.getSelected($scope.tests);
+        /**
+         * Deletes selected test results from the server after prompting the user for confirmation
+         */
+        $scope.deleteResults = function () {
+            var selectedResults = SelectionService.getSelected($scope.results);
             var testNos;
-            
-            if (selectedTests.length > 0) {
-            	testNos = _.pluck(selectedTests, 'testNo');
-            	
-            	PromptService.confirm("Do you want to permanently delete this result?")
-	            	.then(function(){
-	            		LearnResultResource.delete($scope.project.id, testNos)
-	            		.then(function(){
-	            			_.forEach(testNos, function(testNo){
-	            				_.remove($scope.tests, {testNo: testNo})
-	            			})
-	            		})
-	            	})
+
+            if (selectedResults.length > 0) {
+                testNos = _.pluck(selectedResults, 'testNo');
+                PromptService.confirm("Do you want to permanently delete this result?")
+                    .then(function () {
+                        LearnResultResource.delete(project.id, testNos)
+                            .then(function () {
+                                _.forEach(testNos, function (testNo) {
+                                    _.remove($scope.tests, {testNo: testNo})
+                                })
+                            })
+                    })
             }
         }
     }
@@ -4031,6 +4045,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @type {string}
          */
         $scope.selectedChartProperty = $scope.chartProperties.RESETS;
+
+        /**
+         * @type {boolean}
+         */
+        $scope.fullWidth = false;
 
         /**
          * The n3 chart data for the directive
@@ -4124,6 +4143,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 data: null,
                 options: null
             };
+            $scope.fullWidth = false;
         }
     }
 }());;(function () {
@@ -4944,7 +4964,33 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 	        }
 		}
 	};
-}());(function() {
+}());(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('dispatchResize', dispatchResize);
+
+    function dispatchResize() {
+
+        var directive = {
+            link: link
+        };
+        return directive;
+
+        function link(scope, el, attrs) {
+            el.on('click', function () {
+                var delay = 0;
+                if (attrs.dispatchResize && angular.isNumber(parseInt(attrs.dispatchResize))) {
+                    delay = parseInt(attrs.dispatchResize);
+                }
+                window.setTimeout(function () {
+                    window.dispatchEvent(new Event('resize'));
+                }, delay);
+            })
+        }
+    }
+}());;(function() {
 	'use strict';
 
 	angular
@@ -5773,8 +5819,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 					_graph.setNode("" + i, {
 						shape : 'circle',
 						label : node.toString(),
-						width : 25
-					});
+						width : 25,
+                        style: 'fill: #fff; stroke: #000; stroke-width: 1',
+                        labelStyle: 'font-size: 1.25em; font-weight: bold'
+                    });
 				});
 
 				// add edges to the graph
@@ -5783,7 +5831,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 					_graph.setEdge(edge.from, edge.to, {
 						label : edge.input + "/" + edge.output,
 						labeloffset : 5,
-						lineInterpolate : 'basis'
+						lineInterpolate : 'basis',
+                        style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
+                        labelStyle: 'font-size: 1.2em'
 					}, edgeName);
 				});
 
@@ -5802,7 +5852,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 					_graph.setNode("" + i, {
 						shape : 'circle',
 						label : node.toString(),
-						width : 25
+						width : 25,
+                        style: 'fill: #fff; stroke: #000; stroke-width: 1',
+                        labelStyle: 'font-size: 1.5em; font-weight: bold'
 					});
 				});
 
@@ -5830,7 +5882,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 						_graph.setEdge(from, to, {
 							label : labels.join('\n'),
 							labeloffset : 5,
-							lineInterpolate : 'basis'
+							lineInterpolate : 'basis',
+                            style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
+                            labelStyle: 'font-size: 1.2em'
 						}, (from + '' + to));
 					});
 				});
@@ -5932,7 +5986,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     function panelManager() {
 
         var template = '' +
-            '<div style="position: absolute; top: 50px; bottom: 0; width: 100%;">' +
+            '<div style="position: absolute; top: 42px; bottom: 0; width: 100%;">' +
             '   <div ng-click="addPanel()" style="position: absolute; right: 0; top: 0; bottom: 0; width: 40px; background: #f2f2f2; border-left: 1px solid #e7e7e7"></div>' +
             '   <div style="position: absolute; left: 0; top: 0; bottom: 0; right: 40px; background: #fff" ng-transclude></div>' +
             '</div>';
@@ -7989,6 +8043,163 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 }());;(function () {
     'use strict';
 
+    var dummyResults = [{
+        "amountOfResets": 111,
+        "configuration": {
+            "algorithm": "EXTENSIBLE_LSTAR",
+            "eqOracle": {
+                "type": "sample",
+                "counterExamples": [{"input": ["w2", "w2", "w3"], "output": ["OK", "OK", "OK"]}]
+            },
+            "maxAmountOfStepsToLearn": 0,
+            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
+                "id": 4,
+                "revision": 2
+            }, {"id": 5, "revision": 2}, {"id": 6, "revision": 2}]
+        },
+        "duration": 40759,
+        "hypothesis": {
+            "nodes": [0, 1, 2],
+            "initNode": 0,
+            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
+                "from": 0,
+                "input": "w1",
+                "to": 0,
+                "output": "OK"
+            }, {"from": 0, "input": "w2", "to": 2, "output": "OK"}, {
+                "from": 0,
+                "input": "w3",
+                "to": 0,
+                "output": "FAILED"
+            }, {"from": 0, "input": "w4", "to": 0, "output": "OK"}, {
+                "from": 1,
+                "input": "reset",
+                "to": 0,
+                "output": "OK"
+            }, {"from": 1, "input": "w1", "to": 1, "output": "OK"}, {
+                "from": 1,
+                "input": "w2",
+                "to": 0,
+                "output": "OK"
+            }, {"from": 1, "input": "w3", "to": 2, "output": "OK"}, {
+                "from": 1,
+                "input": "w4",
+                "to": 1,
+                "output": "FAILED"
+            }, {"from": 2, "input": "reset", "to": 0, "output": "OK"}, {
+                "from": 2,
+                "input": "w1",
+                "to": 2,
+                "output": "OK"
+            }, {"from": 2, "input": "w2", "to": 1, "output": "OK"}, {
+                "from": 2,
+                "input": "w3",
+                "to": 2,
+                "output": "FAILED"
+            }, {"from": 2, "input": "w4", "to": 2, "output": "OK"}]
+        },
+        "project": 1,
+        "sigma": ["reset", "w1", "w2", "w3", "w4"],
+        "startTime": "2015-03-05T09:19:02.250+00:00",
+        "stepNo": 2,
+        "testNo": 1,
+        "type": "web"
+    }, {
+        "amountOfResets": 41,
+        "configuration": {
+            "algorithm": "DISCRIMINATION_TREE",
+            "eqOracle": {
+                "type": "sample",
+                "counterExamples": [{"input": ["w2", "w2", "w3"], "output": ["OK", "OK", "OK"]}]
+            },
+            "maxAmountOfStepsToLearn": 0,
+            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
+                "id": 4,
+                "revision": 2
+            }, {"id": 5, "revision": 2}, {"id": 6, "revision": 2}]
+        },
+        "duration": 26402,
+        "hypothesis": {
+            "nodes": [0, 2, 1],
+            "initNode": 0,
+            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
+                "from": 0,
+                "input": "w1",
+                "to": 0,
+                "output": "OK"
+            }, {"from": 0, "input": "w2", "to": 1, "output": "OK"}, {
+                "from": 0,
+                "input": "w3",
+                "to": 0,
+                "output": "FAILED"
+            }, {"from": 0, "input": "w4", "to": 0, "output": "OK"}, {
+                "from": 1,
+                "input": "reset",
+                "to": 0,
+                "output": "OK"
+            }, {"from": 1, "input": "w1", "to": 1, "output": "OK"}, {
+                "from": 1,
+                "input": "w2",
+                "to": 2,
+                "output": "OK"
+            }, {"from": 1, "input": "w3", "to": 1, "output": "FAILED"}, {
+                "from": 1,
+                "input": "w4",
+                "to": 1,
+                "output": "OK"
+            }, {"from": 2, "input": "reset", "to": 0, "output": "OK"}, {
+                "from": 2,
+                "input": "w1",
+                "to": 2,
+                "output": "OK"
+            }, {"from": 2, "input": "w2", "to": 0, "output": "OK"}, {
+                "from": 2,
+                "input": "w3",
+                "to": 1,
+                "output": "OK"
+            }, {"from": 2, "input": "w4", "to": 2, "output": "FAILED"}]
+        },
+        "project": 1,
+        "sigma": ["reset", "w1", "w2", "w3", "w4"],
+        "startTime": "2015-03-05T09:21:02.962+00:00",
+        "stepNo": 2,
+        "testNo": 2,
+        "type": "web"
+    }, {
+        "amountOfResets": 20,
+        "configuration": {
+            "algorithm": "DHC",
+            "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 2, "maxNoOfTests": 1},
+            "maxAmountOfStepsToLearn": 0,
+            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
+                "id": 4,
+                "revision": 2
+            }, {"id": 5, "revision": 2}]
+        },
+        "duration": 9208,
+        "hypothesis": {
+            "nodes": [0],
+            "initNode": 0,
+            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
+                "from": 0,
+                "input": "w1",
+                "to": 0,
+                "output": "OK"
+            }, {"from": 0, "input": "w2", "to": 0, "output": "OK"}, {
+                "from": 0,
+                "input": "w3",
+                "to": 0,
+                "output": "FAILED"
+            }]
+        },
+        "project": 1,
+        "sigma": ["reset", "w1", "w2", "w3"],
+        "startTime": "2015-03-05T12:29:19.995+00:00",
+        "stepNo": 1,
+        "testNo": 3,
+        "type": "web"
+    }];
+
     angular
         .module('weblearner.resources')
         .factory('LearnResultResource', [
@@ -7997,8 +8208,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         ]);
 
     /**
-     * LearnResultResource
-     * 
      * The resource the get test results from the server
      *
      * @param $http
@@ -8030,163 +8239,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         function getAllFinal(projectId) {
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
-                .then(function(){
-                    return [{
-                        "amountOfResets": 111,
-                        "configuration": {
-                            "algorithm": "EXTENSIBLE_LSTAR",
-                            "eqOracle": {
-                                "type": "sample",
-                                "counterExamples": [{"input": ["w2", "w2", "w3"], "output": ["OK", "OK", "OK"]}]
-                            },
-                            "maxAmountOfStepsToLearn": 0,
-                            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
-                                "id": 4,
-                                "revision": 2
-                            }, {"id": 5, "revision": 2}, {"id": 6, "revision": 2}]
-                        },
-                        "duration": 40759,
-                        "hypothesis": {
-                            "nodes": [0, 1, 2],
-                            "initNode": 0,
-                            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
-                                "from": 0,
-                                "input": "w1",
-                                "to": 0,
-                                "output": "OK"
-                            }, {"from": 0, "input": "w2", "to": 2, "output": "OK"}, {
-                                "from": 0,
-                                "input": "w3",
-                                "to": 0,
-                                "output": "FAILED"
-                            }, {"from": 0, "input": "w4", "to": 0, "output": "OK"}, {
-                                "from": 1,
-                                "input": "reset",
-                                "to": 0,
-                                "output": "OK"
-                            }, {"from": 1, "input": "w1", "to": 1, "output": "OK"}, {
-                                "from": 1,
-                                "input": "w2",
-                                "to": 0,
-                                "output": "OK"
-                            }, {"from": 1, "input": "w3", "to": 2, "output": "OK"}, {
-                                "from": 1,
-                                "input": "w4",
-                                "to": 1,
-                                "output": "FAILED"
-                            }, {"from": 2, "input": "reset", "to": 0, "output": "OK"}, {
-                                "from": 2,
-                                "input": "w1",
-                                "to": 2,
-                                "output": "OK"
-                            }, {"from": 2, "input": "w2", "to": 1, "output": "OK"}, {
-                                "from": 2,
-                                "input": "w3",
-                                "to": 2,
-                                "output": "FAILED"
-                            }, {"from": 2, "input": "w4", "to": 2, "output": "OK"}]
-                        },
-                        "project": 1,
-                        "sigma": ["reset", "w1", "w2", "w3", "w4"],
-                        "startTime": "2015-03-05T09:19:02.250+00:00",
-                        "stepNo": 2,
-                        "testNo": 1,
-                        "type": "web"
-                    }, {
-                        "amountOfResets": 41,
-                        "configuration": {
-                            "algorithm": "DISCRIMINATION_TREE",
-                            "eqOracle": {
-                                "type": "sample",
-                                "counterExamples": [{"input": ["w2", "w2", "w3"], "output": ["OK", "OK", "OK"]}]
-                            },
-                            "maxAmountOfStepsToLearn": 0,
-                            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
-                                "id": 4,
-                                "revision": 2
-                            }, {"id": 5, "revision": 2}, {"id": 6, "revision": 2}]
-                        },
-                        "duration": 26402,
-                        "hypothesis": {
-                            "nodes": [0, 2, 1],
-                            "initNode": 0,
-                            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
-                                "from": 0,
-                                "input": "w1",
-                                "to": 0,
-                                "output": "OK"
-                            }, {"from": 0, "input": "w2", "to": 1, "output": "OK"}, {
-                                "from": 0,
-                                "input": "w3",
-                                "to": 0,
-                                "output": "FAILED"
-                            }, {"from": 0, "input": "w4", "to": 0, "output": "OK"}, {
-                                "from": 1,
-                                "input": "reset",
-                                "to": 0,
-                                "output": "OK"
-                            }, {"from": 1, "input": "w1", "to": 1, "output": "OK"}, {
-                                "from": 1,
-                                "input": "w2",
-                                "to": 2,
-                                "output": "OK"
-                            }, {"from": 1, "input": "w3", "to": 1, "output": "FAILED"}, {
-                                "from": 1,
-                                "input": "w4",
-                                "to": 1,
-                                "output": "OK"
-                            }, {"from": 2, "input": "reset", "to": 0, "output": "OK"}, {
-                                "from": 2,
-                                "input": "w1",
-                                "to": 2,
-                                "output": "OK"
-                            }, {"from": 2, "input": "w2", "to": 0, "output": "OK"}, {
-                                "from": 2,
-                                "input": "w3",
-                                "to": 1,
-                                "output": "OK"
-                            }, {"from": 2, "input": "w4", "to": 2, "output": "FAILED"}]
-                        },
-                        "project": 1,
-                        "sigma": ["reset", "w1", "w2", "w3", "w4"],
-                        "startTime": "2015-03-05T09:21:02.962+00:00",
-                        "stepNo": 2,
-                        "testNo": 2,
-                        "type": "web"
-                    }, {
-                        "amountOfResets": 20,
-                        "configuration": {
-                            "algorithm": "DHC",
-                            "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 2, "maxNoOfTests": 1},
-                            "maxAmountOfStepsToLearn": 0,
-                            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
-                                "id": 4,
-                                "revision": 2
-                            }, {"id": 5, "revision": 2}]
-                        },
-                        "duration": 9208,
-                        "hypothesis": {
-                            "nodes": [0],
-                            "initNode": 0,
-                            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
-                                "from": 0,
-                                "input": "w1",
-                                "to": 0,
-                                "output": "OK"
-                            }, {"from": 0, "input": "w2", "to": 0, "output": "OK"}, {
-                                "from": 0,
-                                "input": "w3",
-                                "to": 0,
-                                "output": "FAILED"
-                            }]
-                        },
-                        "project": 1,
-                        "sigma": ["reset", "w1", "w2", "w3"],
-                        "startTime": "2015-03-05T12:29:19.995+00:00",
-                        "stepNo": 1,
-                        "testNo": 3,
-                        "type": "web"
-                    }];
+                .then(function(response){
+                    return dummyResults
                 })
                 .catch(ResourceResponseService.fail);
         }
@@ -8199,8 +8253,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @return {*}
          */
         function getFinal(projectId, testNo) {
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo)
-                .then(ResourceResponseService.success)
+            //return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo)
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
+                .then(function(response){
+                    return dummyResults[2];
+                })
                 .catch(ResourceResponseService.fail);
         }
 
@@ -8213,8 +8270,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         function getComplete(projectId, testNo) {
 
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
-                .then(ResourceResponseService.success)
+            //return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
+                .then(function(){
+                    return [dummyResults[2],dummyResults[1],dummyResults[0]];
+                })
                 .catch(ResourceResponseService.fail);
         }
 
@@ -8228,7 +8288,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         function deleteTests(projectId, testNo) {
         	
         	if (angular.isArray(testNo)) {
-        		testNo = testNo.join();
+        		testNo = testNo.join(',');
         	}
         	
             return $http.delete(paths.api.URL + '/projects/' + projectId + '/results/' + testNo, {})

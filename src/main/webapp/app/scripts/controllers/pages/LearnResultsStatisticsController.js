@@ -61,6 +61,11 @@
         $scope.selectedChartProperty = $scope.chartProperties.RESETS;
 
         /**
+         * @type {boolean}
+         */
+        $scope.fullWidth = false;
+
+        /**
          * The n3 chart data for the directive
          * @type {{data: null|Array, options: null|{}}}
          */
@@ -152,6 +157,7 @@
                 data: null,
                 options: null
             };
+            $scope.fullWidth = false;
         }
     }
 }());

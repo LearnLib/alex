@@ -1,9 +1,11 @@
 <div class="modal-header">
 
-    <div>
-        <h3 class="modal-title">Hypothesis Layout Settings</h3>
-        <span class="text-muted">Edit the settings for the presentation of the hypothesis</span>
-    </div>
+    <a class="btn btn-default btn-icon pull-right" ng-click="close()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+    <h3 class="modal-title">Hypothesis Layout Settings</h3>
+    <span class="text-muted">Edit the settings for the presentation of the hypothesis</span>
 
 </div>
 
@@ -38,5 +40,4 @@
 <div class="modal-footer">
 	<button class="btn btn-default btn-sm" ng-click="defaultLayoutSettings()">Default</button>
     <button class="btn btn-primary btn-sm" ng-click="update()">Update</button>
-    <button class="btn btn-warning btn-sm" ng-click="close()">Cancel</button>
 </div>

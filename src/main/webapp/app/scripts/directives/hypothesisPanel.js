@@ -8,7 +8,7 @@
     function panelManager() {
 
         var template = '' +
-            '<div style="position: absolute; top: 50px; bottom: 0; width: 100%;">' +
+            '<div style="position: absolute; top: 42px; bottom: 0; width: 100%;">' +
             '   <div ng-click="addPanel()" style="position: absolute; right: 0; top: 0; bottom: 0; width: 40px; background: #f2f2f2; border-left: 1px solid #e7e7e7"></div>' +
             '   <div style="position: absolute; left: 0; top: 0; bottom: 0; right: 40px; background: #fff" ng-transclude></div>' +
             '</div>';

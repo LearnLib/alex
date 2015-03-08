@@ -129,8 +129,10 @@
 					_graph.setNode("" + i, {
 						shape : 'circle',
 						label : node.toString(),
-						width : 25
-					});
+						width : 25,
+                        style: 'fill: #fff; stroke: #000; stroke-width: 1',
+                        labelStyle: 'font-size: 1.25em; font-weight: bold'
+                    });
 				});
 
 				// add edges to the graph
@@ -139,7 +141,9 @@
 					_graph.setEdge(edge.from, edge.to, {
 						label : edge.input + "/" + edge.output,
 						labeloffset : 5,
-						lineInterpolate : 'basis'
+						lineInterpolate : 'basis',
+                        style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
+                        labelStyle: 'font-size: 1.2em'
 					}, edgeName);
 				});
 
@@ -158,7 +162,9 @@
 					_graph.setNode("" + i, {
 						shape : 'circle',
 						label : node.toString(),
-						width : 25
+						width : 25,
+                        style: 'fill: #fff; stroke: #000; stroke-width: 1',
+                        labelStyle: 'font-size: 1.5em; font-weight: bold'
 					});
 				});
 
@@ -186,7 +192,9 @@
 						_graph.setEdge(from, to, {
 							label : labels.join('\n'),
 							labeloffset : 5,
-							lineInterpolate : 'basis'
+							lineInterpolate : 'basis',
+                            style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
+                            labelStyle: 'font-size: 1.2em'
 						}, (from + '' + to));
 					});
 				});

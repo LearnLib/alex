@@ -3,55 +3,75 @@
 
     angular
         .module('weblearner.controller')
-        .controller('LearnResultsController', [
-            '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService',
-            LearnResultsController
-        ]);
+        .controller('LearnResultsController', LearnResultsController);
 
-    function LearnResultsController($scope, SessionService, LearnResultResource, SelectionService, PromptService) {
+    LearnResultsController.$inject = [
+        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService'
+    ];
 
-        $scope.project = SessionService.project.get();
-        $scope.tests = [];
+    /**
+     * The controller for listing all final test results.
+     *
+     * The template can be found at 'views/pages/learn-results.html'
+     *
+     * @param $scope
+     * @param Session
+     * @param LearnResultResource
+     * @param SelectionService
+     * @param PromptService
+     * @constructor
+     */
+    function LearnResultsController($scope, Session, LearnResultResource, SelectionService, PromptService) {
 
-        //////////
+        // The project that is saved in the session
+        var project = Session.project.get();
 
+        /**
+         * All final test results of a project
+         *
+         * @type {Array}
+         */
+        $scope.results = [];
+
+        // get all final test results
         LearnResultResource.getAllFinal($scope.project.id)
-            .then(function (tests) {
-                $scope.tests = tests;
+            .then(function (results) {
+                $scope.results = results;
             });
 
-        //////////
-
-        $scope.deleteTest = function (test) {
-
-            SelectionService.removeSelection(test);
-
+        /**
+         * Deletes a test result from the server after prompting the user for confirmation
+         *
+         * @param result - The test result that should be deleted
+         */
+        $scope.deleteResult = function (result) {
             PromptService.confirm("Do you want to permanently delete this result?")
-	            .then(function(){
-	            	LearnResultResource.delete($scope.project.id, test.testNo)
-	                .then(function () {
-	                    _.remove($scope.tests, {testNo: test.testNo});
-	                })
-	            })
+                .then(function () {
+                    LearnResultResource.delete(project.id, result.testNo)
+                        .then(function () {
+                            _.remove($scope.results, {testNo: result.testNo});
+                        })
+                })
         };
 
-        $scope.deleteTests = function () {
-
-            var selectedTests = SelectionService.getSelected($scope.tests);
+        /**
+         * Deletes selected test results from the server after prompting the user for confirmation
+         */
+        $scope.deleteResults = function () {
+            var selectedResults = SelectionService.getSelected($scope.results);
             var testNos;
-            
-            if (selectedTests.length > 0) {
-            	testNos = _.pluck(selectedTests, 'testNo');
-            	
-            	PromptService.confirm("Do you want to permanently delete this result?")
-	            	.then(function(){
-	            		LearnResultResource.delete($scope.project.id, testNos)
-	            		.then(function(){
-	            			_.forEach(testNos, function(testNo){
-	            				_.remove($scope.tests, {testNo: testNo})
-	            			})
-	            		})
-	            	})
+
+            if (selectedResults.length > 0) {
+                testNos = _.pluck(selectedResults, 'testNo');
+                PromptService.confirm("Do you want to permanently delete this result?")
+                    .then(function () {
+                        LearnResultResource.delete(project.id, testNos)
+                            .then(function () {
+                                _.forEach(testNos, function (testNo) {
+                                    _.remove($scope.tests, {testNo: testNo})
+                                })
+                            })
+                    })
             }
         }
     }
