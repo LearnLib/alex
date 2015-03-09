@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -24,6 +25,7 @@ import java.util.Set;
  * Entity to organize symbols.
  */
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SymbolGroup implements Serializable {
 
     /** to be serializable. */
@@ -115,6 +117,9 @@ public class SymbolGroup implements Serializable {
 
     @JsonProperty("symbolAmount")
     public int getSymbolSize() {
+        if (symbols == null) {
+            return 0;
+        }
         return this.symbols.size();
     }
 

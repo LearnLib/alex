@@ -51,7 +51,7 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
     @JsonIgnore
     private Project project;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @Cascade({ CascadeType.SAVE_UPDATE})
     @JsonIgnore
     private SymbolGroup group;
@@ -313,11 +313,6 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
         }
 
         actions.add(action);
-    }
-
-    public void loadLazyRelations() {
-        Hibernate.initialize(this.getActions());
-        Hibernate.initialize(this.getGroup());
     }
 
     public void beforeSave() {

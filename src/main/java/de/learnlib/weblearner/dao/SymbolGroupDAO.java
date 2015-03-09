@@ -30,7 +30,7 @@ public interface SymbolGroupDAO {
      * @throws NoSuchElementException
      *         If no project with the given id was found.
      */
-    List<SymbolGroup> getAll(long projectId) throws NoSuchElementException;
+    List<SymbolGroup> getAll(long projectId, String... embedFields) throws NoSuchElementException;
 
     /**
      * Get one group.
@@ -43,7 +43,7 @@ public interface SymbolGroupDAO {
      * @throws NoSuchElementException
      *         If the Project or the Group could not be found.
      */
-    SymbolGroup get(long projectId, Long groupId) throws NoSuchElementException;
+    SymbolGroup get(long projectId, Long groupId, String... embedFields) throws NoSuchElementException;
 
     /**
      * Update a group.

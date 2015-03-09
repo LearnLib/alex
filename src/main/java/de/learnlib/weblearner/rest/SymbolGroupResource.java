@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.rest;
 
+import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.dao.SymbolGroupDAO;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
@@ -15,6 +16,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,6 +39,9 @@ public class SymbolGroupResource {
 
     @Inject
     private SymbolGroupDAO symbolGroupDAO;
+
+    @Inject
+    private SymbolDAO symbolDAO;
 
     /**
      * Create a new group.
@@ -78,9 +83,13 @@ public class SymbolGroupResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId) {
+    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         try {
-            List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId);
+            String[] fields = null;
+            if (embed != null) {
+                fields = embed.split(",");
+            }
+            List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId, fields);
             return Response.ok(groups).build();
         } catch (NoSuchElementException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
@@ -103,9 +112,15 @@ public class SymbolGroupResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
+    public Response get(@PathParam("project_id") long projectId,
+                        @PathParam("id") Long id,
+                        @QueryParam("embed") String embed) {
         try {
-            SymbolGroup group = symbolGroupDAO.get(projectId, id);
+            String[] fields = null;
+            if (embed != null) {
+                fields = embed.split(",");
+            }
+            SymbolGroup group = symbolGroupDAO.get(projectId, id, fields);
             return Response.ok(group).build();
         } catch (NoSuchElementException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get", Response.Status.NOT_FOUND, e);
@@ -126,15 +141,7 @@ public class SymbolGroupResource {
     @Path("/{id}/symbols")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
-        //todo(alex.s): implement me
-        LinkedList<Symbol> symbols = new LinkedList<>();
-        for (long i = 1; i <= 10; i++) {
-            Symbol newSymbol = new Symbol();
-            newSymbol.setId(i);
-            newSymbol.setName("Symbol " + i);
-            newSymbol.setAbbreviation("symb_" + i);
-            symbols.add(newSymbol);
-        }
+        List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(projectId, id);
 
         return Response.ok(symbols).build();
     }

@@ -44,6 +44,10 @@ public interface SymbolDAO {
      */
     List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs);
 
+    List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId);
+
+    List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel);
+
     /**
      * Get a list of symbols by their ids. Fetch only the latest revision of each.
      *

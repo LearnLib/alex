@@ -400,6 +400,16 @@ public class SymbolDAOImplTest {
     }
 
     @Test
+    public void shouldGetAllSymbolsOfAGroup() {
+        symbols = createTestSymbolLists();
+
+        List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(project.getId(), group.getId(),
+                                                                        SymbolVisibilityLevel.ALL);
+
+        assertEquals(SYMBOL_COUNT + 1, symbolsFromDB.size()); // SYMBOL_COUNT are created in the test list + the symbol
+    }
+
+    @Test
     public void shouldGetTheRightSymbol() {
         symbolDAO.create(symbol);
         Symbol symb2 = symbolDAO.getWithLatestRevision(symbol.getProjectId(), symbol.getId());
@@ -449,10 +459,10 @@ public class SymbolDAOImplTest {
 
         @SuppressWarnings("unchecked") // should return a list of Symbols
         List<Symbol> symbolsInDB = session.createCriteria(Symbol.class)
-                                                .add(Restrictions.eq("project.id", symbol.getProjectId()))
-                                                .add(Restrictions.eq("id", symbol.getId()))
-                                                .add(Restrictions.eq("revision", symbol.getRevision()))
-                                                .list();
+                                            .add(Restrictions.eq("project.id", symbol.getProjectId()))
+                                            .add(Restrictions.eq("id", symbol.getId()))
+                                            .add(Restrictions.eq("revision", symbol.getRevision()))
+                                            .list();
 
         assertNotNull(symbolsInDB);
         assertEquals(1, symbolsInDB.size());
@@ -468,8 +478,8 @@ public class SymbolDAOImplTest {
         symbolDAO.update(symbol2);
 
         Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol2.getId());
-        SymbolGroup defaultGroupInDB = symbolGroupDAO.get(project.getId(), project.getDefaultGroup().getId());
-        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId());
+        SymbolGroup defaultGroupInDB = symbolGroupDAO.get(project.getId(), project.getDefaultGroup().getId(), "all");
+        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId(), "all");
         assertEquals(groupInDB, symbolInDB.getGroup());
         assertEquals(0, defaultGroupInDB.getSymbolSize());
         assertEquals(2, groupInDB.getSymbolSize());
@@ -483,8 +493,8 @@ public class SymbolDAOImplTest {
         symbolDAO.update(symbol);
 
         Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol.getId());
-        SymbolGroup defaultGroupInDB = symbolGroupDAO.get(project.getId(), project.getDefaultGroup().getId());
-        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId());
+        SymbolGroup defaultGroupInDB = symbolGroupDAO.get(project.getId(), project.getDefaultGroup().getId(), "all");
+        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId(), "all");
         assertEquals(defaultGroupInDB, symbolInDB.getGroup());
         assertEquals(2, defaultGroupInDB.getSymbolSize());
         assertEquals(0, groupInDB.getSymbolSize());
@@ -602,6 +612,9 @@ public class SymbolDAOImplTest {
             Symbol s = new Symbol();
             s.setProject(project);
             project.getSymbols().add(s);
+            if (i % 2 == 0) {  // add every second symbol to another group
+                s.setGroup(group);
+            }
             s.setName("Test Symbol - Get All Web No. " + i);
             s.setAbbreviation("web_all_" + i);
             s.addAction(new WaitAction());
@@ -631,6 +644,9 @@ public class SymbolDAOImplTest {
             Symbol s = new Symbol();
             s.setProject(project);
             project.getSymbols().add(s);
+            if (i % 2 == 0) { // add every second symbol to another group
+                s.setGroup(group);
+            }
             s.setName("Test Symbol - Get All REST No. " + i);
             s.setAbbreviation("rest_all_" + i);
             symbolDAO.create(s);

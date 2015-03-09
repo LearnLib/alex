@@ -6,6 +6,7 @@ import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
@@ -117,6 +118,18 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     public List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs) {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        List<Symbol> result = getAll(session, projectId, idRevPairs);
+
+        // done
+        HibernateUtil.commitTransaction();
+        return result;
+    }
+
+    List<Symbol> getAll(Session session, Long projectId, List<IdRevisionPair> idRevPairs) {
         // no DB interaction if no symbols are requested
         if (idRevPairs.isEmpty()) {
             return new LinkedList<>();
@@ -131,13 +144,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             ));
         }
         DetachedCriteria symbolIds = DetachedCriteria.forClass(Symbol.class)
-                                                        .add(Restrictions.eq("project.id", projectId))
-                                                        .add(symbolIdRestrictions)
-                                                        .setProjection(Projections.property("symbolId"));
-
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+                .add(Restrictions.eq("project.id", projectId))
+                .add(symbolIdRestrictions)
+                .setProjection(Projections.property("symbolId"));
 
         // get the symbols
         @SuppressWarnings("unchecked") // should return a list of Symbols
@@ -147,14 +156,54 @@ public class SymbolDAOImpl implements SymbolDAO {
                                         .list();
 
         // load the lazy relations
-        for (Symbol symb : result) {
-            symb.loadLazyRelations();
+        for (Symbol symbol : result) {
+            loadLazyRelations(symbol);
         }
-
-        // done
-        HibernateUtil.commitTransaction();
         return result;
     }
+
+    @Override
+    public List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId) {
+        return getAllWithLatestRevision(projectId, groupId, SymbolVisibilityLevel.VISIBLE);
+    }
+
+    @Override
+    public List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel) {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        List<IdRevisionPair> idRevPairs = getIdRevisionPairs(session, projectId, groupId, visibilityLevel);
+
+        HibernateUtil.commitTransaction();
+
+        if (idRevPairs.isEmpty()) {
+            return new LinkedList<>();
+        }
+        return getAll(projectId, idRevPairs);
+    }
+
+    List<IdRevisionPair> getIdRevisionPairs(Session session,
+                                      Long projectId,
+                                      Long groupId,
+                                      SymbolVisibilityLevel visibilityLevel) {
+        SymbolGroup group = (SymbolGroup) session.createCriteria(SymbolGroup.class)
+                                                    .add(Restrictions.eq("project.id", projectId))
+                                                    .add(Restrictions.eq("id", groupId))
+                                                    .uniqueResult();
+
+        // get latest revision
+        List<Object[]> idRevList = session.createCriteria(Symbol.class)
+                                            .add(Restrictions.eq("project.id", projectId))
+                                            .add(Restrictions.eq("group", group))
+                                            .add(visibilityLevel.getCriterion())
+                                            .setProjection(Projections.projectionList()
+                                                                   .add(Projections.groupProperty("id"))
+                                                                   .add(Projections.max("revision")))
+                                            .list();
+        return createIdRevisionPairList(idRevList);
+    }
+
 
     @Override
     public List<Symbol> getByIdsWithLatestRevision(Long projectId, Long... ids) {
@@ -181,14 +230,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         HibernateUtil.commitTransaction();
 
-        List<IdRevisionPair> idRevPairs = new LinkedList<>();
-        for (Object[] obj : idRevList) {
-            IdRevisionPair newPair = new IdRevisionPair();
-            newPair.setId((Long) obj[0]);
-            newPair.setRevision((Long) obj[1]);
-
-            idRevPairs.add(newPair);
-        }
+        List<IdRevisionPair> idRevPairs = createIdRevisionPairList(idRevList);
 
         if (idRevPairs.isEmpty()) {
             return new LinkedList<>();
@@ -358,12 +400,14 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     private void hideSymbols(Session session, List<Symbol> symbols) throws IllegalArgumentException {
         for (Symbol symbol : symbols) {
-            symbol.loadLazyRelations();
+            loadLazyRelations(symbol);
 
             symbol.setHidden(true);
             session.update(symbol);
         }
     }
+
+
 
     @Override
     public void show(Long projectId, Long... ids) throws IllegalArgumentException {
@@ -391,6 +435,18 @@ public class SymbolDAOImpl implements SymbolDAO {
             symbol.setHidden(false);
             session.update(symbol);
         }
+    }
+
+    private List<IdRevisionPair> createIdRevisionPairList(List<Object[]> idRevionsFromDB) {
+        List<IdRevisionPair> idRevPairs = new LinkedList<>();
+        for (Object[] obj : idRevionsFromDB) {
+            IdRevisionPair newPair = new IdRevisionPair();
+            newPair.setId((Long) obj[0]);
+            newPair.setRevision((Long) obj[1]);
+
+            idRevPairs.add(newPair);
+        }
+        return idRevPairs;
     }
 
     private List<Symbol> getSymbols(Session session, Long projectId, Long symbolId) {
@@ -439,6 +495,11 @@ public class SymbolDAOImpl implements SymbolDAO {
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("The name or the abbreviation of the symbol is already used in the project.");
         }
+    }
+
+    public static void loadLazyRelations(Symbol symbol) {
+        Hibernate.initialize(symbol.getActions());
+        Hibernate.initialize(symbol.getGroup());
     }
 
 }

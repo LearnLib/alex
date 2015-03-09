@@ -1,21 +1,31 @@
 package de.learnlib.weblearner.dao;
 
+import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
+import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import javax.validation.ValidationException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * Implementation of a SymbolGroupDAO using Hibernate.
  */
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
+
+    private SymbolDAOImpl symbolDAO;
+
+    public SymbolGroupDAOImpl() {
+        this.symbolDAO = new SymbolDAOImpl(this);
+    }
 
     @Override
     public void create(SymbolGroup group) throws ValidationException {
@@ -46,7 +56,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public List<SymbolGroup> getAll(long projectId) throws NoSuchElementException {
+    public List<SymbolGroup> getAll(long projectId, String... embedFields) throws NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -63,10 +73,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                                 .list();
 
         for (SymbolGroup group : resultList) {
-            Hibernate.initialize(group.getSymbols());
-            for (Symbol symbol : group.getSymbols()) {
-                symbol.loadLazyRelations();
-            }
+            initLazyRelations(session, group, embedFields);
         }
 
         HibernateUtil.commitTransaction();
@@ -74,7 +81,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public SymbolGroup get(long projectId, Long groupId) throws NoSuchElementException {
+    public SymbolGroup get(long projectId, Long groupId, String... embedFields) throws NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -91,10 +98,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                              + " in the project " + projectId + ".");
         }
 
-        Hibernate.initialize(result.getSymbols());
-        for (Symbol symbol : result.getSymbols()) {
-            symbol.loadLazyRelations();
-        }
+        initLazyRelations(session, result, embedFields);
 
         HibernateUtil.commitTransaction();
         return result;
@@ -158,6 +162,32 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         if (!constrainsTestList.isEmpty()) {
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("The group name must be unique per project.");
+        }
+    }
+
+    private void initLazyRelations(Session session, SymbolGroup group, String... embedFields) {
+        Set<String> fieldsToLoad = new HashSet<>();
+        if (embedFields != null) {
+            if (embedFields.length == 1 && "all".equals(embedFields[0])) {
+                fieldsToLoad.add("completeSymbols");
+            } else {
+                for (String field : embedFields) {
+                    fieldsToLoad.add(field);
+                }
+            }
+        }
+
+        if (fieldsToLoad.contains("completeSymbols")) {
+            Hibernate.initialize(group.getSymbols());
+            for (Symbol symbol : group.getSymbols()) {
+                SymbolDAOImpl.loadLazyRelations(symbol);
+            }
+        } else if (fieldsToLoad.contains("symbols")) {
+            List<IdRevisionPair> idRevisionPairs = symbolDAO.getIdRevisionPairs(session, group.getProjectId(), group.getId(), SymbolVisibilityLevel.ALL);
+            List<Symbol> symbols = symbolDAO.getAll(session, group.getProjectId(), idRevisionPairs);
+            group.setSymbols(new HashSet<>(symbols));
+        } else {
+            group.setSymbols(null);
         }
     }
 }

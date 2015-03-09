@@ -179,7 +179,7 @@ public class ProjectDAOImpl implements ProjectDAO {
                 for (SymbolGroup group : project.getGroups()) {
                     Hibernate.initialize(group);
                     for (Symbol symbol : group.getSymbols()) {
-                        symbol.loadLazyRelations();
+                        SymbolDAOImpl.loadLazyRelations(symbol);
                     }
                 }
             } else {
@@ -191,7 +191,7 @@ public class ProjectDAOImpl implements ProjectDAO {
                 if (project.getDefaultGroup() != null) {
                     Hibernate.initialize(project.getDefaultGroup().getSymbols());
                     for (Symbol symbol : project.getDefaultGroup().getSymbols()) {
-                        symbol.loadLazyRelations();
+                        SymbolDAOImpl.loadLazyRelations(symbol);
                     }
                 }
             } else {
@@ -200,8 +200,8 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             if (fieldsToLoad.contains("symbols")) {
                 Hibernate.initialize(project.getSymbols());
-                for (Symbol s : project.getSymbols()) {
-                    s.loadLazyRelations();
+                for (Symbol symbol : project.getSymbols()) {
+                    SymbolDAOImpl.loadLazyRelations(symbol);
                 }
             } else {
                 project.setSymbols(null);
