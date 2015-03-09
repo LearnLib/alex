@@ -1778,12 +1778,10 @@ angular.module("app/views/pages/home.html", []).run(["$templateCache", function(
     "                </p>\n" +
     "            </div>\n" +
     "\n" +
-    "            <div class=\"container\" ng-if=\"projects.length == 0\">\n" +
-    "                <div class=\"alert alert-info\">\n" +
-    "                    You haven't created a project yet. You can create a new one <a href=\"#/project/create\">here</a> and\n" +
-    "                    start\n" +
-    "                    testing it.\n" +
-    "                </div>\n" +
+    "            <div class=\"alert alert-info\" ng-if=\"projects.length == 0\">\n" +
+    "                You haven't created a project yet. You can create a new one <a href=\"#/project/create\">here</a> and\n" +
+    "                start\n" +
+    "                testing it.\n" +
     "            </div>\n" +
     "\n" +
     "        </div>\n" +
@@ -1849,7 +1847,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div  ng-show=\"selectedChartMode === null\">\n" +
+    "        <div ng-show=\"selectedChartMode === null\">\n" +
     "\n" +
     "            <div class=\"pull-left\" selectable items=\"results\" style=\"margin-right: 16px\">\n" +
     "                <input type=\"checkbox\" selectable-item-checkbox>\n" +
@@ -1968,7 +1966,7 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "     sub-title=\"Have a look at all the tests you ran for this project\">\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"results\">\n" +
@@ -2025,12 +2023,11 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
-    "    </div>\n" +
+    "        <div class=\"alert alert-info\" ng-if=\"results.length === 0\">\n" +
+    "            You have not run any tests yet or the active one is not finished.\n" +
+    "        </div>\n" +
     "\n" +
-    "    <div class=\"alert alert-info\" ng-if=\"results.length === 0\">\n" +
-    "        You have not run any tests yet or the active one is not finished.\n" +
     "    </div>\n" +
-    "\n" +
     "</div>");
 }]);
 
@@ -2336,22 +2333,18 @@ angular.module("app/views/pages/project.html", []).run(["$templateCache", functi
 angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/symbols-actions.html",
-    "<div class=\"view-heading\">\n" +
-    "    <div class=\"container\">\n" +
-    "        <h2 class=\"view-heading-title\">Actions</h2>\n" +
-    "\n" +
-    "        <p class=\"view-heading-sub-title\">\n" +
-    "            Create and manage the actions for symbol:\n" +
-    "            <strong ng-bind=\"symbol.name\"></strong> <em>[<span ng-bind=\"symbol.abbreviation\"></span>]</em>\n" +
-    "        </p>\n" +
-    "    </div>\n" +
+    "<div view-heading\n" +
+    "     title=\"Actions\"\n" +
+    "     sub-title=\"Create and manage the actions for symbol: {{symbol.name}}\">\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbol.actions\">\n" +
+    "\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable=\"symbol.actions\">\n" +
+    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
     "        </div>\n" +
+    "\n" +
     "        <div class=\"pull-left\">\n" +
     "            <button class=\"btn btn-xs btn-primary\" open-action-create-modal symbol=\"symbol\" on-created=\"addAction\">\n" +
     "                Create\n" +
@@ -2367,47 +2360,50 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "                Delete\n" +
     "            </button>\n" +
     "        </div>\n" +
+    "\n" +
     "        <div class=\"pull-right\">\n" +
     "            <button class=\"btn btn-default btn-xs\" ng-click=\"revertChanges()\">Reset</button>\n" +
     "            <button class=\"btn btn-success btn-xs\" ng-click=\"saveChanges()\">Save</button>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
-    "\n" +
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div ng-if=\"symbol.actions\" as-sortable ng-model=\"symbol.actions\">\n" +
-    "            <div selectable-list ng-model=\"symbol.actions\">\n" +
-    "                <div selectable-list-item ng-repeat=\"action in symbol.actions track by $index\" as-sortable-item>\n" +
+    "            <div selectable items=\"symbol.actions\">\n" +
+    "                <div selectable-list>\n" +
+    "                    <div selectable-list-item ng-repeat=\"action in symbol.actions track by $index\" as-sortable-item>\n" +
     "\n" +
-    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                            <i class=\"fa fa-bars\"></i>\n" +
-    "                        </button>\n" +
-    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                            <li>\n" +
-    "                                <a href open-action-edit-modal symbol=\"symbol\" action=\"action\"\n" +
-    "                                   on-updated=\"updateAction\">\n" +
-    "                                    <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a href ng-click=\"deleteAction(action)\">\n" +
-    "                                    <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                        </ul>\n" +
+    "                        <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                            <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                                <i class=\"fa fa-bars\"></i>\n" +
+    "                            </button>\n" +
+    "                            <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                                <li>\n" +
+    "                                    <a href open-action-edit-modal symbol=\"symbol\" action=\"action\"\n" +
+    "                                       on-updated=\"updateAction\">\n" +
+    "                                        <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
+    "                                    </a>\n" +
+    "                                </li>\n" +
+    "                                <li>\n" +
+    "                                    <a href ng-click=\"deleteAction(action)\">\n" +
+    "                                        <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+    "                                    </a>\n" +
+    "                                </li>\n" +
+    "                            </ul>\n" +
+    "                        </div>\n" +
+    "\n" +
+    "                        <span class=\"text-muted pull-right\" as-sortable-item-handle\n" +
+    "                              style=\"margin-right: 15px; padding: 2px;\">\n" +
+    "                            <i class=\"fa fa-sort fa-fw\"></i>\n" +
+    "                        </span>\n" +
+    "\n" +
+    "                        <span ng-bind=\"action.toString()\"></span>\n" +
+    "\n" +
     "                    </div>\n" +
-    "\n" +
-    "                    <span class=\"text-muted pull-right\" as-sortable-item-handle\n" +
-    "                          style=\"margin-right: 15px; padding: 2px;\">\n" +
-    "                        <i class=\"fa fa-sort fa-fw\"></i>\n" +
-    "                    </span>\n" +
-    "\n" +
-    "                    <span ng-bind=\"action.toString()\"></span>\n" +
-    "\n" +
     "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
@@ -2762,7 +2758,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                                        </a>\n" +
     "                                    </li>\n" +
     "                                    <li>\n" +
-    "                                        <a href symbol-move-modal-handle groups=\"groups\">\n" +
+    "                                        <a href symbol-move-modal-handle groups=\"groups\" symbols=\"[symbol]\" on-moved=\"updateSymbol\">\n" +
     "                                            <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +

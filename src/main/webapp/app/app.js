@@ -1829,12 +1829,10 @@ angular.module("app/views/pages/home.html", []).run(["$templateCache", function(
     "                </p>\n" +
     "            </div>\n" +
     "\n" +
-    "            <div class=\"container\" ng-if=\"projects.length == 0\">\n" +
-    "                <div class=\"alert alert-info\">\n" +
-    "                    You haven't created a project yet. You can create a new one <a href=\"#/project/create\">here</a> and\n" +
-    "                    start\n" +
-    "                    testing it.\n" +
-    "                </div>\n" +
+    "            <div class=\"alert alert-info\" ng-if=\"projects.length == 0\">\n" +
+    "                You haven't created a project yet. You can create a new one <a href=\"#/project/create\">here</a> and\n" +
+    "                start\n" +
+    "                testing it.\n" +
     "            </div>\n" +
     "\n" +
     "        </div>\n" +
@@ -1900,7 +1898,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div  ng-show=\"selectedChartMode === null\">\n" +
+    "        <div ng-show=\"selectedChartMode === null\">\n" +
     "\n" +
     "            <div class=\"pull-left\" selectable items=\"results\" style=\"margin-right: 16px\">\n" +
     "                <input type=\"checkbox\" selectable-item-checkbox>\n" +
@@ -2019,7 +2017,7 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "     sub-title=\"Have a look at all the tests you ran for this project\">\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"sub-nav\" fix-on-scroll=\"{top:124,class:'fixed'}\">\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"results\">\n" +
@@ -2076,12 +2074,11 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
-    "    </div>\n" +
+    "        <div class=\"alert alert-info\" ng-if=\"results.length === 0\">\n" +
+    "            You have not run any tests yet or the active one is not finished.\n" +
+    "        </div>\n" +
     "\n" +
-    "    <div class=\"alert alert-info\" ng-if=\"results.length === 0\">\n" +
-    "        You have not run any tests yet or the active one is not finished.\n" +
     "    </div>\n" +
-    "\n" +
     "</div>");
 }]);
 
@@ -2387,22 +2384,18 @@ angular.module("app/views/pages/project.html", []).run(["$templateCache", functi
 angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/symbols-actions.html",
-    "<div class=\"view-heading\">\n" +
-    "    <div class=\"container\">\n" +
-    "        <h2 class=\"view-heading-title\">Actions</h2>\n" +
-    "\n" +
-    "        <p class=\"view-heading-sub-title\">\n" +
-    "            Create and manage the actions for symbol:\n" +
-    "            <strong ng-bind=\"symbol.name\"></strong> <em>[<span ng-bind=\"symbol.abbreviation\"></span>]</em>\n" +
-    "        </p>\n" +
-    "    </div>\n" +
+      "<div view-heading\n" +
+      "     title=\"Actions\"\n" +
+      "     sub-title=\"Create and manage the actions for symbol: {{symbol.name}}\">\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "            <input type=\"checkbox\" select-all-items-checkbox items=\"symbol.actions\">\n" +
+      "\n" +
+      "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable=\"symbol.actions\">\n" +
+      "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
     "        </div>\n" +
+      "\n" +
     "        <div class=\"pull-left\">\n" +
     "            <button class=\"btn btn-xs btn-primary\" open-action-create-modal symbol=\"symbol\" on-created=\"addAction\">\n" +
     "                Create\n" +
@@ -2418,47 +2411,50 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "                Delete\n" +
     "            </button>\n" +
     "        </div>\n" +
+      "\n" +
     "        <div class=\"pull-right\">\n" +
     "            <button class=\"btn btn-default btn-xs\" ng-click=\"revertChanges()\">Reset</button>\n" +
     "            <button class=\"btn btn-success btn-xs\" ng-click=\"saveChanges()\">Save</button>\n" +
     "        </div>\n" +
+      "\n" +
     "    </div>\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
-    "\n" +
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div ng-if=\"symbol.actions\" as-sortable ng-model=\"symbol.actions\">\n" +
-    "            <div selectable-list ng-model=\"symbol.actions\">\n" +
-    "                <div selectable-list-item ng-repeat=\"action in symbol.actions track by $index\" as-sortable-item>\n" +
+      "            <div selectable items=\"symbol.actions\">\n" +
+      "                <div selectable-list>\n" +
+      "                    <div selectable-list-item ng-repeat=\"action in symbol.actions track by $index\" as-sortable-item>\n" +
     "\n" +
-    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                            <i class=\"fa fa-bars\"></i>\n" +
-    "                        </button>\n" +
-    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                            <li>\n" +
-    "                                <a href open-action-edit-modal symbol=\"symbol\" action=\"action\"\n" +
-    "                                   on-updated=\"updateAction\">\n" +
-    "                                    <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                            <li>\n" +
-    "                                <a href ng-click=\"deleteAction(action)\">\n" +
-    "                                    <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
-    "                                </a>\n" +
-    "                            </li>\n" +
-    "                        </ul>\n" +
-    "                    </div>\n" +
+      "                        <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+      "                            <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+      "                                <i class=\"fa fa-bars\"></i>\n" +
+      "                            </button>\n" +
+      "                            <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+      "                                <li>\n" +
+      "                                    <a href open-action-edit-modal symbol=\"symbol\" action=\"action\"\n" +
+      "                                       on-updated=\"updateAction\">\n" +
+      "                                        <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
+      "                                    </a>\n" +
+      "                                </li>\n" +
+      "                                <li>\n" +
+      "                                    <a href ng-click=\"deleteAction(action)\">\n" +
+      "                                        <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+      "                                    </a>\n" +
+      "                                </li>\n" +
+      "                            </ul>\n" +
+      "                        </div>\n" +
     "\n" +
-    "                    <span class=\"text-muted pull-right\" as-sortable-item-handle\n" +
-    "                          style=\"margin-right: 15px; padding: 2px;\">\n" +
-    "                        <i class=\"fa fa-sort fa-fw\"></i>\n" +
-    "                    </span>\n" +
+      "                        <span class=\"text-muted pull-right\" as-sortable-item-handle\n" +
+      "                              style=\"margin-right: 15px; padding: 2px;\">\n" +
+      "                            <i class=\"fa fa-sort fa-fw\"></i>\n" +
+      "                        </span>\n" +
     "\n" +
-    "                    <span ng-bind=\"action.toString()\"></span>\n" +
+      "                        <span ng-bind=\"action.toString()\"></span>\n" +
     "\n" +
+      "                    </div>\n" +
     "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
@@ -2813,7 +2809,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                                        </a>\n" +
     "                                    </li>\n" +
     "                                    <li>\n" +
-    "                                        <a href symbol-move-modal-handle groups=\"groups\">\n" +
+    "                                        <a href symbol-move-modal-handle groups=\"groups\" symbols=\"[symbol]\" on-moved=\"updateSymbol\">\n" +
     "                                            <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +
@@ -3758,20 +3754,28 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .controller('SymbolMoveModalController', SymbolMoveModalController);
 
     SymbolMoveModalController.$inject = [
-        '$scope', '$modalInstance', 'modalData', 'Symbol'
+        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SelectionService'
     ];
 
-    function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol) {
+    function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol, SelectionService) {
 
         $scope.symbols = modalData.symbols;
         $scope.groups = modalData.groups;
         $scope.selectedGroup = null;
 
         $scope.moveSymbols = function () {
+            var symbols;
             if ($scope.selectedGroup !== null) {
                 _.forEach($scope.symbols, function (symbol) {
-                    $scope.symbol.group = $scope.selectedGroup.id;
-                    Symbol.Resource.update($scope.selectedGroup.project, symbol);
+                    SelectionService.removeSelection(symbol);
+                    symbol.group = $scope.selectedGroup.id;
+                    Symbol.Resource.update($scope.selectedGroup.project, symbol)
+                        .then(function (updatedSymbol) {
+                            //$modalInstance.$close({
+                            //    new: updatedSymbol,
+                            //    old:
+                            //})
+                        })
                 })
             }
         };
@@ -4114,11 +4118,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             if (selectedResults.length > 0) {
 
-                // TODO: dummy values, fill with data from the server
-                var selectedResults = [];
-                selectedResults.push([$scope.results[0], $scope.results[1]]);
-                selectedResults.push([$scope.results[2], $scope.results[0], $scope.results[1]]);
-                selectedResults.push([$scope.results[1], $scope.results[2]]);
+                // TODO: get complete results from selected results as soon as there is an interface for that
+                return;
 
                 chartData =
                     LearnerResultChartService
@@ -4221,10 +4222,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('LearnStartController', [
-            '$scope', '$stateParams', '$interval', 'SessionService', 'LearnerResource',
-            LearnStartController
-        ]);
+        .controller('LearnStartController', LearnStartController);
+
+    LearnStartController.$inject = ['$scope', '$interval', 'SessionService', 'LearnerResource'];
 
     /**
      * LearnStartController
@@ -4233,13 +4233,13 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      *
      * @param $scope
      * @param $interval
-     * @param SessionService
+     * @param Session
      * @param LearnerResource
      * @constructor
      */
-    function LearnStartController($scope, $interval, SessionService, LearnerResource) {
+    function LearnStartController($scope, $interval, Session, LearnerResource) {
 
-        var _project = SessionService.project.get();
+        var _project = Session.project.get();
         var _interval = null;
         var _intervalTime = 10000;
 
@@ -4258,17 +4258,17 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             input: '',
             output: ''
         };
-        
+
         $scope.layoutSettings;
 
         //////////
-        
+
         // start polling the server
         _poll();
-        
+
         // stop polling when you leave the page
-        $scope.$on("$destroy", function(){
-        	$interval.cancel(_interval);
+        $scope.$on("$destroy", function () {
+            $interval.cancel(_interval);
         });
 
         //////////
@@ -4317,19 +4317,16 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             var copy = angular.copy($scope.test.configuration);
             delete copy.algorithm;
             delete copy.symbols;
+            delete copy.resetSymbol;
 
             LearnerResource.resume(_project.id, $scope.test.testNo, copy)
-                .then(function () {
-                    _poll();
-                })
+                .then(_poll)
         };
 
         $scope.abort = function () {
-
             if ($scope.active) {
                 LearnerResource.stop()
-                    .then(function(data){
-
+                    .then(function (data) {
                         console.log(data)
                     })
             }
@@ -4366,7 +4363,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('ProjectCreateController', ProjectCreateController);
 
-    ProjectCreateController.$inject = ['$scope', '$state', 'Project'];
+    ProjectCreateController.$inject = ['$scope', '$state', 'Project', 'ToastService'];
 
     /**
      * ProjectCreateController
@@ -4378,7 +4375,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param Project
      * @constructor
      */
-    function ProjectCreateController($scope, $state, Project) {
+    function ProjectCreateController($scope, $state, Project, Toast) {
 
         $scope.project = new Project();
 
@@ -4387,8 +4384,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         $scope.createProject = function() {
             Project.Resource.create($scope.project)
-                .then(function () {
+                .then(function (createdProject) {
+                    Toast.success('Project "' + createdProject.name + '" created');
                     $state.go('home');
+                })
+                .catch(function (response) {
+                    Toast.danger('<p><strong>Creation of project failed</strong></p>' + response.data.message)
                 })
         }
     }
@@ -4397,10 +4398,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('ProjectSettingsController', [
-            '$scope', '$state', 'Project', 'SessionService', 'PromptService',
-            ProjectSettingsController
-        ]);
+        .controller('ProjectSettingsController', ProjectSettingsController);
+
+    ProjectSettingsController.$inject = [
+        '$scope', '$state', 'Project', 'SessionService', 'PromptService', 'ToastService', 'LearnerResource'
+    ];
 
     /**
      * The controller that handles the deleting and updating of a project. Belongs to the template at
@@ -4409,15 +4411,16 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param $scope
      * @param $state
      * @param Project
-     * @param SessionService
+     * @param Session
      * @param PromptService
+     * @param Toast
      */
-    function ProjectSettingsController($scope, $state, Project, SessionService, PromptService) {
+    function ProjectSettingsController($scope, $state, Project, Session, PromptService, Toast, LearnerResource) {
 
         var projectCopy;
 
         /** The project that is stored in the session **/
-        $scope.project = SessionService.project.get();
+        $scope.project = Session.project.get();
         projectCopy = angular.copy($scope.project);
 
         //////////
@@ -4428,7 +4431,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         $scope.updateProject = function () {
 
             // delete this property because it is read only and the will throw an error otherwise
-        	delete $scope.project.symbolAmount;
+            delete $scope.project.symbolAmount;
 
             // update the project on the server
             Project.Resource.update($scope.project)
@@ -4446,23 +4449,31 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         $scope.deleteProject = function () {
             var message = 'Do you really want to delete this project with all its symbols and test results? This process can not be undone.';
 
-            // prompt the user
-        	PromptService.confirm(message)
-	        	.then(function(){
+            LearnerResource.isActive()
+                .then(function (data) {
+                    if (data.active !== false) {
+                        confirmDeletion();
+                    } else {
+                        Toast.info('Project could not be deleted because there is an active lear')
+                    }
+                });
 
-	        	    // delete project from server
-	        		Project.Resource.delete($scope.project)
-		                .then(function () {
-		                    SessionService.project.remove();
-		                    $state.go('home');
-		                })
-	        	})
+            function confirmDeletion() {
+                PromptService.confirm(message)
+                    .then(function () {
+                        Project.Resource.delete($scope.project)
+                            .then(function () {
+                                SessionService.project.remove();
+                                $state.go('home');
+                            })
+                    })
+            }
         };
 
         /**
          * Resets the project edit form by copying the project copy back to the project under edit
          */
-        $scope.resetForm = function() {
+        $scope.resetForm = function () {
             $scope.project = angular.copy(projectCopy);
         }
     }
@@ -4665,8 +4676,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             $scope.groups.push(group);
         };
 
-        $scope.updateSymbol = function (symbol) {
-            // TODO
+        $scope.updateSymbol = function (symbol, oldSymbol) {
+            var group = _.find($scope.groups, {id: symbol.group});
+            if (group) {
+                group.symbols.push(symbol);
+            }
         };
 
         $scope.updateGroup = function (group) {
@@ -4971,13 +4985,29 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.directives')
         .directive('dispatchResize', dispatchResize);
 
+    /**
+     * This directive is used to fire a resize event to the window element with a given delay. Therefore it adds
+     * a click event to element the directive was used on. Directive must be used as attribute with a value that
+     * indicates how long resize event firing should be delayed (in ms). When no value is given, the resize event is
+     * fired directly with a delay of 0 ms.
+     *
+     * Use: <button dispatch-resize="1000">Click Me</button>
+     *
+     * @returns {{link: link}}
+     */
     function dispatchResize() {
 
         var directive = {
+            restrict: 'A',
             link: link
         };
         return directive;
 
+        /**
+         * @param scope
+         * @param el
+         * @param attrs
+         */
         function link(scope, el, attrs) {
             el.on('click', function () {
                 var delay = 0;
@@ -5080,176 +5110,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 			}
 		}
 	}
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('downloadCanvasAsImage', [
-            'PromptService',
-            downloadCanvasAsImage
-        ]);
-
-    /**
-     * downloadCanvasAsImage
-     *
-     * The directive to download a given canvas as a png file. Add this directive as an attribute to any kind of
-     * element, best on a button. The directive adds an click event to the element of the directive.
-     *
-     * @param PromptService
-     * @returns {{link: link}}
-     */
-    function downloadCanvasAsImage(PromptService) {
-
-        var directive = {
-            restrict: 'A',
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        /**
-         * @param scope - the scope
-         * @param el - the element of the directive
-         * @param attrs - the attributes of the element
-         */
-        function link(scope, el, attrs) {
-
-            el.on('click', promptFileName);
-
-            //////////
-
-            /**
-             * Prompt the user for a file name for the image of the chart
-             */
-            function promptFileName() {
-                PromptService.prompt('Enter a name for the chart image file.', {
-                    regexp: /^[a-zA-Z0-9\.\-,_]+$/,
-                    errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
-                }).then(download);
-            }
-
-            /**
-             * Download the canvas whose id was passed as an attribute from this directive as png
-             */
-            function download(filename) {
-
-                // make sure the id was passed
-                if (attrs.downloadCanvasAsImage) {
-
-                    // find canvas
-                    var canvas = document.getElementById(attrs.downloadCanvasAsImage);
-                    var a;
-
-                    if (canvas != null) {
-
-                        // create image data with highest quality
-                        var img = canvas.toDataURL('image/png', 1.0);
-                        
-                        // create new link element with image data
-    					a = document.createElement('a');
-    					a.style.display = 'none';
-    					a.setAttribute('href', img);
-    					a.setAttribute('target', '_blank');
-    	                a.setAttribute('download', filename + '.png');
-              	        
-    	                // append link to the dom, fire click event and remove it
-    	                document.body.appendChild(a);
-              	        a.click();
-              	        document.body.removeChild(a);
-                    }
-                }
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('downloadHypothesisAsSvg', [
-            'PromptService',
-            downloadHypothesisAsSvg
-        ]);
-
-    function downloadHypothesisAsSvg(PromptService) {
-    	
-    	var defs = '' +
-    		'<defs>' +
-        	'<style type="text/css"><![CDATA[' +
-            '	.hypothesis text {' +
-    	  	'		font-size: 12px;}' +
-			'	.hypothesis .node {' +
-      		'		fill: #fff;' +
-      		'		stroke: #000;' +
-      		'		stroke-width: 1; }' +
-			'	.hypothesis .node .label text {' +
-		    ' 		fill: #000;' +
-      		'		stroke: #000;' +
-      		'		stroke-width: 1; }' +
-    		'	.hypothesis .edgePath .path {' +
-      		'		stroke: rgba(0, 0, 0, 0.3);' +
-      		'		stroke-width: 3;' +
-      		'		fill: none; }' +
-    		'	.hypothesis .edgeLabel text {' +
-      		'		fill: #555; }' +
-			']]></style>'+
-			'</defs>';
-
-        var directive = {
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attrs) {
-
-            el.on('click', promptFilename);
-
-            //////////
-
-            function promptFilename() {
-                PromptService.prompt('Enter a name for the svg file.', {
-                    regexp: /^[a-zA-Z0-9\.\-,_]+$/,
-                    errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
-                }).then(download);
-            }
-
-            function download(filename) {
-
-                var selector = attrs.downloadHypothesisAsSvg;
-                var svg = document.querySelector(selector);
-                var a;
-
-                if (svg.nodeName != 'SVG') {
-                    svg = svg.getElementsByTagName('svg')[0];
-                    if (svg == null) {
-                        return;
-                    }
-                }
-
-                svg.setAttribute('version', '1.1');
-                svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-                // create serialized string from svg element
-                var svgString = new XMLSerializer().serializeToString(svg);
-
-                // create new link element with image data
-                a = document.createElement('a');
-                a.style.display = 'none';
-                a.setAttribute('href', 'data:image/svg+xml,' + svgString);                
-                a.setAttribute('target', '_blank');
-                a.setAttribute('download', filename + '.svg');
-
-                // append link to the dom, fire click event and remove it
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            }
-        }
-    }
 }());;(function () {
     'use strict';
 
@@ -6670,7 +6530,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .directive('selectableList', selectableList)
         .directive('selectableListItem', selectableListItem)
         .directive('selectableItemCheckbox', selectableItemCheckbox);
-    
+
+
     function selectable() {
 
         var directive = {
@@ -7356,7 +7217,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             this.regexp = isRegexp || false
         };
 
-        Action.Web.SearchForText.prototype.toString = function () {
+        Action.Web.SearchForNode.prototype.toString = function () {
             return 'Search for node "' + this.value + '"' + (this.regexp ? 'as regexp' : '');
         };
 
@@ -7448,7 +7309,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             this.regexp = isRegexp || false;
         };
 
-        Action.Rest.CheckHttpBodyText.toString = function () {
+        Action.Rest.CheckHttpBodyText.prototype.toString = function () {
             return 'Search in the HTTP response body for ' + (this.regexp ? 'regexp' : 'string') + ' "' + this.value + '"';
         };
 
@@ -7544,7 +7405,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         Action.Other.SetVariableByJSONAttribute = function (name, jsonAttribute) {
             this.type = actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE;
             this.name = name || null;
-            this.value = jsonAttribute;
+            this.value = jsonAttribute || null;
         };
 
         Action.Other.SetVariableByJSONAttribute.prototype.toString = function () {
@@ -7554,7 +7415,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         Action.Other.SetVariableByNode = function (name, xPath) {
             this.type = actionTypes.other.SET_VARIABLE_BY_NODE;
             this.name = name || null;
-            this.value = xPath;
+            this.value = xPath || null;
         };
 
         Action.Other.SetVariableByNode.prototype.toString = function () {
@@ -7642,6 +7503,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     break;
             }
 
+        };
+
+        Action.buildSome = function (data) {
+            var actions = [];
+            for (var i = 0; i < data.length; i++) {
+                actions.push(Action.build(data[i]));
+            }
+            return actions;
         };
 
         Action.createByType = function (type) {
@@ -7914,7 +7783,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.models')
         .factory('Symbol', SymbolModel);
 
-    SymbolModel.$inject = ['SymbolResource'];
+    SymbolModel.$inject = ['SymbolResource', 'Action'];
 
     /**
      * The factory for the symbol model.
@@ -7923,7 +7792,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @returns {Symbol} - The symbol model
      * @constructor
      */
-    function SymbolModel(SymbolResource) {
+    function SymbolModel(SymbolResource, Action) {
 
         /**
          * The symbol model.
@@ -7960,7 +7829,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         Symbol.build = function (data) {
             var symbol = new Symbol(data.name, data.abbreviation);
-            symbol.actions = data.actions;
+            symbol.actions = Action.buildSome(data.actions);
             symbol.id = data.id;
             symbol.revision = data.revision;
             symbol.project = data.project;
@@ -8043,181 +7912,19 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 }());;(function () {
     'use strict';
 
-    var dummyResults = [{
-        "amountOfResets": 111,
-        "configuration": {
-            "algorithm": "EXTENSIBLE_LSTAR",
-            "eqOracle": {
-                "type": "sample",
-                "counterExamples": [{"input": ["w2", "w2", "w3"], "output": ["OK", "OK", "OK"]}]
-            },
-            "maxAmountOfStepsToLearn": 0,
-            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
-                "id": 4,
-                "revision": 2
-            }, {"id": 5, "revision": 2}, {"id": 6, "revision": 2}]
-        },
-        "duration": 40759,
-        "hypothesis": {
-            "nodes": [0, 1, 2],
-            "initNode": 0,
-            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
-                "from": 0,
-                "input": "w1",
-                "to": 0,
-                "output": "OK"
-            }, {"from": 0, "input": "w2", "to": 2, "output": "OK"}, {
-                "from": 0,
-                "input": "w3",
-                "to": 0,
-                "output": "FAILED"
-            }, {"from": 0, "input": "w4", "to": 0, "output": "OK"}, {
-                "from": 1,
-                "input": "reset",
-                "to": 0,
-                "output": "OK"
-            }, {"from": 1, "input": "w1", "to": 1, "output": "OK"}, {
-                "from": 1,
-                "input": "w2",
-                "to": 0,
-                "output": "OK"
-            }, {"from": 1, "input": "w3", "to": 2, "output": "OK"}, {
-                "from": 1,
-                "input": "w4",
-                "to": 1,
-                "output": "FAILED"
-            }, {"from": 2, "input": "reset", "to": 0, "output": "OK"}, {
-                "from": 2,
-                "input": "w1",
-                "to": 2,
-                "output": "OK"
-            }, {"from": 2, "input": "w2", "to": 1, "output": "OK"}, {
-                "from": 2,
-                "input": "w3",
-                "to": 2,
-                "output": "FAILED"
-            }, {"from": 2, "input": "w4", "to": 2, "output": "OK"}]
-        },
-        "project": 1,
-        "sigma": ["reset", "w1", "w2", "w3", "w4"],
-        "startTime": "2015-03-05T09:19:02.250+00:00",
-        "stepNo": 2,
-        "testNo": 1,
-        "type": "web"
-    }, {
-        "amountOfResets": 41,
-        "configuration": {
-            "algorithm": "DISCRIMINATION_TREE",
-            "eqOracle": {
-                "type": "sample",
-                "counterExamples": [{"input": ["w2", "w2", "w3"], "output": ["OK", "OK", "OK"]}]
-            },
-            "maxAmountOfStepsToLearn": 0,
-            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
-                "id": 4,
-                "revision": 2
-            }, {"id": 5, "revision": 2}, {"id": 6, "revision": 2}]
-        },
-        "duration": 26402,
-        "hypothesis": {
-            "nodes": [0, 2, 1],
-            "initNode": 0,
-            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
-                "from": 0,
-                "input": "w1",
-                "to": 0,
-                "output": "OK"
-            }, {"from": 0, "input": "w2", "to": 1, "output": "OK"}, {
-                "from": 0,
-                "input": "w3",
-                "to": 0,
-                "output": "FAILED"
-            }, {"from": 0, "input": "w4", "to": 0, "output": "OK"}, {
-                "from": 1,
-                "input": "reset",
-                "to": 0,
-                "output": "OK"
-            }, {"from": 1, "input": "w1", "to": 1, "output": "OK"}, {
-                "from": 1,
-                "input": "w2",
-                "to": 2,
-                "output": "OK"
-            }, {"from": 1, "input": "w3", "to": 1, "output": "FAILED"}, {
-                "from": 1,
-                "input": "w4",
-                "to": 1,
-                "output": "OK"
-            }, {"from": 2, "input": "reset", "to": 0, "output": "OK"}, {
-                "from": 2,
-                "input": "w1",
-                "to": 2,
-                "output": "OK"
-            }, {"from": 2, "input": "w2", "to": 0, "output": "OK"}, {
-                "from": 2,
-                "input": "w3",
-                "to": 1,
-                "output": "OK"
-            }, {"from": 2, "input": "w4", "to": 2, "output": "FAILED"}]
-        },
-        "project": 1,
-        "sigma": ["reset", "w1", "w2", "w3", "w4"],
-        "startTime": "2015-03-05T09:21:02.962+00:00",
-        "stepNo": 2,
-        "testNo": 2,
-        "type": "web"
-    }, {
-        "amountOfResets": 20,
-        "configuration": {
-            "algorithm": "DHC",
-            "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 2, "maxNoOfTests": 1},
-            "maxAmountOfStepsToLearn": 0,
-            "symbols": [{"id": 1, "revision": 2}, {"id": 3, "revision": 2}, {
-                "id": 4,
-                "revision": 2
-            }, {"id": 5, "revision": 2}]
-        },
-        "duration": 9208,
-        "hypothesis": {
-            "nodes": [0],
-            "initNode": 0,
-            "edges": [{"from": 0, "input": "reset", "to": 0, "output": "OK"}, {
-                "from": 0,
-                "input": "w1",
-                "to": 0,
-                "output": "OK"
-            }, {"from": 0, "input": "w2", "to": 0, "output": "OK"}, {
-                "from": 0,
-                "input": "w3",
-                "to": 0,
-                "output": "FAILED"
-            }]
-        },
-        "project": 1,
-        "sigma": ["reset", "w1", "w2", "w3"],
-        "startTime": "2015-03-05T12:29:19.995+00:00",
-        "stepNo": 1,
-        "testNo": 3,
-        "type": "web"
-    }];
-
     angular
         .module('weblearner.resources')
-        .factory('LearnResultResource', [
-            '$http', '$q', 'paths', 'ResourceResponseService',
-            LearnResultResource
-        ]);
+        .factory('LearnResultResource', LearnResultResource);
+
+    LearnResultResource.$inject = ['$http', 'paths'];
 
     /**
-     * The resource the get test results from the server
-     *
      * @param $http
-     * @param $q
      * @param paths
-     * @param ResourceResponseService
-     * @return {{getGetAllFinal: getGetAllFinal, getFinal: getFinal, getComplete: getComplete, delete: deleteTest}}
+     * @returns {{getAllFinal: getAllFinal, getFinal: getFinal, getComplete: getComplete, delete: deleteTests}}
      * @constructor
      */
-    function LearnResultResource($http, $q, paths, ResourceResponseService) {
+    function LearnResultResource($http, paths) {
 
         // the service
         var service = {
@@ -8228,8 +7935,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
         return service;
 
-        //////////
-
         /**
          * Get all final results from all tests that were run for a project. the results only include the final
          * hypothesis
@@ -8239,10 +7944,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         function getAllFinal(projectId) {
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
-                .then(function(response){
-                    return dummyResults
+                .then(function (response) {
+                    return response.data;
                 })
-                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -8253,12 +7957,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @return {*}
          */
         function getFinal(projectId, testNo) {
-            //return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo)
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
-                .then(function(response){
-                    return dummyResults[2];
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo)
+                .then(function (response) {
+                    return response.data;
                 })
-                .catch(ResourceResponseService.fail);
         }
 
         /**
@@ -8270,35 +7972,25 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         function getComplete(projectId, testNo) {
 
-            //return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
-                .then(function(){
-                    return [dummyResults[2],dummyResults[1],dummyResults[0]];
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
+                .then(function (response) {
+                    return response.data;
                 })
-                .catch(ResourceResponseService.fail);
         }
 
         /**
-         * Delete a complete test run, that also includes all hypotheses that were created
          *
          * @param projectId
-         * @param testNo
-         * @return {*}
+         * @param testNos
+         * @returns {HttpPromise}
          */
-        function deleteTests(projectId, testNo) {
-        	
-        	if (angular.isArray(testNo)) {
-        		testNo = testNo.join(',');
-        	}
-        	
-            return $http.delete(paths.api.URL + '/projects/' + projectId + '/results/' + testNo, {})
-                .then(success)
-                .catch(ResourceResponseService.fail);
+        function deleteTests(projectId, testNos) {
 
-            function success(response) {
-                var message = 'The results were deleted';
-                return ResourceResponseService.successWithToast(response, message);
+            if (angular.isArray(testNos)) {
+                testNos = testNos.join(',');
             }
+
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/results/' + testNos, {})
         }
     }
 }());;(function () {
@@ -8404,18 +8096,17 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.resources')
         .factory('ProjectResource', ProjectResource);
 
-    ProjectResource.$inject = ['$http', 'paths', 'ResourceResponseService'];
+    ProjectResource.$inject = ['$http', 'paths'];
 
     /**
      * The resource that handles http calls to the API to do CRUD operations on projects
      *
      * @param $http - The $http angular service
      * @param paths - The constant with application paths
-     * @param ResourceResponseService
      * @return {Resource}
      * @constructor
      */
-    function ProjectResource($http, paths, ResourceResponseService) {
+    function ProjectResource($http, paths) {
 
         /**
          * The resource object
@@ -8436,7 +8127,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 .then(function (response) {
                     return _this.buildSome(response.data);
                 })
-                .catch(ResourceResponseService.fail);
         };
 
         /**
@@ -8451,7 +8141,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 .then(function (response) {
                     return _this.build(response.data);
                 })
-                .catch(ResourceResponseService.fail);
         };
 
         /**
@@ -8466,7 +8155,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 .then(function (response) {
                     return _this.build(response.data);
                 })
-                .catch(ResourceResponseService.fail);
         };
 
         /**
@@ -8481,7 +8169,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 .then(function (response) {
                     return _this.build(response.data);
                 })
-                .catch(ResourceResponseService.fail);
         };
 
         /**
@@ -8496,7 +8183,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 .then(function (response) {
                     return _this.build(response.data);
                 })
-                .catch(ResourceResponseService.fail);
         };
 
         /**
@@ -8529,14 +8215,36 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.resources')
         .factory('SymbolGroupResource', Resource);
 
-    Resource.$inject = ['$http', 'paths'];
+    Resource.$inject = ['$http', 'paths', 'ResourceResponseService'];
 
-    function Resource($http, paths) {
+    /**
+     * The resource that handles http requests to the API to do CRUD operations on symbol groups
+     *
+     * @param $http
+     * @param paths
+     * @returns {SymbolGroupResource}
+     * @constructor
+     */
+    function Resource($http, paths, ResourceResponseService) {
 
+        /**
+         * The recourse object for a symbol group
+         *
+         * @constructor
+         */
         function SymbolGroupResource() {
-
         }
 
+        /**
+         * Makes a GET request to /rest/projects/{projectId}/groups/{groupId} in order to fetch a specific symbol group.
+         * As options, an object with a property 'embedSymbols' with a boolean property can be passed. If 'embedSymbols'
+         * is true, then all symbols will be fetched, too. Otherwise an empty symbols array.
+         *
+         * @param {number} projectId - The id of the project the symbol group belongs to
+         * @param {number} groupId - The id of the group that should be fetched
+         * @param {Object} [options] - An object that can have a boolean property 'embedSymbols'
+         * @returns {*} - An angular promise
+         */
         SymbolGroupResource.prototype.get = function (projectId, groupId, options) {
             var _this = this;
             var query = '';
@@ -8551,6 +8259,15 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 })
         };
 
+        /**
+         * Makes a GET request to /rest/projects/{projectId}/groups in order to fetch all symbol groups of a project.
+         * As options, an object with a property 'embedSymbols' with a boolean property can be passed. If 'embedSymbols'
+         * is true, then all symbols of all symbol groups will be fetched, too. Otherwise an empty symbols array.
+         *
+         * @param {number} projectId - The id of the project whose projects should be fetched
+         * @param {Object} options - An object that can have a boolean property 'embedSymbols'
+         * @returns {*} - An angular promise
+         */
         SymbolGroupResource.prototype.getAll = function (projectId, options) {
             var _this = this;
             var query = '';
@@ -8565,6 +8282,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 })
         };
 
+        /**
+         * Makes a GET request to /rest/projects/{projectId}/groups/{groupId}/symbols in order to fetch all symbols that
+         * belong to a given symbol group.
+         *
+         * @param {number} projectId - The id of the project of the group
+         * @param {number} groupId - The id of the group
+         * @returns {*} - An angular promise
+         */
         SymbolGroupResource.prototype.getSymbols = function (projectId, groupId) {
             var _this = this;
 
@@ -8574,6 +8299,13 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 })
         };
 
+        /**
+         * Makes a POST request to /rest/projects/{projectId}/groups in order to create a new symbol group.
+         *
+         * @param {number} projectId - The id of the project of the symbol group
+         * @param {number} group - The object of the symbol group that should be created
+         * @returns {*} - An angular promise
+         */
         SymbolGroupResource.prototype.create = function (projectId, group) {
             var _this = this;
 
@@ -8583,6 +8315,13 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 })
         };
 
+        /**
+         * Makes a PUT request to /rest/projects/{projectId}/groups in order to update an existing symbol group.
+         *
+         * @param {number} projectId - The id of the project of the symbol group
+         * @param {number} group - The symbol group that should be updated
+         * @returns {*} - An angular promise
+         */
         SymbolGroupResource.prototype.update = function (projectId, group) {
             var _this = this;
 
@@ -8592,19 +8331,42 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 })
         };
 
+        /**
+         * Makes a DELETE request to /rest/projects/{projectId}/groups/{groupId} in order to delete an existing symbol
+         * group. When deleted successfully, the symbols that belonged to the group are moved to the default group with
+         * the id 0.
+         *
+         * @param {number} projectId - The id of the project of the symbol group
+         * @param {number} group - The symbol group that should be deleted
+         * @returns {*} - An angular promise
+         */
         SymbolGroupResource.prototype.delete = function (projectId, group) {
             var _this = this;
 
             return $http.delete(paths.api.URL + '/projects/' + projectId + '/groups/' + group.id)
                 .then(function (response) {
-                    return response.data;
+                    return _this.build(response.data);
                 })
         };
 
+        /**
+         * Overwrite this method in order to create an instance of a symbol group. This method will be called on every
+         * successful http request where a single symbol group is involved.
+         *
+         * @param {Object} data - The data the symbol group instance should be build from
+         * @returns {*}
+         */
         SymbolGroupResource.prototype.build = function (data) {
             return data;
         };
 
+        /**
+         * Overwrite this method in order to create a list of instances of symbol groups. This method will be called on
+         * every successful http request where multiple symbol groups are involved.
+         *
+         * @param {Object[]} data - The data the list of symbol group instances should be build from
+         * @returns {*}
+         */
         SymbolGroupResource.prototype.buildSome = function (data) {
             return data;
         };
@@ -8618,18 +8380,17 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.resources')
         .factory('SymbolResource', Resource);
 
-    Resource.$inject = ['$http', 'paths', 'ResourceResponseService'];
+    Resource.$inject = ['$http', 'paths'];
 
     /**
      * The resource that handles http requests to the API to do CRUD operations on symbols
      *
      * @param $http - The angular $http service
      * @param paths - The constant with application paths
-     * @param ResourceResponseService
      * @returns {SymbolResource}
      * @constructor
      */
-    function Resource($http, paths, ResourceResponseService) {
+    function Resource($http, paths) {
 
         /**
          * The resource object for a symbol
@@ -8649,15 +8410,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         SymbolResource.prototype.get = function (projectId, symbolId) {
             var _this = this;
 
-            // make the request
             return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build a symbol instance from the response
-            function success(response) {
-                return _this.build(response.data);
-            }
+                .then(function (response) {
+                    return _this.build(response.data);
+                });
         };
 
         /**
@@ -8674,20 +8430,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             var _this = this;
             var query;
 
-            // check if options are defined and build a query
             if (options && options.deleted && options.deleted === true) {
                 query = '?visibility=hidden';
             }
 
-            // make the request with the query
             return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols' + (query ? query : ''))
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an array of symbol instances from the response
-            function success(response) {
-                return _this.buildSome(response.data);
-            }
+                .then(function (response) {
+                    return _this.buildSome(response.data);
+                });
         };
 
         /**
@@ -8701,15 +8451,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         SymbolResource.prototype.getRevisions = function (projectId, symbolId) {
             var _this = this;
 
-            // make the request
             return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an instance of a symbol from the http response
-            function success(response) {
-                return _this.buildSome(response.data);
-            }
+                .then(function (response) {
+                    return _this.buildSome(response.data);
+                })
         };
 
         /**
@@ -8721,15 +8466,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         SymbolResource.prototype.create = function (projectId, symbol) {
             var _this = this;
 
-            // make the request
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols', symbol)
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an instance of a symbol from the http response
-            function success(response) {
-                return _this.build(response.data);
-            }
+                .then(function (response) {
+                    return _this.build(response.data);
+                })
         };
 
         /**
@@ -8742,15 +8482,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         SymbolResource.prototype.createSome = function (projectId, symbols) {
             var _this = this;
 
-            // make the request
             return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an array of symbol instances from the response
-            function success(response) {
-                return _this.buildSome(response.data);
-            }
+                .then(function (response) {
+                    return _this.buildSome(response.data);
+                });
         };
 
         /**
@@ -8763,15 +8498,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         SymbolResource.prototype.update = function (projectId, symbol) {
             var _this = this;
 
-            // make the request
             return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id, symbol)
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an instance of the updated symbol
-            function success(response) {
-                return _this.build(response.data);
-            }
+                .then(function (response) {
+                    return _this.build(response.data);
+                });
         };
 
         SymbolResource.prototype.updateSome = function (projectId, symbols) {
@@ -8789,15 +8519,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         SymbolResource.prototype.delete = function (projectId, symbolId) {
             var _this = this;
 
-            // make the request
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide', {})
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an instance of the deleted symbol
-            function success(resonse) {
-                return _this.build(resonse.data);
-            }
+                .then(function (resonse) {
+                    return _this.build(resonse.data);
+                });
         };
 
         /**
@@ -8811,18 +8536,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         SymbolResource.prototype.deleteSome = function (projectId, symbolIds) {
             var _this = this;
 
-            // create a string from the ids array for the request path
             symbolIds = symbolIds.join(',');
 
-            // make the request
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolIds + '/hide', {})
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an array of instances from the deleted symbols
-            function success(response) {
-                return _this.buildSome(response.data);
-            }
+                .then(function (response) {
+                    return _this.buildSome(response.data);
+                });
         };
 
         /**
@@ -8836,15 +8555,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         SymbolResource.prototype.recover = function (projectId, symbol) {
             var _this = this;
 
-            // make the request
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id + '/show', {})
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build and instance of the visible symbol
-            function success(response) {
-                return _this.build(response.data);
-            }
+                .then(function (response) {
+                    return _this.build(response.data);
+                });
         };
 
         /**
@@ -8949,7 +8663,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 series: [
                     {
                         y: "val_0",
-                        color: "#2ca02c",
+                        color: "#4B6396",
                         type: "column",
                         axis: "y",
                         id: "series_0"
@@ -8990,6 +8704,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 });
             }
 
+            // create dummy data so that bar gets displayed correctly
+            if (dataSets.length === 1) {
+                dataSets.push({
+                    x: 1,
+                    val_1: 0
+                })
+            }
+
             // create x axis labels for each test result
             options.axes.x.labelFunction = function (l) {
                 if (l % 1 == 0 && l >= 0 && l < results.length) {
@@ -9026,6 +8748,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 drawDots: true,
                 columnsHGap: 3
             };
+            var colors = ['#4B6396', '#3BA3B8', '#3BB877', '#8ACF36', '#E8E835', '#F7821B', '#F74F1B', '#C01BF7'];
             var i, j;
 
             // extract values from learner results by a property
@@ -9080,7 +8803,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             for (i = 0; i < dataSets.length; i++) {
                 options.series.push({
                     y: 'val_' + i,
-                    color: 'rgba(0,255,0,' + (0.2 * (i + 1)) + ')',
+                    color: colors[i % colors.length],
                     type: 'area',
                     axis: 'y',
                     id: 'series_' + i,
@@ -9467,6 +9190,48 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.services')
+        .service('ToastService', ToastService);
+
+    ToastService.$inject = ['ngToast'];
+
+    function ToastService(ngToast) {
+
+        return {
+            success: success,
+            danger: danger
+        };
+
+        function success(message) {
+            ngToast.create({
+                class: 'success',
+                content: message,
+                dismissButton: true
+            });
+        }
+
+        function danger(message) {
+            ngToast.create({
+                class: 'danger',
+                content: message,
+                dismissButton: true
+            });
+        }
+
+        function info(message) {
+            ngToast.create({
+                class: 'info',
+                content: message,
+                dismissButton: true
+            });
+        }
+    }
+}());
+;
+(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.services')
         .factory('WebElementPickerService', [
             '$rootScope',
             WebElementPickerService
@@ -9545,6 +9310,22 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.filters')
+        .filter('formatEnumKey', formatEnumKey);
+
+    function formatEnumKey() {
+        return function (string) {
+            return string.toLowerCase().split('_').join(' ').replace(/\w\S*/g, function (txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            })
+        }
+    }
+}());
+;
+(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.filters')
         .filter('selected', [
             'SelectionService',
             selected
@@ -9570,55 +9351,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.filters')
         .filter('capitalize', capitalize);
 
+    /**
+     * Capitalizes a given string
+     *
+     * @returns {Function}
+     */
     function capitalize() {
         return function (string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
     }
-
-    angular
-        .module('weblearner.filters')
-        .filter('formatEnumKey', formatEnumKey);
-
-    function formatEnumKey() {
-        return function (string) {
-            return string.toLowerCase().split('_').join(' ').replace(/\w\S*/g, function (txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            })
-        }
-    }
-}());;(function() {
-	'use strict';
-
-	angular.module('weblearner.filters')
-		.filter('typeOfRest', typeOfRest)
-		.filter('typeOfWeb', typeOfWeb);
-
-	/**
-	 * The filter that takes an array of objects and returns only those with a
-	 * property 'type' with the value 'rest'
-	 * 
-	 * @return {Function}
-	 */
-	function typeOfRest() {
-		return function(list) {
-			return _.filter(list, {
-				type : 'rest'
-			})
-		}
-	}
-
-	/**
-	 * The filter that takes an array of objects and returns only those with a
-	 * property 'type' with the value 'web'
-	 * 
-	 * @return {Function}
-	 */
-	function typeOfWeb() {
-		return function(list) {
-			return _.filter(list, {
-				type : 'web'
-			})
-		}
-	}
 }());

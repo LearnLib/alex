@@ -5,7 +5,7 @@
         .module('weblearner.models')
         .factory('Symbol', SymbolModel);
 
-    SymbolModel.$inject = ['SymbolResource'];
+    SymbolModel.$inject = ['SymbolResource', 'Action'];
 
     /**
      * The factory for the symbol model.
@@ -14,7 +14,7 @@
      * @returns {Symbol} - The symbol model
      * @constructor
      */
-    function SymbolModel(SymbolResource) {
+    function SymbolModel(SymbolResource, Action) {
 
         /**
          * The symbol model.
@@ -51,7 +51,7 @@
          */
         Symbol.build = function (data) {
             var symbol = new Symbol(data.name, data.abbreviation);
-            symbol.actions = data.actions;
+            symbol.actions = Action.buildSome(data.actions);
             symbol.id = data.id;
             symbol.revision = data.revision;
             symbol.project = data.project;

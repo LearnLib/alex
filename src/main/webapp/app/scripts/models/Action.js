@@ -30,7 +30,7 @@
             this.regexp = isRegexp || false
         };
 
-        Action.Web.SearchForText.prototype.toString = function () {
+        Action.Web.SearchForNode.prototype.toString = function () {
             return 'Search for node "' + this.value + '"' + (this.regexp ? 'as regexp' : '');
         };
 
@@ -122,7 +122,7 @@
             this.regexp = isRegexp || false;
         };
 
-        Action.Rest.CheckHttpBodyText.toString = function () {
+        Action.Rest.CheckHttpBodyText.prototype.toString = function () {
             return 'Search in the HTTP response body for ' + (this.regexp ? 'regexp' : 'string') + ' "' + this.value + '"';
         };
 
@@ -218,7 +218,7 @@
         Action.Other.SetVariableByJSONAttribute = function (name, jsonAttribute) {
             this.type = actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE;
             this.name = name || null;
-            this.value = jsonAttribute;
+            this.value = jsonAttribute || null;
         };
 
         Action.Other.SetVariableByJSONAttribute.prototype.toString = function () {
@@ -228,7 +228,7 @@
         Action.Other.SetVariableByNode = function (name, xPath) {
             this.type = actionTypes.other.SET_VARIABLE_BY_NODE;
             this.name = name || null;
-            this.value = xPath;
+            this.value = xPath || null;
         };
 
         Action.Other.SetVariableByNode.prototype.toString = function () {
@@ -316,6 +316,14 @@
                     break;
             }
 
+        };
+
+        Action.buildSome = function (data) {
+            var actions = [];
+            for (var i = 0; i < data.length; i++) {
+                actions.push(Action.build(data[i]));
+            }
+            return actions;
         };
 
         Action.createByType = function (type) {

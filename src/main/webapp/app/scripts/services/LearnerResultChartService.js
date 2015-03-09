@@ -47,7 +47,7 @@
                 series: [
                     {
                         y: "val_0",
-                        color: "#2ca02c",
+                        color: "#4B6396",
                         type: "column",
                         axis: "y",
                         id: "series_0"
@@ -88,6 +88,14 @@
                 });
             }
 
+            // create dummy data so that bar gets displayed correctly
+            if (dataSets.length === 1) {
+                dataSets.push({
+                    x: 1,
+                    val_1: 0
+                })
+            }
+
             // create x axis labels for each test result
             options.axes.x.labelFunction = function (l) {
                 if (l % 1 == 0 && l >= 0 && l < results.length) {
@@ -124,6 +132,7 @@
                 drawDots: true,
                 columnsHGap: 3
             };
+            var colors = ['#4B6396', '#3BA3B8', '#3BB877', '#8ACF36', '#E8E835', '#F7821B', '#F74F1B', '#C01BF7'];
             var i, j;
 
             // extract values from learner results by a property
@@ -178,7 +187,7 @@
             for (i = 0; i < dataSets.length; i++) {
                 options.series.push({
                     y: 'val_' + i,
-                    color: 'rgba(0,255,0,' + (0.2 * (i + 1)) + ')',
+                    color: colors[i % colors.length],
                     type: 'area',
                     axis: 'y',
                     id: 'series_' + i,

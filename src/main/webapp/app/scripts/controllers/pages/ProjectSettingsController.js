@@ -3,10 +3,11 @@
 
     angular
         .module('weblearner.controller')
-        .controller('ProjectSettingsController', [
-            '$scope', '$state', 'Project', 'SessionService', 'PromptService',
-            ProjectSettingsController
-        ]);
+        .controller('ProjectSettingsController', ProjectSettingsController);
+
+    ProjectSettingsController.$inject = [
+        '$scope', '$state', 'Project', 'SessionService', 'PromptService', 'ToastService', 'LearnerResource'
+    ];
 
     /**
      * The controller that handles the deleting and updating of a project. Belongs to the template at
@@ -15,15 +16,16 @@
      * @param $scope
      * @param $state
      * @param Project
-     * @param SessionService
+     * @param Session
      * @param PromptService
+     * @param Toast
      */
-    function ProjectSettingsController($scope, $state, Project, SessionService, PromptService) {
+    function ProjectSettingsController($scope, $state, Project, Session, PromptService, Toast, LearnerResource) {
 
         var projectCopy;
 
         /** The project that is stored in the session **/
-        $scope.project = SessionService.project.get();
+        $scope.project = Session.project.get();
         projectCopy = angular.copy($scope.project);
 
         //////////
@@ -34,7 +36,7 @@
         $scope.updateProject = function () {
 
             // delete this property because it is read only and the will throw an error otherwise
-        	delete $scope.project.symbolAmount;
+            delete $scope.project.symbolAmount;
 
             // update the project on the server
             Project.Resource.update($scope.project)
@@ -52,23 +54,31 @@
         $scope.deleteProject = function () {
             var message = 'Do you really want to delete this project with all its symbols and test results? This process can not be undone.';
 
-            // prompt the user
-        	PromptService.confirm(message)
-	        	.then(function(){
+            LearnerResource.isActive()
+                .then(function (data) {
+                    if (data.active !== false || (data.project !== $scope.project.id)) {
+                        confirmDeletion();
+                    } else {
+                        Toast.info('Project could not be deleted because there is an active learning process')
+                    }
+                });
 
-	        	    // delete project from server
-	        		Project.Resource.delete($scope.project)
-		                .then(function () {
-		                    SessionService.project.remove();
-		                    $state.go('home');
-		                })
-	        	})
+            function confirmDeletion() {
+                PromptService.confirm(message)
+                    .then(function () {
+                        Project.Resource.delete($scope.project)
+                            .then(function () {
+                                SessionService.project.remove();
+                                $state.go('home');
+                            })
+                    })
+            }
         };
 
         /**
          * Resets the project edit form by copying the project copy back to the project under edit
          */
-        $scope.resetForm = function() {
+        $scope.resetForm = function () {
             $scope.project = angular.copy(projectCopy);
         }
     }

@@ -1,19 +1,15 @@
-<div class="view-heading">
-    <div class="container">
-        <h2 class="view-heading-title">Actions</h2>
-
-        <p class="view-heading-sub-title">
-            Create and manage the actions for symbol:
-            <strong ng-bind="symbol.name"></strong> <em>[<span ng-bind="symbol.abbreviation"></span>]</em>
-        </p>
-    </div>
+<div view-heading
+     title="Actions"
+     sub-title="Create and manage the actions for symbol: {{symbol.name}}">
 </div>
 
 <div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
     <div class="container">
-        <div class="pull-left" style="margin-right: 16px">
-            <input type="checkbox" select-all-items-checkbox items="symbol.actions">
+
+        <div class="pull-left" style="margin-right: 16px" selectable="symbol.actions">
+            <input type="checkbox" selectable-item-checkbox>
         </div>
+
         <div class="pull-left">
             <button class="btn btn-xs btn-primary" open-action-create-modal symbol="symbol" on-created="addAction">
                 Create
@@ -29,47 +25,50 @@
                 Delete
             </button>
         </div>
+
         <div class="pull-right">
             <button class="btn btn-default btn-xs" ng-click="revertChanges()">Reset</button>
             <button class="btn btn-success btn-xs" ng-click="saveChanges()">Save</button>
         </div>
+
     </div>
 </div>
 
 <div class="view-body">
-
     <div class="container">
 
         <div ng-if="symbol.actions" as-sortable ng-model="symbol.actions">
-            <div selectable-list ng-model="symbol.actions">
-                <div selectable-list-item ng-repeat="action in symbol.actions track by $index" as-sortable-item>
+            <div selectable items="symbol.actions">
+                <div selectable-list>
+                    <div selectable-list-item ng-repeat="action in symbol.actions track by $index" as-sortable-item>
 
-                    <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
-                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
-                            <i class="fa fa-bars"></i>
-                        </button>
-                        <ul class="dropdown-menu pull-left" role="menu">
-                            <li>
-                                <a href open-action-edit-modal symbol="symbol" action="action"
-                                   on-updated="updateAction">
-                                    <i class="fa fa-edit fa-fw"></i> Edit
-                                </a>
-                            </li>
-                            <li>
-                                <a href ng-click="deleteAction(action)">
-                                    <i class="fa fa-trash fa-fw"></i> Delete
-                                </a>
-                            </li>
-                        </ul>
+                        <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+                            <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <ul class="dropdown-menu pull-left" role="menu">
+                                <li>
+                                    <a href open-action-edit-modal symbol="symbol" action="action"
+                                       on-updated="updateAction">
+                                        <i class="fa fa-edit fa-fw"></i> Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href ng-click="deleteAction(action)">
+                                        <i class="fa fa-trash fa-fw"></i> Delete
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <span class="text-muted pull-right" as-sortable-item-handle
+                              style="margin-right: 15px; padding: 2px;">
+                            <i class="fa fa-sort fa-fw"></i>
+                        </span>
+
+                        <span ng-bind="action.toString()"></span>
+
                     </div>
-
-                    <span class="text-muted pull-right" as-sortable-item-handle
-                          style="margin-right: 15px; padding: 2px;">
-                        <i class="fa fa-sort fa-fw"></i>
-                    </span>
-
-                    <span ng-bind="action.toString()"></span>
-
                 </div>
             </div>
         </div>

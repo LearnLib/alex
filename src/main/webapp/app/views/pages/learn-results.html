@@ -3,7 +3,7 @@
      sub-title="Have a look at all the tests you ran for this project">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
+<div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
     <div class="container">
 
         <div class="pull-left" style="margin-right: 16px" selectable items="results">
@@ -60,10 +60,9 @@
             </div>
         </div>
 
-    </div>
+        <div class="alert alert-info" ng-if="results.length === 0">
+            You have not run any tests yet or the active one is not finished.
+        </div>
 
-    <div class="alert alert-info" ng-if="results.length === 0">
-        You have not run any tests yet or the active one is not finished.
     </div>
-
 </div>

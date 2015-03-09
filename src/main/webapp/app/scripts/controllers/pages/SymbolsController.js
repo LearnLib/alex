@@ -100,8 +100,11 @@
             $scope.groups.push(group);
         };
 
-        $scope.updateSymbol = function (symbol) {
-            // TODO
+        $scope.updateSymbol = function (symbol, oldSymbol) {
+            var group = _.find($scope.groups, {id: symbol.group});
+            if (group) {
+                group.symbols.push(symbol);
+            }
         };
 
         $scope.updateGroup = function (group) {

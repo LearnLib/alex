@@ -5,18 +5,17 @@
         .module('weblearner.resources')
         .factory('ProjectResource', ProjectResource);
 
-    ProjectResource.$inject = ['$http', 'paths', 'ResourceResponseService'];
+    ProjectResource.$inject = ['$http', 'paths'];
 
     /**
      * The resource that handles http calls to the API to do CRUD operations on projects
      *
      * @param $http - The $http angular service
      * @param paths - The constant with application paths
-     * @param ResourceResponseService
      * @return {Resource}
      * @constructor
      */
-    function ProjectResource($http, paths, ResourceResponseService) {
+    function ProjectResource($http, paths) {
 
         /**
          * The resource object
@@ -37,7 +36,6 @@
                 .then(function (response) {
                     return _this.buildSome(response.data);
                 })
-                .catch(ResourceResponseService.fail);
         };
 
         /**
@@ -52,7 +50,6 @@
                 .then(function (response) {
                     return _this.build(response.data);
                 })
-                .catch(ResourceResponseService.fail);
         };
 
         /**
@@ -67,7 +64,6 @@
                 .then(function (response) {
                     return _this.build(response.data);
                 })
-                .catch(ResourceResponseService.fail);
         };
 
         /**
@@ -82,7 +78,6 @@
                 .then(function (response) {
                     return _this.build(response.data);
                 })
-                .catch(ResourceResponseService.fail);
         };
 
         /**
@@ -97,7 +92,6 @@
                 .then(function (response) {
                     return _this.build(response.data);
                 })
-                .catch(ResourceResponseService.fail);
         };
 
         /**

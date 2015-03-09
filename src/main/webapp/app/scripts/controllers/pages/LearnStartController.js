@@ -2,10 +2,9 @@
 
     angular
         .module('weblearner.controller')
-        .controller('LearnStartController', [
-            '$scope', '$stateParams', '$interval', 'SessionService', 'LearnerResource',
-            LearnStartController
-        ]);
+        .controller('LearnStartController', LearnStartController);
+
+    LearnStartController.$inject = ['$scope', '$interval', 'SessionService', 'LearnerResource'];
 
     /**
      * LearnStartController
@@ -14,13 +13,13 @@
      *
      * @param $scope
      * @param $interval
-     * @param SessionService
+     * @param Session
      * @param LearnerResource
      * @constructor
      */
-    function LearnStartController($scope, $interval, SessionService, LearnerResource) {
+    function LearnStartController($scope, $interval, Session, LearnerResource) {
 
-        var _project = SessionService.project.get();
+        var _project = Session.project.get();
         var _interval = null;
         var _intervalTime = 10000;
 
@@ -39,17 +38,17 @@
             input: '',
             output: ''
         };
-        
+
         $scope.layoutSettings;
 
         //////////
-        
+
         // start polling the server
         _poll();
-        
+
         // stop polling when you leave the page
-        $scope.$on("$destroy", function(){
-        	$interval.cancel(_interval);
+        $scope.$on("$destroy", function () {
+            $interval.cancel(_interval);
         });
 
         //////////
@@ -98,19 +97,16 @@
             var copy = angular.copy($scope.test.configuration);
             delete copy.algorithm;
             delete copy.symbols;
+            delete copy.resetSymbol;
 
             LearnerResource.resume(_project.id, $scope.test.testNo, copy)
-                .then(function () {
-                    _poll();
-                })
+                .then(_poll)
         };
 
         $scope.abort = function () {
-
             if ($scope.active) {
                 LearnerResource.stop()
-                    .then(function(data){
-
+                    .then(function (data) {
                         console.log(data)
                     })
             }

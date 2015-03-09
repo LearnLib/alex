@@ -20,12 +20,10 @@
                 </p>
             </div>
 
-            <div class="container" ng-if="projects.length == 0">
-                <div class="alert alert-info">
-                    You haven't created a project yet. You can create a new one <a href="#/project/create">here</a> and
-                    start
-                    testing it.
-                </div>
+            <div class="alert alert-info" ng-if="projects.length == 0">
+                You haven't created a project yet. You can create a new one <a href="#/project/create">here</a> and
+                start
+                testing it.
             </div>
 
         </div>

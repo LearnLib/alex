@@ -31,6 +31,6 @@
 	        scope.openProject(projects[0]);
             expect(sessionStorage.getItem('project')).not.toBeNull();
             sessionStorage.clear();
-	    })
+        });
 	});
 }());

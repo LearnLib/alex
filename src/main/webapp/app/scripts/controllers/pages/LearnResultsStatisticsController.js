@@ -128,11 +128,8 @@
 
             if (selectedResults.length > 0) {
 
-                // TODO: dummy values, fill with data from the server
-                var selectedResults = [];
-                selectedResults.push([$scope.results[0], $scope.results[1]]);
-                selectedResults.push([$scope.results[2], $scope.results[0], $scope.results[1]]);
-                selectedResults.push([$scope.results[1], $scope.results[2]]);
+                // TODO: get complete results from selected results as soon as there is an interface for that
+                return;
 
                 chartData =
                     LearnerResultChartService

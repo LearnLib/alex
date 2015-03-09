@@ -7,7 +7,8 @@
         .directive('selectableList', selectableList)
         .directive('selectableListItem', selectableListItem)
         .directive('selectableItemCheckbox', selectableItemCheckbox);
-    
+
+
     function selectable() {
 
         var directive = {

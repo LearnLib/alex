@@ -6,20 +6,28 @@
         .controller('SymbolMoveModalController', SymbolMoveModalController);
 
     SymbolMoveModalController.$inject = [
-        '$scope', '$modalInstance', 'modalData', 'Symbol'
+        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SelectionService'
     ];
 
-    function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol) {
+    function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol, SelectionService) {
 
         $scope.symbols = modalData.symbols;
         $scope.groups = modalData.groups;
         $scope.selectedGroup = null;
 
         $scope.moveSymbols = function () {
+            var symbols;
             if ($scope.selectedGroup !== null) {
                 _.forEach($scope.symbols, function (symbol) {
-                    $scope.symbol.group = $scope.selectedGroup.id;
-                    Symbol.Resource.update($scope.selectedGroup.project, symbol);
+                    SelectionService.removeSelection(symbol);
+                    symbol.group = $scope.selectedGroup.id;
+                    Symbol.Resource.update($scope.selectedGroup.project, symbol)
+                        .then(function (updatedSymbol) {
+                            //$modalInstance.$close({
+                            //    new: updatedSymbol,
+                            //    old:
+                            //})
+                        })
                 })
             }
         };

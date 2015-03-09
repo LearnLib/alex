@@ -5,18 +5,17 @@
         .module('weblearner.resources')
         .factory('SymbolResource', Resource);
 
-    Resource.$inject = ['$http', 'paths', 'ResourceResponseService'];
+    Resource.$inject = ['$http', 'paths'];
 
     /**
      * The resource that handles http requests to the API to do CRUD operations on symbols
      *
      * @param $http - The angular $http service
      * @param paths - The constant with application paths
-     * @param ResourceResponseService
      * @returns {SymbolResource}
      * @constructor
      */
-    function Resource($http, paths, ResourceResponseService) {
+    function Resource($http, paths) {
 
         /**
          * The resource object for a symbol
@@ -36,15 +35,10 @@
         SymbolResource.prototype.get = function (projectId, symbolId) {
             var _this = this;
 
-            // make the request
             return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build a symbol instance from the response
-            function success(response) {
-                return _this.build(response.data);
-            }
+                .then(function (response) {
+                    return _this.build(response.data);
+                });
         };
 
         /**
@@ -61,20 +55,14 @@
             var _this = this;
             var query;
 
-            // check if options are defined and build a query
             if (options && options.deleted && options.deleted === true) {
                 query = '?visibility=hidden';
             }
 
-            // make the request with the query
             return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols' + (query ? query : ''))
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an array of symbol instances from the response
-            function success(response) {
-                return _this.buildSome(response.data);
-            }
+                .then(function (response) {
+                    return _this.buildSome(response.data);
+                });
         };
 
         /**
@@ -88,15 +76,10 @@
         SymbolResource.prototype.getRevisions = function (projectId, symbolId) {
             var _this = this;
 
-            // make the request
             return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an instance of a symbol from the http response
-            function success(response) {
-                return _this.buildSome(response.data);
-            }
+                .then(function (response) {
+                    return _this.buildSome(response.data);
+                })
         };
 
         /**
@@ -108,15 +91,10 @@
         SymbolResource.prototype.create = function (projectId, symbol) {
             var _this = this;
 
-            // make the request
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols', symbol)
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an instance of a symbol from the http response
-            function success(response) {
-                return _this.build(response.data);
-            }
+                .then(function (response) {
+                    return _this.build(response.data);
+                })
         };
 
         /**
@@ -129,15 +107,10 @@
         SymbolResource.prototype.createSome = function (projectId, symbols) {
             var _this = this;
 
-            // make the request
             return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an array of symbol instances from the response
-            function success(response) {
-                return _this.buildSome(response.data);
-            }
+                .then(function (response) {
+                    return _this.buildSome(response.data);
+                });
         };
 
         /**
@@ -150,15 +123,10 @@
         SymbolResource.prototype.update = function (projectId, symbol) {
             var _this = this;
 
-            // make the request
             return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id, symbol)
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an instance of the updated symbol
-            function success(response) {
-                return _this.build(response.data);
-            }
+                .then(function (response) {
+                    return _this.build(response.data);
+                });
         };
 
         SymbolResource.prototype.updateSome = function (projectId, symbols) {
@@ -176,15 +144,10 @@
         SymbolResource.prototype.delete = function (projectId, symbolId) {
             var _this = this;
 
-            // make the request
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide', {})
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an instance of the deleted symbol
-            function success(resonse) {
-                return _this.build(resonse.data);
-            }
+                .then(function (resonse) {
+                    return _this.build(resonse.data);
+                });
         };
 
         /**
@@ -198,18 +161,12 @@
         SymbolResource.prototype.deleteSome = function (projectId, symbolIds) {
             var _this = this;
 
-            // create a string from the ids array for the request path
             symbolIds = symbolIds.join(',');
 
-            // make the request
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolIds + '/hide', {})
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build an array of instances from the deleted symbols
-            function success(response) {
-                return _this.buildSome(response.data);
-            }
+                .then(function (response) {
+                    return _this.buildSome(response.data);
+                });
         };
 
         /**
@@ -223,15 +180,10 @@
         SymbolResource.prototype.recover = function (projectId, symbol) {
             var _this = this;
 
-            // make the request
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id + '/show', {})
-                .then(success)
-                .catch(ResourceResponseService.fail);
-
-            // build and instance of the visible symbol
-            function success(response) {
-                return _this.build(response.data);
-            }
+                .then(function (response) {
+                    return _this.build(response.data);
+                });
         };
 
         /**
