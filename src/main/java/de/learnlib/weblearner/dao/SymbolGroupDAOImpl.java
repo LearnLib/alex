@@ -12,6 +12,9 @@ import javax.validation.ValidationException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Implementation of a SymbolGroupDAO using Hibernate.
+ */
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     @Override
@@ -50,7 +53,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         Project project = (Project) session.load(Project.class, projectId);
 
-        if(project == null) {
+        if (project == null) {
             HibernateUtil.rollbackTransaction();
             throw new NoSuchElementException("The project with the id " + projectId + " was not found.");
         }
@@ -85,7 +88,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         if (result == null) {
             HibernateUtil.rollbackTransaction();
             throw new NoSuchElementException("Could not find a group with the id " + groupId
-                                                     + " in the project "+ projectId + ".");
+                                             + " in the project " + projectId + ".");
         }
 
         Hibernate.initialize(result.getSymbols());
@@ -115,7 +118,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         }
 
         // apply changes
-        session.merge(group);
+        groupInDB.setName(group.getName());
+        session.update(groupInDB);
+
         HibernateUtil.commitTransaction();
     }
 

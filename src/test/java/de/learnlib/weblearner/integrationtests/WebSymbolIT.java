@@ -105,7 +105,6 @@ public class WebSymbolIT {
                     + "{\"type\": \"web_click\"},"
                     + "{\"type\": \"wait\", \"duration\": 1000}"
                 + "]}";
-        System.out.println("$$$$$ " + json);
         path = "/projects/" + project.getId() + "/symbols/" + symbol.getId();
         response = client.target(BASE_URL + path).request().put(Entity.entity(json, MediaType.APPLICATION_JSON));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());

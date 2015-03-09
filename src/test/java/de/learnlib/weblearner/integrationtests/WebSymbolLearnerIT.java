@@ -133,7 +133,6 @@ public class WebSymbolLearnerIT {
         response = client.target(BASE_LEARNER_URL + path).request().get();
         LearnerResult result = new LearnerResult();
         String resultAsJSON = response.readEntity(String.class);
-        System.out.println("&&&&&&& " + resultAsJSON);
         result.setJSON(resultAsJSON);
 
         assertTrue(testHelper.hypothesisIsEqualToTheExpectedOne(result.getHypothesis(), testAlphabet, "web"));

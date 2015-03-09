@@ -28,7 +28,6 @@ public class SubmitActionTest {
     public void setUp() {
         s = new SubmitAction();
         s.setNode("#node");
-        s.setUrl("http://example.com");
     }
 
     @Test
@@ -38,7 +37,6 @@ public class SubmitActionTest {
         SubmitAction s2 = mapper.readValue(json, SubmitAction.class);
 
         assertEquals(s.getNode(), s2.getNode());
-        assertEquals(s.getUrl(), s2.getUrl());
     }
 
     @Test
@@ -51,7 +49,6 @@ public class SubmitActionTest {
         assertTrue(obj instanceof SubmitAction);
         SubmitAction objAsAction = (SubmitAction) obj;
         assertEquals("#node", objAsAction.getNode());
-        assertEquals("http://example.com", objAsAction.getUrl());
     }
 
     @Test

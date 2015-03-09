@@ -11,34 +11,28 @@
             "actions" : [
                 {
                     "type": "web_checkForNode",
-                    "value": "#node",
-                    "url": "http://example.com"
+                    "value": "#node"
                 },
                 {
                     "type": "web_checkForText",
-                    "value": "Lorem Ipsum",
-                    "url": "http://example.com"
+                    "value": "Lorem Ipsum"
                 },
                 {
                     "type": "web_clear",
-                    "node": "#node",
-                    "url":  "http://example.com"
+                    "node": "#node"
                 },
                 {
                     "type": "web_click",
-                    "node": "#node",
-                    "url":  "http://example.com"
+                    "node": "#node"
                 },
                 {
                     "type" : "web_fill",
                     "node" : "#input",
-                    "url" : "http://example.com",
                     "generator" : "none"
                 },
                 {
                     "type": "web_submit",
-                    "node": "#node",
-                    "url":  "http://example.com"
+                    "node": "#node"
                 },
                 {
                     "type": "wait",

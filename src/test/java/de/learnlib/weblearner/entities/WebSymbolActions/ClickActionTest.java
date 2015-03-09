@@ -28,7 +28,6 @@ public class ClickActionTest {
     public void setUp() {
         c = new ClickAction();
         c.setNode("#node");
-        c.setUrl("http://example.com");
     }
 
     @Test
@@ -38,7 +37,6 @@ public class ClickActionTest {
         ClickAction c2 = mapper.readValue(json, ClickAction.class);
 
         assertEquals(c.getNode(), c2.getNode());
-        assertEquals(c.getUrl(), c2.getUrl());
     }
 
     @Test
@@ -51,7 +49,6 @@ public class ClickActionTest {
         assertTrue(obj instanceof ClickAction);
         ClickAction objAsAction = (ClickAction) obj;
         assertEquals("#node", objAsAction.getNode());
-        assertEquals("http://example.com", objAsAction.getUrl());
     }
 
     @Test

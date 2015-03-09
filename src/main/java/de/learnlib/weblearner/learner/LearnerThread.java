@@ -74,7 +74,11 @@ public class LearnerThread<C> extends Thread {
         this.result = result;
         this.ceiSUL = new ContextExecutableInputSUL<>(context);
         this.context = context;
-        this.symbolMapper = new SymbolMapper<>(result.getConfiguration().getSymbols().toArray(new Symbol[result.getConfiguration().getSymbols().size()]));
+
+        List<Symbol> symbols = result.getConfiguration().getSymbols();
+        Symbol[] symbolsArray = symbols.toArray(new Symbol[symbols.size()]);
+        this.symbolMapper = new SymbolMapper<>(symbolsArray);
+
         this.sul = Mappers.apply(symbolMapper, ceiSUL);
 
         this.sigma = symbolMapper.getAlphabet();

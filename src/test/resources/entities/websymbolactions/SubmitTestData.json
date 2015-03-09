@@ -1,5 +1,4 @@
 {
     "type": "web_submit",
-    "node": "#node",
-    "url":  "http://example.com"
+    "node": "#node"
 }

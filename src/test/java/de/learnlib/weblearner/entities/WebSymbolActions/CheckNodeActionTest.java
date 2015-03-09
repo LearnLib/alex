@@ -27,8 +27,6 @@ public class CheckNodeActionTest {
     public void setUp() {
         checkNode = new CheckNodeAction();
         checkNode.setValue("#node");
-        checkNode.setUrl("http://example.com");
-        checkNode.setRegexp(false);
 }
 
     @Test
@@ -38,7 +36,6 @@ public class CheckNodeActionTest {
         CheckNodeAction c2 = mapper.readValue(json, CheckNodeAction.class);
 
         assertEquals(checkNode.getValue(), c2.getValue());
-        assertEquals(checkNode.getUrl(), c2.getUrl());
     }
 
     @Test
@@ -51,7 +48,6 @@ public class CheckNodeActionTest {
         assertTrue(obj instanceof CheckNodeAction);
         CheckNodeAction objAsAction = (CheckNodeAction) obj;
         assertEquals("#node", objAsAction.getValue());
-        assertEquals("http://example.com", objAsAction.getUrl());
     }
 
     @Test

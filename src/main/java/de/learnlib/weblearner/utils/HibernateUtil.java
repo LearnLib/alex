@@ -10,9 +10,6 @@ import de.learnlib.weblearner.entities.RESTSymbolActions.CheckHeaderFieldAction;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CheckStatusAction;
 import de.learnlib.weblearner.entities.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
-import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.entities.SymbolAction;
-import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.StoreSymbolActions.DeclareCounterAction;
 import de.learnlib.weblearner.entities.StoreSymbolActions.DeclareVariableAction;
 import de.learnlib.weblearner.entities.StoreSymbolActions.IncrementCounterAction;
@@ -20,6 +17,10 @@ import de.learnlib.weblearner.entities.StoreSymbolActions.SetCounterAction;
 import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableAction;
 import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableByJSONAttributeAction;
 import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableByNodeAction;
+import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolAction;
+import de.learnlib.weblearner.entities.SymbolGroup;
+import de.learnlib.weblearner.entities.WebSymbolActions.CheckNodeAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.ClearAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.ClickAction;
@@ -58,8 +59,8 @@ public final class HibernateUtil {
             configuration.addAnnotatedClass(Project.class);
             configuration.addAnnotatedClass(SymbolGroup.class);
             configuration.addAnnotatedClass(Symbol.class);
-            configuration.addAnnotatedClass(SymbolAction.class);
-            // Variabel & Counter
+
+            // Variable & Counter
             configuration.addAnnotatedClass(DeclareCounterAction.class);
             configuration.addAnnotatedClass(DeclareVariableAction.class);
             configuration.addAnnotatedClass(IncrementCounterAction.class);
@@ -67,9 +68,13 @@ public final class HibernateUtil {
             configuration.addAnnotatedClass(SetVariableAction.class);
             configuration.addAnnotatedClass(SetVariableByJSONAttributeAction.class);
             configuration.addAnnotatedClass(SetVariableByNodeAction.class);
-            // Web Symbols & Actions
+
+            //Actions
+            configuration.addAnnotatedClass(SymbolAction.class);
+            // Web Actions
             configuration.addAnnotatedClass(WebSymbolAction.class);
             configuration.addAnnotatedClass(CheckTextWebAction.class);
+            configuration.addAnnotatedClass(CheckNodeAction.class);
             configuration.addAnnotatedClass(ClearAction.class);
             configuration.addAnnotatedClass(ClickAction.class);
             configuration.addAnnotatedClass(FillAction.class);
@@ -85,6 +90,7 @@ public final class HibernateUtil {
             configuration.addAnnotatedClass(CheckTextRestAction.class);
             configuration.addAnnotatedClass(CheckHeaderFieldAction.class);
             configuration.addAnnotatedClass(CheckStatusAction.class);
+
             // Learner entities
             configuration.addAnnotatedClass(LearnerResult.class);
 

@@ -21,9 +21,7 @@ public class ProjectTest {
             + "sed diam nonumy eirmod tempor invidunt ut labore";
 
     public static Project readProject(String json) throws IOException {
-        System.out.println("()()()()()()()() " + json);
         json = json.replaceAll(",\"symbolAmount\":[ ]?[0-9]+", "");
-        System.out.println("()()()()()()()() " + json);
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, Project.class);
     }

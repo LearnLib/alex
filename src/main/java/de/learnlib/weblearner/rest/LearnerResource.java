@@ -74,7 +74,9 @@ public class LearnerResource {
             List<Symbol> symbols = symbolDAO.getAll(projectId, configuration.getSymbolsAsIdRevisionPairs());
             configuration.setSymbols(symbols);
 
-            Symbol resetSymbol = symbolDAO.get(projectId, configuration.getResetSymbolAsIdRevisionPair().getId(), configuration.getResetSymbolAsIdRevisionPair().getRevision());
+            Symbol resetSymbol = symbolDAO.get(projectId,
+                                               configuration.getResetSymbolAsIdRevisionPair().getId(),
+                                               configuration.getResetSymbolAsIdRevisionPair().getRevision());
             if (resetSymbol == null) {
                 throw new IllegalArgumentException("No reset symbol found!");
             }

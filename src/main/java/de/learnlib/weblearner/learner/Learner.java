@@ -4,7 +4,6 @@ import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.LearnerResumeConfiguration;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.Symbol;
 
 import java.util.concurrent.Executors;
 
@@ -37,6 +36,8 @@ public class Learner {
      *         The project the learning process runs in.
      * @param configuration
      *         The configuration to use for the learning process.
+     * @throws IllegalArgumentException
+     *         If the configuration was invalid.
      * @throws IllegalStateException
      *         If a learning process is already active.
      */

@@ -141,7 +141,7 @@ public class ProjectDAOImpl implements ProjectDAO {
             Session session = HibernateUtil.getSession();
             HibernateUtil.beginTransaction();
 
-            for(SymbolGroup group : project.getGroups()) {
+            for (SymbolGroup group : project.getGroups()) {
                 for (Symbol symbol : group.getSymbols()) {
                     session.delete(symbol);
                 }

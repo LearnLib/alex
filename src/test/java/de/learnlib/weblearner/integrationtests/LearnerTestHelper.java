@@ -1,7 +1,6 @@
 package de.learnlib.weblearner.integrationtests;
 
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
@@ -92,7 +91,7 @@ public class LearnerTestHelper {
                                                                                       actualMealy,
                                                                                       testAlphabet);
 
-        System.out.println("######### " + separatingWord);
+        System.out.println("separatingWord: " + separatingWord);
 
         return separatingWord == null;
     }

@@ -9,7 +9,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -132,7 +131,7 @@ public class MixedLearnerIT extends JerseyTest {
         response = client.target(BASE_LEARNER_URL + path).request().get();
         LearnerResult result = new LearnerResult();
         String resultAsJSON = response.readEntity(String.class);
-        System.out.println("&&&&&&& " + resultAsJSON);
+        System.out.println("result as JSON" + resultAsJSON);
         result.setJSON(resultAsJSON);
     }
 

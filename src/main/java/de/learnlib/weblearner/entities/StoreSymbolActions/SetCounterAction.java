@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("setCounter")
 @JsonTypeName("setCounter")
-public class SetCounterAction extends SymbolAction{
+public class SetCounterAction extends SymbolAction {
 
     private String name;
 

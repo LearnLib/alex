@@ -257,19 +257,15 @@ public class SymbolResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("project_id") long projectId, @PathParam("id") long id, Symbol symbol) {
-        System.out.println("+++++++++++++++ " + symbol);
         if (id != symbol.getId() || projectId != symbol.getProjectId()) {
-            System.out.println("############ asdf" );
             return  Response.status(Status.BAD_REQUEST).build();
         } else {
             try {
                 symbolDAO.update(symbol);
                 return Response.ok(symbol).build();
             } catch (IllegalArgumentException e) {
-                System.out.println("############ " + e);
                 return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.NOT_FOUND, e);
             } catch (ValidationException e) {
-                System.out.println("############ " + e);
                 return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.BAD_REQUEST, e);
             }
         }

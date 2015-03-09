@@ -7,7 +7,6 @@ import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
@@ -39,13 +38,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         try {
             // create the symbol
             create(session, symbol);
-
-            System.out.println("----------------");
-            for (int i = 0; i < symbol.getActions().size(); i++) {
-                System.out.println(symbol.getActions().get(i));
-            }
-            System.out.println("----------------");
-
             HibernateUtil.commitTransaction();
 
         // error handling
@@ -288,7 +280,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         SymbolGroup oldGroup = symbolGroupDAO.get(symbolInDB.getProjectId(), symbolInDB.getGroupId());
         SymbolGroup newGroup = symbolGroupDAO.get(symbol.getProjectId(), symbol.getGroupId());
         List<Symbol> symbols = getWithAllRevisions(symbol.getProjectId(), symbol.getId());
-        System.out.println("%%%%% " + newGroup);
 
         // start session
         Session session = HibernateUtil.getSession();
@@ -317,12 +308,10 @@ public class SymbolDAOImpl implements SymbolDAO {
         // test for unique constrains
         checkUniqueConstrains(session, symbol); // will throw exception if the symbol is invalid
 
-        System.out.println("==============================");
         SymbolGroup newGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
                                                     .using("project", symbol.getProject())
                                                     .using("id", symbol.getGroupId())
                                                     .load();
-        System.out.println("$$$$$$ " + newGroup.getName());
 
         // count revision up
         symbol.setSymbolId(0L);
@@ -332,12 +321,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.beforeSave();
         session.save(symbol);
 
-        System.out.println("==============================");
-
         if (!newGroup.equals(oldGroup)) {
-//                oldGroup.getSymbols().removeAll(symbols);
-//                session.update(oldGroup);
-            System.out.println("$$$$$$ " + newGroup.getName());
             List<Symbol> symbols = session.createCriteria(Symbol.class)
                                             .add(Restrictions.eq("project", symbol.getProject()))
                                             .add(Restrictions.eq("id", symbol.getId()))
@@ -345,11 +329,8 @@ public class SymbolDAOImpl implements SymbolDAO {
             symbols.remove(symbol);
 
             for (Symbol s : symbols) {
-//                    s.setGroup(newGroup);
                 newGroup.addSymbol(s);
-//                    session.update(s);
             }
-//                session.update(newGroup);
         }
     }
 
@@ -455,7 +436,6 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         // if the query result is not empty, the constrains are violated.
         if (testList.size() > 0) {
-            System.out.println("checkUniqueConstrains();");
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("The name or the abbreviation of the symbol is already used in the project.");
         }

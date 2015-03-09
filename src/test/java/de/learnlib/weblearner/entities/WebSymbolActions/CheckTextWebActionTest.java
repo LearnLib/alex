@@ -25,7 +25,6 @@ public class CheckTextWebActionTest {
     public void setUp() {
         checkText = new CheckTextWebAction();
         checkText.setValue("Foobar");
-        checkText.setUrl("http://example.com");
         checkText.setRegexp(false);
     }
 
@@ -36,7 +35,6 @@ public class CheckTextWebActionTest {
         CheckTextWebAction c2 = (CheckTextWebAction) mapper.readValue(json, SymbolAction.class);
 
         assertEquals(checkText.getValue(), c2.getValue());
-        assertEquals(checkText.getUrl(), c2.getUrl());
     }
 
     @Test
@@ -49,7 +47,6 @@ public class CheckTextWebActionTest {
         assertTrue(obj instanceof CheckTextWebAction);
         CheckTextWebAction c = (CheckTextWebAction) obj;
         assertEquals("Lorem Ipsum", c.getValue());
-        assertEquals("http://example.com", c.getUrl());
     }
 
     @Test

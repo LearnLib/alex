@@ -92,8 +92,8 @@ public class WebSymbolTest {
     @Test
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
-                    + "{\"type\":\"web_click\",\"node\":null,\"url\":null},"
-                    + "{\"type\":\"web_checkForText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
+                    + "{\"type\":\"web_click\",\"node\":null},"
+                    + "{\"type\":\"web_checkForText\",\"value\":\"F[oO0]+\",\"regexp\":true},"
                     + "{\"type\":\"wait\",\"duration\":0}"
                 + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":0,\"revision\":null}";
         symbol.setProject(null);
@@ -112,8 +112,8 @@ public class WebSymbolTest {
     @Test
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
-                                    + "{\"type\":\"web_click\",\"node\":null,\"url\":null},"
-                                    + "{\"type\":\"web_checkForText\",\"value\":\"F[oO0]+\",\"url\":null,\"regexp\":true},"
+                                    + "{\"type\":\"web_click\",\"node\":null},"
+                                    + "{\"type\":\"web_checkForText\",\"value\":\"F[oO0]+\",\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"duration\":0}"
                                 + "],\"group\":2,\"hidden\":false,\"id\":null,\"name\":\"WebSymbol\",\"project\":1,"
                                 + "\"revision\":null}";
@@ -156,7 +156,7 @@ public class WebSymbolTest {
         WebSymbolAction action2 = mock(WebSymbolAction.class);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 
-        Symbol symbol = new Symbol();
+        symbol = new Symbol();
         symbol.addAction(action1);
         symbol.addAction(action2);
 
@@ -171,7 +171,7 @@ public class WebSymbolTest {
         WebSymbolAction action2 = mock(WebSymbolAction.class);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 
-        Symbol symbol = new Symbol();
+        symbol = new Symbol();
         symbol.addAction(action1);
         symbol.addAction(action2);
 

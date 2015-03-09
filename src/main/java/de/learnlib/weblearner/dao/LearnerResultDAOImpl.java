@@ -1,7 +1,6 @@
 package de.learnlib.weblearner.dao;
 
 import de.learnlib.weblearner.entities.LearnerResult;
-import de.learnlib.weblearner.learner.Learner;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -173,7 +172,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         if (result == null) {
             throw new NoSuchElementException("The result with the test no. " + testNo
-                                                     + " and the step no. " + stepNo  +"  was not found.");
+                                             + " and the step no. " + stepNo  + "  was not found.");
         }
 
         // done

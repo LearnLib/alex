@@ -19,21 +19,33 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     private static final long serialVersionUID = -5130245647384793948L;
 
     /**
-     * Link to the Symbols that are must be used during the learning.
+     * Link to the Symbols that are used during the learning.
      * @requiredField
      */
     @Transient
     @JsonProperty("symbols")
     private List<IdRevisionPair> symbolsAsIdRevisionPairs;
 
+    /**
+     * The actual list of Symbols used during the learning.
+     * Only used internally.
+     */
     @Transient
     @JsonIgnore
     private List<Symbol> symbols;
 
+    /**
+     * Link to the Symbols that should be used as a reset Symbol.
+     * @requiredField
+     */
     @Transient
     @JsonProperty("resetSymbol")
     private IdRevisionPair resetSymbolAsIdRevisionPair;
 
+    /**
+     * The actual Symbols that should be used as a reset Symbol.
+     * Only used internally.
+     */
     @Transient
     @JsonIgnore
     private Symbol resetSymbol;
@@ -72,16 +84,28 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         this.symbolsAsIdRevisionPairs = symbolsAsIdRevisionPairs;
     }
 
+    /**
+     * Get the list of Symbols that must be used for the learning process.
+     *
+     * @return The list of Symbols.
+     */
     public List<Symbol> getSymbols() {
         return symbols;
     }
 
+    /**
+     * Set a list of symbols to be used for the learning process.
+     *
+     * @param symbols
+     *         The new list of Symbols.
+     */
     public void setSymbols(List<Symbol> symbols) {
         this.symbols = symbols;
     }
 
     /**
      * Get the LearnerAlgorithm that should be used for the learning process.
+     *
      * @return The selected LearnerAlgorithm.
      */
     @Transient
@@ -89,25 +113,47 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         return algorithm;
     }
 
+    /**
+     * Get the IdRevisionPair of the reset symbol.
+     *
+     * @return The link to the reset symbol.
+     */
     public IdRevisionPair getResetSymbolAsIdRevisionPair() {
         return resetSymbolAsIdRevisionPair;
     }
 
+    /**
+     * Set the IdRevisionPair of the reset symbol. This updates not the reset symbol itself.
+     *
+     * @param resetSymbolAsIdRevisionPair
+     *         The new pair of the reset symbol.
+     */
     public void setResetSymbolAsIdRevisionPair(IdRevisionPair resetSymbolAsIdRevisionPair) {
         this.resetSymbolAsIdRevisionPair = resetSymbolAsIdRevisionPair;
     }
 
+    /**
+     * Get the actual reset symbol.
+     *
+     * @return The reset symbol.
+     */
     public Symbol getResetSymbol() {
         return resetSymbol;
     }
 
+    /**
+     * Set the reset symbol. This updates not the IdRevisionPair of the reset symbol.
+     * @param resetSymbol The new reset symbol.
+     */
     public void setResetSymbol(Symbol resetSymbol) {
         this.resetSymbol = resetSymbol;
     }
 
     /**
      * Set a new LearnerAlgorithm to use for the learning.
-     * @param algorithm The new algorithm to be used.
+     *
+     * @param algorithm
+     *         The new algorithm to be used.
      */
     public void setAlgorithm(LearnAlgorithms algorithm) {
         this.algorithm = algorithm;

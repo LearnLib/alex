@@ -28,7 +28,6 @@ public class ClearActionTest {
     public void setUp() {
         c = new ClearAction();
         c.setNode("#node");
-        c.setUrl("http://example.com");
     }
 
     @Test
@@ -38,7 +37,6 @@ public class ClearActionTest {
         ClearAction c2 = mapper.readValue(json, ClearAction.class);
 
         assertEquals(c.getNode(), c2.getNode());
-        assertEquals(c.getUrl(), c2.getUrl());
     }
 
     @Test
@@ -51,7 +49,6 @@ public class ClearActionTest {
         assertTrue(obj instanceof ClearAction);
         ClearAction objAsAction = (ClearAction) obj;
         assertEquals("#node", objAsAction.getNode());
-        assertEquals("http://example.com", objAsAction.getUrl());
     }
 
     @Test

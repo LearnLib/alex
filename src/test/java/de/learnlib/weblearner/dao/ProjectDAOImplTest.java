@@ -4,7 +4,6 @@ import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolAction;
-import de.learnlib.weblearner.entities.SymbolActionHandler;
 import de.learnlib.weblearner.entities.WebSymbolActions.WaitAction;
 import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
 import de.learnlib.weblearner.utils.HibernateUtil;

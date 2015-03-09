@@ -22,9 +22,6 @@ public class SubmitAction extends WebSymbolAction {
     /** The information to identify the element. */
     private String node;
 
-    /** The URL of the site. */
-    private String url;
-
     /**
      * Get the information to identify the element.
      * 
@@ -42,25 +39,6 @@ public class SubmitAction extends WebSymbolAction {
      */
     public void setNode(String node) {
         this.node = node;
-    }
-
-    /**
-     * Get the URL of the site where the element is on.
-     * 
-     * @return The site URL the element is on.
-     */
-    public String getUrl() {
-        return url;
-    }
-
-    /**
-     * Set the URL of the site where the element is on.
-     * 
-     * @param url
-     *            The new site URL.
-     */
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     @Override

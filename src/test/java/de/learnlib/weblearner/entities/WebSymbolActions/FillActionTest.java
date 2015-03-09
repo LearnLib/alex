@@ -28,7 +28,6 @@ public class FillActionTest {
     public void setUp() {
         f = new FillAction();
         f.setNode("#node");
-        f.setUrl("http://example.com");
         f.setGenerator("gen1");
     }
 
@@ -39,7 +38,6 @@ public class FillActionTest {
         FillAction f2 = mapper.readValue(json, FillAction.class);
 
         assertEquals(f.getNode(), f2.getNode());
-        assertEquals(f.getUrl(), f2.getUrl());
     }
 
     @Test
@@ -52,7 +50,6 @@ public class FillActionTest {
         assertTrue(obj instanceof FillAction);
         FillAction objAsAction = (FillAction) obj;
         assertEquals("#input", objAsAction.getNode());
-        assertEquals("http://example.com", objAsAction.getUrl());
         assertEquals("none", objAsAction.getGenerator());
     }
 

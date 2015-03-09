@@ -22,9 +22,6 @@ public class CheckTextWebAction extends WebSymbolAction {
     /** The value the site is checked for. */
     private String value;
 
-    /** The URL of the site. */
-    private String url;
-
     /**
      * Field to determine if the search string is a regular expression.
      * Only works while searching for text.
@@ -48,25 +45,6 @@ public class CheckTextWebAction extends WebSymbolAction {
      */
     public void setValue(String value) {
         this.value = value;
-    }
-
-    /**
-     * Get the URL of the site where to check.
-     * 
-     * @return The site URL.
-     */
-    public String getUrl() {
-        return url;
-    }
-
-    /**
-     * Set the URL of the site where to check.
-     * 
-     * @param url
-     *            The new site URL.
-     */
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     /**

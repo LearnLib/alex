@@ -41,12 +41,14 @@ public class SymbolGroupResource {
     /**
      * Create a new group.
      *
+     * @param projectId
+     *         The ID of the project.
      * @param group
-     *            The group to create.
+     *         The group to create.
      * @return On success the added group (enhanced with information from the DB); an error message on failure.
-     * @responseType    de.learnlib.weblearner.entities.SymbolGroup
+     * @responseType de.learnlib.weblearner.entities.SymbolGroup
      * @successResponse 201 created
-     * @errorResponse   400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -118,12 +120,13 @@ public class SymbolGroupResource {
      *         The ID of the project.
      * @param id
      *         The ID of the group within the project.
-     * @return
+     * @return The list of symbols within one group.
      */
     @GET
     @Path("/{id}/symbols")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
+        //todo(alex.s): implement me
         LinkedList<Symbol> symbols = new LinkedList<>();
         for (long i = 1; i <= 10; i++) {
             Symbol newSymbol = new Symbol();

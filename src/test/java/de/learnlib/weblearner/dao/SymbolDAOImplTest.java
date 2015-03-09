@@ -79,7 +79,6 @@ public class SymbolDAOImplTest {
         WebSymbolAction a2 = new ClearAction();
         symbol.addAction(a2);
         ClickAction a3 = new ClickAction();
-        a3.setUrl("http://example.com/");
         a3.setNode("#node-id");
         symbol.addAction(a3);
         WebSymbolAction a4 = new FillAction();
