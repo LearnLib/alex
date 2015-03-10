@@ -102,7 +102,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                     .using("id", symbol.getGroupId())
                                                     .load();
         if (group == null) {
-            group = project.getDefaultGroup();
+            throw new ValidationException("The specified group was not found and thus the Symbol was not created.");
         }
         group.addSymbol(symbol);
 
