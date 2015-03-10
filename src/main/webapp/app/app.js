@@ -61,11 +61,13 @@ angular.module("app/views/directives/counter-example-builder.html", []).run(["$t
     "	        <div class=\"container-fluid\">\n" +
     "	        \n" +
     "	        	<p class=\"navbar-text\"><strong>Counter Example Builder</strong></p>\n" +
-    "	        \n" +
-    "	            <button class=\"btn btn-default navbar-btn pull-right\" ng-click=\"close()\"><i\n" +
+    "\n" +
+    "                <button class=\"btn btn-default btn-sm navbar-btn pull-right\" ng-click=\"close()\"><i\n" +
     "	                    class=\"fa fa-close\"></i></button>\n" +
-    "	            <button class=\"btn btn-primary navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">ok</button>\n" +
-    "	            <button class=\"btn btn-default navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
+    "                <button class=\"btn btn-primary btn-sm navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
+    "                    ok\n" +
+    "                </button>\n" +
+    "                <button class=\"btn btn-default btn-sm navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
     "	            	<i class=\"fa fa-eye\"></i>\n" +
     "	            </button>  \n" +
     "	        </div>\n" +
@@ -1485,6 +1487,10 @@ angular.module("app/views/modals/modal-test-details.html", []).run(["$templateCa
   $templateCache.put("app/views/modals/modal-test-details.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"ok()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
     "    <h3 class=\"modal-title\">Test Details</h3>\n" +
     "    <span class=\"text-muted\">View some details about this test</span>\n" +
     "\n" +
@@ -1584,10 +1590,12 @@ angular.module("app/views/modals/symbol-create-modal.html", []).run(["$templateC
     "            </datalist>\n" +
     "        </div>\n" +
     "\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"errorMsg\" ng-bind=\"errorMsg\"></div>\n" +
+    "\n" +
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
-    "        <button class=\"btn btn-primary\" type=\"submit\">Create Symbol</button>\n" +
+    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Create</button>\n" +
     "    </div>\n" +
     "\n" +
     "</form>");
@@ -1630,10 +1638,12 @@ angular.module("app/views/modals/symbol-edit-modal.html", []).run(["$templateCac
     "            <small ng-show=\"symbol_edit_form.abbreviation.$error.required\"> The field must not be empty.</small>\n" +
     "        </div>\n" +
     "\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"errorMsg\" ng-bind=\"errorMsg\"></div>\n" +
+    "\n" +
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
-    "        <button class=\"btn btn-primary\" type=\"submit\">Update Symbol</button>\n" +
+    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update</button>\n" +
     "    </div>\n" +
     "\n" +
     "</form>");
@@ -1707,12 +1717,8 @@ angular.module("app/views/modals/symbol-group-edit-modal.html", []).run(["$templ
     "             ng-show=\"create_symbol_group_form.name.$dirty && create_symbol_group_form.name.$invalid\">\n" +
     "            <small ng-show=\"create_symbol_group_form.name.$error.required\"> The field must not be empty.</small>\n" +
     "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"groupExists\">\n" +
-    "            <small>\n" +
-    "                There is already a symbol group with the name \"<strong ng-bind=\"group.name\"></strong>\". Please choose\n" +
-    "                another one.\n" +
-    "            </small>\n" +
-    "        </div>\n" +
+    "\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"errorMsg\" ng-bind=\"errorMsg\"></div>\n" +
     "\n" +
     "    </div>\n" +
     "\n" +
@@ -2005,6 +2011,10 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "\n" +
     "        </div>\n" +
     "\n" +
+    "        <div class=\"alert alert-info\" ng-show=\"results.length === 0\">\n" +
+    "            You have not run any tests yet.\n" +
+    "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>");
 }]);
@@ -2146,7 +2156,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                    <div selectable-list-item ng-repeat=\"symbol in group.symbols\">\n" +
     "\n" +
     "                        <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
-    "                            <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-star' : 'fa-star-o'\"></i>\n" +
+    "                            <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'\"></i>\n" +
     "                        </a>\n" +
     "\n" +
     "                        <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
@@ -2384,18 +2394,18 @@ angular.module("app/views/pages/project.html", []).run(["$templateCache", functi
 angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/symbols-actions.html",
-      "<div view-heading\n" +
-      "     title=\"Actions\"\n" +
-      "     sub-title=\"Create and manage the actions for symbol: {{symbol.name}}\">\n" +
+    "<div view-heading\n" +
+    "     title=\"Actions\"\n" +
+    "     sub-title=\"Create and manage the actions for symbol: {{symbol.name}}\">\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
-      "\n" +
-      "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable=\"symbol.actions\">\n" +
-      "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable=\"symbol.actions\">\n" +
+    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
     "        </div>\n" +
-      "\n" +
+    "\n" +
     "        <div class=\"pull-left\">\n" +
     "            <button class=\"btn btn-xs btn-primary\" open-action-create-modal symbol=\"symbol\" on-created=\"addAction\">\n" +
     "                Create\n" +
@@ -2411,12 +2421,12 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "                Delete\n" +
     "            </button>\n" +
     "        </div>\n" +
-      "\n" +
+    "\n" +
     "        <div class=\"pull-right\">\n" +
     "            <button class=\"btn btn-default btn-xs\" ng-click=\"revertChanges()\">Reset</button>\n" +
     "            <button class=\"btn btn-success btn-xs\" ng-click=\"saveChanges()\">Save</button>\n" +
     "        </div>\n" +
-      "\n" +
+    "\n" +
     "    </div>\n" +
     "</div>\n" +
     "\n" +
@@ -2424,37 +2434,37 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div ng-if=\"symbol.actions\" as-sortable ng-model=\"symbol.actions\">\n" +
-      "            <div selectable items=\"symbol.actions\">\n" +
-      "                <div selectable-list>\n" +
-      "                    <div selectable-list-item ng-repeat=\"action in symbol.actions track by $index\" as-sortable-item>\n" +
+    "            <div selectable items=\"symbol.actions\">\n" +
+    "                <div selectable-list>\n" +
+    "                    <div selectable-list-item ng-repeat=\"action in symbol.actions track by $index\" as-sortable-item>\n" +
     "\n" +
-      "                        <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-      "                            <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-      "                                <i class=\"fa fa-bars\"></i>\n" +
-      "                            </button>\n" +
-      "                            <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-      "                                <li>\n" +
-      "                                    <a href open-action-edit-modal symbol=\"symbol\" action=\"action\"\n" +
-      "                                       on-updated=\"updateAction\">\n" +
-      "                                        <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
-      "                                    </a>\n" +
-      "                                </li>\n" +
-      "                                <li>\n" +
-      "                                    <a href ng-click=\"deleteAction(action)\">\n" +
-      "                                        <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
-      "                                    </a>\n" +
-      "                                </li>\n" +
-      "                            </ul>\n" +
-      "                        </div>\n" +
+    "                        <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                            <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                                <i class=\"fa fa-bars\"></i>\n" +
+    "                            </button>\n" +
+    "                            <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                                <li>\n" +
+    "                                    <a href open-action-edit-modal symbol=\"symbol\" action=\"action\"\n" +
+    "                                       on-updated=\"updateAction\">\n" +
+    "                                        <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
+    "                                    </a>\n" +
+    "                                </li>\n" +
+    "                                <li>\n" +
+    "                                    <a href ng-click=\"deleteAction(action)\">\n" +
+    "                                        <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+    "                                    </a>\n" +
+    "                                </li>\n" +
+    "                            </ul>\n" +
+    "                        </div>\n" +
     "\n" +
-      "                        <span class=\"text-muted pull-right\" as-sortable-item-handle\n" +
-      "                              style=\"margin-right: 15px; padding: 2px;\">\n" +
-      "                            <i class=\"fa fa-sort fa-fw\"></i>\n" +
-      "                        </span>\n" +
+    "                        <span class=\"text-muted pull-right\" as-sortable-item-handle\n" +
+    "                              style=\"margin-right: 15px; padding: 2px;\">\n" +
+    "                            <i class=\"fa fa-sort fa-fw\"></i>\n" +
+    "                        </span>\n" +
     "\n" +
-      "                        <span ng-bind=\"action.toString()\"></span>\n" +
+    "                        <span ng-bind=\"action.toString()\"></span>\n" +
     "\n" +
-      "                    </div>\n" +
+    "                    </div>\n" +
     "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
@@ -2809,7 +2819,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                                        </a>\n" +
     "                                    </li>\n" +
     "                                    <li>\n" +
-    "                                        <a href symbol-move-modal-handle groups=\"groups\" symbols=\"[symbol]\" on-moved=\"updateSymbol\">\n" +
+    "                                        <a href symbol-move-modal-handle groups=\"groups\" symbols=\"[symbol]\"\n" +
+    "                                           on-moved=\"updateSymbol\">\n" +
     "                                            <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +
@@ -3545,11 +3556,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('SymbolCreateModalController', SymbolCreateModalController);
 
-    SymbolCreateModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'Symbol', 'SymbolGroup'];
+    SymbolCreateModalController.$inject = [
+        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SymbolGroup', 'ToastService'
+    ];
 
     /**
-     * Handles the behaviour of the modal to create a new symbol. The corresponding template for this modal can found
-     * under 'app/partials/modals/symbol-create-modal.html'.
+     * Handles the behaviour of the modal to create a new symbol.
+     *
+     * The template for this modal can found at 'app/partials/modals/symbol-create-modal.html'.
      *
      * @param $scope
      * @param $modalInstance
@@ -3558,45 +3572,71 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param SymbolGroup
      * @constructor
      */
-    function SymbolCreateModalController($scope, $modalInstance, modalData, Symbol, SymbolGroup) {
+    function SymbolCreateModalController($scope, $modalInstance, modalData, Symbol, SymbolGroup, Toast) {
 
         // the id of the project the new symbol is created for
-        var projectId = modalData.projectId;
-
-        /** The model of the symbol that will be created @type {Symbol} */
-        $scope.symbol = new Symbol();
-
-        $scope.groups = [];
-
-        $scope.selectedGroup;
-
-        SymbolGroup.Resource.getAll(projectId)
-            .then(function (groups) {
-                $scope.groups = groups;
-            });
+        var projectId = null;
 
         /**
-         * Make a request to the API and create a new symbol. Close the modal on success.
+         * The model of the symbol that will be created
+         * @type {Symbol}
+         */
+        $scope.symbol = new Symbol();
+
+        /**
+         * An error message that can be displayed in the template
+         * @type {String|null}
+         */
+        $scope.errorMsg = null;
+
+        /**
+         * The list of available symbol groups where the new symbol could be created in
+         * @type {SymbolGroup[]}
+         */
+        $scope.groups = [];
+
+        /**
+         * The symbol group that is selected
+         * @type {null|SymbolGroup}
+         */
+        $scope.selectedGroup = null;
+
+        // parameter validation &
+        // fetch all symbol groups so that they can be selected in the template
+        (function init() {
+            if (angular.isUndefined(modalData.projectId)) {
+                throw new Error('required parameter projectId not defined');
+            } else {
+                projectId = modalData.projectId;
+                SymbolGroup.Resource.getAll(projectId)
+                    .then(function (groups) {
+                        $scope.groups = groups;
+                    });
+            }
+        }());
+
+        /**
+         * Makes a request to the API and create a new symbol. If the name of the group the user entered was not found
+         * the symbol will be put in the default group with the id 0. Closes the modal on success.
          */
         $scope.createSymbol = function () {
+            $scope.errorMsg = null;
 
             var group = _.find($scope.groups, {name: $scope.selectedGroup});
 
-            if (angular.isDefined(group)) {
-                $scope.symbol.group = group.id;
-            } else {
-                // TODO: ask the user to create a new group
-            }
+            $scope.symbol.group = angular.isDefined(group) ? group.id : 0;
 
             Symbol.Resource.create(projectId, $scope.symbol)
                 .then(function (newSymbol) {
+                    Toast.success('Created symbol <strong>' + newSymbol.name + '</strong>');
                     $modalInstance.close(newSymbol);
+                })
+                .catch(function (response) {
+                    $scope.errorMsg = response.data.message
                 })
         };
 
-        /**
-         * Close the modal.
-         */
+        /** Closes the modal dialog */
         $scope.closeModal = function () {
             $modalInstance.dismiss();
         }
@@ -3608,7 +3648,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('SymbolEditModalController', SymbolEditModalController);
 
-    SymbolEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'Symbol', 'SelectionService'];
+    SymbolEditModalController.$inject = [
+        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SelectionService', 'ToastService'
+    ];
 
     /**
      * Handles the behaviour of the modal to edit an existing symbol and updates the edited symbol on the server.
@@ -3621,10 +3663,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param SelectionService
      * @constructor
      */
-    function SymbolEditModalController($scope, $modalInstance, modalData, Symbol, SelectionService) {
+    function SymbolEditModalController($scope, $modalInstance, modalData, Symbol, SelectionService, Toast) {
 
         /** The symbol that is passed to the modal. @type {Symbol} */
         $scope.symbol = modalData.symbol;
+
+        $scope.errorMsg = null;
 
         // The copy of the symbol that will be passed back together with the updated one
         var copy = $scope.symbol.copy();
@@ -3633,20 +3677,22 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * Make a request to the API in order to update the symbol. Close the modal on success.
          */
         $scope.updateSymbol = function () {
+            $scope.errorMsg = null;
 
             // remove the selection from the symbol in case there is any
             SelectionService.removeSelection($scope.symbol);
 
-            // TODO: delete this when merging is complete
-            $scope.symbol.type = 'web';
-
             // update the symbol and close the modal dialog on success with the updated symbol
             Symbol.Resource.update($scope.symbol.project, $scope.symbol)
                 .then(function (updatedSymbol) {
+                    Toast.success('Symbol updated');
                     $modalInstance.close({
                         new: updatedSymbol,
                         old: copy
                     });
+                })
+                .catch(function (response) {
+                    $scope.errorMsg = response.data.message;
                 })
         };
 
@@ -3706,42 +3752,85 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('SymbolGroupEditModalController', SymbolGroupEditModalController);
 
-    SymbolGroupEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'SymbolGroup'];
+    SymbolGroupEditModalController.$inject = [
+        '$scope', '$modalInstance', 'modalData', 'SymbolGroup', 'ToastService'
+    ];
 
-    function SymbolGroupEditModalController($scope, $modalInstance, modalData, SymbolGroup) {
+    /**
+     * The controller that handles the modal dialog for deleting and updating a symbol group. The modal data that is
+     * passed must have an property 'group' whose value should be an instance of SymbolGroup
+     *
+     * The template is at 'views/modals/symbol-group-edit-modal.html'
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param modalData - The data that is passed to this controller
+     * @param SymbolGroup
+     * @param Toast - The ToastService
+     * @constructor
+     */
+    function SymbolGroupEditModalController($scope, $modalInstance, modalData, SymbolGroup, Toast) {
 
-        $scope.groupExists = false;
-        $scope.group = modalData.group.copy();
-        $scope.groups = [];
+        /**
+         * The symbol group that should be edited
+         * @type {null|SymbolGroup}
+         */
+        $scope.group = null;
 
-        SymbolGroup.Resource.getAll($scope.group.project)
-            .then(function (groups) {
-                $scope.groups = groups;
-            });
+        /**
+         * An error message that can be displayed in the template
+         * @type {null|String}
+         */
+        $scope.errorMsg = null;
 
+        (function init() {
+            if (angular.isDefined(modalData.group) && modalData.group instanceof SymbolGroup) {
+                $scope.group = modalData.group.copy();
+            } else {
+                throw new Error('Wrong parameter type');
+            }
+        }());
+
+        /**
+         * Updates the symbol group under edit and closes the modal dialog on success
+         */
         $scope.updateGroup = function () {
+            $scope.errorMsg = null;
+
             SymbolGroup.Resource.update($scope.group.project, $scope.group)
                 .then(function (updatedGroup) {
+                    Toast.success('Group updated');
                     $modalInstance.close({
                         status: 'updated',
-                        group: updatedGroup
+                        newGroup: updatedGroup,
+                        oldGroup: modalData.group
                     });
+                })
+                .catch(function (response) {
+                    $scope.errorMsg = response.data.message;
                 })
         };
 
+        /**
+         * Deletes the symbol group under edit and closes the modal dialog on success
+         */
         $scope.deleteGroup = function () {
+            $scope.errorMsg = null;
+
             SymbolGroup.Resource.delete($scope.group.project, $scope.group)
                 .then(function () {
+                    Toast.success('Group <strong>' + $scope.group.name + '</strong> deleted');
                     $modalInstance.close({
                         status: 'deleted',
                         group: $scope.group
                     });
-                });
+                })
+                .catch(function (response) {
+                    $scope.errorMsg = response.data.message;
+                })
         };
 
-        /**
-         * Close the modal.
-         */
+        /** Closes the modal dialog */
         $scope.closeModal = function () {
             $modalInstance.dismiss();
         }
@@ -3754,13 +3843,13 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .controller('SymbolMoveModalController', SymbolMoveModalController);
 
     SymbolMoveModalController.$inject = [
-        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SelectionService'
+        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SymbolGroup', 'SelectionService'
     ];
 
     function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol, SelectionService) {
 
         $scope.symbols = modalData.symbols;
-        $scope.groups = modalData.groups;
+        $scope.groups = [];
         $scope.selectedGroup = null;
 
         $scope.moveSymbols = function () {
@@ -3771,10 +3860,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     symbol.group = $scope.selectedGroup.id;
                     Symbol.Resource.update($scope.selectedGroup.project, symbol)
                         .then(function (updatedSymbol) {
-                            //$modalInstance.$close({
-                            //    new: updatedSymbol,
-                            //    old:
-                            //})
+                            $modalInstance.close({
+                                new: updatedSymbol,
+                                old: null
+                            })
                         })
                 })
             }
@@ -3784,9 +3873,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             $scope.selectedGroup = $scope.selectedGroup === group ? null : group;
         };
 
-        /**
-         * Close the modal dialog
-         */
+        /** Close the modal dialog */
         $scope.closeModal = function () {
             $modalInstance.dismiss();
         }
@@ -3918,7 +4005,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .controller('LearnResultsController', LearnResultsController);
 
     LearnResultsController.$inject = [
-        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService'
+        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService', 'ToastService'
     ];
 
     /**
@@ -3933,7 +4020,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param PromptService
      * @constructor
      */
-    function LearnResultsController($scope, Session, LearnResultResource, SelectionService, PromptService) {
+    function LearnResultsController($scope, Session, LearnResultResource, SelectionService, PromptService, Toast) {
 
         // The project that is saved in the session
         var project = Session.project.get();
@@ -3961,8 +4048,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 .then(function () {
                     LearnResultResource.delete(project.id, result.testNo)
                         .then(function () {
+                            Toast.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
                             _.remove($scope.results, {testNo: result.testNo});
                         })
+                        .catch(function (response) {
+                            Toast.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
+                        });
                 })
         };
 
@@ -3975,14 +4066,18 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             if (selectedResults.length > 0) {
                 testNos = _.pluck(selectedResults, 'testNo');
-                PromptService.confirm("Do you want to permanently delete this result?")
+                PromptService.confirm("Do you want to permanently delete theses results?")
                     .then(function () {
                         LearnResultResource.delete(project.id, testNos)
                             .then(function () {
+                                Toast.success('Learn result for test deleted');
                                 _.forEach(testNos, function (testNo) {
                                     _.remove($scope.tests, {testNo: testNo})
                                 })
                             })
+                            .catch(function (response) {
+                                Toast.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
+                            });
                     })
             }
         }
@@ -4000,7 +4095,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     ];
 
     /**
-     *
+     * The controller for the learn result statistics page.
      *
      * The corresponding template can be found under 'views/pages/learn-results-statistics.html'.
      *
@@ -4152,55 +4247,105 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('LearnSetupController', [
-            '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'LearnConfiguration',
-            'LearnerResource', 'ngToast',
-            LearnSetupController
-        ]);
+        .controller('LearnSetupController', LearnSetupController);
 
-    function LearnSetupController($scope, $state, SymbolGroup, SessionService, SelectionService, LearnConfiguration,
-                                  LearnerResource, toast) {
+    LearnSetupController.$inject = [
+        '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'LearnConfiguration',
+        'LearnerResource', 'ToastService'
+    ];
 
-        $scope.project = SessionService.project.get();
+    /**
+     * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
+     *
+     * The template can be found at 'views/pages/learn-setup.html'
+     *
+     * @param $scope
+     * @param $state
+     * @param SymbolGroup
+     * @param Session
+     * @param SelectionService
+     * @param LearnConfiguration
+     * @param LearnerResource
+     * @param Toast
+     * @constructor
+     */
+    function LearnSetupController($scope, $state, SymbolGroup, Session, SelectionService, LearnConfiguration,
+                                  LearnerResource, Toast) {
+
+        // the project that is stored in the session
+        var project = Session.project.get();
+
+        /**
+         * All symbol groups that belong the the sessions project
+         * @type {SymbolGroup[]}
+         */
         $scope.groups = [];
+
+        /**
+         * A list of all symbols of all groups that is used in order to select them
+         * @type {Symbol[]}
+         */
         $scope.allSymbols = [];
+
+        /**
+         * The configuration that is send to the server for learning
+         * @type {LearnConfiguration}
+         */
         $scope.learnConfiguration = new LearnConfiguration();
-        $scope.resetSymbol;
 
-        //////////
+        /**
+         * The symbol that should be used as a reset symbol
+         * @type {Symbol|null}
+         */
+        $scope.resetSymbol = null;
 
-        LearnerResource.isActive()
-            .then(function (data) {
-                if (data.active) {
-                    if (data.project == $scope.project.id) {
-                        $state.go('learn.start');
+        (function init() {
+
+            // make sure that there isn't any other learn process active
+            // redirect to the load screen in case there is an active one
+            LearnerResource.isActive()
+                .then(function (data) {
+                    if (data.active) {
+                        if (data.project == project.id) {
+                            $state.go('learn.start');
+                        } else {
+                            Toast.danger('There is already running a test from another project.');
+                        }
                     } else {
-                        toast.create({
-                            class: 'danger',
-                            content: 'There is already running a test from another project.',
-                            dismissButton: true
-                        });
+
+                        // load all symbols in case there isn't any active learning process
+                        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+                            .then(function (groups) {
+                                $scope.groups = groups;
+                                $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
+                            });
                     }
-                } else {
-                    SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
-                        .then(function (groups) {
-                            $scope.groups = groups;
-                            $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
-                        });
-                }
-            });
+                });
+        }());
 
-        //////////
-
+        /**
+         * Sets the reset symbol
+         * @param symbol - The symbol that will be used to reset the sul
+         */
         $scope.setResetSymbol = function (symbol) {
             $scope.resetSymbol = symbol;
         };
 
+        /**
+         * Starts the learning process if symbols are selected and a reset symbol is defined. Redirects to the
+         * learning load screen on success.
+         */
         $scope.startLearning = function () {
-            var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
+            var selectedSymbols;
 
-            if (selectedSymbols.length && $scope.resetSymbol) {
+            if (angular.isUndefined($scope.resetSymbol)) {
+                Toast.danger('You <strong>must</strong> selected a reset symbol in order to start learning');
+                return;
+            }
 
+            selectedSymbols = SelectionService.getSelected($scope.allSymbols);
+
+            if (selectedSymbols.length > 0) {
                 _.forEach(selectedSymbols, function (symbol) {
                     $scope.learnConfiguration.addSymbol(symbol)
                 });
@@ -4211,9 +4356,19 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     .then(function () {
                         $state.go('learn.start')
                     })
+                    .catch(function (response) {
+                        Toast.danger('<p><strong>Start learning failed</strong></p>' + response.data.message);
+                    });
+            } else {
+                Toast.danger('You <strong>must</strong> at least select one symbol to start learning');
             }
         };
 
+        /**
+         * Updates the learn configuration
+         *
+         * @param {LearnConfiguration} config
+         */
         $scope.updateLearnConfiguration = function (config) {
             $scope.learnConfiguration = config;
         };
@@ -4451,10 +4606,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             LearnerResource.isActive()
                 .then(function (data) {
-                    if (data.active !== false) {
+                    if (data.active !== false || (data.project !== $scope.project.id)) {
                         confirmDeletion();
                     } else {
-                        Toast.info('Project could not be deleted because there is an active lear')
+                        Toast.info('Project could not be deleted because there is an active learning process')
                     }
                 });
 
@@ -4485,10 +4640,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .controller('SymbolsActionsController', SymbolsActionsController);
 
     SymbolsActionsController.$inject = [
-        '$scope', '$stateParams', 'Symbol', 'SessionService', 'SelectionService'
+        '$scope', '$stateParams', 'Symbol', 'SessionService', 'SelectionService', 'ToastService'
     ];
 
-    function SymbolsActionsController($scope, $stateParams, Symbol, SessionService, SelectionService) {
+    function SymbolsActionsController($scope, $stateParams, Symbol, SessionService, SelectionService, Toast) {
 
         /** the open project */
         $scope.project = SessionService.project.get();
@@ -4564,7 +4719,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             // update the symbol
             Symbol.Resource.update($scope.project.id, copy)
-                .then(init)
+                .then(function (updatedSymbol) {
+                    Toast.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
+                })
+                .catch(function (response) {
+                    Toast.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
+                })
         };
 
         /**
@@ -4581,64 +4741,56 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('SymbolsController', SymbolsController);
 
-    SymbolsController.$inject = ['$scope', 'SessionService', 'Symbol', 'SymbolGroup', 'SelectionService', '_'];
+    SymbolsController.$inject = [
+        '$scope', 'SessionService', 'Symbol', 'SymbolGroup', 'SelectionService', '_', 'ToastService'
+    ];
 
-    function SymbolsController($scope, Session, Symbol, SymbolGroup, SelectionService, _) {
+    /**
+     * The template can be found at 'views/pages/symbols.html'
+     *
+     * @param $scope
+     * @param Session
+     * @param Symbol
+     * @param SymbolGroup
+     * @param SelectionService
+     * @param _
+     * @param Toast
+     * @constructor
+     */
+    function SymbolsController($scope, Session, Symbol, SymbolGroup, SelectionService, _, Toast) {
 
         $scope.project = Session.project.get();
         $scope.groups = [];
-        $scope.allSymbols = [];
         $scope.collapseAll = false;
-        $scope.selectedSymbols = [];
 
-        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
-            .then(function (groups) {
-                $scope.groups = groups;
-                $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
-            });
-
-        $scope.toggleCollapseAllGroups = function () {
-            $scope.collapseAll = !$scope.collapseAll;
-            _.forEach($scope.groups, function (group) {
-                group._isCollapsed = $scope.collapseAll;
-            })
-        };
+        (function init() {
+            SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+                .then(function (groups) {
+                    $scope.groups = groups;
+                });
+        }());
 
         function removeSymbolsFromScope(symbols) {
-            _.forEach(symbols, function(symbol){
-                var index = _.findIndex($scope.groups, {id: symbol.group});
-                _.remove($scope.groups[index].symbols, {id: symbol.id});
-                _.remove($scope.symbols, {id: symbol.id});
+            _.forEach(symbols, function (symbol) {
+                var group = _.find($scope.groups, {id: symbol.group});
+                group.removeSymbol(symbol);
             })
         }
 
         /**
          * Deletes a given symbol and remove it from the scope so that it will not be listed any longer
          *
-         * @param symbol {Symbol} - The symbol that should be deleted
+         * @param {Symbol} symbol - The symbol that should be deleted
          */
         $scope.deleteSymbol = function (symbol) {
             Symbol.Resource.delete($scope.project.id, symbol.id)
                 .then(function () {
+                    Toast.success('Symbol <strong>' + symbol.name + '</strong> deleted');
                     removeSymbolsFromScope([symbol]);
+                }).catch(function (response) {
+                    Toast.danger('<p><strong>Deletion failed!</strong></p>' + response.data.message);
                 })
         };
-
-        /**
-         * Moves the selected symbols to a new group
-         *
-         * @param group {SymbolGroup} - The group where the selected symbols should be moved into
-         */
-        $scope.moveSelectedSymbolsTo = function (group) {
-            var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
-
-            SelectionService.removeSelection(selectedSymbols);
-            _.forEach(selectedSymbols, function (symbol) {
-                symbol.group = group.id;
-                group.push(symbol);
-            });
-        };
-
 
         /**
          * Deletes the symbols the user selected from the server and the scope
@@ -4650,37 +4802,42 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             if (selectedSymbols.length > 0) {
                 symbolsIds = _.pluck(selectedSymbols, 'id');
                 Symbol.Resource.deleteSome($scope.project.id, symbolsIds)
-                    .then(removeSymbolsFromScope);
+                    .then(function () {
+                        Toast.success('Symbols deleted');
+                        removeSymbolsFromScope(selectedSymbols);
+                    }).catch(function (response) {
+                        Toast.danger('<p><strong>Deletion failed!</strong></p>' + response.data.message);
+                    })
             }
         };
 
         /**
          * Adds a symbol to to its corresponding group the scope
          *
-         * @param symbol {Symbol} - The new symbol that should be added to the list
+         * @param {Symbol} symbol - The new symbol that should be added to the list
          */
         $scope.addSymbol = function (symbol) {
-            var index = _.findIndex($scope.groups, {id: symbol.group});
-            if (index > -1) {
-                $scope.groups[index].symbols.push(symbol);
-                $scope.allSymbols.push(symbol);
+            var group = _.find($scope.groups, {id: symbol.group});
+            if (angular.isDefined(group)) {
+                group.addSymbol(symbol);
             }
         };
 
         /**
          * Adds a group to the scope
          *
-         * @param group {SymbolGroup} - The new group that should be added to the list
+         * @param {SymbolGroup} group - The new group that should be added to the list
          */
         $scope.addGroup = function (group) {
             $scope.groups.push(group);
         };
 
-        $scope.updateSymbol = function (symbol, oldSymbol) {
-            var group = _.find($scope.groups, {id: symbol.group});
-            if (group) {
-                group.symbols.push(symbol);
-            }
+        /**
+         * Updates a symbol in the scope
+         * @param symbol
+         */
+        $scope.updateSymbol = function (symbol) {
+
         };
 
         $scope.updateGroup = function (group) {
@@ -4691,13 +4848,15 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
 
         $scope.deleteGroup = function (group) {
-            removeSymbolsFromScope(group.symbols);
             _.remove($scope.groups, {id: group.id});
         };
 
-        $scope.getSelectedSymbols = function () {
-            return SelectionService.getSelected($scope.allSymbols);
-        }
+        $scope.toggleCollapseAllGroups = function () {
+            $scope.collapseAll = !$scope.collapseAll;
+            _.forEach($scope.groups, function (group) {
+                group._isCollapsed = $scope.collapseAll;
+            })
+        };
     }
 }());;(function () {
     'use strict';
@@ -4948,7 +5107,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 			scope: {},
 			controller: ['$scope', controller],
 			templateUrl: paths.views.DIRECTIVES + '/counter-example-builder.html'
-		}
+        };
+
 		return directive;
 				
 		function controller($scope){
@@ -4958,27 +5118,27 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 	        $scope.counterExample = [
 	            {input: 'w1', output: 'output1'},
 	            {input: 'w2', output: 'output2'},
-	            {input: 'w3', output: 'output3'},
-	        ]
+                {input: 'w3', output: 'output3'}
+            ];
 
 	        $scope.add = function() {
 	            $scope.counterExample.push({input: null, output: null})
-	        }
+            };
 
 	        $scope.remove = function(index) {
 	            $scope.counterExample.splice(index, 1);
-	        }
+            };
 
 	        $scope.onDropInput = function(data, evt, index){
 	            $scope.counterExample[index].input = data['json/custom-object'];
-	        }
+            };
 
 	        $scope.onDropOutput = function(data, evt, index){
 	            $scope.counterExample[index].output = data['json/custom-object'];
 	        }
 		}
 	};
-}());(function () {
+}());;(function () {
     'use strict';
 
     angular
@@ -6776,7 +6936,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         function link(scope, el, attrs) {
 
-            // attach the click event on the target element that opens the modal dialog
             el.on('click', handleModal);
 
             function handleModal() {
@@ -6792,7 +6951,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     }
                 });
 
-                // call the callback with the created symbol on success
                 modal.result.then(function (symbol) {
                     scope.onCreated()(symbol);
                 })
@@ -6853,6 +7011,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                         }
                     }
                 });
+
                 modal.result.then(function (symbol) {
                     scope.onUpdated()(symbol.new, symbol.old);
                 })
@@ -6910,6 +7069,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     symbolGroupEditModalHandle.$inject = ['$modal', 'paths'];
 
+    /**
+     *
+     * @param $modal
+     * @param paths
+     * @returns {{scope: {group: string, onUpdated: string, onDeleted: string}, link: link}}
+     */
     function symbolGroupEditModalHandle($modal, paths) {
 
         var directive = {
@@ -6922,12 +7087,16 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
         return directive;
 
+        /**
+         * @param scope
+         * @param el
+         * @param attrs
+         */
         function link(scope, el, attrs) {
 
             el.on('click', handleModal);
 
             function handleModal() {
-
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/symbol-group-edit-modal.html',
                     controller: 'SymbolGroupEditModalController',
@@ -6940,10 +7109,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     }
                 });
 
-                // call the callback with the created symbol on success
                 modal.result.then(function (data) {
                     if (data.status === 'updated') {
-                        scope.onUpdated()(data.group);
+                        scope.onUpdated()(data.newGroup, data.oldGroup);
                     } else if (data.status === 'deleted') {
                         scope.onDeleted()(data.group);
                     }
@@ -7829,7 +7997,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         Symbol.build = function (data) {
             var symbol = new Symbol(data.name, data.abbreviation);
-            symbol.actions = Action.buildSome(data.actions);
+            symbol.actions = data.actions ? Action.buildSome(data.actions) : [];
             symbol.id = data.id;
             symbol.revision = data.revision;
             symbol.project = data.project;
@@ -7841,15 +8009,19 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         /**
          * Build an array of symbol instances from an object array
          *
-         * @param data - The data the symobl instances should be build from
+         * @param data - The data the symbol instances should be build from
          * @returns {SymbolModel.Symbol[]} - The array of symbol instances
          */
         Symbol.buildSome = function (data) {
-            var symbols = [];
-            for (var i = 0; i < data.length; i++) {
-                symbols.push(Symbol.build(data[i]))
+            if (angular.isDefined(data)) {
+                var symbols = [];
+                for (var i = 0; i < data.length; i++) {
+                    symbols.push(Symbol.build(data[i]))
+                }
+                return symbols;
+            } else {
+                return [];
             }
-            return symbols;
         };
 
         /**
@@ -7872,9 +8044,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.models')
         .factory('SymbolGroup', SymbolGroupModel);
 
-    SymbolGroupModel.$inject = ['SymbolGroupResource', 'Symbol'];
+    SymbolGroupModel.$inject = ['SymbolGroupResource', 'Symbol', '_'];
 
-    function SymbolGroupModel(SymbolGroupResource, Symbol) {
+    function SymbolGroupModel(SymbolGroupResource, Symbol, _) {
 
         function SymbolGroup(name) {
             this.name = name || null;
@@ -7882,6 +8054,18 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             this.project;
             this.symbols;
         }
+
+        SymbolGroup.prototype.addSymbol = function (symbol) {
+            if (angular.isArray(this.symbols)) {
+                this.symbols.push(symbol);
+            }
+        };
+
+        SymbolGroup.prototype.removeSymbol = function (symbol) {
+            if (angular.isArray(this.symbols)) {
+                _.remove(this.symbols, {id: symbol.id});
+            }
+        };
 
         SymbolGroup.prototype.copy = function () {
             return SymbolGroup.build(angular.copy(this));
@@ -8380,24 +8564,24 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.resources')
         .factory('SymbolResource', Resource);
 
-    Resource.$inject = ['$http', 'paths'];
+    Resource.$inject = ['$http', 'paths', '_'];
 
     /**
      * The resource that handles http requests to the API to do CRUD operations on symbols
      *
      * @param $http - The angular $http service
      * @param paths - The constant with application paths
+     * @param _ - Lodash
      * @returns {SymbolResource}
      * @constructor
      */
-    function Resource($http, paths) {
+    function Resource($http, paths, _) {
 
         /**
          * The resource object for a symbol
          * @constructor
          */
         function SymbolResource() {
-
         }
 
         /**
@@ -8473,7 +8657,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
 
         /**
-         * Make a PUT request to /rest/projects/{projectId}/symbols in order to create multiple symbols at once.
+         * Make a POST request to /rest/projects/{projectId}/symbols/batch in order to create multiple symbols at once.
          *
          * @param projectId - The id of the project the symbols should belong to
          * @param symbols - The array of symbols that should be created
@@ -8482,7 +8666,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         SymbolResource.prototype.createSome = function (projectId, symbols) {
             var _this = this;
 
-            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/batch', symbols)
                 .then(function (response) {
                     return _this.buildSome(response.data);
                 });
@@ -8504,12 +8688,26 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 });
         };
 
+        /**
+         * Make a POST request to /rest/projects/{projectId}/symbols/batch/{symbolIds} in order to update a bunch of
+         * symbols at once
+         *
+         * @param projectId
+         * @param symbols
+         * @returns {*}
+         */
         SymbolResource.prototype.updateSome = function (projectId, symbols) {
-            // TODO
+            var _this = this;
+            var ids = _.pluck(symbols, 'id').join(',');
+
+            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + ids, symbols)
+                .then(function (response) {
+                    return _this.buildSome(response.data);
+                })
         };
 
         /**
-         * Make a DELETE request to /rest/projects/{projectId}/symbols/hide in order to delete a single symbol. The
+         * Make a POST request to /rest/projects/{projectId}/symbols/hide in order to delete a single symbol. The
          * Symbol will not be deleted permanently, it will be just hidden and ignored when you call getAll().
          *
          * @param projectId - The id of the project the symbol belongs to
@@ -8526,7 +8724,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
 
         /**
-         * Make a DELETE request to /rest/projects/{projectId}/symbols/hide in order to delete multiple symbols at once.
+         * Make a POST request to /rest/projects/{projectId}/symbols/hide in order to delete multiple symbols at once.
          * Symbols will not be deleted permanently but stay hidden.
          *
          * @param projectId - The id of the projects the symbols belong to
@@ -8535,7 +8733,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         SymbolResource.prototype.deleteSome = function (projectId, symbolIds) {
             var _this = this;
-
             symbolIds = symbolIds.join(',');
 
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolIds + '/hide', {})
@@ -9198,7 +9395,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         return {
             success: success,
-            danger: danger
+            danger: danger,
+            info: info
         };
 
         function success(message) {
@@ -9225,9 +9423,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             });
         }
     }
-}());
-;
-(function () {
+}());;(function () {
     'use strict';
 
     angular
@@ -9319,9 +9515,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             })
         }
     }
-}());
-;
-(function () {
+}());;(function () {
     'use strict';
 
     angular

@@ -59,7 +59,7 @@
                     <div selectable-list-item ng-repeat="symbol in group.symbols">
 
                         <a class="pull-right" ng-click="setResetSymbol(symbol)">
-                            <i class="fa" ng-class="resetSymbol == symbol ? 'fa-star' : 'fa-star-o'"></i>
+                            <i class="fa" ng-class="resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'"></i>
                         </a>
 
                         <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>

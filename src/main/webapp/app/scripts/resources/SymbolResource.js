@@ -5,24 +5,24 @@
         .module('weblearner.resources')
         .factory('SymbolResource', Resource);
 
-    Resource.$inject = ['$http', 'paths'];
+    Resource.$inject = ['$http', 'paths', '_'];
 
     /**
      * The resource that handles http requests to the API to do CRUD operations on symbols
      *
      * @param $http - The angular $http service
      * @param paths - The constant with application paths
+     * @param _ - Lodash
      * @returns {SymbolResource}
      * @constructor
      */
-    function Resource($http, paths) {
+    function Resource($http, paths, _) {
 
         /**
          * The resource object for a symbol
          * @constructor
          */
         function SymbolResource() {
-
         }
 
         /**
@@ -98,7 +98,7 @@
         };
 
         /**
-         * Make a PUT request to /rest/projects/{projectId}/symbols in order to create multiple symbols at once.
+         * Make a POST request to /rest/projects/{projectId}/symbols/batch in order to create multiple symbols at once.
          *
          * @param projectId - The id of the project the symbols should belong to
          * @param symbols - The array of symbols that should be created
@@ -107,7 +107,7 @@
         SymbolResource.prototype.createSome = function (projectId, symbols) {
             var _this = this;
 
-            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/batch', symbols)
                 .then(function (response) {
                     return _this.buildSome(response.data);
                 });
@@ -129,12 +129,26 @@
                 });
         };
 
+        /**
+         * Make a POST request to /rest/projects/{projectId}/symbols/batch/{symbolIds} in order to update a bunch of
+         * symbols at once
+         *
+         * @param projectId
+         * @param symbols
+         * @returns {*}
+         */
         SymbolResource.prototype.updateSome = function (projectId, symbols) {
-            // TODO
+            var _this = this;
+            var ids = _.pluck(symbols, 'id').join(',');
+
+            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + ids, symbols)
+                .then(function (response) {
+                    return _this.buildSome(response.data);
+                })
         };
 
         /**
-         * Make a DELETE request to /rest/projects/{projectId}/symbols/hide in order to delete a single symbol. The
+         * Make a POST request to /rest/projects/{projectId}/symbols/hide in order to delete a single symbol. The
          * Symbol will not be deleted permanently, it will be just hidden and ignored when you call getAll().
          *
          * @param projectId - The id of the project the symbol belongs to
@@ -151,7 +165,7 @@
         };
 
         /**
-         * Make a DELETE request to /rest/projects/{projectId}/symbols/hide in order to delete multiple symbols at once.
+         * Make a POST request to /rest/projects/{projectId}/symbols/hide in order to delete multiple symbols at once.
          * Symbols will not be deleted permanently but stay hidden.
          *
          * @param projectId - The id of the projects the symbols belong to
@@ -160,7 +174,6 @@
          */
         SymbolResource.prototype.deleteSome = function (projectId, symbolIds) {
             var _this = this;
-
             symbolIds = symbolIds.join(',');
 
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolIds + '/hide', {})

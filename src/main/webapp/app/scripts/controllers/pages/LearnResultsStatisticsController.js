@@ -10,7 +10,7 @@
     ];
 
     /**
-     *
+     * The controller for the learn result statistics page.
      *
      * The corresponding template can be found under 'views/pages/learn-results-statistics.html'.
      *

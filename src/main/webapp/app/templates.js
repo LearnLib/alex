@@ -10,11 +10,13 @@ angular.module("app/views/directives/counter-example-builder.html", []).run(["$t
     "	        <div class=\"container-fluid\">\n" +
     "	        \n" +
     "	        	<p class=\"navbar-text\"><strong>Counter Example Builder</strong></p>\n" +
-    "	        \n" +
-    "	            <button class=\"btn btn-default navbar-btn pull-right\" ng-click=\"close()\"><i\n" +
+    "\n" +
+    "                <button class=\"btn btn-default btn-sm navbar-btn pull-right\" ng-click=\"close()\"><i\n" +
     "	                    class=\"fa fa-close\"></i></button>\n" +
-    "	            <button class=\"btn btn-primary navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">ok</button>\n" +
-    "	            <button class=\"btn btn-default navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
+    "                <button class=\"btn btn-primary btn-sm navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
+    "                    ok\n" +
+    "                </button>\n" +
+    "                <button class=\"btn btn-default btn-sm navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
     "	            	<i class=\"fa fa-eye\"></i>\n" +
     "	            </button>  \n" +
     "	        </div>\n" +
@@ -1434,6 +1436,10 @@ angular.module("app/views/modals/modal-test-details.html", []).run(["$templateCa
   $templateCache.put("app/views/modals/modal-test-details.html",
     "<div class=\"modal-header\">\n" +
     "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"ok()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
     "    <h3 class=\"modal-title\">Test Details</h3>\n" +
     "    <span class=\"text-muted\">View some details about this test</span>\n" +
     "\n" +
@@ -1533,10 +1539,12 @@ angular.module("app/views/modals/symbol-create-modal.html", []).run(["$templateC
     "            </datalist>\n" +
     "        </div>\n" +
     "\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"errorMsg\" ng-bind=\"errorMsg\"></div>\n" +
+    "\n" +
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
-    "        <button class=\"btn btn-primary\" type=\"submit\">Create Symbol</button>\n" +
+    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Create</button>\n" +
     "    </div>\n" +
     "\n" +
     "</form>");
@@ -1579,10 +1587,12 @@ angular.module("app/views/modals/symbol-edit-modal.html", []).run(["$templateCac
     "            <small ng-show=\"symbol_edit_form.abbreviation.$error.required\"> The field must not be empty.</small>\n" +
     "        </div>\n" +
     "\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"errorMsg\" ng-bind=\"errorMsg\"></div>\n" +
+    "\n" +
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
-    "        <button class=\"btn btn-primary\" type=\"submit\">Update Symbol</button>\n" +
+    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update</button>\n" +
     "    </div>\n" +
     "\n" +
     "</form>");
@@ -1656,12 +1666,8 @@ angular.module("app/views/modals/symbol-group-edit-modal.html", []).run(["$templ
     "             ng-show=\"create_symbol_group_form.name.$dirty && create_symbol_group_form.name.$invalid\">\n" +
     "            <small ng-show=\"create_symbol_group_form.name.$error.required\"> The field must not be empty.</small>\n" +
     "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"groupExists\">\n" +
-    "            <small>\n" +
-    "                There is already a symbol group with the name \"<strong ng-bind=\"group.name\"></strong>\". Please choose\n" +
-    "                another one.\n" +
-    "            </small>\n" +
-    "        </div>\n" +
+    "\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"errorMsg\" ng-bind=\"errorMsg\"></div>\n" +
     "\n" +
     "    </div>\n" +
     "\n" +
@@ -1954,6 +1960,10 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "\n" +
     "        </div>\n" +
     "\n" +
+    "        <div class=\"alert alert-info\" ng-show=\"results.length === 0\">\n" +
+    "            You have not run any tests yet.\n" +
+    "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>");
 }]);
@@ -2095,7 +2105,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                    <div selectable-list-item ng-repeat=\"symbol in group.symbols\">\n" +
     "\n" +
     "                        <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
-    "                            <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-star' : 'fa-star-o'\"></i>\n" +
+    "                            <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'\"></i>\n" +
     "                        </a>\n" +
     "\n" +
     "                        <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
@@ -2758,7 +2768,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                                        </a>\n" +
     "                                    </li>\n" +
     "                                    <li>\n" +
-    "                                        <a href symbol-move-modal-handle groups=\"groups\" symbols=\"[symbol]\" on-moved=\"updateSymbol\">\n" +
+    "                                        <a href symbol-move-modal-handle groups=\"groups\" symbols=\"[symbol]\"\n" +
+    "                                           on-moved=\"updateSymbol\">\n" +
     "                                            <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +

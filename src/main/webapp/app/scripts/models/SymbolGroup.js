@@ -4,9 +4,9 @@
         .module('weblearner.models')
         .factory('SymbolGroup', SymbolGroupModel);
 
-    SymbolGroupModel.$inject = ['SymbolGroupResource', 'Symbol'];
+    SymbolGroupModel.$inject = ['SymbolGroupResource', 'Symbol', '_'];
 
-    function SymbolGroupModel(SymbolGroupResource, Symbol) {
+    function SymbolGroupModel(SymbolGroupResource, Symbol, _) {
 
         function SymbolGroup(name) {
             this.name = name || null;
@@ -14,6 +14,18 @@
             this.project;
             this.symbols;
         }
+
+        SymbolGroup.prototype.addSymbol = function (symbol) {
+            if (angular.isArray(this.symbols)) {
+                this.symbols.push(symbol);
+            }
+        };
+
+        SymbolGroup.prototype.removeSymbol = function (symbol) {
+            if (angular.isArray(this.symbols)) {
+                _.remove(this.symbols, {id: symbol.id});
+            }
+        };
 
         SymbolGroup.prototype.copy = function () {
             return SymbolGroup.build(angular.copy(this));

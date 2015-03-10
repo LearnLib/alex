@@ -38,7 +38,6 @@
          */
         function link(scope, el, attrs) {
 
-            // attach the click event on the target element that opens the modal dialog
             el.on('click', handleModal);
 
             function handleModal() {
@@ -54,7 +53,6 @@
                     }
                 });
 
-                // call the callback with the created symbol on success
                 modal.result.then(function (symbol) {
                     scope.onCreated()(symbol);
                 })

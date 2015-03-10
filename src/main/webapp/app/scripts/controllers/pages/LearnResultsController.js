@@ -6,7 +6,7 @@
         .controller('LearnResultsController', LearnResultsController);
 
     LearnResultsController.$inject = [
-        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService'
+        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService', 'ToastService'
     ];
 
     /**
@@ -21,7 +21,7 @@
      * @param PromptService
      * @constructor
      */
-    function LearnResultsController($scope, Session, LearnResultResource, SelectionService, PromptService) {
+    function LearnResultsController($scope, Session, LearnResultResource, SelectionService, PromptService, Toast) {
 
         // The project that is saved in the session
         var project = Session.project.get();
@@ -49,8 +49,12 @@
                 .then(function () {
                     LearnResultResource.delete(project.id, result.testNo)
                         .then(function () {
+                            Toast.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
                             _.remove($scope.results, {testNo: result.testNo});
                         })
+                        .catch(function (response) {
+                            Toast.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
+                        });
                 })
         };
 
@@ -63,14 +67,18 @@
 
             if (selectedResults.length > 0) {
                 testNos = _.pluck(selectedResults, 'testNo');
-                PromptService.confirm("Do you want to permanently delete this result?")
+                PromptService.confirm("Do you want to permanently delete theses results?")
                     .then(function () {
                         LearnResultResource.delete(project.id, testNos)
                             .then(function () {
+                                Toast.success('Learn result for test deleted');
                                 _.forEach(testNos, function (testNo) {
                                     _.remove($scope.tests, {testNo: testNo})
                                 })
                             })
+                            .catch(function (response) {
+                                Toast.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
+                            });
                     })
             }
         }

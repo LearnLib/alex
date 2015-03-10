@@ -11,7 +11,8 @@
 
         return {
             success: success,
-            danger: danger
+            danger: danger,
+            info: info
         };
 
         function success(message) {

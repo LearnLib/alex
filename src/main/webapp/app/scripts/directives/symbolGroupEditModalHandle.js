@@ -7,6 +7,12 @@
 
     symbolGroupEditModalHandle.$inject = ['$modal', 'paths'];
 
+    /**
+     *
+     * @param $modal
+     * @param paths
+     * @returns {{scope: {group: string, onUpdated: string, onDeleted: string}, link: link}}
+     */
     function symbolGroupEditModalHandle($modal, paths) {
 
         var directive = {
@@ -19,12 +25,16 @@
         };
         return directive;
 
+        /**
+         * @param scope
+         * @param el
+         * @param attrs
+         */
         function link(scope, el, attrs) {
 
             el.on('click', handleModal);
 
             function handleModal() {
-
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/symbol-group-edit-modal.html',
                     controller: 'SymbolGroupEditModalController',
@@ -37,10 +47,9 @@
                     }
                 });
 
-                // call the callback with the created symbol on success
                 modal.result.then(function (data) {
                     if (data.status === 'updated') {
-                        scope.onUpdated()(data.group);
+                        scope.onUpdated()(data.newGroup, data.oldGroup);
                     } else if (data.status === 'deleted') {
                         scope.onDeleted()(data.group);
                     }

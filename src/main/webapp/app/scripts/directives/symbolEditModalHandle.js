@@ -52,6 +52,7 @@
                         }
                     }
                 });
+
                 modal.result.then(function (symbol) {
                     scope.onUpdated()(symbol.new, symbol.old);
                 })

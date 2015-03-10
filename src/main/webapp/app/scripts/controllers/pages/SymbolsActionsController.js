@@ -6,10 +6,10 @@
         .controller('SymbolsActionsController', SymbolsActionsController);
 
     SymbolsActionsController.$inject = [
-        '$scope', '$stateParams', 'Symbol', 'SessionService', 'SelectionService'
+        '$scope', '$stateParams', 'Symbol', 'SessionService', 'SelectionService', 'ToastService'
     ];
 
-    function SymbolsActionsController($scope, $stateParams, Symbol, SessionService, SelectionService) {
+    function SymbolsActionsController($scope, $stateParams, Symbol, SessionService, SelectionService, Toast) {
 
         /** the open project */
         $scope.project = SessionService.project.get();
@@ -85,7 +85,12 @@
 
             // update the symbol
             Symbol.Resource.update($scope.project.id, copy)
-                .then(init)
+                .then(function (updatedSymbol) {
+                    Toast.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
+                })
+                .catch(function (response) {
+                    Toast.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
+                })
         };
 
         /**

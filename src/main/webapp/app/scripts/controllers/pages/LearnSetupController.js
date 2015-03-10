@@ -3,55 +3,105 @@
 
     angular
         .module('weblearner.controller')
-        .controller('LearnSetupController', [
-            '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'LearnConfiguration',
-            'LearnerResource', 'ngToast',
-            LearnSetupController
-        ]);
+        .controller('LearnSetupController', LearnSetupController);
 
-    function LearnSetupController($scope, $state, SymbolGroup, SessionService, SelectionService, LearnConfiguration,
-                                  LearnerResource, toast) {
+    LearnSetupController.$inject = [
+        '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'LearnConfiguration',
+        'LearnerResource', 'ToastService'
+    ];
 
-        $scope.project = SessionService.project.get();
+    /**
+     * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
+     *
+     * The template can be found at 'views/pages/learn-setup.html'
+     *
+     * @param $scope
+     * @param $state
+     * @param SymbolGroup
+     * @param Session
+     * @param SelectionService
+     * @param LearnConfiguration
+     * @param LearnerResource
+     * @param Toast
+     * @constructor
+     */
+    function LearnSetupController($scope, $state, SymbolGroup, Session, SelectionService, LearnConfiguration,
+                                  LearnerResource, Toast) {
+
+        // the project that is stored in the session
+        var project = Session.project.get();
+
+        /**
+         * All symbol groups that belong the the sessions project
+         * @type {SymbolGroup[]}
+         */
         $scope.groups = [];
+
+        /**
+         * A list of all symbols of all groups that is used in order to select them
+         * @type {Symbol[]}
+         */
         $scope.allSymbols = [];
+
+        /**
+         * The configuration that is send to the server for learning
+         * @type {LearnConfiguration}
+         */
         $scope.learnConfiguration = new LearnConfiguration();
-        $scope.resetSymbol;
 
-        //////////
+        /**
+         * The symbol that should be used as a reset symbol
+         * @type {Symbol|null}
+         */
+        $scope.resetSymbol = null;
 
-        LearnerResource.isActive()
-            .then(function (data) {
-                if (data.active) {
-                    if (data.project == $scope.project.id) {
-                        $state.go('learn.start');
+        (function init() {
+
+            // make sure that there isn't any other learn process active
+            // redirect to the load screen in case there is an active one
+            LearnerResource.isActive()
+                .then(function (data) {
+                    if (data.active) {
+                        if (data.project == project.id) {
+                            $state.go('learn.start');
+                        } else {
+                            Toast.danger('There is already running a test from another project.');
+                        }
                     } else {
-                        toast.create({
-                            class: 'danger',
-                            content: 'There is already running a test from another project.',
-                            dismissButton: true
-                        });
+
+                        // load all symbols in case there isn't any active learning process
+                        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+                            .then(function (groups) {
+                                $scope.groups = groups;
+                                $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
+                            });
                     }
-                } else {
-                    SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
-                        .then(function (groups) {
-                            $scope.groups = groups;
-                            $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
-                        });
-                }
-            });
+                });
+        }());
 
-        //////////
-
+        /**
+         * Sets the reset symbol
+         * @param symbol - The symbol that will be used to reset the sul
+         */
         $scope.setResetSymbol = function (symbol) {
             $scope.resetSymbol = symbol;
         };
 
+        /**
+         * Starts the learning process if symbols are selected and a reset symbol is defined. Redirects to the
+         * learning load screen on success.
+         */
         $scope.startLearning = function () {
-            var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
+            var selectedSymbols;
 
-            if (selectedSymbols.length && $scope.resetSymbol) {
+            if (angular.isUndefined($scope.resetSymbol)) {
+                Toast.danger('You <strong>must</strong> selected a reset symbol in order to start learning');
+                return;
+            }
 
+            selectedSymbols = SelectionService.getSelected($scope.allSymbols);
+
+            if (selectedSymbols.length > 0) {
                 _.forEach(selectedSymbols, function (symbol) {
                     $scope.learnConfiguration.addSymbol(symbol)
                 });
@@ -62,9 +112,19 @@
                     .then(function () {
                         $state.go('learn.start')
                     })
+                    .catch(function (response) {
+                        Toast.danger('<p><strong>Start learning failed</strong></p>' + response.data.message);
+                    });
+            } else {
+                Toast.danger('You <strong>must</strong> at least select one symbol to start learning');
             }
         };
 
+        /**
+         * Updates the learn configuration
+         *
+         * @param {LearnConfiguration} config
+         */
         $scope.updateLearnConfiguration = function (config) {
             $scope.learnConfiguration = config;
         };

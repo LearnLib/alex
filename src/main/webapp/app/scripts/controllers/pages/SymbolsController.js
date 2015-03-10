@@ -5,64 +5,56 @@
         .module('weblearner.controller')
         .controller('SymbolsController', SymbolsController);
 
-    SymbolsController.$inject = ['$scope', 'SessionService', 'Symbol', 'SymbolGroup', 'SelectionService', '_'];
+    SymbolsController.$inject = [
+        '$scope', 'SessionService', 'Symbol', 'SymbolGroup', 'SelectionService', '_', 'ToastService'
+    ];
 
-    function SymbolsController($scope, Session, Symbol, SymbolGroup, SelectionService, _) {
+    /**
+     * The template can be found at 'views/pages/symbols.html'
+     *
+     * @param $scope
+     * @param Session
+     * @param Symbol
+     * @param SymbolGroup
+     * @param SelectionService
+     * @param _
+     * @param Toast
+     * @constructor
+     */
+    function SymbolsController($scope, Session, Symbol, SymbolGroup, SelectionService, _, Toast) {
 
         $scope.project = Session.project.get();
         $scope.groups = [];
-        $scope.allSymbols = [];
         $scope.collapseAll = false;
-        $scope.selectedSymbols = [];
 
-        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
-            .then(function (groups) {
-                $scope.groups = groups;
-                $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
-            });
-
-        $scope.toggleCollapseAllGroups = function () {
-            $scope.collapseAll = !$scope.collapseAll;
-            _.forEach($scope.groups, function (group) {
-                group._isCollapsed = $scope.collapseAll;
-            })
-        };
+        (function init() {
+            SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+                .then(function (groups) {
+                    $scope.groups = groups;
+                });
+        }());
 
         function removeSymbolsFromScope(symbols) {
-            _.forEach(symbols, function(symbol){
-                var index = _.findIndex($scope.groups, {id: symbol.group});
-                _.remove($scope.groups[index].symbols, {id: symbol.id});
-                _.remove($scope.symbols, {id: symbol.id});
+            _.forEach(symbols, function (symbol) {
+                var group = _.find($scope.groups, {id: symbol.group});
+                group.removeSymbol(symbol);
             })
         }
 
         /**
          * Deletes a given symbol and remove it from the scope so that it will not be listed any longer
          *
-         * @param symbol {Symbol} - The symbol that should be deleted
+         * @param {Symbol} symbol - The symbol that should be deleted
          */
         $scope.deleteSymbol = function (symbol) {
             Symbol.Resource.delete($scope.project.id, symbol.id)
                 .then(function () {
+                    Toast.success('Symbol <strong>' + symbol.name + '</strong> deleted');
                     removeSymbolsFromScope([symbol]);
+                }).catch(function (response) {
+                    Toast.danger('<p><strong>Deletion failed!</strong></p>' + response.data.message);
                 })
         };
-
-        /**
-         * Moves the selected symbols to a new group
-         *
-         * @param group {SymbolGroup} - The group where the selected symbols should be moved into
-         */
-        $scope.moveSelectedSymbolsTo = function (group) {
-            var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
-
-            SelectionService.removeSelection(selectedSymbols);
-            _.forEach(selectedSymbols, function (symbol) {
-                symbol.group = group.id;
-                group.push(symbol);
-            });
-        };
-
 
         /**
          * Deletes the symbols the user selected from the server and the scope
@@ -74,37 +66,42 @@
             if (selectedSymbols.length > 0) {
                 symbolsIds = _.pluck(selectedSymbols, 'id');
                 Symbol.Resource.deleteSome($scope.project.id, symbolsIds)
-                    .then(removeSymbolsFromScope);
+                    .then(function () {
+                        Toast.success('Symbols deleted');
+                        removeSymbolsFromScope(selectedSymbols);
+                    }).catch(function (response) {
+                        Toast.danger('<p><strong>Deletion failed!</strong></p>' + response.data.message);
+                    })
             }
         };
 
         /**
          * Adds a symbol to to its corresponding group the scope
          *
-         * @param symbol {Symbol} - The new symbol that should be added to the list
+         * @param {Symbol} symbol - The new symbol that should be added to the list
          */
         $scope.addSymbol = function (symbol) {
-            var index = _.findIndex($scope.groups, {id: symbol.group});
-            if (index > -1) {
-                $scope.groups[index].symbols.push(symbol);
-                $scope.allSymbols.push(symbol);
+            var group = _.find($scope.groups, {id: symbol.group});
+            if (angular.isDefined(group)) {
+                group.addSymbol(symbol);
             }
         };
 
         /**
          * Adds a group to the scope
          *
-         * @param group {SymbolGroup} - The new group that should be added to the list
+         * @param {SymbolGroup} group - The new group that should be added to the list
          */
         $scope.addGroup = function (group) {
             $scope.groups.push(group);
         };
 
-        $scope.updateSymbol = function (symbol, oldSymbol) {
-            var group = _.find($scope.groups, {id: symbol.group});
-            if (group) {
-                group.symbols.push(symbol);
-            }
+        /**
+         * Updates a symbol in the scope
+         * @param symbol
+         */
+        $scope.updateSymbol = function (symbol) {
+
         };
 
         $scope.updateGroup = function (group) {
@@ -115,12 +112,14 @@
         };
 
         $scope.deleteGroup = function (group) {
-            removeSymbolsFromScope(group.symbols);
             _.remove($scope.groups, {id: group.id});
         };
 
-        $scope.getSelectedSymbols = function () {
-            return SelectionService.getSelected($scope.allSymbols);
-        }
+        $scope.toggleCollapseAllGroups = function () {
+            $scope.collapseAll = !$scope.collapseAll;
+            _.forEach($scope.groups, function (group) {
+                group._isCollapsed = $scope.collapseAll;
+            })
+        };
     }
 }());

@@ -6,13 +6,13 @@
         .controller('SymbolMoveModalController', SymbolMoveModalController);
 
     SymbolMoveModalController.$inject = [
-        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SelectionService'
+        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SymbolGroup', 'SelectionService'
     ];
 
     function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol, SelectionService) {
 
         $scope.symbols = modalData.symbols;
-        $scope.groups = modalData.groups;
+        $scope.groups = [];
         $scope.selectedGroup = null;
 
         $scope.moveSymbols = function () {
@@ -23,10 +23,10 @@
                     symbol.group = $scope.selectedGroup.id;
                     Symbol.Resource.update($scope.selectedGroup.project, symbol)
                         .then(function (updatedSymbol) {
-                            //$modalInstance.$close({
-                            //    new: updatedSymbol,
-                            //    old:
-                            //})
+                            $modalInstance.close({
+                                new: updatedSymbol,
+                                old: null
+                            })
                         })
                 })
             }
@@ -36,9 +36,7 @@
             $scope.selectedGroup = $scope.selectedGroup === group ? null : group;
         };
 
-        /**
-         * Close the modal dialog
-         */
+        /** Close the modal dialog */
         $scope.closeModal = function () {
             $modalInstance.dismiss();
         }

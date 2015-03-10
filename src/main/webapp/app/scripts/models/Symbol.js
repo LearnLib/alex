@@ -51,7 +51,7 @@
          */
         Symbol.build = function (data) {
             var symbol = new Symbol(data.name, data.abbreviation);
-            symbol.actions = Action.buildSome(data.actions);
+            symbol.actions = data.actions ? Action.buildSome(data.actions) : [];
             symbol.id = data.id;
             symbol.revision = data.revision;
             symbol.project = data.project;
@@ -63,15 +63,19 @@
         /**
          * Build an array of symbol instances from an object array
          *
-         * @param data - The data the symobl instances should be build from
+         * @param data - The data the symbol instances should be build from
          * @returns {SymbolModel.Symbol[]} - The array of symbol instances
          */
         Symbol.buildSome = function (data) {
-            var symbols = [];
-            for (var i = 0; i < data.length; i++) {
-                symbols.push(Symbol.build(data[i]))
+            if (angular.isDefined(data)) {
+                var symbols = [];
+                for (var i = 0; i < data.length; i++) {
+                    symbols.push(Symbol.build(data[i]))
+                }
+                return symbols;
+            } else {
+                return [];
             }
-            return symbols;
         };
 
         /**
