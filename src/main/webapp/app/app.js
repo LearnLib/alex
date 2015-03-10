@@ -49,7 +49,7 @@
             $rootScope._ = _;
             $rootScope.selection = SelectionService;
         }])
-}());;angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+}());;angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/counter-example-builder.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -489,155 +489,16 @@ angular.module("app/views/directives/rest-action-edit-form.html", []).run(["$tem
     "</form>");
 }]);
 
-angular.module("app/views/directives/web-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/view-heading.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/views/directives/web-action-edit-form.html",
-    "<form id=\"web-action-edit-form\" ng-submit=\"submitForm()\">\n" +
+  $templateCache.put("app/views/directives/view-heading.html",
+    "<div class=\"view-heading\">\n" +
+    "    <div class=\"container\">\n" +
+    "        <h2 class=\"view-heading-title\" ng-bind=\"::title\"></h2>\n" +
     "\n" +
-    "    <!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.SEARCH_FOR_TEXT\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Search on a page for a piece of text or a regular expression\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Value</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
-    "        </div>\n" +
-    "        <div class=\"checkbox\">\n" +
-    "            <label>\n" +
-    "                <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
-    "            </label>\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
+    "        <p class=\"view-heading-sub-title\" ng-bind=\"::subTitle\"></p>\n" +
     "    </div>\n" +
-    "    <!-- END: SEARCH_FOR_TEXT -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: SEARCH_FOR_NODE -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.SEARCH_FOR_NODE\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Search an HTML element in the DOM tree of a page\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: SEARCH_FOR_NODE -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CLEAR -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CLEAR\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Clear an element (eg. input or contenteditable element)\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: CLEAR -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CLICK -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CLICK\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Click on an element\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: CLICK -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: FILL -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.FILL\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Fill an element with content (eg. input or contenteditable element)\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">The value to fill the element with</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: FILL -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: GO_TO -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.GO_TO\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Go to a url that is <strong>relative</strong> to your projects' base url\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Url</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: GO_TO -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: SUBMIT -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.SUBMIT\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Submit a form\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: SUBMIT -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: WAIT -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.WAIT\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Wait for a specified amount of time before the next action will be executed\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Time to wait (in ms)</label>\n" +
-    "            <input class=\"form-control\" type=\"number\" placeholder=\"time in ms\" ng-model=\"action.duration\">\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: WAIT -->\n" +
-    "\n" +
-    "    <hr>\n" +
-    "    <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update Action</button>\n" +
-    "\n" +
-    "</form>");
+    "</div>");
 }]);
 
 angular.module("app/views/directives/web-element-picker.html", []).run(["$templateCache", function($templateCache) {
@@ -745,8 +606,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                            <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
     "                        </label>\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.value\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle>\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -769,8 +629,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.value\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.value\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -793,8 +652,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.node\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -816,8 +674,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">CSS selector</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.node\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -843,8 +700,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">The value to fill the element with</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.node\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -885,8 +741,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">CSS selector</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.node\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -1762,7 +1617,7 @@ angular.module("app/views/modals/symbol-move-modal.html", []).run(["$templateCac
     "</div>\n" +
     "\n" +
     "<div class=\"modal-footer\">\n" +
-    "    <button class=\"btn btn-sm btn-primary\" ng-click=\"moveSymbols()\">Move Symbols</button>\n" +
+    "    <button class=\"btn btn-sm btn-primary\" ng-click=\"moveSymbols()\">Move</button>\n" +
     "</div>\n" +
     "\n" +
     "");
@@ -2153,7 +2008,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\" selectable items=\"group.symbols\">\n" +
     "\n" +
     "                <div selectable-list>\n" +
-    "                    <div selectable-list-item ng-repeat=\"symbol in group.symbols\">\n" +
+    "                    <div selectable-list-item ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\">\n" +
     "\n" +
     "                        <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
     "                            <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'\"></i>\n" +
@@ -2748,8 +2603,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                    symbol-edit-modal-handle symbol=\"(allSymbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
     "                Edit\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\"\n" +
-    "                    ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\" symbols=\"getSelectedSymbols\"\n" +
+    "                    on-moved=\"moveSymbols\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\">\n" +
     "                Move\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\"\n" +
@@ -2806,7 +2661,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "\n" +
     "                <div selectable items=\"group.symbols\">\n" +
     "                    <div selectable-list>\n" +
-    "                        <div selectable-list-item item=\"symbol\" ng-repeat=\"symbol in group.symbols\">\n" +
+    "                        <div selectable-list-item item=\"symbol\"\n" +
+    "                             ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\">\n" +
     "\n" +
     "                            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
     "                                <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
@@ -2820,7 +2676,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                                    </li>\n" +
     "                                    <li>\n" +
     "                                        <a href symbol-move-modal-handle groups=\"groups\" symbols=\"[symbol]\"\n" +
-    "                                           on-moved=\"updateSymbol\">\n" +
+    "                                           on-moved=\"moveSymbols\">\n" +
     "                                            <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +
@@ -3843,32 +3699,81 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .controller('SymbolMoveModalController', SymbolMoveModalController);
 
     SymbolMoveModalController.$inject = [
-        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SymbolGroup', 'SelectionService'
+        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SelectionService', 'ToastService'
     ];
 
-    function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol, SelectionService) {
+    /**
+     * The controller that handles the moving of symbols into another group.
+     *
+     * The template can be found at 'views/modals/symbol-move-modal.html'
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param modalData
+     * @param Symbol
+     * @param SelectionService
+     * @param Toast
+     * @constructor
+     */
+    function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol, SelectionService, Toast) {
 
-        $scope.symbols = modalData.symbols;
+        /**
+         * The list of symbols that should be moved
+         * @type {Symbol[]}
+         */
+        $scope.symbols = [];
+
+        /**
+         * The list of existing symbol groups
+         * @type {SymbolGroup[]}
+         */
         $scope.groups = [];
+
+        /**
+         * The symbol group the symbols should be moved into
+         * @type {SymbolGroup|null}
+         */
         $scope.selectedGroup = null;
 
+        // some checking if required parameters are given
+        (function init() {
+            if (angular.isDefined(modalData.groups) && angular.isDefined(modalData.symbols)) {
+                $scope.symbols = angular.copy(modalData.symbols);
+                $scope.groups = angular.copy(modalData.groups);
+            } else {
+                throw new Error('Missing data');
+            }
+        }());
+
+        /**
+         * Moves the symbols into the selected group by changing the group property of each symbol and then batch
+         * updating them on the server
+         */
         $scope.moveSymbols = function () {
-            var symbols;
             if ($scope.selectedGroup !== null) {
                 _.forEach($scope.symbols, function (symbol) {
                     SelectionService.removeSelection(symbol);
                     symbol.group = $scope.selectedGroup.id;
-                    Symbol.Resource.update($scope.selectedGroup.project, symbol)
-                        .then(function (updatedSymbol) {
-                            $modalInstance.close({
-                                new: updatedSymbol,
-                                old: null
-                            })
-                        })
-                })
+                });
+                Symbol.Resource.updateSome($scope.selectedGroup.project, $scope.symbols)
+                    .then(function () {
+                        Toast.success('Symbols move to group <strong>' + $scope.selectedGroup.name + '</strong>');
+                        $modalInstance.close({
+                            symbols: modalData.symbols,
+                            group: $scope.selectedGroup
+                        });
+                    })
+                    .catch(function (response) {
+                        Toast.danger('<p><strong>Moving symbols failed</strong></p>' + response.data.message);
+                    })
             }
         };
 
+        /**
+         * Selects the group where the symbols should be moved into
+         *
+         * @param {SymbolGroup} group
+         */
         $scope.selectGroup = function (group) {
             $scope.selectedGroup = $scope.selectedGroup === group ? null : group;
         };
@@ -4325,7 +4230,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         /**
          * Sets the reset symbol
-         * @param symbol - The symbol that will be used to reset the sul
+         *
+         * @param {Symbol} symbol - The symbol that will be used to reset the sul
          */
         $scope.setResetSymbol = function (symbol) {
             $scope.resetSymbol = symbol;
@@ -4761,19 +4667,24 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         $scope.project = Session.project.get();
         $scope.groups = [];
+        $scope.allSymbols = [];
         $scope.collapseAll = false;
 
         (function init() {
             SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
                 .then(function (groups) {
                     $scope.groups = groups;
+                    $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
                 });
         }());
 
         function removeSymbolsFromScope(symbols) {
+            var group;
+
             _.forEach(symbols, function (symbol) {
-                var group = _.find($scope.groups, {id: symbol.group});
-                group.removeSymbol(symbol);
+                group = _.find($scope.groups, {id: symbol.group});
+                _.remove(group.symbols, {id: symbol.id});
+                _.remove($scope.allSymbols, {id: symbol.id});
             })
         }
 
@@ -4837,9 +4748,24 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @param symbol
          */
         $scope.updateSymbol = function (symbol) {
-
+            var group = _.find($scope.groups, {id: symbol.group});
+            var i = _.findIndex(group.symbols, {id: symbol.id});
+            group.symbols[i] = symbol;
         };
 
+        $scope.moveSymbols = function (symbols, group) {
+            _.forEach(symbols, function (symbol) {
+                var g = _.find($scope.groups, {id: symbol.group});
+                _.remove(g.symbols, {id: symbol.id});
+            });
+            var g = _.find($scope.groups, {id: group.id});
+            g.symbols = g.symbols.concat(symbols);
+        };
+
+        /**
+         *
+         * @param group
+         */
         $scope.updateGroup = function (group) {
             var g = _.find($scope.groups, {id: group.id});
             if (angular.isDefined(g)) {
@@ -4847,16 +4773,27 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         };
 
+        /**
+         *
+         * @param group
+         */
         $scope.deleteGroup = function (group) {
             _.remove($scope.groups, {id: group.id});
         };
 
+        /**
+         *
+         */
         $scope.toggleCollapseAllGroups = function () {
             $scope.collapseAll = !$scope.collapseAll;
             _.forEach($scope.groups, function (group) {
                 group._isCollapsed = $scope.collapseAll;
             })
         };
+
+        $scope.getSelectedSymbols = function () {
+            return SelectionService.getSelected($scope.allSymbols);
+        }
     }
 }());;(function () {
     'use strict';
@@ -5624,25 +5561,18 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         function link(scope, el, attrs) {
 
-            var _parent = el.parent()[0];
-
-            //////////
+            var parent = el.parent()[0];
 
             if (scope.bindResize) {
                 angular.element($window).on('resize', fitToParent)
             }
 
-            fitToParent();
-
-            //////////
-
             /**
              * Set the element to the dimensions of its parent
              */
             function fitToParent() {
-
-                var width = _parent.offsetWidth;
-                var height = _parent.offsetHeight;
+                var width = parent.offsetWidth;
+                var height = parent.offsetHeight;
 
                 if (scope.asStyle) {
                     el[0].style.width = width + 'px';
@@ -5652,6 +5582,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     el[0].setAttribute('height', height);
                 }
             }
+
+            fitToParent();
         }
     }
 }());;(function(){
@@ -5708,294 +5640,302 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 		}
 	}
 }());
-;(function() {
+;(function () {
 
-	angular.module('weblearner.directives').directive('hypothesis',
-			[ '$window', 'paths', hypothesis ]);
+    angular.module('weblearner.directives')
+        .directive('hypothesis', hypothesis);
 
-	function intersectNode(node, point) {
-		return node.intersect(point);
-	}
+    hypothesis.$inject = ['$window', 'paths'];
 
-	function calcPoints(g, e) {
-		var edge = g.edge(e), tail = g.node(e.v), head = g.node(e.w), points = edge.points
-				.slice(1, edge.points.length - 1);
+    function intersectNode(node, point) {
+        return node.intersect(point);
+    }
 
-		points.unshift(intersectNode(tail, points[0]));
-		points.push(intersectNode(head, points[points.length - 1]));
+    function calcPoints(g, e) {
+        var edge = g.edge(e), tail = g.node(e.v), head = g.node(e.w), points = edge.points
+            .slice(1, edge.points.length - 1);
 
-		return createLine(edge, points);
-	}
+        points.unshift(intersectNode(tail, points[0]));
+        points.push(intersectNode(head, points[points.length - 1]));
 
-	function createLine(edge, points) {
-		var line = d3.svg.line().x(function(d) {
-			return d.x;
-		}).y(function(d) {
-			return d.y;
-		});
+        return createLine(edge, points);
+    }
 
-		if (_.has(edge, "lineInterpolate")) {
-			line.interpolate(edge.lineInterpolate);
-		}
+    function createLine(edge, points) {
+        var line = d3.svg.line().x(function (d) {
+            return d.x;
+        }).y(function (d) {
+            return d.y;
+        });
 
-		if (_.has(edge, "lineTension")) {
-			line.tension(Number(edge.lineTension));
-		}
+        if (_.has(edge, "lineInterpolate")) {
+            line.interpolate(edge.lineInterpolate);
+        }
 
-		return line(points);
-	}
+        if (_.has(edge, "lineTension")) {
+            line.tension(Number(edge.lineTension));
+        }
 
-	function hypothesis($window, paths) {
+        return line(points);
+    }
 
-		var directive = {
-			scope : {
-				test : '=',
-				counterExample : '=',
-				layoutSettings : '='
-			},
-			templateUrl : paths.views.DIRECTIVES + '/hypothesis.html',
-			link : link
-		};
-		return directive;
+    function hypothesis($window, paths) {
 
-		//////////
+        var directive = {
+            scope: {
+                test: '=',
+                counterExample: '=',
+                layoutSettings: '='
+            },
+            templateUrl: paths.views.DIRECTIVES + '/hypothesis.html',
+            link: link
+        };
+        return directive;
 
-		function link(scope, el, attrs) {
+        //////////
 
-			var _svg;
-			var _svgGroup;
-			var _svgContainer;
-			var _graph;
-			var _renderer;
+        function link(scope, el, attrs) {
 
-			//////////
+            var _svg;
+            var _svgGroup;
+            var _svgContainer;
+            var _graph;
+            var _renderer;
 
-			scope.$watch('test', function(test) {
-				if (angular.isDefined(test) && test != null) {
-					createHypothesis();
-				}
-			});
+            //////////
 
-			scope.$watch('layoutSettings', function(ls) {
-				if (angular.isDefined(ls)) {
-					createHypothesis();
-				}
-			});
+            scope.$watch('test', function (test) {
+                if (angular.isDefined(test) && test != null) {
+                    createHypothesis();
+                }
+            });
 
-			//////////
+            scope.$watch('layoutSettings', function (ls) {
+                if (angular.isDefined(ls)) {
+                    createHypothesis();
+                }
+            });
 
-			function createHypothesis() {
-				clearSvg();
-				initGraph();
-				layout();
-				renderGraph();
-				handleEvents();
-			}
+            //////////
 
-			function clearSvg() {
-				el.find('svg')[0].innerHTML = '';
-			}
+            function createHypothesis() {
+                clearSvg();
+                initGraph();
+                layout();
+                renderGraph();
+                handleEvents();
+            }
 
-			function initGraph() {
+            function clearSvg() {
+                el.find('svg')[0].innerHTML = '';
+            }
 
-				_svg = d3.select(el.find('svg')[0]);
-				_svgGroup = _svg.append("g");
-				_svgContainer = _svg.node().parentNode;
+            function initGraph() {
 
-				_graph = new graphlib.Graph({
-					directed : true,
-					multigraph : true
-				});
+                _svg = d3.select(el.find('svg')[0]);
+                _svgGroup = _svg.append("g");
+                _svgContainer = _svg.node().parentNode;
 
-				if (angular.isDefined(scope.layoutSettings)) {
-					_graph.setGraph({
-						edgesep : scope.layoutSettings.edgesep,
-						nodesep : scope.layoutSettings.nodesep,
-						ranksep : scope.layoutSettings.ranksep
-					});
-				} else {
-					_graph.setGraph({
-						edgesep : 25
-					});
-				}
-			}
-			
-			function layout() {
-				if (angular.isDefined(scope.layoutSettings)) {
-					if (scope.layoutSettings.multigraph) {
-						layoutAsMultiGraph();
-					} else {
-						layoutAsGraph();
-					}
-				} else {
-					layoutAsGraph();
-				}
-			}
+                _graph = new graphlib.Graph({
+                    directed: true,
+                    multigraph: true
+                });
 
-			function layoutAsMultiGraph() {
+                if (angular.isDefined(scope.layoutSettings)) {
+                    _graph.setGraph({
+                        edgesep: scope.layoutSettings.edgesep,
+                        nodesep: scope.layoutSettings.nodesep,
+                        ranksep: scope.layoutSettings.ranksep
+                    });
+                } else {
+                    _graph.setGraph({
+                        edgesep: 25
+                    });
+                }
+            }
 
-				// add nodes to the graph
-				_.forEach(scope.test.hypothesis.nodes, function(node, i) {
-					_graph.setNode("" + i, {
-						shape : 'circle',
-						label : node.toString(),
-						width : 25,
+            function layout() {
+                if (angular.isDefined(scope.layoutSettings)) {
+                    if (scope.layoutSettings.multigraph) {
+                        layoutAsMultiGraph();
+                    } else {
+                        layoutAsGraph();
+                    }
+                } else {
+                    layoutAsGraph();
+                }
+            }
+
+            function layoutAsMultiGraph() {
+
+                // add nodes to the graph
+                _.forEach(scope.test.hypothesis.nodes, function (node, i) {
+                    _graph.setNode("" + i, {
+                        shape: 'circle',
+                        label: node.toString(),
+                        width: 25,
                         style: 'fill: #fff; stroke: #000; stroke-width: 1',
                         labelStyle: 'font-size: 1.25em; font-weight: bold'
                     });
-				});
+                });
 
-				// add edges to the graph
-				_.forEach(scope.test.hypothesis.edges, function(edge, i) {
-					var edgeName = edge.from + "-" + edge.to + "|" + i;
-					_graph.setEdge(edge.from, edge.to, {
-						label : edge.input + "/" + edge.output,
-						labeloffset : 5,
-						lineInterpolate : 'basis',
+                // add edges to the graph
+                _.forEach(scope.test.hypothesis.edges, function (edge, i) {
+                    var edgeName = edge.from + "-" + edge.to + "|" + i;
+                    _graph.setEdge(edge.from, edge.to, {
+                        label: edge.input + "/" + edge.output,
+                        labeloffset: 5,
+                        lineInterpolate: 'basis',
                         style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
                         labelStyle: 'font-size: 1.2em'
-					}, edgeName);
-				});
+                    }, edgeName);
+                });
 
-				// layout it
-				dagreD3.dagre.layout(_graph, {});
-			}
+                // layout it
+                dagreD3.dagre.layout(_graph, {});
+            }
 
-			function layoutAsGraph() {
+            function layoutAsGraph() {
 
-				// another format of a graph for merged multi edges
-				// graph = {<from>: {<to>: <label[]>, ...}, ...}
-				var graph = {};
+                // another format of a graph for merged multi edges
+                // graph = {<from>: {<to>: <label[]>, ...}, ...}
+                var graph = {};
 
-				// add nodes to the rendered graph
-				_.forEach(scope.test.hypothesis.nodes, function(node, i) {
-					_graph.setNode("" + i, {
-						shape : 'circle',
-						label : node.toString(),
-						width : 25,
+                // add nodes to the rendered graph
+                _.forEach(scope.test.hypothesis.nodes, function (node, i) {
+                    _graph.setNode("" + i, {
+                        shape: 'circle',
+                        label: node.toString(),
+                        width: 25,
                         style: 'fill: #fff; stroke: #000; stroke-width: 1',
                         labelStyle: 'font-size: 1.5em; font-weight: bold'
-					});
-				});
+                    });
+                });
 
-				// build data structure for the alternative representation by
-				// pushing some data
-				_.forEach(scope.test.hypothesis.edges, function(edge, i) {
-					if (!graph[edge.from]) {
-						graph[edge.from] = {};
-						graph[edge.from][edge.to] = [ edge.input + "/"
-								+ edge.output ];
-					} else {
-						if (!graph[edge.from][edge.to]) {
-							graph[edge.from][edge.to] = [ edge.input + "/"
-									+ edge.output ];
-						} else {
-							graph[edge.from][edge.to].push(edge.input + "/"
-									+ edge.output);
-						}
-					}
-				});
+                // build data structure for the alternative representation by
+                // pushing some data
+                _.forEach(scope.test.hypothesis.edges, function (edge, i) {
+                    if (!graph[edge.from]) {
+                        graph[edge.from] = {};
+                        graph[edge.from][edge.to] = [edge.input + "/"
+                        + edge.output];
+                    } else {
+                        if (!graph[edge.from][edge.to]) {
+                            graph[edge.from][edge.to] = [edge.input + "/"
+                            + edge.output];
+                        } else {
+                            graph[edge.from][edge.to].push(edge.input + "/"
+                            + edge.output);
+                        }
+                    }
+                });
 
-				// add edges to the rendered graph and combine <label[]>
-				_.forEach(graph, function(k, from) {
-					_.forEach(k, function(labels, to) {
-						_graph.setEdge(from, to, {
-							label : labels.join('\n'),
-							labeloffset : 5,
-							lineInterpolate : 'basis',
+                // add edges to the rendered graph and combine <label[]>
+                _.forEach(graph, function (k, from) {
+                    _.forEach(k, function (labels, to) {
+                        _graph.setEdge(from, to, {
+                            label: labels.join('\n'),
+                            labeloffset: 5,
+                            lineInterpolate: 'basis',
                             style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
                             labelStyle: 'font-size: 1.2em'
-						}, (from + '' + to));
-					});
-				});
+                        }, (from + '' + to));
+                    });
+                });
 
-				// render the graph on the svg
-				dagreD3.dagre.layout(_graph, {});
-			}
+                // render the graph on the svg
+                dagreD3.dagre.layout(_graph, {});
+            }
 
-			function renderGraph() {
+            function renderGraph() {
 
-				// render the graph in the svg
-				_renderer = new dagreD3.render();
-				_renderer(_svgGroup, _graph);
+                // render the graph in the svg
+                _renderer = new dagreD3.render();
+                _renderer(_svgGroup, _graph);
 
-				// Center graph horizontally
-				var xCenterOffset = (_svgContainer.clientWidth - _graph.graph().width) / 2;
-				_svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
-			}
-			
-			function handleEvents(){
-				
-				var zoom;
-				var drag;
-				
-				// attach click events for the selection of counter examples to the edge labels
-				// only if counterExamples is defined
-				if (angular.isDefined(scope.counterExample)) {
-					_svg.selectAll('.edgeLabel tspan').on('click', function() {
-						var label = this.innerHTML.split('/');
-						scope.$apply(function(){
-							scope.counterExample.input += (label[0] + ',');
-							scope.counterExample.output += (label[1] + ',');
-						});
-					});
-				}
-				
-				// Create and handle zoom  & pan event
-				zoom = d3.behavior.zoom().scaleExtent([ 0.1, 10 ])
-						.translate([ (_svgContainer.clientWidth - _graph.graph().width) / 2, 100 ]).on("zoom", zoomHandler);
-				zoom(_svg);
+                // Center graph horizontally
+                var xCenterOffset = (_svgContainer.clientWidth - _graph.graph().width) / 2;
+                _svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
+            }
 
-				function zoomHandler() {
-					_svgGroup.attr('transform', 'translate(' + zoom.translate()
-							+ ')' + ' scale(' + zoom.scale() + ')');
-				}
-				
-				// Add drag behavior for nodes
-				drag = d3.behavior.drag()
-						.origin(function(d) { return d; })
-						.on('dragstart', dragstart)
-						.on("drag", drag);
+            function handleEvents() {
 
-				_svg.selectAll('.node')
-						.attr('cx', function(d) { return d.x; })
-						.attr('cy', function(d) { return d.y; })
-						.call(drag);
+                var zoom;
+                var drag;
 
-				// prevent pan effect while dragging nodes
-				function dragstart(d) {
-					d3.event.sourceEvent.stopPropagation();
-				}
+                // attach click events for the selection of counter examples to the edge labels
+                // only if counterExamples is defined
+                if (angular.isDefined(scope.counterExample)) {
+                    _svg.selectAll('.edgeLabel tspan').on('click', function () {
+                        var label = this.innerHTML.split('/');
+                        scope.$apply(function () {
+                            scope.counterExample.input += (label[0] + ',');
+                            scope.counterExample.output += (label[1] + ',');
+                        });
+                    });
+                }
 
-				function drag(d) {
-					var node = d3.select(this);
-					var attrs = _graph.node(d);
-					attrs.x += d3.event.dx;
-					attrs.y += d3.event.dy;
-					node.attr('transform', 'translate(' + attrs.x + ','
-							+ attrs.y + ')');
+                // Create and handle zoom  & pan event
+                zoom = d3.behavior.zoom().scaleExtent([0.1, 10])
+                    .translate([(_svgContainer.clientWidth - _graph.graph().width) / 2, 100]).on("zoom", zoomHandler);
+                zoom(_svg);
 
-					// redraw edges
-					var paths = d3.selectAll('.path');
-					_.forEach(_graph.edges(), function(edge, i) {
-						var line = calcPoints(_graph, edge);
-						paths[0][i].setAttribute('d', line);
-					});
-				}
-				
-				angular.element($window).on('resize', fitSize);
+                function zoomHandler() {
+                    _svgGroup.attr('transform', 'translate(' + zoom.translate()
+                    + ')' + ' scale(' + zoom.scale() + ')');
+                }
 
-				function fitSize() {
-					_svg.attr("width", _svgContainer.clientWidth);
-					_svg.attr("height", _svgContainer.clientHeight);
-				}
+                // Add drag behavior for nodes
+                drag = d3.behavior.drag()
+                    .origin(function (d) {
+                        return d;
+                    })
+                    .on('dragstart', dragstart)
+                    .on("drag", drag);
 
-				window.setTimeout(function() {
-					window.dispatchEvent(new Event('resize'));
-				}, 100);
-			}
-		}
-	}
+                _svg.selectAll('.node')
+                    .attr('cx', function (d) {
+                        return d.x;
+                    })
+                    .attr('cy', function (d) {
+                        return d.y;
+                    })
+                    .call(drag);
+
+                // prevent pan effect while dragging nodes
+                function dragstart(d) {
+                    d3.event.sourceEvent.stopPropagation();
+                }
+
+                function drag(d) {
+                    var node = d3.select(this);
+                    var attrs = _graph.node(d);
+                    attrs.x += d3.event.dx;
+                    attrs.y += d3.event.dy;
+                    node.attr('transform', 'translate(' + attrs.x + ','
+                    + attrs.y + ')');
+
+                    // redraw edges
+                    var paths = d3.selectAll('.path');
+                    _.forEach(_graph.edges(), function (edge, i) {
+                        var line = calcPoints(_graph, edge);
+                        paths[0][i].setAttribute('d', line);
+                    });
+                }
+
+                angular.element($window).on('resize', fitSize);
+
+                function fitSize() {
+                    _svg.attr("width", _svgContainer.clientWidth);
+                    _svg.attr("height", _svgContainer.clientHeight);
+                }
+
+                window.setTimeout(function () {
+                    window.dispatchEvent(new Event('resize'));
+                }, 100);
+            }
+        }
+    }
 }());;(function () {
     'use strict';
 
@@ -6647,45 +6587,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.directives')
-        .directive('openWebElementPicker', [
-            'WebElementPickerService',
-            openWebElementPicker
-        ]);
-
-    function openWebElementPicker(WebElementPickerService) {
-
-        var directive = {
-            scope: {
-                url: '=',
-                selector: '='
-            },
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attrs) {
-
-            el.on('click', WebElementPickerService.open);
-
-            //////////
-
-            scope.$on('webElementPicker.ok', ok);
-
-            //////////
-
-            function ok(event, data) {
-                scope.url = data.url;
-                scope.selector = data.selector;
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
         .directive('selectable', selectable)
         .directive('selectableList', selectableList)
         .directive('selectableListItem', selectableListItem)
@@ -7132,7 +7033,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         var directive = {
             scope: {
-                symbols: '=',
+                symbols: '&',
                 groups: '=',
                 onMoved: '&'
             },
@@ -7145,21 +7046,24 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             el.on('click', handleModal);
 
             function handleModal() {
+                var symbols = scope.symbols();
+                if (angular.isFunction(symbols)) {
+                    symbols = symbols();
+                }
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/symbol-move-modal.html',
                     controller: 'SymbolMoveModalController',
                     resolve: {
                         modalData: function () {
                             return {
-                                symbols: scope.symbols,
+                                symbols: symbols,
                                 groups: scope.groups
                             }
                         }
                     }
                 });
-
-                modal.result.then(function (groups) {
-                    scope.onMoved()(groups);
+                modal.result.then(function (data) {
+                    scope.onMoved()(data.symbols, data.group);
                 })
             }
         }
@@ -7171,22 +7075,26 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.directives')
         .directive('viewHeading', viewHeading);
 
-    function viewHeading() {
+    viewHeading.$inject = ['paths'];
 
-        var template = '' +
-            '<div class="view-heading">' +
-            '   <div class="container">' +
-            '       <h2 class="view-heading-title" ng-bind="::title"></h2>' +
-            '       <p class="view-heading-sub-title" ng-bind="::subTitle"></p>' +
-            '   </div>' +
-            '</div>';
-
+    /**
+     * A directive that is used as a shortcut for the heading of a page to save some coding. Use it on every page that
+     * should have a header with a title and a sub-title. The directive accepts two parameters 'title' and 'subTile'
+     * which both only accept static values.
+     *
+     * Use it like '<view-heading title="..." sub-title="..."></view-heading>'
+     *
+     * The template can be found and changed at 'views/directives/view-heading.html'
+     *
+     * @returns {{scope: {title: string, subTitle: string}, templateUrl: string}}
+     */
+    function viewHeading(paths) {
         return {
             scope: {
                 title: '@',
                 subTitle: '@'
             },
-            template: template
+            templateUrl: paths.views.DIRECTIVES + '/view-heading.html'
         }
     }
 }());;(function () {
@@ -7194,12 +7102,19 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.directives')
-        .directive('webElementPicker', [
-            '$window', 'WebElementPickerService', 'paths',
-            webElementPicker
-        ]);
+        .directive('webElementPicker', webElementPicker);
 
+    webElementPicker.$inject = ['$window', 'WebElementPickerService', 'paths'];
 
+    /**
+     * The web element picker. It is used to select an element from the dom tree of the site of the projects base
+     * url.
+     *
+     * @param $window - AngularJS window wrapper
+     * @param WebElementPickerService - The service to communicate with the picker
+     * @param paths - The applications constants
+     * @returns {{scope: {}, templateUrl: string, link: link, controller: *[]}}
+     */
     function webElementPicker($window, WebElementPickerService, paths) {
 
         var directive = {
@@ -7213,35 +7128,26 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
         return directive;
 
-        //////////
-
+        /**
+         * @param scope
+         * @param el
+         * @param attrs
+         */
         function link(scope, el, attrs) {
 
-            var _iframe = el.find('iframe');
-            var _lastTarget = null;
+            // the iframe where the projects site gets loaded into
+            var iframe = el.find('iframe');
 
-            //////////
-
-            scope.url = '';
-            scope.selector = null;
-
-            //////////
-
-            _iframe.on('load', iframeLoaded);
-
-            //////////
-
-            function iframeLoaded() {
-                angular.element(_iframe.contents()[0].body.querySelectorAll('a')).on('click', function () {
-                    // console.log(this.getAttribute('href'));
-                });
-            }
+            // when moving with the mouse over an element, this elements gets saved in this variable in order to
+            // prevent multiple calls of getCssPath for the same element
+            var lastTarget = null;
 
             /**
-             * Get the unique CSS Path from selected Element
+             * Get the unique CSS XPath from selected Element
              * http://stackoverflow.com/questions/4588119/get-elements-css-selector-without-element-id
+             *
              * @param el  - The element to get the unique css path from
-             * @returns {string} - The unique css path ot the element
+             * @returns {String} - The unique css path ot the element
              * @private
              */
             function getCssPath(el) {
@@ -7263,94 +7169,203 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 return names.join(" > ");
             }
 
+            /**
+             * Saves the element that is under the cursor so that it can be selected. Adds an outline to the element
+             * in order to highlight it.
+             *
+             * @param e - js event
+             * @returns {boolean}
+             */
             function handleMouseMove(e) {
-                if (_lastTarget == e.target) {
+                if (lastTarget == e.target) {
                     return false;
                 } else {
-                    if (_lastTarget != null) {
-                        _lastTarget.style.outline = '0px'
+                    if (lastTarget != null) {
+                        lastTarget.style.outline = '0px'
                     }
-                    _lastTarget = e.target;
+                    lastTarget = e.target;
                 }
-                _lastTarget.style.outline = '5px solid red';
-                scope.selector = getCssPath(_lastTarget);
+                lastTarget.style.outline = '5px solid red';
+                scope.selector = getCssPath(lastTarget);
                 scope.$apply();
             }
 
+            /**
+             * Removes the outline from the selected element, removes all events from the iframe and removes the
+             * keypress event. When this function is called the selected element is fixed and won't change by any
+             * further interaction with the iframe
+             *
+             * @param e - js event
+             */
             function handleClick(e) {
                 if (angular.isDefined(e)) {
                     e.preventDefault();
                     e.stopPropagation();
                 }
-                _lastTarget.style.outline = '0px';
-                _lastTarget = null;
 
-                angular.element(_iframe.contents()[0].body).off('mousemove', handleMouseMove);
-                angular.element(_iframe.contents()[0].body).off('click', handleClick);
+                lastTarget.style.outline = '0px';
+                lastTarget = null;
+
+                angular.element(iframe.contents()[0].body).off('mousemove', handleMouseMove);
+                angular.element(iframe.contents()[0].body).off('click', handleClick);
                 angular.element(document.body).off('keyup', handleKeyUp);
             }
 
+            /**
+             * Calls handleClick() when control key is pressed to have an alternative for selecting a dom node without
+             * firing any click events on it.
+             *
+             * @param e
+             */
             function handleKeyUp(e) {
                 if (e.keyCode == 17) { // strg
                     handleClick();
                 }
             }
 
-            //////////
-
+            /**
+             * Loads an entered url into the iframe
+             */
             scope.loadUrl = function () {
                 if (scope.url == '') {
-                    _iframe[0].setAttribute('src', scope.proxyUrl);
+                    iframe[0].setAttribute('src', scope.proxyUrl);
                 } else {
-                    _iframe[0].setAttribute('src', scope.proxyUrl + '/' + scope.url);
+                    iframe[0].setAttribute('src', scope.proxyUrl + '/' + scope.url);
                 }
             };
 
+            /**
+             * Enables the selection mode and therefore adds events to the iframe
+             */
             scope.enableSelection = function () {
-                var iframeBody = angular.element(_iframe.contents()[0].body);
+                var iframeBody = angular.element(iframe.contents()[0].body);
                 iframeBody.on('mousemove', handleMouseMove);
                 iframeBody.one('click', handleClick);
                 angular.element(document.body).on('keyup', handleKeyUp);
             };
         }
 
-        //////////
+        /**
+         * The controller of the web element picker. Listens on events and
+         *
+         * @param $scope
+         * @param SessionService
+         * @param paths
+         */
+        function controller($scope, Session, paths) {
 
-        function controller($scope, SessionService, paths) {
-
+            /**
+             * Indicator if web element picker is visible or not
+             * @type {boolean}
+             */
             $scope.show = false;
-            $scope.project = SessionService.project.get();
+
+            /**
+             * The project that is stored in the session. Is used to get the baseUrl of it
+             * @type {Project}
+             */
+            $scope.project = null;
+
+            /**
+             * The URL of the proxy
+             * policies
+             * @type {String|null}
+             */
             $scope.proxyUrl = null;
 
-            //////////
+            /**
+             * The XPath of the selected element
+             * @type {null}
+             */
+            $scope.selector = null;
 
-            if ($scope.project != null) {
-                $scope.proxyUrl = $window.location.origin + paths.api.PROXY_URL + $scope.project.baseUrl;
+            /**
+             * Creates the proxy url where all requests are send to in order to avoid violation of foreign domain
+             * @returns {*}
+             */
+            function buildProxyUrl() {
+                return $window.location.origin + paths.api.PROXY_URL + $scope.project.baseUrl;
             }
 
-            $scope.$on('webElementPicker.open', function () {
-                $scope.show = true;
-            });
+            /**
+             * Initialize scope properties and listen for events
+             */
+            function init() {
+                $scope.project = Session.project.get();
+                if ($scope.project != null) {
+                    $scope.proxyUrl = buildProxyUrl();
+                }
 
-            $scope.$on('project.opened', function () {
-                $scope.project = SessionService.project.get();
-                $scope.proxyUrl = $window.location.origin + '/rest/proxy?url=' + $scope.project.baseUrl;
-            });
+                // show the web element picker when open event gets fired
+                $scope.$on('webElementPicker.open', function () {
+                    $scope.show = true;
+                });
 
-            //////////
+                // when a new project gets opened initialize the controller again
+                $scope.$on('project.opened', init);
+            }
 
+            /**
+             * Makes the web element picker invisible and fires the close event
+             */
             $scope.close = function () {
                 $scope.show = false;
                 WebElementPickerService.close();
             };
 
+            /**
+             * Makes the web element Picker invisible and fires the ok event with the selector of the element that was
+             * selected. If no selector is defined, then it just closes the picker
+             */
             $scope.ok = function () {
-                WebElementPickerService.ok({
-                    url: '',
-                    selector: $scope.selector
-                });
                 $scope.show = false;
-            }
+                if ($scope.selector === null) {
+                    $scope.close();
+                } else {
+                    WebElementPickerService.ok($scope.selector);
+                }
+            };
+
+            init();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('webElementPickerHandle', webElementPickerHandle);
+
+    webElementPickerHandle.$inject = ['WebElementPickerService'];
+
+    /**
+     * The handle for the web element picker. Adds an click event to the attached element that opens the web element
+     * picker.
+     *
+     * Accepts an attribute 'selector' that should be the model where the XPath of the selected element should be
+     * stored into.
+     *
+     * Use it like '<button web-element-picker-handle selector="..."></button>'
+     *
+     * @param WebElementPickerService - The service for the web element picker
+     * @returns {{scope: {selector: string}, link: link}}
+     */
+    function webElementPickerHandle(WebElementPickerService) {
+
+        var directive = {
+            scope: {
+                selector: '='
+            },
+            link: link
+        };
+        return directive;
+
+        function link(scope, el, attrs) {
+            el.on('click', WebElementPickerService.open);
+
+            scope.$on('webElementPicker.ok', function (e, data) {
+                scope.selector = data.selector;
+            });
         }
     }
 }());;(function () {
@@ -8046,8 +8061,23 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     SymbolGroupModel.$inject = ['SymbolGroupResource', 'Symbol', '_'];
 
+    /**
+     * The service for the model of a symbol group
+     *
+     * @param SymbolGroupResource
+     * @param Symbol
+     * @param _
+     * @returns {SymbolGroup}
+     * @constructor
+     */
     function SymbolGroupModel(SymbolGroupResource, Symbol, _) {
 
+        /**
+         * The symbol group model
+         *
+         * @param name - The name of the symbol group
+         * @constructor
+         */
         function SymbolGroup(name) {
             this.name = name || null;
             this.id;
@@ -8055,22 +8085,21 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             this.symbols;
         }
 
-        SymbolGroup.prototype.addSymbol = function (symbol) {
-            if (angular.isArray(this.symbols)) {
-                this.symbols.push(symbol);
-            }
-        };
-
-        SymbolGroup.prototype.removeSymbol = function (symbol) {
-            if (angular.isArray(this.symbols)) {
-                _.remove(this.symbols, {id: symbol.id});
-            }
-        };
-
+        /**
+         * Creates a copy of the current instance
+         *
+         * @returns {*}
+         */
         SymbolGroup.prototype.copy = function () {
             return SymbolGroup.build(angular.copy(this));
         };
 
+        /**
+         * Creates an instance of a SymbolGroup from a given object
+         *
+         * @param {Object} data - The object the SymbolGroup should be build from
+         * @returns {SymbolGroupModel.SymbolGroup} - A new instance of SymbolGroup with the data
+         */
         SymbolGroup.build = function (data) {
             var group = new SymbolGroup(data.name);
             group.id = data.id;
@@ -8079,6 +8108,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             return group;
         };
 
+        /**
+         * Creates a list of instances of SymbolGroup from a given object list
+         *
+         * @param {Object[]} data - The list the array of SymbolGroup should be build from
+         * @returns {SymbolGroup[]} - The list of SymbolGroups
+         */
         SymbolGroup.buildSome = function (data) {
             var groups = [];
             for (var i = 0; i < data.length; i++) {
@@ -8087,7 +8122,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             return groups;
         };
 
+        // attach the resource of the symbol groups
         SymbolGroup.Resource = new SymbolGroupResource();
+
+        // overwrite the build functions so that the resource creates instances of SymbolGroups
         SymbolGroup.Resource.build = SymbolGroup.build;
         SymbolGroup.Resource.buildSome = SymbolGroup.buildSome;
 
@@ -8724,7 +8762,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
 
         /**
-         * Make a POST request to /rest/projects/{projectId}/symbols/hide in order to delete multiple symbols at once.
+         * Make a POST request to /rest/projects/{projectId}/symbols/batch/{symbolIds}/hide in order to delete multiple symbols at once.
          * Symbols will not be deleted permanently but stay hidden.
          *
          * @param projectId - The id of the projects the symbols belong to
@@ -8735,7 +8773,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             var _this = this;
             symbolIds = symbolIds.join(',');
 
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolIds + '/hide', {})
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + symbolIds + '/hide', {})
                 .then(function (response) {
                     return _this.buildSome(response.data);
                 });
@@ -9222,9 +9260,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         var _propertyName = "_selected";
 
-        //////////
-
-        // the service
         var service = {
             getSelected: getSelected,
             select: select,
@@ -9236,8 +9271,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             getPropertyName: getPropertyName()
         };
         return service;
-
-        //////////
 
         /**
          * Filters all objects where the property '_selected' doesn't exists or is false.
@@ -9391,6 +9424,13 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     ToastService.$inject = ['ngToast'];
 
+    /**
+     * A service that is used as a wrapper around the ngToast module.
+     *
+     * @param ngToast - The ngToast
+     * @returns {{success: success, danger: danger, info: info}}
+     * @constructor
+     */
     function ToastService(ngToast) {
 
         return {
@@ -9399,6 +9439,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             info: info
         };
 
+        /**
+         * Create a success toast message
+         *
+         * @param {String} message - The message to be displayed
+         */
         function success(message) {
             ngToast.create({
                 class: 'success',
@@ -9407,6 +9452,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             });
         }
 
+        /**
+         * Create an error / danger toast message
+         *
+         * @param {String} message - The message to be displayed
+         */
         function danger(message) {
             ngToast.create({
                 class: 'danger',
@@ -9415,6 +9465,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             });
         }
 
+        /**
+         * Create an info toast message
+         *
+         * @param {String} message - The message to be displayed
+         */
         function info(message) {
             ngToast.create({
                 class: 'info',
@@ -9428,10 +9483,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.services')
-        .factory('WebElementPickerService', [
-            '$rootScope',
-            WebElementPickerService
-        ]);
+        .factory('WebElementPickerService', WebElementPickerService);
+
+    WebElementPickerService.$inject = ['$rootScope'];
 
     /**
      * WebElementPickerService
@@ -9444,15 +9498,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      */
     function WebElementPickerService($rootScope) {
 
-        // the service
-        var service = {
+        return {
             open: open,
             close: close,
             ok: ok
         };
-        return service;
-
-        //////////
 
         /**
          * Tell the webElementPicker to be displayed. Listen to the 'webElementPicker.open' event to get notified when

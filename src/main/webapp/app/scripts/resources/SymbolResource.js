@@ -165,7 +165,7 @@
         };
 
         /**
-         * Make a POST request to /rest/projects/{projectId}/symbols/hide in order to delete multiple symbols at once.
+         * Make a POST request to /rest/projects/{projectId}/symbols/batch/{symbolIds}/hide in order to delete multiple symbols at once.
          * Symbols will not be deleted permanently but stay hidden.
          *
          * @param projectId - The id of the projects the symbols belong to
@@ -176,7 +176,7 @@
             var _this = this;
             symbolIds = symbolIds.join(',');
 
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolIds + '/hide', {})
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + symbolIds + '/hide', {})
                 .then(function (response) {
                     return _this.buildSome(response.data);
                 });

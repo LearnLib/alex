@@ -7,6 +7,13 @@
 
     ToastService.$inject = ['ngToast'];
 
+    /**
+     * A service that is used as a wrapper around the ngToast module.
+     *
+     * @param ngToast - The ngToast
+     * @returns {{success: success, danger: danger, info: info}}
+     * @constructor
+     */
     function ToastService(ngToast) {
 
         return {
@@ -15,6 +22,11 @@
             info: info
         };
 
+        /**
+         * Create a success toast message
+         *
+         * @param {String} message - The message to be displayed
+         */
         function success(message) {
             ngToast.create({
                 class: 'success',
@@ -23,6 +35,11 @@
             });
         }
 
+        /**
+         * Create an error / danger toast message
+         *
+         * @param {String} message - The message to be displayed
+         */
         function danger(message) {
             ngToast.create({
                 class: 'danger',
@@ -31,6 +48,11 @@
             });
         }
 
+        /**
+         * Create an info toast message
+         *
+         * @param {String} message - The message to be displayed
+         */
         function info(message) {
             ngToast.create({
                 class: 'info',

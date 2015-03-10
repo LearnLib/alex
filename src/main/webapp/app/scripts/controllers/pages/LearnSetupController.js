@@ -81,7 +81,8 @@
 
         /**
          * Sets the reset symbol
-         * @param symbol - The symbol that will be used to reset the sul
+         *
+         * @param {Symbol} symbol - The symbol that will be used to reset the sul
          */
         $scope.setResetSymbol = function (symbol) {
             $scope.resetSymbol = symbol;

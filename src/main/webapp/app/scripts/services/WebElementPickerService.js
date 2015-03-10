@@ -3,10 +3,9 @@
 
     angular
         .module('weblearner.services')
-        .factory('WebElementPickerService', [
-            '$rootScope',
-            WebElementPickerService
-        ]);
+        .factory('WebElementPickerService', WebElementPickerService);
+
+    WebElementPickerService.$inject = ['$rootScope'];
 
     /**
      * WebElementPickerService
@@ -19,15 +18,11 @@
      */
     function WebElementPickerService($rootScope) {
 
-        // the service
-        var service = {
+        return {
             open: open,
             close: close,
             ok: ok
         };
-        return service;
-
-        //////////
 
         /**
          * Tell the webElementPicker to be displayed. Listen to the 'webElementPicker.open' event to get notified when

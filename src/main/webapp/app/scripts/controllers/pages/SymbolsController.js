@@ -25,19 +25,24 @@
 
         $scope.project = Session.project.get();
         $scope.groups = [];
+        $scope.allSymbols = [];
         $scope.collapseAll = false;
 
         (function init() {
             SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
                 .then(function (groups) {
                     $scope.groups = groups;
+                    $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
                 });
         }());
 
         function removeSymbolsFromScope(symbols) {
+            var group;
+
             _.forEach(symbols, function (symbol) {
-                var group = _.find($scope.groups, {id: symbol.group});
-                group.removeSymbol(symbol);
+                group = _.find($scope.groups, {id: symbol.group});
+                _.remove(group.symbols, {id: symbol.id});
+                _.remove($scope.allSymbols, {id: symbol.id});
             })
         }
 
@@ -101,9 +106,24 @@
          * @param symbol
          */
         $scope.updateSymbol = function (symbol) {
-
+            var group = _.find($scope.groups, {id: symbol.group});
+            var i = _.findIndex(group.symbols, {id: symbol.id});
+            group.symbols[i] = symbol;
         };
 
+        $scope.moveSymbols = function (symbols, group) {
+            _.forEach(symbols, function (symbol) {
+                var g = _.find($scope.groups, {id: symbol.group});
+                _.remove(g.symbols, {id: symbol.id});
+            });
+            var g = _.find($scope.groups, {id: group.id});
+            g.symbols = g.symbols.concat(symbols);
+        };
+
+        /**
+         *
+         * @param group
+         */
         $scope.updateGroup = function (group) {
             var g = _.find($scope.groups, {id: group.id});
             if (angular.isDefined(g)) {
@@ -111,15 +131,26 @@
             }
         };
 
+        /**
+         *
+         * @param group
+         */
         $scope.deleteGroup = function (group) {
             _.remove($scope.groups, {id: group.id});
         };
 
+        /**
+         *
+         */
         $scope.toggleCollapseAllGroups = function () {
             $scope.collapseAll = !$scope.collapseAll;
             _.forEach($scope.groups, function (group) {
                 group._isCollapsed = $scope.collapseAll;
             })
         };
+
+        $scope.getSelectedSymbols = function () {
+            return SelectionService.getSelected($scope.allSymbols);
+        }
     }
 }());

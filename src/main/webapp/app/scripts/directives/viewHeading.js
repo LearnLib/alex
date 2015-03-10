@@ -5,22 +5,26 @@
         .module('weblearner.directives')
         .directive('viewHeading', viewHeading);
 
-    function viewHeading() {
+    viewHeading.$inject = ['paths'];
 
-        var template = '' +
-            '<div class="view-heading">' +
-            '   <div class="container">' +
-            '       <h2 class="view-heading-title" ng-bind="::title"></h2>' +
-            '       <p class="view-heading-sub-title" ng-bind="::subTitle"></p>' +
-            '   </div>' +
-            '</div>';
-
+    /**
+     * A directive that is used as a shortcut for the heading of a page to save some coding. Use it on every page that
+     * should have a header with a title and a sub-title. The directive accepts two parameters 'title' and 'subTile'
+     * which both only accept static values.
+     *
+     * Use it like '<view-heading title="..." sub-title="..."></view-heading>'
+     *
+     * The template can be found and changed at 'views/directives/view-heading.html'
+     *
+     * @returns {{scope: {title: string, subTitle: string}, templateUrl: string}}
+     */
+    function viewHeading(paths) {
         return {
             scope: {
                 title: '@',
                 subTitle: '@'
             },
-            template: template
+            templateUrl: paths.views.DIRECTIVES + '/view-heading.html'
         }
     }
 }());

@@ -1,4 +1,4 @@
-angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/web-action-edit-form.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/counter-example-builder.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -438,155 +438,16 @@ angular.module("app/views/directives/rest-action-edit-form.html", []).run(["$tem
     "</form>");
 }]);
 
-angular.module("app/views/directives/web-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/view-heading.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/views/directives/web-action-edit-form.html",
-    "<form id=\"web-action-edit-form\" ng-submit=\"submitForm()\">\n" +
+  $templateCache.put("app/views/directives/view-heading.html",
+    "<div class=\"view-heading\">\n" +
+    "    <div class=\"container\">\n" +
+    "        <h2 class=\"view-heading-title\" ng-bind=\"::title\"></h2>\n" +
     "\n" +
-    "    <!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.SEARCH_FOR_TEXT\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Search on a page for a piece of text or a regular expression\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Value</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
-    "        </div>\n" +
-    "        <div class=\"checkbox\">\n" +
-    "            <label>\n" +
-    "                <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
-    "            </label>\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
+    "        <p class=\"view-heading-sub-title\" ng-bind=\"::subTitle\"></p>\n" +
     "    </div>\n" +
-    "    <!-- END: SEARCH_FOR_TEXT -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: SEARCH_FOR_NODE -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.SEARCH_FOR_NODE\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Search an HTML element in the DOM tree of a page\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.value\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: SEARCH_FOR_NODE -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CLEAR -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CLEAR\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Clear an element (eg. input or contenteditable element)\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: CLEAR -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: CLICK -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.CLICK\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Click on an element\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: CLICK -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: FILL -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.FILL\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Fill an element with content (eg. input or contenteditable element)\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">The value to fill the element with</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: FILL -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: GO_TO -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.GO_TO\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Go to a url that is <strong>relative</strong> to your projects' base url\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Url</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: GO_TO -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: SUBMIT -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.SUBMIT\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Submit a form\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">CSS selector</label>\n" +
-    "            <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
-    "        </div>\n" +
-    "        <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\" selector=\"action.node\">\n" +
-    "            <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "        </button>\n" +
-    "    </div>\n" +
-    "    <!-- END: SUBMIT -->\n" +
-    "\n" +
-    "\n" +
-    "    <!-- BEGIN: WAIT -->\n" +
-    "    <div ng-if=\"action.type == actionTypes.WAIT\">\n" +
-    "        <p class=\"text-muted\">\n" +
-    "            Wait for a specified amount of time before the next action will be executed\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label\">Time to wait (in ms)</label>\n" +
-    "            <input class=\"form-control\" type=\"number\" placeholder=\"time in ms\" ng-model=\"action.duration\">\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <!-- END: WAIT -->\n" +
-    "\n" +
-    "    <hr>\n" +
-    "    <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update Action</button>\n" +
-    "\n" +
-    "</form>");
+    "</div>");
 }]);
 
 angular.module("app/views/directives/web-element-picker.html", []).run(["$templateCache", function($templateCache) {
@@ -694,8 +555,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                            <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
     "                        </label>\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.value\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle>\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -718,8 +578,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.value\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.value\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -742,8 +601,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.node\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -765,8 +623,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">CSS selector</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.node\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -792,8 +649,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">The value to fill the element with</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.node\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -834,8 +690,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">CSS selector</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" open-web-element-picker url=\"action.url\"\n" +
-    "                            selector=\"action.node\">\n" +
+    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </button>\n" +
     "\n" +
@@ -1711,7 +1566,7 @@ angular.module("app/views/modals/symbol-move-modal.html", []).run(["$templateCac
     "</div>\n" +
     "\n" +
     "<div class=\"modal-footer\">\n" +
-    "    <button class=\"btn btn-sm btn-primary\" ng-click=\"moveSymbols()\">Move Symbols</button>\n" +
+    "    <button class=\"btn btn-sm btn-primary\" ng-click=\"moveSymbols()\">Move</button>\n" +
     "</div>\n" +
     "\n" +
     "");
@@ -2102,7 +1957,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\" selectable items=\"group.symbols\">\n" +
     "\n" +
     "                <div selectable-list>\n" +
-    "                    <div selectable-list-item ng-repeat=\"symbol in group.symbols\">\n" +
+    "                    <div selectable-list-item ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\">\n" +
     "\n" +
     "                        <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
     "                            <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'\"></i>\n" +
@@ -2697,8 +2552,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                    symbol-edit-modal-handle symbol=\"(allSymbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
     "                Edit\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\"\n" +
-    "                    ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\" symbols=\"getSelectedSymbols\"\n" +
+    "                    on-moved=\"moveSymbols\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\">\n" +
     "                Move\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\"\n" +
@@ -2755,7 +2610,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "\n" +
     "                <div selectable items=\"group.symbols\">\n" +
     "                    <div selectable-list>\n" +
-    "                        <div selectable-list-item item=\"symbol\" ng-repeat=\"symbol in group.symbols\">\n" +
+    "                        <div selectable-list-item item=\"symbol\"\n" +
+    "                             ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\">\n" +
     "\n" +
     "                            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
     "                                <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
@@ -2769,7 +2625,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                                    </li>\n" +
     "                                    <li>\n" +
     "                                        <a href symbol-move-modal-handle groups=\"groups\" symbols=\"[symbol]\"\n" +
-    "                                           on-moved=\"updateSymbol\">\n" +
+    "                                           on-moved=\"moveSymbols\">\n" +
     "                                            <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +

@@ -24,9 +24,6 @@
          */
         var _propertyName = "_selected";
 
-        //////////
-
-        // the service
         var service = {
             getSelected: getSelected,
             select: select,
@@ -38,8 +35,6 @@
             getPropertyName: getPropertyName()
         };
         return service;
-
-        //////////
 
         /**
          * Filters all objects where the property '_selected' doesn't exists or is false.

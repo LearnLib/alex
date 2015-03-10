@@ -34,8 +34,8 @@
                     symbol-edit-modal-handle symbol="(allSymbols | selected | first)" on-updated="updateSymbol">
                 Edit
             </button>
-            <button class="btn btn-xs btn-default" symbol-move-modal-handle groups="groups"
-                    ng-class="(allSymbols|selected).length > 0 ? '' : 'disabled'">
+            <button class="btn btn-xs btn-default" symbol-move-modal-handle groups="groups" symbols="getSelectedSymbols"
+                    on-moved="moveSymbols" ng-class="(allSymbols|selected).length > 0 ? '' : 'disabled'">
                 Move
             </button>
             <button class="btn btn-xs btn-default" ng-class="(allSymbols|selected).length > 0 ? '' : 'disabled'"
@@ -92,7 +92,8 @@
 
                 <div selectable items="group.symbols">
                     <div selectable-list>
-                        <div selectable-list-item item="symbol" ng-repeat="symbol in group.symbols">
+                        <div selectable-list-item item="symbol"
+                             ng-repeat="symbol in group.symbols | orderBy:'-name':true">
 
                             <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
                                 <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
@@ -106,7 +107,7 @@
                                     </li>
                                     <li>
                                         <a href symbol-move-modal-handle groups="groups" symbols="[symbol]"
-                                           on-moved="updateSymbol">
+                                           on-moved="moveSymbols">
                                             <i class="fa fa-exchange fa-fw"></i> Move
                                         </a>
                                     </li>

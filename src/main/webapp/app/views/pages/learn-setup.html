@@ -56,7 +56,7 @@
             <div class="symbol-group-body" collapse="group._isCollapsed" selectable items="group.symbols">
 
                 <div selectable-list>
-                    <div selectable-list-item ng-repeat="symbol in group.symbols">
+                    <div selectable-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true">
 
                         <a class="pull-right" ng-click="setResetSymbol(symbol)">
                             <i class="fa" ng-class="resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'"></i>

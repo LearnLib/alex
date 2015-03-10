@@ -45,25 +45,18 @@
          */
         function link(scope, el, attrs) {
 
-            var _parent = el.parent()[0];
-
-            //////////
+            var parent = el.parent()[0];
 
             if (scope.bindResize) {
                 angular.element($window).on('resize', fitToParent)
             }
 
-            fitToParent();
-
-            //////////
-
             /**
              * Set the element to the dimensions of its parent
              */
             function fitToParent() {
-
-                var width = _parent.offsetWidth;
-                var height = _parent.offsetHeight;
+                var width = parent.offsetWidth;
+                var height = parent.offsetHeight;
 
                 if (scope.asStyle) {
                     el[0].style.width = width + 'px';
@@ -73,6 +66,8 @@
                     el[0].setAttribute('height', height);
                 }
             }
+
+            fitToParent();
         }
     }
 }());
