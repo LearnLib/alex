@@ -130,7 +130,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     @Override
     public void delete(long projectId, Long groupId) throws IllegalArgumentException {
-        SymbolGroup group = get(projectId, groupId);
+        SymbolGroup group = get(projectId, groupId, "all");
 
         // start session
         Session session = HibernateUtil.getSession();
