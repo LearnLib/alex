@@ -181,6 +181,12 @@
             $scope.selector = null;
 
             /**
+             * The url that is loaded in the iframe
+             * @type {string}
+             */
+            $scope.url = '';
+
+            /**
              * Creates the proxy url where all requests are send to in order to avoid violation of foreign domain
              * @returns {*}
              */

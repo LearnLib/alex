@@ -606,9 +606,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                            <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
     "                        </label>\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle>\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle>\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: SEARCH_FOR_TEXT -->\n" +
@@ -629,9 +629,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.value\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.value\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: SEARCH_FOR_NODE -->\n" +
@@ -652,9 +652,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: CLEAR -->\n" +
@@ -674,9 +674,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">CSS selector</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: CLICK -->\n" +
@@ -700,9 +700,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">The value to fill the element with</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: FILL -->\n" +
@@ -741,9 +741,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">CSS selector</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: SUBMIT -->\n" +
@@ -1530,12 +1530,8 @@ angular.module("app/views/modals/symbol-group-create-modal.html", []).run(["$tem
     "             ng-show=\"create_symbol_group_form.name.$dirty && create_symbol_group_form.name.$invalid\">\n" +
     "            <small ng-show=\"create_symbol_group_form.name.$error.required\"> The field must not be empty.</small>\n" +
     "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"groupExists\">\n" +
-    "            <small>\n" +
-    "                There is already a symbol group with the name \"<strong ng-bind=\"group.name\"></strong>\". Please choose\n" +
-    "                another one.\n" +
-    "            </small>\n" +
-    "        </div>\n" +
+    "\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"errorMsg\" ng-bind=\"errorMsg\"></div>\n" +
     "\n" +
     "    </div>\n" +
     "\n" +
@@ -3566,37 +3562,78 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('SymbolGroupCreateModalController', SymbolGroupCreateModalController);
 
-    SymbolGroupCreateModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'SymbolGroup', '_'];
+    SymbolGroupCreateModalController.$inject = [
+        '$scope', '$modalInstance', 'modalData', 'SymbolGroup', '_', 'ToastService'
+    ];
 
-    function SymbolGroupCreateModalController($scope, $modalInstance, modalData, SymbolGroup, _) {
+    /**
+     * The controller for the modal dialog that handles the creation of a new symbol group.
+     *
+     * The template can be found at 'views/modals/symbol-create-modal.html'
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param modalData
+     * @param SymbolGroup
+     * @param _
+     * @param Toast
+     * @constructor
+     */
+    function SymbolGroupCreateModalController($scope, $modalInstance, modalData, SymbolGroup, _, Toast) {
 
-        $scope.projectId = modalData.projectId;
+        // the id of the project where the new symbol group should be created in
+        var projectId = modalData.projectId;
+
+        /**
+         * The new symbol group
+         * @type {SymbolGroup}
+         */
         $scope.group = new SymbolGroup();
+
+        /**
+         * The list of all existing symbol groups. They are used in order to check if the name of the new symbol group
+         * already exists
+         * @type {Array}
+         */
         $scope.groups = [];
-        $scope.groupExists = false;
 
-        SymbolGroup.Resource.getAll($scope.projectId)
-            .then(function (groups) {
-                $scope.groups = groups;
-            });
+        /**
+         * An error message that can be displayed in the modal template
+         * @type {String|null}
+         */
+        $scope.errorMsg = null;
 
+        // load all existing symbol groups
+        (function init() {
+            SymbolGroup.Resource.getAll(projectId)
+                .then(function (groups) {
+                    $scope.groups = groups;
+                });
+        }());
+
+        /**
+         * Creates a new symbol group and closes the modal on success and passes the newly created symbol group
+         */
         $scope.createGroup = function () {
+            $scope.errorMsg = null;
 
             var index = _.findIndex($scope.groups, {name: $scope.group.name});
+
             if (index === -1) {
-                SymbolGroup.Resource.create($scope.projectId, $scope.group)
+                SymbolGroup.Resource.create(projectId, $scope.group)
                     .then(function (newGroup) {
+                        Toast.success('Symbol group <strong>' + newGroup.name + '</strong> created');
                         $modalInstance.close(newGroup);
+                    })
+                    .catch(function (response) {
+                        $scope.errorMsg = response.data.message;
                     });
-                $scope.groupExists = false;
             } else {
-                $scope.groupExists = true;
+                $scope.errorMsg = 'The group name is already in use in this project';
             }
         };
 
-        /**
-         * Close the modal.
-         */
+        /** Close the modal. */
         $scope.closeModal = function () {
             $modalInstance.dismiss();
         }
@@ -4665,9 +4702,28 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      */
     function SymbolsController($scope, Session, Symbol, SymbolGroup, SelectionService, _, Toast) {
 
+        /**
+         * The project that is stored in the session
+         * @type {Project}
+         */
         $scope.project = Session.project.get();
+
+        /**
+         * The list of symbol groups that belong to the saved project
+         * @type {SymbolGroup[]}
+         */
         $scope.groups = [];
+
+        /**
+         * The list of all symbols that belong to the project
+         * @type {Array}
+         */
         $scope.allSymbols = [];
+
+        /**
+         * Flag that indicates if all groups should be collapsed
+         * @type {boolean}
+         */
         $scope.collapseAll = false;
 
         (function init() {
@@ -4678,6 +4734,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 });
         }());
 
+        /**
+         * Removes a list of symbols from its groups and from the list of all symbols
+         *
+         * @param {Symbol[]} symbols - The symbols that should be removed
+         */
         function removeSymbolsFromScope(symbols) {
             var group;
 
@@ -4730,7 +4791,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         $scope.addSymbol = function (symbol) {
             var group = _.find($scope.groups, {id: symbol.group});
             if (angular.isDefined(group)) {
-                group.addSymbol(symbol);
+                group.symbols.push(symbol);
             }
         };
 
@@ -4753,18 +4814,26 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             group.symbols[i] = symbol;
         };
 
+        /**
+         * Moves a list of symbols to a new group
+         *
+         * @param symbols - The symbols *before* updating
+         * @param group - The group the symbols should be moved into
+         */
         $scope.moveSymbols = function (symbols, group) {
             _.forEach(symbols, function (symbol) {
                 var g = _.find($scope.groups, {id: symbol.group});
                 _.remove(g.symbols, {id: symbol.id});
+                symbol.group = group.id;
             });
             var g = _.find($scope.groups, {id: group.id});
             g.symbols = g.symbols.concat(symbols);
         };
 
         /**
+         * Updates a symbol group by updating its name
          *
-         * @param group
+         * @param group - The updated group
          */
         $scope.updateGroup = function (group) {
             var g = _.find($scope.groups, {id: group.id});
@@ -4774,11 +4843,15 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
 
         /**
+         * Deletes a group from the scope and all of its symbols
          *
-         * @param group
+         * @param {SymbolGroup} group - The group that should be removed
          */
         $scope.deleteGroup = function (group) {
             _.remove($scope.groups, {id: group.id});
+            _.forEach(group.symbols, function (symbol) {
+                _.remove($scope.allSymbols, {id: symbol.id});
+            })
         };
 
         /**
@@ -4791,6 +4864,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             })
         };
 
+        /**
+         * Get the list of selectedSymbols
+         *
+         * @returns {Symbol[]} - The symbols
+         */
         $scope.getSelectedSymbols = function () {
             return SelectionService.getSelected($scope.allSymbols);
         }
@@ -7280,6 +7358,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             $scope.selector = null;
 
             /**
+             * The url that is loaded in the iframe
+             * @type {string}
+             */
+            $scope.url = '';
+
+            /**
              * Creates the proxy url where all requests are send to in order to avoid violation of foreign domain
              * @returns {*}
              */
@@ -7363,8 +7447,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         function link(scope, el, attrs) {
             el.on('click', WebElementPickerService.open);
 
-            scope.$on('webElementPicker.ok', function (e, data) {
-                scope.selector = data.selector;
+            scope.$on('webElementPicker.ok', function (e, xpath) {
+                scope.selector = xpath;
             });
         }
     }

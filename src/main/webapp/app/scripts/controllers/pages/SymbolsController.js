@@ -23,9 +23,28 @@
      */
     function SymbolsController($scope, Session, Symbol, SymbolGroup, SelectionService, _, Toast) {
 
+        /**
+         * The project that is stored in the session
+         * @type {Project}
+         */
         $scope.project = Session.project.get();
+
+        /**
+         * The list of symbol groups that belong to the saved project
+         * @type {SymbolGroup[]}
+         */
         $scope.groups = [];
+
+        /**
+         * The list of all symbols that belong to the project
+         * @type {Array}
+         */
         $scope.allSymbols = [];
+
+        /**
+         * Flag that indicates if all groups should be collapsed
+         * @type {boolean}
+         */
         $scope.collapseAll = false;
 
         (function init() {
@@ -36,6 +55,11 @@
                 });
         }());
 
+        /**
+         * Removes a list of symbols from its groups and from the list of all symbols
+         *
+         * @param {Symbol[]} symbols - The symbols that should be removed
+         */
         function removeSymbolsFromScope(symbols) {
             var group;
 
@@ -88,7 +112,7 @@
         $scope.addSymbol = function (symbol) {
             var group = _.find($scope.groups, {id: symbol.group});
             if (angular.isDefined(group)) {
-                group.addSymbol(symbol);
+                group.symbols.push(symbol);
             }
         };
 
@@ -111,18 +135,26 @@
             group.symbols[i] = symbol;
         };
 
+        /**
+         * Moves a list of symbols to a new group
+         *
+         * @param symbols - The symbols *before* updating
+         * @param group - The group the symbols should be moved into
+         */
         $scope.moveSymbols = function (symbols, group) {
             _.forEach(symbols, function (symbol) {
                 var g = _.find($scope.groups, {id: symbol.group});
                 _.remove(g.symbols, {id: symbol.id});
+                symbol.group = group.id;
             });
             var g = _.find($scope.groups, {id: group.id});
             g.symbols = g.symbols.concat(symbols);
         };
 
         /**
+         * Updates a symbol group by updating its name
          *
-         * @param group
+         * @param group - The updated group
          */
         $scope.updateGroup = function (group) {
             var g = _.find($scope.groups, {id: group.id});
@@ -132,11 +164,15 @@
         };
 
         /**
+         * Deletes a group from the scope and all of its symbols
          *
-         * @param group
+         * @param {SymbolGroup} group - The group that should be removed
          */
         $scope.deleteGroup = function (group) {
             _.remove($scope.groups, {id: group.id});
+            _.forEach(group.symbols, function (symbol) {
+                _.remove($scope.allSymbols, {id: symbol.id});
+            })
         };
 
         /**
@@ -149,6 +185,11 @@
             })
         };
 
+        /**
+         * Get the list of selectedSymbols
+         *
+         * @returns {Symbol[]} - The symbols
+         */
         $scope.getSelectedSymbols = function () {
             return SelectionService.getSelected($scope.allSymbols);
         }

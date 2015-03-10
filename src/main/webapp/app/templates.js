@@ -555,9 +555,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                            <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
     "                        </label>\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle>\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle>\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: SEARCH_FOR_TEXT -->\n" +
@@ -578,9 +578,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.value\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.value\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: SEARCH_FOR_NODE -->\n" +
@@ -601,9 +601,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: CLEAR -->\n" +
@@ -623,9 +623,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">CSS selector</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: CLICK -->\n" +
@@ -649,9 +649,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">The value to fill the element with</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: FILL -->\n" +
@@ -690,9 +690,9 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">CSS selector</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
-    "                    <button class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
-    "                    </button>\n" +
+    "                    </a>\n" +
     "\n" +
     "                </div>\n" +
     "                <!-- END: SUBMIT -->\n" +
@@ -1479,12 +1479,8 @@ angular.module("app/views/modals/symbol-group-create-modal.html", []).run(["$tem
     "             ng-show=\"create_symbol_group_form.name.$dirty && create_symbol_group_form.name.$invalid\">\n" +
     "            <small ng-show=\"create_symbol_group_form.name.$error.required\"> The field must not be empty.</small>\n" +
     "        </div>\n" +
-    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"groupExists\">\n" +
-    "            <small>\n" +
-    "                There is already a symbol group with the name \"<strong ng-bind=\"group.name\"></strong>\". Please choose\n" +
-    "                another one.\n" +
-    "            </small>\n" +
-    "        </div>\n" +
+    "\n" +
+    "        <div class=\"alert alert-danger alert-condensed\" ng-show=\"errorMsg\" ng-bind=\"errorMsg\"></div>\n" +
     "\n" +
     "    </div>\n" +
     "\n" +

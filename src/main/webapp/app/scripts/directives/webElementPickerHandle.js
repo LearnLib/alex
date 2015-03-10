@@ -32,8 +32,8 @@
         function link(scope, el, attrs) {
             el.on('click', WebElementPickerService.open);
 
-            scope.$on('webElementPicker.ok', function (e, data) {
-                scope.selector = data.selector;
+            scope.$on('webElementPicker.ok', function (e, xpath) {
+                scope.selector = xpath;
             });
         }
     }
