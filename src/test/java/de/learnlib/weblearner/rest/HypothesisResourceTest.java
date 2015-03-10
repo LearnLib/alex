@@ -200,7 +200,7 @@ public class HypothesisResourceTest extends JerseyTest {
         Response response = target("/projects/" + PROJECT_ID + "/results/,,,,")
                             .request().delete();
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 
     @Test
@@ -210,6 +210,6 @@ public class HypothesisResourceTest extends JerseyTest {
         Response response = target("/projects/" + PROJECT_ID + "/results/foobar")
                             .request().delete();
 
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 }

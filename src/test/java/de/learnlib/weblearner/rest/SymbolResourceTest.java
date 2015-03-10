@@ -31,6 +31,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -172,7 +173,7 @@ public class SymbolResourceTest extends JerseyTest {
         String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
         // when
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch").request().post(Entity.json(json));
 
         // then
         assertSymbolListCreation(response);
@@ -187,7 +188,7 @@ public class SymbolResourceTest extends JerseyTest {
         String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
         // when
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch").request().post(Entity.json(json));
 
         // then
         symbol.setProject(project);
@@ -201,7 +202,7 @@ public class SymbolResourceTest extends JerseyTest {
         String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
         // when
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch").request().post(Entity.json(json));
         given(symbolDAO.getWithLatestRevision(PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
 
         // then
@@ -214,7 +215,7 @@ public class SymbolResourceTest extends JerseyTest {
         symbol.setProjectId(PROJECT_TEST_ID + 1);
         String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch").request().post(Entity.json(json));
         given(symbolDAO.getWithLatestRevision(PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
 
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -227,7 +228,7 @@ public class SymbolResourceTest extends JerseyTest {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request().put(Entity.json(json));
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch").request().post(Entity.json(json));
 
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
@@ -363,9 +364,27 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
+    public void shouldUpdateMultipleSymbolsAtOnce() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId();
+        Response response = target(path).request().put(Entity.json(symbols));
+
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        assertEquals("2", response.getHeaderString("X-Total-Count"));
+        verify(symbolDAO).update(symbols);
+    }
+
+    @Test
+    public void shouldNotUpdateMultipleSymbolsIfIdsDoNotMatch() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId();
+        Response response = target(path).request().put(Entity.json(symbols));
+
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        verify(symbolDAO, never()).update(symbols);
+    }
+
+    @Test
     public void shouldHideASymbol() {
-        symbols.remove(symbol2);
-        given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId())).willReturn(symbols);
+        given(symbolDAO.getWithLatestRevision(PROJECT_TEST_ID, symbol.getId())).willReturn(symbol);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/hide";
         Response response = target(path).request().post(null);
@@ -381,7 +400,8 @@ public class SymbolResourceTest extends JerseyTest {
         given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
                 .willReturn(symbols);
 
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "," + symbol2.getId() + "/hide";
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/"
+                    + symbol.getId() + "," + symbol2.getId() + "/hide";
         Response response = target(path).request().post(null);
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
@@ -403,7 +423,7 @@ public class SymbolResourceTest extends JerseyTest {
     public void ensureThatInvalidIdsToHideAreHandledProperly() {
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/,,,/hide";
         Response response = target(path).request().post(null);
-        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
         verify(symbolDAO, never()).hide(eq(PROJECT_TEST_ID), any(Long[].class));
     }
@@ -412,15 +432,14 @@ public class SymbolResourceTest extends JerseyTest {
     public void ensureThatInvalidIdsToHideAreHandledProperly2() {
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/foobar/hide";
         Response response = target(path).request().post(null);
-        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
         verify(symbolDAO, never()).hide(eq(PROJECT_TEST_ID), any(Long[].class));
     }
 
     @Test
     public void shouldShowASymbol() {
-        symbols.remove(symbol2);
-        given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId())).willReturn(symbols);
+        given(symbolDAO.getWithLatestRevision(PROJECT_TEST_ID, symbol.getId())).willReturn(symbol);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/show";
         Response response = target(path).request().post(null);
@@ -436,7 +455,7 @@ public class SymbolResourceTest extends JerseyTest {
         given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
                 .willReturn(symbols);
 
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "," + symbol2.getId() + "/show";
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId() + "/show";
         Response response = target(path).request().post(null);
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
@@ -458,7 +477,7 @@ public class SymbolResourceTest extends JerseyTest {
     public void ensureThatInvalidIdsToShowAreHandledProperly() {
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/,,,/show";
         Response response = target(path).request().post(null);
-        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
         verify(symbolDAO, never()).show(eq(PROJECT_TEST_ID), any(Long[].class));
     }
@@ -467,7 +486,7 @@ public class SymbolResourceTest extends JerseyTest {
     public void ensureThatInvalidIdsToShowAreHandledProperly2() {
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/foobar/show";
         Response response = target(path).request().post(null);
-        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
         verify(symbolDAO, never()).show(eq(PROJECT_TEST_ID), any(Long[].class));
     }

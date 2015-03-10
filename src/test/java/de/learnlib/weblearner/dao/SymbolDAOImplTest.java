@@ -553,6 +553,19 @@ public class SymbolDAOImplTest {
     }
 
     @Test
+    public void shouldDoBatchUpdate() {
+        symbolDAO.create(symbols);
+        symbol.setName(symbol.getName() + " - updated");
+        symbol2.setName(symbol2.getName() + " - updated");
+
+        symbolDAO.update(symbols);
+
+        symbols = symbolDAO.getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.VISIBLE);
+        assertEquals(symbol.getName(), symbols.get(0).getName());
+        assertEquals(symbol2.getName(), symbols.get(1).getName());
+    }
+
+    @Test
     public void shouldHideAValidSymbols() {
         symbolDAO.create(symbol);
         symbol.setName(symbol.getName() + " - updated");

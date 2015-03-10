@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.dao.SymbolDAO;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
+import de.learnlib.weblearner.utils.IdsList;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
-import de.learnlib.weblearner.utils.ResourceInputHelpers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,7 +27,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * REST API to manage the symbols.
@@ -63,7 +66,7 @@ public class SymbolResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSymbol(@PathParam("project_id") long projectId, Symbol symbol) {
+    public Response createSymbol(@PathParam("project_id") Long projectId, Symbol symbol) {
 
         try {
             checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
@@ -91,10 +94,11 @@ public class SymbolResource {
      * @successResponse 201 created
      * @errorResponse   400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
      */
-    @PUT
+    @POST
+    @Path("/batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response batchCreateSymbols(@PathParam("project_id") long projectId, List<Symbol> symbols) {
+    public Response batchCreateSymbols(@PathParam("project_id") Long projectId, List<Symbol> symbols) {
         try {
             //TODO (Alex S.): can this loop be moved down to prevent multiple iteration over the symbol list?
             for (Symbol symbol : symbols) {
@@ -117,10 +121,10 @@ public class SymbolResource {
         }
     }
 
-    private void checkSymbolBeforeCreation(long projectId, Symbol symbol) {
-        if (symbol.getProjectId() == 0) {
+    private void checkSymbolBeforeCreation(Long projectId, Symbol symbol) {
+        if (symbol.getProjectId() == 0L) {
             symbol.setProjectId(projectId);
-        } else if (symbol.getProjectId() != projectId) {
+        } else if (!Objects.equals(symbol.getProjectId(), projectId)) {
             throw new IllegalArgumentException("The symbol should not have a project"
                     + "or at least the project id should be the one in the get parameter");
         }
@@ -141,7 +145,7 @@ public class SymbolResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId,
+    public Response getAll(@PathParam("project_id") Long projectId,
                            @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         try {
             List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(projectId, visibilityLevel);
@@ -171,7 +175,7 @@ public class SymbolResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") long projectId, @PathParam("id") long id) {
+    public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);
         if (symbol != null) {
             return Response.ok(symbol).build();
@@ -195,7 +199,7 @@ public class SymbolResource {
     @GET
     @Path("/{id}/complete")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getComplete(@PathParam("project_id") long projectId, @PathParam("id") long id) {
+    public Response getComplete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         List<Symbol> symbols = symbolDAO.getWithAllRevisions(projectId, id);
         try {
             String json = createSymbolsJSON(symbols);
@@ -225,7 +229,7 @@ public class SymbolResource {
     @GET
     @Path("/{id}:{revision}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getWithRevision(@PathParam("project_id") long projectId, @PathParam("id") long id,
+    public Response getWithRevision(@PathParam("project_id") Long projectId, @PathParam("id") Long id,
             @PathParam("revision") long revision) {
         Symbol symbol = symbolDAO.get(projectId, id, revision);
         if (symbol != null) {
@@ -256,24 +260,87 @@ public class SymbolResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") long projectId, @PathParam("id") long id, Symbol symbol) {
-        if (id != symbol.getId() || projectId != symbol.getProjectId()) {
+    public Response update(@PathParam("project_id") Long projectId, @PathParam("id") Long id, Symbol symbol) {
+        if (!Objects.equals(id, symbol.getId()) || !Objects.equals(projectId, symbol.getProjectId())) {
             return  Response.status(Status.BAD_REQUEST).build();
-        } else {
-            try {
-                symbolDAO.update(symbol);
-                return Response.ok(symbol).build();
-            } catch (IllegalArgumentException e) {
-                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.NOT_FOUND, e);
-            } catch (ValidationException e) {
-                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.BAD_REQUEST, e);
-            }
+        }
+
+        try {
+            symbolDAO.update(symbol);
+            return Response.ok(symbol).build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.NOT_FOUND, e);
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.BAD_REQUEST, e);
         }
     }
 
     /**
-     * Mark on symbol as hidden.
+     * Update a bunch of Symbols.
+     *
+     * @param projectId
+     *            The ID of the project.
+     * @param ids
+     *            The IDs of the symbols.
+     * @param symbols
+     *            The new symbol data.
+     * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
+     * @responseType de.learnlib.weblearner.entities.Symbol
+     * @successResponse 200 OK
+     * @errorResponse   400 bad request `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
+    @PUT
+    @Path("/batch/{ids}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response batchUpdate(@PathParam("project_id") Long projectId,
+                                @PathParam("ids") IdsList ids,
+                                List<Symbol> symbols) {
+        Set idsSet = new HashSet<>(ids);
+        for (Symbol symbol : symbols) {
+            if (!idsSet.contains(symbol.getId()) || !Objects.equals(projectId, symbol.getProjectId())) {
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+        }
+        try {
+            symbolDAO.update(symbols);
+            return Response.ok(symbols).header("X-Total-Count", symbols.size()).build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchUpdate", Status.NOT_FOUND, e);
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchUpdate", Status.BAD_REQUEST, e);
+        }
+    }
+
+    /**
+     * Mark one symbol as hidden.
      * 
+     * @param projectId
+     *            The ID of the project.
+     * @param id
+     *            The ID of the symbol to hide.
+     * @return On success no content will be returned; an error message on failure.
+     * @successResponse 204 OK & no content
+     * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
+    @POST
+    @Path("/{id}/hide")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response hide(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
+        try {
+            symbolDAO.hide(projectId, id);
+            Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);
+            return Response.status(Status.OK).entity(symbol).build();
+
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
+        }
+    }
+
+    /**
+     * Mark a bunch of symbols as hidden.
+     *
      * @param projectId
      *            The ID of the project.
      * @param ids
@@ -283,31 +350,16 @@ public class SymbolResource {
      * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
      */
     @POST
-    @Path("/{id}/hide")
+    @Path("/batch/{ids}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("project_id") long projectId, @PathParam("id") String ids) {
+    public Response hide(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
         try {
-            Long[] idsArray;
-            try {
-                idsArray = ResourceInputHelpers.splitUp(ids);
-            } catch (NumberFormatException e) {
-                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
-                        Response.Status.BAD_REQUEST,  e);
-            } catch (IllegalArgumentException e) {
-                Exception e2 = new IllegalArgumentException("You must at least specify one id to hide.");
-                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
-                        Response.Status.BAD_REQUEST, e2);
-            }
-
+            Long[] idsArray = ids.toArray(new Long[ids.size()]);
             symbolDAO.hide(projectId, idsArray);
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(projectId, idsArray);
 
-            if (symbols.size() == 1) {
-                return Response.status(Status.OK).entity(symbols.get(0)).build();
-            } else {
-                String json = createSymbolsJSON(symbols);
-                return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
-            }
+            String json = createSymbolsJSON(symbols);
+            return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
         } catch (JsonProcessingException e) {
@@ -322,8 +374,8 @@ public class SymbolResource {
      *
      * @param projectId
      *            The ID of the project.
-     * @param ids
-     *            The IDs of the symbol to show.
+     * @param id
+     *            The ID of the symbol to show.
      * @return On success no content will be returned; an error message on failure.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
@@ -331,29 +383,38 @@ public class SymbolResource {
     @POST
     @Path("/{id}/show")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response show(@PathParam("project_id") long projectId, @PathParam("id") String ids) {
+    public Response show(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         try {
-            Long[] idsArray;
-            try {
-                idsArray = ResourceInputHelpers.splitUp(ids);
-            } catch (NumberFormatException e) {
-                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
-                        Response.Status.BAD_REQUEST,  e);
-            } catch (IllegalArgumentException e) {
-                Exception e2 = new IllegalArgumentException("You must at least specify one id to show.");
-                return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide",
-                        Response.Status.BAD_REQUEST, e2);
-            }
+            symbolDAO.show(projectId, id);
+            Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);
+            return Response.status(Status.OK).entity(symbol).build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
+        }
+    }
 
+    /**
+     * Remove the hidden flag from a bunch of symbols.
+     *
+     * @param projectId
+     *            The ID of the project.
+     * @param ids
+     *            The IDs of the symbols to show.
+     * @return On success no content will be returned; an error message on failure.
+     * @successResponse 204 OK & no content
+     * @errorResponse   404 not found `de.learnlib.weblearner.utils.ResourceErrorHandler.RESTError
+     */
+    @POST
+    @Path("/batch/{ids}/show")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response show(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
+        try {
+            Long[] idsArray = ids.toArray(new Long[ids.size()]);
             symbolDAO.show(projectId, idsArray);
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(projectId, idsArray);
 
-            if (symbols.size() == 1) {
-                return Response.status(Status.OK).entity(symbols.get(0)).build();
-            } else {
-                String json = createSymbolsJSON(symbols);
-                return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
-            }
+            String json = createSymbolsJSON(symbols);
+            return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
         } catch (JsonProcessingException e) {

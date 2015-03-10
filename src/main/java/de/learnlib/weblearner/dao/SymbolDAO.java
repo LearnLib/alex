@@ -123,6 +123,18 @@ public interface SymbolDAO {
     void update(Symbol symbol) throws IllegalArgumentException, ValidationException;
 
     /**
+     * Update a list of Symbols.
+     *
+     * @param symbols
+     *            The symbol sto update.
+     * @throws IllegalArgumentException
+     *             When one of the Symbol was not found.
+     * @throws ValidationException
+     *             When one of the Symbol was not valid.
+     */
+    void update(List<Symbol> symbols) throws IllegalArgumentException, ValidationException;
+
+    /**
      * Mark a symbol as hidden.
      * 
      * @param projectId

@@ -19,6 +19,7 @@ import org.hibernate.criterion.Subqueries;
 import javax.validation.ValidationException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementation of a SymbolDAO using Hibernate.
@@ -212,11 +213,20 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     public List<Symbol> getByIdsWithLatestRevision(Long projectId, SymbolVisibilityLevel visibilityLevel,
-                                                      Long... ids) {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+                                                   Long... ids) {
+        try {
+            // start session
+            Session session = HibernateUtil.getSession();
+            HibernateUtil.beginTransaction();
 
+            return getByIdsWithLatestRevision(session, projectId, visibilityLevel, ids);
+        } finally {
+            HibernateUtil.commitTransaction();
+        }
+    }
+
+    public List<Symbol> getByIdsWithLatestRevision(Session session, Long projectId,
+                                                   SymbolVisibilityLevel visibilityLevel, Long... ids) {
         // get latest revision
         @SuppressWarnings("unchecked") // should return a list of objects arrays which contain 2 Long values.
         List<Object[]> idRevList = session.createCriteria(Symbol.class)
@@ -228,14 +238,13 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                                        .add(Projections.max("revision"))
                                             ).list();
 
-        HibernateUtil.commitTransaction();
 
         List<IdRevisionPair> idRevPairs = createIdRevisionPairList(idRevList);
 
         if (idRevPairs.isEmpty()) {
             return new LinkedList<>();
         }
-        return getAll(projectId, idRevPairs);
+        return getAll(session, projectId, idRevPairs);
     }
 
     @Override
@@ -273,7 +282,17 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     public Symbol getWithLatestRevision(Long projectId, Long id) {
-        List<Symbol> resultList = getByIdsWithLatestRevision(projectId, id);
+        HibernateUtil.beginTransaction();
+        Session session = HibernateUtil.getSession();
+
+        Symbol result = getWithLatestRevision(session, projectId, id);
+
+        HibernateUtil.commitTransaction();
+        return result;
+    }
+
+    private Symbol getWithLatestRevision(Session session, Long projectId, Long id) {
+        List<Symbol> resultList = getByIdsWithLatestRevision(session, projectId, SymbolVisibilityLevel.ALL, id);
 
         if (resultList.isEmpty()) {
             return null;
@@ -309,32 +328,13 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     public void update(Symbol symbol) throws IllegalArgumentException, ValidationException {
-        // checks for valid symbol
-        if (symbol.getProjectId() == 0) {
-            throw new IllegalArgumentException("Update failed: Project unknown.");
-        }
-
-        Symbol symbolInDB = getWithLatestRevision(symbol.getProjectId(), symbol.getId());
-        if (symbolInDB == null) {
-            throw new IllegalArgumentException("Update failed: Symbol unknown.");
-        }
-
-        SymbolGroup oldGroup = symbolGroupDAO.get(symbolInDB.getProjectId(), symbolInDB.getGroupId());
-        SymbolGroup newGroup = symbolGroupDAO.get(symbol.getProjectId(), symbol.getGroupId());
-        List<Symbol> symbols = getWithAllRevisions(symbol.getProjectId(), symbol.getId());
-
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        // only allow update form the latest revision
-        if (symbol.getRevision() != symbolInDB.getRevision()) {
-            throw new IllegalArgumentException("Could not update the Symbol because you used an old revision.");
-        }
-
         // update
         try {
-            update(session, symbol, oldGroup);
+            update(session, symbol);
 
             HibernateUtil.commitTransaction();
 
@@ -343,13 +343,68 @@ public class SymbolDAOImpl implements SymbolDAO {
                  | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("Could not update the Symbol because it is not valid.", e);
+        } catch (IllegalArgumentException e) {
+            HibernateUtil.rollbackTransaction();
+            throw new IllegalArgumentException("Could not update the Symbol because of an invalid argument.", e);
         }
     }
 
-    private void update(Session session, Symbol symbol, SymbolGroup oldGroup) {
+    @Override
+    public void update(List<Symbol> symbols) throws IllegalArgumentException, ValidationException {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        // update
+        try {
+            for (Symbol symbol : symbols) {
+                update(session, symbol);
+            }
+
+            HibernateUtil.commitTransaction();
+
+            // error handling
+        } catch (javax.validation.ConstraintViolationException
+                | org.hibernate.exception.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            for (Symbol symbol : symbols) {
+                symbol.setId(null);
+                symbol.setRevision(null);
+            }
+            throw new ValidationException("Could not update the Symbols because one is not valid.", e);
+        } catch (IllegalArgumentException e) {
+            HibernateUtil.rollbackTransaction();
+            for (Symbol symbol : symbols) {
+                symbol.setId(null);
+                symbol.setRevision(null);
+            }
+            throw new IllegalArgumentException("Could not update the Symbol because one has an invalid argument.", e);
+        }
+    }
+
+    private void update(Session session, Symbol symbol) {
+        // checks for valid symbol
+        if (symbol.getProjectId() == null) {
+            throw new IllegalArgumentException("Update failed: Project unknown.");
+        }
+
+        Symbol symbolInDB = getWithLatestRevision(session, symbol.getProjectId(), symbol.getId());
+        if (symbolInDB == null) {
+            throw new IllegalArgumentException("Update failed: Symbol unknown.");
+        }
+
+        // only allow update form the latest revision
+        if (!Objects.equals(symbol.getRevision(), symbolInDB.getRevision())) {
+            throw new IllegalArgumentException("Update failed: You used an old revision.");
+        }
+
         // test for unique constrains
         checkUniqueConstrains(session, symbol); // will throw exception if the symbol is invalid
 
+        SymbolGroup oldGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("project", symbol.getProject())
+                                                    .using("id", symbolInDB.getGroupId())
+                                                    .load();
         SymbolGroup newGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
                                                     .using("project", symbol.getProject())
                                                     .using("id", symbol.getGroupId())
@@ -363,6 +418,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.beforeSave();
         session.save(symbol);
 
+        // update group
         if (!newGroup.equals(oldGroup)) {
             List<Symbol> symbols = session.createCriteria(Symbol.class)
                                             .add(Restrictions.eq("project", symbol.getProject()))
@@ -437,9 +493,9 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private List<IdRevisionPair> createIdRevisionPairList(List<Object[]> idRevionsFromDB) {
+    private List<IdRevisionPair> createIdRevisionPairList(List<Object[]> idRevisionsFromDB) {
         List<IdRevisionPair> idRevPairs = new LinkedList<>();
-        for (Object[] obj : idRevionsFromDB) {
+        for (Object[] obj : idRevisionsFromDB) {
             IdRevisionPair newPair = new IdRevisionPair();
             newPair.setId((Long) obj[0]);
             newPair.setRevision((Long) obj[1]);
