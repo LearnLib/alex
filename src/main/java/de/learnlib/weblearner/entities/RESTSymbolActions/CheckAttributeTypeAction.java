@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities.RESTSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import de.learnlib.weblearner.entities.ExecuteResult;
@@ -83,6 +84,11 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
         return attribute;
     }
 
+    @JsonIgnore
+    public String getAttributeWithVariableValues() {
+        return insertVariableValues(attribute);
+    }
+
     /**
      * Set the field name of the attribute which should be searched for.
      *
@@ -115,7 +121,7 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         String body = target.getBody();
-        JsonNodeType typeInBody = JSONHelpers.getAttributeType(body, attribute);
+        JsonNodeType typeInBody = JSONHelpers.getAttributeType(body, getAttributeWithVariableValues());
 
         if (typeInBody != null && typeInBody.equals(jsonType.getRelatedType())) {
             return ExecuteResult.OK;

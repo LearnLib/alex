@@ -1,6 +1,9 @@
 package de.learnlib.weblearner.utils;
 
 import de.learnlib.weblearner.entities.ExecuteResult;
+import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
+import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,6 +65,38 @@ public final class SearchHelper {
             return ExecuteResult.OK;
         } else {
             return ExecuteResult.FAILED;
+        }
+    }
+
+    public static String insertVariableValues(MultiConnector connector, String text) {
+        StringBuilder result = new StringBuilder();
+        int variableStartPos = text.indexOf("{{");
+        int variableEndPos = -2; // because of the length of '}}' we will always +2 to the endPos,
+                                 // so this is a start at 0
+
+        while (variableStartPos > -1) {
+            result.append(text.substring(variableEndPos + 2, variableStartPos)); // add everything before the variable.
+
+            variableEndPos = text.indexOf("}}", variableStartPos);
+            boolean variableIsCounter = text.charAt(variableStartPos + 2) == '#';
+            String variableName = text.substring(variableStartPos + 3, variableEndPos);
+
+            String variableValue = getValue(connector, variableName, variableIsCounter);
+            result.append(variableValue);
+
+            variableStartPos = text.indexOf("{{", variableEndPos); // prepare next step
+        }
+
+        result.append(text.substring(variableEndPos + 2));
+
+        return result.toString();
+    }
+
+    private static String getValue(MultiConnector connector, String variableName, boolean counter) {
+        if (counter) {
+            return String.valueOf(connector.getConnector(CounterStoreConnector.class).get(variableName));
+        } else {
+            return connector.getConnector(VariableStoreConnector.class).get(variableName);
         }
     }
 

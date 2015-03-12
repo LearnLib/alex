@@ -2,7 +2,6 @@ package de.learnlib.weblearner.entities.StoreSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
-import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
@@ -12,6 +11,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -20,62 +20,66 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class DeclareCounterActionTest {
+public class SetCounterActionTest {
 
     private static final String TEST_NAME = "counter";
+    private static final Integer TEST_VALUE = 42;
 
-    private DeclareCounterAction declareAction;
+    private SetCounterAction setAction;
 
     @Before
     public void setUp() {
-        declareAction = new DeclareCounterAction();
-        declareAction.setName(TEST_NAME);
+        setAction = new SetCounterAction();
+        setAction.setName(TEST_NAME);
+        setAction.setValue(TEST_VALUE);
     }
 
     @Test
     public void testJSON() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(declareAction);
-        DeclareCounterAction declareAction2 = (DeclareCounterAction) mapper.readValue(json, SymbolAction.class);
+        String json = mapper.writeValueAsString(setAction);
+        SetCounterAction declareAction2 = (SetCounterAction) mapper.readValue(json, SymbolAction.class);
 
-        assertEquals(declareAction.getName(), declareAction2.getName());
+        assertEquals(setAction.getName(), declareAction2.getName());
+        assertEquals(setAction.getValue(), declareAction2.getValue());
     }
 
     @Test
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/StoreSymbolActions/DeclareCounterTestData.json").toURI());
+        File file = new File(getClass().getResource("/entities/StoreSymbolActions/SetCounterTestData.json").toURI());
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
-        assertTrue(obj instanceof DeclareCounterAction);
-        DeclareCounterAction objAsAction = (DeclareCounterAction) obj;
+        assertTrue(obj instanceof SetCounterAction);
+        SetCounterAction objAsAction = (SetCounterAction) obj;
         assertEquals(TEST_NAME, objAsAction.getName());
+        assertEquals(TEST_VALUE, objAsAction.getValue());
     }
 
     @Test
-    public void shouldSuccessfulDeclareANewCounter() {
+    public void shouldSuccessfulSetTheCounterValue() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
         MultiConnector connector = mock(MultiConnector.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
-        ExecuteResult result = declareAction.execute(connector);
+        ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).declare(TEST_NAME);
+        verify(counters).set(TEST_NAME, TEST_VALUE);
     }
 
     @Test
-    public void shouldFailIfNameIsAlreadyUsed() {
+    public void shouldFailIfCounterIsNotDeclared() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        willThrow(IllegalArgumentException.class).given(counters).declare(TEST_NAME);
+        willThrow(IllegalStateException.class).given(counters).set(TEST_NAME, TEST_VALUE);
         MultiConnector connector = mock(MultiConnector.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
-        ExecuteResult result = declareAction.execute(connector);
+        ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.FAILED, result);
-        verify(counters).declare(TEST_NAME);
+        verify(counters).set(TEST_NAME, TEST_VALUE);
     }
 
 }

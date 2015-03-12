@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities.WebSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
@@ -35,6 +36,11 @@ public class GotoAction extends WebSymbolAction {
         return url;
     }
 
+    @JsonIgnore
+    public String getURLWithVariableValues() {
+        return insertVariableValues(url);
+    }
+
     /**
      * Set the URL of the site where this element is navigating to..
      * 
@@ -48,7 +54,7 @@ public class GotoAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.get(url);
+            connector.get(getURLWithVariableValues());
             return ExecuteResult.OK;
         } catch (Exception e) {
             LOGGER.info("Could not goto " + url, e);

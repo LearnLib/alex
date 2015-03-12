@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities.RESTSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
@@ -34,6 +35,11 @@ public class CheckTextRestAction extends RESTSymbolAction {
         return value;
     }
 
+    @JsonIgnore
+    public String getValueWithVariableValues() {
+        return insertVariableValues(value);
+    }
+
     /**
      * Set the value which will be searched in the last response body.
      *
@@ -65,7 +71,7 @@ public class CheckTextRestAction extends RESTSymbolAction {
 
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
-        return SearchHelper.search(value, target.getBody(), regexp);
+        return SearchHelper.search(getValueWithVariableValues(), target.getBody(), regexp);
     }
 
 }

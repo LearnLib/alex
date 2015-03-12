@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities.WebSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
@@ -31,6 +32,11 @@ public class CheckNodeAction extends WebSymbolAction {
         return value;
     }
 
+    @JsonIgnore
+    public String getValueWithVariableValues() {
+        return insertVariableValues(value);
+    }
+
     /**
      * Set the value to check for.
      * 
@@ -44,7 +50,7 @@ public class CheckNodeAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.getElement(value);
+            connector.getElement(getValueWithVariableValues());
             return ExecuteResult.OK;
         } catch (NoSuchElementException e) {
             return ExecuteResult.FAILED;

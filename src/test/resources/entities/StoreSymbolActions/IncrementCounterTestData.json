@@ -1,0 +1,4 @@
+{
+  "type": "incrementCounter",
+  "name": "counter"
+}

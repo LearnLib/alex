@@ -2,10 +2,10 @@ package de.learnlib.weblearner.entities.StoreSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
-import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,15 +20,15 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class DeclareCounterActionTest {
+public class DeclareVariableActionTest {
 
-    private static final String TEST_NAME = "counter";
+    private static final String TEST_NAME = "variable";
 
-    private DeclareCounterAction declareAction;
+    private DeclareVariableAction declareAction;
 
     @Before
     public void setUp() {
-        declareAction = new DeclareCounterAction();
+        declareAction = new DeclareVariableAction();
         declareAction.setName(TEST_NAME);
     }
 
@@ -36,7 +36,7 @@ public class DeclareCounterActionTest {
     public void testJSON() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(declareAction);
-        DeclareCounterAction declareAction2 = (DeclareCounterAction) mapper.readValue(json, SymbolAction.class);
+        DeclareVariableAction declareAction2 = (DeclareVariableAction) mapper.readValue(json, SymbolAction.class);
 
         assertEquals(declareAction.getName(), declareAction2.getName());
     }
@@ -45,37 +45,37 @@ public class DeclareCounterActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/StoreSymbolActions/DeclareCounterTestData.json").toURI());
+        File file = new File(getClass().getResource("/entities/StoreSymbolActions/DeclareVariableTestData.json").toURI());
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
-        assertTrue(obj instanceof DeclareCounterAction);
-        DeclareCounterAction objAsAction = (DeclareCounterAction) obj;
+        assertTrue(obj instanceof DeclareVariableAction);
+        DeclareVariableAction objAsAction = (DeclareVariableAction) obj;
         assertEquals(TEST_NAME, objAsAction.getName());
     }
 
     @Test
     public void shouldSuccessfulDeclareANewCounter() {
-        CounterStoreConnector counters = mock(CounterStoreConnector.class);
+        VariableStoreConnector variables = mock(VariableStoreConnector.class);
         MultiConnector connector = mock(MultiConnector.class);
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
         ExecuteResult result = declareAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).declare(TEST_NAME);
+        verify(variables).declare(TEST_NAME);
     }
 
     @Test
     public void shouldFailIfNameIsAlreadyUsed() {
-        CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        willThrow(IllegalArgumentException.class).given(counters).declare(TEST_NAME);
+        VariableStoreConnector variables = mock(VariableStoreConnector.class);
+        willThrow(IllegalArgumentException.class).given(variables).declare(TEST_NAME);
         MultiConnector connector = mock(MultiConnector.class);
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
         ExecuteResult result = declareAction.execute(connector);
 
         assertEquals(ExecuteResult.FAILED, result);
-        verify(counters).declare(TEST_NAME);
+        verify(variables).declare(TEST_NAME);
     }
 
 }

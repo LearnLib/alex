@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities.RESTSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
@@ -57,6 +58,11 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
         return value;
     }
 
+    @JsonIgnore
+    public String getValueWithVariableValues() {
+        return insertVariableValues(value);
+    }
+
     /**
      * Set the value which should be inside of the header field.
      *
@@ -91,13 +97,13 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
         List<Object> headerFieldValues = connector.getHeaders().get(key);
         if (headerFieldValues == null) {
             return ExecuteResult.FAILED;
-        } else if (!regexp && headerFieldValues.contains(value)) {
+        } else if (!regexp && headerFieldValues.contains(getValueWithVariableValues())) {
             return ExecuteResult.OK;
         } else if (regexp) {
             ExecuteResult tmpResult = ExecuteResult.FAILED;
             for (int i = 0; i < headerFieldValues.size() && tmpResult == ExecuteResult.FAILED; i++) {
                 String headerFieldValue = headerFieldValues.get(i).toString();
-                tmpResult = SearchHelper.searchWithRegex(value, headerFieldValue);
+                tmpResult = SearchHelper.searchWithRegex(getValueWithVariableValues(), headerFieldValue);
             }
             return tmpResult;
         } else {

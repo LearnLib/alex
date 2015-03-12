@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities.RESTSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
@@ -77,6 +78,11 @@ public class CallAction extends RESTSymbolAction {
         return url;
     }
 
+    @JsonIgnore
+    public String getUrlWithVariableValues() {
+        return insertVariableValues(url);
+    }
+
     /**
      * Set the URL to send the request to.
      *
@@ -96,6 +102,11 @@ public class CallAction extends RESTSymbolAction {
         return data;
     }
 
+    @JsonIgnore
+    public String getDataWithVariableValues() {
+        return insertVariableValues(data);
+    }
+
     /**
      * Set the optional data which will be send together with a POST or PUT request.
      *
@@ -112,7 +123,7 @@ public class CallAction extends RESTSymbolAction {
             doRequest(target);
             return ExecuteResult.OK;
         } catch (Exception e) {
-            LOGGER.info("Could not call " + url, e);
+            LOGGER.info("Could not call " + getUrlWithVariableValues(), e);
             return ExecuteResult.FAILED;
         }
     }
@@ -120,16 +131,16 @@ public class CallAction extends RESTSymbolAction {
     private void doRequest(WebServiceConnector target) {
         switch (method) {
             case GET:
-                target.get(url);
+                target.get(getUrlWithVariableValues());
                 break;
             case POST:
-                target.post(url, data);
+                target.post(getUrlWithVariableValues(), getDataWithVariableValues());
                 break;
             case PUT:
-                target.put(url, data);
+                target.put(getUrlWithVariableValues(), getDataWithVariableValues());
                 break;
             case DELETE:
-                target.delete(url);
+                target.delete(getUrlWithVariableValues());
                 break;
             default:
                 LOGGER.info("tried to make a call to a REST API with an unknown method '" + method.name() + "'.");

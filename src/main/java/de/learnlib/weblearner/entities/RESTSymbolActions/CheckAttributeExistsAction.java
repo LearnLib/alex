@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities.RESTSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
@@ -31,6 +32,11 @@ public class CheckAttributeExistsAction extends RESTSymbolAction {
         return attribute;
     }
 
+    @JsonIgnore
+    public String getAttributeWithVariableValues() {
+        return insertVariableValues(attribute);
+    }
+
     /**
      * Set the field name of the attribute which should be searched for.
      *
@@ -45,7 +51,7 @@ public class CheckAttributeExistsAction extends RESTSymbolAction {
     public ExecuteResult execute(WebServiceConnector target) {
         String body = target.getBody();
 
-        if (JSONHelpers.getAttributeValue(body, attribute) != null) {
+        if (JSONHelpers.getAttributeValue(body, getAttributeWithVariableValues()) != null) {
             return ExecuteResult.OK;
         } else {
             return ExecuteResult.FAILED;

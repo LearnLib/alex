@@ -1,7 +1,9 @@
 package de.learnlib.weblearner.entities.WebSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
+import de.learnlib.weblearner.learner.connectors.MultiConnector;
 import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
 import de.learnlib.weblearner.utils.SearchHelper;
 
@@ -37,6 +39,11 @@ public class CheckTextWebAction extends WebSymbolAction {
         return value;
     }
 
+    @JsonIgnore
+    public String getValueWithVariableValues() {
+        return insertVariableValues(value);
+    }
+
     /**
      * Set the value to check for.
      * 
@@ -69,7 +76,7 @@ public class CheckTextWebAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         String pageSource = connector.getPageSource();
-        return SearchHelper.search(value, pageSource, regexp);
+        return SearchHelper.search(getValueWithVariableValues(), pageSource, regexp);
     }
 
 }

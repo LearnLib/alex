@@ -1,5 +1,5 @@
 {
     "type" : "web_fill",
     "node" : "#input",
-    "generator" : "none"
+    "value" : "Lorem Ipsum"
 }

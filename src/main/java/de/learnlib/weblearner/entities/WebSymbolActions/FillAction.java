@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities.WebSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
@@ -19,11 +20,17 @@ public class FillAction extends WebSymbolAction {
     /** to be serializable. */
     private static final long serialVersionUID = 8595076806577663223L;
 
-    /** The information to identify the element. */
+    /**
+     * The information to identify the element.
+     * @requiredField
+     */
     private String node;
 
-    /** Dummy string to hold the type of generator to use. */
-    private String generator;
+    /**
+     * The Value to insert.
+     * @requiredField
+     */
+    private String value;
 
     /**
      * Get the information to identify the element.
@@ -32,6 +39,11 @@ public class FillAction extends WebSymbolAction {
      */
     public String getNode() {
         return node;
+    }
+
+    @JsonIgnore
+    public String getNodeWithVariableValues() {
+        return insertVariableValues(node);
     }
 
     /**
@@ -45,28 +57,33 @@ public class FillAction extends WebSymbolAction {
     }
 
     /**
-     * Get the generator used to fill the element.
+     * Get the value used to fill the element.
      * 
-     * @return The generator in use.
+     * @return The value.
      */
-    public String getGenerator() {
-        return generator;
+    public String getValue() {
+        return value;
+    }
+
+    @JsonIgnore
+    public String getValueWithVariableValues() {
+        return insertVariableValues(value);
     }
 
     /**
-     * Set the generator to be used when filling the element.
+     * Set the value to be used when filling the element.
      * 
-     * @param generator
-     *            The new generator.
+     * @param value
+     *            The new value.
      */
-    public void setGenerator(String generator) {
-        this.generator = generator;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.getElement(node).sendKeys(generator);
+            connector.getElement(getNodeWithVariableValues()).sendKeys(getValueWithVariableValues());
             return ExecuteResult.OK;
         } catch (NoSuchElementException e) {
             return ExecuteResult.FAILED;

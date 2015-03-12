@@ -16,7 +16,7 @@ import de.learnlib.weblearner.entities.StoreSymbolActions.IncrementCounterAction
 import de.learnlib.weblearner.entities.StoreSymbolActions.SetCounterAction;
 import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableAction;
 import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableByJSONAttributeAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableByNodeAction;
+import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableByHTMLElementAction;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.entities.SymbolGroup;
@@ -67,7 +67,7 @@ public final class HibernateUtil {
             configuration.addAnnotatedClass(SetCounterAction.class);
             configuration.addAnnotatedClass(SetVariableAction.class);
             configuration.addAnnotatedClass(SetVariableByJSONAttributeAction.class);
-            configuration.addAnnotatedClass(SetVariableByNodeAction.class);
+            configuration.addAnnotatedClass(SetVariableByHTMLElementAction.class);
 
             //Actions
             configuration.addAnnotatedClass(SymbolAction.class);

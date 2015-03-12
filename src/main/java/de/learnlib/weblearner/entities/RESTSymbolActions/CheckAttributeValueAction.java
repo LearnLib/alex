@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.entities.RESTSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
@@ -38,6 +39,11 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
         return attribute;
     }
 
+    @JsonIgnore
+    public String getAttributeWithVariableValues() {
+        return insertVariableValues(attribute);
+    }
+
     /**
      * Set the field name of the attribute which should be searched for.
      *
@@ -55,6 +61,11 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
      */
     public String getValue() {
         return value;
+    }
+
+    @JsonIgnore
+    public String getValueWithVariableValues() {
+        return insertVariableValues(value);
     }
 
     /**
@@ -89,12 +100,12 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         String body = target.getBody();
-        String valueInTheBody = JSONHelpers.getAttributeValue(body, attribute);
+        String valueInTheBody = JSONHelpers.getAttributeValue(body, getAttributeWithVariableValues());
 
         if (valueInTheBody == null) {
             return ExecuteResult.FAILED;
         } else {
-            return SearchHelper.search(value, valueInTheBody, regexp);
+            return SearchHelper.search(getValueWithVariableValues(), valueInTheBody, regexp);
         }
     }
 

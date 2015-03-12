@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("setVariableByHTML")
 @JsonTypeName("setVariableByHTML")
-public class SetVariableByNodeAction extends SetVariableAction {
+public class SetVariableByHTMLElementAction extends SetVariableAction {
 
     @Override
     public ExecuteResult execute(MultiConnector connector) {

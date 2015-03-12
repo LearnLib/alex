@@ -28,7 +28,7 @@ public class FillActionTest {
     public void setUp() {
         f = new FillAction();
         f.setNode("#node");
-        f.setGenerator("gen1");
+        f.setValue("Lorem Ipsum");
     }
 
     @Test
@@ -50,7 +50,7 @@ public class FillActionTest {
         assertTrue(obj instanceof FillAction);
         FillAction objAsAction = (FillAction) obj;
         assertEquals("#input", objAsAction.getNode());
-        assertEquals("none", objAsAction.getGenerator());
+        assertEquals("Lorem Ipsum", objAsAction.getValue());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class FillActionTest {
         given(connector.getElement("#node")).willReturn(element);
 
         assertEquals(OK, f.execute(connector));
-        verify(element).sendKeys(f.getGenerator());
+        verify(element).sendKeys(f.getValue());
     }
 
     @Test
