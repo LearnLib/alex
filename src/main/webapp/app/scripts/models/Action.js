@@ -55,11 +55,11 @@
         Action.Web.Fill = function (node, value) {
             this.type = actionTypes.web.FILL;
             this.node = node || null;
-            this.generator = value || null
+            this.value = value || null
         };
 
         Action.Web.Fill.prototype.toString = function () {
-            return 'Fill element "' + this.node + '" with "' + this.generator + '"';
+            return 'Fill element "' + this.node + '" with "' + this.value + '"';
         };
 
         Action.Web.GoTo = function (url) {
@@ -253,7 +253,7 @@
                     return new Action.Web.Click(data.node);
                     break;
                 case actionTypes.web.FILL:
-                    return new Action.Web.Fill(data.node, data.generator);
+                    return new Action.Web.Fill(data.node, data.value);
                     break;
                 case actionTypes.web.GO_TO:
                     return new Action.Web.GoTo(data.url);
@@ -315,7 +315,6 @@
                     return null;
                     break;
             }
-
         };
 
         Action.buildSome = function (data) {

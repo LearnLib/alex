@@ -30,8 +30,6 @@
         };
         return service;
 
-        //////////
-
         /**
          * Start the server side learning process of a project
          *

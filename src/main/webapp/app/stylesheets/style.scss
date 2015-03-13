@@ -3,7 +3,6 @@
 @import "web-element-picker";
 @import "load-screen";
 @import "navigation";
-@import "counter-example-builder";
 
 *, *:after, *:before {
   -webkit-box-sizing: border-box;
@@ -163,7 +162,7 @@ form {
   position: absolute;
   right: 0;
   bottom: 0;
-  top: 38px;
+  top: 30px;
   width: 320px;
   background: #f8f8f8;
   border: 1px solid #e7e7e7;
@@ -223,6 +222,11 @@ form {
 }
 
 .selectable-list {
+
+  .selected {
+    background: #f6f6f6
+  }
+
   .selectable-list-heading, .selectable-list-item {
     .selectable-list-control {
       width: 30px;

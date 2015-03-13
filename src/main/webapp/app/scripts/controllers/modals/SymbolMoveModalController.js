@@ -62,6 +62,7 @@
                     SelectionService.removeSelection(symbol);
                     symbol.group = $scope.selectedGroup.id;
                 });
+                console.log($scope.symbols);
                 Symbol.Resource.updateSome($scope.selectedGroup.project, $scope.symbols)
                     .then(function () {
                         Toast.success('Symbols move to group <strong>' + $scope.selectedGroup.name + '</strong>');

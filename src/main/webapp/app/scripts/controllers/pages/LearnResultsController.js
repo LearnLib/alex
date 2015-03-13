@@ -5,39 +5,46 @@
         .module('weblearner.controller')
         .controller('LearnResultsController', LearnResultsController);
 
-    LearnResultsController.$inject = [
-        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService', 'ToastService'
-    ];
+    LearnResultsController.$inject = ['$scope', 'SessionService', 'LearnResult', 'PromptService', 'ToastService'];
 
     /**
      * The controller for listing all final test results.
      *
      * The template can be found at 'views/pages/learn-results.html'
      *
-     * @param $scope
-     * @param Session
-     * @param LearnResultResource
-     * @param SelectionService
-     * @param PromptService
+     * @param $scope - The controllers scope
+     * @param Session - The SessionService
+     * @param LearnResult - The service for creating LearnResults
+     * @param PromptService - The service for prompts
+     * @param Toast - The ToastService
      * @constructor
      */
-    function LearnResultsController($scope, Session, LearnResultResource, SelectionService, PromptService, Toast) {
+    function LearnResultsController($scope, Session, LearnResult, PromptService, Toast) {
 
         // The project that is saved in the session
         var project = Session.project.get();
 
         /**
          * All final test results of a project
-         *
          * @type {Array}
          */
         $scope.results = [];
 
-        // get all final test results
-        LearnResultResource.getAllFinal($scope.project.id)
-            .then(function (results) {
-                $scope.results = results;
-            });
+        /**
+         * The test results the user selected
+         * @type {Array}
+         */
+        $scope.selectedResults = [];
+
+        (function init() {
+
+            // get all final test results
+            LearnResult.Resource.getAllFinal($scope.project.id)
+                .then(function (results) {
+                    $scope.results = results;
+                    console.log(results)
+                });
+        }());
 
         /**
          * Deletes a test result from the server after prompting the user for confirmation
@@ -45,9 +52,9 @@
          * @param result - The test result that should be deleted
          */
         $scope.deleteResult = function (result) {
-            PromptService.confirm("Do you want to permanently delete this result?")
+            PromptService.confirm("Do you want to permanently delete this result? Changes cannot be undone.")
                 .then(function () {
-                    LearnResultResource.delete(project.id, result.testNo)
+                    LearnResult.Resource.delete(project.id, result.testNo)
                         .then(function () {
                             Toast.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
                             _.remove($scope.results, {testNo: result.testNo});
@@ -62,18 +69,17 @@
          * Deletes selected test results from the server after prompting the user for confirmation
          */
         $scope.deleteResults = function () {
-            var selectedResults = SelectionService.getSelected($scope.results);
             var testNos;
 
-            if (selectedResults.length > 0) {
-                testNos = _.pluck(selectedResults, 'testNo');
-                PromptService.confirm("Do you want to permanently delete theses results?")
+            if ($scope.selectedResults.length > 0) {
+                testNos = _.pluck($scope.selectedResults, 'testNo');
+                PromptService.confirm("Do you want to permanently delete theses results? Changes cannot be undone.")
                     .then(function () {
-                        LearnResultResource.delete(project.id, testNos)
+                        LearnResult.Resource.deleteSome(project.id, testNos)
                             .then(function () {
-                                Toast.success('Learn result for test deleted');
+                                Toast.success('Learn results deleted');
                                 _.forEach(testNos, function (testNo) {
-                                    _.remove($scope.tests, {testNo: testNo})
+                                    _.remove($scope.results, {testNo: testNo})
                                 })
                             })
                             .catch(function (response) {

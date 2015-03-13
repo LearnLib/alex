@@ -13,6 +13,7 @@
             'ngToast',
             'draganddrop',
             'n3-line-chart',
+            'selectionModel',
 
             //all templates
             'templates-all',
@@ -49,80 +50,7 @@
             $rootScope._ = _;
             $rootScope.selection = SelectionService;
         }])
-}());;angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
-
-angular.module("app/views/directives/counter-example-builder.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/counter-example-builder.html",
-    "<div id=\"counter-example-builder\">\n" +
-    "	<div class=\"wrapper\">\n" +
-    "	\n" +
-    "		<nav class=\"navbar navbar-default\" role=\"navigation\">\n" +
-    "	        <div class=\"container-fluid\">\n" +
-    "	        \n" +
-    "	        	<p class=\"navbar-text\"><strong>Counter Example Builder</strong></p>\n" +
-    "\n" +
-    "                <button class=\"btn btn-default btn-sm navbar-btn pull-right\" ng-click=\"close()\"><i\n" +
-    "	                    class=\"fa fa-close\"></i></button>\n" +
-    "                <button class=\"btn btn-primary btn-sm navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
-    "                    ok\n" +
-    "                </button>\n" +
-    "                <button class=\"btn btn-default btn-sm navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
-    "	            	<i class=\"fa fa-eye\"></i>\n" +
-    "	            </button>  \n" +
-    "	        </div>\n" +
-    "	    </nav>\n" +
-    "	    \n" +
-    "	    <div class=\"available-inputs-panel\">\n" +
-    "	        <ul class=\"list-group\">\n" +
-    "	            <li class=\"list-group-item\" ng-repeat=\"input in inputs\" draggable=\"true\" effect-allowed=\"copy\"\n" +
-    "	                draggable-type=\"custom-object\" draggable-data=\"input\">{{input}}</li>\n" +
-    "	        </ul>\n" +
-    "	    </div>\n" +
-    "    \n" +
-    "    <div class=\"counter-example-panel\">\n" +
-    "\n" +
-    "		<div class=\"counter-example-list-wrapper\">\n" +
-    "            <div class=\"list-group\" as-sortable ng-model=\"ios\">\n" +
-    "                <div class=\"list-group-item\" ng-repeat=\"io in counterExample track by $index\" as-sortable-item>\n" +
-    "\n" +
-    "                    <span class=\"text-muted pull-right\" ng-click=\"remove($index)\">\n" +
-    "                        <i class=\"fa fa-trash fa-fw\"></i>\n" +
-    "                    </span>\n" +
-    "\n" +
-    "                    <span class=\"text-muted pull-right\" as-sortable-item-handle style=\"display: inline-block; margin-right: 5px\">\n" +
-    "                        <i class=\"fa fa-sort fa-fw\"></i>\n" +
-    "                    </span>\n" +
-    "\n" +
-    "                    <div class=\"container-fluid clearfix\" style=\"margin-right: 50px; padding: 0\">\n" +
-    "\n" +
-    "                        <div style=\"width: 66%; float: left\" drop=\"onDropInput($data, $event, $index)\" drop-effect=\"copy\"\n" +
-    "                             drop-accept=\"'json/custom-object'\">\n" +
-    "                            <div class=\"counter-example-input\">{{io.input}}</div>\n" +
-    "                        </div>\n" +
-    "\n" +
-    "                        <div style=\"width: 34%; float: left\">\n" +
-    "                            <select class=\"form-control\">\n" +
-    "                            	<option>OK</option>\n" +
-    "                            	<option>FAILED</option>\n" +
-    "                            </select>\n" +
-    "                        </div>\n" +
-    "\n" +
-    "                    </div>\n" +
-    "\n" +
-    "                </div>\n" +
-    "        	</div>\n" +
-    "        	\n" +
-    "        	<button class=\"btn btn-default btn-sm btn-block\" ng-click=\"add()\">\n" +
-    "	            Add\n" +
-    "	        </button>\n" +
-    "    	</div>\n" +
-    "		\n" +
-    "    </div>\n" +
-    "				\n" +
-    "	</div>\n" +
-    "</div>");
-}]);
+}());;angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -349,16 +277,6 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                </li>\n" +
     "            </ul>\n" +
     "\n" +
-    "            <ul class=\"nav navbar-nav navbar-right\" ng-if=\"!project\">\n" +
-    "                <li class=\"dropdown\" dropdown dropdown-navigation>\n" +
-    "                    <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
-    "                       aria-expanded=\"false\">Tools <span class=\"caret\"></span></a>\n" +
-    "                    <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "                        <li><a ui-sref=\"tools.hypotheses\">View Hypothesis from PC</a></li>\n" +
-    "                    </ul>\n" +
-    "                </li>\n" +
-    "            </ul>\n" +
-    "\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
@@ -370,7 +288,18 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
 angular.module("app/views/directives/observation-table.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/directives/observation-table.html",
-    "");
+    "<table class=\"table table-condensed obsevation-table\">\n" +
+    "    <thead>\n" +
+    "        <tr>\n" +
+    "            <th ng-repeat=\"th in table.header\" ng-bind=\"::th\"></th>\n" +
+    "        </tr>\n" +
+    "    </thead>\n" +
+    "    <tbody>\n" +
+    "        <tr ng-repeat=\"tr in table.body track by $index\">\n" +
+    "            <td ng-repeat=\"td in tr track by $index\" ng-bind=\"::td\"></td>\n" +
+    "        </tr>\n" +
+    "    </tbody>\n" +
+    "</table>");
 }]);
 
 angular.module("app/views/directives/rest-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
@@ -698,7 +627,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                    </div>\n" +
     "                    <div class=\"form-group\">\n" +
     "                        <label class=\"control-label\">The value to fill the element with</label>\n" +
-    "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
     "                    </div>\n" +
     "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
@@ -1098,12 +1027,509 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "\n" +
     "    <h3 class=\"modal-title\">Update Action</h3>\n" +
     "    <span class=\"text-muted\">Update an existing action for a symbol</span>\n" +
-    "\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"modal-body\">\n" +
+    "<form ng-submit=\"updateAction()\" id=\"action-create-form\">\n" +
     "\n" +
-    "</div>");
+    "    <div class=\"modal-body\">\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.SEARCH_FOR_TEXT\">\n" +
+    "\n" +
+    "            <h4><strong>Search for Text</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Search on a page for a piece of text or a regular expression\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">Value</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "            <div class=\"checkbox\">\n" +
+    "                <label>\n" +
+    "                    <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
+    "                </label>\n" +
+    "            </div>\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle>\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: SEARCH_FOR_TEXT -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SEARCH_FOR_NODE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.SEARCH_FOR_NODE\">\n" +
+    "\n" +
+    "            <h4><strong>Search for Node</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Search an HTML element in the DOM tree of a page\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">CSS selector</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.value\">\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: SEARCH_FOR_NODE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CLEAR -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.CLEAR\">\n" +
+    "\n" +
+    "            <h4><strong>Clear Node</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Clear an element (eg. input or contenteditable element)\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">CSS selector</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CLEAR -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CLICK -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.CLICK\">\n" +
+    "\n" +
+    "            <h4><strong>Click</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Click on an element\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">CSS selector</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "            </div>\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CLICK -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: FILL -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.FILL\">\n" +
+    "\n" +
+    "            <h4><strong>Fill Node</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Fill an element with content (eg. input or contenteditable element)\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">CSS selector</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">The value to fill the element with</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: FILL -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: GO_TO -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.GO_TO\">\n" +
+    "\n" +
+    "            <h4><strong>Go to URL</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Go to a url that is <strong>relative</strong> to your projects' base url\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">Url</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: GO_TO -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SUBMIT -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.SUBMIT\">\n" +
+    "\n" +
+    "            <h4><strong>Submit Form</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Submit a form\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">CSS selector</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "            </div>\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: SUBMIT -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CALL_URL -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CALL_URL\">\n" +
+    "\n" +
+    "            <h4><strong>Call Url</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Make a HTTP request to an URL (relative to your projects base url)</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <select class=\"form-control\" ng-options=\"m for m in ['DELETE', 'GET', 'POST', 'PUT']\"\n" +
+    "                        ng-model=\"action.method\">\n" +
+    "                    <option value=\"\" disabled>Select a Method</option>\n" +
+    "                </select>\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label>Data</label>\n" +
+    "\n" +
+    "                <div ng-model=\"action.data\"\n" +
+    "                     style=\"border-radius: 4px; width: 100%; height: 150px; border: 1px solid #ccc\"\n" +
+    "                     ui-ace=\"{useWrapMode : true, showGutter: true, theme:'eclipse', mode: 'json'}\"></div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CALL_URL -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_ATTRIBUTE_EXISTS -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_ATTRIBUTE_EXISTS\">\n" +
+    "\n" +
+    "            <h4><strong>Check Attribute Exists</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Check if a JSON attribute exists in the response body</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\"\n" +
+    "                       ng-model=\"action.attribute\">\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_ATTRIBUTE_EXISTS -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_ATTRIBUTE_TYPE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_ATTRIBUTE_TYPE\">\n" +
+    "\n" +
+    "            <h4><strong>Check Attribute Type</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Check if a JSON attribute in the response body has a specific type</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\"\n" +
+    "                       ng-model=\"action.attribute\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <select class=\"form-control\" ng-model=\"action.jsonType\"\n" +
+    "                        ng-options=\"t as t for t in ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']\">\n" +
+    "                    <option value=\"\" disabled>Choose a JavaScript type</option>\n" +
+    "                </select>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_ATTRIBUTE_TYPE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_ATTRIBUTE_VALUE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_ATTRIBUTE_VALUE\">\n" +
+    "\n" +
+    "            <h4><strong>Check Attribute Value</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Check a JSON attribute of the response body to be a specific value</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\"\n" +
+    "                       ng-model=\"action.attribute\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"the attribute value\"\n" +
+    "                       ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "            <div class=\"checkbox\">\n" +
+    "                <label>\n" +
+    "                    <input type=\"checkbox\" ng-model=\"action.regexp\"> is regular expression\n" +
+    "                </label>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_ATTRIBUTE_VALUE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_HEADER_FIELD -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_HEADER_FIELD\">\n" +
+    "\n" +
+    "            <h4><strong>Check Header Field</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Check a HTTP response header field to have a specific value</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"http header field, e.g. Content-Type\"\n" +
+    "                       ng-model=\"action.key\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\"\n" +
+    "                       placeholder=\"http header field value, e.g. application/json\" ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "            <div class=\"checkbox\">\n" +
+    "                <label>\n" +
+    "                    <input type=\"checkbox\" ng-model=\"action.regexp\">is regular expression\n" +
+    "                </label>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_HEADER_FIELD -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_HTTP_BODY_TEXT -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_HTTP_BODY_TEXT\">\n" +
+    "\n" +
+    "            <h4><strong>Check HTTP Body Text</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Search for a string or a regular express in the response body of a request</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"value to search for\"\n" +
+    "                       ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "            <div class=\"checkbox\">\n" +
+    "                <label>\n" +
+    "                    <input type=\"checkbox\" ng-model=\"action.regexp\">\n" +
+    "                    is regular expression\n" +
+    "                </label>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_HTTP_BODY_TEXT -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_STATUS -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_STATUS\">\n" +
+    "\n" +
+    "            <h4><strong>Check Status</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Check the HTTP response to have a specific status</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <label>HTTP Status</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"number\" placeholder=\"e.g. 200, 404 ...\"\n" +
+    "                       ng-model=\"action.status\">\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_STATUS -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: WAIT -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.WAIT\">\n" +
+    "            <h4><strong>Wait</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Wait for a specified amount of time in ms.\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <label>Duration</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"number\" class=\"form-control\" min=\"0\" ng-model=\"action.duration\" placeholder=\"0\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: WAIT -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: DECLARE_COUNTER -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.DECLARE_COUNTER\">\n" +
+    "            <h4><strong>Declare Counter</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Declare a counter variable that can be used in other actions\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the counter\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: DECLARE_COUNTER -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: DECLARE_VARIABLE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.DECLARE_VARIABLE\">\n" +
+    "            <h4><strong>Declare Variable</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Declare a variable that can be used in other actions\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the variable\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: DECLARE_VARIABLE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: INCREMENT_COUNTER -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.INCREMENT_COUNTER\">\n" +
+    "            <h4><strong>Increment Counter</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Increment an <strong>already declared</strong> counter variable\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the counter\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: INCREMENT_COUNTER -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SET_COUNTER -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.SET_COUNTER\">\n" +
+    "            <h4><strong>Set Counter</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Set the value of an <strong>already declared</strong> counter variable\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the counter\">\n" +
+    "            </div>\n" +
+    "            <label>Value</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"number\" class=\"form-control\" ng-model=\"action.value\" placeholder=\"0\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: SET_COUNTER -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SET_VARIABLE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.SET_VARIABLE\">\n" +
+    "            <h4><strong>Set Variable</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Set the value of an <strong>already declared</strong> variable\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the variable\">\n" +
+    "            </div>\n" +
+    "            <label>Value</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" ng-model=\"action.value\" placeholder=\"The value of the variable\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: SET_VARIABLE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SET_VARIABLE_BY_JSON_ATTRIBUTE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE\">\n" +
+    "            <h4><strong>Set Variable By JSON Attribute</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Set the value of an <strong>already declared</strong> variable to the content of a JSON\n" +
+    "                attribute\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the variable\">\n" +
+    "            </div>\n" +
+    "            <label>Attribute</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" ng-model=\"action.value\" placeholder=\"The JSON attribute\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SET_VARIABLE_BY_NODE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.SET_VARIABLE_BY_NODE\">\n" +
+    "            <h4><strong>Set Variable By Node Value</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Set the value of an <strong>already declared</strong> variable to the content of a HTML element\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the variable\">\n" +
+    "            </div>\n" +
+    "            <label>XPath</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" ng-model=\"action.value\" placeholder=\"The CSS3 XPath to the element\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update</button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run(["$templateCache", function($templateCache) {
@@ -1757,8 +2183,8 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "\n" +
     "        <div ng-show=\"selectedChartMode === null\">\n" +
     "\n" +
-    "            <div class=\"pull-left\" selectable items=\"results\" style=\"margin-right: 16px\">\n" +
-    "                <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "            <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "                <input type=\"checkbox\" selection-checkbox-all items=\"results\">\n" +
     "            </div>\n" +
     "\n" +
     "            <div class=\"btn-group btn-group-xs pull-left\" dropdown dropdown-hover>\n" +
@@ -1819,9 +2245,16 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\" ng-style=\"fullWidth ? {'width':'100%'} : {}\">\n" +
     "\n" +
-    "        <div selectable items=\"results\" ng-if=\"selectedChartMode === null\">\n" +
-    "            <div selectable-list>\n" +
-    "                <div selectable-list-item ng-repeat=\"result in results track by $index\">\n" +
+    "        <div class=\"selectable-list\" ng-show=\"selectedChartMode === null\">\n" +
+    "            <div ng-repeat=\"result in results\"\n" +
+    "                 selection-model\n" +
+    "                 selection-model-type=\"checkbox\"\n" +
+    "                 selection-model-selected-attribute=\"_selected\"\n" +
+    "                 selection-model-mode=\"multiple\"\n" +
+    "                 selection-model-selected-items=\"selectedResults\"\n" +
+    "                 selection-model-cleanup-strategy=\"deselect\">\n" +
+    "\n" +
+    "                <div selectable-list-item>\n" +
     "\n" +
     "                    <strong>Test No\n" +
     "                        <span ng-bind=\"result.testNo\"></span>\n" +
@@ -1881,8 +2314,8 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"results\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"results\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-left\">\n" +
@@ -1897,41 +2330,50 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\" selectable items=\"results\">\n" +
     "\n" +
-    "        <div selectable-list>\n" +
-    "            <div selectable-list-item ng-repeat=\"result in results track by $index\">\n" +
+    "        <div class=\"selectable-list\">\n" +
+    "            <div ng-repeat=\"result in results\"\n" +
+    "                 selection-model\n" +
+    "                 selection-model-type=\"checkbox\"\n" +
+    "                 selection-model-selected-attribute=\"_selected\"\n" +
+    "                 selection-model-mode=\"multiple\"\n" +
+    "                 selection-model-selected-items=\"selectedResults\"\n" +
+    "                 selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
-    "                <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                    <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                        <i class=\"fa fa-bars\"></i>\n" +
-    "                    </button>\n" +
-    "                    <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                        <li>\n" +
-    "                            <a href=\"\" open-test-details-modal test=\"result\">\n" +
-    "                                <i class=\"fa fa-info fa-fw\"></i> Details\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                        <li>\n" +
-    "                            <a ui-sref=\"learn.results.compare({testNos: [result.testNo]})\">\n" +
-    "                                <i class=\"fa fa-code-fork fa-fw\"></i> Hypotheses\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                        <li>\n" +
-    "                            <a href=\"\" ng-click=\"deleteResult(result)\">\n" +
-    "                                <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                    </ul>\n" +
+    "                <div selectable-list-item>\n" +
+    "\n" +
+    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                            <i class=\"fa fa-bars\"></i>\n" +
+    "                        </button>\n" +
+    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                            <li>\n" +
+    "                                <a href=\"\" open-test-details-modal test=\"result\">\n" +
+    "                                    <i class=\"fa fa-info fa-fw\"></i> Details\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li>\n" +
+    "                                <a ui-sref=\"learn.results.compare({testNos: [result.testNo]})\">\n" +
+    "                                    <i class=\"fa fa-code-fork fa-fw\"></i> Hypotheses\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li>\n" +
+    "                                <a href=\"\" ng-click=\"deleteResult(result)\">\n" +
+    "                                    <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                        </ul>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <strong>Test No\n" +
+    "                        <span ng-bind=\"result.testNo\"></span>\n" +
+    "                    </strong>,\n" +
+    "                    [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
+    "\n" +
+    "                    <div class=\"text-muted\">\n" +
+    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                    </div>\n" +
+    "\n" +
     "                </div>\n" +
-    "\n" +
-    "                <strong>Test No\n" +
-    "                    <span ng-bind=\"result.testNo\"></span>\n" +
-    "                </strong>,\n" +
-    "                [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                <div class=\"text-muted\">\n" +
-    "                    Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                </div>\n" +
-    "\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
@@ -1954,8 +2396,8 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"allSymbols\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"getAllSymbols\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-right\">\n" +
@@ -1973,20 +2415,20 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "\n" +
     "<div class=\"view-body\">\n" +
     "    <div class=\"container symbol-group-list\">\n" +
-    "        <div ng-repeat=\"group in groups track by group.id\" class=\"symbol-group\">\n" +
+    "\n" +
+    "        <div ng-repeat=\"group in groups\" class=\"symbol-group\"\n" +
+    "             ng-class=\"group._isCollapsed ? 'collapsed' :''\">\n" +
     "\n" +
     "            <div class=\"selectable-list symbol-group-header\">\n" +
     "                <div class=\"selectable-list-heading\">\n" +
-    "\n" +
-    "                    <div class=\"selectable-list-control\" selectable items=\"group.symbols\">\n" +
-    "                        <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "                    <div class=\"selectable-list-control\">\n" +
+    "                        <input type=\"checkbox\" selection-checkbox-all items=\"group.symbols\">\n" +
     "                    </div>\n" +
-    "\n" +
     "                    <div class=\"selectable-list-content\">\n" +
     "\n" +
     "                        <span class=\"pull-right\" ng-click=\"group._isCollapsed = !group._isCollapsed\">\n" +
-    "                            <i class=\"fa fa-fw\"\n" +
-    "                               ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
+    "                        <i class=\"fa fa-fw\"\n" +
+    "                           ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
     "                        </span>\n" +
     "\n" +
     "                        <h3 class=\"symbol-group-title\" ng-bind=\"group.name\"\n" +
@@ -1997,32 +2439,38 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                        </p>\n" +
     "\n" +
     "                    </div>\n" +
-    "\n" +
     "                </div>\n" +
     "            </div>\n" +
     "\n" +
-    "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\" selectable items=\"group.symbols\">\n" +
+    "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\">\n" +
+    "                <div class=\"selectable-list\">\n" +
+    "                    <div ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\"\n" +
+    "                         selection-model\n" +
+    "                         selection-model-type=\"checkbox\"\n" +
+    "                         selection-model-selected-attribute=\"_selected\"\n" +
+    "                         selection-model-mode=\"multiple\"\n" +
+    "                         selection-model-selected-items=\"selectedSymbols\"\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
-    "                <div selectable-list>\n" +
-    "                    <div selectable-list-item ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\">\n" +
+    "                        <div selectable-list-item>\n" +
+    "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
+    "                                <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'\"></i>\n" +
+    "                            </a>\n" +
     "\n" +
-    "                        <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
-    "                            <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'\"></i>\n" +
-    "                        </a>\n" +
+    "                            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
     "\n" +
-    "                        <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
-    "\n" +
-    "                        <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                            <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                        </a>\n" +
-    "\n" +
+    "                            <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                                <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
+    "                            </a>\n" +
+    "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
     "\n" +
     "            </div>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
-    "</div>");
+    "</div");
 }]);
 
 angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", function($templateCache) {
@@ -2254,21 +2702,20 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable=\"symbol.actions\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"symbol.actions\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-primary\" open-action-create-modal symbol=\"symbol\" on-created=\"addAction\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" action-create-modal-handle on-created=\"addAction\">\n" +
     "                Create\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" open-action-edit-modal symbol=\"symbol\"\n" +
-    "                    action=\"(symbol.actions | selected | first)\"\n" +
+    "            <button class=\"btn btn-xs btn-default\" action-edit-modal-handle action=\"(selectedActions | first)\"\n" +
     "                    on-updated=\"updateAction\"\n" +
-    "                    ng-class=\"(symbol.actions|selected).length != 1 ? 'disabled': ''\">\n" +
+    "                    ng-class=\"selectedActions.length !== 1 ? 'disabled': ''\">\n" +
     "                Edit\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-click=\"deleteSelectedActions()\"\n" +
-    "                    ng-class=\"(symbol.actions|selected).length == 0 ? 'disabled': ''\">\n" +
+    "                    ng-class=\"selectedActions.length === 0 ? 'disabled': ''\">\n" +
     "                Delete\n" +
     "            </button>\n" +
     "        </div>\n" +
@@ -2285,9 +2732,17 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div ng-if=\"symbol.actions\" as-sortable ng-model=\"symbol.actions\">\n" +
-    "            <div selectable items=\"symbol.actions\">\n" +
-    "                <div selectable-list>\n" +
-    "                    <div selectable-list-item ng-repeat=\"action in symbol.actions track by $index\" as-sortable-item>\n" +
+    "            <div class=\"selectable-list\">\n" +
+    "                <div ng-repeat=\"action in symbol.actions\"\n" +
+    "                     selection-model\n" +
+    "                     selection-model-type=\"checkbox\"\n" +
+    "                     selection-model-selected-attribute=\"_selected\"\n" +
+    "                     selection-model-mode=\"multiple\"\n" +
+    "                     selection-model-selected-items=\"selectedActions\"\n" +
+    "                     selection-model-cleanup-strategy=\"deselect\"\n" +
+    "                     as-sortable-item>\n" +
+    "\n" +
+    "                    <div selectable-list-item>\n" +
     "\n" +
     "                        <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
     "                            <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
@@ -2295,8 +2750,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "                            </button>\n" +
     "                            <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
     "                                <li>\n" +
-    "                                    <a href open-action-edit-modal symbol=\"symbol\" action=\"action\"\n" +
-    "                                       on-updated=\"updateAction\">\n" +
+    "                                    <a href action-edit-modal-handle action=\"action\" on-updated=\"updateAction\">\n" +
     "                                        <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
     "                                    </a>\n" +
     "                                </li>\n" +
@@ -2316,6 +2770,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "                        <span ng-bind=\"action.toString()\"></span>\n" +
     "\n" +
     "                    </div>\n" +
+    "\n" +
     "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
@@ -2571,8 +3026,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"allSymbols\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"getAllSymbols\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-left\">\n" +
@@ -2595,15 +3050,15 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                </ul>\n" +
     "            </div>\n" +
     "\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length == 1 ? '' : 'disabled'\"\n" +
-    "                    symbol-edit-modal-handle symbol=\"(allSymbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-class=\"selectedSymbols.length === 1 ? '' : 'disabled'\"\n" +
+    "                    symbol-edit-modal-handle symbol=\"(selectedSymbols | first)\" on-updated=\"updateSymbol\">\n" +
     "                Edit\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\" symbols=\"getSelectedSymbols\"\n" +
-    "                    on-moved=\"moveSymbols\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\" symbols=\"selectedSymbols\"\n" +
+    "                    on-moved=\"moveSymbolsToGroup\" ng-class=\"selectedSymbols.length > 0 ? '' : 'disabled'\">\n" +
     "                Move\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\"\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-class=\"selectedSymbols.length > 0 ? '' : 'disabled'\"\n" +
     "                    ng-click=\"deleteSelectedSymbols()\">\n" +
     "                Delete\n" +
     "            </button>\n" +
@@ -2612,7 +3067,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "\n" +
     "        <div class=\"pull-right\">\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-click=\"toggleCollapseAllGroups()\">\n" +
-    "                <i class=\"fa fa-fw\" ng-class=\"collapseAll ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
+    "                <i class=\"fa fa-fw\" ng-class=\"groupsCollapsed ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
     "            </button>\n" +
     "        </div>\n" +
     "\n" +
@@ -2622,19 +3077,19 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "<div class=\"view-body\">\n" +
     "    <div class=\"container symbol-group-list\">\n" +
     "\n" +
-    "        <div ng-repeat=\"group in groups track by group.id\" class=\"symbol-group\"\n" +
-    "             ng-class=\"group._isCollapsed ? 'collapsed' :''\">\n" +
+    "        <div ng-repeat=\"group in groups track by $index\" class=\"symbol-group\"\n" +
+    "             ng-class=\"group._collapsed ? 'collapsed' :''\">\n" +
     "\n" +
     "            <div class=\"selectable-list symbol-group-header\">\n" +
     "                <div class=\"selectable-list-heading\">\n" +
-    "                    <div class=\"selectable-list-control\" selectable items=\"group.symbols\">\n" +
-    "                        <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "                    <div class=\"selectable-list-control\">\n" +
+    "                        <input type=\"checkbox\" selection-checkbox-all items=\"group.symbols\">\n" +
     "                    </div>\n" +
     "                    <div class=\"selectable-list-content\">\n" +
     "\n" +
-    "                        <span class=\"pull-right\" ng-click=\"group._isCollapsed = !group._isCollapsed\">\n" +
+    "                        <span class=\"pull-right\" ng-click=\"group._collapsed = !group._collapsed\">\n" +
     "                            <i class=\"fa fa-fw\"\n" +
-    "                               ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
+    "                               ng-class=\"group._collapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
     "                        </span>\n" +
     "\n" +
     "                        <a href class=\"pull-right\" style=\"margin-right: 15px\" symbol-group-edit-modal-handle\n" +
@@ -2643,7 +3098,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                        </a>\n" +
     "\n" +
     "                        <h3 class=\"symbol-group-title\" ng-bind=\"group.name\"\n" +
-    "                            ng-click=\"group._isCollapsed = !group._isCollapsed\"></h3>\n" +
+    "                            ng-click=\"group._collapsed = !group._collapsed\"></h3>\n" +
     "\n" +
     "                        <p class=\"text-muted\">\n" +
     "                            <span ng-bind=\"group.symbols.length\"></span> Symbols\n" +
@@ -2653,13 +3108,17 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                </div>\n" +
     "            </div>\n" +
     "\n" +
-    "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\">\n" +
+    "            <div class=\"symbol-group-body\" collapse=\"group._collapsed\">\n" +
+    "                <div class=\"selectable-list\">\n" +
+    "                    <div ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\"\n" +
+    "                         selection-model\n" +
+    "                         selection-model-type=\"checkbox\"\n" +
+    "                         selection-model-selected-attribute=\"_selected\"\n" +
+    "                         selection-model-mode=\"multiple\"\n" +
+    "                         selection-model-selected-items=\"selectedSymbols\"\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
-    "                <div selectable items=\"group.symbols\">\n" +
-    "                    <div selectable-list>\n" +
-    "                        <div selectable-list-item item=\"symbol\"\n" +
-    "                             ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\">\n" +
-    "\n" +
+    "                        <div selectable-list-item>\n" +
     "                            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
     "                                <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
     "                                    <i class=\"fa fa-bars\"></i>\n" +
@@ -2672,7 +3131,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                                    </li>\n" +
     "                                    <li>\n" +
     "                                        <a href symbol-move-modal-handle groups=\"groups\" symbols=\"[symbol]\"\n" +
-    "                                           on-moved=\"moveSymbols\">\n" +
+    "                                           on-moved=\"moveSymbolsToGroup\">\n" +
     "                                            <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +
@@ -2701,13 +3160,13 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                            <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
     "                                <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
     "                            </a>\n" +
-    "\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
     "\n" +
     "            </div>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>");
 }]);
@@ -2722,29 +3181,20 @@ angular.module("app/views/widgets/widget-counter-examples.html", []).run(["$temp
   "use strict";
   $templateCache.put("app/views/widgets/widget-counter-examples.html",
     "<form class=\"form form-condensed\" ng-submit=\"addCounterExample()\">\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <div class=\"input-group\">\n" +
-    "            <input type=\"text\" class=\"form-control\" placeholder=\"input\" ng-model=\"newCounterExample.input\">\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        Click on the labels of the hypothesis\n" +
+    "    </p>\n" +
     "\n" +
-    "            <div class=\"input-group-addon\">\n" +
-    "                <i class=\"fa fa-info\"></i>\n" +
-    "            </div>\n" +
-    "        </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <input type=\"text\" class=\"form-control\" placeholder=\"input\" ng-model=\"newCounterExample.input\">\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
-    "        <div class=\"input-group\">\n" +
-    "            <input type=\"text\" class=\"form-control\" placeholder=\"output\" ng-model=\"newCounterExample.output\">\n" +
-    "\n" +
-    "            <div class=\"input-group-addon\">\n" +
-    "                <i class=\"fa fa-info\"></i>\n" +
-    "            </div>\n" +
-    "        </div>\n" +
+    "        <input type=\"text\" class=\"form-control\" placeholder=\"output\" ng-model=\"newCounterExample.output\">\n" +
+    "    </div>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
-    "		<div class=\"btn-group btn-group-sm\">\n" +
-    "    		<button class=\"btn btn-primary\">Add Counter Example</button>\n" +
-    "    		<a href open-counter-example-builder counter-example=\"newCounterExample\" class=\"btn btn-default\">Edit</a>\n" +
-    "		</div>\n" +
+    "        <button class=\"btn btn-primary btn-xs\">Add</button>\n" +
+    "        <a href class=\"btn btn-default btn-xs\" ng-click=\"testCounterExample(counterExample)\">Test</a>\n" +
     "    </div>\n" +
     "</form>\n" +
     "<hr>\n" +
@@ -2832,7 +3282,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param paths
      */
     function config($stateProvider, $urlRouterProvider, paths) {
-    	    	
+
         // redirect to the start page when no other route fits
         $urlRouterProvider.otherwise("/home");
 
@@ -2910,7 +3360,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 }
             })
             .state('symbols.history', {
-            	url: '/{symbolId:int}/history',
+                url: '/{symbolId:int}/history',
                 views: {
                     '@': {
                         controller: 'SymbolsHistoryController',
@@ -3022,21 +3472,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     requiresProject: false
                 }
             })
-
-            // =========================================================
-            // tool pages
-
-            .state('tools', {
-                abstract: true,
-                template: '<ui-view class="animate-view" />'
-            })
-            .state('tools.hyotheses', {
-                url: '/tools/hypotheses/view',
-                templateUrl: paths.views.PAGES + '/tools-hypotheses-view.html',
-                data: {
-                    requiresProject: false
-                }
-            })
     }
 
     /**
@@ -3047,11 +3482,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param SessionService
      */
     function run($rootScope, $state, SessionService) {
-    	
+
         // route validation
         $rootScope.$on("$stateChangeStart", stateChangeStart);
 
-        function stateChangeStart(event, toState, toParams, fromState, fromParams){
+        function stateChangeStart(event, toState, toParams, fromState, fromParams) {
             if (toState.data) {
                 if (toState.data.requiresProject && SessionService.project.get() == null) {
                     $state.go("home");
@@ -3127,7 +3562,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .constant('learnAlgorithms', {
             EXTENSIBLE_LSTAR: 'EXTENSIBLE_LSTAR',
             DHC: 'DHC',
-            DISCRIMINATION_TREE: 'DISCRIMINATION_TREE'
+            DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
+            TTT : 'TTT'
         })
 }());;(function () {
     'use strict';
@@ -3136,22 +3572,52 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('ActionCreateModalController', ActionCreateModalController);
 
-    ActionCreateModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action'];
+    ActionCreateModalController.$inject = ['$scope', '$modalInstance', 'actionTypes', 'Action'];
 
-    function ActionCreateModalController($scope, $modalInstance, modalData, actionTypes, Action) {
+    /**
+     * The controller for the modal dialog that handles the creation of a new action.
+     *
+     * The template can be found at 'views/modals/action-create-modal.html'.
+     *
+     * @param $scope
+     * @param $modalInstance
+     * @param actionTypes
+     * @param Action
+     * @constructor
+     */
+    function ActionCreateModalController($scope, $modalInstance, actionTypes, Action) {
 
+        /**
+         * The constant for action type names
+         * @type {Object}
+         */
         $scope.actionTypes = actionTypes;
-        $scope.symbol = modalData.symbol;
+
+        /**
+         * The model for the new action
+         * @type {null|Object}
+         */
         $scope.action = null;
 
+        /**
+         * Creates a new instance of an Action by a type that was clicked in the modal dialog.
+         *
+         * @param {string} type - The type of the action that should be created
+         */
         $scope.selectNewActionType = function (type) {
             $scope.action = Action.createByType(type);
         };
 
+        /**
+         * Closes the modal dialog an passes the created action back to the handle that called the modal
+         */
         $scope.createAction = function () {
             $modalInstance.close($scope.action);
         };
 
+        /**
+         * Closes the modal dialog without passing any data
+         */
         $scope.closeModal = function () {
             $modalInstance.dismiss();
         };
@@ -3161,33 +3627,52 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('ActionEditModalController', [
-            '$scope', '$modalInstance', 'modalData', 'WebActionTypes', 'RestActionTypes',
-            ActionEditModalController
-        ]);
+        .controller('ActionEditModalController', ActionEditModalController);
 
-    function ActionEditModalController($scope, $modalInstance, modalData, WebActionTypes, RestActionTypes) {
+    ActionEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action'];
 
-        $scope.webActionTypes = WebActionTypes;
-        $scope.restActionTypes = RestActionTypes;
+    /**
+     * The controller for the modal dialog that handles the editing of an action.
+     *
+     * The template can be found at 'views/modals/action-edit-modal.html'.
+     *
+     * @param $scope - The controllers scope
+     * @param $modalInstance - The model instance
+     * @param modalData - The data that is passed to this controller
+     * @param actionTypes - The constant for action type names
+     * @param Action - The Action model
+     * @constructor
+     */
+    function ActionEditModalController($scope, $modalInstance, modalData, actionTypes, Action) {
 
-        //////////
+        /**
+         * The constant for actions type names
+         * @type {Object}
+         */
+        $scope.actionTypes = actionTypes;
 
-        $scope.symbol = modalData.symbol;
+        /**
+         * The copy of the action that should be edited
+         * @type {Object}
+         */
         $scope.action = angular.copy(modalData.action);
 
-        //////////
+        /**
+         * Close the modal dialog and pass the updated action to the handle that called it
+         */
+        $scope.updateAction = function () {
 
-        $scope.$on('action.edited', updateAction);
+            // because actions are identified by temporary id
+            // a new action has to be build and given the old id manually
+            var id = $scope.action._id;
+            $scope.action = Action.build($scope.action);
+            $scope.action._id = id;
+            $modalInstance.close($scope.action);
+        };
 
-        //////////
-
-        function updateAction (evt, action) {
-            $modalInstance.close(action);
-        }
-
-        //////////
-
+        /**
+         * Close the modal dialog without passing any data
+         */
         $scope.closeModal = function () {
             $modalInstance.dismiss();
         }
@@ -3792,6 +4277,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     SelectionService.removeSelection(symbol);
                     symbol.group = $scope.selectedGroup.id;
                 });
+                console.log($scope.symbols);
                 Symbol.Resource.updateSome($scope.selectedGroup.project, $scope.symbols)
                     .then(function () {
                         Toast.success('Symbols move to group <strong>' + $scope.selectedGroup.name + '</strong>');
@@ -3850,43 +4336,46 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     HomeController.$inject = ['$scope', '$state', 'Project', 'SessionService'];
 
     /**
-     * HomeController
-     *
      * The controller for the landing page. It lists the projects.
+     *
+     * The controller can be found at 'views/pages/home.html'
      *
      * @param $scope
      * @param $state
      * @param Project
-     * @param SessionService
+     * @param Session
      * @constructor
      */
-    function HomeController($scope, $state, Project, SessionService) {
-
-        /** The project list */
-        $scope.projects = [];
-
-        //////////
-
-        // redirect to the project dash page if one is open
-        if (SessionService.project.get()) {
-            $state.go('project');
-        }
-
-        // get all projects from the server
-        Project.Resource.all()
-            .then(function(projects){
-                $scope.projects = projects;
-            });
-
-        //////////
+    function HomeController($scope, $state, Project, Session) {
 
         /**
-         * Open a project by saving it into the session and redirect to the projects dashboard.
+         * The list of all created projects
+         * @type {Project[]}
+         */
+        $scope.projects = [];
+
+        // initialize the controllers data
+        (function init() {
+
+            // redirect to the project dash page if one is open
+            if (Session.project.get() !== null) {
+                $state.go('project');
+            }
+
+            // get all projects from the server
+            Project.Resource.all()
+                .then(function (projects) {
+                    $scope.projects = projects;
+                });
+        }());
+
+        /**
+         * Opens a project by saving it into the session and redirect to the projects dashboard.
          *
-         * @param project - The project that should be saved in the sessionStorage
+         * @param {Project} project - The project that should be saved in the sessionStorage
          */
         $scope.openProject = function (project) {
-            SessionService.project.save(project);
+            Session.project.save(project);
             $state.go('project');
         }
     }
@@ -3895,45 +4384,83 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('LearnResultsCompareController', [
-            '$scope', '$stateParams', 'SessionService', 'LearnResultResource',
-            LearnResultsCompareController
-        ]);
+        .controller('LearnResultsCompareController', LearnResultsCompareController);
 
-    function LearnResultsCompareController($scope, $stateParams, SessionService, LearnResultResource) {
+    LearnResultsCompareController.$inject = ['$scope', '$stateParams', 'SessionService', 'LearnResult', '_'];
 
-        $scope.project = SessionService.project.get();
+    /**
+     * The controller that handles the page for displaying multiple complete learn results in a slide show.
+     *
+     * The template can be found at 'views/pages/learn-result-compare.html'
+     *
+     * @param $scope - The controllers $scope
+     * @param $stateParams - The state parameters
+     * @param Session - The session service
+     * @param LearnResult - The LearnResult model
+     * @param _ - Lodash
+     * @constructor
+     */
+    function LearnResultsCompareController($scope, $stateParams, Session, LearnResult, _) {
+
+        // the project that is saved in the session
+        var project = Session.project.get();
+
+        /**
+         * All final learn results from all tests that were made for a project
+         * @type {LearnResult[]}
+         */
         $scope.results = [];
+
+        /**
+         * The list of active panels where each panel contains a complete learn result set
+         * @type {LearnResult[][]}
+         */
+
         $scope.panels = [];
+
+        /**
+         * The list of layout settings for the current hypothesis that is shown in a panel
+         * @type {Object[]}
+         */
         $scope.layoutSettings = [];
 
-        //////////
-
-        LearnResultResource.getAllFinal($scope.project.id)
-            .then(function (results) {
-                $scope.results = results;
-                return $stateParams.testNos;
-            })
-            .then(loadComplete);
-
-        //////////
-
-        function loadComplete(testNos, index) {
-        	testNos = testNos.split(',');
-        	_.forEach(testNos, function(testNo){       		
-        		LearnResultResource.getComplete($scope.project.id, testNo)
-                .then(function(completeTestResult){
-                    if (angular.isUndefined(index)) {
-                        $scope.panels.push(completeTestResult);
-                    } else {
-                        $scope.panels[index] = completeTestResult;
-                    }
+        // load all final learn results of all test an then load the complete test results from the test numbers
+        // that are passed from the url in the panels
+        (function init() {
+            LearnResult.Resource.getAllFinal(project.id)
+                .then(function (results) {
+                    $scope.results = results;
+                    return $stateParams.testNos;
                 })
-        	})
+                .then(loadComplete);
+        }());
+
+        /**
+         * Loads a complete learn result set from a test number in the panel with a given index
+         *
+         * @param {String} testNos - The test numbers as concatenated string, separated by a ','
+         * @param {number} index - The index of the panel the complete learn result should be displayed in
+         */
+        function loadComplete(testNos, index) {
+            testNos = testNos.split(',');
+            _.forEach(testNos, function (testNo) {
+                LearnResult.Resource.getComplete($scope.project.id, testNo)
+                    .then(function (completeTestResult) {
+                        if (angular.isUndefined(index)) {
+                            $scope.panels.push(completeTestResult);
+                        } else {
+                            $scope.panels[index] = completeTestResult;
+                        }
+                    })
+            })
         }
 
-        //////////
-
+        /**
+         * Loads a complete learn result set from a learn result in the panel with a given index
+         *
+         * @param {LearnResult} result - The learn result whose complete set should be loaded in a panel
+         * @param {number} index - The index of the panel the complete set should be displayed in
+         */
         $scope.fillPanel = function (result, index) {
             loadComplete(result.testNo + '', index);
         }
@@ -3946,39 +4473,46 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('LearnResultsController', LearnResultsController);
 
-    LearnResultsController.$inject = [
-        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'PromptService', 'ToastService'
-    ];
+    LearnResultsController.$inject = ['$scope', 'SessionService', 'LearnResult', 'PromptService', 'ToastService'];
 
     /**
      * The controller for listing all final test results.
      *
      * The template can be found at 'views/pages/learn-results.html'
      *
-     * @param $scope
-     * @param Session
-     * @param LearnResultResource
-     * @param SelectionService
-     * @param PromptService
+     * @param $scope - The controllers scope
+     * @param Session - The SessionService
+     * @param LearnResult - The service for creating LearnResults
+     * @param PromptService - The service for prompts
+     * @param Toast - The ToastService
      * @constructor
      */
-    function LearnResultsController($scope, Session, LearnResultResource, SelectionService, PromptService, Toast) {
+    function LearnResultsController($scope, Session, LearnResult, PromptService, Toast) {
 
         // The project that is saved in the session
         var project = Session.project.get();
 
         /**
          * All final test results of a project
-         *
          * @type {Array}
          */
         $scope.results = [];
 
-        // get all final test results
-        LearnResultResource.getAllFinal($scope.project.id)
-            .then(function (results) {
-                $scope.results = results;
-            });
+        /**
+         * The test results the user selected
+         * @type {Array}
+         */
+        $scope.selectedResults = [];
+
+        (function init() {
+
+            // get all final test results
+            LearnResult.Resource.getAllFinal($scope.project.id)
+                .then(function (results) {
+                    $scope.results = results;
+                    console.log(results)
+                });
+        }());
 
         /**
          * Deletes a test result from the server after prompting the user for confirmation
@@ -3986,9 +4520,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @param result - The test result that should be deleted
          */
         $scope.deleteResult = function (result) {
-            PromptService.confirm("Do you want to permanently delete this result?")
+            PromptService.confirm("Do you want to permanently delete this result? Changes cannot be undone.")
                 .then(function () {
-                    LearnResultResource.delete(project.id, result.testNo)
+                    LearnResult.Resource.delete(project.id, result.testNo)
                         .then(function () {
                             Toast.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
                             _.remove($scope.results, {testNo: result.testNo});
@@ -4003,18 +4537,17 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * Deletes selected test results from the server after prompting the user for confirmation
          */
         $scope.deleteResults = function () {
-            var selectedResults = SelectionService.getSelected($scope.results);
             var testNos;
 
-            if (selectedResults.length > 0) {
-                testNos = _.pluck(selectedResults, 'testNo');
-                PromptService.confirm("Do you want to permanently delete theses results?")
+            if ($scope.selectedResults.length > 0) {
+                testNos = _.pluck($scope.selectedResults, 'testNo');
+                PromptService.confirm("Do you want to permanently delete theses results? Changes cannot be undone.")
                     .then(function () {
-                        LearnResultResource.delete(project.id, testNos)
+                        LearnResult.Resource.deleteSome(project.id, testNos)
                             .then(function () {
-                                Toast.success('Learn result for test deleted');
+                                Toast.success('Learn results deleted');
                                 _.forEach(testNos, function (testNo) {
-                                    _.remove($scope.tests, {testNo: testNo})
+                                    _.remove($scope.results, {testNo: testNo})
                                 })
                             })
                             .catch(function (response) {
@@ -4033,7 +4566,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .controller('LearnResultsStatisticsController', LearnResultsStatisticsController);
 
     LearnResultsStatisticsController.$inject = [
-        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'LearnerResultChartService'
+        '$scope', 'SessionService', 'LearnResult', 'LearnerResultChartService'
     ];
 
     /**
@@ -4043,13 +4576,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      *
      * @param $scope
      * @param Session
-     * @param LearnResultResource
-     * @param SelectionService
+     * @param LearnResult
      * @param LearnerResultChartService
      * @constructor
      */
-    function LearnResultsStatisticsController($scope, Session, LearnResultResource, SelectionService,
-                                              LearnerResultChartService) {
+    function LearnResultsStatisticsController($scope, Session, LearnResult, LearnerResultChartService) {
 
         // The project that is stored in the session
         var project = Session.project.get();
@@ -4074,6 +4605,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @type {Array}
          */
         $scope.results = [];
+
+        /**
+         * The list of selected learn results
+         * @type {Array}
+         */
+        $scope.selectedResults = [];
 
         /**
          * The mode of the displayed chart
@@ -4101,11 +4638,15 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             options: null
         };
 
-        // get all final learn results of the project
-        LearnResultResource.getAllFinal(project.id)
-            .then(function (results) {
-                $scope.results = results;
-            });
+        // initialize the controller
+        (function init () {
+
+            // get all final learn results of the project
+            LearnResult.Resource.getAllFinal(project.id)
+                .then(function (results) {
+                    $scope.results = results;
+                });
+        }());
 
         /**
          * Sets the selected learner result property from which the chart data should be created. Calls the methods
@@ -4127,13 +4668,13 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * displayable chart mode to MULTIPLE_FINAL
          */
         $scope.createChartFromFinalResults = function () {
-            var selectedResults = SelectionService.getSelected($scope.results);
             var chartData;
 
-            if (selectedResults.length > 0) {
+            console.log($scope.selectedResults)
+            if ($scope.selectedResults.length > 0) {
                 chartData =
                     LearnerResultChartService
-                        .createDataFromMultipleFinalResults(selectedResults, $scope.selectedChartProperty);
+                        .createDataFromMultipleFinalResults($scope.selectedResults, $scope.selectedChartProperty);
 
                 $scope.chartData = {
                     data: chartData.data,
@@ -4150,24 +4691,22 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * displayable chart mode to MULTIPLE_COMPLETE
          */
         $scope.createChartFromCompleteResults = function () {
-            var selectedResults = SelectionService.getSelected($scope.results);
             var chartData;
 
-            if (selectedResults.length > 0) {
+            if ($scope.selectedResults.length > 0) {
 
                 // TODO: get complete results from selected results as soon as there is an interface for that
-                return;
 
-                chartData =
-                    LearnerResultChartService
-                        .createDataFromMultipleCompleteResults(selectedResults, $scope.selectedChartProperty);
-
-                $scope.chartData = {
-                    data: chartData.data,
-                    options: chartData.options
-                };
-
-                $scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
+                //chartData =
+                //    LearnerResultChartService
+                //        .createDataFromMultipleCompleteResults($scope.selectedResults, $scope.selectedChartProperty);
+                //
+                //$scope.chartData = {
+                //    data: chartData.data,
+                //    options: chartData.options
+                //};
+                //
+                //$scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
             }
         };
 
@@ -4281,7 +4820,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         $scope.startLearning = function () {
             var selectedSymbols;
 
-            if (angular.isUndefined($scope.resetSymbol)) {
+            if ($scope.resetSymbol === null) {
                 Toast.danger('You <strong>must</strong> selected a reset symbol in order to start learning');
                 return;
             }
@@ -4315,6 +4854,15 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         $scope.updateLearnConfiguration = function (config) {
             $scope.learnConfiguration = config;
         };
+
+        /**
+         * Extracts all symbols from all symbol groups and merges them into a single array
+         *
+         * @returns {Symbol[]}
+         */
+        $scope.getAllSymbols = function () {
+            return _.flatten(_.pluck($scope.groups, 'symbols'));
+        };
     }
 }());;(function () {
 
@@ -4325,8 +4873,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     LearnStartController.$inject = ['$scope', '$interval', 'SessionService', 'LearnerResource'];
 
     /**
-     * LearnStartController
-     *
      * Shows a load screen and the hypothesis of a test.
      *
      * @param $scope
@@ -4387,6 +4933,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                                     $scope.active = false;
                                     $scope.test = test;
                                     $scope.isEqOracleSample = test.configuration.eqOracle.type == 'sample';
+
+                                    console.log(test);
                                 });
                             $interval.cancel(_interval);
                         }
@@ -4428,6 +4976,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                         console.log(data)
                     })
             }
+        };
+
+        $scope.testCounterExample = function(counterExample){
+            return;
         }
     }
 
@@ -4517,7 +5069,10 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         var projectCopy;
 
-        /** The project that is stored in the session **/
+        /**
+         * The project that is stored in the session
+         * @type {Project}
+         **/
         $scope.project = Session.project.get();
         projectCopy = angular.copy($scope.project);
 
@@ -4542,11 +5097,13 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         /**
          * Prompts the user for confirmation and deletes the project on success. Redirects to '/home' when project
-         * was deleted and removes the project from the sessionStorage
+         * was deleted and removes the project from the sessionStorage.
          */
         $scope.deleteProject = function () {
             var message = 'Do you really want to delete this project with all its symbols and test results? This process can not be undone.';
 
+            // check if the current project is used in learning and abort deletion
+            // because of unknown side effects
             LearnerResource.isActive()
                 .then(function (data) {
                     if (data.active !== false || (data.project !== $scope.project.id)) {
@@ -4561,8 +5118,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     .then(function () {
                         Project.Resource.delete($scope.project)
                             .then(function () {
-                                SessionService.project.remove();
+                                Toast.success('Project <strong>' + $scope.project.name + '</strong> deleted');
+                                Session.project.remove();
                                 $state.go('home');
+                            })
+                            .catch(function (response) {
+                                Toast.danger('<p><strong>Deleting project failed</strong></p>' + response.data.message);
                             })
                     })
             }
@@ -4586,22 +5147,59 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         '$scope', '$stateParams', 'Symbol', 'SessionService', 'SelectionService', 'ToastService'
     ];
 
-    function SymbolsActionsController($scope, $stateParams, Symbol, SessionService, SelectionService, Toast) {
+    /**
+     * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
+     * manages has to be defined in the url by its id. The URL /symbols/4/actions therefore manages the actions of the
+     * symbol with id 4. When no such id was found, the controller redirects to an error page.
+     *
+     * The template can be found at 'views/pages/symbols-actions.html'.
+     *
+     * @param $scope - The controllers scope
+     * @param $stateParams - The parameters of the state
+     * @param Symbol - The Symbol model
+     * @param Session - The session service
+     * @param SelectionService - The selection service
+     * @param Toast - The ToastService
+     * @constructor
+     */
+    function SymbolsActionsController($scope, $stateParams, Symbol, Session, SelectionService, Toast) {
 
-        /** the open project */
-        $scope.project = SessionService.project.get();
+        /**
+         * The project that is stored in the session
+         * @type {Project}
+         */
+        $scope.project = Session.project.get();
 
-        /** the symbol whose actions are managed */
-        $scope.symbol;
+        /**
+         * The symbol whose actions are managed
+         * @type {Symbol|null}
+         */
+        $scope.symbol = null;
 
-        /** a copy of $scope.symbol to revert unsaved changes */
-        $scope.symbolCopy;
+        /**
+         * A copy of $scope.symbol to revert unsaved changes
+         * @type {Symbol|null}
+         */
+        $scope.symbolCopy = null;
+
+        /**
+         * The list of selected actions
+         * @type {Array}
+         */
+        $scope.selectedActions = [];
 
         // load all actions from the symbol
-        Symbol.Resource.get($scope.project.id, $stateParams.symbolId)
-            .then(init);
+        // redirect to an error page when the symbol from the url id cannot be found
+        (function init() {
+            Symbol.Resource.get($scope.project.id, $stateParams.symbolId)
+                .then(prepareSymbol)
+                .catch(function (response) {
+                    // TODO: redirect to an error page with a message
+                });
+        }());
 
-        function init(symbol) {
+        // initialize the controller for a given symbol
+        function prepareSymbol(symbol) {
 
             // create unique ids for actions
             _.forEach(symbol.actions, function (action) {
@@ -4614,44 +5212,55 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         }
 
         /**
-         * delete the actions that the user selected from the scope
+         * Deletes the actions that the user selected from the scope
          */
         $scope.deleteSelectedActions = function () {
-            var selectedActions = SelectionService.getSelected($scope.symbol.actions);
-            if (selectedActions.length) {
-                _.forEach(selectedActions, $scope.deleteAction);
+            if ($scope.selectedActions.length > 0) {
+                _.forEach($scope.selectedActions, $scope.deleteAction);
+                Toast.success('Actions deleted');
             }
         };
 
+        /**
+         * Removes an action from a symbol
+         *
+         * @param {Object} action
+         */
         $scope.deleteAction = function (action) {
             _.remove($scope.symbol.actions, {_id: action._id});
+            Toast.success('Action deleted');
         };
 
         /**
-         * add a new action to the list of actions of the symbol
-         * @param action
+         * Adds a new action to the list of actions of the symbol and gives it a temporary unique id
+         *
+         * @param {Object} action
          */
         $scope.addAction = function (action) {
             action._id = _.uniqueId();
             $scope.symbol.actions.push(action);
+            Toast.success('Action created');
         };
 
         /**
-         * update an action
-         * @param updatedAction
+         * Updates an existing action
+         *
+         * @param {Object} updatedAction
          */
         $scope.updateAction = function (updatedAction) {
             var index = _.findIndex($scope.symbol.actions, {_id: updatedAction._id});
             if (index > -1) {
                 $scope.symbol.actions[index] = updatedAction;
+                Toast.success('Action updated');
             }
         };
 
         /**
-         * save the changes that were made to the symbol by updating it on the server
+         * Saves the changes that were made to the symbol by updating it on the server.
          */
         $scope.saveChanges = function () {
 
+            // update the copy for later reverting
             var copy = $scope.symbol.copy();
             SelectionService.removeSelection(copy.actions);
 
@@ -4663,6 +5272,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             // update the symbol
             Symbol.Resource.update($scope.project.id, copy)
                 .then(function (updatedSymbol) {
+                    prepareSymbol(updatedSymbol);
                     Toast.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
                 })
                 .catch(function (response) {
@@ -4671,10 +5281,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
 
         /**
-         * revert the changes that were made to the symbol
+         * Reverts the changes that were made to the symbol before the last update
          */
         $scope.revertChanges = function () {
-            $scope.symbol = angular.copy($scope.symbolCopy);
+            prepareSymbol($scope.symbolCopy);
+            Toast.info('Changes reverted to the last update');
         };
     }
 }());;(function () {
@@ -4684,193 +5295,201 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('SymbolsController', SymbolsController);
 
-    SymbolsController.$inject = [
-        '$scope', 'SessionService', 'Symbol', 'SymbolGroup', 'SelectionService', '_', 'ToastService'
-    ];
+    SymbolsController.$inject = ['$scope', 'SessionService', 'Symbol', 'SymbolGroup', '_', 'ToastService'];
 
     /**
-     * The template can be found at 'views/pages/symbols.html'
+     * The controller that handles CRUD operations on symbols and symbol groups.
+     *
+     * The template can be found at 'views/pages/symbols.html'.
      *
      * @param $scope
      * @param Session
      * @param Symbol
      * @param SymbolGroup
-     * @param SelectionService
      * @param _
      * @param Toast
      * @constructor
      */
-    function SymbolsController($scope, Session, Symbol, SymbolGroup, SelectionService, _, Toast) {
+    function SymbolsController($scope, Session, Symbol, SymbolGroup, _, Toast) {
 
         /**
-         * The project that is stored in the session
+         * The project that is saved in the session
          * @type {Project}
          */
         $scope.project = Session.project.get();
 
         /**
-         * The list of symbol groups that belong to the saved project
-         * @type {SymbolGroup[]}
+         * indicates if symbol groups are displayed collapsed
+         * @type {boolean}
+         */
+        $scope.groupsCollapsed = false;
+
+        /**
+         * The model for selected symbols
+         * @type {Symbol[]}
+         */
+        $scope.selectedSymbols = [];
+
+        /**
+         * The symbol groups that belong to the project
+         * @type {SymbolGroup}
          */
         $scope.groups = [];
 
-        /**
-         * The list of all symbols that belong to the project
-         * @type {Array}
-         */
-        $scope.allSymbols = [];
-
-        /**
-         * Flag that indicates if all groups should be collapsed
-         * @type {boolean}
-         */
-        $scope.collapseAll = false;
-
+        // fetch all symbol groups and include all symbols
         (function init() {
             SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
                 .then(function (groups) {
                     $scope.groups = groups;
-                    $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
-                });
+                })
         }());
 
         /**
-         * Removes a list of symbols from its groups and from the list of all symbols
+         * Finds the symbol group object from a given symbol. Returns undefined if no symbol group was found.
          *
-         * @param {Symbol[]} symbols - The symbols that should be removed
+         * @param symbol - The symbol whose group object should be found
+         * @returns {SymbolGroup|undefined} - The found symbol group or undefined
          */
-        function removeSymbolsFromScope(symbols) {
-            var group;
-
-            _.forEach(symbols, function (symbol) {
-                group = _.find($scope.groups, {id: symbol.group});
-                _.remove(group.symbols, {id: symbol.id});
-                _.remove($scope.allSymbols, {id: symbol.id});
-            })
+        function findGroupFromSymbol(symbol) {
+            return _.find($scope.groups, {id: symbol.group});
         }
 
         /**
-         * Deletes a given symbol and remove it from the scope so that it will not be listed any longer
+         * Extracts all symbols from all symbol groups and merges them into a single array
          *
-         * @param {Symbol} symbol - The symbol that should be deleted
+         * @returns {Symbol[]}
+         */
+        $scope.getAllSymbols = function () {
+            return _.flatten(_.pluck($scope.groups, 'symbols'));
+        };
+
+        /**
+         * Adds a single new symbol to the scope by finding its corresponding group and adding it there
+         *
+         * @param {Symbol} symbol - The symbol that should be added
+         */
+        $scope.addSymbol = function (symbol) {
+            findGroupFromSymbol(symbol).symbols.push(symbol)
+        };
+
+        /**
+         * Removes a list of symbols from the scope by finding the group of each symbol and removing it from
+         * it
+         *
+         * @param {Symbol[]} symbols - The symbols that should be removed
+         */
+        $scope.removeSymbols = function (symbols) {
+            var group;
+            _.forEach(symbols, function (symbol) {
+                delete symbol._selected;
+                group = findGroupFromSymbol(symbol);
+                _.remove(group.symbols, {id: symbol.id});
+            })
+        };
+
+        /**
+         * Updates an existing symbol
+         *
+         * @param {Symbol} updatedSymbol - The updated symbol object
+         */
+        $scope.updateSymbol = function (updatedSymbol) {
+            $scope.updateSymbols([updatedSymbol]);
+        };
+
+        /**
+         * Updates multiple existing symbols
+         *
+         * @param {Symbol[]} updatedSymbols - The updated symbol objects
+         */
+        $scope.updateSymbols = function (updatedSymbols) {
+            var group;
+            var i;
+            _.forEach(updatedSymbols, function (symbol) {
+                group = findGroupFromSymbol(symbol);
+                i = _.findIndex(group.symbols, {id: symbol.id});
+                if (i > -1) {
+                    group.symbols[i].name = symbol.name;
+                    group.symbols[i].abbreviation = symbol.abbreviation;
+                    group.symbols[i].group = symbol.group
+                }
+            })
+        };
+
+        /**
+         * Moves a list of existing symbols into another group.
+         *
+         * @param {Symbol[]} symbols - The symbols that should be moved
+         * @param {SymbolGroup} group - The group the symbols should be moved into
+         */
+        $scope.moveSymbolsToGroup = function (symbols, group) {
+            var group = _.find($scope.groups, {id: group.id});
+
+            _.forEach(symbols, function (symbol) {
+                var g = _.find($scope.groups, {id: symbol.group});
+                var i = _.findIndex(g.symbols, {id: symbol.id});
+                g.symbols.splice(i, 1);
+                symbol.group = group.id;
+                group.symbols.push(symbol);
+            })
+        };
+
+        /**
+         * Deletes a single symbol from the server and from the scope if the deletion was successful
+         *
+         * @param {Symbol} symbol - The symbol to be deleted
          */
         $scope.deleteSymbol = function (symbol) {
-            Symbol.Resource.delete($scope.project.id, symbol.id)
+            Symbol.Resource.delete($scope.project.id, symbol)
                 .then(function () {
                     Toast.success('Symbol <strong>' + symbol.name + '</strong> deleted');
-                    removeSymbolsFromScope([symbol]);
-                }).catch(function (response) {
-                    Toast.danger('<p><strong>Deletion failed!</strong></p>' + response.data.message);
+                    $scope.removeSymbols([symbol]);
+                })
+                .catch(function (response) {
+                    Toast.danger('<p><strong>Deleting symbol failed</strong></p>' + response.data.messageł);
                 })
         };
 
         /**
-         * Deletes the symbols the user selected from the server and the scope
+         * Deletes all symbols that the user selected from the server and the scope, if the deletion was successful
          */
         $scope.deleteSelectedSymbols = function () {
-            var selectedSymbols = SelectionService.getSelected($scope.allSymbols);
-            var symbolsIds;
-
-            if (selectedSymbols.length > 0) {
-                symbolsIds = _.pluck(selectedSymbols, 'id');
-                Symbol.Resource.deleteSome($scope.project.id, symbolsIds)
-                    .then(function () {
-                        Toast.success('Symbols deleted');
-                        removeSymbolsFromScope(selectedSymbols);
-                    }).catch(function (response) {
-                        Toast.danger('<p><strong>Deletion failed!</strong></p>' + response.data.message);
-                    })
-            }
+            Symbol.Resource.deleteSome($scope.project.id, $scope.selectedSymbols)
+                .then(function () {
+                    Toast.success('Symbols deleted');
+                    $scope.removeSymbols($scope.selectedSymbols);
+                })
+                .catch(function (response) {
+                    Toast.danger('<p><strong>Deleting symbols failed</strong></p>' + response.data.message);
+                })
         };
 
         /**
-         * Adds a symbol to to its corresponding group the scope
+         * Adds a new symbol group to the scope
          *
-         * @param {Symbol} symbol - The new symbol that should be added to the list
-         */
-        $scope.addSymbol = function (symbol) {
-            var group = _.find($scope.groups, {id: symbol.group});
-            if (angular.isDefined(group)) {
-                group.symbols.push(symbol);
-            }
-        };
-
-        /**
-         * Adds a group to the scope
-         *
-         * @param {SymbolGroup} group - The new group that should be added to the list
+         * @param {SymbolGroup} group - The group that should be added
          */
         $scope.addGroup = function (group) {
             $scope.groups.push(group);
         };
 
         /**
-         * Updates a symbol in the scope
-         * @param symbol
+         * Updates a symbol group in the scope by changing its name property to the one of the groups that is passed
+         * as a parameter
+         *
+         * @param {SymbolGroup} updatedGroup - The updated symbol group
          */
-        $scope.updateSymbol = function (symbol) {
-            var group = _.find($scope.groups, {id: symbol.group});
-            var i = _.findIndex(group.symbols, {id: symbol.id});
-            group.symbols[i] = symbol;
+        $scope.updateGroup = function (updatedGroup) {
+            _.find($scope.groups, {id: updatedGroup.id}).name = updatedGroup.name;
         };
 
         /**
-         * Moves a list of symbols to a new group
-         *
-         * @param symbols - The symbols *before* updating
-         * @param group - The group the symbols should be moved into
-         */
-        $scope.moveSymbols = function (symbols, group) {
-            _.forEach(symbols, function (symbol) {
-                var g = _.find($scope.groups, {id: symbol.group});
-                _.remove(g.symbols, {id: symbol.id});
-                symbol.group = group.id;
-            });
-            var g = _.find($scope.groups, {id: group.id});
-            g.symbols = g.symbols.concat(symbols);
-        };
-
-        /**
-         * Updates a symbol group by updating its name
-         *
-         * @param group - The updated group
-         */
-        $scope.updateGroup = function (group) {
-            var g = _.find($scope.groups, {id: group.id});
-            if (angular.isDefined(g)) {
-                g.name = group.name;
-            }
-        };
-
-        /**
-         * Deletes a group from the scope and all of its symbols
-         *
-         * @param {SymbolGroup} group - The group that should be removed
-         */
-        $scope.deleteGroup = function (group) {
-            _.remove($scope.groups, {id: group.id});
-            _.forEach(group.symbols, function (symbol) {
-                _.remove($scope.allSymbols, {id: symbol.id});
-            })
-        };
-
-        /**
-         *
+         * Collapses all groups or expands them
          */
         $scope.toggleCollapseAllGroups = function () {
-            $scope.collapseAll = !$scope.collapseAll;
-            _.forEach($scope.groups, function (group) {
-                group._isCollapsed = $scope.collapseAll;
-            })
-        };
-
-        /**
-         * Get the list of selectedSymbols
-         *
-         * @returns {Symbol[]} - The symbols
-         */
-        $scope.getSelectedSymbols = function () {
-            return SelectionService.getSelected($scope.allSymbols);
+            $scope.groupsCollapsed = !$scope.groupsCollapsed;
+            for (var i = 0; i < $scope.groups; i++) {
+                $scope.groups[i]._collapsed = $scope.groupsCollapsed;
+            }
         }
     }
 }());;(function () {
@@ -5107,52 +5726,120 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         }
     }
-}());;(function(){
-	'use strict';
-	
-	angular
-		.module('weblearner.directives')
-		.directive('counterExampleBuilder', counterExampleBuilder);
-	
-	counterExampleBuilder.$inject = ['paths'];
-	
-	function counterExampleBuilder(paths){
-		
-		var directive = {
-			scope: {},
-			controller: ['$scope', controller],
-			templateUrl: paths.views.DIRECTIVES + '/counter-example-builder.html'
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('actionCreateModalHandle', actionCreateModalHandle);
+
+    actionCreateModalHandle.$inject = ['$modal', 'paths'];
+
+    /**
+     * The directive that is used to handle the modal dialog for creating an action. Must be used as an attribute for
+     * the attached element. It attaches a click event to the element that opens the modal dialog. Does NOT saves the
+     * action on the server.
+     *
+     * The directive excepts one additional attribute. 'onCreated' has to be a function with one parameter where the
+     * created action is passed on success.
+     *
+     * Can be used like this: '<button action-create-modal-handle on-created="...">Click Me!</button>'
+     *
+     * @param $modal - The modal service
+     * @param paths - The applications paths constant
+     * @returns {{restrict: string, scope: {onCreated: string}, link: link}}
+     */
+    function actionCreateModalHandle($modal, paths) {
+
+        // the directive
+        return {
+            restrict: 'A',
+            scope: {
+                onCreated: '&'
+            },
+            link: link
         };
 
-		return directive;
-				
-		function controller($scope){
-			
-			$scope.inputs = ['w1', 'w2', 'w3'];
+        // handles the directives logic
+        function link(scope, el, attr) {
+            el.on('click', handleModal);
 
-	        $scope.counterExample = [
-	            {input: 'w1', output: 'output1'},
-	            {input: 'w2', output: 'output2'},
-                {input: 'w3', output: 'output3'}
-            ];
+            function handleModal() {
 
-	        $scope.add = function() {
-	            $scope.counterExample.push({input: null, output: null})
-            };
+                // create the modal
+                var modal = $modal.open({
+                    templateUrl: paths.views.MODALS + '/action-create-modal.html',
+                    controller: 'ActionCreateModalController'
+                });
 
-	        $scope.remove = function(index) {
-	            $scope.counterExample.splice(index, 1);
-            };
+                // call the callback on success
+                modal.result.then(function (action) {
+                    scope.onCreated()(action);
+                });
+            }
+        }
+    }
+}());;(function () {
+    'use strict';
 
-	        $scope.onDropInput = function(data, evt, index){
-	            $scope.counterExample[index].input = data['json/custom-object'];
-            };
+    angular
+        .module('weblearner.directives')
+        .directive('actionEditModalHandle', actionEditModalHandle);
 
-	        $scope.onDropOutput = function(data, evt, index){
-	            $scope.counterExample[index].output = data['json/custom-object'];
-	        }
-		}
-	};
+    actionEditModalHandle.$inject = ['$modal', 'paths'];
+
+    /**
+     * The directive that is used to handle the modal dialog for editing an action. Must be used as an attribute for the
+     * attached element. It attaches a click event to the element that opens the modal dialog. Does NOT update the symbol
+     * with the new action.
+     *
+     * The directive excepts two additional attributes. 'action' has to contain the action object to be edited.
+     * 'onUpdated' has to be a function with one parameter where the updated action is passed on success.
+     *
+     * Can be used like this: '<button action-edit-modal-handle action="..." on-updated="...">Click Me!</button>'
+     *
+     * @param $modal - The modal service
+     * @param paths - The applications paths constant
+     * @returns {{restrict: string, scope: {action: string, onUpdated: string}, link: link}}
+     */
+    function actionEditModalHandle($modal, paths) {
+
+        // the directive
+        return {
+            restrict: 'A',
+            scope: {
+                action: '=',
+                onUpdated: '&'
+            },
+            link: link
+        };
+
+        // handles the directives logic
+        function link(scope, el, attr) {
+            el.on('click', handleModal);
+
+            function handleModal() {
+
+                // create and open the modal dialog
+                var modal = $modal.open({
+                    templateUrl: paths.views.MODALS + '/action-edit-modal.html',
+                    controller: 'ActionEditModalController',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                action: scope.action
+                            };
+                        }
+                    }
+                });
+
+                // when successfully creating an action, call the callback function and pass the updated action
+                modal.result.then(function (action) {
+                    scope.onUpdated()(action);
+                });
+            }
+        }
+    }
 }());;(function () {
     'use strict';
 
@@ -6382,114 +7069,55 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     //		}
     //	}
     //}
-}());;(function () {
+}());;(function(){
     'use strict';
 
     angular
         .module('weblearner.directives')
-        .directive('openActionCreateModal', [
-            '$modal', 'ngToast', 'paths',
-            openActionCreateModal
-        ]);
+        .directive('observationTable', observationTable);
 
-    function openActionCreateModal($modal, toast, paths) {
+    observationTable.$inject = ['paths'];
 
-        var directive = {
-            restrict: 'EA',
+    function observationTable(paths){
+
+        return {
             scope: {
-                symbol: '=',
-                onCreated: '&'
+                data: '='
             },
-            link: link
+            link: link,
+            templateUrl: paths.views.DIRECTIVES + '/observation-table.html'
         };
-        return directive;
 
-        //////////
+        function link(scope, el, attrs) {
+            scope.table = {
+                header: [],
+                body: []
+            };
 
-        function link(scope, el, attr) {
-
-            el.on('click', handleModal);
-
-            function handleModal() {
-
-                var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/action-create-modal.html',
-                    controller: 'ActionCreateModalController',
-                    resolve: {
-                        modalData: function () {
-                            return {
-                                symbol: angular.copy(scope.symbol)
-                            };
-                        }
-                    }
-                });
-
-                // when successfully creating a symbol at the new to the list
-                modal.result.then(function (action) {
-                    scope.onCreated()(action);
-                    toast.create({
-                        class: 'success',
-                        content: 'Action created'
-                    });
-                });
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('openActionEditModal', [
-            '$modal', 'ngToast', 'paths',
-            openActionEditModal
-        ]);
-
-    function openActionEditModal($modal, toast, paths) {
-        var directive = {
-            restrict: 'EA',
-            scope: {
-                symbol: '=',
-                action: '=',
-                onUpdated: '&'
-            },
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attr) {
-
-            el.on('click', handleModal);
-
-            function handleModal() {
-
-                if (angular.isUndefined(scope.action)) {
-                    return;
+            scope.$watch('data', function(n){
+                if (angular.isDefined(n)) {
+                    createObservationTable();
                 }
+            });
 
-                var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/action-edit-modal.html',
-                    controller: 'ActionEditModalController',
-                    resolve: {
-                        modalData: function () {
-                            return {
-                                symbol: angular.copy(scope.symbol),
-                                action: angular.copy(scope.action)
-                            };
+            function createObservationTable(){
+                var rows = scope.data.split('\n');
+
+                if (rows.length > 1) {
+                    for (var i = 1; i < rows.length; i+=2) {
+                        rows[i] = rows[i].split('|');
+                        rows[i].shift();
+                        rows[i].pop();
+                        for (var j = 0; j < rows[i].length; j++) {
+                            rows[i][j] = rows[i][j].trim();
+                        }
+                        if (i === 1) {
+                            scope.table.header = rows[i];
+                        } else {
+                            scope.table.body.push(rows[i]);
                         }
                     }
-                });
-
-                // when successfully creating a symbol at the new to the list
-                modal.result.then(function (action) {
-                    toast.create({
-                        class: 'success',
-                        content: 'Action updated'
-                    });
-                    scope.onUpdated()(action);
-                });
+                }
             }
         }
     }
@@ -6665,75 +7293,27 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.directives')
-        .directive('selectable', selectable)
-        .directive('selectableList', selectableList)
-        .directive('selectableListItem', selectableListItem)
-        .directive('selectableItemCheckbox', selectableItemCheckbox);
+        .directive('selectionCheckboxAll', selectionCheckboxAll)
+        .directive('selectableListItem', selectableListItem);
 
-
-    function selectable() {
+    function selectionCheckboxAll() {
 
         var directive = {
             scope: {
-                items: '='
+                items: '&'
             },
-            controller: ['$scope', controller]
-        };
-        return directive;
-
-        function controller($scope) {
-            this.getItems = function () {
-                return $scope.items;
-            }
-        }
-    }
-
-    function selectableList() {
-
-        var directive = {
-            transclude: true,
-            replace: true,
-            template: '<div class="selectable-list" ng-transclude></div>'
-        };
-        return directive;
-    }
-
-    function selectableListItem() {
-
-        var directive = {
-            require: '^selectable',
-            transclude: true,
-            template: ' <div class="selectable-list-item" ng-class="item._selected ? \'active\' : \'\'">' +
-            '               <div class="selectable-list-control">' +
-            '                   <input type="checkbox" ng-model="item._selected">' +
-            '               </div>' +
-            '               <div class="selectable-list-content" ng-transclude></div>' +
-            '           </div>',
             link: link
         };
         return directive;
 
         function link(scope, el, attrs, ctrl) {
-            scope.item = ctrl.getItems()[scope.$index];
-        }
-    }
-
-    function selectableItemCheckbox() {
-
-        var directive = {
-            require: '^selectable',
-            link: link
-        };
-        return directive;
-
-        function link(scope, el, attrs, ctrl) {
-
-            var items;
-            var _this;
-
             el.on('change', function () {
-                items = ctrl.getItems();
-                _this = this;
+                var _this = this;
+                var items = scope.items();
+
+                if (angular.isFunction(items)) {
+                    items = items();
+                }
 
                 scope.$apply(function () {
                     for (var i = 0; i < items.length; i++) {
@@ -6742,6 +7322,20 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 });
             })
         }
+    }
+
+    function selectableListItem() {
+
+        var directive = {
+            transclude: true,
+            template: ' <div class="selectable-list-item">' +
+            '               <div class="selectable-list-control">' +
+            '                   <input type="checkbox">' +
+            '               </div>' +
+            '               <div class="selectable-list-content" ng-transclude></div>' +
+            '           </div>'
+        };
+        return directive;
     }
 }());;(function () {
     'use strict';
@@ -7509,11 +8103,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         Action.Web.Fill = function (node, value) {
             this.type = actionTypes.web.FILL;
             this.node = node || null;
-            this.generator = value || null
+            this.value = value || null
         };
 
         Action.Web.Fill.prototype.toString = function () {
-            return 'Fill element "' + this.node + '" with "' + this.generator + '"';
+            return 'Fill element "' + this.node + '" with "' + this.value + '"';
         };
 
         Action.Web.GoTo = function (url) {
@@ -7707,7 +8301,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     return new Action.Web.Click(data.node);
                     break;
                 case actionTypes.web.FILL:
-                    return new Action.Web.Fill(data.node, data.generator);
+                    return new Action.Web.Fill(data.node, data.value);
                     break;
                 case actionTypes.web.GO_TO:
                     return new Action.Web.GoTo(data.url);
@@ -7769,7 +8363,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     return null;
                     break;
             }
-
         };
 
         Action.buildSome = function (data) {
@@ -7970,7 +8563,91 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         return LearnConfiguration;
     }
-}());;;(function () {
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.models')
+        .factory('LearnResult', LearnResultModel);
+
+    LearnResultModel.$inject = ['LearnConfiguration', 'LearnResultResource'];
+
+    /**
+     * The factory for the model of a learn result
+     *
+     * @param LearnConfiguration
+     * @param LearnResultResource
+     * @returns {LearnResult}
+     * @constructor
+     */
+    function LearnResultModel(LearnConfiguration, LearnResultResource) {
+
+        /**
+         * The model of a learn result
+         *
+         * @constructor
+         */
+        function LearnResult() {
+            this.amountOfResets;
+            this.configuration;
+            this.hypothesis;
+            this.duration;
+            this.project;
+            this.sigma;
+            this.startTime;
+            this.stepNo;
+            this.testNo;
+            this.algorithmInformation;
+        }
+
+        /**
+         * Creates a new instance of a LearnResult from an object
+         *
+         * @param {Object} data - The object the learn result should be build from
+         * @returns {LearnResultModel.LearnResult} - The instance of LearnResult from the data
+         */
+        LearnResult.build = function (data) {
+            var result = new LearnResult();
+            result.amountOfResets = data.amountOfResets;
+            result.configuration = LearnConfiguration.build(data.configuration);
+            result.hypothesis = data.hypothesis;
+            result.duration = data.duration;
+            result.project = data.project;
+            result.startTime = data.startTime;
+            result.stepNo = data.stepNo;
+            result.testNo = data.testNo;
+            result.algorithmInformation = data.algorithmInformation;
+            return result;
+        };
+
+        /**
+         * Creates a list of new instances of LearnResult from a list of objects
+         *
+         * @param {Object[]} data - The list of objects the list of learn results should be build from
+         * @returns {LearnResultModel.LearnResult[]} - The list of learn results
+         */
+        LearnResult.buildSome = function (data) {
+            var results = [];
+            for (var i = 0; i < data.length; i++) {
+                results.push(LearnResult.build(data[i]));
+            }
+            return results;
+        };
+
+        /**
+         * The resource for learn results for communication with the API
+         * @type {LearnResultResource}
+         */
+        LearnResult.Resource = new LearnResultResource();
+
+        // overwrite the build methods of the resource so that the API returns instances of
+        // learn results instead of plain objects
+        LearnResult.Resource.build = LearnResult.build;
+        LearnResult.Resource.buildSome = LearnResult.buildSome;
+
+        return LearnResult;
+    }
+}());;(function () {
     'use strict';
 
     angular
@@ -8220,84 +8897,109 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.resources')
-        .factory('LearnResultResource', LearnResultResource);
+        .factory('LearnResultResource', Resource);
 
-    LearnResultResource.$inject = ['$http', 'paths'];
+    Resource.$inject = ['$http', 'paths'];
 
     /**
-     * @param $http
-     * @param paths
-     * @returns {{getAllFinal: getAllFinal, getFinal: getFinal, getComplete: getComplete, delete: deleteTests}}
+     * The resource that handles http request to the API to do CRUD operations on learn results
+     *
+     * @param $http - The angular http service
+     * @param paths - The constant with application paths
+     * @returns {LearnResultResource} - The LearnResource class
      * @constructor
      */
-    function LearnResultResource($http, paths) {
-
-        // the service
-        var service = {
-            getAllFinal: getAllFinal,
-            getFinal: getFinal,
-            getComplete: getComplete,
-            delete: deleteTests
-        };
-        return service;
+    function Resource($http, paths) {
 
         /**
-         * Get all final results from all tests that were run for a project. the results only include the final
-         * hypothesis
-         *
-         * @param projectId
-         * @return {*}
+         * The LearnResultResource
+         * @constructor
          */
-        function getAllFinal(projectId) {
+        function LearnResultResource() {
+        }
+
+        /**
+         * Makes a GET request to 'rest/projects/{projectId}/results in order to get all final learn results of all
+         * tests of a project.
+         *
+         * @param {number} projectId - The id of the project whose final learn results should be fetched
+         * @returns {*} - A promise with the learn results
+         */
+        LearnResultResource.prototype.getAllFinal = function (projectId) {
+            var _this = this;
+
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
                 .then(function (response) {
-                    return response.data;
+                    return _this.buildSome(response.data);
                 })
-        }
+        };
 
         /**
-         * Get the final test result for a project that only includes the final hypothesis
+         * Makes a GET request to 'rest/projects/{projectId}/results/{testNo}/complete in order to get all intermediate
+         * results of a test.
          *
-         * @param projectId
-         * @param testNo
-         * @return {*}
+         * @param {number} projectId - The id of the project of the test
+         * @param {number} testNo - The number of the test that should be completely fetched
+         * @returns {*} - A promise with a list of learn results
          */
-        function getFinal(projectId, testNo) {
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo)
-                .then(function (response) {
-                    return response.data;
-                })
-        }
-
-        /**
-         * Get all created hypotheses that were created during a learn process of a project
-         *
-         * @param projectId
-         * @param testNo
-         * @return {*}
-         */
-        function getComplete(projectId, testNo) {
+        LearnResultResource.prototype.getComplete = function (projectId, testNo) {
+            var _this = this;
 
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
                 .then(function (response) {
-                    return response.data;
+                    return _this.buildSome(response.data);
                 })
-        }
+        };
+
+        // TODO: implement when api has implemented the function
+        // LearnResultResource.prototype.getSomeComplete = function (projectId, testNos) {}
 
         /**
+         * Wrapper for deleteSome for a single testNo
          *
-         * @param projectId
-         * @param testNos
-         * @returns {HttpPromise}
+         * @param {number} projectId
+         * @param {number} testNo
          */
-        function deleteTests(projectId, testNos) {
+        LearnResultResource.prototype.delete = function (projectId, testNo) {
+            this.deleteSome(projectId, [testNo]);
+        };
 
-            if (angular.isArray(testNos)) {
-                testNos = testNos.join(',');
-            }
+        /**
+         * Makes a DELETE request to '/rest/projects/{projectId}/results/{testNos} in order to delete test results.
+         *
+         * @param {number} projectId - The id of the tests that should be deleted
+         * @param {number[]} testNos - The array of test numbers of the tests that should be deleted
+         * @returns {*} - A promise
+         */
+        LearnResultResource.prototype.deleteSome = function (projectId, testNos) {
+            testNos = testNos.join(',');
 
             return $http.delete(paths.api.URL + '/projects/' + projectId + '/results/' + testNos, {})
-        }
+        };
+
+        /**
+         * Overwrite this method in order to map the data that is fetched from the server to a class. The function is
+         * called after every successful request that contains data.
+         *
+         * @param {Object} data - The object that should be created an instance of a class from
+         * @returns {*}
+         */
+        LearnResultResource.prototype.build = function (data) {
+            return data;
+        };
+
+        /**
+         * Overwrite this method in order to map the a list of objects that is fetched from the server to a list of
+         * class instances. The function is called after every successful request that contains data.
+         *
+         * @param {Object[]} data - The list of objects that should be created a list of instances of a class from
+         * @returns {*}
+         */
+        LearnResultResource.prototype.buildSome = function (data) {
+            return data;
+        };
+
+        return LearnResultResource;
     }
 }());;(function () {
     'use strict';
@@ -8330,8 +9032,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             isActive: isActive
         };
         return service;
-
-        //////////
 
         /**
          * Start the server side learning process of a project
@@ -8833,13 +9533,13 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * Symbol will not be deleted permanently, it will be just hidden and ignored when you call getAll().
          *
          * @param projectId - The id of the project the symbol belongs to
-         * @param symbolId - The id of the symbol that should be deleted
+         * @param symbol - The the symbol that should be deleted
          * @returns {*}
          */
-        SymbolResource.prototype.delete = function (projectId, symbolId) {
+        SymbolResource.prototype.delete = function (projectId, symbol) {
             var _this = this;
 
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide', {})
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id + '/hide', {})
                 .then(function (resonse) {
                     return _this.build(resonse.data);
                 });
@@ -8850,12 +9550,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * Symbols will not be deleted permanently but stay hidden.
          *
          * @param projectId - The id of the projects the symbols belong to
-         * @param symbolIds - The array of ids from the symbols that should be deleted
+         * @param symbols - The symbols that should be deleted
          * @returns {*}
          */
-        SymbolResource.prototype.deleteSome = function (projectId, symbolIds) {
+        SymbolResource.prototype.deleteSome = function (projectId, symbols) {
             var _this = this;
-            symbolIds = symbolIds.join(',');
+            var symbolIds = _.pluck(symbols, 'id').join(',');
 
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + symbolIds + '/hide', {})
                 .then(function (response) {

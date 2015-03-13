@@ -7,21 +7,20 @@
     <div class="container">
 
         <div class="pull-left" style="margin-right: 16px" selectable="symbol.actions">
-            <input type="checkbox" selectable-item-checkbox>
+            <input type="checkbox" selection-checkbox-all items="symbol.actions">
         </div>
 
         <div class="pull-left">
-            <button class="btn btn-xs btn-primary" open-action-create-modal symbol="symbol" on-created="addAction">
+            <button class="btn btn-xs btn-primary" action-create-modal-handle on-created="addAction">
                 Create
             </button>
-            <button class="btn btn-xs btn-default" open-action-edit-modal symbol="symbol"
-                    action="(symbol.actions | selected | first)"
+            <button class="btn btn-xs btn-default" action-edit-modal-handle action="(selectedActions | first)"
                     on-updated="updateAction"
-                    ng-class="(symbol.actions|selected).length != 1 ? 'disabled': ''">
+                    ng-class="selectedActions.length !== 1 ? 'disabled': ''">
                 Edit
             </button>
             <button class="btn btn-xs btn-default" ng-click="deleteSelectedActions()"
-                    ng-class="(symbol.actions|selected).length == 0 ? 'disabled': ''">
+                    ng-class="selectedActions.length === 0 ? 'disabled': ''">
                 Delete
             </button>
         </div>
@@ -38,9 +37,17 @@
     <div class="container">
 
         <div ng-if="symbol.actions" as-sortable ng-model="symbol.actions">
-            <div selectable items="symbol.actions">
-                <div selectable-list>
-                    <div selectable-list-item ng-repeat="action in symbol.actions track by $index" as-sortable-item>
+            <div class="selectable-list">
+                <div ng-repeat="action in symbol.actions"
+                     selection-model
+                     selection-model-type="checkbox"
+                     selection-model-selected-attribute="_selected"
+                     selection-model-mode="multiple"
+                     selection-model-selected-items="selectedActions"
+                     selection-model-cleanup-strategy="deselect"
+                     as-sortable-item>
+
+                    <div selectable-list-item>
 
                         <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
                             <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
@@ -48,8 +55,7 @@
                             </button>
                             <ul class="dropdown-menu pull-left" role="menu">
                                 <li>
-                                    <a href open-action-edit-modal symbol="symbol" action="action"
-                                       on-updated="updateAction">
+                                    <a href action-edit-modal-handle action="action" on-updated="updateAction">
                                         <i class="fa fa-edit fa-fw"></i> Edit
                                     </a>
                                 </li>
@@ -69,6 +75,7 @@
                         <span ng-bind="action.toString()"></span>
 
                     </div>
+
                 </div>
             </div>
         </div>

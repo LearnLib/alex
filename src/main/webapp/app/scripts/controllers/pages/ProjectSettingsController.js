@@ -24,7 +24,10 @@
 
         var projectCopy;
 
-        /** The project that is stored in the session **/
+        /**
+         * The project that is stored in the session
+         * @type {Project}
+         **/
         $scope.project = Session.project.get();
         projectCopy = angular.copy($scope.project);
 
@@ -49,11 +52,13 @@
 
         /**
          * Prompts the user for confirmation and deletes the project on success. Redirects to '/home' when project
-         * was deleted and removes the project from the sessionStorage
+         * was deleted and removes the project from the sessionStorage.
          */
         $scope.deleteProject = function () {
             var message = 'Do you really want to delete this project with all its symbols and test results? This process can not be undone.';
 
+            // check if the current project is used in learning and abort deletion
+            // because of unknown side effects
             LearnerResource.isActive()
                 .then(function (data) {
                     if (data.active !== false || (data.project !== $scope.project.id)) {
@@ -68,8 +73,12 @@
                     .then(function () {
                         Project.Resource.delete($scope.project)
                             .then(function () {
-                                SessionService.project.remove();
+                                Toast.success('Project <strong>' + $scope.project.name + '</strong> deleted');
+                                Session.project.remove();
                                 $state.go('home');
+                            })
+                            .catch(function (response) {
+                                Toast.danger('<p><strong>Deleting project failed</strong></p>' + response.data.message);
                             })
                     })
             }

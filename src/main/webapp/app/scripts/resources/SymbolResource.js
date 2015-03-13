@@ -152,13 +152,13 @@
          * Symbol will not be deleted permanently, it will be just hidden and ignored when you call getAll().
          *
          * @param projectId - The id of the project the symbol belongs to
-         * @param symbolId - The id of the symbol that should be deleted
+         * @param symbol - The the symbol that should be deleted
          * @returns {*}
          */
-        SymbolResource.prototype.delete = function (projectId, symbolId) {
+        SymbolResource.prototype.delete = function (projectId, symbol) {
             var _this = this;
 
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/hide', {})
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id + '/hide', {})
                 .then(function (resonse) {
                     return _this.build(resonse.data);
                 });
@@ -169,12 +169,12 @@
          * Symbols will not be deleted permanently but stay hidden.
          *
          * @param projectId - The id of the projects the symbols belong to
-         * @param symbolIds - The array of ids from the symbols that should be deleted
+         * @param symbols - The symbols that should be deleted
          * @returns {*}
          */
-        SymbolResource.prototype.deleteSome = function (projectId, symbolIds) {
+        SymbolResource.prototype.deleteSome = function (projectId, symbols) {
             var _this = this;
-            symbolIds = symbolIds.join(',');
+            var symbolIds = _.pluck(symbols, 'id').join(',');
 
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + symbolIds + '/hide', {})
                 .then(function (response) {

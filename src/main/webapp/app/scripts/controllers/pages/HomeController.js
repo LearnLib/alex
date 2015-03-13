@@ -8,43 +8,46 @@
     HomeController.$inject = ['$scope', '$state', 'Project', 'SessionService'];
 
     /**
-     * HomeController
-     *
      * The controller for the landing page. It lists the projects.
+     *
+     * The controller can be found at 'views/pages/home.html'
      *
      * @param $scope
      * @param $state
      * @param Project
-     * @param SessionService
+     * @param Session
      * @constructor
      */
-    function HomeController($scope, $state, Project, SessionService) {
-
-        /** The project list */
-        $scope.projects = [];
-
-        //////////
-
-        // redirect to the project dash page if one is open
-        if (SessionService.project.get()) {
-            $state.go('project');
-        }
-
-        // get all projects from the server
-        Project.Resource.all()
-            .then(function(projects){
-                $scope.projects = projects;
-            });
-
-        //////////
+    function HomeController($scope, $state, Project, Session) {
 
         /**
-         * Open a project by saving it into the session and redirect to the projects dashboard.
+         * The list of all created projects
+         * @type {Project[]}
+         */
+        $scope.projects = [];
+
+        // initialize the controllers data
+        (function init() {
+
+            // redirect to the project dash page if one is open
+            if (Session.project.get() !== null) {
+                $state.go('project');
+            }
+
+            // get all projects from the server
+            Project.Resource.all()
+                .then(function (projects) {
+                    $scope.projects = projects;
+                });
+        }());
+
+        /**
+         * Opens a project by saving it into the session and redirect to the projects dashboard.
          *
-         * @param project - The project that should be saved in the sessionStorage
+         * @param {Project} project - The project that should be saved in the sessionStorage
          */
         $scope.openProject = function (project) {
-            SessionService.project.save(project);
+            Session.project.save(project);
             $state.go('project');
         }
     }

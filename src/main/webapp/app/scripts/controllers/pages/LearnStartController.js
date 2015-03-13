@@ -7,8 +7,6 @@
     LearnStartController.$inject = ['$scope', '$interval', 'SessionService', 'LearnerResource'];
 
     /**
-     * LearnStartController
-     *
      * Shows a load screen and the hypothesis of a test.
      *
      * @param $scope
@@ -69,6 +67,8 @@
                                     $scope.active = false;
                                     $scope.test = test;
                                     $scope.isEqOracleSample = test.configuration.eqOracle.type == 'sample';
+
+                                    console.log(test);
                                 });
                             $interval.cancel(_interval);
                         }
@@ -110,6 +110,10 @@
                         console.log(data)
                     })
             }
+        };
+
+        $scope.testCounterExample = function(counterExample){
+            return;
         }
     }
 

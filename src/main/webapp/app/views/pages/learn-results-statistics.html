@@ -8,8 +8,8 @@
 
         <div ng-show="selectedChartMode === null">
 
-            <div class="pull-left" selectable items="results" style="margin-right: 16px">
-                <input type="checkbox" selectable-item-checkbox>
+            <div class="pull-left" style="margin-right: 16px">
+                <input type="checkbox" selection-checkbox-all items="results">
             </div>
 
             <div class="btn-group btn-group-xs pull-left" dropdown dropdown-hover>
@@ -70,9 +70,16 @@
 <div class="view-body">
     <div class="container" ng-style="fullWidth ? {'width':'100%'} : {}">
 
-        <div selectable items="results" ng-if="selectedChartMode === null">
-            <div selectable-list>
-                <div selectable-list-item ng-repeat="result in results track by $index">
+        <div class="selectable-list" ng-show="selectedChartMode === null">
+            <div ng-repeat="result in results"
+                 selection-model
+                 selection-model-type="checkbox"
+                 selection-model-selected-attribute="_selected"
+                 selection-model-mode="multiple"
+                 selection-model-selected-items="selectedResults"
+                 selection-model-cleanup-strategy="deselect">
+
+                <div selectable-list-item>
 
                     <strong>Test No
                         <span ng-bind="result.testNo"></span>

@@ -13,6 +13,7 @@
             'ngToast',
             'draganddrop',
             'n3-line-chart',
+            'selectionModel',
 
             //all templates
             'templates-all',

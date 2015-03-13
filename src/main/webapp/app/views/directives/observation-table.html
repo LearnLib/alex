@@ -1,0 +1,12 @@
+<table class="table table-condensed obsevation-table">
+    <thead>
+        <tr>
+            <th ng-repeat="th in table.header" ng-bind="::th"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="tr in table.body track by $index">
+            <td ng-repeat="td in tr track by $index" ng-bind="::td"></td>
+        </tr>
+    </tbody>
+</table>

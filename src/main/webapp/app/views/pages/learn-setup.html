@@ -6,8 +6,8 @@
 <div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
     <div class="container">
 
-        <div class="pull-left" style="margin-right: 16px" selectable items="allSymbols">
-            <input type="checkbox" selectable-item-checkbox>
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" selection-checkbox-all items="getAllSymbols">
         </div>
 
         <div class="pull-right">
@@ -25,20 +25,20 @@
 
 <div class="view-body">
     <div class="container symbol-group-list">
-        <div ng-repeat="group in groups track by group.id" class="symbol-group">
+
+        <div ng-repeat="group in groups" class="symbol-group"
+             ng-class="group._isCollapsed ? 'collapsed' :''">
 
             <div class="selectable-list symbol-group-header">
                 <div class="selectable-list-heading">
-
-                    <div class="selectable-list-control" selectable items="group.symbols">
-                        <input type="checkbox" selectable-item-checkbox>
+                    <div class="selectable-list-control">
+                        <input type="checkbox" selection-checkbox-all items="group.symbols">
                     </div>
-
                     <div class="selectable-list-content">
 
                         <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
-                            <i class="fa fa-fw"
-                               ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                        <i class="fa fa-fw"
+                           ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
                         </span>
 
                         <h3 class="symbol-group-title" ng-bind="group.name"
@@ -49,29 +49,35 @@
                         </p>
 
                     </div>
-
                 </div>
             </div>
 
-            <div class="symbol-group-body" collapse="group._isCollapsed" selectable items="group.symbols">
+            <div class="symbol-group-body" collapse="group._isCollapsed">
+                <div class="selectable-list">
+                    <div ng-repeat="symbol in group.symbols | orderBy:'-name':true"
+                         selection-model
+                         selection-model-type="checkbox"
+                         selection-model-selected-attribute="_selected"
+                         selection-model-mode="multiple"
+                         selection-model-selected-items="selectedSymbols"
+                         selection-model-cleanup-strategy="deselect">
 
-                <div selectable-list>
-                    <div selectable-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true">
+                        <div selectable-list-item>
+                            <a class="pull-right" ng-click="setResetSymbol(symbol)">
+                                <i class="fa" ng-class="resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'"></i>
+                            </a>
 
-                        <a class="pull-right" ng-click="setResetSymbol(symbol)">
-                            <i class="fa" ng-class="resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'"></i>
-                        </a>
+                            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
 
-                        <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
-
-                        <a ui-sref="symbols.actions({symbolId:symbol.id})">
-                            <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
-                        </a>
-
+                            <a ui-sref="symbols.actions({symbolId:symbol.id})">
+                                <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
             </div>
         </div>
+
     </div>
-</div>
+</div

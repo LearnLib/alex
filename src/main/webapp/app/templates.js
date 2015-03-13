@@ -1,77 +1,4 @@
-angular.module('templates-all', ['app/views/directives/counter-example-builder.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
-
-angular.module("app/views/directives/counter-example-builder.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/counter-example-builder.html",
-    "<div id=\"counter-example-builder\">\n" +
-    "	<div class=\"wrapper\">\n" +
-    "	\n" +
-    "		<nav class=\"navbar navbar-default\" role=\"navigation\">\n" +
-    "	        <div class=\"container-fluid\">\n" +
-    "	        \n" +
-    "	        	<p class=\"navbar-text\"><strong>Counter Example Builder</strong></p>\n" +
-    "\n" +
-    "                <button class=\"btn btn-default btn-sm navbar-btn pull-right\" ng-click=\"close()\"><i\n" +
-    "	                    class=\"fa fa-close\"></i></button>\n" +
-    "                <button class=\"btn btn-primary btn-sm navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
-    "                    ok\n" +
-    "                </button>\n" +
-    "                <button class=\"btn btn-default btn-sm navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">\n" +
-    "	            	<i class=\"fa fa-eye\"></i>\n" +
-    "	            </button>  \n" +
-    "	        </div>\n" +
-    "	    </nav>\n" +
-    "	    \n" +
-    "	    <div class=\"available-inputs-panel\">\n" +
-    "	        <ul class=\"list-group\">\n" +
-    "	            <li class=\"list-group-item\" ng-repeat=\"input in inputs\" draggable=\"true\" effect-allowed=\"copy\"\n" +
-    "	                draggable-type=\"custom-object\" draggable-data=\"input\">{{input}}</li>\n" +
-    "	        </ul>\n" +
-    "	    </div>\n" +
-    "    \n" +
-    "    <div class=\"counter-example-panel\">\n" +
-    "\n" +
-    "		<div class=\"counter-example-list-wrapper\">\n" +
-    "            <div class=\"list-group\" as-sortable ng-model=\"ios\">\n" +
-    "                <div class=\"list-group-item\" ng-repeat=\"io in counterExample track by $index\" as-sortable-item>\n" +
-    "\n" +
-    "                    <span class=\"text-muted pull-right\" ng-click=\"remove($index)\">\n" +
-    "                        <i class=\"fa fa-trash fa-fw\"></i>\n" +
-    "                    </span>\n" +
-    "\n" +
-    "                    <span class=\"text-muted pull-right\" as-sortable-item-handle style=\"display: inline-block; margin-right: 5px\">\n" +
-    "                        <i class=\"fa fa-sort fa-fw\"></i>\n" +
-    "                    </span>\n" +
-    "\n" +
-    "                    <div class=\"container-fluid clearfix\" style=\"margin-right: 50px; padding: 0\">\n" +
-    "\n" +
-    "                        <div style=\"width: 66%; float: left\" drop=\"onDropInput($data, $event, $index)\" drop-effect=\"copy\"\n" +
-    "                             drop-accept=\"'json/custom-object'\">\n" +
-    "                            <div class=\"counter-example-input\">{{io.input}}</div>\n" +
-    "                        </div>\n" +
-    "\n" +
-    "                        <div style=\"width: 34%; float: left\">\n" +
-    "                            <select class=\"form-control\">\n" +
-    "                            	<option>OK</option>\n" +
-    "                            	<option>FAILED</option>\n" +
-    "                            </select>\n" +
-    "                        </div>\n" +
-    "\n" +
-    "                    </div>\n" +
-    "\n" +
-    "                </div>\n" +
-    "        	</div>\n" +
-    "        	\n" +
-    "        	<button class=\"btn btn-default btn-sm btn-block\" ng-click=\"add()\">\n" +
-    "	            Add\n" +
-    "	        </button>\n" +
-    "    	</div>\n" +
-    "		\n" +
-    "    </div>\n" +
-    "				\n" +
-    "	</div>\n" +
-    "</div>");
-}]);
+angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -298,16 +225,6 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                </li>\n" +
     "            </ul>\n" +
     "\n" +
-    "            <ul class=\"nav navbar-nav navbar-right\" ng-if=\"!project\">\n" +
-    "                <li class=\"dropdown\" dropdown dropdown-navigation>\n" +
-    "                    <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
-    "                       aria-expanded=\"false\">Tools <span class=\"caret\"></span></a>\n" +
-    "                    <ul class=\"dropdown-menu\" role=\"menu\">\n" +
-    "                        <li><a ui-sref=\"tools.hypotheses\">View Hypothesis from PC</a></li>\n" +
-    "                    </ul>\n" +
-    "                </li>\n" +
-    "            </ul>\n" +
-    "\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
@@ -319,7 +236,18 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
 angular.module("app/views/directives/observation-table.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/directives/observation-table.html",
-    "");
+    "<table class=\"table table-condensed obsevation-table\">\n" +
+    "    <thead>\n" +
+    "        <tr>\n" +
+    "            <th ng-repeat=\"th in table.header\" ng-bind=\"::th\"></th>\n" +
+    "        </tr>\n" +
+    "    </thead>\n" +
+    "    <tbody>\n" +
+    "        <tr ng-repeat=\"tr in table.body track by $index\">\n" +
+    "            <td ng-repeat=\"td in tr track by $index\" ng-bind=\"::td\"></td>\n" +
+    "        </tr>\n" +
+    "    </tbody>\n" +
+    "</table>");
 }]);
 
 angular.module("app/views/directives/rest-action-edit-form.html", []).run(["$templateCache", function($templateCache) {
@@ -647,7 +575,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                    </div>\n" +
     "                    <div class=\"form-group\">\n" +
     "                        <label class=\"control-label\">The value to fill the element with</label>\n" +
-    "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.generator\">\n" +
+    "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
     "                    </div>\n" +
     "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
@@ -1047,12 +975,509 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "\n" +
     "    <h3 class=\"modal-title\">Update Action</h3>\n" +
     "    <span class=\"text-muted\">Update an existing action for a symbol</span>\n" +
-    "\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"modal-body\">\n" +
+    "<form ng-submit=\"updateAction()\" id=\"action-create-form\">\n" +
     "\n" +
-    "</div>");
+    "    <div class=\"modal-body\">\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SEARCH_FOR_TEXT -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.SEARCH_FOR_TEXT\">\n" +
+    "\n" +
+    "            <h4><strong>Search for Text</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Search on a page for a piece of text or a regular expression\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">Value</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "            <div class=\"checkbox\">\n" +
+    "                <label>\n" +
+    "                    <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
+    "                </label>\n" +
+    "            </div>\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle>\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: SEARCH_FOR_TEXT -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SEARCH_FOR_NODE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.SEARCH_FOR_NODE\">\n" +
+    "\n" +
+    "            <h4><strong>Search for Node</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Search an HTML element in the DOM tree of a page\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">CSS selector</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.value\">\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: SEARCH_FOR_NODE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CLEAR -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.CLEAR\">\n" +
+    "\n" +
+    "            <h4><strong>Clear Node</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Clear an element (eg. input or contenteditable element)\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">CSS selector</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CLEAR -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CLICK -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.CLICK\">\n" +
+    "\n" +
+    "            <h4><strong>Click</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Click on an element\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">CSS selector</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "            </div>\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CLICK -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: FILL -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.FILL\">\n" +
+    "\n" +
+    "            <h4><strong>Fill Node</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Fill an element with content (eg. input or contenteditable element)\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">CSS selector</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">The value to fill the element with</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: FILL -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: GO_TO -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.GO_TO\">\n" +
+    "\n" +
+    "            <h4><strong>Go to URL</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Go to a url that is <strong>relative</strong> to your projects' base url\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">Url</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: GO_TO -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SUBMIT -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.web.SUBMIT\">\n" +
+    "\n" +
+    "            <h4><strong>Submit Form</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Submit a form\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label class=\"control-label\">CSS selector</label>\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "            </div>\n" +
+    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "            </a>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: SUBMIT -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CALL_URL -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CALL_URL\">\n" +
+    "\n" +
+    "            <h4><strong>Call Url</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Make a HTTP request to an URL (relative to your projects base url)</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"url\" ng-model=\"action.url\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <select class=\"form-control\" ng-options=\"m for m in ['DELETE', 'GET', 'POST', 'PUT']\"\n" +
+    "                        ng-model=\"action.method\">\n" +
+    "                    <option value=\"\" disabled>Select a Method</option>\n" +
+    "                </select>\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <label>Data</label>\n" +
+    "\n" +
+    "                <div ng-model=\"action.data\"\n" +
+    "                     style=\"border-radius: 4px; width: 100%; height: 150px; border: 1px solid #ccc\"\n" +
+    "                     ui-ace=\"{useWrapMode : true, showGutter: true, theme:'eclipse', mode: 'json'}\"></div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CALL_URL -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_ATTRIBUTE_EXISTS -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_ATTRIBUTE_EXISTS\">\n" +
+    "\n" +
+    "            <h4><strong>Check Attribute Exists</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Check if a JSON attribute exists in the response body</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\"\n" +
+    "                       ng-model=\"action.attribute\">\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_ATTRIBUTE_EXISTS -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_ATTRIBUTE_TYPE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_ATTRIBUTE_TYPE\">\n" +
+    "\n" +
+    "            <h4><strong>Check Attribute Type</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Check if a JSON attribute in the response body has a specific type</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\"\n" +
+    "                       ng-model=\"action.attribute\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <select class=\"form-control\" ng-model=\"action.jsonType\"\n" +
+    "                        ng-options=\"t as t for t in ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']\">\n" +
+    "                    <option value=\"\" disabled>Choose a JavaScript type</option>\n" +
+    "                </select>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_ATTRIBUTE_TYPE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_ATTRIBUTE_VALUE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_ATTRIBUTE_VALUE\">\n" +
+    "\n" +
+    "            <h4><strong>Check Attribute Value</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Check a JSON attribute of the response body to be a specific value</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"json attribute, e.g. myobj.attr[1].obj\"\n" +
+    "                       ng-model=\"action.attribute\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"the attribute value\"\n" +
+    "                       ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "            <div class=\"checkbox\">\n" +
+    "                <label>\n" +
+    "                    <input type=\"checkbox\" ng-model=\"action.regexp\"> is regular expression\n" +
+    "                </label>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_ATTRIBUTE_VALUE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_HEADER_FIELD -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_HEADER_FIELD\">\n" +
+    "\n" +
+    "            <h4><strong>Check Header Field</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Check a HTTP response header field to have a specific value</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"http header field, e.g. Content-Type\"\n" +
+    "                       ng-model=\"action.key\">\n" +
+    "            </div>\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\"\n" +
+    "                       placeholder=\"http header field value, e.g. application/json\" ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "            <div class=\"checkbox\">\n" +
+    "                <label>\n" +
+    "                    <input type=\"checkbox\" ng-model=\"action.regexp\">is regular expression\n" +
+    "                </label>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_HEADER_FIELD -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_HTTP_BODY_TEXT -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_HTTP_BODY_TEXT\">\n" +
+    "\n" +
+    "            <h4><strong>Check HTTP Body Text</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Search for a string or a regular express in the response body of a request</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"text\" placeholder=\"value to search for\"\n" +
+    "                       ng-model=\"action.value\">\n" +
+    "            </div>\n" +
+    "            <div class=\"checkbox\">\n" +
+    "                <label>\n" +
+    "                    <input type=\"checkbox\" ng-model=\"action.regexp\">\n" +
+    "                    is regular expression\n" +
+    "                </label>\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_HTTP_BODY_TEXT -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: CHECK_STATUS -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.rest.CHECK_STATUS\">\n" +
+    "\n" +
+    "            <h4><strong>Check Status</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">Check the HTTP response to have a specific status</p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <label>HTTP Status</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" type=\"number\" placeholder=\"e.g. 200, 404 ...\"\n" +
+    "                       ng-model=\"action.status\">\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <!-- END: CHECK_STATUS -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: WAIT -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.WAIT\">\n" +
+    "            <h4><strong>Wait</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Wait for a specified amount of time in ms.\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <label>Duration</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"number\" class=\"form-control\" min=\"0\" ng-model=\"action.duration\" placeholder=\"0\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: WAIT -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: DECLARE_COUNTER -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.DECLARE_COUNTER\">\n" +
+    "            <h4><strong>Declare Counter</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Declare a counter variable that can be used in other actions\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the counter\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: DECLARE_COUNTER -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: DECLARE_VARIABLE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.DECLARE_VARIABLE\">\n" +
+    "            <h4><strong>Declare Variable</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Declare a variable that can be used in other actions\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the variable\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: DECLARE_VARIABLE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: INCREMENT_COUNTER -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.INCREMENT_COUNTER\">\n" +
+    "            <h4><strong>Increment Counter</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Increment an <strong>already declared</strong> counter variable\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the counter\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: INCREMENT_COUNTER -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SET_COUNTER -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.SET_COUNTER\">\n" +
+    "            <h4><strong>Set Counter</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Set the value of an <strong>already declared</strong> counter variable\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the counter\">\n" +
+    "            </div>\n" +
+    "            <label>Value</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"number\" class=\"form-control\" ng-model=\"action.value\" placeholder=\"0\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: SET_COUNTER -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SET_VARIABLE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.SET_VARIABLE\">\n" +
+    "            <h4><strong>Set Variable</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Set the value of an <strong>already declared</strong> variable\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the variable\">\n" +
+    "            </div>\n" +
+    "            <label>Value</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" ng-model=\"action.value\" placeholder=\"The value of the variable\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: SET_VARIABLE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SET_VARIABLE_BY_JSON_ATTRIBUTE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE\">\n" +
+    "            <h4><strong>Set Variable By JSON Attribute</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Set the value of an <strong>already declared</strong> variable to the content of a JSON\n" +
+    "                attribute\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the variable\">\n" +
+    "            </div>\n" +
+    "            <label>Attribute</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" ng-model=\"action.value\" placeholder=\"The JSON attribute\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->\n" +
+    "\n" +
+    "\n" +
+    "        <!-- BEGIN: SET_VARIABLE_BY_NODE -->\n" +
+    "        <div ng-if=\"action.type === actionTypes.other.SET_VARIABLE_BY_NODE\">\n" +
+    "            <h4><strong>Set Variable By Node Value</strong></h4>\n" +
+    "\n" +
+    "            <p class=\"text-muted\">\n" +
+    "                Set the value of an <strong>already declared</strong> variable to the content of a HTML element\n" +
+    "            </p>\n" +
+    "            <hr>\n" +
+    "            <label>Name</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
+    "                       placeholder=\"The name of the variable\">\n" +
+    "            </div>\n" +
+    "            <label>XPath</label>\n" +
+    "\n" +
+    "            <div class=\"form-group\">\n" +
+    "                <input class=\"form-control\" ng-model=\"action.value\" placeholder=\"The CSS3 XPath to the element\">\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Update</button>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run(["$templateCache", function($templateCache) {
@@ -1706,8 +2131,8 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "\n" +
     "        <div ng-show=\"selectedChartMode === null\">\n" +
     "\n" +
-    "            <div class=\"pull-left\" selectable items=\"results\" style=\"margin-right: 16px\">\n" +
-    "                <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "            <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "                <input type=\"checkbox\" selection-checkbox-all items=\"results\">\n" +
     "            </div>\n" +
     "\n" +
     "            <div class=\"btn-group btn-group-xs pull-left\" dropdown dropdown-hover>\n" +
@@ -1768,9 +2193,16 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\" ng-style=\"fullWidth ? {'width':'100%'} : {}\">\n" +
     "\n" +
-    "        <div selectable items=\"results\" ng-if=\"selectedChartMode === null\">\n" +
-    "            <div selectable-list>\n" +
-    "                <div selectable-list-item ng-repeat=\"result in results track by $index\">\n" +
+    "        <div class=\"selectable-list\" ng-show=\"selectedChartMode === null\">\n" +
+    "            <div ng-repeat=\"result in results\"\n" +
+    "                 selection-model\n" +
+    "                 selection-model-type=\"checkbox\"\n" +
+    "                 selection-model-selected-attribute=\"_selected\"\n" +
+    "                 selection-model-mode=\"multiple\"\n" +
+    "                 selection-model-selected-items=\"selectedResults\"\n" +
+    "                 selection-model-cleanup-strategy=\"deselect\">\n" +
+    "\n" +
+    "                <div selectable-list-item>\n" +
     "\n" +
     "                    <strong>Test No\n" +
     "                        <span ng-bind=\"result.testNo\"></span>\n" +
@@ -1830,8 +2262,8 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"results\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"results\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-left\">\n" +
@@ -1846,41 +2278,50 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\" selectable items=\"results\">\n" +
     "\n" +
-    "        <div selectable-list>\n" +
-    "            <div selectable-list-item ng-repeat=\"result in results track by $index\">\n" +
+    "        <div class=\"selectable-list\">\n" +
+    "            <div ng-repeat=\"result in results\"\n" +
+    "                 selection-model\n" +
+    "                 selection-model-type=\"checkbox\"\n" +
+    "                 selection-model-selected-attribute=\"_selected\"\n" +
+    "                 selection-model-mode=\"multiple\"\n" +
+    "                 selection-model-selected-items=\"selectedResults\"\n" +
+    "                 selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
-    "                <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                    <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                        <i class=\"fa fa-bars\"></i>\n" +
-    "                    </button>\n" +
-    "                    <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                        <li>\n" +
-    "                            <a href=\"\" open-test-details-modal test=\"result\">\n" +
-    "                                <i class=\"fa fa-info fa-fw\"></i> Details\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                        <li>\n" +
-    "                            <a ui-sref=\"learn.results.compare({testNos: [result.testNo]})\">\n" +
-    "                                <i class=\"fa fa-code-fork fa-fw\"></i> Hypotheses\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                        <li>\n" +
-    "                            <a href=\"\" ng-click=\"deleteResult(result)\">\n" +
-    "                                <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                    </ul>\n" +
+    "                <div selectable-list-item>\n" +
+    "\n" +
+    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                            <i class=\"fa fa-bars\"></i>\n" +
+    "                        </button>\n" +
+    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                            <li>\n" +
+    "                                <a href=\"\" open-test-details-modal test=\"result\">\n" +
+    "                                    <i class=\"fa fa-info fa-fw\"></i> Details\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li>\n" +
+    "                                <a ui-sref=\"learn.results.compare({testNos: [result.testNo]})\">\n" +
+    "                                    <i class=\"fa fa-code-fork fa-fw\"></i> Hypotheses\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li>\n" +
+    "                                <a href=\"\" ng-click=\"deleteResult(result)\">\n" +
+    "                                    <i class=\"fa fa-trash fa-fw\"></i> Delete\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                        </ul>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <strong>Test No\n" +
+    "                        <span ng-bind=\"result.testNo\"></span>\n" +
+    "                    </strong>,\n" +
+    "                    [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
+    "\n" +
+    "                    <div class=\"text-muted\">\n" +
+    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                    </div>\n" +
+    "\n" +
     "                </div>\n" +
-    "\n" +
-    "                <strong>Test No\n" +
-    "                    <span ng-bind=\"result.testNo\"></span>\n" +
-    "                </strong>,\n" +
-    "                [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                <div class=\"text-muted\">\n" +
-    "                    Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                </div>\n" +
-    "\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
@@ -1903,8 +2344,8 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"allSymbols\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"getAllSymbols\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-right\">\n" +
@@ -1922,20 +2363,20 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "\n" +
     "<div class=\"view-body\">\n" +
     "    <div class=\"container symbol-group-list\">\n" +
-    "        <div ng-repeat=\"group in groups track by group.id\" class=\"symbol-group\">\n" +
+    "\n" +
+    "        <div ng-repeat=\"group in groups\" class=\"symbol-group\"\n" +
+    "             ng-class=\"group._isCollapsed ? 'collapsed' :''\">\n" +
     "\n" +
     "            <div class=\"selectable-list symbol-group-header\">\n" +
     "                <div class=\"selectable-list-heading\">\n" +
-    "\n" +
-    "                    <div class=\"selectable-list-control\" selectable items=\"group.symbols\">\n" +
-    "                        <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "                    <div class=\"selectable-list-control\">\n" +
+    "                        <input type=\"checkbox\" selection-checkbox-all items=\"group.symbols\">\n" +
     "                    </div>\n" +
-    "\n" +
     "                    <div class=\"selectable-list-content\">\n" +
     "\n" +
     "                        <span class=\"pull-right\" ng-click=\"group._isCollapsed = !group._isCollapsed\">\n" +
-    "                            <i class=\"fa fa-fw\"\n" +
-    "                               ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
+    "                        <i class=\"fa fa-fw\"\n" +
+    "                           ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
     "                        </span>\n" +
     "\n" +
     "                        <h3 class=\"symbol-group-title\" ng-bind=\"group.name\"\n" +
@@ -1946,32 +2387,38 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                        </p>\n" +
     "\n" +
     "                    </div>\n" +
-    "\n" +
     "                </div>\n" +
     "            </div>\n" +
     "\n" +
-    "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\" selectable items=\"group.symbols\">\n" +
+    "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\">\n" +
+    "                <div class=\"selectable-list\">\n" +
+    "                    <div ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\"\n" +
+    "                         selection-model\n" +
+    "                         selection-model-type=\"checkbox\"\n" +
+    "                         selection-model-selected-attribute=\"_selected\"\n" +
+    "                         selection-model-mode=\"multiple\"\n" +
+    "                         selection-model-selected-items=\"selectedSymbols\"\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
-    "                <div selectable-list>\n" +
-    "                    <div selectable-list-item ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\">\n" +
+    "                        <div selectable-list-item>\n" +
+    "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
+    "                                <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'\"></i>\n" +
+    "                            </a>\n" +
     "\n" +
-    "                        <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
-    "                            <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'\"></i>\n" +
-    "                        </a>\n" +
+    "                            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
     "\n" +
-    "                        <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
-    "\n" +
-    "                        <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                            <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                        </a>\n" +
-    "\n" +
+    "                            <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
+    "                                <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
+    "                            </a>\n" +
+    "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
     "\n" +
     "            </div>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
-    "</div>");
+    "</div");
 }]);
 
 angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", function($templateCache) {
@@ -2203,21 +2650,20 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable=\"symbol.actions\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"symbol.actions\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-primary\" open-action-create-modal symbol=\"symbol\" on-created=\"addAction\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" action-create-modal-handle on-created=\"addAction\">\n" +
     "                Create\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" open-action-edit-modal symbol=\"symbol\"\n" +
-    "                    action=\"(symbol.actions | selected | first)\"\n" +
+    "            <button class=\"btn btn-xs btn-default\" action-edit-modal-handle action=\"(selectedActions | first)\"\n" +
     "                    on-updated=\"updateAction\"\n" +
-    "                    ng-class=\"(symbol.actions|selected).length != 1 ? 'disabled': ''\">\n" +
+    "                    ng-class=\"selectedActions.length !== 1 ? 'disabled': ''\">\n" +
     "                Edit\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-click=\"deleteSelectedActions()\"\n" +
-    "                    ng-class=\"(symbol.actions|selected).length == 0 ? 'disabled': ''\">\n" +
+    "                    ng-class=\"selectedActions.length === 0 ? 'disabled': ''\">\n" +
     "                Delete\n" +
     "            </button>\n" +
     "        </div>\n" +
@@ -2234,9 +2680,17 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div ng-if=\"symbol.actions\" as-sortable ng-model=\"symbol.actions\">\n" +
-    "            <div selectable items=\"symbol.actions\">\n" +
-    "                <div selectable-list>\n" +
-    "                    <div selectable-list-item ng-repeat=\"action in symbol.actions track by $index\" as-sortable-item>\n" +
+    "            <div class=\"selectable-list\">\n" +
+    "                <div ng-repeat=\"action in symbol.actions\"\n" +
+    "                     selection-model\n" +
+    "                     selection-model-type=\"checkbox\"\n" +
+    "                     selection-model-selected-attribute=\"_selected\"\n" +
+    "                     selection-model-mode=\"multiple\"\n" +
+    "                     selection-model-selected-items=\"selectedActions\"\n" +
+    "                     selection-model-cleanup-strategy=\"deselect\"\n" +
+    "                     as-sortable-item>\n" +
+    "\n" +
+    "                    <div selectable-list-item>\n" +
     "\n" +
     "                        <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
     "                            <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
@@ -2244,8 +2698,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "                            </button>\n" +
     "                            <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
     "                                <li>\n" +
-    "                                    <a href open-action-edit-modal symbol=\"symbol\" action=\"action\"\n" +
-    "                                       on-updated=\"updateAction\">\n" +
+    "                                    <a href action-edit-modal-handle action=\"action\" on-updated=\"updateAction\">\n" +
     "                                        <i class=\"fa fa-edit fa-fw\"></i> Edit\n" +
     "                                    </a>\n" +
     "                                </li>\n" +
@@ -2265,6 +2718,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "                        <span ng-bind=\"action.toString()\"></span>\n" +
     "\n" +
     "                    </div>\n" +
+    "\n" +
     "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
@@ -2520,8 +2974,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"allSymbols\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"getAllSymbols\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-left\">\n" +
@@ -2544,15 +2998,15 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                </ul>\n" +
     "            </div>\n" +
     "\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length == 1 ? '' : 'disabled'\"\n" +
-    "                    symbol-edit-modal-handle symbol=\"(allSymbols | selected | first)\" on-updated=\"updateSymbol\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-class=\"selectedSymbols.length === 1 ? '' : 'disabled'\"\n" +
+    "                    symbol-edit-modal-handle symbol=\"(selectedSymbols | first)\" on-updated=\"updateSymbol\">\n" +
     "                Edit\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\" symbols=\"getSelectedSymbols\"\n" +
-    "                    on-moved=\"moveSymbols\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\">\n" +
+    "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\" symbols=\"selectedSymbols\"\n" +
+    "                    on-moved=\"moveSymbolsToGroup\" ng-class=\"selectedSymbols.length > 0 ? '' : 'disabled'\">\n" +
     "                Move\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" ng-class=\"(allSymbols|selected).length > 0 ? '' : 'disabled'\"\n" +
+    "            <button class=\"btn btn-xs btn-default\" ng-class=\"selectedSymbols.length > 0 ? '' : 'disabled'\"\n" +
     "                    ng-click=\"deleteSelectedSymbols()\">\n" +
     "                Delete\n" +
     "            </button>\n" +
@@ -2561,7 +3015,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "\n" +
     "        <div class=\"pull-right\">\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-click=\"toggleCollapseAllGroups()\">\n" +
-    "                <i class=\"fa fa-fw\" ng-class=\"collapseAll ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
+    "                <i class=\"fa fa-fw\" ng-class=\"groupsCollapsed ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
     "            </button>\n" +
     "        </div>\n" +
     "\n" +
@@ -2571,19 +3025,19 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "<div class=\"view-body\">\n" +
     "    <div class=\"container symbol-group-list\">\n" +
     "\n" +
-    "        <div ng-repeat=\"group in groups track by group.id\" class=\"symbol-group\"\n" +
-    "             ng-class=\"group._isCollapsed ? 'collapsed' :''\">\n" +
+    "        <div ng-repeat=\"group in groups track by $index\" class=\"symbol-group\"\n" +
+    "             ng-class=\"group._collapsed ? 'collapsed' :''\">\n" +
     "\n" +
     "            <div class=\"selectable-list symbol-group-header\">\n" +
     "                <div class=\"selectable-list-heading\">\n" +
-    "                    <div class=\"selectable-list-control\" selectable items=\"group.symbols\">\n" +
-    "                        <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "                    <div class=\"selectable-list-control\">\n" +
+    "                        <input type=\"checkbox\" selection-checkbox-all items=\"group.symbols\">\n" +
     "                    </div>\n" +
     "                    <div class=\"selectable-list-content\">\n" +
     "\n" +
-    "                        <span class=\"pull-right\" ng-click=\"group._isCollapsed = !group._isCollapsed\">\n" +
+    "                        <span class=\"pull-right\" ng-click=\"group._collapsed = !group._collapsed\">\n" +
     "                            <i class=\"fa fa-fw\"\n" +
-    "                               ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
+    "                               ng-class=\"group._collapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
     "                        </span>\n" +
     "\n" +
     "                        <a href class=\"pull-right\" style=\"margin-right: 15px\" symbol-group-edit-modal-handle\n" +
@@ -2592,7 +3046,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                        </a>\n" +
     "\n" +
     "                        <h3 class=\"symbol-group-title\" ng-bind=\"group.name\"\n" +
-    "                            ng-click=\"group._isCollapsed = !group._isCollapsed\"></h3>\n" +
+    "                            ng-click=\"group._collapsed = !group._collapsed\"></h3>\n" +
     "\n" +
     "                        <p class=\"text-muted\">\n" +
     "                            <span ng-bind=\"group.symbols.length\"></span> Symbols\n" +
@@ -2602,13 +3056,17 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                </div>\n" +
     "            </div>\n" +
     "\n" +
-    "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\">\n" +
+    "            <div class=\"symbol-group-body\" collapse=\"group._collapsed\">\n" +
+    "                <div class=\"selectable-list\">\n" +
+    "                    <div ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\"\n" +
+    "                         selection-model\n" +
+    "                         selection-model-type=\"checkbox\"\n" +
+    "                         selection-model-selected-attribute=\"_selected\"\n" +
+    "                         selection-model-mode=\"multiple\"\n" +
+    "                         selection-model-selected-items=\"selectedSymbols\"\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
-    "                <div selectable items=\"group.symbols\">\n" +
-    "                    <div selectable-list>\n" +
-    "                        <div selectable-list-item item=\"symbol\"\n" +
-    "                             ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\">\n" +
-    "\n" +
+    "                        <div selectable-list-item>\n" +
     "                            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
     "                                <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
     "                                    <i class=\"fa fa-bars\"></i>\n" +
@@ -2621,7 +3079,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                                    </li>\n" +
     "                                    <li>\n" +
     "                                        <a href symbol-move-modal-handle groups=\"groups\" symbols=\"[symbol]\"\n" +
-    "                                           on-moved=\"moveSymbols\">\n" +
+    "                                           on-moved=\"moveSymbolsToGroup\">\n" +
     "                                            <i class=\"fa fa-exchange fa-fw\"></i> Move\n" +
     "                                        </a>\n" +
     "                                    </li>\n" +
@@ -2650,13 +3108,13 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                            <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
     "                                <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
     "                            </a>\n" +
-    "\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
     "\n" +
     "            </div>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>");
 }]);
@@ -2671,29 +3129,20 @@ angular.module("app/views/widgets/widget-counter-examples.html", []).run(["$temp
   "use strict";
   $templateCache.put("app/views/widgets/widget-counter-examples.html",
     "<form class=\"form form-condensed\" ng-submit=\"addCounterExample()\">\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <div class=\"input-group\">\n" +
-    "            <input type=\"text\" class=\"form-control\" placeholder=\"input\" ng-model=\"newCounterExample.input\">\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        Click on the labels of the hypothesis\n" +
+    "    </p>\n" +
     "\n" +
-    "            <div class=\"input-group-addon\">\n" +
-    "                <i class=\"fa fa-info\"></i>\n" +
-    "            </div>\n" +
-    "        </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <input type=\"text\" class=\"form-control\" placeholder=\"input\" ng-model=\"newCounterExample.input\">\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
-    "        <div class=\"input-group\">\n" +
-    "            <input type=\"text\" class=\"form-control\" placeholder=\"output\" ng-model=\"newCounterExample.output\">\n" +
-    "\n" +
-    "            <div class=\"input-group-addon\">\n" +
-    "                <i class=\"fa fa-info\"></i>\n" +
-    "            </div>\n" +
-    "        </div>\n" +
+    "        <input type=\"text\" class=\"form-control\" placeholder=\"output\" ng-model=\"newCounterExample.output\">\n" +
+    "    </div>\n" +
     "    </div>\n" +
     "    <div class=\"form-group\">\n" +
-    "		<div class=\"btn-group btn-group-sm\">\n" +
-    "    		<button class=\"btn btn-primary\">Add Counter Example</button>\n" +
-    "    		<a href open-counter-example-builder counter-example=\"newCounterExample\" class=\"btn btn-default\">Edit</a>\n" +
-    "		</div>\n" +
+    "        <button class=\"btn btn-primary btn-xs\">Add</button>\n" +
+    "        <a href class=\"btn btn-default btn-xs\" ng-click=\"testCounterExample(counterExample)\">Test</a>\n" +
     "    </div>\n" +
     "</form>\n" +
     "<hr>\n" +

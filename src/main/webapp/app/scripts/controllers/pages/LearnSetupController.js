@@ -95,7 +95,7 @@
         $scope.startLearning = function () {
             var selectedSymbols;
 
-            if (angular.isUndefined($scope.resetSymbol)) {
+            if ($scope.resetSymbol === null) {
                 Toast.danger('You <strong>must</strong> selected a reset symbol in order to start learning');
                 return;
             }
@@ -128,6 +128,15 @@
          */
         $scope.updateLearnConfiguration = function (config) {
             $scope.learnConfiguration = config;
+        };
+
+        /**
+         * Extracts all symbols from all symbol groups and merges them into a single array
+         *
+         * @returns {Symbol[]}
+         */
+        $scope.getAllSymbols = function () {
+            return _.flatten(_.pluck($scope.groups, 'symbols'));
         };
     }
 }());

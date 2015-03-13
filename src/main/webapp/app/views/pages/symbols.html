@@ -6,8 +6,8 @@
 <div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
     <div class="container">
 
-        <div class="pull-left" style="margin-right: 16px" selectable items="allSymbols">
-            <input type="checkbox" selectable-item-checkbox>
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" selection-checkbox-all items="getAllSymbols">
         </div>
 
         <div class="pull-left">
@@ -30,15 +30,15 @@
                 </ul>
             </div>
 
-            <button class="btn btn-xs btn-default" ng-class="(allSymbols|selected).length == 1 ? '' : 'disabled'"
-                    symbol-edit-modal-handle symbol="(allSymbols | selected | first)" on-updated="updateSymbol">
+            <button class="btn btn-xs btn-default" ng-class="selectedSymbols.length === 1 ? '' : 'disabled'"
+                    symbol-edit-modal-handle symbol="(selectedSymbols | first)" on-updated="updateSymbol">
                 Edit
             </button>
-            <button class="btn btn-xs btn-default" symbol-move-modal-handle groups="groups" symbols="getSelectedSymbols"
-                    on-moved="moveSymbols" ng-class="(allSymbols|selected).length > 0 ? '' : 'disabled'">
+            <button class="btn btn-xs btn-default" symbol-move-modal-handle groups="groups" symbols="selectedSymbols"
+                    on-moved="moveSymbolsToGroup" ng-class="selectedSymbols.length > 0 ? '' : 'disabled'">
                 Move
             </button>
-            <button class="btn btn-xs btn-default" ng-class="(allSymbols|selected).length > 0 ? '' : 'disabled'"
+            <button class="btn btn-xs btn-default" ng-class="selectedSymbols.length > 0 ? '' : 'disabled'"
                     ng-click="deleteSelectedSymbols()">
                 Delete
             </button>
@@ -47,7 +47,7 @@
 
         <div class="pull-right">
             <button class="btn btn-xs btn-default" ng-click="toggleCollapseAllGroups()">
-                <i class="fa fa-fw" ng-class="collapseAll ? 'fa-chevron-down': 'fa-chevron-right'"></i>
+                <i class="fa fa-fw" ng-class="groupsCollapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
             </button>
         </div>
 
@@ -57,19 +57,19 @@
 <div class="view-body">
     <div class="container symbol-group-list">
 
-        <div ng-repeat="group in groups track by group.id" class="symbol-group"
-             ng-class="group._isCollapsed ? 'collapsed' :''">
+        <div ng-repeat="group in groups track by $index" class="symbol-group"
+             ng-class="group._collapsed ? 'collapsed' :''">
 
             <div class="selectable-list symbol-group-header">
                 <div class="selectable-list-heading">
-                    <div class="selectable-list-control" selectable items="group.symbols">
-                        <input type="checkbox" selectable-item-checkbox>
+                    <div class="selectable-list-control">
+                        <input type="checkbox" selection-checkbox-all items="group.symbols">
                     </div>
                     <div class="selectable-list-content">
 
-                        <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
+                        <span class="pull-right" ng-click="group._collapsed = !group._collapsed">
                             <i class="fa fa-fw"
-                               ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                               ng-class="group._collapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
                         </span>
 
                         <a href class="pull-right" style="margin-right: 15px" symbol-group-edit-modal-handle
@@ -78,7 +78,7 @@
                         </a>
 
                         <h3 class="symbol-group-title" ng-bind="group.name"
-                            ng-click="group._isCollapsed = !group._isCollapsed"></h3>
+                            ng-click="group._collapsed = !group._collapsed"></h3>
 
                         <p class="text-muted">
                             <span ng-bind="group.symbols.length"></span> Symbols
@@ -88,13 +88,17 @@
                 </div>
             </div>
 
-            <div class="symbol-group-body" collapse="group._isCollapsed">
+            <div class="symbol-group-body" collapse="group._collapsed">
+                <div class="selectable-list">
+                    <div ng-repeat="symbol in group.symbols | orderBy:'-name':true"
+                         selection-model
+                         selection-model-type="checkbox"
+                         selection-model-selected-attribute="_selected"
+                         selection-model-mode="multiple"
+                         selection-model-selected-items="selectedSymbols"
+                         selection-model-cleanup-strategy="deselect">
 
-                <div selectable items="group.symbols">
-                    <div selectable-list>
-                        <div selectable-list-item item="symbol"
-                             ng-repeat="symbol in group.symbols | orderBy:'-name':true">
-
+                        <div selectable-list-item>
                             <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
                                 <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
                                     <i class="fa fa-bars"></i>
@@ -107,7 +111,7 @@
                                     </li>
                                     <li>
                                         <a href symbol-move-modal-handle groups="groups" symbols="[symbol]"
-                                           on-moved="moveSymbols">
+                                           on-moved="moveSymbolsToGroup">
                                             <i class="fa fa-exchange fa-fw"></i> Move
                                         </a>
                                     </li>
@@ -136,12 +140,12 @@
                             <a ui-sref="symbols.actions({symbolId:symbol.id})">
                                 <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
                             </a>
-
                         </div>
                     </div>
                 </div>
 
             </div>
         </div>
+
     </div>
 </div>

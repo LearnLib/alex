@@ -20,7 +20,7 @@
      * @param paths
      */
     function config($stateProvider, $urlRouterProvider, paths) {
-    	    	
+
         // redirect to the start page when no other route fits
         $urlRouterProvider.otherwise("/home");
 
@@ -98,7 +98,7 @@
                 }
             })
             .state('symbols.history', {
-            	url: '/{symbolId:int}/history',
+                url: '/{symbolId:int}/history',
                 views: {
                     '@': {
                         controller: 'SymbolsHistoryController',
@@ -210,21 +210,6 @@
                     requiresProject: false
                 }
             })
-
-            // =========================================================
-            // tool pages
-
-            .state('tools', {
-                abstract: true,
-                template: '<ui-view class="animate-view" />'
-            })
-            .state('tools.hyotheses', {
-                url: '/tools/hypotheses/view',
-                templateUrl: paths.views.PAGES + '/tools-hypotheses-view.html',
-                data: {
-                    requiresProject: false
-                }
-            })
     }
 
     /**
@@ -235,11 +220,11 @@
      * @param SessionService
      */
     function run($rootScope, $state, SessionService) {
-    	
+
         // route validation
         $rootScope.$on("$stateChangeStart", stateChangeStart);
 
-        function stateChangeStart(event, toState, toParams, fromState, fromParams){
+        function stateChangeStart(event, toState, toParams, fromState, fromParams) {
             if (toState.data) {
                 if (toState.data.requiresProject && SessionService.project.get() == null) {
                     $state.go("home");

@@ -6,7 +6,7 @@
         .controller('LearnResultsStatisticsController', LearnResultsStatisticsController);
 
     LearnResultsStatisticsController.$inject = [
-        '$scope', 'SessionService', 'LearnResultResource', 'SelectionService', 'LearnerResultChartService'
+        '$scope', 'SessionService', 'LearnResult', 'LearnerResultChartService'
     ];
 
     /**
@@ -16,13 +16,11 @@
      *
      * @param $scope
      * @param Session
-     * @param LearnResultResource
-     * @param SelectionService
+     * @param LearnResult
      * @param LearnerResultChartService
      * @constructor
      */
-    function LearnResultsStatisticsController($scope, Session, LearnResultResource, SelectionService,
-                                              LearnerResultChartService) {
+    function LearnResultsStatisticsController($scope, Session, LearnResult, LearnerResultChartService) {
 
         // The project that is stored in the session
         var project = Session.project.get();
@@ -47,6 +45,12 @@
          * @type {Array}
          */
         $scope.results = [];
+
+        /**
+         * The list of selected learn results
+         * @type {Array}
+         */
+        $scope.selectedResults = [];
 
         /**
          * The mode of the displayed chart
@@ -74,11 +78,15 @@
             options: null
         };
 
-        // get all final learn results of the project
-        LearnResultResource.getAllFinal(project.id)
-            .then(function (results) {
-                $scope.results = results;
-            });
+        // initialize the controller
+        (function init () {
+
+            // get all final learn results of the project
+            LearnResult.Resource.getAllFinal(project.id)
+                .then(function (results) {
+                    $scope.results = results;
+                });
+        }());
 
         /**
          * Sets the selected learner result property from which the chart data should be created. Calls the methods
@@ -100,13 +108,13 @@
          * displayable chart mode to MULTIPLE_FINAL
          */
         $scope.createChartFromFinalResults = function () {
-            var selectedResults = SelectionService.getSelected($scope.results);
             var chartData;
 
-            if (selectedResults.length > 0) {
+            console.log($scope.selectedResults)
+            if ($scope.selectedResults.length > 0) {
                 chartData =
                     LearnerResultChartService
-                        .createDataFromMultipleFinalResults(selectedResults, $scope.selectedChartProperty);
+                        .createDataFromMultipleFinalResults($scope.selectedResults, $scope.selectedChartProperty);
 
                 $scope.chartData = {
                     data: chartData.data,
@@ -123,24 +131,22 @@
          * displayable chart mode to MULTIPLE_COMPLETE
          */
         $scope.createChartFromCompleteResults = function () {
-            var selectedResults = SelectionService.getSelected($scope.results);
             var chartData;
 
-            if (selectedResults.length > 0) {
+            if ($scope.selectedResults.length > 0) {
 
                 // TODO: get complete results from selected results as soon as there is an interface for that
-                return;
 
-                chartData =
-                    LearnerResultChartService
-                        .createDataFromMultipleCompleteResults(selectedResults, $scope.selectedChartProperty);
-
-                $scope.chartData = {
-                    data: chartData.data,
-                    options: chartData.options
-                };
-
-                $scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
+                //chartData =
+                //    LearnerResultChartService
+                //        .createDataFromMultipleCompleteResults($scope.selectedResults, $scope.selectedChartProperty);
+                //
+                //$scope.chartData = {
+                //    data: chartData.data,
+                //    options: chartData.options
+                //};
+                //
+                //$scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
             }
         };
 

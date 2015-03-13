@@ -65,6 +65,7 @@
         .constant('learnAlgorithms', {
             EXTENSIBLE_LSTAR: 'EXTENSIBLE_LSTAR',
             DHC: 'DHC',
-            DISCRIMINATION_TREE: 'DISCRIMINATION_TREE'
+            DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
+            TTT : 'TTT'
         })
 }());
