@@ -3,6 +3,8 @@ package de.learnlib.weblearner.learner;
 import de.learnlib.algorithms.dhc.mealy.MealyDHCBuilder;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealyBuilder;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealyBuilder;
+import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
+import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
 import de.learnlib.oracles.SULOracle;
 import de.learnlib.weblearner.entities.LearnAlgorithms;
@@ -39,6 +41,8 @@ public final class LearnerAlgorithmFactory {
             return createDiscriminationTreeLearner(sigma, oracle);
         case EXTENSIBLE_LSTAR:
             return createExtensibleLStarLearner(sigma, oracle);
+            case TTT:
+                return createTTTLearner(sigma, oracle);
         default:
             throw new IllegalArgumentException("The learn algorithm " + algorithm + " is not known in the factory.");
         }
@@ -57,5 +61,10 @@ public final class LearnerAlgorithmFactory {
     private static MealyLearner<String, String> createExtensibleLStarLearner(Alphabet<String> sigma,
                                                                              SULOracle<String, String> oracle) {
         return new ExtensibleLStarMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
+    }
+
+    private static MealyLearner<String, String> createTTTLearner(Alphabet<String> sigma,
+                                                                 SULOracle<String, String> oracle) {
+        return new TTTLearnerMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
     }
 }

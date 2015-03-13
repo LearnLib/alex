@@ -75,7 +75,7 @@
         <!-- dependencies versions -->
         <jersey.version>2.16</jersey.version>
         <hibernate.version>5.1.3.Final</hibernate.version>
-        <learnlib.version>0.11.1</learnlib.version>
+        <learnlib.version>0.11.2-SNAPSHOT</learnlib.version>
         <automatalib.version>0.4.1</automatalib.version>
         <selenium.version>2.45.0</selenium.version>
     </properties>
@@ -149,6 +149,11 @@
         <dependency>
             <groupId>de.learnlib</groupId>
             <artifactId>learnlib-lstar-generic</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-ttt</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
         <dependency>

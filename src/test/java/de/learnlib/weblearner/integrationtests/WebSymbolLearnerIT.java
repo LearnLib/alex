@@ -7,6 +7,7 @@ import de.learnlib.weblearner.entities.Symbol;
 import net.automatalib.words.Alphabet;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -121,7 +122,7 @@ public class WebSymbolLearnerIT {
         String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
                     + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + ", \"eqOracle\":"
                         + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                    + "\"algorithm\": \"DISCRIMINATION_TREE\"}";
+                    + "\"algorithm\": \"TTT\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
@@ -147,7 +148,7 @@ public class WebSymbolLearnerIT {
         String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
                     + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + ", \"eqOracle\":"
                         + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                    + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"EXTENSIBLE_LSTAR\"}";
+                    + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"TTT\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
@@ -181,7 +182,7 @@ public class WebSymbolLearnerIT {
         String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
                     + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + ", \"eqOracle\":"
                         + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                    + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"DHC\"}";
+                    + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"TTT\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 

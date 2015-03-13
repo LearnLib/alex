@@ -119,7 +119,7 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
                         + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + " , \"eqOracle\":"
                             + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                            + "\"algorithm\": \"DHC\"}";
+                            + "\"algorithm\": \"TTT\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
@@ -131,6 +131,7 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         response = client.target(BASE_LEARNER_URL + path).request().get();
         LearnerResult result = new LearnerResult();
         String resultAsJSON = response.readEntity(String.class);
+        System.out.println(resultAsJSON);
         result.setJSON(resultAsJSON);
         assertTrue(testHelper.hypothesisIsEqualToTheExpectedOne(result.getHypothesis(), testAlphabet, "rest"));
     }

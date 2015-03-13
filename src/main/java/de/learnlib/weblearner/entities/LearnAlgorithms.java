@@ -18,6 +18,11 @@ public enum LearnAlgorithms {
     /**
      * @see de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy
      */
-    DISCRIMINATION_TREE
+    DISCRIMINATION_TREE,
+
+    /**
+     * @see de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy
+     */
+    TTT
 
 }

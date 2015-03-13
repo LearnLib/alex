@@ -1,8 +1,17 @@
 package de.learnlib.weblearner.learner;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ser.SerializerFactory;
+import de.learnlib.algorithms.discriminationtree.hypothesis.HState;
+import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
+import de.learnlib.algorithms.features.observationtable.writer.ObservationTableASCIIWriter;
+import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
 import de.learnlib.api.SUL;
+import de.learnlib.discriminationtree.DTNode;
+import de.learnlib.discriminationtree.DiscriminationTree;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.Mappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
@@ -14,11 +23,18 @@ import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
 import de.learnlib.weblearner.learner.connectors.MultiContextHandler;
+import de.learnlib.weblearner.utils.DiscriminationTreeSerializer;
+import net.automatalib.graphs.dot.GraphDOTHelper;
+import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests.
@@ -236,11 +252,55 @@ public class LearnerThread<C> extends Thread {
         long startTime = result.getStartTime().getTime();
         long currentTime = new Date().getTime();
         result.setDuration(currentTime - startTime);
+        saveInternalDataStructure();
         if (context instanceof MultiContextHandler) {
             result.setAmountOfResets(((MultiContextHandler) context).getCounter() - result.getAmountOfResets());
         } else {
             result.setAmountOfResets(-1);
         }
+    }
+
+    private void saveInternalDataStructure() {
+        if (learner instanceof ExtensibleLStarMealy) {
+            StringBuilder observationTable = new StringBuilder();
+            new ObservationTableASCIIWriter<String, String>().write(((ExtensibleLStarMealy) learner).getObservationTable(), observationTable);
+            result.setAlgorithmInformation(observationTable.toString());
+        } else if (learner instanceof DTLearnerMealy) {
+            DiscriminationTree discriminationTree = ((DTLearnerMealy) learner).getDiscriminationTree();
+            DTNode root = discriminationTree.getRoot();
+            result.setAlgorithmInformation(dtNodeToString(root));
+        }
+    }
+
+    private String dtNodeToString(DTNode<String, String, HState> node) {
+        StringBuilder result = new StringBuilder();
+        result.append('{');
+
+        if (node.isLeaf()) {
+            result.append("\"data\": \"");
+            result.append(node.getData());
+            result.append('"');
+        } else {
+            result.append("\"discriminator\": \"");
+            result.append(node.getDiscriminator());
+            result.append("\",");
+
+            result.append("\"children\": [");
+            for (Map.Entry<String, DTNode<String, String, HState>> entry : node.getChildEntries()) {
+                DTNode child = entry.getValue();
+                result.append(dtNodeToString(child));
+                result.append(",");
+            }
+
+            // remove last ',' if necessary
+            if (result.charAt(result.length() - 1) == ',') {
+                result.setLength(result.length() - 1);
+            }
+            result.append(']');
+        }
+
+        result.append('}');
+        return result.toString();
     }
 
 }

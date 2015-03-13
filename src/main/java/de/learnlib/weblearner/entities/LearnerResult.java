@@ -2,6 +2,7 @@ package de.learnlib.weblearner.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,6 +34,7 @@ import java.util.List;
  */
 @Entity
 @JsonPropertyOrder(alphabetic = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerResult implements Serializable {
 
     /** to be serializable. */
@@ -78,6 +80,9 @@ public class LearnerResult implements Serializable {
 
     /** The hypothesis of the result. */
     private CompactMealyMachineProxy hypothesis;
+
+    /** This is an optional property and can contain things like the internal data structure. */
+    private String algorithmInformation;
 
     /**
      * Default constructor.
@@ -360,6 +365,16 @@ public class LearnerResult implements Serializable {
         this.jsonChanged = true;
     }
 
+    @Column(length = Integer.MAX_VALUE)
+    public String getAlgorithmInformation() {
+        return algorithmInformation;
+    }
+
+    public void setAlgorithmInformation(String algorithmInformation) {
+        this.algorithmInformation = algorithmInformation;
+        this.jsonChanged = true;
+    }
+
     /**
      * Get the result as JSON.
      * This method buffers the generated JSON.
@@ -414,6 +429,7 @@ public class LearnerResult implements Serializable {
             setConfiguration(newResult.getConfiguration());
             setSigma(newResult.getSigma());
             setHypothesis(newResult.getHypothesis());
+            setAlgorithmInformation(newResult.getAlgorithmInformation());
 
             this.json = json;
             this.jsonChanged = false;
