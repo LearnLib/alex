@@ -268,6 +268,7 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                           aria-expanded=\"false\">Symbols <span class=\"caret\"></span></a>\n" +
     "                        <ul class=\"dropdown-menu\" role=\"menu\">\n" +
     "                            <li><a ui-sref=\"symbols\">Manage Symbols</a></li>\n" +
+    "                            <li><a ui-sref=\"symbols.trash\">Trash</a></li>\n" +
     "                            <li class=\"divider\"></li>\n" +
     "                            <li><a ui-sref=\"symbols.import\">Import</a></li>\n" +
     "                            <li><a ui-sref=\"symbols.export\">Export</a></li>\n" +
@@ -2890,29 +2891,19 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
 angular.module("app/views/pages/symbols-history.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/symbols-history.html",
-    "<div class=\"container\">\n" +
-    "    <h2>Symbols History</h2>\n" +
-    "\n" +
-    "    <p class=\"muted\">\n" +
-    "        Restore and older version of the symbol <strong>Symbol.Name</strong>\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
+    "<div view-heading\n" +
+    "     title=\"Symbols History\"\n" +
+    "     sub-title=\"Restore and older version of a symbol\">\n" +
     "</div>\n" +
     "\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\">\n" +
     "\n" +
-    "<div class=\"container\">\n" +
-    "    <table class=\"table\">\n" +
-    "        <thead>\n" +
-    "        <tr>\n" +
-    "            <th></th>\n" +
-    "        </tr>\n" +
-    "        </thead>\n" +
-    "        <tbody>\n" +
+    "        <div class=\"selectable-list\">\n" +
+    "            <div class=\"selectable-list-item\" ng-repeat=\"revision in revisions | orderBy:'-revision':false \">\n" +
+    "                <div class=\"selectable-list-content\" style=\"margin-left: 5px\">\n" +
     "\n" +
-    "            <tr ng-repeat=\"revision in revisions\">\n" +
-    "                <td>\n" +
-    "\n" +
-    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
+    "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover ng-if=\"$index !== 0\">\n" +
     "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
     "                            <i class=\"fa fa-bars\"></i>\n" +
     "                        </button>\n" +
@@ -2925,16 +2916,29 @@ angular.module("app/views/pages/symbols-history.html", []).run(["$templateCache"
     "                        </ul>\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <strong ng-bind=\"revision.name\"></strong> [<span ng-bind=\"revision.abbreviation\"></span>]\n" +
+    "                    <span class=\"label label-primary pull-right\" ng-show=\"$index === 0\">Latest</span>\n" +
+    "\n" +
+    "                    <strong ng-bind=\"revision.name\"></strong> [<span ng-bind=\"revision.abbreviation\"></span>], Rev. {{revision.revision}}\n" +
     "\n" +
     "                    <p class=\"text-muted\">\n" +
-    "                        <span ng-bind=\"revision.actions.length\"></span> Actions\n" +
-    "                    </p>\n" +
-    "                </td>\n" +
-    "            </tr>\n" +
+    "                        <a href ng-click=\"revision._collapsed = !revision._collapsed\">\n" +
+    "                            <span ng-bind=\"revision.actions.length\"></span>\n" +
+    "                            Actions\n" +
+    "                            <i class=\"fa fa-fw\" ng-class=\"revision._collapsed ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
+    "                        </a>\n" +
     "\n" +
-    "        </tbody>\n" +
-    "    </table>\n" +
+    "                        <ol collapse=\"!revision._collapsed\">\n" +
+    "                            <li ng-repeat=\"action in revision.actions\">\n" +
+    "                                {{action.toString()}}\n" +
+    "                            </li>\n" +
+    "                        </ol>\n" +
+    "                    </p>\n" +
+    "\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
@@ -3002,8 +3006,8 @@ angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", 
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"symbols\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"symbols\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-right\">\n" +
@@ -3018,10 +3022,24 @@ angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", 
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div selectable items=\"symbols\" ng-if=\"symbols.length > 0\">\n" +
-    "            <div selectable-list>\n" +
-    "                <div selectable-list-item ng-repeat=\"symbol in symbols track by $index\">\n" +
+    "        <div class=\"alert alert-info alert-condensed\" ng-show=\"symbols.length > 0\">\n" +
+    "            <i class=\"fa fa-fw fa-info\"></i> Recovered symbols will be put in the default group.\n" +
+    "        </div>\n" +
     "\n" +
+    "        <div class=\"alert alert-info\" ng-show=\"symbols.length === 0\">\n" +
+    "            There aren't any deleted symbols.\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"selectable-list\" ng-if=\"symbols.length > 0\">\n" +
+    "            <div ng-repeat=\"symbol in symbols | orderBy:'-name':true\"\n" +
+    "                 selection-model\n" +
+    "                 selection-model-type=\"checkbox\"\n" +
+    "                 selection-model-selected-attribute=\"_selected\"\n" +
+    "                 selection-model-mode=\"multiple\"\n" +
+    "                 selection-model-selected-items=\"selectedSymbols\"\n" +
+    "                 selection-model-cleanup-strategy=\"deselect\">\n" +
+    "\n" +
+    "                <div selectable-list-item>\n" +
     "                    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"recoverSymbol(symbol)\">\n" +
     "                        <i class=\"fa fa-rotate-left fa-fw\"></i>\n" +
     "                    </a>\n" +
@@ -3031,13 +3049,9 @@ angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", 
     "                    <div class=\"text-muted\">\n" +
     "                        <span ng-bind=\"symbol.actions.length\"></span> Actions\n" +
     "                    </div>\n" +
-    "\n" +
     "                </div>\n" +
-    "            </div>\n" +
-    "        </div>\n" +
     "\n" +
-    "        <div class=\"alert alert-info\" ng-if=\"symbols.length === 0\">\n" +
-    "            There are no deleted symbols\n" +
+    "            </div>\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
@@ -3145,7 +3159,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                         selection-model-selected-attribute=\"_selected\"\n" +
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
-    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
+    "                         ng-if=\"!symbol.hidden\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "                            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
@@ -5580,47 +5595,83 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             return selectedSymbols;
         };
     }
-}());;(function(){
-	'use strict';
+}());;(function () {
+    'use strict';
 
-	angular
-		.module('weblearner.controller')
-		.controller('SymbolsHistoryController', [
-		     '$scope', '$stateParams', 'SymbolResource', 'SessionService',
-		     SymbolsHistoryController
-	     ]);
-     
-    function SymbolsHistoryController($scope, $stateParams, SymbolResource, SessionService) {
-		
-		$scope.project = SessionService.project.get();
-		$scope.revisions = [];
-		$scope.latestSymbol;
-		
-		//////////
-		
-		SymbolResource.getRevisions($scope.project.id, $stateParams.symbolId)
-			.then(function(revisions){
-				$scope.latestSymbol = revisions.pop();
-				$scope.revisions = revisions;
-			});
-		
-		//////////
-		
-		$scope.restoreRevision = function(revision) {
-			
-			// copy all important properties from the revision to the latest
-			$scope.latestSymbol.name = revision.name;
-			$scope.latestSymbol.abbreviation = revision.abbreviation;
-			$scope.latestSymbol.actions = revision.actions;
-			
-			// update symbol with new properties
-			SymbolResource.update($scope.project.id, $scope.latestSymbol)
-				.then(function(symbol){
-					$scope.revisions.push($scope.latestSymbol);
-					$scope.latestSymbol = symbol;
-				})
-		}
-	}
+    angular
+        .module('weblearner.controller')
+        .controller('SymbolsHistoryController', SymbolsHistoryController);
+
+    SymbolsHistoryController.$inject = ['$scope', '$stateParams', 'Symbol', 'SessionService', 'ToastService'];
+
+    /**
+     * @param $scope - The controllers scope
+     * @param $stateParams - The ui.router $stateParams service
+     * @param Symbol - The factory for the Symbol model
+     * @param Session - The SessionService
+     * @param Toast - The ToastService
+     * @constructor
+     */
+    function SymbolsHistoryController($scope, $stateParams, Symbol, Session, Toast) {
+
+        // The project in the session
+        var project = Session.project.get();
+
+        /**
+         * All revisions of a symbol
+         * @type {Symbol[]}
+         */
+        $scope.revisions = [];
+
+        /**
+         * The most current version of a symbol
+         * @type {Symbol}
+         */
+        $scope.latestRevision = null;
+
+        // init controller
+        (function init() {
+
+            // load all revisions of the symbol whose id is passed in the URL
+            if (angular.isDefined($stateParams.symbolId)) {
+                Symbol.Resource.getRevisions(project.id, $stateParams.symbolId)
+                    .then(function (revisions) {
+                        $scope.latestRevision = revisions[revisions.length - 1];
+                        $scope.revisions = revisions;
+                    })
+                    .catch(function () {
+                        // TODO: go to error page
+                    })
+            } else {
+                // TODO: go to error page
+            }
+        }());
+
+        /**
+         * Restores a previous revision of a symbol by updating the latest with the properties of the revision
+         *
+         * @param {symbol} revision - The revision of the symbol that should be restored
+         */
+        $scope.restoreRevision = function (revision) {
+            var symbol = $scope.latestRevision.copy();
+
+            // copy all important properties from the revision to the latest
+            symbol.name = revision.name;
+            symbol.abbreviation = revision.abbreviation;
+            symbol.actions = revision.actions;
+
+            // update symbol with new properties
+            Symbol.Resource.update(project.id, symbol)
+                .then(function (updatedSymbol) {
+                    Toast.success('Updated symbol to revion <strong>' + revision.revision + '</strong>');
+                    $scope.revisions.push(updatedSymbol);
+                    $scope.latestRevision = updatedSymbol;
+                })
+                .catch(function (response) {
+                    Toast.danger('<p><strong>Update to revion failed</strong></p>' + response.data.message);
+                })
+        }
+    }
 }());;(function () {
     'use strict';
 
@@ -5693,50 +5744,59 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('SymbolsTrashController', SymbolsTrashController);
 
-    SymbolsTrashController.$inject = ['$scope', 'SessionService', 'Symbol', 'SelectionService', '_'];
+    SymbolsTrashController.$inject = ['$scope', 'SessionService', 'Symbol', '_', 'ToastService'];
 
     /**
      * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
      * of these symbols. By default, recovered symbols will be moved in the default group with the id 0.
      *
-     * @param $scope
-     * @param Session
-     * @param Symbol
-     * @param SelectionService
+     * @param $scope - The controllers scope object
+     * @param Session - The SessionService
+     * @param Symbol - The Symbol factory
+     * @param _ - Lodash
+     * @param Toast - The ToastService
      * @constructor
      */
-    function SymbolsTrashController($scope, Session, Symbol, SelectionService, _) {
+    function SymbolsTrashController($scope, Session, Symbol, _, Toast) {
 
         // The project that is saved in the sessionStorage
         var project = Session.project.get();
 
         /**
          * The list of deleted symbols
-         *
          * @type {Symbol[]}
          */
         $scope.symbols = [];
 
-        // fetch all deleted symbols and save them in scope
-        Symbol.Resource.getAll(project.id, {deleted: true})
-            .then(function (symbols) {
-                $scope.symbols = symbols;
-            });
+        /**
+         * The list of selected symbols
+         * @type {Symbol[]}
+         */
+        $scope.selectedSymbols = [];
+
+        // initialize controller scope variables
+        (function init() {
+
+            // fetch all deleted symbols and save them in scope
+            Symbol.Resource.getAll(project.id, {deleted: true})
+                .then(function (symbols) {
+                    $scope.symbols = symbols;
+                });
+        }())
 
         /**
          * Recovers a deleted symbol by calling the API and removes the recovered symbol from the symbol list on success
          *
-         * @param symbol {Symbol} - The symbol that should be recovered from the trash
+         * @param {Symbol} symbol - The symbol that should be recovered from the trash
          */
         $scope.recoverSymbol = function (symbol) {
-
-            // create a copy so that the selection won't be removed in case the API call fails
-            var s = symbol.copy();
-            SelectionService.removeSelection(s);
-
             Symbol.Resource.recover(project.id, symbol)
                 .then(function (recoveredSymbol) {
+                    Toast.success('Symbol ' + recoveredSymbol.name + ' recovered');
                     _.remove($scope.symbols, {id: recoveredSymbol.id});
+                })
+                .catch(function (response) {
+                    Toast.error('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + response.data.message);
                 })
         };
 
@@ -5744,10 +5804,17 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * Recovers all symbols that were selected and calls $scope.recoverSymbol for each one
          */
         $scope.recoverSelectedSymbols = function () {
-            var selectedSymbols = SelectionService.getSelected($scope.symbols);
-
-            if (selectedSymbols.length > 0) {
-                _.forEach(selectedSymbols, $scope.recoverSymbol);
+            if ($scope.selectedSymbols.length > 0) {
+                Symbol.Resource.recoverSome(project.id, $scope.selectedSymbols)
+                    .then(function () {
+                        Toast.success('Symbols recovered');
+                        _.forEach($scope.selectedSymbols, function (symbol) {
+                            _.remove($scope.symbols, {id: symbol.id})
+                        })
+                    })
+                    .catch(function (response) {
+                        Toast.error('<p><strong>Error recovering symbols!</strong></p>' + response.data.message);
+                    })
             }
         }
     }
@@ -8791,6 +8858,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             result.duration = data.duration;
             result.project = data.project;
             result.startTime = data.startTime;
+            result.sigma = data.sigma;
             result.stepNo = data.stepNo;
             result.testNo = data.testNo;
             result.algorithmInformation = data.algorithmInformation;
@@ -9647,7 +9715,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         };
 
         /**
-         * Make a POST request to /rest/projects/{projectId}/symbols/symbolId/show in order to revert the deleting
+         * Makes a POST request to /rest/projects/{projectId}/symbols/symbolId/show in order to revert the deleting
          * of a symbol.
          *
          * @param projectId - The id of the project the symbol belongs to
@@ -9660,6 +9728,24 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id + '/show', {})
                 .then(function (response) {
                     return _this.build(response.data);
+                });
+        };
+
+        /**
+         * Makes a POST request to /rest/projects/{projectId}/symbols/batch/{symbolIds}/show in order to revert the
+         * deleting of multiple symbols.
+         *
+         * @param projectId - The id of the project the symbols belongs to
+         * @param symbols - The symbols that should be made visible again
+         * @returns {*} - A promise object
+         */
+        SymbolResource.prototype.recoverSome = function (projectId, symbols) {
+            var _this = this;
+            var symbolIds = _.pluck(symbols, 'id').join(',');
+
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + symbolIds + '/show', {})
+                .then(function (response) {
+                    return _this.buildSome(response.data);
                 });
         };
 

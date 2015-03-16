@@ -49,6 +49,7 @@
             result.duration = data.duration;
             result.project = data.project;
             result.startTime = data.startTime;
+            result.sigma = data.sigma;
             result.stepNo = data.stepNo;
             result.testNo = data.testNo;
             result.algorithmInformation = data.algorithmInformation;

@@ -183,7 +183,7 @@
         };
 
         /**
-         * Make a POST request to /rest/projects/{projectId}/symbols/symbolId/show in order to revert the deleting
+         * Makes a POST request to /rest/projects/{projectId}/symbols/symbolId/show in order to revert the deleting
          * of a symbol.
          *
          * @param projectId - The id of the project the symbol belongs to
@@ -196,6 +196,24 @@
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id + '/show', {})
                 .then(function (response) {
                     return _this.build(response.data);
+                });
+        };
+
+        /**
+         * Makes a POST request to /rest/projects/{projectId}/symbols/batch/{symbolIds}/show in order to revert the
+         * deleting of multiple symbols.
+         *
+         * @param projectId - The id of the project the symbols belongs to
+         * @param symbols - The symbols that should be made visible again
+         * @returns {*} - A promise object
+         */
+        SymbolResource.prototype.recoverSome = function (projectId, symbols) {
+            var _this = this;
+            var symbolIds = _.pluck(symbols, 'id').join(',');
+
+            return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + symbolIds + '/show', {})
+                .then(function (response) {
+                    return _this.buildSome(response.data);
                 });
         };
 

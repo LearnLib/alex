@@ -6,8 +6,8 @@
 <div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
     <div class="container">
 
-        <div class="pull-left" style="margin-right: 16px" selectable items="symbols">
-            <input type="checkbox" selectable-item-checkbox>
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" selection-checkbox-all items="symbols">
         </div>
 
         <div class="pull-right">
@@ -22,10 +22,24 @@
 <div class="view-body">
     <div class="container">
 
-        <div selectable items="symbols" ng-if="symbols.length > 0">
-            <div selectable-list>
-                <div selectable-list-item ng-repeat="symbol in symbols track by $index">
+        <div class="alert alert-info alert-condensed" ng-show="symbols.length > 0">
+            <i class="fa fa-fw fa-info"></i> Recovered symbols will be put in the default group.
+        </div>
 
+        <div class="alert alert-info" ng-show="symbols.length === 0">
+            There aren't any deleted symbols.
+        </div>
+
+        <div class="selectable-list" ng-if="symbols.length > 0">
+            <div ng-repeat="symbol in symbols | orderBy:'-name':true"
+                 selection-model
+                 selection-model-type="checkbox"
+                 selection-model-selected-attribute="_selected"
+                 selection-model-mode="multiple"
+                 selection-model-selected-items="selectedSymbols"
+                 selection-model-cleanup-strategy="deselect">
+
+                <div selectable-list-item>
                     <a class="btn btn-default btn-icon pull-right" ng-click="recoverSymbol(symbol)">
                         <i class="fa fa-rotate-left fa-fw"></i>
                     </a>
@@ -35,13 +49,9 @@
                     <div class="text-muted">
                         <span ng-bind="symbol.actions.length"></span> Actions
                     </div>
-
                 </div>
-            </div>
-        </div>
 
-        <div class="alert alert-info" ng-if="symbols.length === 0">
-            There are no deleted symbols
+            </div>
         </div>
 
     </div>

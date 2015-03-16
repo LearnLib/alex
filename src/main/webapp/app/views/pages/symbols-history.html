@@ -1,26 +1,16 @@
-<div class="container">
-    <h2>Symbols History</h2>
-
-    <p class="muted">
-        Restore and older version of the symbol <strong>Symbol.Name</strong>
-    </p>
-    <hr>
+<div view-heading
+     title="Symbols History"
+     sub-title="Restore and older version of a symbol">
 </div>
 
+<div class="view-body">
+    <div class="container">
 
-<div class="container">
-    <table class="table">
-        <thead>
-        <tr>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
+        <div class="selectable-list">
+            <div class="selectable-list-item" ng-repeat="revision in revisions | orderBy:'-revision':false ">
+                <div class="selectable-list-content" style="margin-left: 5px">
 
-            <tr ng-repeat="revision in revisions">
-                <td>
-
-                    <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+                    <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover ng-if="$index !== 0">
                         <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
                             <i class="fa fa-bars"></i>
                         </button>
@@ -33,14 +23,27 @@
                         </ul>
                     </div>
 
-                    <strong ng-bind="revision.name"></strong> [<span ng-bind="revision.abbreviation"></span>]
+                    <span class="label label-primary pull-right" ng-show="$index === 0">Latest</span>
+
+                    <strong ng-bind="revision.name"></strong> [<span ng-bind="revision.abbreviation"></span>], Rev. {{revision.revision}}
 
                     <p class="text-muted">
-                        <span ng-bind="revision.actions.length"></span> Actions
-                    </p>
-                </td>
-            </tr>
+                        <a href ng-click="revision._collapsed = !revision._collapsed">
+                            <span ng-bind="revision.actions.length"></span>
+                            Actions
+                            <i class="fa fa-fw" ng-class="revision._collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
+                        </a>
 
-        </tbody>
-    </table>
+                        <ol collapse="!revision._collapsed">
+                            <li ng-repeat="action in revision.actions">
+                                {{action.toString()}}
+                            </li>
+                        </ol>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
