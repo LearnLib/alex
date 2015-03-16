@@ -4,31 +4,49 @@
     <div class="sub-nav absolute">
         <div class="container-fluid">
             <div class="pull-left" style="margin-right: 16px">
-                <div class="btn-group btn-group-xs" dropdown>
-                    <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
-                        <i class="fa fa-bars"></i>
+
+                <div style="display: inline-block;" ng-show="mode === modes.HYPOTHESIS">
+                    <div class="btn-group btn-group-xs" dropdown>
+                        <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <ul class="dropdown-menu pull-left" role="menu">
+                            <li>
+                                <a href learn-result-details-modal-handle result="getCurrentStep()">
+                                    <i class="fa fa-info fa-fw"></i> Details
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href download-svg="#hypothesis-{{index}}">
+                                    <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
+                                </a>
+                                <a href download-as-json data="getCurrentStep().hypothesis">
+                                    <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button class="btn btn-default btn-xs" open-hypothesis-layout-settings-modal
+                            layout-settings="layoutSettings[index]">
+                        <i class="fa fa-eye fa-fw"></i> Layout
                     </button>
-                    <ul class="dropdown-menu pull-left" role="menu">
-                        <li>
-                            <a href="" open-test-details-modal test="getCurrentStep()">
-                                <i class="fa fa-info fa-fw"></i> Details
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href download-svg="#hypothesis-{{index}}">
-                                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
-                            </a>
-                            <a href download-as-json data="getCurrentStep().hypothesis">
-                                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
-                            </a>
-                        </li>
-                    </ul>
                 </div>
-                
-                <button class="btn btn-default btn-xs" open-hypothesis-layout-settings-modal layout-settings="layoutSettings[index]">
-                     	<i class="fa fa-eye fa-fw"></i> Layout
-                </button>
+
+                <div style="display: inline-block;" ng-if="hasInternatDataStructure()">
+                    <button class="btn btn-default btn-xs"
+                            ng-show="mode === modes.INTERNAL"
+                            ng-click="showHypothesis()">
+                        Hypothesis
+                    </button>
+                    <button class="btn btn-default btn-xs"
+                            ng-show="mode === modes.HYPOTHESIS"
+                            ng-click="showInternalDataStructure()">
+                        Internal
+                    </button>
+                </div>
+
             </div>
             <div class="pull-right">
 
@@ -61,8 +79,20 @@
 
     <div class="hypothesis-panel">
 
-        <hypothesis id="hypothesis-{{index}}" test="getCurrentStep()" layout-settings="layoutSettings[index]"></hypothesis>
+        <hypothesis id="hypothesis-{{index}}" test="getCurrentStep()"
+                    layout-settings="layoutSettings[index]"
+                    ng-if="mode === modes.HYPOTHESIS"></hypothesis>
+
+        <observation-table data="result[pointer].algorithmInformation"
+                           ng-if="mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR">
+        </observation-table>
+
+        <discrimination-tree data="result[pointer].algorithmInformation"
+                           ng-if="mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE">
+        </discrimination-tree>
 
     </div>
+
+</div>
 
 </div>

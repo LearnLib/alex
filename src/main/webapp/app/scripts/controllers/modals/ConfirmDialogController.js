@@ -3,14 +3,11 @@
 
     angular
         .module('weblearner.controller')
-        .controller('ConfirmDialogController', [
-            '$scope', '$modalInstance', 'modalData',
-            ConfirmDialogController
-        ]);
+        .controller('ConfirmDialogController', ConfirmDialogController);
+
+    ConfirmDialogController.$inject = ['$scope', '$modalInstance', 'modalData'];
 
     /**
-     * ConfirmDialogController
-     *
      * The controller that handles the confirm modal dialog.
      *
      * @param $scope
@@ -24,8 +21,6 @@
         $scope.text = modalData.text;
         $scope.regexp = modalData.regexp;
         $scope.errorMsg = modalData.errorMsg;
-
-        //////////
 
         /**
          * Close the modal dialog

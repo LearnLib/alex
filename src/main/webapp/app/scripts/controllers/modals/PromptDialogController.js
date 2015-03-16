@@ -3,14 +3,11 @@
 
     angular
         .module('weblearner.controller')
-        .controller('PromptDialogController', [
-            '$scope', '$modalInstance', 'modalData',
-            PromptDialogController
-        ]);
+        .controller('PromptDialogController', PromptDialogController);
+
+    PromptDialogController.$inject = ['$scope', '$modalInstance', 'modalData'];
 
     /**
-     * PromptDialogController
-     *
      * The controller that handles the prompt modal dialog.
      *
      * @param $scope
@@ -31,8 +28,6 @@
 
         /** the message that is shown when the user input doesn't match the regex **/
         $scope.errorMsg = modalData.errorMsg || 'Unknown validation error';
-
-        //////////
 
         /**
          * Close the modal dialog and pass the user input

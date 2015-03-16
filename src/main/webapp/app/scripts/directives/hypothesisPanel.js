@@ -119,9 +119,9 @@
         .module('weblearner.directives')
         .directive('hypothesisSlideshowPanel', hypothesisSlideshowPanel);
 
-    hypothesisSlideshowPanel.$inject = ['paths'];
+    hypothesisSlideshowPanel.$inject = ['paths', 'learnAlgorithms'];
 
-    function hypothesisSlideshowPanel(paths) {
+    function hypothesisSlideshowPanel(paths, learnAlgorithms) {
 
         var directive = {
             require: '^panelManager',
@@ -141,6 +141,14 @@
             scope.index;
             scope.pointer = scope.result.length - 1;
             scope.panels = ctrl.getPanels();
+            scope.learnAlgorithms = learnAlgorithms;
+
+            scope.modes = {
+                HYPOTHESIS: 0,
+                INTERNAL: 1,
+            }
+
+            scope.mode = scope.modes.HYPOTHESIS;
 
             //////////
 
@@ -180,6 +188,18 @@
 
             scope.getCurrentStep = function () {
                 return scope.result[scope.pointer];
+            }
+
+            scope.hasInternatDataStructure = function(){
+                return angular.isDefined(scope.result[scope.pointer].algorithmInformation);
+            }
+
+            scope.showInternalDataStructure = function(){
+                scope.mode = scope.modes.INTERNAL;
+            }
+
+            scope.showHypothesis = function(){
+                scope.mode = scope.modes.HYPOTHESIS;
             }
         }
     }

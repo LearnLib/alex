@@ -7,7 +7,7 @@
 
     LearnSetupController.$inject = [
         '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'LearnConfiguration',
-        'LearnerResource', 'ToastService'
+        'LearnerService', 'ToastService'
     ];
 
     /**
@@ -21,12 +21,12 @@
      * @param Session
      * @param SelectionService
      * @param LearnConfiguration
-     * @param LearnerResource
+     * @param Learner
      * @param Toast
      * @constructor
      */
     function LearnSetupController($scope, $state, SymbolGroup, Session, SelectionService, LearnConfiguration,
-                                  LearnerResource, Toast) {
+                                  Learner, Toast) {
 
         // the project that is stored in the session
         var project = Session.project.get();
@@ -59,7 +59,7 @@
 
             // make sure that there isn't any other learn process active
             // redirect to the load screen in case there is an active one
-            LearnerResource.isActive()
+            Learner.isActive()
                 .then(function (data) {
                     if (data.active) {
                         if (data.project == project.id) {
@@ -109,7 +109,7 @@
 
                 $scope.learnConfiguration.setResetSymbol($scope.resetSymbol);
 
-                LearnerResource.start($scope.project.id, $scope.learnConfiguration)
+                Learner.start($scope.project.id, $scope.learnConfiguration)
                     .then(function () {
                         $state.go('learn.start')
                     })

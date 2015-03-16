@@ -50,7 +50,7 @@
             $rootScope._ = _;
             $rootScope.selection = SelectionService;
         }])
-}());;angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+}());;angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -61,31 +61,49 @@ angular.module("app/views/directives/hypothesis-panel.html", []).run(["$template
     "    <div class=\"sub-nav absolute\">\n" +
     "        <div class=\"container-fluid\">\n" +
     "            <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "                <div class=\"btn-group btn-group-xs\" dropdown>\n" +
-    "                    <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
-    "                        <i class=\"fa fa-bars\"></i>\n" +
+    "\n" +
+    "                <div style=\"display: inline-block;\" ng-show=\"mode === modes.HYPOTHESIS\">\n" +
+    "                    <div class=\"btn-group btn-group-xs\" dropdown>\n" +
+    "                        <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
+    "                            <i class=\"fa fa-bars\"></i>\n" +
+    "                        </button>\n" +
+    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                            <li>\n" +
+    "                                <a href learn-result-details-modal-handle result=\"getCurrentStep()\">\n" +
+    "                                    <i class=\"fa fa-info fa-fw\"></i> Details\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li class=\"divider\"></li>\n" +
+    "                            <li>\n" +
+    "                                <a href download-svg=\"#hypothesis-{{index}}\">\n" +
+    "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
+    "                                </a>\n" +
+    "                                <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
+    "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.json\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                        </ul>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <button class=\"btn btn-default btn-xs\" open-hypothesis-layout-settings-modal\n" +
+    "                            layout-settings=\"layoutSettings[index]\">\n" +
+    "                        <i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
     "                    </button>\n" +
-    "                    <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                        <li>\n" +
-    "                            <a href=\"\" open-test-details-modal test=\"getCurrentStep()\">\n" +
-    "                                <i class=\"fa fa-info fa-fw\"></i> Details\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                        <li class=\"divider\"></li>\n" +
-    "                        <li>\n" +
-    "                            <a href download-svg=\"#hypothesis-{{index}}\">\n" +
-    "                                <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
-    "                            </a>\n" +
-    "                            <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
-    "                                <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.json\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                    </ul>\n" +
     "                </div>\n" +
-    "                \n" +
-    "                <button class=\"btn btn-default btn-xs\" open-hypothesis-layout-settings-modal layout-settings=\"layoutSettings[index]\">\n" +
-    "                     	<i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
-    "                </button>\n" +
+    "\n" +
+    "                <div style=\"display: inline-block;\" ng-if=\"hasInternatDataStructure()\">\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.INTERNAL\"\n" +
+    "                            ng-click=\"showHypothesis()\">\n" +
+    "                        Hypothesis\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.HYPOTHESIS\"\n" +
+    "                            ng-click=\"showInternalDataStructure()\">\n" +
+    "                        Internal\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "\n" +
     "            </div>\n" +
     "            <div class=\"pull-right\">\n" +
     "\n" +
@@ -118,9 +136,21 @@ angular.module("app/views/directives/hypothesis-panel.html", []).run(["$template
     "\n" +
     "    <div class=\"hypothesis-panel\">\n" +
     "\n" +
-    "        <hypothesis id=\"hypothesis-{{index}}\" test=\"getCurrentStep()\" layout-settings=\"layoutSettings[index]\"></hypothesis>\n" +
+    "        <hypothesis id=\"hypothesis-{{index}}\" test=\"getCurrentStep()\"\n" +
+    "                    layout-settings=\"layoutSettings[index]\"\n" +
+    "                    ng-if=\"mode === modes.HYPOTHESIS\"></hypothesis>\n" +
+    "\n" +
+    "        <observation-table data=\"result[pointer].algorithmInformation\"\n" +
+    "                           ng-if=\"mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR\">\n" +
+    "        </observation-table>\n" +
+    "\n" +
+    "        <discrimination-tree data=\"result[pointer].algorithmInformation\"\n" +
+    "                           ng-if=\"mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE\">\n" +
+    "        </discrimination-tree>\n" +
     "\n" +
     "    </div>\n" +
+    "\n" +
+    "</div>\n" +
     "\n" +
     "</div>");
 }]);
@@ -1532,6 +1562,23 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "</form>");
 }]);
 
+angular.module("app/views/modals/confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/modals/confirm-dialog.html",
+    "<form ng-submit=\"ok()\">\n" +
+    "\n" +
+    "	<div class=\"modal-body\">\n" +
+    "	    <h4 ng-bind=\"text\"></h4>\n" +
+    "	</div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Yes</button>\n" +
+    "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">No</a>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
+}]);
+
 angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/modals/hypothesis-layout-settings-modal.html",
@@ -1577,6 +1624,69 @@ angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run
     "<div class=\"modal-footer\">\n" +
     "	<button class=\"btn btn-default btn-sm\" ng-click=\"defaultLayoutSettings()\">Default</button>\n" +
     "    <button class=\"btn btn-primary btn-sm\" ng-click=\"update()\">Update</button>\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/modals/learn-result-details-modal.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/modals/learn-result-details-modal.html",
+    "<div class=\"modal-header\">\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"ok()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
+    "    <h3 class=\"modal-title\">Test Details</h3>\n" +
+    "    <span class=\"text-muted\">View some details about this test</span>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-body\">\n" +
+    "\n" +
+    "    <table class=\"table table-condensed\">\n" +
+    "\n" +
+    "        <tr class=\"active\">\n" +
+    "            <td colspan=\"2\"><strong>About This Test</strong></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>nth Test</td>\n" +
+    "            <td>{{result.testNo}}</td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>nth Hypothesis</td>\n" +
+    "            <td>{{result.stepNo}}</td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>Started</td>\n" +
+    "            <td ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>Duration</td>\n" +
+    "            <td>{{result.duration}} ms</td>\n" +
+    "        </tr>\n" +
+    "\n" +
+    "        <tr class=\"active\">\n" +
+    "            <td colspan=\"2\"><strong>Configuration</strong></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>Algorithm</td>\n" +
+    "            <td>{{result.configuration.algorithm}}</td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>EQ Oracle</td>\n" +
+    "            <td>{{result.configuration.eqOracle.type}}</td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>Steps to Learn</td>\n" +
+    "            <td>{{result.configuration.maxAmountOfStepsToLearn}}</td>\n" +
+    "        </tr>\n" +
+    "\n" +
+    "    </table>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-footer\">\n" +
+    "    <button class=\"btn btn-primary\" ng-click=\"ok()\">Ok</button>\n" +
     "</div>");
 }]);
 
@@ -1717,26 +1827,9 @@ angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$te
     "</form>");
 }]);
 
-angular.module("app/views/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/prompt-dialog.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/views/modals/modal-confirm-dialog.html",
-    "<form ng-submit=\"ok()\">\n" +
-    "\n" +
-    "	<div class=\"modal-body\">\n" +
-    "	    <h4 ng-bind=\"text\"></h4>\n" +
-    "	</div>\n" +
-    "\n" +
-    "    <div class=\"modal-footer\">\n" +
-    "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Yes</button>\n" +
-    "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">No</a>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/views/modals/modal-prompt-dialog.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/modals/modal-prompt-dialog.html",
+  $templateCache.put("app/views/modals/prompt-dialog.html",
     "<div class=\"modal-header\">\n" +
     "    <h3 ng-bind=\"text\"></h3>\n" +
     "</div>\n" +
@@ -1761,69 +1854,6 @@ angular.module("app/views/modals/modal-prompt-dialog.html", []).run(["$templateC
     "    </div>\n" +
     "\n" +
     "</form>");
-}]);
-
-angular.module("app/views/modals/modal-test-details.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/modals/modal-test-details.html",
-    "<div class=\"modal-header\">\n" +
-    "\n" +
-    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"ok()\">\n" +
-    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
-    "    </a>\n" +
-    "\n" +
-    "    <h3 class=\"modal-title\">Test Details</h3>\n" +
-    "    <span class=\"text-muted\">View some details about this test</span>\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"modal-body\">\n" +
-    "\n" +
-    "    <table class=\"table table-condensed\">\n" +
-    "\n" +
-    "        <tr class=\"active\">\n" +
-    "            <td colspan=\"2\"><strong>About This Test</strong></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>nth Test</td>\n" +
-    "            <td>{{test.testNo}}</td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>nth Hypothesis</td>\n" +
-    "            <td>{{test.stepNo}}</td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Started</td>\n" +
-    "            <td ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Duration</td>\n" +
-    "            <td>{{test.duration}} ms</td>\n" +
-    "        </tr>\n" +
-    "\n" +
-    "        <tr class=\"active\">\n" +
-    "            <td colspan=\"2\"><strong>Configuration</strong></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Algorithm</td>\n" +
-    "            <td>{{test.configuration.algorithm}}</td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>EQ Oracle</td>\n" +
-    "            <td>{{test.configuration.eqOracle.type}}</td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Steps to Learn</td>\n" +
-    "            <td>{{test.configuration.maxAmountOfStepsToLearn}}</td>\n" +
-    "        </tr>\n" +
-    "\n" +
-    "    </table>\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"modal-footer\">\n" +
-    "    <button class=\"btn btn-primary\" ng-click=\"ok()\">Ok</button>\n" +
-    "</div>");
 }]);
 
 angular.module("app/views/modals/symbol-create-modal.html", []).run(["$templateCache", function($templateCache) {
@@ -2340,14 +2370,13 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "                 selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
     "                <div selectable-list-item>\n" +
-    "\n" +
     "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
     "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
     "                            <i class=\"fa fa-bars\"></i>\n" +
     "                        </button>\n" +
     "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
     "                            <li>\n" +
-    "                                <a href=\"\" open-test-details-modal test=\"result\">\n" +
+    "                                <a href learn-result-details-modal-handle result=\"result\">\n" +
     "                                    <i class=\"fa fa-info fa-fw\"></i> Details\n" +
     "                                </a>\n" +
     "                            </li>\n" +
@@ -2493,7 +2522,7 @@ angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", fu
     "            <div class=\"container-fluid\">\n" +
     "\n" +
     "                <div class=\"pull-left\">\n" +
-    "                    <button class=\"btn btn-xs btn-default\" open-test-details-modal test=\"test\">\n" +
+    "                    <button class=\"btn btn-xs btn-default\" learn-result-details-modal-handle result=\"test\">\n" +
     "                        <i class=\"fa fa-info fa-fw\"></i> Details\n" +
     "                    </button>\n" +
     "                	<button class=\"btn btn-xs btn-default\" open-hypothesis-layout-settings-modal layout-settings=\"layoutSettings\" on-update=\"updateLayoutSettings\">\n" +
@@ -3682,14 +3711,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('ConfirmDialogController', [
-            '$scope', '$modalInstance', 'modalData',
-            ConfirmDialogController
-        ]);
+        .controller('ConfirmDialogController', ConfirmDialogController);
+
+    ConfirmDialogController.$inject = ['$scope', '$modalInstance', 'modalData'];
 
     /**
-     * ConfirmDialogController
-     *
      * The controller that handles the confirm modal dialog.
      *
      * @param $scope
@@ -3703,8 +3729,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         $scope.text = modalData.text;
         $scope.regexp = modalData.regexp;
         $scope.errorMsg = modalData.errorMsg;
-
-        //////////
 
         /**
          * Close the modal dialog
@@ -3763,6 +3787,42 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 			$scope.layoutSettings = angular.copy(_defaultLayoutSetting);
 		};
 	}
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('LearnResultDetailsModalController', LearnResultDetailsModalController);
+
+    LearnResultDetailsModalController.$inject = ['$scope', '$modalInstance', 'modalData'];
+
+    /**
+     * The controller that is used to display the details of a learn result in a modal dialog. The data that is passed
+     * to this controller should be an object with a property 'result' which contains a learn result object. If none is
+     * given, nothing will be displayed.
+     *
+     * The template can be found at 'views/learn-result-details-modal.html'.
+     *
+     * @param $scope - The controllers scope
+     * @param $modalInstance - The ui.bootstrap $modalInstance service
+     * @param modalData - The data that is passed to the controller from its handle
+     * @constructor
+     */
+    function LearnResultDetailsModalController($scope, $modalInstance, modalData) {
+
+        /**
+         * The learn result whose details should be displayed
+         * @type {LearnResult}
+         */
+        $scope.result = modalData.result;
+
+        /**
+         * Close the modal dialog without passing any data
+         */
+        $scope.ok = function () {
+            $modalInstance.dismiss();
+        }
+    }
 }());;(function () {
     'use strict';
 
@@ -3837,14 +3897,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('PromptDialogController', [
-            '$scope', '$modalInstance', 'modalData',
-            PromptDialogController
-        ]);
+        .controller('PromptDialogController', PromptDialogController);
+
+    PromptDialogController.$inject = ['$scope', '$modalInstance', 'modalData'];
 
     /**
-     * PromptDialogController
-     *
      * The controller that handles the prompt modal dialog.
      *
      * @param $scope
@@ -3865,8 +3922,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         /** the message that is shown when the user input doesn't match the regex **/
         $scope.errorMsg = modalData.errorMsg || 'Unknown validation error';
-
-        //////////
 
         /**
          * Close the modal dialog and pass the user input
@@ -4311,26 +4366,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.controller')
-        .controller('TestDetailsController', [
-            '$scope', '$modalInstance', 'modalData',
-            TestDetailsController
-        ]);
-
-    function TestDetailsController($scope, $modalInstance, modalData) {
-
-        $scope.test = modalData.test;
-
-        //////////
-
-        $scope.ok = function () {
-            $modalInstance.dismiss();
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.controller')
         .controller('HomeController', HomeController);
 
     HomeController.$inject = ['$scope', '$state', 'Project', 'SessionService'];
@@ -4732,7 +4767,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     LearnSetupController.$inject = [
         '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'LearnConfiguration',
-        'LearnerResource', 'ToastService'
+        'LearnerService', 'ToastService'
     ];
 
     /**
@@ -4746,12 +4781,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param Session
      * @param SelectionService
      * @param LearnConfiguration
-     * @param LearnerResource
+     * @param Learner
      * @param Toast
      * @constructor
      */
     function LearnSetupController($scope, $state, SymbolGroup, Session, SelectionService, LearnConfiguration,
-                                  LearnerResource, Toast) {
+                                  Learner, Toast) {
 
         // the project that is stored in the session
         var project = Session.project.get();
@@ -4784,7 +4819,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             // make sure that there isn't any other learn process active
             // redirect to the load screen in case there is an active one
-            LearnerResource.isActive()
+            Learner.isActive()
                 .then(function (data) {
                     if (data.active) {
                         if (data.project == project.id) {
@@ -4834,7 +4869,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
                 $scope.learnConfiguration.setResetSymbol($scope.resetSymbol);
 
-                LearnerResource.start($scope.project.id, $scope.learnConfiguration)
+                Learner.start($scope.project.id, $scope.learnConfiguration)
                     .then(function () {
                         $state.go('learn.start')
                     })
@@ -4870,7 +4905,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('LearnStartController', LearnStartController);
 
-    LearnStartController.$inject = ['$scope', '$interval', 'SessionService', 'LearnerResource'];
+    LearnStartController.$inject = ['$scope', '$interval', 'SessionService', 'LearnerService'];
 
     /**
      * Shows a load screen and the hypothesis of a test.
@@ -4878,16 +4913,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param $scope
      * @param $interval
      * @param Session
-     * @param LearnerResource
+     * @param Learner
      * @constructor
      */
-    function LearnStartController($scope, $interval, Session, LearnerResource) {
+    function LearnStartController($scope, $interval, Session, Learner) {
 
         var _project = Session.project.get();
         var _interval = null;
         var _intervalTime = 10000;
-
-        //////////
 
         /** the test result **/
         $scope.test = null;
@@ -4905,35 +4938,32 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         $scope.layoutSettings;
 
-        //////////
+        // initialize the controller
+        (function init() {
 
-        // start polling the server
-        _poll();
+            // start polling the server
+            poll();
 
-        // stop polling when you leave the page
-        $scope.$on("$destroy", function () {
-            $interval.cancel(_interval);
-        });
-
-        //////////
+            // stop polling when you leave the page
+            $scope.$on("$destroy", function () {
+                $interval.cancel(_interval);
+            });
+        }());
 
         /**
-         * check every x seconds if the server has finished learning and set the test if he did finish
-         * @private
+         * Checks every x seconds if the server has finished learning and set the test if he did finish
          */
-        function _poll() {
-
+        function poll() {
             $scope.active = true;
             _interval = $interval(function () {
-                LearnerResource.isActive()
+                Learner.isActive()
                     .then(function (data) {
                         if (!data.active) {
-                            LearnerResource.status()
+                            Learner.getStatus()
                                 .then(function (test) {
                                     $scope.active = false;
                                     $scope.test = test;
-                                    $scope.isEqOracleSample = test.configuration.eqOracle.type == 'sample';
-
+                                    $scope.isEqOracleSample = test.configuration.eqOracle.type === 'sample';
                                     console.log(test);
                                 });
                             $interval.cancel(_interval);
@@ -4942,8 +4972,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }, _intervalTime);
         }
 
-        //////////
-
         /**
          * Update the configuration for the continuing test when choosing eqOracle 'sample' and showing an intermediate
          * hypothesis
@@ -4951,7 +4979,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @param config
          */
         $scope.updateLearnConfiguration = function (config) {
-
             $scope.test.configuration = config;
         };
 
@@ -4959,30 +4986,27 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample'
          */
         $scope.resumeLearning = function () {
-
             var copy = angular.copy($scope.test.configuration);
             delete copy.algorithm;
             delete copy.symbols;
             delete copy.resetSymbol;
-
-            LearnerResource.resume(_project.id, $scope.test.testNo, copy)
-                .then(_poll)
+            Learner.resume(_project.id, $scope.test.testNo, copy)
+                .then(poll)
         };
 
         $scope.abort = function () {
             if ($scope.active) {
-                LearnerResource.stop()
+                Learner.stop()
                     .then(function (data) {
                         console.log(data)
                     })
             }
         };
 
-        $scope.testCounterExample = function(counterExample){
+        $scope.testCounterExample = function (counterExample) {
             return;
         }
     }
-
 }());
 ;(function(){
     'use strict';
@@ -5051,7 +5075,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .controller('ProjectSettingsController', ProjectSettingsController);
 
     ProjectSettingsController.$inject = [
-        '$scope', '$state', 'Project', 'SessionService', 'PromptService', 'ToastService', 'LearnerResource'
+        '$scope', '$state', 'Project', 'SessionService', 'PromptService', 'ToastService', 'LearnerService'
     ];
 
     /**
@@ -5064,8 +5088,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
      * @param Session
      * @param PromptService
      * @param Toast
+     * @param Learner
      */
-    function ProjectSettingsController($scope, $state, Project, Session, PromptService, Toast, LearnerResource) {
+    function ProjectSettingsController($scope, $state, Project, Session, PromptService, Toast, Learner) {
 
         var projectCopy;
 
@@ -5104,7 +5129,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             // check if the current project is used in learning and abort deletion
             // because of unknown side effects
-            LearnerResource.isActive()
+            Learner.isActive()
                 .then(function (data) {
                     if (data.active !== false || (data.project !== $scope.project.id)) {
                         confirmDeletion();
@@ -5845,6 +5870,158 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.directives')
+        .directive('discriminationTree', discriminationTree);
+
+    discriminationTree.$inject = ['_', '$window'];
+
+    function discriminationTree(_, $window) {
+
+        return {
+            scope: {
+                data: '='
+            },
+            template: '<svg><g></g></svg>',
+            link: link
+        }
+
+        function link(scope, el, attrs) {
+
+            var data = {
+                discriminator: "w2 w3",
+                children: [
+                    {
+                        discriminator: 'w3',
+                        children: [
+                            {data: 'q0'},
+                            {data: 'q2'}
+                        ]
+                    },
+                    {data: 'q1'}
+                ]
+            }
+
+            var svg = d3.select(el.find('svg')[0]);
+            var svgGroup = d3.select(el.find('svg').find('g')[0]);
+            var svgContainer = el[0].parentNode;
+
+            var graph = createGraph(data);
+            var layoutedGraph = layout(graph);
+            render(layoutedGraph);
+
+            function createGraph(dt) {
+
+                var nodes = [];
+                var edges = [];
+
+                function createGraphData(node, parent) {
+
+                    if (node.children.length === 0) {
+                        return;
+                    }
+
+                    if (!_.find(nodes, node.discriminator)) {
+                        nodes.push(node.discriminator)
+                    }
+
+                    if (parent !== null) {
+                        edges.push({
+                            from: parent.discriminator,
+                            to: node.discriminator
+                        })
+                    }
+
+                    _.forEach(node.children, function(child){
+                        if (child.data) {
+                            nodes.push(child.data);
+                            edges.push({
+                                from: node.discriminator,
+                                to: child.data
+                            })
+                        }
+                    });
+
+                    _.forEach(node.children, function (child) {
+                        if (child.discriminator) {
+                            createGraphData(child, node);
+                        }
+                    })
+                }
+
+                createGraphData(dt, null);
+
+                return {
+                    nodes: nodes,
+                    edges: edges
+                }
+            }
+
+            function layout(graph){
+
+                var _graph = new graphlib.Graph({
+                    directed: true,
+                });
+
+                _graph.setGraph({})
+
+                //// add nodes to the graph
+                _.forEach(graph.nodes, function (node, i) {
+                    _graph.setNode(node, {
+                        shape: 'circle',
+                        label: node,
+                        width: 25,
+                        style: 'fill: #fff; stroke: #000; stroke-width: 1',
+                        labelStyle: 'font-size: 1.25em; font-weight: bold'
+                    });
+                });
+
+                //add edges to the graph
+                _.forEach(graph.edges, function (edge, i) {
+                    _graph.setEdge(edge.from, edge.to, {
+                        lineInterpolate: 'basis',
+                        style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none"
+                    });
+                });
+
+                // layout
+                dagreD3.dagre.layout(_graph, {});
+
+                return _graph;
+            }
+
+            function render(graph) {
+                new dagreD3.render()(svgGroup, graph);
+
+                var xCenterOffset = (svgContainer.clientWidth - graph.graph().width) / 2;
+                svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
+
+                // Create and handle zoom  & pan event
+                var zoom = d3.behavior.zoom().scaleExtent([0.1, 10])
+                    .translate([(svgContainer.clientWidth - graph.graph().width) / 2, 100]).on("zoom", zoomHandler);
+                zoom(svg);
+
+                function zoomHandler() {
+                    svgGroup.attr('transform', 'translate(' + zoom.translate()
+                    + ')' + ' scale(' + zoom.scale() + ')');
+                }
+
+                angular.element($window).on('resize', fitSize);
+
+                function fitSize() {
+                    svg.attr("width", svgContainer.clientWidth);
+                    svg.attr("height", svgContainer.clientHeight);
+                }
+
+                window.setTimeout(function () {
+                    window.dispatchEvent(new Event('resize'));
+                }, 100);
+            }
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
         .directive('dispatchResize', dispatchResize);
 
     /**
@@ -6027,6 +6204,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             function createCsvData(results) {
                 var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,Symbols,Resets,Duration (ms)\n';
 
+                console.log(results)
+
                 _.forEach(results, function (result) {
                     csv += result.project + ',';
                     csv += result.testNo + ',';
@@ -6034,7 +6213,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     csv += result.stepNo + ',';
                     csv += result.configuration.algorithm + ',';
                     csv += result.configuration.eqOracle.type + ',';
-                    csv += result.sigma.length + ',';
+                    csv += result.configuration.symbols.length + ',';
                     csv += result.amountOfResets + ',';
                     csv += result.duration + '\n';
                 });
@@ -6822,9 +7001,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.directives')
         .directive('hypothesisSlideshowPanel', hypothesisSlideshowPanel);
 
-    hypothesisSlideshowPanel.$inject = ['paths'];
+    hypothesisSlideshowPanel.$inject = ['paths', 'learnAlgorithms'];
 
-    function hypothesisSlideshowPanel(paths) {
+    function hypothesisSlideshowPanel(paths, learnAlgorithms) {
 
         var directive = {
             require: '^panelManager',
@@ -6844,6 +7023,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             scope.index;
             scope.pointer = scope.result.length - 1;
             scope.panels = ctrl.getPanels();
+            scope.learnAlgorithms = learnAlgorithms;
+
+            scope.modes = {
+                HYPOTHESIS: 0,
+                INTERNAL: 1,
+            }
+
+            scope.mode = scope.modes.HYPOTHESIS;
 
             //////////
 
@@ -6883,6 +7070,69 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             scope.getCurrentStep = function () {
                 return scope.result[scope.pointer];
+            }
+
+            scope.hasInternatDataStructure = function(){
+                return angular.isDefined(scope.result[scope.pointer].algorithmInformation);
+            }
+
+            scope.showInternalDataStructure = function(){
+                scope.mode = scope.modes.INTERNAL;
+            }
+
+            scope.showHypothesis = function(){
+                scope.mode = scope.modes.HYPOTHESIS;
+            }
+        }
+    }
+}());;(function () {
+
+    angular
+        .module('weblearner.directives')
+        .directive('learnResultDetailsModalHandle', learnResultDetailsModalHandle);
+
+    learnResultDetailsModalHandle.$inject = ['$modal', 'paths'];
+
+    /**
+     * The directive that handles the modal dialog for displaying details about a learn result. Can only be used as
+     * an attribute and expects a second attribute 'result' which should be the LearnResult whose details should be
+     * shown. Attaches a click event on the element that opens the modal.
+     *
+     * Use it like this: '<button learn-result-details-modal-handle result="...">Click me!</button>'
+     *
+     * @param $modal - The modal service
+     * @param paths - The application paths constant
+     * @returns {{restrict: string, scope: {result: string}, link: link}}
+     */
+    function learnResultDetailsModalHandle($modal, paths) {
+
+        // the directive
+        return {
+            restrict: 'A',
+            scope: {
+                result: '='
+            },
+            link: link
+        };
+
+        // the behaviour of the directive
+        function link(scope, el, attrs) {
+            el.on('click', handleModal);
+
+            function handleModal() {
+                if (angular.isDefined(scope.result)) {
+                    $modal.open({
+                        templateUrl: paths.views.MODALS + '/learn-result-details-modal.html',
+                        controller: 'LearnResultDetailsModalController',
+                        resolve: {
+                            modalData: function () {
+                                return {
+                                    result: scope.result
+                                }
+                            }
+                        }
+                    })
+                }
             }
         }
     }
@@ -7121,37 +7371,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         }
     }
-}());;(function(){
-	
-	angular
-		.module('weblearner.directives')
-		.directive('openCounterExampleBuilder', openCounterExampleBuilder)
-		
-	openCounterExampleBuilder.$inject = ['CounterExampleBuilderService'];
-	
-	function openCounterExampleBuilder(CounterExampleBuilder) {
-		
-		var directive = {
-			scope: {
-				inputs: '=',
-				outputs: '=',
-				counterExample: '='
-			},
-			link: link
-		};
-		return directive;
-		
-		function link(scope, el, attrs) {
-			
-			el.on('click', function(){
-				CounterExampleBuilder.open({
-					inputs: angular.copy(scope.inputs),
-					outputs: angular.copy(scope.outputs),
-					counterExample: angular.copy(scope.counterExample)
-				});
-			});
-		}
-	}
 }());;(function () {
     'use strict';
 
@@ -7243,48 +7462,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 modal.result.then(function (learnConfiguration) {
                     scope.onOk()(learnConfiguration);
                 });
-            }
-        }
-    }
-}());;(function () {
-
-    angular
-        .module('weblearner.directives')
-        .directive('openTestDetailsModal', [
-            '$modal', 'paths',
-            openTestDetailsModal
-        ]);
-
-    function openTestDetailsModal($modal, paths) {
-
-        var directive = {
-            scope: {
-                test: '='
-            },
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attrs) {
-
-            el.on('click', handleModal);
-
-            function handleModal() {
-                if (angular.isDefined(scope.test)) {
-                    $modal.open({
-                        templateUrl: paths.views.MODALS + '/modal-test-details.html',
-                        controller: 'TestDetailsController',
-                        resolve: {
-                            modalData: function () {
-                                return {
-                                    test: angular.copy(scope.test)
-                                }
-                            }
-                        }
-                    })
-                }
             }
         }
     }
@@ -9006,100 +9183,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.resources')
-        .factory('LearnerResource', [
-            '$http', '$q', 'paths', 'ResourceResponseService',
-            Learner
-        ]);
-
-    /**
-     * Learner
-     * The resource that is used to communicate with the learner
-     *
-     * @param $http
-     * @param $q
-     * @param paths
-     * @param ResourceResponseService
-     * @return {{start: startLearning, stop: stopLearning, resume: resumeLearning, status: getStatus, isActive: isActive}}
-     * @constructor
-     */
-    function Learner($http, $q, paths, ResourceResponseService) {
-
-        var service = {
-            start: startLearning,
-            stop: stopLearning,
-            resume: resumeLearning,
-            status: getStatus,
-            isActive: isActive
-        };
-        return service;
-
-        /**
-         * Start the server side learning process of a project
-         *
-         * @param projectId
-         * @param learnConfiguration
-         * @return {*}
-         */
-        function startLearning(projectId, learnConfiguration) {
-            return $http.post(paths.api.URL + '/learner/start/' + projectId, learnConfiguration)
-                .then(ResourceResponseService.success)
-                .catch(ResourceResponseService.fail);
-        }
-
-        /**
-         * Try to force stop a running learning process of a project. May not necessarily work due to difficulties
-         * with the thread handling
-         *
-         * @return {*}
-         */
-        function stopLearning() {
-            return $http.get(paths.api.URL + '/learner/stop/')
-                .then(ResourceResponseService.success)
-                .catch(ResourceResponseService.fail);
-        }
-
-        /**
-         * Resume a paused learning process where the eqOracle was 'sample' and the learn process was interrupted
-         * so that the ongoing process parameters could be defined
-         *
-         * @param projectId
-         * @param learnConfiguration
-         * @return {*}
-         */
-        function resumeLearning(projectId, testNo, learnConfiguration) {
-            return $http.post(paths.api.URL + '/learner/resume/' + projectId + '/' + testNo, learnConfiguration)
-                .then(ResourceResponseService.success)
-                .catch(ResourceResponseService.fail);
-        }
-
-        /**
-         * Gets the learner result that includes the hypothesis. make sure isActive() returns true before calling this
-         * function
-         *
-         * @return {*}
-         */
-        function getStatus() {
-            return $http.get(paths.api.URL + '/learner/status/')
-                .then(ResourceResponseService.success)
-                .catch(ResourceResponseService.fail);
-        }
-
-        /**
-         * Check if the server is finished learning a project
-         *
-         * @return {*}
-         */
-        function isActive() {
-            return $http.get(paths.api.URL + '/learner/active')
-                .then(ResourceResponseService.success)
-                .catch(ResourceResponseService.fail);
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.resources')
         .factory('ProjectResource', ProjectResource);
 
     ProjectResource.$inject = ['$http', 'paths'];
@@ -9847,6 +9930,90 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     'use strict';
 
     angular
+        .module('weblearner.resources')
+        .factory('LearnerService', LearnerService);
+
+    LearnerService.$inject = ['$http', '$q', 'paths'];
+
+    /**
+     * @param $http
+     * @param $q
+     * @param paths
+     * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive}}
+     * @constructor
+     */
+    function LearnerService($http, $q, paths) {
+
+        return {
+            start: start,
+            stop: stop,
+            resume: resume,
+            getStatus: getStatus,
+            isActive: isActive
+        };
+
+        /**
+         * Start the server side learning process of a project
+         *
+         * @param projectId
+         * @param learnConfiguration
+         * @return {*}
+         */
+        function start(projectId, learnConfiguration) {
+            return $http.post(paths.api.URL + '/learner/start/' + projectId, learnConfiguration);
+        }
+
+        /**
+         * Try to force stop a running learning process of a project. May not necessarily work due to difficulties
+         * with the thread handling
+         *
+         * @return {*}
+         */
+        function stop() {
+            return $http.get(paths.api.URL + '/learner/stop/');
+        }
+
+        /**
+         * Resume a paused learning process where the eqOracle was 'sample' and the learn process was interrupted
+         * so that the ongoing process parameters could be defined
+         *
+         * @param projectId
+         * @param learnConfiguration
+         * @return {*}
+         */
+        function resume(projectId, testNo, learnConfiguration) {
+            return $http.post(paths.api.URL + '/learner/resume/' + projectId + '/' + testNo, learnConfiguration);
+        }
+
+        /**
+         * Gets the learner result that includes the hypothesis. make sure isActive() returns true before calling this
+         * function
+         *
+         * @return {*}
+         */
+        function getStatus() {
+            return $http.get(paths.api.URL + '/learner/status/')
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+
+        /**
+         * Check if the server is finished learning a project
+         *
+         * @return {*}
+         */
+        function isActive() {
+            return $http.get(paths.api.URL + '/learner/active')
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
         .module('weblearner.services')
         .factory('LoadScreenService', [
             '$rootScope',
@@ -9897,35 +10064,30 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     PromptService.$inject = ['$modal', 'paths'];
 
     /**
-     * PromptService
-     *
-     * The service that can be called to replace window.prompt() with some more options.
      *
      * @param $modal
-     * @return {{prompt: prompt}}
+     * @param paths
+     * @returns {{prompt: prompt, confirm: confirm}}
      * @constructor
      */
     function PromptService($modal, paths) {
 
-        var service = {
+        // the available service methods
+        return {
             prompt: prompt,
             confirm: confirm
         };
-        return service;
-
-        //////////
 
         /**
-         * Open the prompt dialog.
+         * Opens the prompt dialog.
          *
          * @param text {string} - The text to display
          * @param options {{regexp: string, errorMsg: string}}
          * @return {*} - The modal result promise
          */
         function prompt(text, options) {
-
             var modal = $modal.open({
-                templateUrl: paths.views.MODALS + '/modal-prompt-dialog.html',
+                templateUrl: paths.views.MODALS + '/prompt-dialog.html',
                 controller: 'PromptDialogController',
                 resolve: {
                     modalData: function () {
@@ -9937,19 +10099,18 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     }
                 }
             });
-
             return modal.result;
         }
-        
+
         /**
-         * Open the confirm dialog
-         * 
-         * @param text - The text to be displayed
+         * Opens the confirm dialog
+         *
+         * @param text - The text to be displayed in the confirm dialog
+         * @returns {*} - The modal result promise
          */
         function confirm(text) {
-
             var modal = $modal.open({
-                templateUrl: paths.views.MODALS + '/modal-confirm-dialog.html',
+                templateUrl: paths.views.MODALS + '/confirm-dialog.html',
                 controller: 'ConfirmDialogController',
                 resolve: {
                     modalData: function () {
@@ -9959,7 +10120,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     }
                 }
             });
-
             return modal.result;
         }
     }

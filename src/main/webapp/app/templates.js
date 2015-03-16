@@ -1,4 +1,4 @@
-angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/modal-confirm-dialog.html', 'app/views/modals/modal-prompt-dialog.html', 'app/views/modals/modal-test-details.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -9,31 +9,49 @@ angular.module("app/views/directives/hypothesis-panel.html", []).run(["$template
     "    <div class=\"sub-nav absolute\">\n" +
     "        <div class=\"container-fluid\">\n" +
     "            <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-    "                <div class=\"btn-group btn-group-xs\" dropdown>\n" +
-    "                    <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
-    "                        <i class=\"fa fa-bars\"></i>\n" +
+    "\n" +
+    "                <div style=\"display: inline-block;\" ng-show=\"mode === modes.HYPOTHESIS\">\n" +
+    "                    <div class=\"btn-group btn-group-xs\" dropdown>\n" +
+    "                        <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
+    "                            <i class=\"fa fa-bars\"></i>\n" +
+    "                        </button>\n" +
+    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                            <li>\n" +
+    "                                <a href learn-result-details-modal-handle result=\"getCurrentStep()\">\n" +
+    "                                    <i class=\"fa fa-info fa-fw\"></i> Details\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li class=\"divider\"></li>\n" +
+    "                            <li>\n" +
+    "                                <a href download-svg=\"#hypothesis-{{index}}\">\n" +
+    "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
+    "                                </a>\n" +
+    "                                <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
+    "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.json\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                        </ul>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <button class=\"btn btn-default btn-xs\" open-hypothesis-layout-settings-modal\n" +
+    "                            layout-settings=\"layoutSettings[index]\">\n" +
+    "                        <i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
     "                    </button>\n" +
-    "                    <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                        <li>\n" +
-    "                            <a href=\"\" open-test-details-modal test=\"getCurrentStep()\">\n" +
-    "                                <i class=\"fa fa-info fa-fw\"></i> Details\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                        <li class=\"divider\"></li>\n" +
-    "                        <li>\n" +
-    "                            <a href download-svg=\"#hypothesis-{{index}}\">\n" +
-    "                                <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
-    "                            </a>\n" +
-    "                            <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
-    "                                <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.json\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                    </ul>\n" +
     "                </div>\n" +
-    "                \n" +
-    "                <button class=\"btn btn-default btn-xs\" open-hypothesis-layout-settings-modal layout-settings=\"layoutSettings[index]\">\n" +
-    "                     	<i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
-    "                </button>\n" +
+    "\n" +
+    "                <div style=\"display: inline-block;\" ng-if=\"hasInternatDataStructure()\">\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.INTERNAL\"\n" +
+    "                            ng-click=\"showHypothesis()\">\n" +
+    "                        Hypothesis\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.HYPOTHESIS\"\n" +
+    "                            ng-click=\"showInternalDataStructure()\">\n" +
+    "                        Internal\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "\n" +
     "            </div>\n" +
     "            <div class=\"pull-right\">\n" +
     "\n" +
@@ -66,9 +84,21 @@ angular.module("app/views/directives/hypothesis-panel.html", []).run(["$template
     "\n" +
     "    <div class=\"hypothesis-panel\">\n" +
     "\n" +
-    "        <hypothesis id=\"hypothesis-{{index}}\" test=\"getCurrentStep()\" layout-settings=\"layoutSettings[index]\"></hypothesis>\n" +
+    "        <hypothesis id=\"hypothesis-{{index}}\" test=\"getCurrentStep()\"\n" +
+    "                    layout-settings=\"layoutSettings[index]\"\n" +
+    "                    ng-if=\"mode === modes.HYPOTHESIS\"></hypothesis>\n" +
+    "\n" +
+    "        <observation-table data=\"result[pointer].algorithmInformation\"\n" +
+    "                           ng-if=\"mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR\">\n" +
+    "        </observation-table>\n" +
+    "\n" +
+    "        <discrimination-tree data=\"result[pointer].algorithmInformation\"\n" +
+    "                           ng-if=\"mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE\">\n" +
+    "        </discrimination-tree>\n" +
     "\n" +
     "    </div>\n" +
+    "\n" +
+    "</div>\n" +
     "\n" +
     "</div>");
 }]);
@@ -1480,6 +1510,23 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "</form>");
 }]);
 
+angular.module("app/views/modals/confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/modals/confirm-dialog.html",
+    "<form ng-submit=\"ok()\">\n" +
+    "\n" +
+    "	<div class=\"modal-body\">\n" +
+    "	    <h4 ng-bind=\"text\"></h4>\n" +
+    "	</div>\n" +
+    "\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Yes</button>\n" +
+    "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">No</a>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
+}]);
+
 angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/modals/hypothesis-layout-settings-modal.html",
@@ -1525,6 +1572,69 @@ angular.module("app/views/modals/hypothesis-layout-settings-modal.html", []).run
     "<div class=\"modal-footer\">\n" +
     "	<button class=\"btn btn-default btn-sm\" ng-click=\"defaultLayoutSettings()\">Default</button>\n" +
     "    <button class=\"btn btn-primary btn-sm\" ng-click=\"update()\">Update</button>\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/modals/learn-result-details-modal.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/modals/learn-result-details-modal.html",
+    "<div class=\"modal-header\">\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"ok()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
+    "    <h3 class=\"modal-title\">Test Details</h3>\n" +
+    "    <span class=\"text-muted\">View some details about this test</span>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-body\">\n" +
+    "\n" +
+    "    <table class=\"table table-condensed\">\n" +
+    "\n" +
+    "        <tr class=\"active\">\n" +
+    "            <td colspan=\"2\"><strong>About This Test</strong></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>nth Test</td>\n" +
+    "            <td>{{result.testNo}}</td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>nth Hypothesis</td>\n" +
+    "            <td>{{result.stepNo}}</td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>Started</td>\n" +
+    "            <td ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>Duration</td>\n" +
+    "            <td>{{result.duration}} ms</td>\n" +
+    "        </tr>\n" +
+    "\n" +
+    "        <tr class=\"active\">\n" +
+    "            <td colspan=\"2\"><strong>Configuration</strong></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>Algorithm</td>\n" +
+    "            <td>{{result.configuration.algorithm}}</td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>EQ Oracle</td>\n" +
+    "            <td>{{result.configuration.eqOracle.type}}</td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>Steps to Learn</td>\n" +
+    "            <td>{{result.configuration.maxAmountOfStepsToLearn}}</td>\n" +
+    "        </tr>\n" +
+    "\n" +
+    "    </table>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-footer\">\n" +
+    "    <button class=\"btn btn-primary\" ng-click=\"ok()\">Ok</button>\n" +
     "</div>");
 }]);
 
@@ -1665,26 +1775,9 @@ angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$te
     "</form>");
 }]);
 
-angular.module("app/views/modals/modal-confirm-dialog.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/modals/prompt-dialog.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/views/modals/modal-confirm-dialog.html",
-    "<form ng-submit=\"ok()\">\n" +
-    "\n" +
-    "	<div class=\"modal-body\">\n" +
-    "	    <h4 ng-bind=\"text\"></h4>\n" +
-    "	</div>\n" +
-    "\n" +
-    "    <div class=\"modal-footer\">\n" +
-    "        <button type=\"submit\" class=\"btn btn-primary btn-sm\">Yes</button>\n" +
-    "        <a class=\"btn btn-default btn-sm\" ng-click=\"close()\">No</a>\n" +
-    "    </div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
-angular.module("app/views/modals/modal-prompt-dialog.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/modals/modal-prompt-dialog.html",
+  $templateCache.put("app/views/modals/prompt-dialog.html",
     "<div class=\"modal-header\">\n" +
     "    <h3 ng-bind=\"text\"></h3>\n" +
     "</div>\n" +
@@ -1709,69 +1802,6 @@ angular.module("app/views/modals/modal-prompt-dialog.html", []).run(["$templateC
     "    </div>\n" +
     "\n" +
     "</form>");
-}]);
-
-angular.module("app/views/modals/modal-test-details.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/modals/modal-test-details.html",
-    "<div class=\"modal-header\">\n" +
-    "\n" +
-    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"ok()\">\n" +
-    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
-    "    </a>\n" +
-    "\n" +
-    "    <h3 class=\"modal-title\">Test Details</h3>\n" +
-    "    <span class=\"text-muted\">View some details about this test</span>\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"modal-body\">\n" +
-    "\n" +
-    "    <table class=\"table table-condensed\">\n" +
-    "\n" +
-    "        <tr class=\"active\">\n" +
-    "            <td colspan=\"2\"><strong>About This Test</strong></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>nth Test</td>\n" +
-    "            <td>{{test.testNo}}</td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>nth Hypothesis</td>\n" +
-    "            <td>{{test.stepNo}}</td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Started</td>\n" +
-    "            <td ng-bind=\"(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Duration</td>\n" +
-    "            <td>{{test.duration}} ms</td>\n" +
-    "        </tr>\n" +
-    "\n" +
-    "        <tr class=\"active\">\n" +
-    "            <td colspan=\"2\"><strong>Configuration</strong></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Algorithm</td>\n" +
-    "            <td>{{test.configuration.algorithm}}</td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>EQ Oracle</td>\n" +
-    "            <td>{{test.configuration.eqOracle.type}}</td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Steps to Learn</td>\n" +
-    "            <td>{{test.configuration.maxAmountOfStepsToLearn}}</td>\n" +
-    "        </tr>\n" +
-    "\n" +
-    "    </table>\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"modal-footer\">\n" +
-    "    <button class=\"btn btn-primary\" ng-click=\"ok()\">Ok</button>\n" +
-    "</div>");
 }]);
 
 angular.module("app/views/modals/symbol-create-modal.html", []).run(["$templateCache", function($templateCache) {
@@ -2288,14 +2318,13 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "                 selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
     "                <div selectable-list-item>\n" +
-    "\n" +
     "                    <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
     "                        <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
     "                            <i class=\"fa fa-bars\"></i>\n" +
     "                        </button>\n" +
     "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
     "                            <li>\n" +
-    "                                <a href=\"\" open-test-details-modal test=\"result\">\n" +
+    "                                <a href learn-result-details-modal-handle result=\"result\">\n" +
     "                                    <i class=\"fa fa-info fa-fw\"></i> Details\n" +
     "                                </a>\n" +
     "                            </li>\n" +
@@ -2441,7 +2470,7 @@ angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", fu
     "            <div class=\"container-fluid\">\n" +
     "\n" +
     "                <div class=\"pull-left\">\n" +
-    "                    <button class=\"btn btn-xs btn-default\" open-test-details-modal test=\"test\">\n" +
+    "                    <button class=\"btn btn-xs btn-default\" learn-result-details-modal-handle result=\"test\">\n" +
     "                        <i class=\"fa fa-info fa-fw\"></i> Details\n" +
     "                    </button>\n" +
     "                	<button class=\"btn btn-xs btn-default\" open-hypothesis-layout-settings-modal layout-settings=\"layoutSettings\" on-update=\"updateLayoutSettings\">\n" +

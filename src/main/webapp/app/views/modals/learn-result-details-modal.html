@@ -18,19 +18,19 @@
         </tr>
         <tr>
             <td>nth Test</td>
-            <td>{{test.testNo}}</td>
+            <td>{{result.testNo}}</td>
         </tr>
         <tr>
             <td>nth Hypothesis</td>
-            <td>{{test.stepNo}}</td>
+            <td>{{result.stepNo}}</td>
         </tr>
         <tr>
             <td>Started</td>
-            <td ng-bind="(test.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></td>
+            <td ng-bind="(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></td>
         </tr>
         <tr>
             <td>Duration</td>
-            <td>{{test.duration}} ms</td>
+            <td>{{result.duration}} ms</td>
         </tr>
 
         <tr class="active">
@@ -38,15 +38,15 @@
         </tr>
         <tr>
             <td>Algorithm</td>
-            <td>{{test.configuration.algorithm}}</td>
+            <td>{{result.configuration.algorithm}}</td>
         </tr>
         <tr>
             <td>EQ Oracle</td>
-            <td>{{test.configuration.eqOracle.type}}</td>
+            <td>{{result.configuration.eqOracle.type}}</td>
         </tr>
         <tr>
             <td>Steps to Learn</td>
-            <td>{{test.configuration.maxAmountOfStepsToLearn}}</td>
+            <td>{{result.configuration.maxAmountOfStepsToLearn}}</td>
         </tr>
 
     </table>

@@ -53,6 +53,8 @@
             function createCsvData(results) {
                 var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,Symbols,Resets,Duration (ms)\n';
 
+                console.log(results)
+
                 _.forEach(results, function (result) {
                     csv += result.project + ',';
                     csv += result.testNo + ',';
@@ -60,7 +62,7 @@
                     csv += result.stepNo + ',';
                     csv += result.configuration.algorithm + ',';
                     csv += result.configuration.eqOracle.type + ',';
-                    csv += result.sigma.length + ',';
+                    csv += result.configuration.symbols.length + ',';
                     csv += result.amountOfResets + ',';
                     csv += result.duration + '\n';
                 });

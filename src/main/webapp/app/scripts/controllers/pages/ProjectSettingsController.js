@@ -6,7 +6,7 @@
         .controller('ProjectSettingsController', ProjectSettingsController);
 
     ProjectSettingsController.$inject = [
-        '$scope', '$state', 'Project', 'SessionService', 'PromptService', 'ToastService', 'LearnerResource'
+        '$scope', '$state', 'Project', 'SessionService', 'PromptService', 'ToastService', 'LearnerService'
     ];
 
     /**
@@ -19,8 +19,9 @@
      * @param Session
      * @param PromptService
      * @param Toast
+     * @param Learner
      */
-    function ProjectSettingsController($scope, $state, Project, Session, PromptService, Toast, LearnerResource) {
+    function ProjectSettingsController($scope, $state, Project, Session, PromptService, Toast, Learner) {
 
         var projectCopy;
 
@@ -59,7 +60,7 @@
 
             // check if the current project is used in learning and abort deletion
             // because of unknown side effects
-            LearnerResource.isActive()
+            Learner.isActive()
                 .then(function (data) {
                     if (data.active !== false || (data.project !== $scope.project.id)) {
                         confirmDeletion();
