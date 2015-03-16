@@ -53,7 +53,7 @@
         /**
          * Restores a previous revision of a symbol by updating the latest with the properties of the revision
          *
-         * @param {symbol} revision - The revision of the symbol that should be restored
+         * @param {Symbol} revision - The revision of the symbol that should be restored
          */
         $scope.restoreRevision = function (revision) {
             var symbol = $scope.latestRevision.copy();
@@ -66,12 +66,12 @@
             // update symbol with new properties
             Symbol.Resource.update(project.id, symbol)
                 .then(function (updatedSymbol) {
-                    Toast.success('Updated symbol to revion <strong>' + revision.revision + '</strong>');
+                    Toast.success('Updated symbol to revision <strong>' + revision.revision + '</strong>');
                     $scope.revisions.push(updatedSymbol);
                     $scope.latestRevision = updatedSymbol;
                 })
                 .catch(function (response) {
-                    Toast.danger('<p><strong>Update to revion failed</strong></p>' + response.data.message);
+                    Toast.danger('<p><strong>Update to revision failed</strong></p>' + response.data.message);
                 })
         }
     }
