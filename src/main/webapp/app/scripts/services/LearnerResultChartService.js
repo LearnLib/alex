@@ -19,18 +19,19 @@
 
         // The learner result properties
         var properties = {
-            RESETS: 'amountOfResets',
-            SYMBOLS: 'sigma',
+            MQS: 'mqsUsed',
+            EQS: 'eqsUsed',
+            SYMBOL_CALLS: 'symbolsUsed',
+            SIGMA: 'sigma',
             DURATION: 'duration'
         };
 
         // The available service data
-        var service = {
+        return {
             createDataFromMultipleFinalResults: createDataFromMultipleFinalResults,
             createDataFromMultipleCompleteResults: createDataFromMultipleCompleteResults,
             properties: properties
         };
-        return service;
 
         /**
          * Creates bar chart data from a list of final learner results which includes the data itself and options.
@@ -63,18 +64,26 @@
                 columnsHGap: 3
             };
 
+            var statistics = _.pluck(results, 'statistics');
+
             // extract values from learner results by a property
             switch (property) {
-                case properties.RESETS:
-                    dataValues = _.pluck(results, properties.RESETS);
+                case properties.MQS:
+                    dataValues = _.pluck(statistics, properties.MQS);
                     break;
-                case properties.SYMBOLS:
-                    dataValues = _.map(_.pluck(results, properties.SYMBOLS), function (n) {
+                case properties.EQS:
+                    dataValues = _.pluck(statistics, properties.EQS);
+                    break;
+                case properties.SIGMA:
+                    dataValues = _.map(_.pluck(results, properties.SIGMA), function (n) {
                         return n.length
                     });
                     break;
+                case properties.SYMBOL_CALLS:
+                    dataValues = _.pluck(statistics, properties.SYMBOL_CALLS);
+                    break;
                 case properties.DURATION:
-                    dataValues = _.pluck(results, properties.DURATION);
+                    dataValues = _.pluck(statistics, properties.DURATION);
                     break;
                 default :
                     break;
@@ -137,21 +146,31 @@
 
             // extract values from learner results by a property
             switch (property) {
-                case properties.RESETS:
+                case properties.MQS:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result, properties.RESETS));
+                        dataValues.push(_.pluck(result.statistics, properties.MQS));
                     });
                     break;
-                case properties.SYMBOLS:
+                case properties.EQS:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.map(_.pluck(result, properties.SYMBOLS), function (n) {
+                        dataValues.push(_.pluck(result.statistics, properties.EQS));
+                    });
+                    break;
+                case properties.SIGMA:
+                    _.forEach(results, function (result) {
+                        dataValues.push(_.map(_.pluck(result, properties.SIGMA), function (n) {
                             return n.length;
                         }));
                     });
                     break;
+                case properties.SYMBOL_CALLS:
+                    _.forEach(results, function (result) {
+                        dataValues.push(_.pluck(result.statistics, properties.SYMBOL_CALLS));
+                    });
+                    break;
                 case properties.DURATION:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result, properties.DURATION));
+                        dataValues.push(_.pluck(result.statistics, properties.DURATION));
                     });
                     break;
                 default :

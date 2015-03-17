@@ -1,5 +1,4 @@
-
-<div style="position: absolute; width: 100%; top: 50px; bottom: 0; overflow: auto;">
+<div style="position: absolute; width: 100%; top: 42px; bottom: 0; overflow: auto;">
 
     <div ng-if="active == true" class="container" style="margin-top: 54px">
         <div class="alert alert-info">
@@ -7,46 +6,33 @@
         </div>
         <hr>
         <button class="btn btn-default btn-xs pull-right" ng-click="abort()">
-            <i class="fa fa-close fa-fw"></i> Abort Learning
+            <i class="fa fa-close fa-fw"></i> Abort
         </button>
     </div>
 
-    <div ng-if="!active && test">
-        <div class="sub-nav fixed">
-            <div class="container-fluid">
+    <div ng-if="!active && results.length > 0">
 
-                <div class="pull-left">
-                    <button class="btn btn-xs btn-default" learn-result-details-modal-handle result="test">
-                        <i class="fa fa-info fa-fw"></i> Details
-                    </button>
-                	<button class="btn btn-xs btn-default" open-hypothesis-layout-settings-modal layout-settings="layoutSettings" on-update="updateLayoutSettings">
-                		<i class="fa fa-eye fa-fw"></i> Layout
-                	</button>
-                </div>
+        <div class="panel-sidebar">
 
-                <div class="pull-right" ng-if="isEqOracleSample">
-                    <button class="btn btn-xs btn-success" ng-click="resumeLearning()">
-                        Resume
-                    </button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="panel-sidebar" ng-if="isEqOracleSample">
+            <p>
+                <br>
+                <button class="btn btn-primary btn-sm btn-block" ng-click="resumeLearning()">Resume</button>
+            </p>
 
             <div widget widget-title="Configuration" collapsed="false">
-                <div widget-test-resume-settings configuration="test.configuration"></div>
+                <div widget-test-resume-settings configuration="_.last(results).configuration"></div>
             </div>
 
-            <div widget widget-title="Counter Examples" collapsed="true">
-                <div widget-counter-examples counter-examples="test.configuration.eqOracle.counterExamples" counter-example="counterExample"></div>
+            <div widget widget-title="Counter Examples" collapsed="true"
+                 ng-if="_.last(results).configuration.eqOracle.type === 'sample'">
+                <div widget-counter-examples counter-examples="_.last(results).configuration.eqOracle.counterExamples"
+                     counter-example="counterExample"></div>
             </div>
 
         </div>
 
-        <hypothesis test="test" counter-example="counterExample" layout-settings="layoutSettings"></hypothesis>
+        <div learn-results-panel results="results" counter-example="counterExample"></div>
+
     </div>
 
 </div>

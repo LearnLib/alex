@@ -84,10 +84,10 @@
                     <strong>Test No
                         <span ng-bind="result.testNo"></span>
                     </strong>,
-                    [<span ng-bind="(result.configuration.algorithm|formatEnumKey)"></span>]
+                    [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
 
                     <div class="text-muted">
-                        Started: <span ng-bind="(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+                        Started: <span ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
                     </div>
 
                 </div>
@@ -102,14 +102,24 @@
 
             <div class="text-center">
                 <button class="btn btn-xs"
-                        ng-class="selectedChartProperty === chartProperties.RESETS ? 'btn-primary':'btn-default'"
-                        ng-click="selectChartProperty(chartProperties.RESETS)">
-                    #Resets
+                        ng-class="selectedChartProperty === chartProperties.MQS ? 'btn-primary':'btn-default'"
+                        ng-click="selectChartProperty(chartProperties.MQS)">
+                    #MQs
                 </button>
                 <button class="btn btn-xs"
-                        ng-class="selectedChartProperty === chartProperties.SYMBOLS ? 'btn-primary':'btn-default'"
-                        ng-click="selectChartProperty(chartProperties.SYMBOLS)">
-                    #Symbols
+                        ng-class="selectedChartProperty === chartProperties.EQS ? 'btn-primary':'btn-default'"
+                        ng-click="selectChartProperty(chartProperties.EQS)">
+                    #EQs
+                </button>
+                <button class="btn btn-xs"
+                        ng-class="selectedChartProperty === chartProperties.SYMBOL_CALLS ? 'btn-primary':'btn-default'"
+                        ng-click="selectChartProperty(chartProperties.SYMBOL_CALLS)">
+                    #Called Symbols
+                </button>
+                <button class="btn btn-xs"
+                        ng-class="selectedChartProperty === chartProperties.SIGMA ? 'btn-primary':'btn-default'"
+                        ng-click="selectChartProperty(chartProperties.SIGMA)">
+                    |Sigma|
                 </button>
                 <button class="btn btn-xs"
                         ng-class="selectedChartProperty === chartProperties.DURATION ? 'btn-primary':'btn-default'"

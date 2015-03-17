@@ -11,7 +11,6 @@
             'ui.ace',
             'ui.router',
             'ngToast',
-            'draganddrop',
             'n3-line-chart',
             'selectionModel',
 
@@ -50,7 +49,7 @@
             $rootScope._ = _;
             $rootScope.selection = SelectionService;
         }])
-}());;angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+}());;angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -91,7 +90,7 @@ angular.module("app/views/directives/hypothesis-panel.html", []).run(["$template
     "                    </button>\n" +
     "                </div>\n" +
     "\n" +
-    "                <div style=\"display: inline-block;\" ng-if=\"hasInternatDataStructure()\">\n" +
+    "                <div style=\"display: inline-block;\" ng-if=\"hasInternalDataStructure()\">\n" +
     "                    <button class=\"btn btn-default btn-xs\"\n" +
     "                            ng-show=\"mode === modes.INTERNAL\"\n" +
     "                            ng-click=\"showHypothesis()\">\n" +
@@ -160,6 +159,108 @@ angular.module("app/views/directives/hypothesis.html", []).run(["$templateCache"
   $templateCache.put("app/views/directives/hypothesis.html",
     "<div style=\"position: absolute; top: 0; width: 100%; bottom: 0; overflow: hidden; background: #fff;\">\n" +
     "    <svg class=\"hypothesis\"></svg>\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/directives/learn-results-panel.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/learn-results-panel.html",
+    "<div class=\"hypothesis-panel-container\">\n" +
+    "\n" +
+    "    <!-- BEGIN: Subnavigation -->\n" +
+    "    <div class=\"sub-nav absolute\">\n" +
+    "        <div class=\"container-fluid\">\n" +
+    "            <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "\n" +
+    "                <div style=\"display: inline-block;\" ng-show=\"mode === modes.HYPOTHESIS\">\n" +
+    "                    <div class=\"btn-group btn-group-xs\" dropdown dropdown-hover>\n" +
+    "                        <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
+    "                            <i class=\"fa fa-bars\"></i>\n" +
+    "                        </button>\n" +
+    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                            <li>\n" +
+    "                                <a href learn-result-details-modal-handle result=\"getCurrentStep()\">\n" +
+    "                                    <i class=\"fa fa-info fa-fw\"></i> Details\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li class=\"divider\"></li>\n" +
+    "                            <li>\n" +
+    "                                <a href download-svg=\"#hypothesis\">\n" +
+    "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
+    "                                </a>\n" +
+    "                                <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
+    "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.json\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                        </ul>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <button class=\"btn btn-default btn-xs\" open-hypothesis-layout-settings-modal\n" +
+    "                            layout-settings=\"layoutSettings\">\n" +
+    "                        <i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "                <div style=\"display: inline-block;\" ng-if=\"hasInternalDataStructure()\">\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.INTERNAL\"\n" +
+    "                            ng-click=\"showHypothesis()\">\n" +
+    "                        Hypothesis\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.HYPOTHESIS\"\n" +
+    "                            ng-click=\"showInternalDataStructure()\">\n" +
+    "                        Internal\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "            <div class=\"pull-right\">\n" +
+    "\n" +
+    "                <div class=\"btn-group btn-group-xs\">\n" +
+    "                    <button class=\"btn btn-default\" ng-click=\"firstStep()\">\n" +
+    "                        <i class=\"fa fa-angle-double-left fa-fw\"></i>\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default\" ng-click=\"previousStep()\">\n" +
+    "                        <i class=\"fa fa-angle-left fa-fw\"></i>\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default disabled\">\n" +
+    "                        <span ng-bind=\"pointer + 1\"></span>/<span ng-bind=\"results.length\"></span>\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default\" ng-click=\"nextStep()\">\n" +
+    "                        <i class=\"fa fa-angle-right fa-fw\"></i>\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default\" ng-click=\"lastStep()\">\n" +
+    "                        <i class=\"fa fa-angle-double-right fa-fw\"></i>\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: Subnavigation -->\n" +
+    "\n" +
+    "    <div class=\"hypothesis-panel\">\n" +
+    "\n" +
+    "        <hypothesis id=\"hypothesis\" test=\"getCurrentStep()\" layout-settings=\"layoutSettings\"\n" +
+    "                    ng-if=\"mode === modes.HYPOTHESIS\" && pointer=== results.length - 1></hypothesis>\n" +
+    "\n" +
+    "        <hypothesis id=\"hypothesis\" test=\"getCurrentStep()\" layout-settings=\"layoutSettings\"\n" +
+    "                    counter-example=\"counterExample\"\n" +
+    "                    ng-if=\"mode === modes.HYPOTHESIS\" && pointer !== results.length - 1></hypothesis>\n" +
+    "\n" +
+    "        <observation-table data=\"result[pointer].algorithmInformation\"\n" +
+    "                           ng-if=\"mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR\">\n" +
+    "        </observation-table>\n" +
+    "\n" +
+    "        <discrimination-tree data=\"result[pointer].algorithmInformation\"\n" +
+    "                             ng-if=\"mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE\">\n" +
+    "        </discrimination-tree>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
     "</div>");
 }]);
 
@@ -1651,19 +1752,15 @@ angular.module("app/views/modals/learn-result-details-modal.html", []).run(["$te
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>nth Test</td>\n" +
-    "            <td>{{result.testNo}}</td>\n" +
+    "            <td ng-bind=\"result.testNo\"></td>\n" +
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>nth Hypothesis</td>\n" +
-    "            <td>{{result.stepNo}}</td>\n" +
+    "            <td ng-bind=\"result.stepNo\"></td>\n" +
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>Started</td>\n" +
-    "            <td ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Duration</td>\n" +
-    "            <td>{{result.duration}} ms</td>\n" +
+    "            <td ng-bind=\"(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
     "        </tr>\n" +
     "\n" +
     "        <tr class=\"active\">\n" +
@@ -1671,15 +1768,39 @@ angular.module("app/views/modals/learn-result-details-modal.html", []).run(["$te
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>Algorithm</td>\n" +
-    "            <td>{{result.configuration.algorithm}}</td>\n" +
+    "            <td ng-bind=\"(result.configuration.algorithm | formatAlgorithm)\"></td>\n" +
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>EQ Oracle</td>\n" +
-    "            <td>{{result.configuration.eqOracle.type}}</td>\n" +
+    "            <td ng-bind=\"(result.configuration.eqOracle.type | formatEqOracle)\"></td>\n" +
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>Steps to Learn</td>\n" +
-    "            <td>{{result.configuration.maxAmountOfStepsToLearn}}</td>\n" +
+    "            <td ng-bind=\"result.configuration.maxAmountOfStepsToLearn\"></td>\n" +
+    "        </tr>\n" +
+    "\n" +
+    "        <tr class=\"active\">\n" +
+    "            <td colspan=\"2\"><strong>Numbers</strong></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>Duration</td>\n" +
+    "            <td><span ng-bind=\"result.statistics.duration\"></span> ms</td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>#Membership Queries</td>\n" +
+    "            <td ng-bind=\"result.statistics.mqsUsed\"></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>#Equivalence Queries</td>\n" +
+    "            <td ng-bind=\"result.statistics.eqsUsed\"></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>#Symbol Calls</td>\n" +
+    "            <td ng-bind=\"result.statistics.symbolsUsed\"></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>|Sigma|</td>\n" +
+    "            <td ng-bind=\"result.sigma.length\"></td>\n" +
     "        </tr>\n" +
     "\n" +
     "    </table>\n" +
@@ -1714,7 +1835,7 @@ angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$te
     "				class=\"text-muted\">Select an algorithm that will be used for\n" +
     "				the learn process (default is L*)</span> <select class=\"form-control\"\n" +
     "				ng-model=\"learnConfiguration.algorithm\"\n" +
-    "				ng-options=\"k for (k,v) in learnAlgorithms\">\n" +
+    "                ng-options=\"(k|formatAlgorithm) for (k,v) in learnAlgorithms\">\n" +
     "				<option value=\"\" disabled>select an algorithm</option>\n" +
     "			</select>\n" +
     "		</div>\n" +
@@ -1722,9 +1843,8 @@ angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$te
     "		<div class=\"form-group\">\n" +
     "			<label class=\"control-label\">EQ Oracle</label><br> <span\n" +
     "				class=\"text-muted\">Select how counter examples should be\n" +
-    "				found (default is COMPLETE)</span> <select class=\"form-control\"\n" +
-    "                                                           ng-model=\"selectedEqOracle\"\n" +
-    "				ng-options=\"v for (k,v) in eqOracles\">\n" +
+    "				found</span> <select class=\"form-control\" ng-model=\"selectedEqOracle\"\n" +
+    "                                     ng-options=\"(v|formatEqOracle) for (k,v) in eqOracles\">\n" +
     "				<option value=\"\" disabled>select a method</option>\n" +
     "			</select>\n" +
     "		</div>\n" +
@@ -1832,7 +1952,7 @@ angular.module("app/views/modals/prompt-dialog.html", []).run(["$templateCache",
   "use strict";
   $templateCache.put("app/views/modals/prompt-dialog.html",
     "<div class=\"modal-header\">\n" +
-    "    <h3 ng-bind=\"text\"></h3>\n" +
+    "    <h4 ng-bind=\"text\"></h4>\n" +
     "</div>\n" +
     "\n" +
     "<form name=\"prompt_form\" ng-submit=\"ok()\">\n" +
@@ -2158,46 +2278,49 @@ angular.module("app/views/pages/home.html", []).run(["$templateCache", function(
 angular.module("app/views/pages/learn-results-compare.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/learn-results-compare.html",
-    "<div panel-manager=\"panels\">\n" +
+    "<div style=\"position: absolute; width: 100%; top: 42px; bottom: 0; overflow: auto;\">\n" +
+    "    <div panel-manager=\"panels\">\n" +
     "\n" +
-    "    <div panel panel-index=\"$index\" ng-repeat=\"result in panels track by $index\">\n" +
+    "        <div panel panel-index=\"$index\" ng-repeat=\"result in panels track by $index\">\n" +
     "\n" +
-    "        <div ng-if=\"result\">\n" +
-    "            <hypothesis-slideshow-panel panel-index=\"{{$index}}\" result=\"result\"></hypothesis-slideshow-panel>\n" +
+    "            <div ng-if=\"result\">\n" +
+    "                <hypothesis-slideshow-panel panel-index=\"{{$index}}\" result=\"result\"></hypothesis-slideshow-panel>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
+    "\n" +
+    "                <ul class=\"list-group\">\n" +
+    "                    <li class=\"list-group-item\" ng-repeat=\"result in results\"\n" +
+    "                        ng-click=\"fillPanel(result, $parent.$index)\">\n" +
+    "\n" +
+    "                        <strong>Test No\n" +
+    "                            <span ng-bind=\"result.testNo\"></span>\n" +
+    "                        </strong>,\n" +
+    "                        [<span ng-bind=\"(result.configuration.algorithm|formatAlgorithm)\"></span>]\n" +
+    "\n" +
+    "                        <br>\n" +
+    "\n" +
+    "                        <p class=\"text-muted\">\n" +
+    "                            Started: <span\n" +
+    "                                ng-bind=\"(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                    </li>\n" +
+    "                </ul>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
     "        </div>\n" +
     "\n" +
-    "        <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
-    "\n" +
-    "            <ul class=\"list-group\">\n" +
-    "                <li class=\"list-group-item\" ng-repeat=\"result in results\"\n" +
-    "                    ng-click=\"fillPanel(result, $parent.$index)\">\n" +
-    "\n" +
-    "                    <strong>Test No\n" +
-    "                        <span ng-bind=\"result.testNo\"></span>\n" +
-    "                    </strong>,\n" +
-    "                    [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                    <br>\n" +
-    "\n" +
-    "                    <p class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                </li>\n" +
-    "            </ul>\n" +
-    "\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"panels.length == 0\" style=\"padding-top: 30px\">\n" +
-    "        <div class=\"container\">\n" +
-    "            <div class=\"alert alert-info\">\n" +
-    "                Add a panel by clicking on the grey area on the right and select a test.\n" +
+    "        <div ng-if=\"panels.length == 0\" style=\"padding-top: 30px\">\n" +
+    "            <div class=\"container\">\n" +
+    "                <div class=\"alert alert-info\">\n" +
+    "                    Add a panel by clicking on the grey area on the right and select a test.\n" +
+    "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
-    "    </div>\n" +
     "\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
@@ -2290,10 +2413,10 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "                    <strong>Test No\n" +
     "                        <span ng-bind=\"result.testNo\"></span>\n" +
     "                    </strong>,\n" +
-    "                    [<span ng-bind=\"(result.configuration.algorithm|formatEnumKey)\"></span>]\n" +
+    "                    [<span ng-bind=\"(result.configuration.algorithm|formatAlgorithm)\"></span>]\n" +
     "\n" +
     "                    <div class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                        Started: <span ng-bind=\"(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
     "                    </div>\n" +
     "\n" +
     "                </div>\n" +
@@ -2308,14 +2431,24 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "\n" +
     "            <div class=\"text-center\">\n" +
     "                <button class=\"btn btn-xs\"\n" +
-    "                        ng-class=\"selectedChartProperty === chartProperties.RESETS ? 'btn-primary':'btn-default'\"\n" +
-    "                        ng-click=\"selectChartProperty(chartProperties.RESETS)\">\n" +
-    "                    #Resets\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.MQS ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.MQS)\">\n" +
+    "                    #MQs\n" +
     "                </button>\n" +
     "                <button class=\"btn btn-xs\"\n" +
-    "                        ng-class=\"selectedChartProperty === chartProperties.SYMBOLS ? 'btn-primary':'btn-default'\"\n" +
-    "                        ng-click=\"selectChartProperty(chartProperties.SYMBOLS)\">\n" +
-    "                    #Symbols\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.EQS ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.EQS)\">\n" +
+    "                    #EQs\n" +
+    "                </button>\n" +
+    "                <button class=\"btn btn-xs\"\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.SYMBOL_CALLS ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.SYMBOL_CALLS)\">\n" +
+    "                    #Called Symbols\n" +
+    "                </button>\n" +
+    "                <button class=\"btn btn-xs\"\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.SIGMA ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.SIGMA)\">\n" +
+    "                    |Sigma|\n" +
     "                </button>\n" +
     "                <button class=\"btn btn-xs\"\n" +
     "                        ng-class=\"selectedChartProperty === chartProperties.DURATION ? 'btn-primary':'btn-default'\"\n" +
@@ -2397,10 +2530,10 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "                    <strong>Test No\n" +
     "                        <span ng-bind=\"result.testNo\"></span>\n" +
     "                    </strong>,\n" +
-    "                    [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
+    "                    [<span ng-bind=\"(result.configuration.algorithm | formatAlgorithm)\"></span>]\n" +
     "\n" +
     "                    <div class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                        Started: <span ng-bind=\"(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
     "                    </div>\n" +
     "\n" +
     "                </div>\n" +
@@ -2445,6 +2578,39 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "\n" +
     "<div class=\"view-body\">\n" +
     "    <div class=\"container symbol-group-list\">\n" +
+    "\n" +
+    "        <div class=\"alert alert-info alert-condensed clearfix\">\n" +
+    "            <button class=\"btn btn-xs btn-info pull-right\" open-learn-setup-settings-modal\n" +
+    "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
+    "                <i class=\"fa fa-gear\"></i>\n" +
+    "            </button>\n" +
+    "\n" +
+    "            <p>\n" +
+    "                Using algorithm <strong ng-bind=\"(learnConfiguration.algorithm | formatAlgorithm)\"></strong>\n" +
+    "                with EQ-Oracle <strong ng-bind=\"(learnConfiguration.eqOracle.type | formatEqOracle)\"></strong>\n" +
+    "                <span ng-if=\"learnConfiguration.eqOracle.type === 'complete'\">\n" +
+    "                    (min-depth: <span ng-bind=\"learnConfiguration.eqOracle.minDepth\"></span>, max-depth: <span\n" +
+    "                        ng-bind=\"learnConfiguration.eqOracle.maxDepth\"></span>)\n" +
+    "                </span>\n" +
+    "                <span ng-if=\"learnConfiguration.eqOracle.type === 'random_word'\">\n" +
+    "                    (\n" +
+    "                    min-length: <span ng-bind=\"learnConfiguration.eqOracle.minLength\"></span>,\n" +
+    "                    max-length: <span ng-bind=\"learnConfiguration.eqOracle.maxLength\"></span>,\n" +
+    "                    #words: <span ng-bind=\"learnConfiguration.eqOracle.maxNoOfTests\"></span>\n" +
+    "                    )\n" +
+    "                </span>\n" +
+    "            </p>\n" +
+    "\n" +
+    "            <p ng-show=\"resetSymbol === null\">\n" +
+    "                <em>Please select a reset symbol by clicking on the blue circle</em>\n" +
+    "            </p>\n" +
+    "\n" +
+    "            <p ng-show=\"resetSymbol !== null\">\n" +
+    "                Reset symbol is <strong ng-bind=\"resetSymbol.name\"></strong>\n" +
+    "            </p>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <hr>\n" +
     "\n" +
     "        <div ng-repeat=\"group in groups\" class=\"symbol-group\"\n" +
     "             ng-class=\"group._isCollapsed ? 'collapsed' :''\">\n" +
@@ -2500,13 +2666,13 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
-    "</div");
+    "</div>");
 }]);
 
 angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/learn-start.html",
-    "<div style=\"position: absolute; width: 100%; top: 50px; bottom: 0; overflow: auto;\">\n" +
+    "<div style=\"position: absolute; width: 100%; top: 42px; bottom: 0; overflow: auto;\">\n" +
     "\n" +
     "    <div ng-if=\"active == true\" class=\"container\" style=\"margin-top: 54px\">\n" +
     "        <div class=\"alert alert-info\">\n" +
@@ -2514,46 +2680,33 @@ angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", fu
     "        </div>\n" +
     "        <hr>\n" +
     "        <button class=\"btn btn-default btn-xs pull-right\" ng-click=\"abort()\">\n" +
-    "            <i class=\"fa fa-close fa-fw\"></i> Abort Learning\n" +
+    "            <i class=\"fa fa-close fa-fw\"></i> Abort\n" +
     "        </button>\n" +
     "    </div>\n" +
     "\n" +
-    "    <div ng-if=\"!active && test\">\n" +
-    "        <div class=\"sub-nav fixed\">\n" +
-    "            <div class=\"container-fluid\">\n" +
+    "    <div ng-if=\"!active && results.length > 0\">\n" +
     "\n" +
-    "                <div class=\"pull-left\">\n" +
-    "                    <button class=\"btn btn-xs btn-default\" learn-result-details-modal-handle result=\"test\">\n" +
-    "                        <i class=\"fa fa-info fa-fw\"></i> Details\n" +
-    "                    </button>\n" +
-    "                	<button class=\"btn btn-xs btn-default\" open-hypothesis-layout-settings-modal layout-settings=\"layoutSettings\" on-update=\"updateLayoutSettings\">\n" +
-    "                		<i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
-    "                	</button>\n" +
-    "                </div>\n" +
+    "        <div class=\"panel-sidebar\">\n" +
     "\n" +
-    "                <div class=\"pull-right\" ng-if=\"isEqOracleSample\">\n" +
-    "                    <button class=\"btn btn-xs btn-success\" ng-click=\"resumeLearning()\">\n" +
-    "                        Resume\n" +
-    "                    </button>\n" +
-    "                </div>\n" +
-    "\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"panel-sidebar\" ng-if=\"isEqOracleSample\">\n" +
+    "            <p>\n" +
+    "                <br>\n" +
+    "                <button class=\"btn btn-primary btn-sm btn-block\" ng-click=\"resumeLearning()\">Resume</button>\n" +
+    "            </p>\n" +
     "\n" +
     "            <div widget widget-title=\"Configuration\" collapsed=\"false\">\n" +
-    "                <div widget-test-resume-settings configuration=\"test.configuration\"></div>\n" +
+    "                <div widget-test-resume-settings configuration=\"_.last(results).configuration\"></div>\n" +
     "            </div>\n" +
     "\n" +
-    "            <div widget widget-title=\"Counter Examples\" collapsed=\"true\">\n" +
-    "                <div widget-counter-examples counter-examples=\"test.configuration.eqOracle.counterExamples\" counter-example=\"counterExample\"></div>\n" +
+    "            <div widget widget-title=\"Counter Examples\" collapsed=\"true\"\n" +
+    "                 ng-if=\"_.last(results).configuration.eqOracle.type === 'sample'\">\n" +
+    "                <div widget-counter-examples counter-examples=\"_.last(results).configuration.eqOracle.counterExamples\"\n" +
+    "                     counter-example=\"counterExample\"></div>\n" +
     "            </div>\n" +
     "\n" +
     "        </div>\n" +
     "\n" +
-    "        <hypothesis test=\"test\" counter-example=\"counterExample\" layout-settings=\"layoutSettings\"></hypothesis>\n" +
+    "        <div learn-results-panel results=\"results\" counter-example=\"counterExample\"></div>\n" +
+    "\n" +
     "    </div>\n" +
     "\n" +
     "</div>\n" +
@@ -3022,10 +3175,6 @@ angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", 
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"alert alert-info alert-condensed\" ng-show=\"symbols.length > 0\">\n" +
-    "            <i class=\"fa fa-fw fa-info\"></i> Recovered symbols will be put in the default group.\n" +
-    "        </div>\n" +
-    "\n" +
     "        <div class=\"alert alert-info\" ng-show=\"symbols.length === 0\">\n" +
     "            There aren't any deleted symbols.\n" +
     "        </div>\n" +
@@ -3094,7 +3243,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "            </div>\n" +
     "\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-class=\"selectedSymbols.length === 1 ? '' : 'disabled'\"\n" +
-    "                    symbol-edit-modal-handle symbol=\"(selectedSymbols | first)\" on-updated=\"updateSymbol\">\n" +
+    "                    symbol-edit-modal-handle symbol=\"selectedSymbols[0]\" on-updated=\"updateSymbol\">\n" +
     "                Edit\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\" symbols=\"selectedSymbols\"\n" +
@@ -3213,12 +3362,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "\n" +
     "    </div>\n" +
     "</div>");
-}]);
-
-angular.module("app/views/pages/tools-hypotheses-view.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/pages/tools-hypotheses-view.html",
-    "drop hypothesis from json here");
 }]);
 
 angular.module("app/views/widgets/widget-counter-examples.html", []).run(["$templateCache", function($templateCache) {
@@ -4920,38 +5063,55 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.controller')
         .controller('LearnStartController', LearnStartController);
 
-    LearnStartController.$inject = ['$scope', '$interval', 'SessionService', 'LearnerService'];
+    LearnStartController.$inject = [
+        '$scope', '$interval', 'SessionService', 'LearnerService', 'LearnResult', 'ToastService'
+    ];
 
     /**
-     * Shows a load screen and the hypothesis of a test.
+     * The controller for showing a load screen during the learning and shows all learn results from the current test
+     * in the intermediate steps.
+     *
+     * The template can be found at 'views/pages/learn-start.html'.
      *
      * @param $scope
      * @param $interval
      * @param Session
      * @param Learner
+     * @param LearnResult
+     * @param Toast
      * @constructor
      */
-    function LearnStartController($scope, $interval, Session, Learner) {
+    function LearnStartController($scope, $interval, Session, Learner, LearnResult, Toast) {
 
-        var _project = Session.project.get();
-        var _interval = null;
-        var _intervalTime = 10000;
+        // The project that is stored in the session
+        var project = Session.project.get();
 
-        /** the test result **/
-        $scope.test = null;
+        // The interval object
+        var interval = null;
 
-        /** indicator for polling the server for a test result */
+        // The time for the polling interval
+        var intervalTime = 10000;
+
+        /**
+         * The complete learn result until the most recent learned one
+         * @type {LearnResult[]}
+         */
+        $scope.results = [];
+
+        /**
+         * Indicates if polling the server for a test result is still active
+         * @type {boolean}
+         */
         $scope.active = false;
 
-        /** indicator if eqOracle was type 'sample' **/
-        $scope.isEqOracleSample = false;
-
+        /**
+         *
+         * @type {{input: string, output: string}}
+         */
         $scope.counterExample = {
             input: '',
             output: ''
         };
-
-        $scope.layoutSettings;
 
         // initialize the controller
         (function init() {
@@ -4961,7 +5121,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             // stop polling when you leave the page
             $scope.$on("$destroy", function () {
-                $interval.cancel(_interval);
+                $interval.cancel(interval);
             });
         }());
 
@@ -4970,21 +5130,24 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         function poll() {
             $scope.active = true;
-            _interval = $interval(function () {
+            interval = $interval(function () {
                 Learner.isActive()
                     .then(function (data) {
                         if (!data.active) {
-                            Learner.getStatus()
-                                .then(function (test) {
-                                    $scope.active = false;
-                                    $scope.test = test;
-                                    $scope.isEqOracleSample = test.configuration.eqOracle.type === 'sample';
-                                    console.log(test);
-                                });
-                            $interval.cancel(_interval);
+                            Learner.getStatus().then(loadComplete);
+                            $interval.cancel(interval);
+                            $scope.active = false;
                         }
                     })
-            }, _intervalTime);
+            }, intervalTime);
+
+            // load the complete set of steps for the learn result
+            function loadComplete(result) {
+                LearnResult.Resource.getComplete(project.id, result.testNo)
+                    .then(function (results) {
+                        $scope.results = results;
+                    });
+            }
         }
 
         /**
@@ -5001,25 +5164,31 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample'
          */
         $scope.resumeLearning = function () {
-            var copy = angular.copy($scope.test.configuration);
+            var copy = angular.copy(_.last($scope.results).configuration);
             delete copy.algorithm;
             delete copy.symbols;
             delete copy.resetSymbol;
-            Learner.resume(_project.id, $scope.test.testNo, copy)
+            Learner.resume(project.id, _.last($scope.results).testNo, copy)
                 .then(poll)
         };
 
+        /**
+         * Tell the learner to stop learning at the next possible time, when the next hypothesis is generated
+         */
         $scope.abort = function () {
             if ($scope.active) {
+                Toast.info('The learner will stop with the next hypothesis');
                 Learner.stop()
-                    .then(function (data) {
-                        console.log(data)
-                    })
             }
         };
 
+        /**
+         * Test if a counter example really is one
+         *
+         * @param counterExample
+         */
         $scope.testCounterExample = function (counterExample) {
-            return;
+            
         }
     }
 }());
@@ -5650,7 +5819,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         /**
          * Restores a previous revision of a symbol by updating the latest with the properties of the revision
          *
-         * @param {symbol} revision - The revision of the symbol that should be restored
+         * @param {Symbol} revision - The revision of the symbol that should be restored
          */
         $scope.restoreRevision = function (revision) {
             var symbol = $scope.latestRevision.copy();
@@ -5663,12 +5832,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             // update symbol with new properties
             Symbol.Resource.update(project.id, symbol)
                 .then(function (updatedSymbol) {
-                    Toast.success('Updated symbol to revion <strong>' + revision.revision + '</strong>');
+                    Toast.success('Updated symbol to revision <strong>' + revision.revision + '</strong>');
                     $scope.revisions.push(updatedSymbol);
                     $scope.latestRevision = updatedSymbol;
                 })
                 .catch(function (response) {
-                    Toast.danger('<p><strong>Update to revion failed</strong></p>' + response.data.message);
+                    Toast.danger('<p><strong>Update to revision failed</strong></p>' + response.data.message);
                 })
         }
     }
@@ -6269,20 +6438,20 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
              * @returns {string} - The csv string from learner results
              */
             function createCsvData(results) {
-                var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,Symbols,Resets,Duration (ms)\n';
-
-                console.log(results)
+                var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,|Sigma|,#MQs,#EQs,#Symbol Calls,Duration (ms)\n';
 
                 _.forEach(results, function (result) {
                     csv += result.project + ',';
                     csv += result.testNo + ',';
-                    csv += '"' + result.startTime + '",';
+                    csv += '"' + result.statistics.startTime + '",';
                     csv += result.stepNo + ',';
                     csv += result.configuration.algorithm + ',';
                     csv += result.configuration.eqOracle.type + ',';
                     csv += result.configuration.symbols.length + ',';
-                    csv += result.amountOfResets + ',';
-                    csv += result.duration + '\n';
+                    csv += result.statistics.mqsUsed + ',';
+                    csv += result.statistics.eqsUsed + ',';
+                    csv += result.statistics.symbolsUsed + ',';
+                    csv += result.statistics.duration + '\n';
                 });
 
                 return csv;
@@ -6414,6 +6583,22 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 a.click();
                 document.body.removeChild(a);
             }
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('downloadTableAsCsv', downloadTableAsCsv);
+
+    function downloadTableAsCsv() {
+        return {
+            link: link
+        };
+
+        function link(scope, el, attrs) {
+
         }
     }
 }());;(function(){
@@ -6957,7 +7142,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     function panelManager() {
 
         var template = '' +
-            '<div style="position: absolute; top: 42px; bottom: 0; width: 100%;">' +
+            '<div style="position: absolute; top: 0; bottom: 0; width: 100%;">' +
             '   <div ng-click="addPanel()" style="position: absolute; right: 0; top: 0; bottom: 0; width: 40px; background: #f2f2f2; border-left: 1px solid #e7e7e7"></div>' +
             '   <div style="position: absolute; left: 0; top: 0; bottom: 0; right: 40px; background: #fff" ng-transclude></div>' +
             '</div>';
@@ -6998,6 +7183,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             }
         }
     }
+
 
     angular
         .module('weblearner.directives')
@@ -7094,8 +7280,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             scope.modes = {
                 HYPOTHESIS: 0,
-                INTERNAL: 1,
-            }
+                INTERNAL: 1
+            };
 
             scope.mode = scope.modes.HYPOTHESIS;
 
@@ -7137,17 +7323,17 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             scope.getCurrentStep = function () {
                 return scope.result[scope.pointer];
-            }
+            };
 
-            scope.hasInternatDataStructure = function(){
+            scope.hasInternalDataStructure = function () {
                 return angular.isDefined(scope.result[scope.pointer].algorithmInformation);
-            }
+            };
 
-            scope.showInternalDataStructure = function(){
+            scope.showInternalDataStructure = function () {
                 scope.mode = scope.modes.INTERNAL;
-            }
+            };
 
-            scope.showHypothesis = function(){
+            scope.showHypothesis = function () {
                 scope.mode = scope.modes.HYPOTHESIS;
             }
         }
@@ -7200,6 +7386,83 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                         }
                     })
                 }
+            }
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('learnResultsPanel', learnResultsPanel);
+
+    learnResultsPanel.$inject = ['paths'];
+
+    function learnResultsPanel(paths) {
+        return {
+            scope: {
+                results: '=',
+                counterExample: '='
+            },
+            templateUrl: paths.views.DIRECTIVES + '/learn-results-panel.html',
+            controller: ['$scope', controller]
+        };
+
+        function controller($scope) {
+
+            $scope.modes = {
+                HYPOTHESIS: 0,
+                INTERNAL: 1
+            };
+
+            /**
+             * The layout settings for the displayed hypothesis
+             * @type {undefined|Object}
+             */
+            $scope.layoutSettings;
+
+            $scope.mode = $scope.modes.HYPOTHESIS;
+
+            $scope.pointer = $scope.results.length - 1;
+
+            $scope.firstStep = function () {
+                scope.pointer = 0;
+            };
+
+            $scope.previousStep = function () {
+                if ($scope.pointer - 1 < 0) {
+                    $scope.lastStep();
+                } else {
+                    $scope.pointer--;
+                }
+            };
+
+            $scope.nextStep = function () {
+                if ($scope.pointer + 1 > $scope.results.length - 1) {
+                    $scope.firstStep();
+                } else {
+                    $scope.pointer++;
+                }
+            };
+
+            $scope.lastStep = function () {
+                $scope.pointer = $scope.results.length - 1;
+            };
+
+            $scope.getCurrentStep = function () {
+                return $scope.results[$scope.pointer];
+            };
+
+            $scope.hasInternalDataStructure = function () {
+                return angular.isDefined($scope.results[$scope.pointer].algorithmInformation);
+            };
+
+            $scope.showInternalDataStructure = function () {
+                $scope.mode = $scope.modes.INTERNAL;
+            };
+
+            $scope.showHypothesis = function () {
+                $scope.mode = $scope.modes.HYPOTHESIS;
             }
         }
     }
@@ -7647,11 +7910,9 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         function controller($scope) {
 
-            $scope.$watch('counterExamples.length', function (n, o) {
-                console.log(n)
-            });
-
-            //////////
+            //$scope.$watch('counterExamples.length', function (n, o) {
+            //
+            //});
 
             $scope.addCounterExample = function () {
 
@@ -8832,16 +9093,20 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          * @constructor
          */
         function LearnResult() {
-            this.amountOfResets;
             this.configuration;
             this.hypothesis;
-            this.duration;
             this.project;
             this.sigma;
-            this.startTime;
             this.stepNo;
             this.testNo;
             this.algorithmInformation;
+            this.statistics = {
+                startTime: null,
+                duration: null,
+                eqsUsed: null,
+                mqsUsed: null,
+                symbolsUsed: null
+            }
         }
 
         /**
@@ -8852,16 +9117,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
          */
         LearnResult.build = function (data) {
             var result = new LearnResult();
-            result.amountOfResets = data.amountOfResets;
             result.configuration = LearnConfiguration.build(data.configuration);
             result.hypothesis = data.hypothesis;
-            result.duration = data.duration;
             result.project = data.project;
-            result.startTime = data.startTime;
             result.sigma = data.sigma;
             result.stepNo = data.stepNo;
             result.testNo = data.testNo;
             result.algorithmInformation = data.algorithmInformation;
+            result.statistics = data.statistics;
             return result;
         };
 
@@ -9823,18 +10086,19 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
         // The learner result properties
         var properties = {
-            RESETS: 'amountOfResets',
-            SYMBOLS: 'sigma',
+            MQS: 'mqsUsed',
+            EQS: 'eqsUsed',
+            SYMBOL_CALLS: 'symbolsUsed',
+            SIGMA: 'sigma',
             DURATION: 'duration'
         };
 
         // The available service data
-        var service = {
+        return {
             createDataFromMultipleFinalResults: createDataFromMultipleFinalResults,
             createDataFromMultipleCompleteResults: createDataFromMultipleCompleteResults,
             properties: properties
         };
-        return service;
 
         /**
          * Creates bar chart data from a list of final learner results which includes the data itself and options.
@@ -9867,18 +10131,26 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 columnsHGap: 3
             };
 
+            var statistics = _.pluck(results, 'statistics');
+
             // extract values from learner results by a property
             switch (property) {
-                case properties.RESETS:
-                    dataValues = _.pluck(results, properties.RESETS);
+                case properties.MQS:
+                    dataValues = _.pluck(statistics, properties.MQS);
                     break;
-                case properties.SYMBOLS:
-                    dataValues = _.map(_.pluck(results, properties.SYMBOLS), function (n) {
+                case properties.EQS:
+                    dataValues = _.pluck(statistics, properties.EQS);
+                    break;
+                case properties.SIGMA:
+                    dataValues = _.map(_.pluck(results, properties.SIGMA), function (n) {
                         return n.length
                     });
                     break;
+                case properties.SYMBOL_CALLS:
+                    dataValues = _.pluck(statistics, properties.SYMBOL_CALLS);
+                    break;
                 case properties.DURATION:
-                    dataValues = _.pluck(results, properties.DURATION);
+                    dataValues = _.pluck(statistics, properties.DURATION);
                     break;
                 default :
                     break;
@@ -9941,21 +10213,31 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
             // extract values from learner results by a property
             switch (property) {
-                case properties.RESETS:
+                case properties.MQS:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result, properties.RESETS));
+                        dataValues.push(_.pluck(result.statistics, properties.MQS));
                     });
                     break;
-                case properties.SYMBOLS:
+                case properties.EQS:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.map(_.pluck(result, properties.SYMBOLS), function (n) {
+                        dataValues.push(_.pluck(result.statistics, properties.EQS));
+                    });
+                    break;
+                case properties.SIGMA:
+                    _.forEach(results, function (result) {
+                        dataValues.push(_.map(_.pluck(result, properties.SIGMA), function (n) {
                             return n.length;
                         }));
                     });
                     break;
+                case properties.SYMBOL_CALLS:
+                    _.forEach(results, function (result) {
+                        dataValues.push(_.pluck(result.statistics, properties.SYMBOL_CALLS));
+                    });
+                    break;
                 case properties.DURATION:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result, properties.DURATION));
+                        dataValues.push(_.pluck(result.statistics, properties.DURATION));
                     });
                     break;
                 default :
@@ -10586,7 +10868,12 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.filters')
-        .filter('formatEnumKey', formatEnumKey);
+        .filter('formatEnumKey', formatEnumKey)
+        .filter('formatEqOracle', formatEqOracle)
+        .filter('formatAlgorithm', formatAlgorithm);
+
+    formatEqOracle.$inject = ['eqOracles'];
+    formatAlgorithm.$inject = ['learnAlgorithms'];
 
     function formatEnumKey() {
         return function (string) {
@@ -10595,6 +10882,39 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             })
         }
     }
+
+    function formatEqOracle(eqOracles) {
+        return function (type) {
+            switch (type) {
+                case eqOracles.RANDOM:
+                    return 'Random Word';
+                case eqOracles.COMPLETE:
+                    return 'Complete';
+                case eqOracles.SAMPLE:
+                    return 'Sample';
+                default:
+                    return type;
+            }
+        }
+    }
+
+    function formatAlgorithm(learnAlgorithms) {
+        return function (name) {
+            switch (name) {
+                case learnAlgorithms.EXTENSIBLE_LSTAR:
+                    return 'L*';
+                case learnAlgorithms.DHC:
+                    return 'DHC';
+                case learnAlgorithms.TTT:
+                    return 'TTT';
+                case learnAlgorithms.DISCRIMINATION_TREE:
+                    return 'Discrimination Tree';
+                default:
+                    return name;
+            }
+        }
+    }
+
 }());;(function () {
     'use strict';
 
@@ -10628,7 +10948,7 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
     /**
      * Capitalizes a given string
      *
-     * @returns {Function}
+     * @returns {Function} - The filter
      */
     function capitalize() {
         return function (string) {

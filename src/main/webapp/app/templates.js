@@ -1,4 +1,4 @@
-angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/pages/tools-hypotheses-view.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
 
 angular.module("app/views/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -39,7 +39,7 @@ angular.module("app/views/directives/hypothesis-panel.html", []).run(["$template
     "                    </button>\n" +
     "                </div>\n" +
     "\n" +
-    "                <div style=\"display: inline-block;\" ng-if=\"hasInternatDataStructure()\">\n" +
+    "                <div style=\"display: inline-block;\" ng-if=\"hasInternalDataStructure()\">\n" +
     "                    <button class=\"btn btn-default btn-xs\"\n" +
     "                            ng-show=\"mode === modes.INTERNAL\"\n" +
     "                            ng-click=\"showHypothesis()\">\n" +
@@ -108,6 +108,108 @@ angular.module("app/views/directives/hypothesis.html", []).run(["$templateCache"
   $templateCache.put("app/views/directives/hypothesis.html",
     "<div style=\"position: absolute; top: 0; width: 100%; bottom: 0; overflow: hidden; background: #fff;\">\n" +
     "    <svg class=\"hypothesis\"></svg>\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/directives/learn-results-panel.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/learn-results-panel.html",
+    "<div class=\"hypothesis-panel-container\">\n" +
+    "\n" +
+    "    <!-- BEGIN: Subnavigation -->\n" +
+    "    <div class=\"sub-nav absolute\">\n" +
+    "        <div class=\"container-fluid\">\n" +
+    "            <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "\n" +
+    "                <div style=\"display: inline-block;\" ng-show=\"mode === modes.HYPOTHESIS\">\n" +
+    "                    <div class=\"btn-group btn-group-xs\" dropdown dropdown-hover>\n" +
+    "                        <button type=\"button\" class=\"btn btn-default dropdown-toggle\" dropdown-toggle>\n" +
+    "                            <i class=\"fa fa-bars\"></i>\n" +
+    "                        </button>\n" +
+    "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                            <li>\n" +
+    "                                <a href learn-result-details-modal-handle result=\"getCurrentStep()\">\n" +
+    "                                    <i class=\"fa fa-info fa-fw\"></i> Details\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                            <li class=\"divider\"></li>\n" +
+    "                            <li>\n" +
+    "                                <a href download-svg=\"#hypothesis\">\n" +
+    "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
+    "                                </a>\n" +
+    "                                <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
+    "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.json\n" +
+    "                                </a>\n" +
+    "                            </li>\n" +
+    "                        </ul>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <button class=\"btn btn-default btn-xs\" open-hypothesis-layout-settings-modal\n" +
+    "                            layout-settings=\"layoutSettings\">\n" +
+    "                        <i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "                <div style=\"display: inline-block;\" ng-if=\"hasInternalDataStructure()\">\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.INTERNAL\"\n" +
+    "                            ng-click=\"showHypothesis()\">\n" +
+    "                        Hypothesis\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.HYPOTHESIS\"\n" +
+    "                            ng-click=\"showInternalDataStructure()\">\n" +
+    "                        Internal\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "            <div class=\"pull-right\">\n" +
+    "\n" +
+    "                <div class=\"btn-group btn-group-xs\">\n" +
+    "                    <button class=\"btn btn-default\" ng-click=\"firstStep()\">\n" +
+    "                        <i class=\"fa fa-angle-double-left fa-fw\"></i>\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default\" ng-click=\"previousStep()\">\n" +
+    "                        <i class=\"fa fa-angle-left fa-fw\"></i>\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default disabled\">\n" +
+    "                        <span ng-bind=\"pointer + 1\"></span>/<span ng-bind=\"results.length\"></span>\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default\" ng-click=\"nextStep()\">\n" +
+    "                        <i class=\"fa fa-angle-right fa-fw\"></i>\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default\" ng-click=\"lastStep()\">\n" +
+    "                        <i class=\"fa fa-angle-double-right fa-fw\"></i>\n" +
+    "                    </button>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <!-- END: Subnavigation -->\n" +
+    "\n" +
+    "    <div class=\"hypothesis-panel\">\n" +
+    "\n" +
+    "        <hypothesis id=\"hypothesis\" test=\"getCurrentStep()\" layout-settings=\"layoutSettings\"\n" +
+    "                    ng-if=\"mode === modes.HYPOTHESIS\" && pointer=== results.length - 1></hypothesis>\n" +
+    "\n" +
+    "        <hypothesis id=\"hypothesis\" test=\"getCurrentStep()\" layout-settings=\"layoutSettings\"\n" +
+    "                    counter-example=\"counterExample\"\n" +
+    "                    ng-if=\"mode === modes.HYPOTHESIS\" && pointer !== results.length - 1></hypothesis>\n" +
+    "\n" +
+    "        <observation-table data=\"result[pointer].algorithmInformation\"\n" +
+    "                           ng-if=\"mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR\">\n" +
+    "        </observation-table>\n" +
+    "\n" +
+    "        <discrimination-tree data=\"result[pointer].algorithmInformation\"\n" +
+    "                             ng-if=\"mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE\">\n" +
+    "        </discrimination-tree>\n" +
+    "\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
     "</div>");
 }]);
 
@@ -1599,19 +1701,15 @@ angular.module("app/views/modals/learn-result-details-modal.html", []).run(["$te
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>nth Test</td>\n" +
-    "            <td>{{result.testNo}}</td>\n" +
+    "            <td ng-bind=\"result.testNo\"></td>\n" +
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>nth Hypothesis</td>\n" +
-    "            <td>{{result.stepNo}}</td>\n" +
+    "            <td ng-bind=\"result.stepNo\"></td>\n" +
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>Started</td>\n" +
-    "            <td ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Duration</td>\n" +
-    "            <td>{{result.duration}} ms</td>\n" +
+    "            <td ng-bind=\"(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
     "        </tr>\n" +
     "\n" +
     "        <tr class=\"active\">\n" +
@@ -1619,15 +1717,39 @@ angular.module("app/views/modals/learn-result-details-modal.html", []).run(["$te
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>Algorithm</td>\n" +
-    "            <td>{{result.configuration.algorithm}}</td>\n" +
+    "            <td ng-bind=\"(result.configuration.algorithm | formatAlgorithm)\"></td>\n" +
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>EQ Oracle</td>\n" +
-    "            <td>{{result.configuration.eqOracle.type}}</td>\n" +
+    "            <td ng-bind=\"(result.configuration.eqOracle.type | formatEqOracle)\"></td>\n" +
     "        </tr>\n" +
     "        <tr>\n" +
     "            <td>Steps to Learn</td>\n" +
-    "            <td>{{result.configuration.maxAmountOfStepsToLearn}}</td>\n" +
+    "            <td ng-bind=\"result.configuration.maxAmountOfStepsToLearn\"></td>\n" +
+    "        </tr>\n" +
+    "\n" +
+    "        <tr class=\"active\">\n" +
+    "            <td colspan=\"2\"><strong>Numbers</strong></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>Duration</td>\n" +
+    "            <td><span ng-bind=\"result.statistics.duration\"></span> ms</td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>#Membership Queries</td>\n" +
+    "            <td ng-bind=\"result.statistics.mqsUsed\"></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>#Equivalence Queries</td>\n" +
+    "            <td ng-bind=\"result.statistics.eqsUsed\"></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>#Symbol Calls</td>\n" +
+    "            <td ng-bind=\"result.statistics.symbolsUsed\"></td>\n" +
+    "        </tr>\n" +
+    "        <tr>\n" +
+    "            <td>|Sigma|</td>\n" +
+    "            <td ng-bind=\"result.sigma.length\"></td>\n" +
     "        </tr>\n" +
     "\n" +
     "    </table>\n" +
@@ -1662,7 +1784,7 @@ angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$te
     "				class=\"text-muted\">Select an algorithm that will be used for\n" +
     "				the learn process (default is L*)</span> <select class=\"form-control\"\n" +
     "				ng-model=\"learnConfiguration.algorithm\"\n" +
-    "				ng-options=\"k for (k,v) in learnAlgorithms\">\n" +
+    "                ng-options=\"(k|formatAlgorithm) for (k,v) in learnAlgorithms\">\n" +
     "				<option value=\"\" disabled>select an algorithm</option>\n" +
     "			</select>\n" +
     "		</div>\n" +
@@ -1670,9 +1792,8 @@ angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$te
     "		<div class=\"form-group\">\n" +
     "			<label class=\"control-label\">EQ Oracle</label><br> <span\n" +
     "				class=\"text-muted\">Select how counter examples should be\n" +
-    "				found (default is COMPLETE)</span> <select class=\"form-control\"\n" +
-    "                                                           ng-model=\"selectedEqOracle\"\n" +
-    "				ng-options=\"v for (k,v) in eqOracles\">\n" +
+    "				found</span> <select class=\"form-control\" ng-model=\"selectedEqOracle\"\n" +
+    "                                     ng-options=\"(v|formatEqOracle) for (k,v) in eqOracles\">\n" +
     "				<option value=\"\" disabled>select a method</option>\n" +
     "			</select>\n" +
     "		</div>\n" +
@@ -1780,7 +1901,7 @@ angular.module("app/views/modals/prompt-dialog.html", []).run(["$templateCache",
   "use strict";
   $templateCache.put("app/views/modals/prompt-dialog.html",
     "<div class=\"modal-header\">\n" +
-    "    <h3 ng-bind=\"text\"></h3>\n" +
+    "    <h4 ng-bind=\"text\"></h4>\n" +
     "</div>\n" +
     "\n" +
     "<form name=\"prompt_form\" ng-submit=\"ok()\">\n" +
@@ -2106,46 +2227,49 @@ angular.module("app/views/pages/home.html", []).run(["$templateCache", function(
 angular.module("app/views/pages/learn-results-compare.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/learn-results-compare.html",
-    "<div panel-manager=\"panels\">\n" +
+    "<div style=\"position: absolute; width: 100%; top: 42px; bottom: 0; overflow: auto;\">\n" +
+    "    <div panel-manager=\"panels\">\n" +
     "\n" +
-    "    <div panel panel-index=\"$index\" ng-repeat=\"result in panels track by $index\">\n" +
+    "        <div panel panel-index=\"$index\" ng-repeat=\"result in panels track by $index\">\n" +
     "\n" +
-    "        <div ng-if=\"result\">\n" +
-    "            <hypothesis-slideshow-panel panel-index=\"{{$index}}\" result=\"result\"></hypothesis-slideshow-panel>\n" +
+    "            <div ng-if=\"result\">\n" +
+    "                <hypothesis-slideshow-panel panel-index=\"{{$index}}\" result=\"result\"></hypothesis-slideshow-panel>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
+    "\n" +
+    "                <ul class=\"list-group\">\n" +
+    "                    <li class=\"list-group-item\" ng-repeat=\"result in results\"\n" +
+    "                        ng-click=\"fillPanel(result, $parent.$index)\">\n" +
+    "\n" +
+    "                        <strong>Test No\n" +
+    "                            <span ng-bind=\"result.testNo\"></span>\n" +
+    "                        </strong>,\n" +
+    "                        [<span ng-bind=\"(result.configuration.algorithm|formatAlgorithm)\"></span>]\n" +
+    "\n" +
+    "                        <br>\n" +
+    "\n" +
+    "                        <p class=\"text-muted\">\n" +
+    "                            Started: <span\n" +
+    "                                ng-bind=\"(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                        </p>\n" +
+    "\n" +
+    "                    </li>\n" +
+    "                </ul>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
     "        </div>\n" +
     "\n" +
-    "        <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
-    "\n" +
-    "            <ul class=\"list-group\">\n" +
-    "                <li class=\"list-group-item\" ng-repeat=\"result in results\"\n" +
-    "                    ng-click=\"fillPanel(result, $parent.$index)\">\n" +
-    "\n" +
-    "                    <strong>Test No\n" +
-    "                        <span ng-bind=\"result.testNo\"></span>\n" +
-    "                    </strong>,\n" +
-    "                    [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
-    "\n" +
-    "                    <br>\n" +
-    "\n" +
-    "                    <p class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
-    "                    </p>\n" +
-    "\n" +
-    "                </li>\n" +
-    "            </ul>\n" +
-    "\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div ng-if=\"panels.length == 0\" style=\"padding-top: 30px\">\n" +
-    "        <div class=\"container\">\n" +
-    "            <div class=\"alert alert-info\">\n" +
-    "                Add a panel by clicking on the grey area on the right and select a test.\n" +
+    "        <div ng-if=\"panels.length == 0\" style=\"padding-top: 30px\">\n" +
+    "            <div class=\"container\">\n" +
+    "                <div class=\"alert alert-info\">\n" +
+    "                    Add a panel by clicking on the grey area on the right and select a test.\n" +
+    "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
-    "    </div>\n" +
     "\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
@@ -2238,10 +2362,10 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "                    <strong>Test No\n" +
     "                        <span ng-bind=\"result.testNo\"></span>\n" +
     "                    </strong>,\n" +
-    "                    [<span ng-bind=\"(result.configuration.algorithm|formatEnumKey)\"></span>]\n" +
+    "                    [<span ng-bind=\"(result.configuration.algorithm|formatAlgorithm)\"></span>]\n" +
     "\n" +
     "                    <div class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                        Started: <span ng-bind=\"(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
     "                    </div>\n" +
     "\n" +
     "                </div>\n" +
@@ -2256,14 +2380,24 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "\n" +
     "            <div class=\"text-center\">\n" +
     "                <button class=\"btn btn-xs\"\n" +
-    "                        ng-class=\"selectedChartProperty === chartProperties.RESETS ? 'btn-primary':'btn-default'\"\n" +
-    "                        ng-click=\"selectChartProperty(chartProperties.RESETS)\">\n" +
-    "                    #Resets\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.MQS ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.MQS)\">\n" +
+    "                    #MQs\n" +
     "                </button>\n" +
     "                <button class=\"btn btn-xs\"\n" +
-    "                        ng-class=\"selectedChartProperty === chartProperties.SYMBOLS ? 'btn-primary':'btn-default'\"\n" +
-    "                        ng-click=\"selectChartProperty(chartProperties.SYMBOLS)\">\n" +
-    "                    #Symbols\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.EQS ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.EQS)\">\n" +
+    "                    #EQs\n" +
+    "                </button>\n" +
+    "                <button class=\"btn btn-xs\"\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.SYMBOL_CALLS ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.SYMBOL_CALLS)\">\n" +
+    "                    #Called Symbols\n" +
+    "                </button>\n" +
+    "                <button class=\"btn btn-xs\"\n" +
+    "                        ng-class=\"selectedChartProperty === chartProperties.SIGMA ? 'btn-primary':'btn-default'\"\n" +
+    "                        ng-click=\"selectChartProperty(chartProperties.SIGMA)\">\n" +
+    "                    |Sigma|\n" +
     "                </button>\n" +
     "                <button class=\"btn btn-xs\"\n" +
     "                        ng-class=\"selectedChartProperty === chartProperties.DURATION ? 'btn-primary':'btn-default'\"\n" +
@@ -2345,10 +2479,10 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "                    <strong>Test No\n" +
     "                        <span ng-bind=\"result.testNo\"></span>\n" +
     "                    </strong>,\n" +
-    "                    [<span ng-bind=\"result.configuration.algorithm\"></span>]\n" +
+    "                    [<span ng-bind=\"(result.configuration.algorithm | formatAlgorithm)\"></span>]\n" +
     "\n" +
     "                    <div class=\"text-muted\">\n" +
-    "                        Started: <span ng-bind=\"(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
+    "                        Started: <span ng-bind=\"(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></span>\n" +
     "                    </div>\n" +
     "\n" +
     "                </div>\n" +
@@ -2393,6 +2527,39 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "\n" +
     "<div class=\"view-body\">\n" +
     "    <div class=\"container symbol-group-list\">\n" +
+    "\n" +
+    "        <div class=\"alert alert-info alert-condensed clearfix\">\n" +
+    "            <button class=\"btn btn-xs btn-info pull-right\" open-learn-setup-settings-modal\n" +
+    "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
+    "                <i class=\"fa fa-gear\"></i>\n" +
+    "            </button>\n" +
+    "\n" +
+    "            <p>\n" +
+    "                Using algorithm <strong ng-bind=\"(learnConfiguration.algorithm | formatAlgorithm)\"></strong>\n" +
+    "                with EQ-Oracle <strong ng-bind=\"(learnConfiguration.eqOracle.type | formatEqOracle)\"></strong>\n" +
+    "                <span ng-if=\"learnConfiguration.eqOracle.type === 'complete'\">\n" +
+    "                    (min-depth: <span ng-bind=\"learnConfiguration.eqOracle.minDepth\"></span>, max-depth: <span\n" +
+    "                        ng-bind=\"learnConfiguration.eqOracle.maxDepth\"></span>)\n" +
+    "                </span>\n" +
+    "                <span ng-if=\"learnConfiguration.eqOracle.type === 'random_word'\">\n" +
+    "                    (\n" +
+    "                    min-length: <span ng-bind=\"learnConfiguration.eqOracle.minLength\"></span>,\n" +
+    "                    max-length: <span ng-bind=\"learnConfiguration.eqOracle.maxLength\"></span>,\n" +
+    "                    #words: <span ng-bind=\"learnConfiguration.eqOracle.maxNoOfTests\"></span>\n" +
+    "                    )\n" +
+    "                </span>\n" +
+    "            </p>\n" +
+    "\n" +
+    "            <p ng-show=\"resetSymbol === null\">\n" +
+    "                <em>Please select a reset symbol by clicking on the blue circle</em>\n" +
+    "            </p>\n" +
+    "\n" +
+    "            <p ng-show=\"resetSymbol !== null\">\n" +
+    "                Reset symbol is <strong ng-bind=\"resetSymbol.name\"></strong>\n" +
+    "            </p>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <hr>\n" +
     "\n" +
     "        <div ng-repeat=\"group in groups\" class=\"symbol-group\"\n" +
     "             ng-class=\"group._isCollapsed ? 'collapsed' :''\">\n" +
@@ -2448,13 +2615,13 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
-    "</div");
+    "</div>");
 }]);
 
 angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/learn-start.html",
-    "<div style=\"position: absolute; width: 100%; top: 50px; bottom: 0; overflow: auto;\">\n" +
+    "<div style=\"position: absolute; width: 100%; top: 42px; bottom: 0; overflow: auto;\">\n" +
     "\n" +
     "    <div ng-if=\"active == true\" class=\"container\" style=\"margin-top: 54px\">\n" +
     "        <div class=\"alert alert-info\">\n" +
@@ -2462,46 +2629,33 @@ angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", fu
     "        </div>\n" +
     "        <hr>\n" +
     "        <button class=\"btn btn-default btn-xs pull-right\" ng-click=\"abort()\">\n" +
-    "            <i class=\"fa fa-close fa-fw\"></i> Abort Learning\n" +
+    "            <i class=\"fa fa-close fa-fw\"></i> Abort\n" +
     "        </button>\n" +
     "    </div>\n" +
     "\n" +
-    "    <div ng-if=\"!active && test\">\n" +
-    "        <div class=\"sub-nav fixed\">\n" +
-    "            <div class=\"container-fluid\">\n" +
+    "    <div ng-if=\"!active && results.length > 0\">\n" +
     "\n" +
-    "                <div class=\"pull-left\">\n" +
-    "                    <button class=\"btn btn-xs btn-default\" learn-result-details-modal-handle result=\"test\">\n" +
-    "                        <i class=\"fa fa-info fa-fw\"></i> Details\n" +
-    "                    </button>\n" +
-    "                	<button class=\"btn btn-xs btn-default\" open-hypothesis-layout-settings-modal layout-settings=\"layoutSettings\" on-update=\"updateLayoutSettings\">\n" +
-    "                		<i class=\"fa fa-eye fa-fw\"></i> Layout\n" +
-    "                	</button>\n" +
-    "                </div>\n" +
+    "        <div class=\"panel-sidebar\">\n" +
     "\n" +
-    "                <div class=\"pull-right\" ng-if=\"isEqOracleSample\">\n" +
-    "                    <button class=\"btn btn-xs btn-success\" ng-click=\"resumeLearning()\">\n" +
-    "                        Resume\n" +
-    "                    </button>\n" +
-    "                </div>\n" +
-    "\n" +
-    "            </div>\n" +
-    "\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div class=\"panel-sidebar\" ng-if=\"isEqOracleSample\">\n" +
+    "            <p>\n" +
+    "                <br>\n" +
+    "                <button class=\"btn btn-primary btn-sm btn-block\" ng-click=\"resumeLearning()\">Resume</button>\n" +
+    "            </p>\n" +
     "\n" +
     "            <div widget widget-title=\"Configuration\" collapsed=\"false\">\n" +
-    "                <div widget-test-resume-settings configuration=\"test.configuration\"></div>\n" +
+    "                <div widget-test-resume-settings configuration=\"_.last(results).configuration\"></div>\n" +
     "            </div>\n" +
     "\n" +
-    "            <div widget widget-title=\"Counter Examples\" collapsed=\"true\">\n" +
-    "                <div widget-counter-examples counter-examples=\"test.configuration.eqOracle.counterExamples\" counter-example=\"counterExample\"></div>\n" +
+    "            <div widget widget-title=\"Counter Examples\" collapsed=\"true\"\n" +
+    "                 ng-if=\"_.last(results).configuration.eqOracle.type === 'sample'\">\n" +
+    "                <div widget-counter-examples counter-examples=\"_.last(results).configuration.eqOracle.counterExamples\"\n" +
+    "                     counter-example=\"counterExample\"></div>\n" +
     "            </div>\n" +
     "\n" +
     "        </div>\n" +
     "\n" +
-    "        <hypothesis test=\"test\" counter-example=\"counterExample\" layout-settings=\"layoutSettings\"></hypothesis>\n" +
+    "        <div learn-results-panel results=\"results\" counter-example=\"counterExample\"></div>\n" +
+    "\n" +
     "    </div>\n" +
     "\n" +
     "</div>\n" +
@@ -2970,10 +3124,6 @@ angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", 
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"alert alert-info alert-condensed\" ng-show=\"symbols.length > 0\">\n" +
-    "            <i class=\"fa fa-fw fa-info\"></i> Recovered symbols will be put in the default group.\n" +
-    "        </div>\n" +
-    "\n" +
     "        <div class=\"alert alert-info\" ng-show=\"symbols.length === 0\">\n" +
     "            There aren't any deleted symbols.\n" +
     "        </div>\n" +
@@ -3042,7 +3192,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "            </div>\n" +
     "\n" +
     "            <button class=\"btn btn-xs btn-default\" ng-class=\"selectedSymbols.length === 1 ? '' : 'disabled'\"\n" +
-    "                    symbol-edit-modal-handle symbol=\"(selectedSymbols | first)\" on-updated=\"updateSymbol\">\n" +
+    "                    symbol-edit-modal-handle symbol=\"selectedSymbols[0]\" on-updated=\"updateSymbol\">\n" +
     "                Edit\n" +
     "            </button>\n" +
     "            <button class=\"btn btn-xs btn-default\" symbol-move-modal-handle groups=\"groups\" symbols=\"selectedSymbols\"\n" +
@@ -3161,12 +3311,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "\n" +
     "    </div>\n" +
     "</div>");
-}]);
-
-angular.module("app/views/pages/tools-hypotheses-view.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/pages/tools-hypotheses-view.html",
-    "drop hypothesis from json here");
 }]);
 
 angular.module("app/views/widgets/widget-counter-examples.html", []).run(["$templateCache", function($templateCache) {

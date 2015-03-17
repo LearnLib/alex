@@ -46,8 +46,7 @@ module.exports = function (grunt) {
                         'bower_components/graphlib/dist/graphlib.core.min.js',
                         'bower_components/dagre/dist/dagre.core.min.js',
                         'bower_components/dagre-d3/dist/dagre-d3.core.min.js',
-                        'bower_components/n3-line-chart/build/line-chart.min.js',
-                        'bower_components/angular-draganddrop/angular-draganddrop.min.js'],
+                        'bower_components/n3-line-chart/build/line-chart.min.js'],
                     dest: 'app/libs.min.js'
                 }
             },

@@ -1,41 +1,44 @@
-<div panel-manager="panels">
+<div style="position: absolute; width: 100%; top: 42px; bottom: 0; overflow: auto;">
+    <div panel-manager="panels">
 
-    <div panel panel-index="$index" ng-repeat="result in panels track by $index">
+        <div panel panel-index="$index" ng-repeat="result in panels track by $index">
 
-        <div ng-if="result">
-            <hypothesis-slideshow-panel panel-index="{{$index}}" result="result"></hypothesis-slideshow-panel>
+            <div ng-if="result">
+                <hypothesis-slideshow-panel panel-index="{{$index}}" result="result"></hypothesis-slideshow-panel>
+            </div>
+
+            <div ng-if="!result" style="padding: 30px">
+
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="result in results"
+                        ng-click="fillPanel(result, $parent.$index)">
+
+                        <strong>Test No
+                            <span ng-bind="result.testNo"></span>
+                        </strong>,
+                        [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
+
+                        <br>
+
+                        <p class="text-muted">
+                            Started: <span
+                                ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+                        </p>
+
+                    </li>
+                </ul>
+
+            </div>
+
         </div>
 
-        <div ng-if="!result" style="padding: 30px">
-
-            <ul class="list-group">
-                <li class="list-group-item" ng-repeat="result in results"
-                    ng-click="fillPanel(result, $parent.$index)">
-
-                    <strong>Test No
-                        <span ng-bind="result.testNo"></span>
-                    </strong>,
-                    [<span ng-bind="result.configuration.algorithm"></span>]
-
-                    <br>
-
-                    <p class="text-muted">
-                        Started: <span ng-bind="(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
-                    </p>
-
-                </li>
-            </ul>
-
-        </div>
-
-    </div>
-
-    <div ng-if="panels.length == 0" style="padding-top: 30px">
-        <div class="container">
-            <div class="alert alert-info">
-                Add a panel by clicking on the grey area on the right and select a test.
+        <div ng-if="panels.length == 0" style="padding-top: 30px">
+            <div class="container">
+                <div class="alert alert-info">
+                    Add a panel by clicking on the grey area on the right and select a test.
+                </div>
             </div>
         </div>
-    </div>
 
+    </div>
 </div>

@@ -64,11 +64,9 @@
 
         function controller($scope) {
 
-            $scope.$watch('counterExamples.length', function (n, o) {
-                console.log(n)
-            });
-
-            //////////
+            //$scope.$watch('counterExamples.length', function (n, o) {
+            //
+            //});
 
             $scope.addCounterExample = function () {
 

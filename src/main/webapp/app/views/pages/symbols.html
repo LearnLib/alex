@@ -31,7 +31,7 @@
             </div>
 
             <button class="btn btn-xs btn-default" ng-class="selectedSymbols.length === 1 ? '' : 'disabled'"
-                    symbol-edit-modal-handle symbol="(selectedSymbols | first)" on-updated="updateSymbol">
+                    symbol-edit-modal-handle symbol="selectedSymbols[0]" on-updated="updateSymbol">
                 Edit
             </button>
             <button class="btn btn-xs btn-default" symbol-move-modal-handle groups="groups" symbols="selectedSymbols"

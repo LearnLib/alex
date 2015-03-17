@@ -8,7 +8,7 @@
     /**
      * Capitalizes a given string
      *
-     * @returns {Function}
+     * @returns {Function} - The filter
      */
     function capitalize() {
         return function (string) {

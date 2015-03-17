@@ -18,19 +18,15 @@
         </tr>
         <tr>
             <td>nth Test</td>
-            <td>{{result.testNo}}</td>
+            <td ng-bind="result.testNo"></td>
         </tr>
         <tr>
             <td>nth Hypothesis</td>
-            <td>{{result.stepNo}}</td>
+            <td ng-bind="result.stepNo"></td>
         </tr>
         <tr>
             <td>Started</td>
-            <td ng-bind="(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></td>
-        </tr>
-        <tr>
-            <td>Duration</td>
-            <td>{{result.duration}} ms</td>
+            <td ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></td>
         </tr>
 
         <tr class="active">
@@ -38,15 +34,39 @@
         </tr>
         <tr>
             <td>Algorithm</td>
-            <td>{{result.configuration.algorithm}}</td>
+            <td ng-bind="(result.configuration.algorithm | formatAlgorithm)"></td>
         </tr>
         <tr>
             <td>EQ Oracle</td>
-            <td>{{result.configuration.eqOracle.type}}</td>
+            <td ng-bind="(result.configuration.eqOracle.type | formatEqOracle)"></td>
         </tr>
         <tr>
             <td>Steps to Learn</td>
-            <td>{{result.configuration.maxAmountOfStepsToLearn}}</td>
+            <td ng-bind="result.configuration.maxAmountOfStepsToLearn"></td>
+        </tr>
+
+        <tr class="active">
+            <td colspan="2"><strong>Numbers</strong></td>
+        </tr>
+        <tr>
+            <td>Duration</td>
+            <td><span ng-bind="result.statistics.duration"></span> ms</td>
+        </tr>
+        <tr>
+            <td>#Membership Queries</td>
+            <td ng-bind="result.statistics.mqsUsed"></td>
+        </tr>
+        <tr>
+            <td>#Equivalence Queries</td>
+            <td ng-bind="result.statistics.eqsUsed"></td>
+        </tr>
+        <tr>
+            <td>#Symbol Calls</td>
+            <td ng-bind="result.statistics.symbolsUsed"></td>
+        </tr>
+        <tr>
+            <td>|Sigma|</td>
+            <td ng-bind="result.sigma.length"></td>
         </tr>
 
     </table>

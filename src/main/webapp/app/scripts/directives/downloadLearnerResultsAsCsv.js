@@ -51,20 +51,20 @@
              * @returns {string} - The csv string from learner results
              */
             function createCsvData(results) {
-                var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,Symbols,Resets,Duration (ms)\n';
-
-                console.log(results)
+                var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,|Sigma|,#MQs,#EQs,#Symbol Calls,Duration (ms)\n';
 
                 _.forEach(results, function (result) {
                     csv += result.project + ',';
                     csv += result.testNo + ',';
-                    csv += '"' + result.startTime + '",';
+                    csv += '"' + result.statistics.startTime + '",';
                     csv += result.stepNo + ',';
                     csv += result.configuration.algorithm + ',';
                     csv += result.configuration.eqOracle.type + ',';
                     csv += result.configuration.symbols.length + ',';
-                    csv += result.amountOfResets + ',';
-                    csv += result.duration + '\n';
+                    csv += result.statistics.mqsUsed + ',';
+                    csv += result.statistics.eqsUsed + ',';
+                    csv += result.statistics.symbolsUsed + ',';
+                    csv += result.statistics.duration + '\n';
                 });
 
                 return csv;

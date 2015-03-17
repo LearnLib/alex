@@ -11,7 +11,6 @@
             'ui.ace',
             'ui.router',
             'ngToast',
-            'draganddrop',
             'n3-line-chart',
             'selectionModel',
 

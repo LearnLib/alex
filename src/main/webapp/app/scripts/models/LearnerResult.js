@@ -23,16 +23,20 @@
          * @constructor
          */
         function LearnResult() {
-            this.amountOfResets;
             this.configuration;
             this.hypothesis;
-            this.duration;
             this.project;
             this.sigma;
-            this.startTime;
             this.stepNo;
             this.testNo;
             this.algorithmInformation;
+            this.statistics = {
+                startTime: null,
+                duration: null,
+                eqsUsed: null,
+                mqsUsed: null,
+                symbolsUsed: null
+            }
         }
 
         /**
@@ -43,16 +47,14 @@
          */
         LearnResult.build = function (data) {
             var result = new LearnResult();
-            result.amountOfResets = data.amountOfResets;
             result.configuration = LearnConfiguration.build(data.configuration);
             result.hypothesis = data.hypothesis;
-            result.duration = data.duration;
             result.project = data.project;
-            result.startTime = data.startTime;
             result.sigma = data.sigma;
             result.stepNo = data.stepNo;
             result.testNo = data.testNo;
             result.algorithmInformation = data.algorithmInformation;
+            result.statistics = data.statistics;
             return result;
         };
 

@@ -58,10 +58,10 @@
                     <strong>Test No
                         <span ng-bind="result.testNo"></span>
                     </strong>,
-                    [<span ng-bind="result.configuration.algorithm"></span>]
+                    [<span ng-bind="(result.configuration.algorithm | formatAlgorithm)"></span>]
 
                     <div class="text-muted">
-                        Started: <span ng-bind="(result.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+                        Started: <span ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
                     </div>
 
                 </div>

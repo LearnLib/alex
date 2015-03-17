@@ -4,38 +4,55 @@
         .module('weblearner.controller')
         .controller('LearnStartController', LearnStartController);
 
-    LearnStartController.$inject = ['$scope', '$interval', 'SessionService', 'LearnerService'];
+    LearnStartController.$inject = [
+        '$scope', '$interval', 'SessionService', 'LearnerService', 'LearnResult', 'ToastService'
+    ];
 
     /**
-     * Shows a load screen and the hypothesis of a test.
+     * The controller for showing a load screen during the learning and shows all learn results from the current test
+     * in the intermediate steps.
+     *
+     * The template can be found at 'views/pages/learn-start.html'.
      *
      * @param $scope
      * @param $interval
      * @param Session
      * @param Learner
+     * @param LearnResult
+     * @param Toast
      * @constructor
      */
-    function LearnStartController($scope, $interval, Session, Learner) {
+    function LearnStartController($scope, $interval, Session, Learner, LearnResult, Toast) {
 
-        var _project = Session.project.get();
-        var _interval = null;
-        var _intervalTime = 10000;
+        // The project that is stored in the session
+        var project = Session.project.get();
 
-        /** the test result **/
-        $scope.test = null;
+        // The interval object
+        var interval = null;
 
-        /** indicator for polling the server for a test result */
+        // The time for the polling interval
+        var intervalTime = 10000;
+
+        /**
+         * The complete learn result until the most recent learned one
+         * @type {LearnResult[]}
+         */
+        $scope.results = [];
+
+        /**
+         * Indicates if polling the server for a test result is still active
+         * @type {boolean}
+         */
         $scope.active = false;
 
-        /** indicator if eqOracle was type 'sample' **/
-        $scope.isEqOracleSample = false;
-
+        /**
+         *
+         * @type {{input: string, output: string}}
+         */
         $scope.counterExample = {
             input: '',
             output: ''
         };
-
-        $scope.layoutSettings;
 
         // initialize the controller
         (function init() {
@@ -45,7 +62,7 @@
 
             // stop polling when you leave the page
             $scope.$on("$destroy", function () {
-                $interval.cancel(_interval);
+                $interval.cancel(interval);
             });
         }());
 
@@ -54,21 +71,24 @@
          */
         function poll() {
             $scope.active = true;
-            _interval = $interval(function () {
+            interval = $interval(function () {
                 Learner.isActive()
                     .then(function (data) {
                         if (!data.active) {
-                            Learner.getStatus()
-                                .then(function (test) {
-                                    $scope.active = false;
-                                    $scope.test = test;
-                                    $scope.isEqOracleSample = test.configuration.eqOracle.type === 'sample';
-                                    console.log(test);
-                                });
-                            $interval.cancel(_interval);
+                            Learner.getStatus().then(loadComplete);
+                            $interval.cancel(interval);
+                            $scope.active = false;
                         }
                     })
-            }, _intervalTime);
+            }, intervalTime);
+
+            // load the complete set of steps for the learn result
+            function loadComplete(result) {
+                LearnResult.Resource.getComplete(project.id, result.testNo)
+                    .then(function (results) {
+                        $scope.results = results;
+                    });
+            }
         }
 
         /**
@@ -85,25 +105,31 @@
          * Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample'
          */
         $scope.resumeLearning = function () {
-            var copy = angular.copy($scope.test.configuration);
+            var copy = angular.copy(_.last($scope.results).configuration);
             delete copy.algorithm;
             delete copy.symbols;
             delete copy.resetSymbol;
-            Learner.resume(_project.id, $scope.test.testNo, copy)
+            Learner.resume(project.id, _.last($scope.results).testNo, copy)
                 .then(poll)
         };
 
+        /**
+         * Tell the learner to stop learning at the next possible time, when the next hypothesis is generated
+         */
         $scope.abort = function () {
             if ($scope.active) {
+                Toast.info('The learner will stop with the next hypothesis');
                 Learner.stop()
-                    .then(function (data) {
-                        console.log(data)
-                    })
             }
         };
 
+        /**
+         * Test if a counter example really is one
+         *
+         * @param counterExample
+         */
         $scope.testCounterExample = function (counterExample) {
-            return;
+            
         }
     }
 }());

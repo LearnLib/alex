@@ -26,6 +26,39 @@
 <div class="view-body">
     <div class="container symbol-group-list">
 
+        <div class="alert alert-info alert-condensed clearfix">
+            <button class="btn btn-xs btn-info pull-right" open-learn-setup-settings-modal
+                    learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
+                <i class="fa fa-gear"></i>
+            </button>
+
+            <p>
+                Using algorithm <strong ng-bind="(learnConfiguration.algorithm | formatAlgorithm)"></strong>
+                with EQ-Oracle <strong ng-bind="(learnConfiguration.eqOracle.type | formatEqOracle)"></strong>
+                <span ng-if="learnConfiguration.eqOracle.type === 'complete'">
+                    (min-depth: <span ng-bind="learnConfiguration.eqOracle.minDepth"></span>, max-depth: <span
+                        ng-bind="learnConfiguration.eqOracle.maxDepth"></span>)
+                </span>
+                <span ng-if="learnConfiguration.eqOracle.type === 'random_word'">
+                    (
+                    min-length: <span ng-bind="learnConfiguration.eqOracle.minLength"></span>,
+                    max-length: <span ng-bind="learnConfiguration.eqOracle.maxLength"></span>,
+                    #words: <span ng-bind="learnConfiguration.eqOracle.maxNoOfTests"></span>
+                    )
+                </span>
+            </p>
+
+            <p ng-show="resetSymbol === null">
+                <em>Please select a reset symbol by clicking on the blue circle</em>
+            </p>
+
+            <p ng-show="resetSymbol !== null">
+                Reset symbol is <strong ng-bind="resetSymbol.name"></strong>
+            </p>
+
+        </div>
+        <hr>
+
         <div ng-repeat="group in groups" class="symbol-group"
              ng-class="group._isCollapsed ? 'collapsed' :''">
 
@@ -80,4 +113,4 @@
         </div>
 
     </div>
-</div
+</div>
