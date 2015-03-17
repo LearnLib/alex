@@ -87,7 +87,7 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
     private boolean hidden;
 
     /** The actions to perform. */
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "symbol", fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
     @OrderBy("number ASC")
     private List<SymbolAction> actions;
@@ -313,6 +313,7 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
         }
 
         actions.add(action);
+        action.setSymbol(this);
     }
 
     public void beforeSave() {
@@ -325,16 +326,14 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
 
     @Override
     public String execute(MultiConnector connector) throws SULException {
-        ExecuteResult result = ExecuteResult.OK;
-
-        for (int i = 0; i < actions.size() && result == ExecuteResult.OK; i++) {
-            ExecuteResult tmpResult = executeAction(actions.get(i), connector);
-            if (tmpResult != ExecuteResult.OK) {
-                result = tmpResult;
+        for (SymbolAction action : actions) {
+            ExecuteResult result = executeAction(action, connector);
+            if (!action.isIgnoreFailure() && result != ExecuteResult.OK) {
+                return result.toString();
             }
         }
 
-        return result.toString();
+        return ExecuteResult.OK.toString();
     }
 
     private ExecuteResult executeAction(SymbolAction action, MultiConnector connector) {

@@ -3,30 +3,31 @@ package de.learnlib.weblearner.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeExistsAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeTypeAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeValueAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckHeaderFieldAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckStatusAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckTextRestAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.DeclareCounterAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.DeclareVariableAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.IncrementCounterAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.SetCounterAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableByJSONAttributeAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableByHTMLElementAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.CheckNodeAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.CheckTextWebAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.ClearAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.ClickAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.FillAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.SubmitAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.WaitAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
+import de.learnlib.weblearner.entities.actions.ExecuteSymbolAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CallAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckAttributeExistsAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckAttributeTypeAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckAttributeValueAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckHeaderFieldAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckStatusAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckTextRestAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.RESTSymbolAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.DeclareCounterAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.DeclareVariableAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.IncrementCounterAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetCounterAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableByHTMLElementAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckNodeAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckTextWebAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClearAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.FillAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.GotoAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.SubmitAction;
+import de.learnlib.weblearner.entities.actions.WaitAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
 
 import javax.persistence.DiscriminatorColumn;
@@ -38,6 +39,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 
@@ -51,6 +54,8 @@ import java.io.Serializable;
 @DiscriminatorValue("SUPER")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
+        @JsonSubTypes.Type(name = "executeSymbol", value = ExecuteSymbolAction.class),
+        @JsonSubTypes.Type(name = "wait", value = WaitAction.class),
         // Counter & Variables
         @JsonSubTypes.Type(name = "declareCounter", value = DeclareCounterAction.class),
         @JsonSubTypes.Type(name = "declareVariable", value = DeclareVariableAction.class),
@@ -68,7 +73,6 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
-        @JsonSubTypes.Type(name = "wait", value = WaitAction.class),
         // REST Actions
         @JsonSubTypes.Type(name = "rest", value = RESTSymbolAction.class),
         @JsonSubTypes.Type(name = "rest_call", value = CallAction.class),
@@ -87,9 +91,26 @@ public abstract class SymbolAction implements Serializable {
     @JsonIgnore
     protected long id;
 
+    @ManyToOne
+    @JoinColumn(name = "symbolId")
+    @JsonIgnore
+    private Symbol symbol;
+
+    public Symbol getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(Symbol symbol) {
+        this.symbol = symbol;
+    }
+
     /** The position the action has in the actions list of the Symbol. */
     @JsonIgnore
     protected int number;
+
+    private boolean negated;
+
+    private boolean ignoreFailure;
 
     /**
      * Get the ID of the Action used in the DB.
@@ -128,6 +149,22 @@ public abstract class SymbolAction implements Serializable {
         this.number = no;
     }
 
+    public boolean isNegated() {
+        return negated;
+    }
+
+    public void setNegated(boolean negated) {
+        this.negated = negated;
+    }
+
+    public boolean isIgnoreFailure() {
+        return ignoreFailure;
+    }
+
+    public void setIgnoreFailure(boolean ignoreFailure) {
+        this.ignoreFailure = ignoreFailure;
+    }
+
     /**
      * Execute the Action. This is the important method in which all the magic will happen.
      *
@@ -137,6 +174,22 @@ public abstract class SymbolAction implements Serializable {
      *          run successfully or not.
      */
     public abstract ExecuteResult execute(MultiConnector connector);
+
+    protected ExecuteResult getSuccessOutput() {
+        if (negated) {
+            return ExecuteResult.FAILED;
+        } else {
+            return ExecuteResult.OK;
+        }
+    }
+
+    protected ExecuteResult getFailedOutput() {
+        if (negated) {
+            return ExecuteResult.OK;
+        } else {
+            return ExecuteResult.FAILED;
+        }
+    }
 
     //CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber - auto generated by IntelliJ
     @Override

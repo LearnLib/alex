@@ -121,6 +121,10 @@ public class WebSymbolIT {
         symbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, symbols.size()); // update == create a new symbol with a higher revision & hide the old one
         symbol = symbols.get(0); // 1st symbol, 2nd revision
+        System.out.println("############");
+        System.out.println(symbol);
+        System.out.println(symbol.getActions());
+        System.out.println("############");
         assertEquals(2, symbol.getActions().size());
 
         // delete

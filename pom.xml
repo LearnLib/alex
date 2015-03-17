@@ -301,11 +301,11 @@
                             <docletArtifact>
                                 <groupId>com.carma</groupId>
                                 <artifactId>swagger-doclet</artifactId>
-                                <version>1.0.4.1</version>
+                                <version>1.0.4.2</version>
                             </docletArtifact>
                             <reportOutputDirectory>${basedir}/src/main/webapp</reportOutputDirectory>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
-                            <additionalparam>-apiVersion 1 -docBasePath /restdocs/docs -apiBasePath /rest -disableCopySwaggerUi</additionalparam>
+                            <additionalparam>-apiVersion 1 -docBasePath /restdocs/docs -apiBasePath ../rest -disableCopySwaggerUi</additionalparam>
                             <destDir>restdocs/docs</destDir> <!-- not the apidocs folder -->
                         </configuration>
                     </execution>

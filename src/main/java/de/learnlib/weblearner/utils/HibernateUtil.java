@@ -2,33 +2,34 @@ package de.learnlib.weblearner.utils;
 
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CallAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeExistsAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeTypeAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckAttributeValueAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckHeaderFieldAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckStatusAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.CheckTextRestAction;
-import de.learnlib.weblearner.entities.RESTSymbolActions.RESTSymbolAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.DeclareCounterAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.DeclareVariableAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.IncrementCounterAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.SetCounterAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableByJSONAttributeAction;
-import de.learnlib.weblearner.entities.StoreSymbolActions.SetVariableByHTMLElementAction;
+import de.learnlib.weblearner.entities.actions.ExecuteSymbolAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CallAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckAttributeExistsAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckAttributeTypeAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckAttributeValueAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckHeaderFieldAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckStatusAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckTextRestAction;
+import de.learnlib.weblearner.entities.actions.RESTSymbolActions.RESTSymbolAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.DeclareCounterAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.DeclareVariableAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.IncrementCounterAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetCounterAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableByHTMLElementAction;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.entities.SymbolGroup;
-import de.learnlib.weblearner.entities.WebSymbolActions.CheckNodeAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.CheckTextWebAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.ClearAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.ClickAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.FillAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.SubmitAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.WaitAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckNodeAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckTextWebAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClearAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.FillAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.GotoAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.SubmitAction;
+import de.learnlib.weblearner.entities.actions.WaitAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.WebSymbolAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.FlushMode;
@@ -71,6 +72,8 @@ public final class HibernateUtil {
 
             //Actions
             configuration.addAnnotatedClass(SymbolAction.class);
+            configuration.addAnnotatedClass(WaitAction.class);
+            configuration.addAnnotatedClass(ExecuteSymbolAction.class);
             // Web Actions
             configuration.addAnnotatedClass(WebSymbolAction.class);
             configuration.addAnnotatedClass(CheckTextWebAction.class);
@@ -80,7 +83,6 @@ public final class HibernateUtil {
             configuration.addAnnotatedClass(FillAction.class);
             configuration.addAnnotatedClass(GotoAction.class);
             configuration.addAnnotatedClass(SubmitAction.class);
-            configuration.addAnnotatedClass(WaitAction.class);
             // REST Symbols & Actions
             configuration.addAnnotatedClass(RESTSymbolAction.class);
             configuration.addAnnotatedClass(CallAction.class);

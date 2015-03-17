@@ -1,6 +1,5 @@
 package de.learnlib.weblearner.utils;
 
-import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
 import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;
@@ -30,9 +29,9 @@ public final class SearchHelper {
      *         The text to match.
      * @param regex
      *         Flag if the value is a regular expression or not.
-     * @return ExecuteResult.OK on success, ExecuteResult.FAILED otherwise.
+     * @return true on success, False otherwise.
      */
-    public static ExecuteResult search(String value, String text, boolean regex) {
+    public static boolean search(String value, String text, boolean regex) {
         if (regex) {
             return searchWithRegex(value, text);
         } else {
@@ -40,12 +39,8 @@ public final class SearchHelper {
         }
     }
 
-    private static ExecuteResult searchWithoutRegex(String value, String text) {
-        if (text.contains(value)) {
-            return ExecuteResult.OK;
-        } else {
-            return ExecuteResult.FAILED;
-        }
+    private static boolean searchWithoutRegex(String value, String text) {
+        return text.contains(value);
     }
 
     /**
@@ -56,16 +51,12 @@ public final class SearchHelper {
      *         The pattern to search.
      * @param text
      *         The text to match.
-     * @return ExecuteResult.OK on success, ExecuteResult.FAILED otherwise.
+     * @return true on success, false otherwise.
      */
-    public static ExecuteResult searchWithRegex(String regex, String text) {
+    public static boolean searchWithRegex(String regex, String text) {
         Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
         Matcher matcher = pattern.matcher(text);
-        if (matcher.matches()) {
-            return ExecuteResult.OK;
-        } else {
-            return ExecuteResult.FAILED;
-        }
+        return matcher.matches();
     }
 
     public static String insertVariableValues(MultiConnector connector, String text) {

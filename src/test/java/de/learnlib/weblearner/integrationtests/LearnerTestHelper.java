@@ -26,7 +26,7 @@ import static org.junit.Assert.fail;
 
 public class LearnerTestHelper {
 
-    private static final int TIME_TO_WAIT_BETWEEN_POLLS = 2000; // three minutes !!
+    private static final int TIME_TO_WAIT_BETWEEN_POLLS = 2000; // two seconds
 
     private String learnerUrl;
 

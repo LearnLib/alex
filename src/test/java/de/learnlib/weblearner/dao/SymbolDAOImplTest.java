@@ -3,16 +3,18 @@ package de.learnlib.weblearner.dao;
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
-import de.learnlib.weblearner.entities.WebSymbolActions.CheckTextWebAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.ClearAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.ClickAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.FillAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.GotoAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.SubmitAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.WaitAction;
-import de.learnlib.weblearner.entities.WebSymbolActions.WebSymbolAction;
+import de.learnlib.weblearner.entities.actions.ExecuteSymbolAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckTextWebAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClearAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.FillAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.GotoAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.SubmitAction;
+import de.learnlib.weblearner.entities.actions.WaitAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -89,6 +91,9 @@ public class SymbolDAOImplTest {
         symbol.addAction(a6);
         WebSymbolAction a7 = new WaitAction();
         symbol.addAction(a7);
+        SymbolAction a8 = new ExecuteSymbolAction();
+        ((ExecuteSymbolAction) a8).setSymbol(symbol);
+        symbol.addAction(a8);
 
         // create symbol 2
         symbol2 = new Symbol();
@@ -133,8 +138,8 @@ public class SymbolDAOImplTest {
         assertNotNull(webSymbolInDB.getActions());
         assertEquals(symbol.getActions().size(), webSymbolInDB.getActions().size());
         for (int i = 0; i < symbol.getActions().size(); i++) {
-            WebSymbolAction expectedAction = (WebSymbolAction) symbol.getActions().get(i);
-            WebSymbolAction actualAction = (WebSymbolAction) webSymbolInDB.getActions().get(i);
+            SymbolAction expectedAction = symbol.getActions().get(i);
+            SymbolAction actualAction = webSymbolInDB.getActions().get(i);
             assertEquals(expectedAction, actualAction);
         }
     }
@@ -221,8 +226,8 @@ public class SymbolDAOImplTest {
         assertNotNull(websymbolInDB.getActions());
         assertEquals(symbol.getActions().size(), websymbolInDB.getActions().size());
         for (int i = 0; i < symbol.getActions().size(); i++) {
-            WebSymbolAction expectedAction = (WebSymbolAction) symbol.getActions().get(i);
-            WebSymbolAction actualAction = (WebSymbolAction) websymbolInDB.getActions().get(i);
+            SymbolAction expectedAction = symbol.getActions().get(i);
+            SymbolAction actualAction = websymbolInDB.getActions().get(i);
             assertEquals(expectedAction, actualAction);
         }
     }

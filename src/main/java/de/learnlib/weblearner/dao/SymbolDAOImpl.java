@@ -3,6 +3,7 @@ package de.learnlib.weblearner.dao;
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.utils.HibernateUtil;
@@ -27,6 +28,7 @@ import java.util.Objects;
 public class SymbolDAOImpl implements SymbolDAO {
 
     private final SymbolGroupDAO symbolGroupDAO;
+    private SymbolAction action;
 
     public SymbolDAOImpl(SymbolGroupDAO symbolGroupDAO) {
         this.symbolGroupDAO = symbolGroupDAO;
@@ -109,7 +111,9 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         if (symbol.getActions() != null) {
             for (int i = 0; i < symbol.getActions().size(); i++) {
-                symbol.getActions().get(0).setNumber(i);
+                action = symbol.getActions().get(0);
+                action.setNumber(i);
+                action.setSymbol(symbol);
             }
         }
 
@@ -414,6 +418,14 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.setSymbolId(0L);
         symbol.setRevision(symbol.getRevision() + 1);
         symbol.setGroup(newGroup);
+
+        if (symbol.getActions() != null) {
+            for (int i = 0; i < symbol.getActions().size(); i++) {
+                action = symbol.getActions().get(0);
+                action.setNumber(i);
+                action.setSymbol(symbol);
+            }
+        }
 
         symbol.beforeSave();
         session.save(symbol);
