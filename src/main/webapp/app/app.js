@@ -3687,9 +3687,11 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
     angular
         .module('weblearner.constants')
-        
-        // make lodash a constant for better testing
-        .constant('_', window._)
+
+        // make global libraries a constant for better testing
+        .constant('_', window._)                // lodash
+        .constant('dagreD3', window.dagreD3)    // dagreD3
+        .constant('d3', window.d3)              // d3
 
         // paths that are used in the application
     	.constant('paths', {
@@ -6108,9 +6110,18 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
         .module('weblearner.directives')
         .directive('discriminationTree', discriminationTree);
 
-    discriminationTree.$inject = ['_', '$window'];
+    discriminationTree.$inject = ['_', 'd3', 'dagreD3', '$window'];
 
-    function discriminationTree(_, $window) {
+    /**
+     * The directive for displaying a discrimination tree.
+     *
+     * @param _
+     * @param d3
+     * @param dagreD3
+     * @param $window
+     * @returns {{scope: {data: string}, template: string, link: link}}
+     */
+    function discriminationTree(_, d3, dagreD3, $window) {
 
         return {
             scope: {
@@ -6118,32 +6129,40 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
             },
             template: '<svg><g></g></svg>',
             link: link
-        }
+        };
 
+        /**
+         * @param scope
+         * @param el
+         * @param attrs
+         */
         function link(scope, el, attrs) {
 
-            var data = {
-                discriminator: "w2 w3",
-                children: [
-                    {
-                        discriminator: 'w3',
-                        children: [
-                            {data: 'q0'},
-                            {data: 'q2'}
-                        ]
-                    },
-                    {data: 'q1'}
-                ]
-            }
-
+            // the svg where the discrimination tree is drawn into
             var svg = d3.select(el.find('svg')[0]);
+
+            // the first g node of the svg for rendering
             var svgGroup = d3.select(el.find('svg').find('g')[0]);
+
+            // the parent of the svg to fit its size accordingly
             var svgContainer = el[0].parentNode;
 
-            var graph = createGraph(data);
-            var layoutedGraph = layout(graph);
-            render(layoutedGraph);
+            // render the new discrimation tree when property 'data' changes
+            scope.$watch('data', function (newValue) {
+                if (angular.isDefined(newValue)) {
+                    var data = angular.fromJson(newValue);
+                    var graph = createGraph(data);
+                    var layoutedGraph = layout(graph);
+                    render(layoutedGraph);
+                }
+            });
 
+            /**
+             * Creates a graph structure from a discrimination tree in order to layout it with the given dagreD3 library
+             *
+             * @param dt - The discrimination tree
+             * @returns {{nodes: Array, edges: Array}} - The tree as graph representation
+             */
             function createGraph(dt) {
 
                 var nodes = [];
@@ -6151,10 +6170,18 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
                 function createGraphData(node, parent) {
 
+                    // root without children
+                    if (!node.children && parent === null) {
+                        nodes.push(node.data);
+                        return;
+                    }
+
+                    // is leaf?
                     if (node.children.length === 0) {
                         return;
                     }
 
+                    // add node if not exists
                     if (!_.find(nodes, node.discriminator)) {
                         nodes.push(node.discriminator)
                     }
@@ -6162,17 +6189,19 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                     if (parent !== null) {
                         edges.push({
                             from: parent.discriminator,
-                            to: node.discriminator
-                        })
+                            to: node.discriminator,
+                            label: node.edgeLabel
+                        });
                     }
 
-                    _.forEach(node.children, function(child){
+                    _.forEach(node.children, function (child) {
                         if (child.data) {
                             nodes.push(child.data);
                             edges.push({
                                 from: node.discriminator,
-                                to: child.data
-                            })
+                                to: child.data,
+                                label: child.edgeLabel
+                            });
                         }
                     });
 
@@ -6191,18 +6220,18 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 }
             }
 
-            function layout(graph){
+            function layout(graph) {
 
                 var _graph = new graphlib.Graph({
-                    directed: true,
+                    directed: true
                 });
 
-                _graph.setGraph({})
+                _graph.setGraph({});
 
                 //// add nodes to the graph
                 _.forEach(graph.nodes, function (node, i) {
                     _graph.setNode(node, {
-                        shape: 'circle',
+                        shape: node[0] === 'q' ? 'rect' : 'circle',
                         label: node,
                         width: 25,
                         style: 'fill: #fff; stroke: #000; stroke-width: 1',
@@ -6214,7 +6243,8 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 _.forEach(graph.edges, function (edge, i) {
                     _graph.setEdge(edge.from, edge.to, {
                         lineInterpolate: 'basis',
-                        style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none"
+                        style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
+                        label: edge.label
                     });
                 });
 
@@ -6242,14 +6272,14 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 
                 angular.element($window).on('resize', fitSize);
 
-                function fitSize() {
-                    svg.attr("width", svgContainer.clientWidth);
-                    svg.attr("height", svgContainer.clientHeight);
-                }
-
                 window.setTimeout(function () {
                     window.dispatchEvent(new Event('resize'));
                 }, 100);
+            }
+
+            function fitSize() {
+                svg.attr("width", svgContainer.clientWidth);
+                svg.attr("height", svgContainer.clientHeight);
             }
         }
     }

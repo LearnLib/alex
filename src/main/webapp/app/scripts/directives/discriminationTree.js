@@ -5,42 +5,60 @@
         .module('weblearner.directives')
         .directive('discriminationTree', discriminationTree);
 
-    discriminationTree.$inject = ['_', '$window'];
+    discriminationTree.$inject = ['_', 'd3', 'dagreD3', 'graphlib', '$window'];
 
-    function discriminationTree(_, $window) {
+    /**
+     * The directive for displaying a discrimination tree in an svg element. Can be used as an attribute or an element.
+     * Expects another property 'data' which holds the string representation of the discrimination tree.
+     *
+     * Use it like: '<discrimination-tree data="...."></discriminaion-tree>'
+     *
+     * @param _ - Lodash
+     * @param d3 - D3
+     * @param dagreD3 - dagreD3
+     * @param graphlib - graphlib
+     * @param $window - angular $window object
+     * @returns {{scope: {data: string}, template: string, link: link}}
+     */
+    function discriminationTree(_, d3, dagreD3, graphlib, $window) {
 
+        // the directive
         return {
             scope: {
                 data: '='
             },
             template: '<svg><g></g></svg>',
             link: link
-        }
+        };
 
+        // handle the directives logic
         function link(scope, el, attrs) {
 
-            var data = {
-                discriminator: "w2 w3",
-                children: [
-                    {
-                        discriminator: 'w3',
-                        children: [
-                            {data: 'q0'},
-                            {data: 'q2'}
-                        ]
-                    },
-                    {data: 'q1'}
-                ]
-            }
-
+            // the svg where the discrimination tree is drawn into
             var svg = d3.select(el.find('svg')[0]);
+
+            // the first g node of the svg for rendering
             var svgGroup = d3.select(el.find('svg').find('g')[0]);
+
+            // the parent of the svg to fit its size accordingly
             var svgContainer = el[0].parentNode;
 
-            var graph = createGraph(data);
-            var layoutedGraph = layout(graph);
-            render(layoutedGraph);
+            // render the new discrimation tree when property 'data' changes
+            scope.$watch('data', function (newValue) {
+                if (angular.isDefined(newValue)) {
+                    var data = angular.fromJson(newValue);
+                    var graph = createGraph(data);
+                    var layoutedGraph = layout(graph);
+                    render(layoutedGraph);
+                }
+            });
 
+            /**
+             * Creates a graph structure from a discrimination tree in order to layout it with the given dagreD3 library
+             *
+             * @param {Object} dt - The discrimination tree
+             * @returns {{nodes: Array, edges: Array}} - The tree as graph representation
+             */
             function createGraph(dt) {
 
                 var nodes = [];
@@ -48,10 +66,18 @@
 
                 function createGraphData(node, parent) {
 
+                    // root without children
+                    if (!node.children && parent === null) {
+                        nodes.push(node.data);
+                        return;
+                    }
+
+                    // is leaf?
                     if (node.children.length === 0) {
                         return;
                     }
 
+                    // add node if not exists
                     if (!_.find(nodes, node.discriminator)) {
                         nodes.push(node.discriminator)
                     }
@@ -59,17 +85,19 @@
                     if (parent !== null) {
                         edges.push({
                             from: parent.discriminator,
-                            to: node.discriminator
-                        })
+                            to: node.discriminator,
+                            label: node.edgeLabel
+                        });
                     }
 
-                    _.forEach(node.children, function(child){
+                    _.forEach(node.children, function (child) {
                         if (child.data) {
                             nodes.push(child.data);
                             edges.push({
                                 from: node.discriminator,
-                                to: child.data
-                            })
+                                to: child.data,
+                                label: child.edgeLabel
+                            });
                         }
                     });
 
@@ -88,18 +116,24 @@
                 }
             }
 
-            function layout(graph){
+            /**
+             * Creates positions for nodes and edges of the discrimination tree that can be rendered with dagreD3
+             *
+             * @param {Object} graph - The discrimination tree as graph
+             * @returns {exports.Graph} - The graph with positions of nodes
+             */
+            function layout(graph) {
 
+                // initialize graph
                 var _graph = new graphlib.Graph({
-                    directed: true,
+                    directed: true
                 });
+                _graph.setGraph({});
 
-                _graph.setGraph({})
-
-                //// add nodes to the graph
+                // add nodes to the graph
                 _.forEach(graph.nodes, function (node, i) {
                     _graph.setNode(node, {
-                        shape: 'circle',
+                        shape: node[0] === 'q' ? 'rect' : 'circle',     // draw a rectangle when node is a leaf
                         label: node,
                         width: 25,
                         style: 'fill: #fff; stroke: #000; stroke-width: 1',
@@ -111,7 +145,8 @@
                 _.forEach(graph.edges, function (edge, i) {
                     _graph.setEdge(edge.from, edge.to, {
                         lineInterpolate: 'basis',
-                        style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none"
+                        style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
+                        label: edge.label
                     });
                 });
 
@@ -121,9 +156,17 @@
                 return _graph;
             }
 
+            /**
+             * Renders the discrimination tree in the svg with the dagreD3 library
+             *
+             * @param {exports.Graph} graph - The graph with position information
+             */
             function render(graph) {
+
+                // render the graph
                 new dagreD3.render()(svgGroup, graph);
 
+                // position it in the center of the svg parent
                 var xCenterOffset = (svgContainer.clientWidth - graph.graph().width) / 2;
                 svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
 
@@ -137,13 +180,18 @@
                     + ')' + ' scale(' + zoom.scale() + ')');
                 }
 
+                // resize the svg to its parents size on window resize
+                // and call it once so that svg gets the proper dimensions
                 angular.element($window).on('resize', fitSize);
-
                 function fitSize() {
                     svg.attr("width", svgContainer.clientWidth);
                     svg.attr("height", svgContainer.clientHeight);
                 }
 
+                fitSize();
+
+                // in order to prevent only a white screen in some browsers, firing a resize event on the window
+                // displays the svg contents
                 window.setTimeout(function () {
                     window.dispatchEvent(new Event('resize'));
                 }, 100);

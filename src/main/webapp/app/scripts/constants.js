@@ -3,9 +3,12 @@
 
     angular
         .module('weblearner.constants')
-        
-        // make lodash a constant for better testing
-        .constant('_', window._)
+
+        // make global libraries a constant for better testing
+        .constant('_', window._)                // lodash
+        .constant('dagreD3', window.dagreD3)    // dagreD3
+        .constant('d3', window.d3)              // d3
+        .constant('graphlib', window.graphlib)  // graphlib
 
         // paths that are used in the application
     	.constant('paths', {
