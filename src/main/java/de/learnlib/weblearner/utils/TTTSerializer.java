@@ -1,31 +1,30 @@
 package de.learnlib.weblearner.utils;
 
-import de.learnlib.algorithms.discriminationtree.hypothesis.HState;
-import de.learnlib.discriminationtree.DTNode;
-import de.learnlib.discriminationtree.DiscriminationTree;
+import de.learnlib.algorithms.ttt.base.DTNode;
+import de.learnlib.algorithms.ttt.base.DiscriminationTree;
 import net.automatalib.words.Word;
 
-public final class DiscriminationTreeSerializer {
+public final class TTTSerializer {
 
-    private DiscriminationTreeSerializer() {}
+    private TTTSerializer() {}
 
-    public static String toJSON(DiscriminationTree<String, Word, HState> tree) {
+    public static String toJSON(DiscriminationTree<String, Word> tree) {
         return toJSON(tree.getRoot());
     }
 
-    private static String toJSON(DTNode<String, Word, HState> node) {
+    private static String toJSON(DTNode<String, Word> node) {
         StringBuilder result = new StringBuilder();
         result.append('{');
 
-        if (node.getParentOutcome() != null) {
+        if (node.getParentEdgeLabel() != null) {
             result.append("\"edgeLabel\": \"");
-            result.append(node.getParentOutcome());
+            result.append(node.getParentEdgeLabel());
             result.append("\",");
         }
 
         if (node.isLeaf()) {
             result.append("\"data\": \"");
-            result.append(node.getData());
+            result.append(node.getState());
             result.append('"');
         } else {
             result.append("\"discriminator\": \"");

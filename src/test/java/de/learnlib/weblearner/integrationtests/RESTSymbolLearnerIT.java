@@ -4,6 +4,7 @@ import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.ProjectTest;
 import de.learnlib.weblearner.entities.Symbol;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import net.automatalib.words.Alphabet;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;

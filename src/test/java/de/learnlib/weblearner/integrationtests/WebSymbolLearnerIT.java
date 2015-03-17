@@ -7,7 +7,6 @@ import de.learnlib.weblearner.entities.Symbol;
 import net.automatalib.words.Alphabet;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -122,7 +121,7 @@ public class WebSymbolLearnerIT {
         String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
                     + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + ", \"eqOracle\":"
                         + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                    + "\"algorithm\": \"TTT\"}";
+                    + "\"algorithm\": \"DISCRIMINATION_TREE\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
@@ -137,8 +136,8 @@ public class WebSymbolLearnerIT {
         result.setJSON(resultAsJSON);
 
         assertTrue(testHelper.hypothesisIsEqualToTheExpectedOne(result.getHypothesis(), testAlphabet, "web"));
-        assertTrue(result.getDuration() > 0);
-        assertTrue(result.getAmountOfResets() > 0);
+        assertTrue(result.getStatistics().getDuration() > 0);
+        assertTrue(result.getStatistics().getEqsUsed() > 0);
     }
 
     @Test(timeout = MAX_TIME_TO_WAIT_FOR_LEARNER)
@@ -148,7 +147,7 @@ public class WebSymbolLearnerIT {
         String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
                     + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + ", \"eqOracle\":"
                         + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                    + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"TTT\"}";
+                    + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"DISCRIMINATION_TREE\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
@@ -182,7 +181,7 @@ public class WebSymbolLearnerIT {
         String json = "{\"symbols\": [" + symbolsIdAndRevisionAsJSON + "],"
                     + "\"resetSymbol\": " + resetSymbolIdAndRevisionAsJSON + ", \"eqOracle\":"
                         + "{\"type\":\"complete\",\"minDepth\":1, \"maxDepth\": 3},"
-                    + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"TTT\"}";
+                    + "\"maxAmountOfStepsToLearn\": 1, \"algorithm\": \"DISCRIMINATION_TREE\"}";
         Response response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 

@@ -16,6 +16,8 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -43,6 +45,102 @@ public class LearnerResult implements Serializable {
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("server");
 
+    @Embeddable
+    @JsonPropertyOrder(alphabetic = true)
+    public static class Statistics {
+
+        /** Date and Time when the learning step was started. The format is conform with the ISO 8601 (JavaScript-Style). */
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
+        private Date startTime;
+
+        /** The duration of the learn step. */
+        private long duration;
+
+        /** The amount of SUL resets if available. Otherwise -1. */
+        private int eqsUsed;
+
+        private int mqsUsed;
+
+        private int symbolsUsed;
+
+        public Statistics() {
+            this.startTime = new Date(0);
+        }
+
+        /**
+         * Get the start time of the learn step.
+         *
+         * @return The start time.
+         */
+        public Date getStartTime() {
+            return startTime;
+        }
+
+        /**
+         * Set the start time of the learn step.
+         *
+         * @param startTime
+         *         The new start time.
+         */
+        public void setStartTime(Date startTime) {
+            this.startTime = startTime;
+        }
+
+        /**
+         * Get the duration the learn step took.
+         *
+         * @return The duration of the learn step.
+         */
+        public long getDuration() {
+            return duration;
+        }
+
+        /**
+         * Set how long the learn step took.
+         *
+         * @param duration
+         *         The new duration.
+         */
+        public void setDuration(long duration) {
+            this.duration = duration;
+        }
+
+        /**
+         * Get the amount of resets done while learning.
+         *
+         * @return The amount of resets during the learn step.
+         */
+        public int getEqsUsed() {
+            return eqsUsed;
+        }
+
+        /**
+         * Set the amount of resets done while learning.
+         *
+         * @param eqsUsed
+         *         The amount of resets during the learn step.
+         */
+        public void setEqsUsed(int eqsUsed) {
+            this.eqsUsed = eqsUsed;
+        }
+
+        public int getMqsUsed() {
+            return mqsUsed;
+        }
+
+        public void setMqsUsed(int mqsUsed) {
+            this.mqsUsed = mqsUsed;
+        }
+
+        public int getSymbolsUsed() {
+            return symbolsUsed;
+        }
+
+        public void setSymbolsUsed(int symbolsUsed) {
+            this.symbolsUsed = symbolsUsed;
+        }
+    }
+
     /** The id of the LearnerResult in the DB. */
     private Long id;
 
@@ -65,15 +163,8 @@ public class LearnerResult implements Serializable {
     /** The LearnerConfiguration which was used to create the result. */
     private LearnerConfiguration configuration;
 
-    /** Date and Time when the learning step was started. The format is conform with the ISO 8601 (JavaScript-Style). */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
-    private Date startTime;
+    private Statistics statistics;
 
-    /** The duration of the learn step. */
-    private long duration;
-
-    /** The amount of SUL resets if available. Otherwise -1. */
-    private int amountOfResets;
 
     /** The Alphabet used while learning. */
     private Alphabet<String> sigma;
@@ -90,7 +181,7 @@ public class LearnerResult implements Serializable {
     public LearnerResult() {
         this.configuration = new LearnerConfiguration();
         this.jsonChanged = true;
-        this.startTime = new Date(0);
+        this.statistics = new Statistics();
     }
 
     /**
@@ -234,61 +325,14 @@ public class LearnerResult implements Serializable {
         this.jsonChanged = true;
     }
 
-    /**
-     * Get the start time of the learn step.
-     *
-     * @return The start time.
-     */
-    public Date getStartTime() {
-        return startTime;
+    @Embedded
+    public Statistics getStatistics() {
+        return statistics;
     }
 
-    /**
-     * Set the start time of the learn step.
-     *
-     * @param startTime
-     *         The new start time.
-     */
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    /**
-     * Get the duration the learn step took.
-     *
-     * @return The duration of the learn step.
-     */
-    public long getDuration() {
-        return duration;
-    }
-
-    /**
-     * Set how long the learn step took.
-     *
-     * @param duration
-     *         The new duration.
-     */
-    public void setDuration(long duration) {
-        this.duration = duration;
-    }
-
-    /**
-     * Get the amount of resets done while learning.
-     *
-     * @return The amount of resets during the learn step.
-     */
-    public int getAmountOfResets() {
-        return amountOfResets;
-    }
-
-    /**
-     * Set the amount of resets done while learning.
-     *
-     * @param amountOfResets
-     *         The amount of resets during the learn step.
-     */
-    public void setAmountOfResets(int amountOfResets) {
-        this.amountOfResets = amountOfResets;
+    public void setStatistics(Statistics statistics) {
+        this.statistics = statistics;
+        this.jsonChanged = true;
     }
 
     /**
@@ -423,9 +467,7 @@ public class LearnerResult implements Serializable {
             setProject(newResult.getProject());
             setTestNo(newResult.getTestNo());
             setStepNo(newResult.getStepNo());
-            setStartTime(newResult.startTime);
-            setDuration(newResult.duration);
-            setAmountOfResets(newResult.amountOfResets);
+            setStatistics(newResult.statistics);
             setConfiguration(newResult.getConfiguration());
             setSigma(newResult.getSigma());
             setHypothesis(newResult.getHypothesis());

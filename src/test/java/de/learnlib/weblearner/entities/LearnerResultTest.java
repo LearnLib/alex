@@ -24,19 +24,24 @@ public class LearnerResultTest {
     private static final Date TEST_DATE = new Date(0);
     private static final long TEST_DURATION = 9001;
     public static final int TEST_RESET_AMOUNT = 123;
-    private static final String EXPECTED_JSON = "{\"amountOfResets\":0,\"configuration\":{"
+    private static final String EXPECTED_JSON = "{\"configuration\":{"
                                                     + "\"algorithm\":\"EXTENSIBLE_LSTAR\",\"eqOracle\":"
                                                     + "{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,"
                                                     + "\"maxNoOfTests\":1},\"maxAmountOfStepsToLearn\":0,"
                                                     + "\"resetSymbol\":null,\"symbols\":[]},"
-                                                + "\"duration\":" + TEST_DURATION + ",\"hypothesis\":{"
+                                                + "\"hypothesis\":{"
                                                     + "\"nodes\":[0,1],\"initNode\":0,\"edges\":["
                                                         + "{\"from\":0,\"input\":\"0\",\"to\":0,\"output\":\"OK\"},"
                                                         + "{\"from\":0,\"input\":\"1\",\"to\":1,\"output\":\"OK\"},"
                                                         + "{\"from\":1,\"input\":\"0\",\"to\":1,\"output\":\"OK\"},"
                                                         + "{\"from\":1,\"input\":\"1\",\"to\":0,\"output\":\"OK\"}"
-                                                + "]},\"project\":" + PROJECT_ID + ",\"sigma\":[\"0\",\"1\"],"
-                                                + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\","
+                                                + "]},"
+                                                + "\"project\":" + PROJECT_ID + ",\"sigma\":[\"0\",\"1\"],"
+                                                + "\"statistics\":{"
+                                                    + "\"duration\":" + TEST_DURATION + ",\"eqsUsed\":0,\"mqsUsed\":0,"
+                                                    + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\""
+                                                    + ",\"symbolsUsed\":0"
+                                                + "},"
                                                 + "\"stepNo\":" + STEP_NO + ",\"testNo\":" + ID + "}";
 
     @Test
@@ -57,12 +62,15 @@ public class LearnerResultTest {
         Project project = mock(Project.class);
         given(project.getId()).willReturn(PROJECT_ID);
 
+        LearnerResult.Statistics statistics = new LearnerResult.Statistics();
+        statistics.setStartTime(TEST_DATE);
+        statistics.setDuration(TEST_DURATION);
+
         LearnerResult result = new LearnerResult();
         result.setProject(project);
         result.setTestNo(ID);
         result.setStepNo(STEP_NO);
-        result.setStartTime(TEST_DATE);
-        result.setDuration(TEST_DURATION);
+        result.setStatistics(statistics);
         result.setSigma(sigma);
         result.createHypothesisFrom(hypothesis);
 
@@ -74,34 +82,41 @@ public class LearnerResultTest {
 
     @Test
     public void shouldReadAndParseJSONCorrectly() throws Exception {
-        String json = "{\"amountOfResets\": " + TEST_RESET_AMOUNT + ", \"configuration\":{"
+        String json = "{\"configuration\":{"
                             + "\"algorithm\":\"DHC\", \"eqOracle\": {\"type\": \"complete\"},"
                             + "\"maxAmountOfStepsToLearn\":0,\"symbols\":[]},"
-                        + "\"duration\": " + TEST_DURATION + ", \"hypothesis\": {"
+                        + "\"hypothesis\": {"
                             + "\"nodes\": [0, 1], \"edges\": ["
                                 + "{\"from\": 0, \"input\": 1, \"to\": 0, \"output\": \"OK\"},"
                                 + "{\"from\": 0, \"input\": 2, \"to\": 1, \"output\": \"OK\"}"
                         + "]},"
                         + "\"testNo\":" + ID + ",\"project\":" + PROJECT_ID + ","
-                        + "\"sigma\":[\"0\",\"1\"],\"stepNo\":" + STEP_NO + ","
-                        + "\"startTime\": \"1970-01-01T00:00:00.000+00:00\"}";
+                        + "\"sigma\":[\"0\",\"1\"],\"stepNo\":" + STEP_NO + ", \"statistics\": {"
+                            + "\"eqsUsed\":123, \"duration\": " + TEST_DURATION + ", \"mqsUsed\":0,"
+                            + "\"startTime\": \"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0}"
+                        +"}";
 
-        LearnerResult result = new LearnerResult();
+        LearnerResult resultFromJSON = new LearnerResult();
         Method method = LearnerResult.class.getDeclaredMethod("setJSON", String.class);
         method.setAccessible(true);
-        method.invoke(result, json);
+        method.invoke(resultFromJSON, json);
 
-        assertEquals(PROJECT_ID, result.getProjectId());
-        assertEquals(ID, result.getTestNo());
-        assertEquals(STEP_NO, result.getStepNo());
-        assertEquals(TEST_DATE, result.getStartTime());
-        assertEquals(TEST_DURATION, result.getDuration());
-        assertEquals(TEST_RESET_AMOUNT, result.getAmountOfResets());
-        assertEquals(LearnAlgorithms.DHC, result.getConfiguration().getAlgorithm());
-        assertTrue(result.getConfiguration().getEqOracle() instanceof CompleteExplorationEQOracleProxy);
-        assertEquals(2, result.getSigma().size());
-        assertEquals(2, result.getHypothesis().getNodes().size());
-        assertEquals(2, result.getHypothesis().getEdges().size());
+        LearnerResult.Statistics statistics = new LearnerResult.Statistics();
+        statistics.setEqsUsed(123);
+        statistics.setStartTime(TEST_DATE);
+        statistics.setDuration(TEST_DURATION);
+
+        assertEquals(PROJECT_ID, resultFromJSON.getProjectId());
+        assertEquals(ID, resultFromJSON.getTestNo());
+        assertEquals(STEP_NO, resultFromJSON.getStepNo());
+        assertEquals(statistics.getDuration(), resultFromJSON.getStatistics().getDuration());
+        assertEquals(statistics.getStartTime(), resultFromJSON.getStatistics().getStartTime());
+        assertEquals(statistics.getEqsUsed(), resultFromJSON.getStatistics().getEqsUsed());
+        assertEquals(LearnAlgorithms.DHC, resultFromJSON.getConfiguration().getAlgorithm());
+        assertTrue(resultFromJSON.getConfiguration().getEqOracle() instanceof CompleteExplorationEQOracleProxy);
+        assertEquals(2, resultFromJSON.getSigma().size());
+        assertEquals(2, resultFromJSON.getHypothesis().getNodes().size());
+        assertEquals(2, resultFromJSON.getHypothesis().getEdges().size());
     }
 
 }

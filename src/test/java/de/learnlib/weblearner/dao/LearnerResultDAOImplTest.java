@@ -142,11 +142,11 @@ public class LearnerResultDAOImplTest {
 
         assertEquals(RESULTS_AMOUNT, resultsInDBAsJSON.size());
         for (int i = 0; i < resultsInDBAsJSON.size(); i++) {
-            String expectedJSON = "{\"amountOfResets\":0,\"configuration\":{"
+            String expectedJSON = "{\"configuration\":{"
                                         + "\"algorithm\":\"EXTENSIBLE_LSTAR\",\"eqOracle\":{\"type\":\"random_word\","
                                             + "\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1}"
                                         + ",\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]},"
-                                    + "\"duration\":0,\"hypothesis\":{"
+                                    + "\"hypothesis\":{"
                                         + "\"nodes\":[0,1],\"initNode\":0,\"edges\":["
                                             + "{\"from\":0,\"input\":\"0\",\"to\":0,\"output\":\"OK\"},"
                                             + "{\"from\":0,\"input\":\"1\",\"to\":1,\"output\":\"OK\"},"
@@ -154,8 +154,11 @@ public class LearnerResultDAOImplTest {
                                             + "{\"from\":1,\"input\":\"1\",\"to\":0,\"output\":\"OK\"}"
                                         + "]},"
                                     + "\"project\":" + project.getId() + ",\"sigma\":[\"0\",\"1\"],"
-                                    + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"stepNo\":" + (i + 1) + ","
-                                    + "\"testNo\":" + result.getTestNo() + "}";
+                                    + "\"statistics\":{"
+                                        + "\"duration\":0,\"eqsUsed\":0,\"mqsUsed\":0,"
+                                        + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0"
+                                    + "},"
+                                    + "\"stepNo\":" + (i + 1) + ",\"testNo\":" + result.getTestNo() + "}";
             String resultAsJSON = resultsInDBAsJSON.get(i);
 
             assertEquals(expectedJSON, resultAsJSON);
@@ -343,10 +346,10 @@ public class LearnerResultDAOImplTest {
     }
 
     private String generateExpectedJSON(LearnerResult result) {
-        return "{\"amountOfResets\":0,\"configuration\":{\"algorithm\":\"EXTENSIBLE_LSTAR\",\"eqOracle\":"
+        return "{\"configuration\":{\"algorithm\":\"EXTENSIBLE_LSTAR\",\"eqOracle\":"
                     + "{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1},"
-                + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]},"
-                + "\"duration\":0,\"hypothesis\":{"
+                    + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]},"
+                + "\"hypothesis\":{"
                     + "\"nodes\":[0,1],\"initNode\":0,\"edges\":["
                     + "{\"from\":0,\"input\":\"0\",\"to\":0,\"output\":\"OK\"},"
                     + "{\"from\":0,\"input\":\"1\",\"to\":1,\"output\":\"OK\"},"
@@ -354,8 +357,11 @@ public class LearnerResultDAOImplTest {
                     + "{\"from\":1,\"input\":\"1\",\"to\":0,\"output\":\"OK\"}"
                 + "]},"
                 + "\"project\":" + result.getProjectId() + ",\"sigma\":[\"0\",\"1\"],"
-                + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"stepNo\":" + result.getStepNo() + ","
-                + "\"testNo\":" + result.getTestNo() + "}";
+                + "\"statistics\":{"
+                    + "\"duration\":0,\"eqsUsed\":0,\"mqsUsed\":0"
+                    + ",\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0"
+                + "},"
+                + "\"stepNo\":" + result.getStepNo() + ",\"testNo\":" + result.getTestNo() + "}";
     }
 
     private List<LearnerResult> createLearnerResultsList() {
