@@ -1086,6 +1086,26 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                </div>\n" +
     "                <!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->\n" +
     "\n" +
+    "\n" +
+    "                <div ng-if=\"action !== null\">\n" +
+    "                    <hr>\n" +
+    "                    <p>\n" +
+    "                        <a href ng-click=\"advancedOptions = !advancedOptions\"><i class=\"fa fa-gear fa-fw\"></i> Advanced Options</a>\n" +
+    "                    </p>\n" +
+    "                    <div collapse=\"!advancedOptions\">\n" +
+    "                        <div class=\"checkbox\">\n" +
+    "                            <label>\n" +
+    "                                <input type=\"checkbox\" ng-model=\"action.negated\"> Negate\n" +
+    "                            </label>\n" +
+    "                        </div>\n" +
+    "                        <div class=\"checkbox\">\n" +
+    "                            <label>\n" +
+    "                                <input type=\"checkbox\" ng-model=\"action.ignoreFailure\"> Ignore Failure\n" +
+    "                            </label>\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
@@ -1603,6 +1623,25 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "            </div>\n" +
     "        </div>\n" +
     "        <!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->\n" +
+    "\n" +
+    "        <div ng-if=\"action !== null\">\n" +
+    "            <hr>\n" +
+    "            <p>\n" +
+    "                <a href ng-click=\"advancedOptions = !advancedOptions\"><i class=\"fa fa-gear fa-fw\"></i> Advanced Options</a>\n" +
+    "            </p>\n" +
+    "            <div collapse=\"!advancedOptions\">\n" +
+    "                <div class=\"checkbox\">\n" +
+    "                    <label>\n" +
+    "                        <input type=\"checkbox\" ng-model=\"action.negated\"> Negate\n" +
+    "                    </label>\n" +
+    "                </div>\n" +
+    "                <div class=\"checkbox\">\n" +
+    "                    <label>\n" +
+    "                        <input type=\"checkbox\" ng-model=\"action.ignoreFailure\"> Ignore Failure\n" +
+    "                    </label>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "\n" +
     "    </div>\n" +
     "\n" +
@@ -2900,6 +2939,11 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "                        </span>\n" +
     "\n" +
     "                        <span ng-bind=\"action.toString()\"></span>\n" +
+    "\n" +
+    "                        <div>\n" +
+    "                            <label class=\"label label-info\" ng-show=\"action.negated\">Negate</label>\n" +
+    "                            <label class=\"label label-danger\" ng-show=\"action.ignoreFailure\">Ignore Failure</label>\n" +
+    "                        </div>\n" +
     "\n" +
     "                    </div>\n" +
     "\n" +

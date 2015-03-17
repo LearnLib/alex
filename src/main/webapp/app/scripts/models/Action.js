@@ -9,12 +9,15 @@
     function ActionModel(actionTypes) {
 
         function Action() {
+            this.negated = false;
+            this.ignoreFailure = false;
         }
 
         Action.Web = function () {
         };
 
         Action.Web.SearchForText = function (value, isRegexp) {
+            Action.call(this);
             this.type = actionTypes.web.SEARCH_FOR_TEXT;
             this.value = value || null;
             this.regexp = isRegexp || false;
@@ -25,6 +28,7 @@
         };
 
         Action.Web.SearchForNode = function (value, isRegexp) {
+            Action.call(this);
             this.type = actionTypes.web.SEARCH_FOR_NODE;
             this.value = value || null;
             this.regexp = isRegexp || false
@@ -35,6 +39,7 @@
         };
 
         Action.Web.Clear = function (node) {
+            Action.call(this);
             this.type = actionTypes.web.CLEAR;
             this.node = node || null;
         };
@@ -44,6 +49,7 @@
         };
 
         Action.Web.Click = function (node) {
+            Action.call(this);
             this.type = actionTypes.web.CLICK;
             this.node = node || null;
         };
@@ -53,6 +59,7 @@
         };
 
         Action.Web.Fill = function (node, value) {
+            Action.call(this);
             this.type = actionTypes.web.FILL;
             this.node = node || null;
             this.value = value || null
@@ -63,6 +70,7 @@
         };
 
         Action.Web.GoTo = function (url) {
+            Action.call(this);
             this.type = actionTypes.web.GO_TO;
             this.url = url || null;
         };
@@ -72,6 +80,7 @@
         };
 
         Action.Web.Submit = function (node) {
+            Action.call(this);
             this.type = actionTypes.web.SUBMIT;
             this.node = node || null;
         };
@@ -86,6 +95,7 @@
         };
 
         Action.Rest.Call = function (method, url, data) {
+            Action.call(this);
             this.type = actionTypes.rest.CALL_URL;
             this.method = method || null;
             this.url = url || null;
@@ -97,6 +107,7 @@
         };
 
         Action.Rest.CheckStatus = function (statusCode) {
+            Action.call(this);
             this.type = actionTypes.rest.CHECK_STATUS;
             this.status = statusCode || null;
         };
@@ -106,6 +117,7 @@
         };
 
         Action.Rest.CheckHeaderField = function (key, value, isRegexp) {
+            Action.call(this);
             this.type = actionTypes.rest.CHECK_HEADER_FIELD;
             this.key = key || null;
             this.value = value || null;
@@ -117,6 +129,7 @@
         };
 
         Action.Rest.CheckHttpBodyText = function (value, isRegexp) {
+            Action.call(this);
             this.type = actionTypes.rest.CHECK_HTTP_BODY_TEXT;
             this.value = value || null;
             this.regexp = isRegexp || false;
@@ -127,6 +140,7 @@
         };
 
         Action.Rest.CheckAttributeExists = function (attribute) {
+            Action.call(this);
             this.type = actionTypes.rest.CHECK_ATTRIBUTE_EXISTS;
             this.attribute = this.attribute = attribute || null;
         };
@@ -136,6 +150,7 @@
         };
 
         Action.Rest.CheckAttributeValue = function (attribute, value, isRegexp) {
+            Action.call(this);
             this.type = actionTypes.rest.CHECK_ATTRIBUTE_VALUE;
             this.attribute = attribute || null;
             this.value = value || null;
@@ -147,6 +162,7 @@
         };
 
         Action.Rest.CheckAttributeType = function (attribute, jsonType) {
+            Action.call(this);
             this.type = actionTypes.rest.CHECK_ATTRIBUTE_TYPE;
             this.attribute = attribute || null;
             this.jsonType = jsonType || null;
@@ -162,6 +178,7 @@
         };
 
         Action.Other.Wait = function (duration) {
+            Action.call(this);
             this.type = actionTypes.other.WAIT;
             this.duration = duration || 0;
         };
@@ -171,6 +188,7 @@
         };
 
         Action.Other.DeclareCounter = function (name) {
+            Action.call(this);
             this.type = actionTypes.other.DECLARE_COUNTER;
             this.name = name || null;
         };
@@ -180,6 +198,7 @@
         };
 
         Action.Other.DeclareVariable = function (name) {
+            Action.call(this);
             this.type = actionTypes.other.DECLARE_VARIABLE;
             this.name = name || null;
         };
@@ -189,6 +208,7 @@
         };
 
         Action.Other.IncrementCounter = function (name) {
+            Action.call(this);
             this.type = actionTypes.other.INCREMENT_COUNTER;
             this.name = name || null;
         };
@@ -198,6 +218,7 @@
         };
 
         Action.Other.SetCounter = function (name, value) {
+            Action.call(this);
             this.type = actionTypes.other.SET_COUNTER;
             this.name = name || null;
             this.value = value || null;
@@ -208,7 +229,10 @@
         };
 
         Action.Other.SetVariable = function (name, value) {
+            Action.call(this);
             this.type = actionTypes.other.SET_VARIABLE;
+            this.name = name;
+            this.value = value;
         };
 
         Action.Other.SetVariable.prototype.toString = function () {
@@ -216,6 +240,7 @@
         };
 
         Action.Other.SetVariableByJSONAttribute = function (name, jsonAttribute) {
+            Action.call(this);
             this.type = actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE;
             this.name = name || null;
             this.value = jsonAttribute || null;
@@ -226,6 +251,7 @@
         };
 
         Action.Other.SetVariableByNode = function (name, xPath) {
+            Action.call(this);
             this.type = actionTypes.other.SET_VARIABLE_BY_NODE;
             this.name = name || null;
             this.value = xPath || null;
@@ -236,85 +262,91 @@
         };
 
         Action.build = function (data) {
+            var action;
 
             switch (data.type) {
 
                 // web actions
                 case actionTypes.web.SEARCH_FOR_TEXT:
-                    return new Action.Web.SearchForText(data.value, data.regexp);
+                    action = new Action.Web.SearchForText(data.value, data.regexp);
                     break;
                 case actionTypes.web.SEARCH_FOR_NODE:
-                    return new Action.Web.SearchForNode(data.value, data.regexp);
+                    action = new Action.Web.SearchForNode(data.value, data.regexp);
                     break;
                 case actionTypes.web.CLEAR:
-                    return new Action.Web.Clear(data.node);
+                    action = new Action.Web.Clear(data.node);
                     break;
                 case actionTypes.web.CLICK:
-                    return new Action.Web.Click(data.node);
+                    action = new Action.Web.Click(data.node);
                     break;
                 case actionTypes.web.FILL:
-                    return new Action.Web.Fill(data.node, data.value);
+                    action = new Action.Web.Fill(data.node, data.value);
                     break;
                 case actionTypes.web.GO_TO:
-                    return new Action.Web.GoTo(data.url);
+                    action = new Action.Web.GoTo(data.url);
                     break;
                 case actionTypes.web.SUBMIT:
-                    return new Action.Web.Submit(data.node);
+                    action = new Action.Web.Submit(data.node);
                     break;
 
                 // rest actions
                 case actionTypes.rest.CALL_URL:
-                    return new Action.Rest.Call(data.method, data.url, data.data);
+                    action = new Action.Rest.Call(data.method, data.url, data.data);
                     break;
                 case actionTypes.rest.CHECK_STATUS:
-                    return new Action.Rest.CheckStatus(data.status);
+                    action = new Action.Rest.CheckStatus(data.status);
                     break;
                 case actionTypes.rest.CHECK_HEADER_FIELD:
-                    return new Action.Rest.CheckHeaderField(data.key, data.value, data.regexp);
+                    action = new Action.Rest.CheckHeaderField(data.key, data.value, data.regexp);
                     break;
                 case actionTypes.rest.CHECK_HTTP_BODY_TEXT:
-                    return new Action.Rest.CheckHttpBodyText(data.value, data.regexp);
+                    action = new Action.Rest.CheckHttpBodyText(data.value, data.regexp);
                     break;
                 case actionTypes.rest.CHECK_ATTRIBUTE_EXISTS:
-                    return new Action.Rest.CheckAttributeExists(data.attribute);
+                    action = new Action.Rest.CheckAttributeExists(data.attribute);
                     break;
                 case actionTypes.rest.CHECK_ATTRIBUTE_VALUE:
-                    return new Action.Rest.CheckAttributeValue(data.attribute, data.value, data.regexp);
+                    action = new Action.Rest.CheckAttributeValue(data.attribute, data.value, data.regexp);
                     break;
                 case actionTypes.rest.CHECK_ATTRIBUTE_TYPE:
-                    return new Action.Rest.CheckAttributeType(data.attribute, data.jsonType);
+                    action = new Action.Rest.CheckAttributeType(data.attribute, data.jsonType);
                     break;
 
                 // other actions
                 case actionTypes.other.WAIT:
-                    return new Action.Other.Wait(data.duration);
+                    action = new Action.Other.Wait(data.duration);
                     break;
                 case actionTypes.other.DECLARE_COUNTER:
-                    return new Action.Other.DeclareCounter(data.name);
+                    action = new Action.Other.DeclareCounter(data.name);
                     break;
                 case actionTypes.other.DECLARE_VARIABLE:
-                    return new Action.Other.DeclareVariable(data.name);
+                    action = new Action.Other.DeclareVariable(data.name);
                     break;
                 case actionTypes.other.INCREMENT_COUNTER:
-                    return new Action.Other.IncrementCounter(data.name);
+                    action = new Action.Other.IncrementCounter(data.name);
                     break;
                 case actionTypes.other.SET_COUNTER:
-                    return new Action.Other.SetCounter(data.name, data.value);
+                    action = new Action.Other.SetCounter(data.name, data.value);
                     break;
                 case actionTypes.other.SET_VARIABLE:
-                    return new Action.Other.SetVariable(data.name, data.value);
+                    action = new Action.Other.SetVariable(data.name, data.value);
                     break;
                 case actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE:
-                    return new Action.Other.SetVariableByJSONAttribute(data.name, data.value);
+                    action = new Action.Other.SetVariableByJSONAttribute(data.name, data.value);
                     break;
                 case actionTypes.other.SET_VARIABLE_BY_NODE:
-                    return new Action.Other.SetVariableByNode(data.name, data.value);
+                    action = new Action.Other.SetVariableByNode(data.name, data.value);
                     break;
 
                 default:
                     return null;
                     break;
             }
+
+            action.negated = data.negated;
+            action.ignoreFailure = data.ignoreFailure;
+
+            return action;
         };
 
         Action.buildSome = function (data) {

@@ -68,6 +68,8 @@
                 action._id = _.uniqueId();
             });
 
+            console.log(symbol.actions)
+
             // add symbol to scope and create a copy in order to revert changes
             $scope.symbol = symbol;
             $scope.symbolCopy = symbol.copy();

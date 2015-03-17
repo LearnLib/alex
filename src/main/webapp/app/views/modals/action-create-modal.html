@@ -525,6 +525,26 @@
                 </div>
                 <!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->
 
+
+                <div ng-if="action !== null">
+                    <hr>
+                    <p>
+                        <a href ng-click="advancedOptions = !advancedOptions"><i class="fa fa-gear fa-fw"></i> Advanced Options</a>
+                    </p>
+                    <div collapse="!advancedOptions">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="action.negated"> Negate
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="action.ignoreFailure"> Ignore Failure
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

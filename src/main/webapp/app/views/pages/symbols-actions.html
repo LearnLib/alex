@@ -74,6 +74,11 @@
 
                         <span ng-bind="action.toString()"></span>
 
+                        <div>
+                            <label class="label label-info" ng-show="action.negated">Negate</label>
+                            <label class="label label-danger" ng-show="action.ignoreFailure">Ignore Failure</label>
+                        </div>
+
                     </div>
 
                 </div>
