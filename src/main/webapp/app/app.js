@@ -49,7 +49,52 @@
             $rootScope._ = _;
             $rootScope.selection = SelectionService;
         }])
-}());;angular.module('templates-all', ['app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/directives/web-element-picker.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+}());;angular.module('templates-all', ['app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis-panel.html', 'app/views/directives/hypothesis.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/rest-action-edit-form.html', 'app/views/directives/view-heading.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html', 'app/views/widgets/widget-counter-examples.html', 'app/views/widgets/widget-test-resume-settings.html']);
+
+angular.module("app/views/directives/html-element-picker.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/html-element-picker.html",
+    "<div id=\"web-element-picker-wrapper\"></div>\n" +
+    "\n" +
+    "<div id=\"web-element-picker\">\n" +
+    "\n" +
+    "    <nav class=\"navbar navbar-default\" role=\"navigation\">\n" +
+    "        <div class=\"container-fluid\">\n" +
+    "\n" +
+    "            <form class=\"navbar-form navbar-left\" ng-submit=\"loadUrl()\">\n" +
+    "                <div class=\"form-group\">\n" +
+    "                    <div class=\"input-group\">\n" +
+    "                        <div class=\"input-group-addon\" tooltip-placement=\"right\" tooltip=\"{{project.baseUrl}}\">..</div>\n" +
+    "                        <input type=\"text\" class=\"form-control\" ng-model=\"url\" placeholder=\"url\">\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "                <button type=\"submit\" class=\"btn btn-default\">Load</button>\n" +
+    "            </form>\n" +
+    "\n" +
+    "            <button class=\"btn btn-default navbar-btn\" ng-click=\"enableSelection()\"><i\n" +
+    "                    class=\"fa fa-magic\"></i></button>\n" +
+    "\n" +
+    "            <button class=\"btn btn-default navbar-btn disabled\" ng-show=\"selector != null\" ng-bind=\"selector\"></button>\n" +
+    "            <button class=\"btn btn-default navbar-btn disabled\" ng-show=\"selector == null\">\n" +
+    "                No Selected Element\n" +
+    "            </button>\n" +
+    "\n" +
+    "            <div class=\"navbar navbar-nav navbar-right\">\n" +
+    "                <button class=\"btn btn-default navbar-btn pull-right\" ng-click=\"close()\"><i\n" +
+    "                        class=\"fa fa-close\"></i></button>\n" +
+    "                <button class=\"btn btn-default navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">ok\n" +
+    "                </button>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </nav>\n" +
+    "\n" +
+    "    <div class=\"iframe-wrapper\">\n" +
+    "        <iframe fit-parent-dimensions bind-resize=\"true\"></iframe>\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "");
+}]);
 
 angular.module("app/views/directives/hypothesis-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -562,51 +607,6 @@ angular.module("app/views/directives/view-heading.html", []).run(["$templateCach
     "</div>");
 }]);
 
-angular.module("app/views/directives/web-element-picker.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/web-element-picker.html",
-    "<div ng-show=\"show\" id=\"web-element-picker-wrapper\">\n" +
-    "\n" +
-    "    <div id=\"web-element-picker\">\n" +
-    "\n" +
-    "        <nav class=\"navbar navbar-default\" role=\"navigation\">\n" +
-    "            <div class=\"container-fluid\">\n" +
-    "\n" +
-    "                <form class=\"navbar-form navbar-left\" ng-submit=\"loadUrl()\">\n" +
-    "                    <div class=\"form-group\">\n" +
-    "                        <div class=\"input-group\">\n" +
-    "                            <div class=\"input-group-addon\" tooltip-placement=\"right\" tooltip=\"{{project.baseUrl}}\">..</div>\n" +
-    "                            <input type=\"text\" class=\"form-control\" ng-model=\"url\" placeholder=\"url\">\n" +
-    "                        </div>\n" +
-    "                    </div>\n" +
-    "                    <button type=\"submit\" class=\"btn btn-default\">Load</button>\n" +
-    "                </form>\n" +
-    "\n" +
-    "                <button class=\"btn btn-default navbar-btn\" ng-click=\"enableSelection()\"><i\n" +
-    "                        class=\"fa fa-magic\"></i></button>\n" +
-    "\n" +
-    "                <button class=\"btn btn-default navbar-btn disabled\" ng-show=\"selector != null\" ng-bind=\"selector\"></button>\n" +
-    "                <button class=\"btn btn-default navbar-btn disabled\" ng-show=\"selector == null\">\n" +
-    "                    No Selected Element\n" +
-    "                </button>\n" +
-    "\n" +
-    "                <div class=\"navbar navbar-nav navbar-right\">\n" +
-    "                    <button class=\"btn btn-default navbar-btn pull-right\" ng-click=\"close()\"><i\n" +
-    "                            class=\"fa fa-close\"></i></button>\n" +
-    "                    <button class=\"btn btn-default navbar-btn pull-right\" ng-click=\"ok()\" style=\"margin-right: 7px\">ok\n" +
-    "                    </button>\n" +
-    "                </div>\n" +
-    "            </div>\n" +
-    "        </nav>\n" +
-    "\n" +
-    "        <div class=\"iframe-wrapper\">\n" +
-    "            <iframe fit-parent-dimensions bind-resize=\"true\"></iframe>\n" +
-    "        </div>\n" +
-    "\n" +
-    "    </div>\n" +
-    "</div>");
-}]);
-
 angular.module("app/views/modals/action-create-modal.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/modals/action-create-modal.html",
@@ -667,7 +667,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                            <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
     "                        </label>\n" +
     "                    </div>\n" +
-    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle>\n" +
+    "                    <a class=\"btn btn-default btn-sm\" html-element-picker>\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </a>\n" +
     "\n" +
@@ -690,7 +690,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.value\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.value\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </a>\n" +
     "\n" +
@@ -713,7 +713,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </a>\n" +
     "\n" +
@@ -735,7 +735,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">CSS selector</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
-    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </a>\n" +
     "\n" +
@@ -761,7 +761,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">The value to fill the element with</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
     "                    </div>\n" +
-    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </a>\n" +
     "\n" +
@@ -802,7 +802,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "                        <label class=\"control-label\">CSS selector</label>\n" +
     "                        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "                    </div>\n" +
-    "                    <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "                    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
     "                        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "                    </a>\n" +
     "\n" +
@@ -1205,7 +1205,7 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "                    <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
     "                </label>\n" +
     "            </div>\n" +
-    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle>\n" +
+    "            <a class=\"btn btn-default btn-sm\" html-element-picker>\n" +
     "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "            </a>\n" +
     "\n" +
@@ -1228,7 +1228,7 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.value\">\n" +
     "            </div>\n" +
     "\n" +
-    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.value\">\n" +
+    "            <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.value\">\n" +
     "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "            </a>\n" +
     "\n" +
@@ -1251,7 +1251,7 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "            </div>\n" +
     "\n" +
-    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "            <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
     "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "            </a>\n" +
     "\n" +
@@ -1273,7 +1273,7 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "                <label class=\"control-label\">CSS selector</label>\n" +
     "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "            </div>\n" +
-    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "            <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
     "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "            </a>\n" +
     "\n" +
@@ -1299,7 +1299,7 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "                <label class=\"control-label\">The value to fill the element with</label>\n" +
     "                <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
     "            </div>\n" +
-    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "            <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
     "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "            </a>\n" +
     "\n" +
@@ -1340,7 +1340,7 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "                <label class=\"control-label\">CSS selector</label>\n" +
     "                <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
     "            </div>\n" +
-    "            <a class=\"btn btn-default btn-sm\" web-element-picker-handle selector=\"action.node\">\n" +
+    "            <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
     "                <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "            </a>\n" +
     "\n" +
@@ -1680,6 +1680,7 @@ angular.module("app/views/modals/action-edit-modal.html", []).run(["$templateCac
     "            <p>\n" +
     "                <a href ng-click=\"advancedOptions = !advancedOptions\"><i class=\"fa fa-gear fa-fw\"></i> Advanced Options</a>\n" +
     "            </p>\n" +
+    "\n" +
     "            <div collapse=\"!advancedOptions\">\n" +
     "                <div class=\"checkbox\">\n" +
     "                    <label>\n" +
@@ -6934,6 +6935,267 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
 	}
 }());
 ;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('htmlElementPicker', htmlElementPicker)
+        .directive('htmlElementPickerWindow', htmlElementPickerWindow)
+        .factory('htmlElementPickerInstance', htmlElementPickerInstance);
+
+    htmlElementPicker.$inject = ['$document', '$compile', 'htmlElementPickerInstance'];
+    htmlElementPickerWindow.$inject = ['$window', 'SessionService', 'paths', 'htmlElementPickerInstance'];
+    htmlElementPickerInstance.$inject = ['$q'];
+
+    /**
+     * @param $document
+     * @param $compile
+     * @param htmlElementPickerInstance
+     * @returns {{restrict: string, scope: {selectorModel: string}, link: Function}}
+     */
+    function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
+        return {
+            restrict: 'A',
+            scope: {
+                selectorModel: '=model'
+            },
+            link: function (scope, el, attrs) {
+                var picker;
+
+                el.on('click', function () {
+                    picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
+                    $document.find('body').prepend(picker);
+
+                    htmlElementPickerInstance.open()
+                        .then(function (selector) {
+                            if (angular.isDefined(scope.selectorModel)) {
+                                scope.selectorModel = selector;
+                            }
+                        })
+                        .finally(function () {
+                            picker.remove();
+                        })
+                })
+            }
+        }
+    }
+
+    /**
+     * The instance for the HTML element picker that holds the promise and the last url
+     *
+     * @returns {{close: Function, open: Function, setUrl: Function, getUrl: Function}}
+     */
+    function htmlElementPickerInstance($q) {
+
+        // the promise
+        var deferred;
+
+        // the url was called at the last opening
+        var lastUrl = null;
+
+        return {
+            close: function (selector) {
+                if (angular.isDefined(selector)) {
+                    deferred.resolve(selector)
+                } else {
+                    deferred.reject();
+                }
+            },
+            open: function () {
+                deferred = $q.defer();
+                return deferred.promise;
+            },
+            setUrl: function (url) {
+                lastUrl = url;
+            },
+            getUrl: function () {
+                return lastUrl;
+            }
+        }
+    }
+
+    function htmlElementPickerWindow($window, Session, paths, htmlElementPickerInstance) {
+
+        return {
+            scope: {},
+            templateUrl: paths.views.DIRECTIVES + '/html-element-picker.html',
+            link: link
+        };
+
+        function link(scope, el, attrs) {
+
+            // the iframe where the projects site gets loaded into
+            var iframe = el.find('iframe');
+
+            // when moving with the mouse over an element, this elements gets saved in this variable in order to
+            // prevent multiple calls of getCssPath for the same element
+            var lastTarget = null;
+
+            // the project that is stored in the session
+            var project = null;
+
+            // the url of the proxy
+            var proxyUrl = null;
+
+            /**
+             * The XPath of the selected element
+             * @type {null}
+             */
+            scope.selector = null;
+
+            /**
+             * The url that is loaded in the iframe
+             * @type {string}
+             */
+            scope.url = null;
+
+            /**
+             * Get the unique CSS XPath from selected Element
+             * http://stackoverflow.com/questions/4588119/get-elements-css-selector-without-element-id
+             *
+             * @param el  - The element to get the unique css path from
+             * @returns {String} - The unique css path ot the element
+             * @private
+             */
+            function getCssPath(el) {
+
+                var names = [];
+                while (el.parentNode) {
+                    if (el.id) {
+                        names.unshift('#' + el.id);
+                        break;
+                    } else {
+                        if (el == el.ownerDocument.documentElement) names.unshift(el.tagName);
+                        else {
+                            for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++);
+                            names.unshift(el.tagName + ":nth-child(" + c + ")");
+                        }
+                        el = el.parentNode;
+                    }
+                }
+                return names.join(" > ");
+            }
+
+            /**
+             * Saves the element that is under the cursor so that it can be selected. Adds an outline to the element
+             * in order to highlight it.
+             *
+             * @param e - js event
+             * @returns {boolean}
+             */
+            function handleMouseMove(e) {
+                if (lastTarget == e.target) {
+                    return false;
+                } else {
+                    if (lastTarget != null) {
+                        lastTarget.style.outline = '0px'
+                    }
+                    lastTarget = e.target;
+                }
+                lastTarget.style.outline = '5px solid red';
+                scope.selector = getCssPath(lastTarget);
+                scope.$apply();
+            }
+
+            /**
+             * Removes the outline from the selected element, removes all events from the iframe and removes the
+             * keypress event. When this function is called the selected element is fixed and won't change by any
+             * further interaction with the iframe
+             *
+             * @param e - js event
+             */
+            function handleClick(e) {
+                if (angular.isDefined(e)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+                lastTarget.style.outline = '0px';
+                lastTarget = null;
+
+                angular.element(iframe.contents()[0].body).off('mousemove', handleMouseMove);
+                angular.element(iframe.contents()[0].body).off('click', handleClick);
+                angular.element(document.body).off('keyup', handleKeyUp);
+            }
+
+            /**
+             * Calls handleClick() when control key is pressed to have an alternative for selecting a dom node without
+             * firing any click events on it.
+             *
+             * @param e
+             */
+            function handleKeyUp(e) {
+                if (e.keyCode == 17) { // strg
+                    handleClick();
+                }
+            }
+
+            // init
+            function init() {
+                project = Session.project.get();
+                proxyUrl = $window.location.origin + paths.api.PROXY_URL;
+
+                scope.url = htmlElementPickerInstance.getUrl();
+                scope.loadUrl();
+            }
+
+            /**
+             * Loads an entered url into the iframe and handles the click on every a element
+             */
+            scope.loadUrl = function () {
+                iframe[0].setAttribute('src', proxyUrl + project.baseUrl + '/' + (scope.url === null ? '' : scope.url));
+                iframe[0].onload = function () {
+                    angular.element(iframe.contents()[0].body.getElementsByTagName('a'))
+                        .on('click', function () {
+                            var _this = this;
+                            if (_this.getAttribute('href') !== '' && _this.getAttribute('href') !== '#') {
+                                scope.$apply(function () {
+                                    scope.url = decodeURIComponent(_this.getAttribute('href'))
+                                        .replace(proxyUrl + project.baseUrl + '/', '')
+                                })
+                            }
+                        }
+                    )
+                }
+            };
+
+            /**
+             * Enables the selection mode and therefore adds events to the iframe
+             */
+            scope.enableSelection = function () {
+                var iframeBody = angular.element(iframe.contents()[0].body);
+                iframeBody.on('mousemove', handleMouseMove);
+                iframeBody.one('click', handleClick);
+                angular.element(document.body).on('keyup', handleKeyUp);
+            };
+
+
+            /**
+             * Makes the web element picker invisible and fires the close event
+             */
+            scope.close = function () {
+                htmlElementPickerInstance.setUrl(scope.url);
+                htmlElementPickerInstance.close();
+            };
+
+            /**
+             * Makes the web element Picker invisible and fires the ok event with the selector of the element that was
+             * selected. If no selector is defined, then it just closes the picker
+             */
+            scope.ok = function () {
+                htmlElementPickerInstance.setUrl(scope.url);
+                htmlElementPickerInstance.close(scope.selector);
+            };
+
+            // init direcitve
+            init();
+        }
+    }
+}
+
+()
+)
+;;(function () {
 
     angular.module('weblearner.directives')
         .directive('hypothesis', hypothesis);
@@ -8369,283 +8631,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 subTitle: '@'
             },
             templateUrl: paths.views.DIRECTIVES + '/view-heading.html'
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('webElementPicker', webElementPicker);
-
-    webElementPicker.$inject = ['$window', 'WebElementPickerService', 'paths'];
-
-    /**
-     * The web element picker. It is used to select an element from the dom tree of the site of the projects base
-     * url.
-     *
-     * @param $window - AngularJS window wrapper
-     * @param WebElementPickerService - The service to communicate with the picker
-     * @param paths - The applications constants
-     * @returns {{scope: {}, templateUrl: string, link: link, controller: *[]}}
-     */
-    function webElementPicker($window, WebElementPickerService, paths) {
-
-        var directive = {
-            scope: {},
-            templateUrl: paths.views.DIRECTIVES + '/web-element-picker.html',
-            link: link,
-            controller: [
-                '$scope', 'SessionService', 'paths',
-                controller
-            ]
-        };
-        return directive;
-
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         */
-        function link(scope, el, attrs) {
-
-            // the iframe where the projects site gets loaded into
-            var iframe = el.find('iframe');
-
-            // when moving with the mouse over an element, this elements gets saved in this variable in order to
-            // prevent multiple calls of getCssPath for the same element
-            var lastTarget = null;
-
-            /**
-             * Get the unique CSS XPath from selected Element
-             * http://stackoverflow.com/questions/4588119/get-elements-css-selector-without-element-id
-             *
-             * @param el  - The element to get the unique css path from
-             * @returns {String} - The unique css path ot the element
-             * @private
-             */
-            function getCssPath(el) {
-
-                var names = [];
-                while (el.parentNode) {
-                    if (el.id) {
-                        names.unshift('#' + el.id);
-                        break;
-                    } else {
-                        if (el == el.ownerDocument.documentElement) names.unshift(el.tagName);
-                        else {
-                            for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++);
-                            names.unshift(el.tagName + ":nth-child(" + c + ")");
-                        }
-                        el = el.parentNode;
-                    }
-                }
-                return names.join(" > ");
-            }
-
-            /**
-             * Saves the element that is under the cursor so that it can be selected. Adds an outline to the element
-             * in order to highlight it.
-             *
-             * @param e - js event
-             * @returns {boolean}
-             */
-            function handleMouseMove(e) {
-                if (lastTarget == e.target) {
-                    return false;
-                } else {
-                    if (lastTarget != null) {
-                        lastTarget.style.outline = '0px'
-                    }
-                    lastTarget = e.target;
-                }
-                lastTarget.style.outline = '5px solid red';
-                scope.selector = getCssPath(lastTarget);
-                scope.$apply();
-            }
-
-            /**
-             * Removes the outline from the selected element, removes all events from the iframe and removes the
-             * keypress event. When this function is called the selected element is fixed and won't change by any
-             * further interaction with the iframe
-             *
-             * @param e - js event
-             */
-            function handleClick(e) {
-                if (angular.isDefined(e)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-
-                lastTarget.style.outline = '0px';
-                lastTarget = null;
-
-                angular.element(iframe.contents()[0].body).off('mousemove', handleMouseMove);
-                angular.element(iframe.contents()[0].body).off('click', handleClick);
-                angular.element(document.body).off('keyup', handleKeyUp);
-            }
-
-            /**
-             * Calls handleClick() when control key is pressed to have an alternative for selecting a dom node without
-             * firing any click events on it.
-             *
-             * @param e
-             */
-            function handleKeyUp(e) {
-                if (e.keyCode == 17) { // strg
-                    handleClick();
-                }
-            }
-
-            /**
-             * Loads an entered url into the iframe
-             */
-            scope.loadUrl = function () {
-                if (scope.url == '') {
-                    iframe[0].setAttribute('src', scope.proxyUrl);
-                } else {
-                    iframe[0].setAttribute('src', scope.proxyUrl + '/' + scope.url);
-                }
-            };
-
-            /**
-             * Enables the selection mode and therefore adds events to the iframe
-             */
-            scope.enableSelection = function () {
-                var iframeBody = angular.element(iframe.contents()[0].body);
-                iframeBody.on('mousemove', handleMouseMove);
-                iframeBody.one('click', handleClick);
-                angular.element(document.body).on('keyup', handleKeyUp);
-            };
-        }
-
-        /**
-         * The controller of the web element picker. Listens on events and
-         *
-         * @param $scope
-         * @param SessionService
-         * @param paths
-         */
-        function controller($scope, Session, paths) {
-
-            /**
-             * Indicator if web element picker is visible or not
-             * @type {boolean}
-             */
-            $scope.show = false;
-
-            /**
-             * The project that is stored in the session. Is used to get the baseUrl of it
-             * @type {Project}
-             */
-            $scope.project = null;
-
-            /**
-             * The URL of the proxy
-             * policies
-             * @type {String|null}
-             */
-            $scope.proxyUrl = null;
-
-            /**
-             * The XPath of the selected element
-             * @type {null}
-             */
-            $scope.selector = null;
-
-            /**
-             * The url that is loaded in the iframe
-             * @type {string}
-             */
-            $scope.url = '';
-
-            /**
-             * Creates the proxy url where all requests are send to in order to avoid violation of foreign domain
-             * @returns {*}
-             */
-            function buildProxyUrl() {
-                return $window.location.origin + paths.api.PROXY_URL + $scope.project.baseUrl;
-            }
-
-            /**
-             * Initialize scope properties and listen for events
-             */
-            function init() {
-                $scope.project = Session.project.get();
-                if ($scope.project != null) {
-                    $scope.proxyUrl = buildProxyUrl();
-                }
-
-                // show the web element picker when open event gets fired
-                $scope.$on('webElementPicker.open', function () {
-                    $scope.show = true;
-                });
-
-                // when a new project gets opened initialize the controller again
-                $scope.$on('project.opened', init);
-            }
-
-            /**
-             * Makes the web element picker invisible and fires the close event
-             */
-            $scope.close = function () {
-                $scope.show = false;
-                WebElementPickerService.close();
-            };
-
-            /**
-             * Makes the web element Picker invisible and fires the ok event with the selector of the element that was
-             * selected. If no selector is defined, then it just closes the picker
-             */
-            $scope.ok = function () {
-                $scope.show = false;
-                if ($scope.selector === null) {
-                    $scope.close();
-                } else {
-                    WebElementPickerService.ok($scope.selector);
-                }
-            };
-
-            init();
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('webElementPickerHandle', webElementPickerHandle);
-
-    webElementPickerHandle.$inject = ['WebElementPickerService'];
-
-    /**
-     * The handle for the web element picker. Adds an click event to the attached element that opens the web element
-     * picker.
-     *
-     * Accepts an attribute 'selector' that should be the model where the XPath of the selected element should be
-     * stored into.
-     *
-     * Use it like '<button web-element-picker-handle selector="..."></button>'
-     *
-     * @param WebElementPickerService - The service for the web element picker
-     * @returns {{scope: {selector: string}, link: link}}
-     */
-    function webElementPickerHandle(WebElementPickerService) {
-
-        var directive = {
-            scope: {
-                selector: '='
-            },
-            link: link
-        };
-        return directive;
-
-        function link(scope, el, attrs) {
-            el.on('click', WebElementPickerService.open);
-
-            scope.$on('webElementPicker.ok', function (e, xpath) {
-                scope.selector = xpath;
-            });
         }
     }
 }());;(function () {
@@ -10917,58 +10902,6 @@ angular.module("app/views/widgets/widget-test-resume-settings.html", []).run(["$
                 content: message,
                 dismissButton: true
             });
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.services')
-        .factory('WebElementPickerService', WebElementPickerService);
-
-    WebElementPickerService.$inject = ['$rootScope'];
-
-    /**
-     * WebElementPickerService
-     *
-     * The service that is used to communicate with the webElementPicker directive.
-     *
-     * @param $rootScope
-     * @return {{open: open, close: close, ok: ok}}
-     * @constructor
-     */
-    function WebElementPickerService($rootScope) {
-
-        return {
-            open: open,
-            close: close,
-            ok: ok
-        };
-
-        /**
-         * Tell the webElementPicker to be displayed. Listen to the 'webElementPicker.open' event to get notified when
-         * the webElementPicker gets closed.
-         */
-        function open() {
-            $rootScope.$broadcast('webElementPicker.open');
-        }
-
-        /**
-         * Tell the webElementPicker to hide. Listen to the 'webElementPicker.close' event to get notified when the
-         * webElementPicker gets closed.
-         */
-        function close() {
-            $rootScope.$broadcast('webElementPicker.close');
-        }
-
-        /**
-         * The webElementPicker calls this function with a parameter {url: .., selector: ...} when the user selected
-         * an element and clicks on the 'ok' button.
-         *
-         * @param data
-         */
-        function ok(data) {
-            $rootScope.$broadcast('webElementPicker.ok', data);
         }
     }
 }());;(function () {
