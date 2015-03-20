@@ -46,6 +46,8 @@ public interface LearnerResultDAO {
      */
     List<String> getAllAsJSON(Long projectId, Long testNo) throws NoSuchElementException;
 
+    List<List<String>> getAllAsJson(Long projectId, List<Long> testNos) throws NoSuchElementException ;
+
     /**
      * Get a the last / final LearnerResult of one test run.
      *

@@ -22,28 +22,7 @@ public final class JSONHelpers {
      */
     private JSONHelpers() {
     }
-
-    /**
-     * Convert a List of JSON encoded data into a JSON encoded list without additional '"'.
-     *
-     * @param list
-     *         A List of JSON encoded strings.
-     * @return A JSON encoded list of the data.
-     */
-    public static String stringListToJSON(List<String> list) {
-        StringBuilder json = new StringBuilder();
-        json.append('[');
-        if (list.size() > 0) {
-            for (String p : list) {
-                json.append(p);
-                json.append(',');
-            }
-            json.deleteCharAt(json.length() - 1); // remove last ','
-        }
-        json.append(']');
-        return json.toString();
-    }
-
+    
     /**
      * Get the value of an attribute from a JSON encoded String.
      *

@@ -28,7 +28,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
 
-public class HypothesisResourceTest extends JerseyTest {
+public class LearnerResultResourceTest extends JerseyTest {
 
     private static final long PROJECT_ID = 1L;
     private static final long RESULT_ID = 10L;
@@ -56,7 +56,7 @@ public class HypothesisResourceTest extends JerseyTest {
         MockitoAnnotations.initMocks(this);
 
         return new WeblearnerTestApplication(projectDAO, symbolGroupDAO, symbolDAO,
-                                             learnerResultDAO, learner, HypothesisResource.class);
+                                             learnerResultDAO, learner, LearnerResultResource.class);
     }
 
     @Before
@@ -89,8 +89,7 @@ public class HypothesisResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
 
-        String expectedJSON = JSONHelpers.stringListToJSON(results);
-        assertEquals(expectedJSON, response.readEntity(String.class));
+        assertEquals(results.toString(), response.readEntity(String.class));
     }
 
     @Test
@@ -124,8 +123,7 @@ public class HypothesisResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
 
-        String expectedJSON = JSONHelpers.stringListToJSON(results);
-        assertEquals(expectedJSON, response.readEntity(String.class));
+        assertEquals(results.toString(), response.readEntity(String.class));
     }
 
     @Test
@@ -134,7 +132,47 @@ public class HypothesisResourceTest extends JerseyTest {
 
         String path = "/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "/complete";
         Response response = target(path).request().get();
+
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldGetAllStepsOfMultipleTestRuns() {
+        List<Long> ids = new LinkedList<>();
+        List<List<String>> results = new LinkedList<>();
+        for (long i = 0; i < TEST_RESULT_AMOUNT; i++) {
+            List<String> tmpList = new LinkedList<>();
+
+            for(Long j = 0L; j < TEST_RESULT_AMOUNT; j++) {
+                Alphabet<String> sigma = new SimpleAlphabet<>();
+                sigma.add("0");
+                sigma.add("1");
+
+                LearnerResult learnerResult = new LearnerResult();
+                learnerResult.setProject(project);
+                learnerResult.setTestNo(RESULT_ID + i);
+                learnerResult.setStepNo(j);
+                learnerResult.setSigma(sigma);
+
+                tmpList.add(learnerResult.getJSON());
+            }
+            ids.add(RESULT_ID + i);
+            results.add(tmpList);
+        }
+        given(learnerResultDAO.getAllAsJson(PROJECT_ID, ids)).willReturn(results);
+
+        StringBuilder idsAsString = new StringBuilder();
+        for (Long id : ids) {
+            idsAsString.append(String.valueOf(id));
+            idsAsString.append(',');
+        }
+        idsAsString.setLength(idsAsString.length() - 1); // remove last ','
+
+        String path = "/projects/" + PROJECT_ID + "/results/" + idsAsString + "/complete";
+        Response response = target(path).request().get();
+
+        String jsonInResponse = response.readEntity(String.class);
+        System.out.println(jsonInResponse);
     }
 
     @Test

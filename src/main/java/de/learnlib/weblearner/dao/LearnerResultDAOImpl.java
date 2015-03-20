@@ -13,6 +13,7 @@ import org.hibernate.criterion.Subqueries;
 import javax.validation.ValidationException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -89,11 +90,47 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     public List<String> getAllAsJSON(Long projectId, Long testNo)
-            throws IllegalArgumentException, NoSuchElementException {
+            throws NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
+        try {
+            List<String> result = getAllAsJSON(session, projectId, testNo);
+
+            // done
+            HibernateUtil.commitTransaction();
+            return result;
+        } catch (NoSuchElementException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<List<String>> getAllAsJson(Long projectId, List<Long> testNos) throws NoSuchElementException {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        List<List<String>> result = new LinkedList<>();
+
+        try {
+            testNos.forEach(testNo -> {
+                List<String> stepsOfOneTestRun = getAllAsJSON(session, projectId, testNo);
+                result.add(stepsOfOneTestRun);
+            });
+            // done
+            HibernateUtil.commitTransaction();
+            return result;
+        } catch (NoSuchElementException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    private List<String> getAllAsJSON(Session session, Long projectId, Long testNo)
+            throws NoSuchElementException {
         if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
             throw new NoSuchElementException("The project with the id " + projectId + " was not found.");
         }
@@ -112,7 +149,6 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         }
 
         // done
-        HibernateUtil.commitTransaction();
         return result;
     }
 
