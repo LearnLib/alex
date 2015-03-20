@@ -7,13 +7,13 @@ import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
 import de.learnlib.weblearner.entities.actions.ExecuteSymbolAction;
+import de.learnlib.weblearner.entities.actions.WaitAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClearAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.FillAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.GotoAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.SubmitAction;
-import de.learnlib.weblearner.entities.actions.WaitAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Session;
@@ -92,7 +92,7 @@ public class SymbolDAOImplTest {
         WebSymbolAction a7 = new WaitAction();
         symbol.addAction(a7);
         SymbolAction a8 = new ExecuteSymbolAction();
-        ((ExecuteSymbolAction) a8).setSymbol(symbol);
+        ((ExecuteSymbolAction) a8).setSymbolToExecute(symbol);
         symbol.addAction(a8);
 
         // create symbol 2

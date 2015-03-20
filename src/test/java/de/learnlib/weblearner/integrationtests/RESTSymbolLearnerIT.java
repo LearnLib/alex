@@ -9,7 +9,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -21,7 +20,6 @@ import javax.ws.rs.core.Response;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
 public class RESTSymbolLearnerIT extends JerseyTest {
 
     private static final int MAX_TIME_TO_WAIT_FOR_LEARNER = 180000; // three minutes !!
@@ -71,10 +69,10 @@ public class RESTSymbolLearnerIT extends JerseyTest {
                 + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/reset\"}"
              + "]}";
         Symbol resetSymbol = testHelper.addSymbol(client, project, json);
-        resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevsionPairListAsJSON(resetSymbol);
+        resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevisionPairListAsJSON(resetSymbol);
 
         // create test symbols
-        Symbol[] symbols = new Symbol[2];
+        Symbol[] symbols = new Symbol[3];
 
         // symbol 1
         String symbolName = "RESTSymbolLearnerIT REST Symbol 1";
@@ -96,8 +94,17 @@ public class RESTSymbolLearnerIT extends JerseyTest {
                 + "]}";
         symbols[1] = testHelper.addSymbol(client, project, json);
 
+        // symbol 3
+        symbolName = "RESTSymbolLearnerIT REST Symbol 3";
+        symbolAbbr = "learnrest3";
+        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
+                + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
+                    + "{\"type\": \"rest_checkStatus\", \"status\" : 500, \"negated\": true}"
+                + "]}";
+        symbols[2] = testHelper.addSymbol(client, project, json);
+
         // remember symbol references
-        symbolsIdAndRevisionAsJSON = testHelper.createIdRevsionPairListAsJSON(symbols);
+        symbolsIdAndRevisionAsJSON = testHelper.createIdRevisionPairListAsJSON(symbols);
 
         // remember alphabet
         testAlphabet = testHelper.createTestAlphabet(symbols);

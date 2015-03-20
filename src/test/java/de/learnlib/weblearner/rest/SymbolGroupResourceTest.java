@@ -23,7 +23,6 @@ import org.mockito.MockitoAnnotations;
 import javax.validation.ValidationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.LinkedList;

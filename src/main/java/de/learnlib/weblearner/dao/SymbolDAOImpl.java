@@ -6,6 +6,7 @@ import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.SymbolVisibilityLevel;
+import de.learnlib.weblearner.entities.actions.ExecuteSymbolAction;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -109,15 +110,22 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
         group.addSymbol(symbol);
 
-        if (symbol.getActions() != null) {
-            for (int i = 0; i < symbol.getActions().size(); i++) {
-                action = symbol.getActions().get(0);
-                action.setNumber(i);
-                action.setSymbol(symbol);
-            }
-        }
-
         symbol.beforeSave();
+
+        symbol.getActions().stream().filter(a -> a instanceof ExecuteSymbolAction).forEach(a -> {
+            ExecuteSymbolAction action = (ExecuteSymbolAction) a;
+            IdRevisionPair idAndRevision =  action.getSymbolToExecuteAsIdRevisionPair();
+
+            if (idAndRevision != null) {
+                Symbol symbolToExecute = (Symbol) session.byNaturalId(Symbol.class)
+                                                            .using("project", action.getProject())
+                                                            .using("id", idAndRevision.getId())
+                                                            .using("revision", idAndRevision.getRevision())
+                                                            .load();
+                action.setSymbolToExecute(symbolToExecute);
+            }
+        });
+
         session.save(symbol);
     }
 
@@ -419,14 +427,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.setRevision(symbol.getRevision() + 1);
         symbol.setGroup(newGroup);
 
-        if (symbol.getActions() != null) {
-            for (int i = 0; i < symbol.getActions().size(); i++) {
-                action = symbol.getActions().get(0);
-                action.setNumber(i);
-                action.setSymbol(symbol);
-            }
-        }
-
         symbol.beforeSave();
         session.save(symbol);
 
@@ -540,7 +540,7 @@ public class SymbolDAOImpl implements SymbolDAO {
      * @param symbol
      *            The Symbol to check.
      * @throws IllegalArgumentException
-     *             If the symbol faild the check.
+     *             If the symbol failed the check.
      */
     private void checkUniqueConstrains(Session session, Symbol symbol) throws IllegalArgumentException {
         // put constrains into a query
@@ -561,12 +561,24 @@ public class SymbolDAOImpl implements SymbolDAO {
         // if the query result is not empty, the constrains are violated.
         if (testList.size() > 0) {
             HibernateUtil.rollbackTransaction();
-            throw new ValidationException("The name or the abbreviation of the symbol is already used in the project.");
+            throw new ValidationException("The name '" + symbol.getName() + "' or the abbreviation '"
+                                         + symbol.getAbbreviation() + "'of the symbol is already used in the project.");
         }
     }
 
     public static void loadLazyRelations(Symbol symbol) {
         Hibernate.initialize(symbol.getActions());
+        symbol.getActions().stream().filter(a -> a instanceof ExecuteSymbolAction).forEach(a -> {
+            ExecuteSymbolAction action = (ExecuteSymbolAction) a;
+            Symbol symbolToExecute = action.getSymbolToExecute();
+
+            if (symbolToExecute != null && (!Hibernate.isInitialized(symbolToExecute) || !Hibernate.isInitialized(symbolToExecute.getActions()))) {
+                Hibernate.initialize(symbolToExecute);
+                Hibernate.initialize(symbolToExecute.getActions());
+                loadLazyRelations(symbolToExecute);
+            }
+        });
+
         Hibernate.initialize(symbol.getGroup());
     }
 

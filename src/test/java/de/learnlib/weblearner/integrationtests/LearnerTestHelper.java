@@ -4,6 +4,7 @@ package de.learnlib.weblearner.integrationtests;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.WebSymbolTest;
 import de.learnlib.weblearner.entities.learnlibproxies.CompactMealyMachineProxy;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.util.automata.equivalence.DeterministicEquivalenceTest;
@@ -42,10 +43,10 @@ public class LearnerTestHelper {
 
         assertEquals(responseJSON, Response.Status.CREATED.getStatusCode(), response.getStatus());
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(responseJSON, Symbol.class);
+        return WebSymbolTest.readSymbol(responseJSON);
     }
 
-    public String createIdRevsionPairListAsJSON(Symbol... symbols) {
+    public String createIdRevisionPairListAsJSON(Symbol... symbols) {
         StringBuilder builder = new StringBuilder();
 
         for (Symbol symbol : symbols) {

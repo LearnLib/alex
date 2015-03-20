@@ -2,7 +2,6 @@ package de.learnlib.weblearner.entities.actions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
-import de.learnlib.weblearner.entities.actions.WaitAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
 import org.junit.Before;

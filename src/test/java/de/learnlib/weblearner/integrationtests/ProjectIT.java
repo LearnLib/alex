@@ -31,8 +31,7 @@ public class ProjectIT {
         String json =  "{\"name\": \"" + projectName + "\", \"baseUrl\": \"http://example.com\"}";
 
         // create
-        Response response = client.target(BASE_URL + "/projects").request().post(
-                Entity.entity(json, MediaType.APPLICATION_JSON));
+        Response response = client.target(BASE_URL + "/projects").request().post(Entity.json(json));
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
         Project project = ProjectTest.readProject(response.readEntity(String.class));
         assertTrue(project.getId() > 0);

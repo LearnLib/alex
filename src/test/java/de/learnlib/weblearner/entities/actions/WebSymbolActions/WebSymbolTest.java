@@ -30,11 +30,11 @@ public class WebSymbolTest {
 
     private Symbol symbol;
 
-    /*public static Symbol readSymbol(String json) throws IOException {
-        json = json.replaceFirst(",\"symbolAmount\":[ ]?[0-9]+", "");
+    public static Symbol readSymbol(String json) throws IOException {
+        json = json.replaceFirst(",\"symbolToExecuteName\":[ ]?\"[a-zA-Z0-9 ]*\"", "");
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, Symbol.class);
-    }*/
+    }
 
     @Before
     public void setUp() {

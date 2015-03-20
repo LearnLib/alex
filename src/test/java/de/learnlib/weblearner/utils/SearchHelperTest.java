@@ -1,6 +1,5 @@
 package de.learnlib.weblearner.utils;
 
-import de.learnlib.weblearner.learner.connectors.Connector;
 import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
 import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;

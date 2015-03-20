@@ -18,7 +18,6 @@ import de.learnlib.weblearner.entities.LearnAlgorithms;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
-import de.learnlib.weblearner.learner.connectors.MultiContextHandler;
 import de.learnlib.weblearner.utils.DiscriminationTreeSerializer;
 import de.learnlib.weblearner.utils.TTTSerializer;
 import net.automatalib.util.graphs.dot.GraphDOT;

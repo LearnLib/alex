@@ -17,8 +17,9 @@ import de.learnlib.weblearner.entities.actions.StoreSymbolActions.DeclareVariabl
 import de.learnlib.weblearner.entities.actions.StoreSymbolActions.IncrementCounterAction;
 import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetCounterAction;
 import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableAction;
-import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
 import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableByHTMLElementAction;
+import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
+import de.learnlib.weblearner.entities.actions.WaitAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckNodeAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClearAction;
@@ -26,9 +27,9 @@ import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.FillAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.GotoAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.SubmitAction;
-import de.learnlib.weblearner.entities.actions.WaitAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -89,35 +90,35 @@ public abstract class SymbolAction implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     @JsonIgnore
-    protected long id;
+    protected Long id;
 
+    @NaturalId
+    @ManyToOne
+    @JoinColumn(name = "projectId")
+    @JsonIgnore
+    protected Project project;
+
+    @NaturalId
     @ManyToOne
     @JoinColumn(name = "symbolId")
     @JsonIgnore
-    private Symbol symbol;
-
-    public Symbol getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(Symbol symbol) {
-        this.symbol = symbol;
-    }
+    protected Symbol symbol;
 
     /** The position the action has in the actions list of the Symbol. */
+    @NaturalId
     @JsonIgnore
     protected int number;
 
-    private boolean negated;
+    protected boolean negated;
 
-    private boolean ignoreFailure;
+    protected boolean ignoreFailure;
 
     /**
      * Get the ID of the Action used in the DB.
      *
      * @return The DB ID of the Action.
      */
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -127,8 +128,24 @@ public abstract class SymbolAction implements Serializable {
      * @param id
      *            The DB ID of the Action.
      */
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public Symbol getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(Symbol symbol) {
+        this.symbol = symbol;
     }
 
     /**
@@ -199,14 +216,19 @@ public abstract class SymbolAction implements Serializable {
 
         SymbolAction that = (SymbolAction) o;
 
-        if (id != that.id) return false;
+        if (number != that.number) return false;
+        if (project != null ? !project.equals(that.project) : that.project != null) return false;
+        if (symbol != null ? !symbol.equals(that.symbol) : that.symbol != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        int result = project != null ? project.hashCode() : 0;
+        result = 31 * result + (symbol != null ? symbol.hashCode() : 0);
+        result = 31 * result + number;
+        return result;
     }
     //CHECKSTYLE.ON: AvoidInlineConditionals|MagicNumber
 

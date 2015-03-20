@@ -3,7 +3,6 @@ package de.learnlib.weblearner.learner;
 import de.learnlib.algorithms.dhc.mealy.MealyDHCBuilder;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealyBuilder;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealyBuilder;
-import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
 import de.learnlib.oracles.SULOracle;
