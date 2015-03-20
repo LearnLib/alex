@@ -30,7 +30,7 @@
 
                     <button class="btn btn-default btn-xs" open-hypothesis-layout-settings-modal
                             layout-settings="layoutSettings">
-                        <i class="fa fa-eye fa-fw"></i> Layout
+                        <i class="fa fa-sliders fa-fw"></i> Layout
                     </button>
                 </div>
 
@@ -48,46 +48,28 @@
                 </div>
 
             </div>
+
+            <div class="pull-right" ng-transclude></div>
+
             <div class="pull-right">
-
-                <div class="btn-group btn-group-xs">
-                    <button class="btn btn-default" ng-click="firstStep()">
-                        <i class="fa fa-angle-double-left fa-fw"></i>
-                    </button>
-                    <button class="btn btn-default" ng-click="previousStep()">
-                        <i class="fa fa-angle-left fa-fw"></i>
-                    </button>
-                    <button class="btn btn-default disabled">
-                        <span ng-bind="pointer + 1"></span>/<span ng-bind="results.length"></span>
-                    </button>
-                    <button class="btn btn-default" ng-click="nextStep()">
-                        <i class="fa fa-angle-right fa-fw"></i>
-                    </button>
-                    <button class="btn btn-default" ng-click="lastStep()">
-                        <i class="fa fa-angle-double-right fa-fw"></i>
-                    </button>
-                </div>
-
+                <index-browser index="pointer" length="{{results.length}}"></index-browser>
             </div>
+
         </div>
     </div>
     <!-- END: Subnavigation -->
 
     <div class="hypothesis-panel">
 
-        <hypothesis id="hypothesis" test="getCurrentStep()" layout-settings="layoutSettings"
+        <hypothesis id="hypothesis" test="results[pointer]" layout-settings="layoutSettings"
                     ng-if="mode === modes.HYPOTHESIS" && pointer=== results.length - 1></hypothesis>
 
-        <hypothesis id="hypothesis" test="getCurrentStep()" layout-settings="layoutSettings"
-                    counter-example="counterExample"
-                    ng-if="mode === modes.HYPOTHESIS" && pointer !== results.length - 1></hypothesis>
-
-        <observation-table data="result[pointer].algorithmInformation"
-                           ng-if="mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR">
+        <observation-table data="results[pointer].algorithmInformation"
+                           ng-if="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR">
         </observation-table>
 
-        <discrimination-tree data="result[pointer].algorithmInformation"
-                             ng-if="mode === modes.INTERNAL && result[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE">
+        <discrimination-tree data="results[pointer].algorithmInformation"
+                             ng-if="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE">
         </discrimination-tree>
 
     </div>

@@ -52,15 +52,14 @@
 
     function widgetCounterExamples(paths) {
 
-        var directive = {
-            templateUrl: paths.views.WIDGETS + '/widget-counter-examples.html',
+        return {
+            templateUrl: paths.views.DIRECTIVES + '/widget-counter-examples.html',
             scope: {
                 counterExamples: '=',
                 newCounterExample: '=counterExample'
             },
             controller: ['$scope', controller]
-        }
-        return directive;
+        };
 
         function controller($scope) {
 
@@ -108,14 +107,13 @@
 
     function widgetTestResumeSettings(paths) {
 
-        var directive = {
-            templateUrl: paths.views.WIDGETS + '/widget-test-resume-settings.html',
+        return {
+            templateUrl: paths.views.DIRECTIVES + '/widget-test-resume-settings.html',
             scope: {
                 configuration: '='
             },
             controller: ['$scope', 'eqOracles', 'EqOracle', controller]
         };
-        return directive;
 
         function controller($scope, eqOracles, EqOracle) {
 

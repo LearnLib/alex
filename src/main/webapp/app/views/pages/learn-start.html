@@ -12,26 +12,26 @@
 
     <div ng-if="!active && results.length > 0">
 
-        <div class="panel-sidebar">
+        <!--<div class="panel-sidebar">-->
 
-            <p>
-                <br>
-                <button class="btn btn-primary btn-sm btn-block" ng-click="resumeLearning()">Resume</button>
-            </p>
+        <!--<p>-->
+        <!--<br>-->
+        <!--<button class="btn btn-primary btn-sm btn-block" ng-click="resumeLearning()">Resume</button>-->
+        <!--</p>-->
 
-            <div widget widget-title="Configuration" collapsed="false">
-                <div widget-test-resume-settings configuration="_.last(results).configuration"></div>
-            </div>
+        <!--<div widget widget-title="Configuration" collapsed="false">-->
+        <!--<div widget-test-resume-settings configuration="_.last(results).configuration"></div>-->
+        <!--</div>-->
 
-            <div widget widget-title="Counter Examples" collapsed="true"
-                 ng-if="_.last(results).configuration.eqOracle.type === 'sample'">
-                <div widget-counter-examples counter-examples="_.last(results).configuration.eqOracle.counterExamples"
-                     counter-example="counterExample"></div>
-            </div>
+        <!--<div widget widget-title="Counter Examples" collapsed="true"-->
+        <!--ng-if="_.last(results).configuration.eqOracle.type === 'sample'">-->
+        <!--<div widget-counter-examples counter-examples="_.last(results).configuration.eqOracle.counterExamples"-->
+        <!--counter-example="counterExample"></div>-->
+        <!--</div>-->
 
-        </div>
+        <!--</div>-->
 
-        <div learn-results-panel results="results" counter-example="counterExample"></div>
+        <div learn-results-panel results="results"></div>
 
     </div>
 

@@ -5,7 +5,9 @@
         .module('weblearner.controller')
         .controller('ActionCreateModalController', ActionCreateModalController);
 
-    ActionCreateModalController.$inject = ['$scope', '$modalInstance', 'actionTypes', 'Action'];
+    ActionCreateModalController.$inject = [
+        '$scope', '$modalInstance', 'actionTypes', 'Action', 'Symbol', 'SessionService'
+    ];
 
     /**
      * The controller for the modal dialog that handles the creation of a new action.
@@ -16,9 +18,13 @@
      * @param $modalInstance
      * @param actionTypes
      * @param Action
+     * @param Symbol
+     * @param Session
      * @constructor
      */
-    function ActionCreateModalController($scope, $modalInstance, actionTypes, Action) {
+    function ActionCreateModalController($scope, $modalInstance, actionTypes, Action, Symbol, Session) {
+
+        var project = Session.project.get();
 
         /**
          * The constant for action type names
@@ -31,6 +37,15 @@
          * @type {null|Object}
          */
         $scope.action = null;
+
+        $scope.symbols = [];
+
+        (function init() {
+            Symbol.Resource.getAll(project.id)
+                .then(function (symbols) {
+                    $scope.symbols = symbols;
+                })
+        }());
 
         /**
          * Creates a new instance of an Action by a type that was clicked in the modal dialog.
@@ -54,5 +69,7 @@
         $scope.closeModal = function () {
             $modalInstance.dismiss();
         };
+
+
     }
 }());

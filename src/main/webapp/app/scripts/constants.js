@@ -16,8 +16,8 @@
     			BASE: 'app/views',
     			DIRECTIVES: 'app/views/directives',
     			MODALS: 'app/views/modals',
-    			WIDGETS: 'app/views/widgets',
-                PAGES: 'app/views/pages'
+                PAGES: 'app/views/pages',
+                INCLUDES: 'app/views/includes'
     		},
     		api: {
     			URL: '/rest',
@@ -46,14 +46,15 @@
                 CHECK_ATTRIBUTE_TYPE: 'rest_checkAttributeType'
             },
             other: {
-                WAIT: 'wait',
                 DECLARE_COUNTER: 'declareCounter',
                 DECLARE_VARIABLE: 'declareVariable',
+                EXECUTE_SYMBOL: 'executeSymbol',
                 INCREMENT_COUNTER: 'incrementCounter',
                 SET_COUNTER: 'setCounter',
                 SET_VARIABLE: 'setVariable',
                 SET_VARIABLE_BY_JSON_ATTRIBUTE: 'setVariableByJSON',
-                SET_VARIABLE_BY_NODE: 'setVariableByHTML'
+                SET_VARIABLE_BY_NODE: 'setVariableByHTML',
+                WAIT: 'wait'
             }
         })
 

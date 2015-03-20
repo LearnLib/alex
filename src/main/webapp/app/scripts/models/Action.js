@@ -207,6 +207,37 @@
             return 'Declare variable "' + this.name + '"';
         };
 
+        Action.Other.ExecuteSymbol = function (symbolName, idRevisionPair) {
+            Action.call(this);
+
+            var _symbol = {
+                name: symbolName || null,
+                revision: null
+            };
+
+            this.type = actionTypes.other.EXECUTE_SYMBOL;
+            this.symbolToExecute = idRevisionPair || {id: null, revision: null};
+
+            this.setSymbol = function (symbol) {
+                if (angular.isDefined(symbol)) {
+                    this.symbolToExecute = {
+                        id: symbol.id,
+                        revision: symbol.revision
+                    };
+                    _symbol.name = symbol.name;
+                    _symbol.revision = symbol.revision;
+                }
+            };
+
+            this.getSymbol = function () {
+                return _symbol;
+            }
+        };
+
+        Action.Other.ExecuteSymbol.prototype.toString = function () {
+            return 'Execute symbol "' + this.getSymbol().name + '", rev. ' + this.symbolToExecute.revision;
+        };
+
         Action.Other.IncrementCounter = function (name) {
             Action.call(this);
             this.type = actionTypes.other.INCREMENT_COUNTER;
@@ -321,6 +352,9 @@
                     break;
                 case actionTypes.other.DECLARE_VARIABLE:
                     action = new Action.Other.DeclareVariable(data.name);
+                    break;
+                case actionTypes.other.EXECUTE_SYMBOL:
+                    action = new Action.Other.ExecuteSymbol(data.symbolToExecuteName, data.symbolToExecute);
                     break;
                 case actionTypes.other.INCREMENT_COUNTER:
                     action = new Action.Other.IncrementCounter(data.name);

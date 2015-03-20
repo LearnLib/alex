@@ -36,6 +36,10 @@
 <div class="view-body">
     <div class="container">
 
+        <div class="alert alert-info alert-condensed" ng-show="hasUnsavedChanges">
+            <i class="fa fa-fw fa-info"></i> There are unsaved changes made to the symbol
+        </div>
+
         <div ng-if="symbol.actions" as-sortable ng-model="symbol.actions">
             <div class="selectable-list">
                 <div ng-repeat="action in symbol.actions"

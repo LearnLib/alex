@@ -218,6 +218,7 @@ form {
     bottom: 0;
     width: 100%;
     background: #fff;
+    overflow: auto;
   }
 }
 
@@ -299,6 +300,6 @@ form {
   }
 }
 
-.red {
-  width: 100%;
+.index-browser {
+  display: inline-block;
 }

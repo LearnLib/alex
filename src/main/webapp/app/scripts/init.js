@@ -45,8 +45,8 @@
                 maxNumber: 1
             });
         }])
-        .run(['$rootScope', '_', 'SelectionService', function ($rootScope, _, SelectionService) {
+        .run(['$rootScope', '_', 'paths', function ($rootScope, _, paths) {
             $rootScope._ = _;
-            $rootScope.selection = SelectionService;
+            $rootScope.paths = paths;
         }])
 }());

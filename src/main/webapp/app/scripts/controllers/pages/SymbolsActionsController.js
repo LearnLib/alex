@@ -50,6 +50,12 @@
          */
         $scope.selectedActions = [];
 
+        /**
+         * Flag for
+         * @type {boolean}
+         */
+        $scope.hasUnsavedChanges = false;
+
         // load all actions from the symbol
         // redirect to an error page when the symbol from the url id cannot be found
         (function init() {
@@ -63,12 +69,10 @@
         // initialize the controller for a given symbol
         function prepareSymbol(symbol) {
 
-            // create unique ids for actions
+            // create unique ids for actions so that they can be found
             _.forEach(symbol.actions, function (action) {
                 action._id = _.uniqueId();
             });
-
-            console.log(symbol.actions)
 
             // add symbol to scope and create a copy in order to revert changes
             $scope.symbol = symbol;
@@ -83,6 +87,7 @@
                 _.forEach($scope.selectedActions, $scope.deleteAction);
                 Toast.success('Actions deleted');
             }
+            $scope.hasUnsavedChanges = true;
         };
 
         /**
@@ -93,6 +98,7 @@
         $scope.deleteAction = function (action) {
             _.remove($scope.symbol.actions, {_id: action._id});
             Toast.success('Action deleted');
+            $scope.hasUnsavedChanges = true;
         };
 
         /**
@@ -101,9 +107,11 @@
          * @param {Object} action
          */
         $scope.addAction = function (action) {
+            console.log(action)
             action._id = _.uniqueId();
             $scope.symbol.actions.push(action);
             Toast.success('Action created');
+            $scope.hasUnsavedChanges = true;
         };
 
         /**
@@ -117,6 +125,7 @@
                 $scope.symbol.actions[index] = updatedAction;
                 Toast.success('Action updated');
             }
+            $scope.hasUnsavedChanges = true;
         };
 
         /**
@@ -138,6 +147,7 @@
                 .then(function (updatedSymbol) {
                     prepareSymbol(updatedSymbol);
                     Toast.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
+                    $scope.hasUnsavedChanges = false;
                 })
                 .catch(function (response) {
                     Toast.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
@@ -150,6 +160,7 @@
         $scope.revertChanges = function () {
             prepareSymbol($scope.symbolCopy);
             Toast.info('Changes reverted to the last update');
+            $scope.hasUnsavedChanges = false;
         };
     }
 }());

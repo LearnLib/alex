@@ -130,6 +130,33 @@
         };
 
         /**
+         * Makes a PUT request to /rest/projects/{projectId}/symbols/{symbolId}/moveTo/{groupId} in order to move
+         * a symbol to another group without creating a new revision
+         *
+         * @param {number} projectId - The id of the project
+         * @param {number} symbolId - The id of the symbol
+         * @param {number} groupId - The id of the symbol group
+         * @returns {HttpPromise}
+         */
+        SymbolResource.prototype.move = function (projectId, symbolId, groupId) {
+            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/moveTo/' + groupId, {})
+        };
+
+        /**
+         * Makes a PUT request to /rest/projects/{projectId}/symbols/{symbolId}/moveTo/{groupId} in order to move
+         * a symbol to another group without creating a new revision
+         *
+         * @param {number} projectId - The id of the project
+         * @param {Symbol[]} symbols - The symbols to be moved
+         * @param {number} groupId - The id of the symbol group
+         * @returns {HttpPromise}
+         */
+        SymbolResource.prototype.moveSome = function (projectId, symbols, groupId) {
+            var symbolIds = _.pluck(symbols, 'id').join(',');
+            return $http.put(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + symbolIds + '/moveTo/' + groupId, {})
+        };
+
+        /**
          * Make a POST request to /rest/projects/{projectId}/symbols/batch/{symbolIds} in order to update a bunch of
          * symbols at once
          *
