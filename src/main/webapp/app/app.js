@@ -1054,15 +1054,24 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "            <div class=\"col-xs-5\">\n" +
     "\n" +
     "                <accordion close-others=\"true\" class=\"action-types-accordion\">\n" +
-    "                    <accordion-group heading=\"Web\" is-open=\"true\">\n" +
+    "                    <accordion-group is-open=\"true\">\n" +
+    "                        <accordion-heading>\n" +
+    "                            <div><strong>Web</strong></div>\n" +
+    "                        </accordion-heading>\n" +
     "                        <a href ng-repeat=\"(k,v) in actionTypes.web\" ng-click=\"selectNewActionType(v)\"\n" +
     "                           ng-bind=\"::(k|formatEnumKey)\"></a>\n" +
     "                    </accordion-group>\n" +
-    "                    <accordion-group heading=\"Rest\">\n" +
+    "                    <accordion-group>\n" +
+    "                        <accordion-heading>\n" +
+    "                            <div><strong>Rest</strong></div>\n" +
+    "                        </accordion-heading>\n" +
     "                        <a href ng-repeat=\"(k,v) in actionTypes.rest\" ng-click=\"selectNewActionType(v)\"\n" +
     "                           ng-bind=\"::(k|formatEnumKey)\"></a>\n" +
     "                    </accordion-group>\n" +
-    "                    <accordion-group heading=\"Other\">\n" +
+    "                    <accordion-group>\n" +
+    "                        <accordion-heading>\n" +
+    "                            <div><strong>Other</strong></div>\n" +
+    "                        </accordion-heading>\n" +
     "                        <a href ng-repeat=\"(k,v) in actionTypes.other\" ng-click=\"selectNewActionType(v)\"\n" +
     "                           ng-bind=\"::(k|formatEnumKey)\"></a>\n" +
     "                    </accordion-group>\n" +
@@ -7059,13 +7068,22 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * The directive that displays a browsable list of learn results. For each result, it can display the observation
      * table, if L* was used, or the Discrimination Tree from the corresponding algorithm.
      *
+     * It expects an attribute 'results' which should contain a list of the learn results that should be displayed. It
+     * can for example be the list of all intermediate results of a complete test or multiple single results from
+     * multiple tests.
+     *
+     * Content that is written inside the tag will be displayed a the top left corner beside the index browser. So
+     * just add small texts or additional buttons in there.
+     *
      * Use it like '<learn-results-panel results="..."> ... </learn-results-panel>'
      *
-     * @param paths
-     * @param learnAlgorithms
+     * @param {Object} paths - The constant for application paths
+     * @param {Object} learnAlgorithms - The constant for available learn algorithms
      * @returns {{scope: {results: string}, transclude: boolean, templateUrl: string, controller: *[]}}
      */
     function learnResultsPanel(paths, learnAlgorithms) {
+
+        // the directive
         return {
             scope: {
                 results: '='
@@ -7141,7 +7159,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      *
      * @returns {{require: string, scope: {results: string, index: string}, templateUrl: string, link: link}}
      */
-    function learnResultsSlideshowPanel() {
+    function learnResultsSlideshowPanel(paths) {
 
         // the directive
         return {

@@ -1003,15 +1003,24 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "            <div class=\"col-xs-5\">\n" +
     "\n" +
     "                <accordion close-others=\"true\" class=\"action-types-accordion\">\n" +
-    "                    <accordion-group heading=\"Web\" is-open=\"true\">\n" +
+    "                    <accordion-group is-open=\"true\">\n" +
+    "                        <accordion-heading>\n" +
+    "                            <div><strong>Web</strong></div>\n" +
+    "                        </accordion-heading>\n" +
     "                        <a href ng-repeat=\"(k,v) in actionTypes.web\" ng-click=\"selectNewActionType(v)\"\n" +
     "                           ng-bind=\"::(k|formatEnumKey)\"></a>\n" +
     "                    </accordion-group>\n" +
-    "                    <accordion-group heading=\"Rest\">\n" +
+    "                    <accordion-group>\n" +
+    "                        <accordion-heading>\n" +
+    "                            <div><strong>Rest</strong></div>\n" +
+    "                        </accordion-heading>\n" +
     "                        <a href ng-repeat=\"(k,v) in actionTypes.rest\" ng-click=\"selectNewActionType(v)\"\n" +
     "                           ng-bind=\"::(k|formatEnumKey)\"></a>\n" +
     "                    </accordion-group>\n" +
-    "                    <accordion-group heading=\"Other\">\n" +
+    "                    <accordion-group>\n" +
+    "                        <accordion-heading>\n" +
+    "                            <div><strong>Other</strong></div>\n" +
+    "                        </accordion-heading>\n" +
     "                        <a href ng-repeat=\"(k,v) in actionTypes.other\" ng-click=\"selectNewActionType(v)\"\n" +
     "                           ng-bind=\"::(k|formatEnumKey)\"></a>\n" +
     "                    </accordion-group>\n" +

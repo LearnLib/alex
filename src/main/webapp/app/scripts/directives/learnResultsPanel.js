@@ -13,13 +13,22 @@
      * The directive that displays a browsable list of learn results. For each result, it can display the observation
      * table, if L* was used, or the Discrimination Tree from the corresponding algorithm.
      *
+     * It expects an attribute 'results' which should contain a list of the learn results that should be displayed. It
+     * can for example be the list of all intermediate results of a complete test or multiple single results from
+     * multiple tests.
+     *
+     * Content that is written inside the tag will be displayed a the top left corner beside the index browser. So
+     * just add small texts or additional buttons in there.
+     *
      * Use it like '<learn-results-panel results="..."> ... </learn-results-panel>'
      *
-     * @param paths
-     * @param learnAlgorithms
+     * @param {Object} paths - The constant for application paths
+     * @param {Object} learnAlgorithms - The constant for available learn algorithms
      * @returns {{scope: {results: string}, transclude: boolean, templateUrl: string, controller: *[]}}
      */
     function learnResultsPanel(paths, learnAlgorithms) {
+
+        // the directive
         return {
             scope: {
                 results: '='
@@ -95,7 +104,7 @@
      *
      * @returns {{require: string, scope: {results: string, index: string}, templateUrl: string, link: link}}
      */
-    function learnResultsSlideshowPanel() {
+    function learnResultsSlideshowPanel(paths) {
 
         // the directive
         return {
