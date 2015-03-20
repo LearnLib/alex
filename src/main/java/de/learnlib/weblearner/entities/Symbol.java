@@ -315,16 +315,6 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
         action.setSymbol(this);
     }
 
-    public void beforeSave() {
-        for (int i = 0; i < actions.size(); i++) {
-            SymbolAction a = actions.get(i);
-            a.setId(null);
-            a.setProject(project);
-            a.setSymbol(this);
-            a.setNumber(i);
-        }
-    }
-
     @Override
     public String execute(MultiConnector connector) throws SULException {
         for (SymbolAction action : actions) {

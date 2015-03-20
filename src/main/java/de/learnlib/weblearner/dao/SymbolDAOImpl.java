@@ -110,21 +110,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
         group.addSymbol(symbol);
 
-        symbol.beforeSave();
-
-        symbol.getActions().stream().filter(a -> a instanceof ExecuteSymbolAction).forEach(a -> {
-            ExecuteSymbolAction action = (ExecuteSymbolAction) a;
-            IdRevisionPair idAndRevision =  action.getSymbolToExecuteAsIdRevisionPair();
-
-            if (idAndRevision != null) {
-                Symbol symbolToExecute = (Symbol) session.byNaturalId(Symbol.class)
-                                                            .using("project", action.getProject())
-                                                            .using("id", idAndRevision.getId())
-                                                            .using("revision", idAndRevision.getRevision())
-                                                            .load();
-                action.setSymbolToExecute(symbolToExecute);
-            }
-        });
+        beforeSymbolSave(session, symbol);
 
         session.save(symbol);
     }
@@ -169,9 +155,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                                         .list();
 
         // load the lazy relations
-        for (Symbol symbol : result) {
-            loadLazyRelations(symbol);
-        }
+        result.forEach(SymbolDAOImpl::loadLazyRelations);
         return result;
     }
 
@@ -427,7 +411,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.setRevision(symbol.getRevision() + 1);
         symbol.setGroup(newGroup);
 
-        symbol.beforeSave();
+        beforeSymbolSave(session, symbol);
+
         session.save(symbol);
 
         // update group
@@ -616,7 +601,33 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
+    private void beforeSymbolSave(Session session, Symbol symbol) {
+        for (int i = 0; i < symbol.getActions().size(); i++) {
+            SymbolAction action = symbol.getActions().get(i);
+            action.setId(null);
+            action.setProject(symbol.getProject());
+            action.setSymbol(symbol);
+            action.setNumber(i);
+
+            if (action instanceof ExecuteSymbolAction) {
+                ExecuteSymbolAction executeSymbolAction = (ExecuteSymbolAction) action;
+                IdRevisionPair idAndRevision =  executeSymbolAction.getSymbolToExecuteAsIdRevisionPair();
+
+                if (idAndRevision != null) {
+                    Symbol symbolToExecute = (Symbol) session.byNaturalId(Symbol.class)
+                                                                .using("project", action.getProject())
+                                                                .using("id", idAndRevision.getId())
+                                                                .using("revision", idAndRevision.getRevision())
+                                                                .load();
+                    executeSymbolAction.setSymbolToExecute(symbolToExecute);
+                }
+            }
+        }
+    }
+
     public static void loadLazyRelations(Symbol symbol) {
+        Hibernate.initialize(symbol.getGroup());
+
         Hibernate.initialize(symbol.getActions());
         symbol.getActions().stream().filter(a -> a instanceof ExecuteSymbolAction).forEach(a -> {
             ExecuteSymbolAction action = (ExecuteSymbolAction) a;
@@ -628,8 +639,6 @@ public class SymbolDAOImpl implements SymbolDAO {
                 loadLazyRelations(symbolToExecute);
             }
         });
-
-        Hibernate.initialize(symbol.getGroup());
     }
 
 }

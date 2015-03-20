@@ -27,17 +27,16 @@ public class ExecuteSymbolAction extends SymbolAction {
     @JsonIgnore
     private Symbol symbolToExecute;
 
-    public ExecuteSymbolAction() {
-    }
-
     public IdRevisionPair getSymbolToExecuteAsIdRevisionPair() {
+        if (symbolToExecuteAsIdRevisionPair == null) {
+            return new IdRevisionPair(symbol.getId(), symbol.getRevision());
+        }
         return symbolToExecuteAsIdRevisionPair;
     }
 
     public void setSymbolToExecuteAsIdRevisionPair(IdRevisionPair symbolToExecuteAsIdRevisionPair) {
         this.symbolToExecuteAsIdRevisionPair = symbolToExecuteAsIdRevisionPair;
     }
-
 
     public Symbol getSymbolToExecute() {
         return symbolToExecute;
