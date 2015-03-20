@@ -571,6 +571,49 @@ public class SymbolDAOImplTest {
     }
 
     @Test
+    public void shouldMoveASymbol() {
+        symbolDAO.create(symbol2);
+
+        symbolDAO.move(symbol2, group.getId());
+
+        Symbol symbolInDB = symbolDAO.getWithLatestRevision(symbol2.getProjectId(), symbol2.getId());
+        assertEquals(symbol2.getRevision(), symbolInDB.getRevision());
+        assertEquals(group.getId(), symbolInDB.getGroupId());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThatAnExceptionIsThrownWhileMovingASymbolIfTheGroupDoesNotExist() {
+        symbolDAO.create(symbol2);
+
+        symbolDAO.move(symbol2, -1L); // should fail
+    }
+
+    @Test
+    public void shouldMoveSymbols() {
+        symbolDAO.create(symbols);
+        List<Long> symbolsIds = new LinkedList<>();
+        symbols.forEach(s -> symbolsIds.add(s.getId()));
+
+        symbolDAO.move(symbols, group.getId());
+
+        List<Symbol> symbolsInDB = symbolDAO.getByIdsWithLatestRevision(symbol2.getProjectId(),
+                                                                       symbolsIds.toArray(new Long[symbolsIds.size()]));
+        symbolsInDB.forEach(s -> {
+            assertEquals(Long.valueOf(1L), s.getRevision());
+            assertEquals(group.getId(), s.getGroupId());
+        });
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ensureThatAnExceptionIsThrownWhileMovingSymbolsIfTheGroupDoesNotExist() {
+        symbolDAO.create(symbols);
+        List<Long> symbolsIds = new LinkedList<>();
+        symbols.forEach(s -> symbolsIds.add(s.getId()));
+
+        symbolDAO.move(symbols, -1L); // should fail
+    }
+
+    @Test
     public void shouldHideAValidSymbols() {
         symbolDAO.create(symbol);
         symbol.setName(symbol.getName() + " - updated");

@@ -382,6 +382,76 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
+    public void shouldMoveASymbol() {
+        given(symbolDAO.getWithLatestRevision(PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/moveTo/" + group.getId();
+        Response response = target(path).request().put(Entity.json(""));
+
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        verify(symbolDAO).getWithLatestRevision(PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        verify(symbolDAO).move(symbol, group.getId());
+    }
+
+    @Test
+    public void ensureThatMovingASymbolThatDoesNotExistsIsHandedProperly() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/moveTo/" + group.getId();
+        Response response = target(path).request().put(Entity.json(""));
+
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        verify(symbolDAO, never()).move(symbol, group.getId());
+    }
+
+    @Test
+    public void ensureThatMovingASymbolIntoTheVoidIsHandedProperly() {
+        given(symbolDAO.getWithLatestRevision(PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+        willThrow(IllegalArgumentException.class).given(symbolDAO).move(symbol, group.getId());
+
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/moveTo/" + group.getId();
+        Response response = target(path).request().put(Entity.json(""));
+
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        verify(symbolDAO).move(symbol, group.getId());
+    }
+
+    @Test
+    public void shouldMoveMultipleSymbols() {
+        given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
+                .willReturn(symbols);
+
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
+                    + "/moveTo/" + group.getId();
+        Response response = target(path).request().put(Entity.json(""));
+
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        verify(symbolDAO).move(symbols, group.getId());
+    }
+
+    @Test
+    public void ensureThatMovingSymbolsThatDoNotExistsIsHandedProperly() {
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
+                    + "/moveTo/" + group.getId();
+        Response response = target(path).request().put(Entity.json(""));
+
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        verify(symbolDAO, never()).move(symbol, group.getId());
+    }
+
+    @Test
+    public void ensureThatMovingMultipleSymbolsIntoTheVoidIsHandedProperly() {
+        given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
+                .willReturn(symbols);
+        willThrow(IllegalArgumentException.class).given(symbolDAO).move(symbols, group.getId());
+
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
+                    + "/moveTo/" + group.getId();
+        Response response = target(path).request().put(Entity.json(""));
+
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        verify(symbolDAO).move(symbols, group.getId());
+    }
+
+    @Test
     public void shouldHideASymbol() {
         given(symbolDAO.getWithLatestRevision(PROJECT_TEST_ID, symbol.getId())).willReturn(symbol);
 

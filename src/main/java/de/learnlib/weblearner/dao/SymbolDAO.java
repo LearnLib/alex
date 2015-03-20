@@ -134,6 +134,10 @@ public interface SymbolDAO {
      */
     void update(List<Symbol> symbols) throws IllegalArgumentException, ValidationException;
 
+    void move(Symbol symbol, Long newGroupId);
+
+    void move(List<Symbol> symbols, Long newGroupId);
+
     /**
      * Mark a symbol as hidden.
      * 

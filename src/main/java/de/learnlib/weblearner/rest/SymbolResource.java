@@ -313,6 +313,47 @@ public class SymbolResource {
         }
     }
 
+    @PUT
+    @Path("/{symbol_id}/moveTo/{group_id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response moveSymbolToAnotherGroup(@PathParam("project_id") Long projectId,
+                                             @PathParam("symbol_id") Long symbolId,
+                                             @PathParam("group_id") Long groupId) {
+        try {
+            Symbol symbol = symbolDAO.getWithLatestRevision(projectId, symbolId);
+            if (symbol == null) {
+                throw new IllegalArgumentException("Symbol with the id '" + symbolId + "' not found!");
+            }
+            symbolDAO.move(symbol, groupId);
+
+            return Response.ok(symbol).build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.moveSymbolToAnotherGroup",
+                                                               Status.NOT_FOUND, e);
+        }
+    }
+
+    @PUT
+    @Path("/batch/{symbol_ids}/moveTo/{group_id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response moveSymbolToAnotherGroup(@PathParam("project_id") Long projectId,
+                                             @PathParam("symbol_ids") IdsList symbolIds,
+                                             @PathParam("group_id") Long groupId) {
+        try {
+            List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(projectId,
+                                                                        symbolIds.toArray(new Long[symbolIds.size()]));
+            if (symbols.isEmpty()) {
+                throw new IllegalArgumentException("Symbols with the ids '" + symbolIds+ "' not found!");
+            }
+            symbolDAO.move(symbols, groupId);
+
+            return Response.ok(symbols).build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.moveSymbolToAnotherGroup",
+                                                               Status.NOT_FOUND, e);
+        }
+    }
+
     /**
      * Mark one symbol as hidden.
      * 

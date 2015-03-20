@@ -438,9 +438,59 @@ public class SymbolDAOImpl implements SymbolDAO {
                                             .list();
             symbols.remove(symbol);
 
-            for (Symbol s : symbols) {
-                newGroup.addSymbol(s);
-            }
+            symbols.forEach(newGroup::addSymbol);
+        }
+    }
+
+    @Override
+    public void move(Symbol symbol, Long newGroupId) throws IllegalArgumentException {
+        HibernateUtil.beginTransaction();
+        Session session = HibernateUtil.getSession();
+
+        try {
+            move(session, symbol, newGroupId);
+
+            HibernateUtil.commitTransaction();
+        } catch (IllegalArgumentException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    @Override
+    public void move(List<Symbol> symbols, Long newGroupId) throws IllegalArgumentException  {
+        HibernateUtil.beginTransaction();
+        Session session = HibernateUtil.getSession();
+
+        try {
+            symbols.forEach(s -> move(session, s, newGroupId));
+            HibernateUtil.commitTransaction();
+        } catch (IllegalArgumentException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    private void move(Session session, Symbol symbol, Long newGroupId) throws IllegalArgumentException {
+        SymbolGroup oldGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("project", symbol.getProject())
+                                                    .using("id", symbol.getGroupId())
+                                                    .load();
+        SymbolGroup newGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("project", symbol.getProject())
+                                                    .using("id", newGroupId)
+                                                    .load();
+
+        if (newGroup == null) {
+            throw new IllegalArgumentException("The group with the id " + newGroupId + " does not exist!");
+        }
+
+        if (!newGroup.equals(oldGroup)) {
+            List<Symbol> symbols = session.createCriteria(Symbol.class)
+                                            .add(Restrictions.eq("project", symbol.getProject()))
+                                            .add(Restrictions.eq("id", symbol.getId()))
+                                            .list();
+            symbols.forEach(newGroup::addSymbol);
         }
     }
 
