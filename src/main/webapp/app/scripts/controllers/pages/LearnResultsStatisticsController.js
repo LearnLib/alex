@@ -62,7 +62,7 @@
          * The property of a learner result that is displayed in the chart
          * @type {string}
          */
-        $scope.selectedChartProperty = $scope.chartProperties.RESETS;
+        $scope.selectedChartProperty = $scope.chartProperties.MQS;
 
         /**
          * @type {boolean}
@@ -110,7 +110,6 @@
         $scope.createChartFromFinalResults = function () {
             var chartData;
 
-            console.log($scope.selectedResults)
             if ($scope.selectedResults.length > 0) {
                 chartData =
                     LearnerResultChartService
@@ -134,19 +133,19 @@
             var chartData;
 
             if ($scope.selectedResults.length > 0) {
+                LearnResult.Resource.getSomeComplete(project.id, _.pluck($scope.selectedResults, 'testNo'))
+                    .then(function (completeResults) {
+                        chartData =
+                            LearnerResultChartService
+                                .createDataFromMultipleCompleteResults(completeResults, $scope.selectedChartProperty);
 
-                // TODO: get complete results from selected results as soon as there is an interface for that
+                        $scope.chartData = {
+                            data: chartData.data,
+                            options: chartData.options
+                        };
 
-                //chartData =
-                //    LearnerResultChartService
-                //        .createDataFromMultipleCompleteResults($scope.selectedResults, $scope.selectedChartProperty);
-                //
-                //$scope.chartData = {
-                //    data: chartData.data,
-                //    options: chartData.options
-                //};
-                //
-                //$scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
+                        $scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
+                    })
             }
         };
 

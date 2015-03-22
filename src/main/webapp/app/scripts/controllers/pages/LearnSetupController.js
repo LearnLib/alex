@@ -63,9 +63,11 @@
                 .then(function (data) {
                     if (data.active) {
                         if (data.project == project.id) {
+                            Toast.info('There is currently running a learn process.');
                             $state.go('learn.start');
                         } else {
                             Toast.danger('There is already running a test from another project.');
+                            $state.go('project')
                         }
                     } else {
 
@@ -111,6 +113,7 @@
 
                 Learner.start($scope.project.id, $scope.learnConfiguration)
                     .then(function () {
+                        Toast.success('Learn process started successfully.');
                         $state.go('learn.start')
                     })
                     .catch(function (response) {

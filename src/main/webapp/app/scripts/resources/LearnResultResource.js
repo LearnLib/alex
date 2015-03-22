@@ -57,8 +57,21 @@
                 })
         };
 
-        // TODO: implement when api has implemented the function
-        // LearnResultResource.prototype.getSomeComplete = function (projectId, testNos) {}
+        /**
+         *
+         * @param projectId
+         * @param testNos
+         * @returns {*}
+         */
+        LearnResultResource.prototype.getSomeComplete = function (projectId, testNos) {
+            var _this = this;
+            testNos = testNos.join(',');
+
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNos + '/complete')
+                .then(function (response) {
+                    return response.data;
+                })
+        }
 
         /**
          * Wrapper for deleteSome for a single testNo

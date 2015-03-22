@@ -11,7 +11,7 @@
 
         var directive = {
             scope: {
-                symbols: '&',
+                symbols: '=',
                 groups: '=',
                 onMoved: '&'
             },
@@ -21,20 +21,14 @@
 
         function link(scope, el, attrs) {
 
-            el.on('click', handleModal);
-
-            function handleModal() {
-                var symbols = scope.symbols();
-                if (angular.isFunction(symbols)) {
-                    symbols = symbols();
-                }
+            el.on('click', function () {
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/symbol-move-modal.html',
                     controller: 'SymbolMoveModalController',
                     resolve: {
                         modalData: function () {
                             return {
-                                symbols: symbols,
+                                symbols: scope.symbols,
                                 groups: scope.groups
                             }
                         }
@@ -43,7 +37,7 @@
                 modal.result.then(function (data) {
                     scope.onMoved()(data.symbols, data.group);
                 })
-            }
+            });
         }
     }
 }());

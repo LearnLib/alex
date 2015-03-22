@@ -151,7 +151,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                            </li>\n" +
     "                            <li class=\"divider\"></li>\n" +
     "                            <li>\n" +
-    "                                <a href download-svg=\"#hypothesis\">\n" +
+    "                                <a href download-svg ancestor-or-element=\"#hypothesis-panel-{{index}}\">\n" +
     "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
     "                                </a>\n" +
     "                                <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
@@ -174,6 +174,16 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                        Hypothesis\n" +
     "                    </button>\n" +
     "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR\"\n" +
+    "                            download-table-as-csv ancestor-or-element=\"#hypothesis-panel-{{index}}\">\n" +
+    "                        Download CSV\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE\"\n" +
+    "                            download-svg ancestor-or-element=\"#hypothesis-panel-{{index}}\">\n" +
+    "                        Download SVG\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
     "                            ng-show=\"mode === modes.HYPOTHESIS\"\n" +
     "                            ng-click=\"showInternalDataStructure()\">\n" +
     "                        Internal\n" +
@@ -192,7 +202,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "    </div>\n" +
     "    <!-- END: Subnavigation -->\n" +
     "\n" +
-    "    <div class=\"hypothesis-panel\">\n" +
+    "    <div class=\"hypothesis-panel\" id=\"hypothesis-panel-{{index}}\">\n" +
     "\n" +
     "        <hypothesis id=\"hypothesis\" test=\"results[pointer]\" layout-settings=\"layoutSettings\"\n" +
     "                    ng-if=\"mode === modes.HYPOTHESIS\" && pointer=== results.length - 1></hypothesis>\n" +
@@ -215,7 +225,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
 angular.module("app/views/directives/learn-results-slideshow-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/directives/learn-results-slideshow-panel.html",
-    "<learn-results-panel results=\"results\">\n" +
+    "<learn-results-panel results=\"results\" index=\"{{index}}\">\n" +
     "    <button class=\"btn btn-xs btn-danger\" ng-click=\"close()\" style=\"margin-left: 5px\">\n" +
     "        <i class=\"fa fa-close\"></i>\n" +
     "    </button>\n" +
@@ -1745,8 +1755,7 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
     "        <div panel panel-index=\"$index\" ng-repeat=\"result in panels track by $index\">\n" +
     "\n" +
     "            <div ng-if=\"result\">\n" +
-    "                <learn-results-slideshow-panel panel-index=\"{{$index}}\"\n" +
-    "                                               results=\"result\"></learn-results-slideshow-panel>\n" +
+    "                <learn-results-slideshow-panel index=\"{{$index}}\" results=\"result\"></learn-results-slideshow-panel>\n" +
     "            </div>\n" +
     "\n" +
     "            <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
@@ -1845,7 +1854,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "            </div>\n" +
     "\n" +
     "            <div class=\"pull-right\">\n" +
-    "                <button class=\"btn btn-default btn-xs\" download-svg=\"#learn-result-chart\">\n" +
+    "                <button class=\"btn btn-default btn-xs\" download-svg ancestor-or-element=\"#learn-result-chart\">\n" +
     "                    <i class=\"fa fa-download fa-fw\"></i> Download as *.svg\n" +
     "                </button>\n" +
     "                <button class=\"btn btn-default btn-xs\" ng-click=\"fullWidth = !fullWidth\" dispatch-resize=\"20\">\n" +
@@ -4222,7 +4231,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * The property of a learner result that is displayed in the chart
          * @type {string}
          */
-        $scope.selectedChartProperty = $scope.chartProperties.RESETS;
+        $scope.selectedChartProperty = $scope.chartProperties.MQS;
 
         /**
          * @type {boolean}
@@ -4270,7 +4279,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         $scope.createChartFromFinalResults = function () {
             var chartData;
 
-            console.log($scope.selectedResults)
             if ($scope.selectedResults.length > 0) {
                 chartData =
                     LearnerResultChartService
@@ -4294,19 +4302,19 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             var chartData;
 
             if ($scope.selectedResults.length > 0) {
+                LearnResult.Resource.getSomeComplete(project.id, _.pluck($scope.selectedResults, 'testNo'))
+                    .then(function (completeResults) {
+                        chartData =
+                            LearnerResultChartService
+                                .createDataFromMultipleCompleteResults(completeResults, $scope.selectedChartProperty);
 
-                // TODO: get complete results from selected results as soon as there is an interface for that
+                        $scope.chartData = {
+                            data: chartData.data,
+                            options: chartData.options
+                        };
 
-                //chartData =
-                //    LearnerResultChartService
-                //        .createDataFromMultipleCompleteResults($scope.selectedResults, $scope.selectedChartProperty);
-                //
-                //$scope.chartData = {
-                //    data: chartData.data,
-                //    options: chartData.options
-                //};
-                //
-                //$scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
+                        $scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
+                    })
             }
         };
 
@@ -4388,9 +4396,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 .then(function (data) {
                     if (data.active) {
                         if (data.project == project.id) {
+                            Toast.info('There is currently running a learn process.');
                             $state.go('learn.start');
                         } else {
                             Toast.danger('There is already running a test from another project.');
+                            $state.go('project')
                         }
                     } else {
 
@@ -4436,6 +4446,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
                 Learner.start($scope.project.id, $scope.learnConfiguration)
                     .then(function () {
+                        Toast.success('Learn process started successfully.');
                         $state.go('learn.start')
                     })
                     .catch(function (response) {
@@ -5730,27 +5741,24 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     /**
      * This directive is used to fire a resize event to the window element with a given delay. Therefore it adds
-     * a click event to element the directive was used on. Directive must be used as attribute with a value that
-     * indicates how long resize event firing should be delayed (in ms). When no value is given, the resize event is
-     * fired directly with a delay of 0 ms.
+     * a click event to element the directive was used on.
      *
-     * Use: <button dispatch-resize="1000">Click Me</button>
+     * Directive must be used as attribute with a value that indicates how long resize event firing should be delayed
+     * (in ms). When no value is given, the resize event is fired directly with a delay of 0 ms.
+     *
+     * Use: <button dispatch-resize="1000">Click Me!</button>
      *
      * @returns {{link: link}}
      */
     function dispatchResize() {
 
-        var directive = {
+        // the directive
+        return {
             restrict: 'A',
             link: link
         };
-        return directive;
 
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         */
+        // the directives behavior
         function link(scope, el, attrs) {
             el.on('click', function () {
                 var delay = 0;
@@ -5768,89 +5776,52 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
 	angular
 		.module('weblearner.directives')
-		.directive('downloadAsJson', ['PromptService', downloadAsJson]);
+        .directive('downloadAsJson', downloadAsJson);
 
-	/**
-	 * downloadAsJson
-	 * 
-	 * Directive that can be applied to any element as an attribute that downloads an object or an array as
-	 * a *.json file. 
-	 * 
-	 * Attribute 'data' has to be defined in order to work and has to be type of object, array or a function
-	 * that returns an object or an array
-	 * 
-	 * @param PromptService
-	 * @returns {{link: link}}
-	 */
-	function downloadAsJson(PromptService) {
-		
-		var directive = {
+    downloadAsJson.$inject = ['FileDownloadService'];
+
+    /**
+     * The directive that can be applied to any element as an attribute that downloads an object or an array as
+     * a *.json file. Attaches a click event to the element that downloads the file. Can only be used as attribute.
+     *
+     * Attribute 'data' has to be defined in order to work and has to be type of object, array or a function
+     * that returns an object or an array.
+     *
+     * Use it like '<button download-as-json data="...">Click Me!</button>'
+     *
+     * @param FileDownloadService
+     * @returns {{restrict: string, scope: {data: string}, link: link}}
+     */
+    function downloadAsJson(FileDownloadService) {
+
+        // the directive
+        return {
 			restrict: 'A',
 			scope:  {
 				data: '='
 			},
 			link: link
-		}
-		return directive;
+        };
 
-		//////////
-
-		/**
-		 * @param scope
-		 * @param el
-		 * @param attrs
-		 */
+        // the directives behaviour
 		function link(scope, el, attrs) {
-			
-			el.on('click', promptFilename);
+            el.on('click', function () {
+                if (angular.isDefined(scope.data)) {
+                    var json;
 
-			//////////
+                    // if data parameter was function call it otherwise just convert data into json
+                    if (angular.isObject(scope.data) || angular.isArray(scope.data)) {
+                        json += encodeURIComponent(angular.toJson(scope.data));
+                    } else if (angular.isFunction(scope.data)) {
+                        json += encodeURIComponent(angular.toJson(scope.data()));
+                    }
 
-			/**
-			 * Open a modal dialog that prompts the user for a file name
-			 */
-			function promptFilename () {
-								
-				if (angular.isDefined(scope.data)) {
-	                PromptService.prompt('Enter a name for the symbols file.', {
-	                    regexp: /^[a-zA-Z0-9\.\-,_]+$/,
-	                    errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
-	                }).then(download);
-				}
-			}
-					
-			/**
-			 * Download the json file with the file name from the prompt dialog and the jsonified data
-			 */
-			function download(filename){
-				
-				var a;
-				var json = 'data:text/json;charset=utf-8,';
-				
-				if (angular.isDefined(scope.data)) {
-					
-					// if data parameter was function call it otherwise just convert data into json
-					if (angular.isObject(scope.data) || angular.isArray(scope.data)) {
-						json += encodeURIComponent(angular.toJson(scope.data));
-					} else if (angular.isFunction(scope.data)) {
-						json += encodeURIComponent(angular.toJson(scope.data()));
-					} else {
-						return;
-					}
-					
-					// create new link element with downloadable json
-					a = document.createElement('a');
-					a.style.display = 'none';
-					a.setAttribute('href', json);
-					a.setAttribute('target', '_blank');
-	                a.setAttribute('download', filename + '.json');
-          	        
-	                // append link to the dom, fire click event and remove it
-	                document.body.appendChild(a);
-          	        a.click();
-          	        document.body.removeChild(a);
-				}		
-			}
+                    // download json
+                    if (angular.isDefined(json)) {
+                        FileDownloadService.downloadJson(json);
+                    }
+                }
+            });
 		}
 	}
 }());;(function () {
@@ -5860,197 +5831,118 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .module('weblearner.directives')
         .directive('downloadLearnerResultsAsCsv', downloadLearnerResultsAsCsv);
 
-    downloadLearnerResultsAsCsv.$inject = ['PromptService', '_'];
+    downloadLearnerResultsAsCsv.$inject = ['PromptService', 'FileDownloadService'];
 
     /**
-     * @param PromptService
-     * @param _ - Lodash
+     * The directive to download statistics from learner results as csv file. Attaches a click event to the directives
+     * element that starts the download.
+     *
+     * Expects an attribute "results" which value should be the learn results to download.
+     *
+     * Use it like <button download-learner-results-as-csv results="...">Click Me!</button>
+     *
+     * @param PromptService - The service that prompts
+     * @param FileDownloadService - The service to download files
      * @returns {{restrict: string, scope: {results: string}, link: link}}
      */
-    function downloadLearnerResultsAsCsv(PromptService, _) {
+    function downloadLearnerResultsAsCsv(PromptService, FileDownloadService) {
 
-        var directive = {
+        // the directive
+        return {
             restrict: 'A',
             scope: {
                 results: '='
             },
             link: link
         };
-        return directive;
-        
+
+        // the directives behavior
         function link(scope, el, attrs) {
 
-            el.on('click', handleDirectiveBehavior);
-
-            /**
-             * Prompts for a filename of the csv file and calls the method to download the file on success
-             */
-            function handleDirectiveBehavior() {
-                var csvData = '';
-
+            // download csv on click
+            el.on('click', function () {
                 if (angular.isDefined(scope.results)) {
-                    csvData = createCsvData(scope.results);
-                    PromptService.prompt('Enter a name for the csv file.', {
-                        regexp: /^[a-zA-Z0-9\.\-,_]+$/,
-                        errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
-                    }).then(function (filename) {
-                        download(csvData, filename)
-                    });
+                    FileDownloadService.downloadCSV(createCsvData(scope.results));
                 }
-            }
+            });
 
             /**
-             * Creates a csv string from learner results
+             * Creates a csv string from learner results.
              *
-             * @param results - The learner results
-             * @returns {string} - The csv string from learner results
+             * @param {LearnResult[]} results - The learner results
+             * @returns {string} - The csv string from learn results
              */
             function createCsvData(results) {
                 var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,|Sigma|,#MQs,#EQs,#Symbol Calls,Duration (ms)\n';
 
-                _.forEach(results, function (result) {
-                    csv += result.project + ',';
-                    csv += result.testNo + ',';
-                    csv += '"' + result.statistics.startTime + '",';
-                    csv += result.stepNo + ',';
-                    csv += result.configuration.algorithm + ',';
-                    csv += result.configuration.eqOracle.type + ',';
-                    csv += result.configuration.symbols.length + ',';
-                    csv += result.statistics.mqsUsed + ',';
-                    csv += result.statistics.eqsUsed + ',';
-                    csv += result.statistics.symbolsUsed + ',';
-                    csv += result.statistics.duration + '\n';
-                });
+                for (var i = 0; i < results.length; i++) {
+                    csv += result[i].project + ',';
+                    csv += result[i].testNo + ',';
+                    csv += '"' + result[i].statistics.startTime + '",';
+                    csv += result[i].stepNo + ',';
+                    csv += result[i].configuration.algorithm + ',';
+                    csv += result[i].configuration.eqOracle.type + ',';
+                    csv += result[i].configuration.symbols.length + ',';
+                    csv += result[i].statistics.mqsUsed + ',';
+                    csv += result[i].statistics.eqsUsed + ',';
+                    csv += result[i].statistics.symbolsUsed + ',';
+                    csv += result[i].statistics.duration + '\n';
+                }
 
                 return csv;
-            }
-
-            /**
-             * Downloads the csv file with learner results
-             *
-             * @param csv - The csv that should be downloaded
-             * @param filename - The name of the csv file
-             */
-            function download(csv, filename) {
-
-                // create new link element with downloadable csv
-                var a = document.createElement('a');
-                a.style.display = 'none';
-                a.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
-                a.setAttribute('target', '_blank');
-                a.setAttribute('download', filename + '.csv');
-
-                // append link to the dom, fire click event and remove it
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
             }
         }
     }
 }());;(function () {
+    'use strict';
 
     angular
         .module('weblearner.directives')
         .directive('downloadSvg', downloadSvg);
 
-    downloadSvg.$inject = ['PromptService'];
+    downloadSvg.$inject = ['FileDownloadService'];
 
     /**
      * The directive that lets you directly download a svg element from the html page into a file. It attaches a click
-     * event to the element it was used on, that first prompts you for a filename and then downloads the svg.
+     * event to the element it was used on, that download the svg. It can only be used as an attribute.
      *
-     * It can only be used as an attribute and the value of the attribute should be a css selector that leads either
-     * directly to svg or to a parent element of the svg. When the selector point the the parent and the parent has
-     * multiple svg children, only the first one will be downloaded.
+     * Expects an attribute 'ancestorOrElement' whose value should be the selector of the svg or of an ancestor of an
+     * svg.
      *
-     * Use the directive for example like this: '<button download-svg="#svg">download</button>'.
+     * Use: '<button download-svg ancestor-or-element="#...">Click Me!</button>'.
      *
-     * @param PromptService - The service for prompting a user input
+     * @param FileDownloadService - The service for downloading files
      * @returns {{restrict: string, link: link}}
      */
-    function downloadSvg(PromptService) {
+    function downloadSvg(FileDownloadService) {
 
-        var directive = {
+        // the directive
+        return {
             restrict: 'A',
-            link: link
+            scope: {
+                ancestorOrElement: '@'
+            },
+            link: link,
         };
-        return directive;
 
+        // the directives behaviour
         function link(scope, el, attrs) {
+            el.on('click', function () {
+                var svg;
 
-            el.on('click', handleDirectiveBehavior);
-
-            /**
-             * Makes sure that the required attribute has a value and that a svg element actually exists. Prompts the
-             * user to enter a filename and calls the download function on success
-             */
-            function handleDirectiveBehavior() {
-                var svg = null;
-
-                if (angular.isDefined(attrs.downloadSvg)) {
-                    svg = findSvg(attrs.downloadSvg);
-
-                    if (svg !== null) {
-                        PromptService.prompt('Enter a name for the svg file.', {
-                            regexp: /^[a-zA-Z0-9\.\-,_]+$/,
-                            errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
-                        }).then(function (filename) {
-                            download(svg, filename);
-                        });
+                // find the downloadable svg element
+                if (scope.ancestorOrElement) {
+                    svg = document.querySelector(scope.ancestorOrElement);
+                    if (svg !== null && svg.nodeName.toLowerCase() === 'svg') {
+                        FileDownloadService.downloadSVG(svg);
+                    } else {
+                        svg = svg.querySelector('svg');
+                        if (svg !== null) {
+                            FileDownloadService.downloadSVG(svg);
+                        }
                     }
                 }
-            }
-
-            /**
-             * Checks if the element of the passed selector already is a svg element and if not, searches for a svg
-             * element in the dom tree below the element and returns the first occurrence.
-             *
-             * @param selector - The selector where a svg element should be looked for
-             * @returns {*|null} - The first occurrence of an svg
-             */
-            function findSvg(selector) {
-                var svg = document.querySelector(selector);
-                if (svg !== null) {
-                    if (svg.nodeName.toLowerCase() !== 'svg') {
-                        svg = svg.querySelector('svg')
-                    }
-                    if (svg !== null) {
-                        return svg;
-                    }
-                }
-                return null;
-            }
-
-            /**
-             * Directly downloads a svg element
-             *
-             * @param svg - The svg element that should be downloaded
-             * @param filename - The name the file should have
-             */
-            function download(svg, filename) {
-
-                // set proper xml attributes for downloadable file
-                svg.setAttribute('version', '1.1');
-                svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-                // create serialized string from svg element and encode it in
-                // base64 otherwise the file will not be completely downloaded
-                // what results in errors opening the file
-                var svgString = new XMLSerializer().serializeToString(svg);
-                var encodedSvgString = window.btoa(svgString);
-
-                // create new link element with image data
-                var a = document.createElement('a');
-                a.style.display = 'none';
-                a.setAttribute('href', 'data:image/svg+xml;base64,\n' + encodedSvgString);
-                a.setAttribute('target', '_blank');
-                a.setAttribute('download', filename + '.svg');
-
-                // append link to the dom, fire click event and remove it
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            }
+            });
         }
     }
 }());;(function () {
@@ -6060,13 +5952,90 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .module('weblearner.directives')
         .directive('downloadTableAsCsv', downloadTableAsCsv);
 
-    function downloadTableAsCsv() {
+    downloadTableAsCsv.$inject = ['FileDownloadService'];
+
+    /**
+     * The directive that downloads a HTML table element as CSV. It attaches a click event to the directives element
+     * which downloads the file. The directive must be used as an attribute.
+     *
+     * It expects one attribute 'ancestorOrElement' which should contain the selector to the table or the an ancester
+     * of the table.
+     *
+     * Use it like "<button download-table-as-csv ancestor-or-element="#table">Click Me!</button>"
+     *
+     * @param FileDownloadService - The service for downloading files
+     * @returns {{restrict: string, scope: {ancestorOrElement: string}, link: link}}
+     */
+    function downloadTableAsCsv(FileDownloadService) {
+
+        // the directive
         return {
+            restrict: 'A',
+            scope: {
+                ancestorOrElement: '@'
+            },
             link: link
         };
 
+        // the directives behaviour
         function link(scope, el, attrs) {
+            el.on('click', function () {
 
+                // the table element
+                var table;
+                var csv;
+
+                // find the downloadable table element
+                if (scope.ancestorOrElement) {
+                    table = document.querySelector(scope.ancestorOrElement);
+                    if (table !== null && table.nodeName.toLowerCase() === 'table') {
+                        csv = createCSV(table);
+                    } else {
+                        table = table.querySelector('table');
+                        if (table !== null) {
+                            csv = createCSV(table);
+                        }
+                    }
+
+                    // download it
+                    if (angular.isDefined(csv)) {
+                        FileDownloadService.downloadCSV(csv);
+                    }
+                }
+            })
+
+            /**
+             * Creates CSV data from the entries of a HTML table element
+             *
+             * @param table - The table element that should be converted
+             * @returns {string} - The table as CSV string
+             */
+            function createCSV(table) {
+                var head = table.querySelectorAll('thead th');
+                var rows = table.querySelectorAll('tbody tr');
+                var csv = '';
+
+                // add entries from table head
+                if (head.length > 0) {
+                    for (var i = 0; i < head.length; i++) {
+                        csv += head[i].textContent.replace(',', ' ') + (i === head.length - 1 ? '\n' : ',');
+                    }
+                }
+
+                // add entreis from table row
+                if (rows.length > 0) {
+                    for (var i = 0; i < rows.length; i++) {
+                        var tds = rows[i].querySelectorAll('td');
+                        if (tds.length > 0) {
+                            for (var j = 0; j < tds.length; j++) {
+                                csv += tds[i].textContent.replace(',', ' ') + (j === tds.length - 1 ? '\n' : ',');
+                            }
+                        }
+                    }
+                }
+
+                return csv;
+            }
         }
     }
 }());;(function(){
@@ -7072,6 +7041,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * can for example be the list of all intermediate results of a complete test or multiple single results from
      * multiple tests.
      *
+     * The second attribute 'index' is optional and should only be used if multiple learnResultPanels are created in
+     * a ng-repeat loop in order to be able to download the internal data structures. Give it the value of scope.$index
+     * in the loop.
+     *
      * Content that is written inside the tag will be displayed a the top left corner beside the index browser. So
      * just add small texts or additional buttons in there.
      *
@@ -7086,7 +7059,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         // the directive
         return {
             scope: {
-                results: '='
+                results: '=',
+                index: '@'
             },
             transclude: true,
             templateUrl: paths.views.DIRECTIVES + '/learn-results-panel.html',
@@ -7156,6 +7130,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     }
 
     /**
+     * The directive to display a closeable learn result panel for the panel manager. Requires to be a child of a
+     * panelManager directive. For everything else see {@link learnResultsPanel}
      *
      * @returns {{require: string, scope: {results: string, index: string}, templateUrl: string, link: link}}
      */
@@ -7192,27 +7168,44 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     loadScreen.$inject = ['$http', 'paths'];
 
+    /**
+     * The load screen that is shown during http requests. It lays over the application to prevent further
+     * interactions with the page. The navigation is still usable. Add it right after the body and give the element
+     * a high value for z-index in the stylesheet.
+     *
+     * Use is like '<load-screen></load-screen>'.
+     *
+     * @param $http - The angular $http service
+     * @param {Object} paths - The constant with application paths
+     * @returns {{scope: {}, templateUrl: string, link: link}}
+     */
     function loadScreen($http, paths) {
 
-        var directive = {
+        // the directive
+        return {
+            scope: {},
             templateUrl: paths.views.DIRECTIVES + '/load-screen.html',
             link: link
         };
-        return directive;
 
-        //////////
+        // the directives behaviour
+        function link(scope, el, attrs) {
 
-        function link (scope, el, attrs) {
-        	        	            
-        	scope.isLoading = function () {
+            /**
+             * Shows if there are currently any active http requests going on
+             *
+             * @returns {boolean} - If there are any active requests
+             */
+            scope.hasPendingRequests = function () {
                 return $http.pendingRequests.length > 0;
             };
 
-            scope.$watch(scope.isLoading, function (v) {
-                if(v){
-                	el[0].style.display = 'block'
-                }else{
-                	el[0].style.display = 'none'
+            // watch the change of pendingRequests and change the visibility of the loadscreen
+            scope.$watch(scope.hasPendingRequests, function (value) {
+                if (value) {
+                    el[0].style.display = 'block';
+                } else {
+                    el[0].style.display = 'none';
                 }
             });
         }
@@ -7925,7 +7918,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         var directive = {
             scope: {
-                symbols: '&',
+                symbols: '=',
                 groups: '=',
                 onMoved: '&'
             },
@@ -7935,20 +7928,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         function link(scope, el, attrs) {
 
-            el.on('click', handleModal);
-
-            function handleModal() {
-                var symbols = scope.symbols();
-                if (angular.isFunction(symbols)) {
-                    symbols = symbols();
-                }
+            el.on('click', function () {
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/symbol-move-modal.html',
                     controller: 'SymbolMoveModalController',
                     resolve: {
                         modalData: function () {
                             return {
-                                symbols: symbols,
+                                symbols: scope.symbols,
                                 groups: scope.groups
                             }
                         }
@@ -7957,7 +7944,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 modal.result.then(function (data) {
                     scope.onMoved()(data.symbols, data.group);
                 })
-            }
+            });
         }
     }
 }());;(function () {
@@ -8963,8 +8950,21 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 })
         };
 
-        // TODO: implement when api has implemented the function
-        // LearnResultResource.prototype.getSomeComplete = function (projectId, testNos) {}
+        /**
+         *
+         * @param projectId
+         * @param testNos
+         * @returns {*}
+         */
+        LearnResultResource.prototype.getSomeComplete = function (projectId, testNos) {
+            var _this = this;
+            testNos = testNos.join(',');
+
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNos + '/complete')
+                .then(function (response) {
+                    return response.data;
+                })
+        }
 
         /**
          * Wrapper for deleteSome for a single testNo
@@ -9139,7 +9139,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .module('weblearner.resources')
         .factory('SymbolGroupResource', Resource);
 
-    Resource.$inject = ['$http', 'paths', 'ResourceResponseService'];
+    Resource.$inject = ['$http', 'paths'];
 
     /**
      * The resource that handles http requests to the API to do CRUD operations on symbol groups
@@ -9149,7 +9149,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @returns {SymbolGroupResource}
      * @constructor
      */
-    function Resource($http, paths, ResourceResponseService) {
+    function Resource($http, paths) {
 
         /**
          * The recourse object for a symbol group
@@ -9567,36 +9567,123 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         return SymbolResource;
     }
-}());;(function(){
-	
-	angular
-		.module('weblearner.services')
-		.service('CounterExampleBuilderService', CounterExampleBuilderService);
-	
-	CounterExampleBuilderService.$inject = ['$rootScope'];
-	
-	function CounterExampleBuilderService($rootScope) {
-		
-		var service = {
-			open: open,
-			close: close,
-			ok: ok
-		}
-		return service;
-		
-		function open(){
-			$rootScope.$broadcast('counterExampleBuilder.open');
-		}
-		
-		function close(){
-			$rootScope.$broadcast('counterExampleBuilder.close');
-		}
-		
-		function ok(){
-			$rootScope.$broadcast('counterExampleBuilder.ok');
-		}
-	}
-}());(function () {
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.services')
+        .factory('FileDownloadService', FileDownloadService);
+
+    FileDownloadService.$inject = ['PromptService'];
+
+    /**
+     * The service that allows the file download of various filetypes: JSON, SVG, CSV. For each download, it prompts
+     * the user for a filename of the downloadable file.
+     *
+     * @param PromptService - The service to create prompts with
+     * @returns {{downloadJson: downloadJson, downloadCSV: downloadCSV, downloadSVG: downloadSVG}}
+     * @constructor
+     */
+    function FileDownloadService(PromptService) {
+
+        // the service
+        return {
+            downloadJson: downloadJson,
+            downloadCSV: downloadCSV,
+            downloadSVG: downloadSVG
+        }
+
+        /**
+         * Downloads a file.
+         *
+         * @param {string} filename - The name of the file
+         * @param {string} fileExtension - The file extension of the file
+         * @param {string} href - The contents of the href attribute which holds the data of the file
+         * @private
+         */
+        function _download(filename, fileExtension, href) {
+
+            // create new link element with downloadable
+            var a = document.createElement('a');
+            a.style.display = 'none';
+            a.setAttribute('href', href);
+            a.setAttribute('target', '_blank');
+            a.setAttribute('download', filename + '.' + fileExtension);
+
+            // append link to the dom, fire click event and remove it
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        /**
+         * Opens a prompt dialog that asks for a file name.
+         *
+         * @param {string} fileExtension - The file extension of the file that should be downloaded
+         * @returns {HttpPromise} - The promise with the filename
+         * @private
+         */
+        function _prompt(fileExtension) {
+            return PromptService.prompt('Enter a name for the ' + fileExtension + ' file.', {
+                regexp: /^[a-zA-Z0-9\.\-,_]+$/,
+                errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
+            })
+        }
+
+        // available service functions
+
+        /**
+         * Downloads an object as a json file. Promts for a file name.
+         *
+         * @param {Object} jsonObject - The object that should be downloaded
+         */
+        function downloadJson(jsonObject) {
+            _prompt('JSON')
+                .then(function (filename) {
+                    var href = 'data:text/json;charset=utf-8,' + angular.toJson(jsonObject);
+                    _download(filename, 'json', href);
+                })
+        }
+
+        /**
+         * Downloads a given string as csv file. Prompts for a filename.
+         *
+         * @param {string} csv - The string that represents the csv
+         */
+        function downloadCSV(csv) {
+            _prompt('CSV')
+                .then(function (filename) {
+                    var href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                    _download(filename, 'csv', href);
+                })
+        }
+
+        /**
+         * Downloads a SVG element as a svg file. Prompts for a filename.
+         *
+         * @param {*|HTMLElement} svg - The svg element that should be downloaded
+         */
+        function downloadSVG(svg) {
+            _prompt('SVG')
+                .then(function (filename) {
+                    var href = 'data:image/svg+xml;base64,\n';
+
+                    // set proper xml attributes for downloadable file
+                    svg.setAttribute('version', '1.1');
+                    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+                    // create serialized string from svg element and encode it in
+                    // base64 otherwise the file will not be completely downloaded
+                    // what results in errors opening the file
+                    var svgString = new XMLSerializer().serializeToString(svg);
+                    var encodedSvgString = window.btoa(svgString);
+                    href += encodedSvgString;
+
+                    _download(filename, 'svg', href);
+                })
+        }
+    }
+}());;(function () {
     'use strict';
 
     angular
@@ -9746,12 +9833,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             switch (property) {
                 case properties.MQS:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result.statistics, properties.MQS));
+                        dataValues.push(_(result).pluck('statistics').pluck(properties.MQS).value());
                     });
                     break;
                 case properties.EQS:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result.statistics, properties.EQS));
+                        dataValues.push(_(result).pluck('statistics').pluck(properties.EQS).value());
                     });
                     break;
                 case properties.SIGMA:
@@ -9763,12 +9850,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     break;
                 case properties.SYMBOL_CALLS:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result.statistics, properties.SYMBOL_CALLS));
+                        dataValues.push(_(result).pluck('statistics').pluck(properties.SYMBOL_CALLS).value());
                     });
                     break;
                 case properties.DURATION:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result.statistics, properties.DURATION));
+                        dataValues.push(_(result).pluck('statistics').pluck(properties.DURATION).value());
                     });
                     break;
                 default :
@@ -9914,50 +10001,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     angular
         .module('weblearner.services')
-        .factory('LoadScreenService', [
-            '$rootScope',
-            LoadScreenService
-        ]);
-
-    /**
-     * LoadScreenService
-     *
-     * The service that is used to communicate with the load screen directive in order to tell it to show or hide
-     *
-     * @param $rootScope
-     * @return {{show: show, hide: hide}}
-     * @constructor
-     */
-    function LoadScreenService($rootScope) {
-
-        // the service
-        var service = {
-            show: show,
-            hide: hide
-        };
-        return service;
-
-        //////////
-
-        /**
-         * Emit the event that indicates that the load screen should be displayed
-         */
-        function show() {
-            $rootScope.$broadcast('loadScreen.show');
-        }
-
-        /**
-         * Emit the event that indicates that the load screen should not be displayed
-         */
-        function hide() {
-            $rootScope.$broadcast('loadScreen.hide');
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.services')
         .service('PromptService', PromptService);
 
     PromptService.$inject = ['$modal', 'paths'];
@@ -10020,61 +10063,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 }
             });
             return modal.result;
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.services')
-        .factory('ResourceResponseService', [
-            '$q', 'ngToast',
-            ResourceResponseService
-        ]);
-
-    function ResourceResponseService($q, ngToast) {
-
-        var service = {
-            success: success,
-            successWithToast: successWithToast,
-            fail: fail,
-            failWithoutToast: failWithoutToast,
-            failWithToast: failWithToast
-        };
-        return service;
-
-        //////////
-
-        function success(response) {
-            return response.data;
-        }
-
-        function successWithToast(response, message) {
-            ngToast.create({
-                class: 'success',
-                content: message
-            });
-            return response.data;
-        }
-
-        function fail(response) {
-            console.error(response.data);
-            return failWithToast(response, response.data);
-        }
-
-        function failWithToast(response, message) {
-            console.error(response.data);
-            ngToast.create({
-                class: 'danger',
-                content: message,
-                dismissButton: true
-            });
-            return $q.reject();
-        }
-
-        function failWithoutToast(response) {
-            console.error(response.data);
-            return $q.reject();
         }
     }
 }());;(function () {

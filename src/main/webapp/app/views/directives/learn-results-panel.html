@@ -18,7 +18,7 @@
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a href download-svg="#hypothesis">
+                                <a href download-svg ancestor-or-element="#hypothesis-panel-{{index}}">
                                     <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
                                 </a>
                                 <a href download-as-json data="getCurrentStep().hypothesis">
@@ -41,6 +41,16 @@
                         Hypothesis
                     </button>
                     <button class="btn btn-default btn-xs"
+                            ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR"
+                            download-table-as-csv ancestor-or-element="#hypothesis-panel-{{index}}">
+                        Download CSV
+                    </button>
+                    <button class="btn btn-default btn-xs"
+                            ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE"
+                            download-svg ancestor-or-element="#hypothesis-panel-{{index}}">
+                        Download SVG
+                    </button>
+                    <button class="btn btn-default btn-xs"
                             ng-show="mode === modes.HYPOTHESIS"
                             ng-click="showInternalDataStructure()">
                         Internal
@@ -59,7 +69,7 @@
     </div>
     <!-- END: Subnavigation -->
 
-    <div class="hypothesis-panel">
+    <div class="hypothesis-panel" id="hypothesis-panel-{{index}}">
 
         <hypothesis id="hypothesis" test="results[pointer]" layout-settings="layoutSettings"
                     ng-if="mode === modes.HYPOTHESIS" && pointer=== results.length - 1></hypothesis>

@@ -100,7 +100,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                            </li>\n" +
     "                            <li class=\"divider\"></li>\n" +
     "                            <li>\n" +
-    "                                <a href download-svg=\"#hypothesis\">\n" +
+    "                                <a href download-svg ancestor-or-element=\"#hypothesis-panel-{{index}}\">\n" +
     "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
     "                                </a>\n" +
     "                                <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
@@ -123,6 +123,16 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                        Hypothesis\n" +
     "                    </button>\n" +
     "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR\"\n" +
+    "                            download-table-as-csv ancestor-or-element=\"#hypothesis-panel-{{index}}\">\n" +
+    "                        Download CSV\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
+    "                            ng-show=\"mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE\"\n" +
+    "                            download-svg ancestor-or-element=\"#hypothesis-panel-{{index}}\">\n" +
+    "                        Download SVG\n" +
+    "                    </button>\n" +
+    "                    <button class=\"btn btn-default btn-xs\"\n" +
     "                            ng-show=\"mode === modes.HYPOTHESIS\"\n" +
     "                            ng-click=\"showInternalDataStructure()\">\n" +
     "                        Internal\n" +
@@ -141,7 +151,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "    </div>\n" +
     "    <!-- END: Subnavigation -->\n" +
     "\n" +
-    "    <div class=\"hypothesis-panel\">\n" +
+    "    <div class=\"hypothesis-panel\" id=\"hypothesis-panel-{{index}}\">\n" +
     "\n" +
     "        <hypothesis id=\"hypothesis\" test=\"results[pointer]\" layout-settings=\"layoutSettings\"\n" +
     "                    ng-if=\"mode === modes.HYPOTHESIS\" && pointer=== results.length - 1></hypothesis>\n" +
@@ -164,7 +174,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
 angular.module("app/views/directives/learn-results-slideshow-panel.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/directives/learn-results-slideshow-panel.html",
-    "<learn-results-panel results=\"results\">\n" +
+    "<learn-results-panel results=\"results\" index=\"{{index}}\">\n" +
     "    <button class=\"btn btn-xs btn-danger\" ng-click=\"close()\" style=\"margin-left: 5px\">\n" +
     "        <i class=\"fa fa-close\"></i>\n" +
     "    </button>\n" +
@@ -1694,8 +1704,7 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
     "        <div panel panel-index=\"$index\" ng-repeat=\"result in panels track by $index\">\n" +
     "\n" +
     "            <div ng-if=\"result\">\n" +
-    "                <learn-results-slideshow-panel panel-index=\"{{$index}}\"\n" +
-    "                                               results=\"result\"></learn-results-slideshow-panel>\n" +
+    "                <learn-results-slideshow-panel index=\"{{$index}}\" results=\"result\"></learn-results-slideshow-panel>\n" +
     "            </div>\n" +
     "\n" +
     "            <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
@@ -1794,7 +1803,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "            </div>\n" +
     "\n" +
     "            <div class=\"pull-right\">\n" +
-    "                <button class=\"btn btn-default btn-xs\" download-svg=\"#learn-result-chart\">\n" +
+    "                <button class=\"btn btn-default btn-xs\" download-svg ancestor-or-element=\"#learn-result-chart\">\n" +
     "                    <i class=\"fa fa-download fa-fw\"></i> Download as *.svg\n" +
     "                </button>\n" +
     "                <button class=\"btn btn-default btn-xs\" ng-click=\"fullWidth = !fullWidth\" dispatch-resize=\"20\">\n" +

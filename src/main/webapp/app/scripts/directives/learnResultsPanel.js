@@ -17,6 +17,10 @@
      * can for example be the list of all intermediate results of a complete test or multiple single results from
      * multiple tests.
      *
+     * The second attribute 'index' is optional and should only be used if multiple learnResultPanels are created in
+     * a ng-repeat loop in order to be able to download the internal data structures. Give it the value of scope.$index
+     * in the loop.
+     *
      * Content that is written inside the tag will be displayed a the top left corner beside the index browser. So
      * just add small texts or additional buttons in there.
      *
@@ -31,7 +35,8 @@
         // the directive
         return {
             scope: {
-                results: '='
+                results: '=',
+                index: '@'
             },
             transclude: true,
             templateUrl: paths.views.DIRECTIVES + '/learn-results-panel.html',
@@ -101,6 +106,8 @@
     }
 
     /**
+     * The directive to display a closeable learn result panel for the panel manager. Requires to be a child of a
+     * panelManager directive. For everything else see {@link learnResultsPanel}
      *
      * @returns {{require: string, scope: {results: string, index: string}, templateUrl: string, link: link}}
      */

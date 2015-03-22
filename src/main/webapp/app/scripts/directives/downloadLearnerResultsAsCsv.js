@@ -5,90 +5,65 @@
         .module('weblearner.directives')
         .directive('downloadLearnerResultsAsCsv', downloadLearnerResultsAsCsv);
 
-    downloadLearnerResultsAsCsv.$inject = ['PromptService', '_'];
+    downloadLearnerResultsAsCsv.$inject = ['PromptService', 'FileDownloadService'];
 
     /**
-     * @param PromptService
-     * @param _ - Lodash
+     * The directive to download statistics from learner results as csv file. Attaches a click event to the directives
+     * element that starts the download.
+     *
+     * Expects an attribute "results" which value should be the learn results to download.
+     *
+     * Use it like <button download-learner-results-as-csv results="...">Click Me!</button>
+     *
+     * @param PromptService - The service that prompts
+     * @param FileDownloadService - The service to download files
      * @returns {{restrict: string, scope: {results: string}, link: link}}
      */
-    function downloadLearnerResultsAsCsv(PromptService, _) {
+    function downloadLearnerResultsAsCsv(PromptService, FileDownloadService) {
 
-        var directive = {
+        // the directive
+        return {
             restrict: 'A',
             scope: {
                 results: '='
             },
             link: link
         };
-        return directive;
-        
+
+        // the directives behavior
         function link(scope, el, attrs) {
 
-            el.on('click', handleDirectiveBehavior);
-
-            /**
-             * Prompts for a filename of the csv file and calls the method to download the file on success
-             */
-            function handleDirectiveBehavior() {
-                var csvData = '';
-
+            // download csv on click
+            el.on('click', function () {
                 if (angular.isDefined(scope.results)) {
-                    csvData = createCsvData(scope.results);
-                    PromptService.prompt('Enter a name for the csv file.', {
-                        regexp: /^[a-zA-Z0-9\.\-,_]+$/,
-                        errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
-                    }).then(function (filename) {
-                        download(csvData, filename)
-                    });
+                    FileDownloadService.downloadCSV(createCsvData(scope.results));
                 }
-            }
+            });
 
             /**
-             * Creates a csv string from learner results
+             * Creates a csv string from learner results.
              *
-             * @param results - The learner results
-             * @returns {string} - The csv string from learner results
+             * @param {LearnResult[]} results - The learner results
+             * @returns {string} - The csv string from learn results
              */
             function createCsvData(results) {
                 var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,|Sigma|,#MQs,#EQs,#Symbol Calls,Duration (ms)\n';
 
-                _.forEach(results, function (result) {
-                    csv += result.project + ',';
-                    csv += result.testNo + ',';
-                    csv += '"' + result.statistics.startTime + '",';
-                    csv += result.stepNo + ',';
-                    csv += result.configuration.algorithm + ',';
-                    csv += result.configuration.eqOracle.type + ',';
-                    csv += result.configuration.symbols.length + ',';
-                    csv += result.statistics.mqsUsed + ',';
-                    csv += result.statistics.eqsUsed + ',';
-                    csv += result.statistics.symbolsUsed + ',';
-                    csv += result.statistics.duration + '\n';
-                });
+                for (var i = 0; i < results.length; i++) {
+                    csv += result[i].project + ',';
+                    csv += result[i].testNo + ',';
+                    csv += '"' + result[i].statistics.startTime + '",';
+                    csv += result[i].stepNo + ',';
+                    csv += result[i].configuration.algorithm + ',';
+                    csv += result[i].configuration.eqOracle.type + ',';
+                    csv += result[i].configuration.symbols.length + ',';
+                    csv += result[i].statistics.mqsUsed + ',';
+                    csv += result[i].statistics.eqsUsed + ',';
+                    csv += result[i].statistics.symbolsUsed + ',';
+                    csv += result[i].statistics.duration + '\n';
+                }
 
                 return csv;
-            }
-
-            /**
-             * Downloads the csv file with learner results
-             *
-             * @param csv - The csv that should be downloaded
-             * @param filename - The name of the csv file
-             */
-            function download(csv, filename) {
-
-                // create new link element with downloadable csv
-                var a = document.createElement('a');
-                a.style.display = 'none';
-                a.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
-                a.setAttribute('target', '_blank');
-                a.setAttribute('download', filename + '.csv');
-
-                // append link to the dom, fire click event and remove it
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
             }
         }
     }

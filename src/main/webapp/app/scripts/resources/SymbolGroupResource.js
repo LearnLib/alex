@@ -4,7 +4,7 @@
         .module('weblearner.resources')
         .factory('SymbolGroupResource', Resource);
 
-    Resource.$inject = ['$http', 'paths', 'ResourceResponseService'];
+    Resource.$inject = ['$http', 'paths'];
 
     /**
      * The resource that handles http requests to the API to do CRUD operations on symbol groups
@@ -14,7 +14,7 @@
      * @returns {SymbolGroupResource}
      * @constructor
      */
-    function Resource($http, paths, ResourceResponseService) {
+    function Resource($http, paths) {
 
         /**
          * The recourse object for a symbol group

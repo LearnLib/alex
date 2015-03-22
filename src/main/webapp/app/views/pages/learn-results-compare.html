@@ -4,8 +4,7 @@
         <div panel panel-index="$index" ng-repeat="result in panels track by $index">
 
             <div ng-if="result">
-                <learn-results-slideshow-panel panel-index="{{$index}}"
-                                               results="result"></learn-results-slideshow-panel>
+                <learn-results-slideshow-panel index="{{$index}}" results="result"></learn-results-slideshow-panel>
             </div>
 
             <div ng-if="!result" style="padding: 30px">

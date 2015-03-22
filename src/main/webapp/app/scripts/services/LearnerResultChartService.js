@@ -148,12 +148,12 @@
             switch (property) {
                 case properties.MQS:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result.statistics, properties.MQS));
+                        dataValues.push(_(result).pluck('statistics').pluck(properties.MQS).value());
                     });
                     break;
                 case properties.EQS:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result.statistics, properties.EQS));
+                        dataValues.push(_(result).pluck('statistics').pluck(properties.EQS).value());
                     });
                     break;
                 case properties.SIGMA:
@@ -165,12 +165,12 @@
                     break;
                 case properties.SYMBOL_CALLS:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result.statistics, properties.SYMBOL_CALLS));
+                        dataValues.push(_(result).pluck('statistics').pluck(properties.SYMBOL_CALLS).value());
                     });
                     break;
                 case properties.DURATION:
                     _.forEach(results, function (result) {
-                        dataValues.push(_.pluck(result.statistics, properties.DURATION));
+                        dataValues.push(_(result).pluck('statistics').pluck(properties.DURATION).value());
                     });
                     break;
                 default :
