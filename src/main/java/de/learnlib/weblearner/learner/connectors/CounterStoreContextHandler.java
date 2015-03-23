@@ -12,7 +12,6 @@ public class CounterStoreContextHandler implements ContextExecutableInputSUL.Con
 
     @Override
     public CounterStoreConnector createContext() {
-        connector.clear();
         return connector;
     }
 
