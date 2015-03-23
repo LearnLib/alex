@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${project.name}">
+<body>
+
+    <menu name="Developer resources">
+        <item href="REST.html" name="REST API" />
+    </menu>
+
+</body>
+</project>
