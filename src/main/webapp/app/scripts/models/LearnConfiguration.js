@@ -28,6 +28,13 @@
             this.resetSymbol = null;
         }
 
+        LearnConfiguration.prototype.toLearnResumeConfiguration = function () {
+            delete this.symbols;
+            delete this.algorithm;
+            delete this.resetSymbol;
+            return this;
+        }
+
         /**
          *
          * @param symbol

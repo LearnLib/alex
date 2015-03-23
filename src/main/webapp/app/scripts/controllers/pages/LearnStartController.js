@@ -5,7 +5,7 @@
         .controller('LearnStartController', LearnStartController);
 
     LearnStartController.$inject = [
-        '$scope', '$interval', 'SessionService', 'LearnerService', 'LearnResult', 'ToastService'
+        '$scope', '$interval', 'SessionService', 'LearnerService', 'LearnResult', 'ToastService', '_'
     ];
 
     /**
@@ -20,9 +20,10 @@
      * @param Learner
      * @param LearnResult
      * @param Toast
+     * @param _
      * @constructor
      */
-    function LearnStartController($scope, $interval, Session, Learner, LearnResult, Toast) {
+    function LearnStartController($scope, $interval, Session, Learner, LearnResult, Toast, _) {
 
         // The project that is stored in the session
         var project = Session.project.get();
@@ -102,16 +103,13 @@
          * Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample'
          */
         $scope.resumeLearning = function () {
-            var copy = angular.copy(_.last($scope.results).configuration);
-            delete copy.algorithm;
-            delete copy.symbols;
-            delete copy.resetSymbol;
+            var config = _.last($scope.results).configuration.copy().toLearnResumeConfiguration();
 
-            console.log(copy.eqOracle);
-            return;
-
-            Learner.resume(project.id, _.last($scope.results).testNo, copy)
+            Learner.resume(project.id, _.last($scope.results).testNo, config)
                 .then(poll)
+                .catch(function (response) {
+                    Toast.danger('<p><strong>Resume learning failed!</strong></p>' + response.data.message);
+                })
         };
 
         /**

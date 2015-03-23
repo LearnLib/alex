@@ -1,8 +1,8 @@
-angular.module('templates-all', ['app/views/directives/counter-examples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
+angular.module('templates-all', ['app/views/directives/counterexamples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
 
-angular.module("app/views/directives/counter-examples-widget.html", []).run(["$templateCache", function($templateCache) {
+angular.module("app/views/directives/counterexamples-widget.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
-  $templateCache.put("app/views/directives/counter-examples-widget.html",
+  $templateCache.put("app/views/directives/counterexamples-widget.html",
     "<form class=\"form form-condensed\" ng-submit=\"addCounterExample()\">\n" +
     "    <p class=\"text-muted\">\n" +
     "        <em>Click on the labels of the hypothesis to create a counterexample. Click on an output to toggle it.</em>\n" +
@@ -15,7 +15,6 @@ angular.module("app/views/directives/counter-examples-widget.html", []).run(["$t
     "            <i class=\"fa fa-fw fa-sort pull-right\" as-sortable-item-handle></i>\n" +
     "\n" +
     "            <span class=\"label label-primary\">{{io.input}}</span>\n" +
-    "            {{io.output === outputAlphabet.OK}}\n" +
     "            <span class=\"label\" ng-class=\"io.output === outputAlphabet.OK ? 'label-success' : 'label-danger'\"\n" +
     "                  ng-click=\"toggleOutputAt($index)\">{{io.output}}</span>\n" +
     "        </div>\n" +
@@ -237,31 +236,31 @@ angular.module("app/views/directives/learn-resume-settings-widget.html", []).run
     "    </div>\n" +
     "\n" +
     "    <div class=\"form-group\">\n" +
-    "        <div ng-if=\"configuration.eqOracle.type == eqOracles.RANDOM\">\n" +
+    "        <div ng-if=\"learnConfiguration.eqOracle.type == eqOracles.RANDOM\">\n" +
     "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.minLength\" type=\"number\"\n" +
+    "                <input class=\"form-control\" ng-model=\"learnConfiguration.eqOracle.minLength\" type=\"number\"\n" +
     "                       style=\"display: inline; width: auto\"> min length\n" +
     "            </p>\n" +
     "\n" +
     "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxLength\" type=\"number\"\n" +
+    "                <input class=\"form-control\" ng-model=\"learnConfiguration.eqOracle.maxLength\" type=\"number\"\n" +
     "                       style=\"display: inline; width: auto\"> max length\n" +
     "            </p>\n" +
     "\n" +
     "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxNoOfTests\" type=\"number\"\n" +
+    "                <input class=\"form-control\" ng-model=\"learnConfiguration.eqOracle.maxNoOfTests\" type=\"number\"\n" +
     "                       style=\"display: inline; width: auto\"> no of random words\n" +
     "            </p>\n" +
     "        </div>\n" +
     "\n" +
-    "        <div ng-if=\"configuration.eqOracle.type == eqOracles.COMPLETE\">\n" +
+    "        <div ng-if=\"learnConfiguration.eqOracle.type == eqOracles.COMPLETE\">\n" +
     "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.minDepth\" type=\"number\"\n" +
+    "                <input class=\"form-control\" ng-model=\"learnConfiguration.eqOracle.minDepth\" type=\"number\"\n" +
     "                       style=\"display: inline; width: auto\"> min depth\n" +
     "            </p>\n" +
     "\n" +
     "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxDepth\" type=\"number\"\n" +
+    "                <input class=\"form-control\" ng-model=\"learnConfiguration.eqOracle.maxDepth\" type=\"number\"\n" +
     "                       style=\"display: inline; width: auto\"> max depth\n" +
     "            </p>\n" +
     "        </div>\n" +
@@ -269,7 +268,7 @@ angular.module("app/views/directives/learn-resume-settings-widget.html", []).run
     "\n" +
     "    <div class=\"form-group\">\n" +
     "        <label class=\"control-label\">Steps to Learn (0 := never stop)</label>\n" +
-    "        <input ng-model=\"configuration.maxAmountOfStepsToLearn\" class=\"form-control\" type=\"text\" placeholder=\"0\">\n" +
+    "        <input ng-model=\"learnConfiguration.maxAmountOfStepsToLearn\" class=\"form-control\" type=\"text\" placeholder=\"0\">\n" +
     "    </div>\n" +
     "\n" +
     "</form>");
@@ -454,6 +453,22 @@ angular.module("app/views/directives/view-heading.html", []).run(["$templateCach
     "\n" +
     "        <p class=\"view-heading-sub-title\" ng-bind=\"::subTitle\"></p>\n" +
     "    </div>\n" +
+    "</div>");
+}]);
+
+angular.module("app/views/directives/widget.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/widget.html",
+    "<div class=\"panel panel-default\">\n" +
+    "    <div class=\"panel-heading\">\n" +
+    "        <div class=\"pull-right\">\n" +
+    "           <span class=\"panel-collapse-handle\" ng-click=\"toggleCollapse()\">\n" +
+    "               <i class=\"fa\" ng-class=\"collapsed ? 'fa-plus-square' : 'fa-minus-square'\"></i>\n" +
+    "            </span>\n" +
+    "        </div>\n" +
+    "        <strong class=\"text-muted\" ng-bind=\"title\"></strong>\n" +
+    "    </div>\n" +
+    "    <div class=\"panel-body\" ng-show=\"!collapsed\" ng-transclude></div>\n" +
     "</div>");
 }]);
 
@@ -2147,13 +2162,13 @@ angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", fu
     "\n" +
     "        <div class=\"panel-sidebar\" ng-class=\"showSidebar === true ? 'show' : ''\">\n" +
     "            <div widget widget-title=\"Configuration\" collapsed=\"false\">\n" +
-    "                <div learn-resume-settings-widget configuration=\"_.last(results).configuration\"></div>\n" +
+    "                <div learn-resume-settings-widget learn-configuration=\"_.last(results).configuration\"></div>\n" +
     "            </div>\n" +
     "\n" +
     "            <div widget widget-title=\"Counter Examples\" collapsed=\"false\"\n" +
     "                 ng-if=\"_.last(results).configuration.eqOracle.type === 'sample'\">\n" +
-    "                <div counter-examples-widget\n" +
-    "                     counter-examples=\"_.last(results).configuration.eqOracle.counterExamples\"></div>\n" +
+    "                <div counterexamples-widget\n" +
+    "                     counterexamples=\"_.last(results).configuration.eqOracle.counterExamples\"></div>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +

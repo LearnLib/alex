@@ -9,31 +9,31 @@
     </div>
 
     <div class="form-group">
-        <div ng-if="configuration.eqOracle.type == eqOracles.RANDOM">
+        <div ng-if="learnConfiguration.eqOracle.type == eqOracles.RANDOM">
             <p>
-                <input class="form-control" ng-model="configuration.eqOracle.minLength" type="number"
+                <input class="form-control" ng-model="learnConfiguration.eqOracle.minLength" type="number"
                        style="display: inline; width: auto"> min length
             </p>
 
             <p>
-                <input class="form-control" ng-model="configuration.eqOracle.maxLength" type="number"
+                <input class="form-control" ng-model="learnConfiguration.eqOracle.maxLength" type="number"
                        style="display: inline; width: auto"> max length
             </p>
 
             <p>
-                <input class="form-control" ng-model="configuration.eqOracle.maxNoOfTests" type="number"
+                <input class="form-control" ng-model="learnConfiguration.eqOracle.maxNoOfTests" type="number"
                        style="display: inline; width: auto"> no of random words
             </p>
         </div>
 
-        <div ng-if="configuration.eqOracle.type == eqOracles.COMPLETE">
+        <div ng-if="learnConfiguration.eqOracle.type == eqOracles.COMPLETE">
             <p>
-                <input class="form-control" ng-model="configuration.eqOracle.minDepth" type="number"
+                <input class="form-control" ng-model="learnConfiguration.eqOracle.minDepth" type="number"
                        style="display: inline; width: auto"> min depth
             </p>
 
             <p>
-                <input class="form-control" ng-model="configuration.eqOracle.maxDepth" type="number"
+                <input class="form-control" ng-model="learnConfiguration.eqOracle.maxDepth" type="number"
                        style="display: inline; width: auto"> max depth
             </p>
         </div>
@@ -41,7 +41,7 @@
 
     <div class="form-group">
         <label class="control-label">Steps to Learn (0 := never stop)</label>
-        <input ng-model="configuration.maxAmountOfStepsToLearn" class="form-control" type="text" placeholder="0">
+        <input ng-model="learnConfiguration.maxAmountOfStepsToLearn" class="form-control" type="text" placeholder="0">
     </div>
 
 </form>

@@ -14,13 +14,13 @@
 
         <div class="panel-sidebar" ng-class="showSidebar === true ? 'show' : ''">
             <div widget widget-title="Configuration" collapsed="false">
-                <div learn-resume-settings-widget configuration="_.last(results).configuration"></div>
+                <div learn-resume-settings-widget learn-configuration="_.last(results).configuration"></div>
             </div>
 
             <div widget widget-title="Counter Examples" collapsed="false"
                  ng-if="_.last(results).configuration.eqOracle.type === 'sample'">
-                <div counter-examples-widget
-                     counter-examples="_.last(results).configuration.eqOracle.counterExamples"></div>
+                <div counterexamples-widget
+                     counterexamples="_.last(results).configuration.eqOracle.counterExamples"></div>
             </div>
         </div>
 

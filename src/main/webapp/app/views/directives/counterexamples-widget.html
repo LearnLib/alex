@@ -10,7 +10,6 @@
             <i class="fa fa-fw fa-sort pull-right" as-sortable-item-handle></i>
 
             <span class="label label-primary">{{io.input}}</span>
-            {{io.output === outputAlphabet.OK}}
             <span class="label" ng-class="io.output === outputAlphabet.OK ? 'label-success' : 'label-danger'"
                   ng-click="toggleOutputAt($index)">{{io.output}}</span>
         </div>
