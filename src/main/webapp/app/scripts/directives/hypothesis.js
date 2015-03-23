@@ -3,7 +3,7 @@
     angular.module('weblearner.directives')
         .directive('hypothesis', hypothesis);
 
-    hypothesis.$inject = ['$window', 'paths'];
+    hypothesis.$inject = ['$window', 'paths', 'CounterExampleService'];
 
     function intersectNode(node, point) {
         return node.intersect(point);
@@ -37,18 +37,17 @@
         return line(points);
     }
 
-    function hypothesis($window, paths) {
+    function hypothesis($window, paths, CounterExampleService) {
 
-        var directive = {
+        return {
             scope: {
                 test: '=',
-                counterExample: '=',
-                layoutSettings: '='
+                layoutSettings: '=',
+                isSelectable: '@'
             },
             templateUrl: paths.views.DIRECTIVES + '/hypothesis.html',
             link: link
         };
-        return directive;
 
         //////////
 
@@ -223,12 +222,11 @@
 
                 // attach click events for the selection of counter examples to the edge labels
                 // only if counterExamples is defined
-                if (angular.isDefined(scope.counterExample)) {
+                if (angular.isDefined(scope.isSelectable)) {
                     _svg.selectAll('.edgeLabel tspan').on('click', function () {
                         var label = this.innerHTML.split('/');
                         scope.$apply(function () {
-                            scope.counterExample.input += (label[0] + ',');
-                            scope.counterExample.output += (label[1] + ',');
+                            CounterExampleService.addIOPairToCurrentCounterexample(label[0], label[1]);
                         });
                     });
                 }

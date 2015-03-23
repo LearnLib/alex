@@ -3,36 +3,32 @@
 
     angular
         .module('weblearner.directives')
-        .directive('openLearnSetupSettingsModal', openLearnSetupSettingsModal);
+        .directive('learnSetupSettingsModalHandle', learnSetupSettingsModalHandle);
 
-    openLearnSetupSettingsModal.$inject = ['$modal', 'paths'];
+    learnSetupSettingsModalHandle.$inject = ['$modal', 'paths'];
 
-    function openLearnSetupSettingsModal($modal, paths) {
+    function learnSetupSettingsModalHandle($modal, paths) {
 
-        var directive = {
-            restrict: 'EA',
+        // the directive
+        return {
+            restrict: 'A',
             scope: {
                 learnConfiguration: '=',
                 onOk: '&'
             },
             link: link
         };
-        return directive;
 
-        //////////
-
+        // the directives behaviour
         function link(scope, el, attr) {
-
-            el.on('click', handleModal);
-
-            function handleModal() {
+            el.on('click', function () {
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/learn-setup-settings-modal.html',
                     controller: 'LearnSetupSettingsModalController',
                     resolve: {
                         modalData: function () {
                             return {
-                                learnConfiguration: scope.learnConfiguration.copy()
+                                learnConfiguration: scope.learnConfiguration
                             };
                         }
                     }
@@ -42,7 +38,7 @@
                 modal.result.then(function (learnConfiguration) {
                     scope.onOk()(learnConfiguration);
                 });
-            }
+            });
         }
     }
 }());

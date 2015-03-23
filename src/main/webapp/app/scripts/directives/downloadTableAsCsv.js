@@ -55,7 +55,7 @@
                         FileDownloadService.downloadCSV(csv);
                     }
                 }
-            })
+            });
 
             /**
              * Creates CSV data from the entries of a HTML table element
@@ -75,13 +75,13 @@
                     }
                 }
 
-                // add entreis from table row
+                // add entries from table row
                 if (rows.length > 0) {
                     for (var i = 0; i < rows.length; i++) {
                         var tds = rows[i].querySelectorAll('td');
                         if (tds.length > 0) {
                             for (var j = 0; j < tds.length; j++) {
-                                csv += tds[i].textContent.replace(',', ' ') + (j === tds.length - 1 ? '\n' : ',');
+                                csv += tds[j].textContent.replace(',', ' ') + (j === tds.length - 1 ? '\n' : ',');
                             }
                         }
                     }

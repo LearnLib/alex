@@ -74,7 +74,7 @@
 
             switch (data.type) {
                 case eqOracles.RANDOM:
-                    eqOracle = new Random(data.minLength, data.maxLength);
+                    eqOracle = new Random(data.minLength, data.maxLength, data.maxNoOfTests);
                     break;
                 case eqOracles.COMPLETE:
                     eqOracle = new Complete(data.minDepth, data.maxDepth);

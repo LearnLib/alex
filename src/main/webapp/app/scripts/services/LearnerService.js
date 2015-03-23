@@ -11,7 +11,7 @@
      * @param $http
      * @param $q
      * @param paths
-     * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive}}
+     * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive, isCounterexample: isCounterexample}}
      * @constructor
      */
     function LearnerService($http, $q, paths) {
@@ -21,7 +21,8 @@
             stop: stop,
             resume: resume,
             getStatus: getStatus,
-            isActive: isActive
+            isActive: isActive,
+            isCounterexample: isCounterexample
         };
 
         /**
@@ -79,6 +80,19 @@
             return $http.get(paths.api.URL + '/learner/active')
                 .then(function (response) {
                     return response.data;
+                })
+        }
+
+        /**
+         * Checks if the selected path is a counterexample.
+         *
+         * @param counterexample
+         * @returns {*}
+         */
+        function isCounterexample(projectId, counterexample) {
+            return $http.post(paths.api.URL + '/learner/active', {})
+                .then(function (response) {
+                    return true;
                 })
         }
     }

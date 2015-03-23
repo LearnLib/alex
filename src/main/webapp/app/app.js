@@ -49,7 +49,45 @@
             $rootScope._ = _;
             $rootScope.paths = paths;
         }])
-}());;angular.module('templates-all', ['app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget-counter-examples.html', 'app/views/directives/widget-test-resume-settings.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
+}());;angular.module('templates-all', ['app/views/directives/counter-examples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
+
+angular.module("app/views/directives/counter-examples-widget.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/counter-examples-widget.html",
+    "<form class=\"form form-condensed\" ng-submit=\"addCounterExample()\">\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        <em>Click on the labels of the hypothesis to create a counterexample. Click on an output to toggle it.</em>\n" +
+    "    </p>\n" +
+    "\n" +
+    "    <div class=\"list-group list-group-condensed\" as-sortable ng-model=\"counterExample\">\n" +
+    "        <div class=\"list-group-item\" ng-repeat=\"io in counterExample\" as-sortable-item>\n" +
+    "\n" +
+    "            <i class=\"fa fa-fw fa-close pull-right\" ng-click=\"removeInputOutputAt($index)\"></i>\n" +
+    "            <i class=\"fa fa-fw fa-sort pull-right\" as-sortable-item-handle></i>\n" +
+    "\n" +
+    "            <span class=\"label label-primary\">{{io.input}}</span>\n" +
+    "            {{io.output === outputAlphabet.OK}}\n" +
+    "            <span class=\"label\" ng-class=\"io.output === outputAlphabet.OK ? 'label-success' : 'label-danger'\"\n" +
+    "                  ng-click=\"toggleOutputAt($index)\">{{io.output}}</span>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\" ng-show=\"counterExample.length > 0\">\n" +
+    "        <button class=\"btn btn-primary btn-xs\">Add</button>\n" +
+    "        <a href class=\"btn btn-default btn-xs\" ng-click=\"testCounterExample()\">Test</a>\n" +
+    "        <hr>\n" +
+    "    </div>\n" +
+    "</form>\n" +
+    "\n" +
+    "<ul class=\"list-group\">\n" +
+    "    <li class=\"list-group-item\" ng-repeat=\"ce in tmpCounterExamples\" ng-click=\"selectCounterExampleAt($index)\">\n" +
+    "        <span class=\"btn btn-icon pull-right\" ng-click=\"removeCounterExampleAt($index)\">\n" +
+    "            <i class=\"fa fa-trash\"></i>\n" +
+    "        </span>\n" +
+    "        {{ce}}\n" +
+    "    </li>\n" +
+    "</ul>");
+}]);
 
 angular.module("app/views/directives/html-element-picker.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -145,7 +183,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                        </button>\n" +
     "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
     "                            <li>\n" +
-    "                                <a href learn-result-details-modal-handle result=\"getCurrentStep()\">\n" +
+    "                                <a href learn-result-details-modal-handle result=\"results[pointer]\">\n" +
     "                                    <i class=\"fa fa-info fa-fw\"></i> Details\n" +
     "                                </a>\n" +
     "                            </li>\n" +
@@ -154,7 +192,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                                <a href download-svg ancestor-or-element=\"#hypothesis-panel-{{index}}\">\n" +
     "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
     "                                </a>\n" +
-    "                                <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
+    "                                <a href download-as-json data=\"results[pointer].hypothesis\">\n" +
     "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.json\n" +
     "                                </a>\n" +
     "                            </li>\n" +
@@ -205,7 +243,11 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "    <div class=\"hypothesis-panel\" id=\"hypothesis-panel-{{index}}\">\n" +
     "\n" +
     "        <hypothesis id=\"hypothesis\" test=\"results[pointer]\" layout-settings=\"layoutSettings\"\n" +
-    "                    ng-if=\"mode === modes.HYPOTHESIS\" && pointer=== results.length - 1></hypothesis>\n" +
+    "                    ng-if=\"mode === modes.HYPOTHESIS && pointer === results.length - 1\"\n" +
+    "                    is-selectable=\"true\"></hypothesis>\n" +
+    "\n" +
+    "        <hypothesis id=\"hypothesis\" test=\"results[pointer]\" layout-settings=\"layoutSettings\"\n" +
+    "                    ng-if=\"mode === modes.HYPOTHESIS && pointer !== results.length - 1\"></hypothesis>\n" +
     "\n" +
     "        <observation-table data=\"results[pointer].algorithmInformation\"\n" +
     "                           ng-if=\"mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR\">\n" +
@@ -230,6 +272,58 @@ angular.module("app/views/directives/learn-results-slideshow-panel.html", []).ru
     "        <i class=\"fa fa-close\"></i>\n" +
     "    </button>\n" +
     "</learn-results-panel>");
+}]);
+
+angular.module("app/views/directives/learn-resume-settings-widget.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/learn-resume-settings-widget.html",
+    "<form class=\"form form-condensed\">\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">EQ Oracle</label><br>\n" +
+    "        <select class=\"form-control\" ng-model=\"selectedEqOracle\" ng-change=\"setEqOracle()\"\n" +
+    "                ng-options=\"(v|formatEqOracle) for (k,v) in eqOracles\">\n" +
+    "            <option value=\"\" disabled>select a method</option>\n" +
+    "        </select>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <div ng-if=\"configuration.eqOracle.type == eqOracles.RANDOM\">\n" +
+    "            <p>\n" +
+    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.minLength\" type=\"number\"\n" +
+    "                       style=\"display: inline; width: auto\"> min length\n" +
+    "            </p>\n" +
+    "\n" +
+    "            <p>\n" +
+    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxLength\" type=\"number\"\n" +
+    "                       style=\"display: inline; width: auto\"> max length\n" +
+    "            </p>\n" +
+    "\n" +
+    "            <p>\n" +
+    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxNoOfTests\" type=\"number\"\n" +
+    "                       style=\"display: inline; width: auto\"> no of random words\n" +
+    "            </p>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div ng-if=\"configuration.eqOracle.type == eqOracles.COMPLETE\">\n" +
+    "            <p>\n" +
+    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.minDepth\" type=\"number\"\n" +
+    "                       style=\"display: inline; width: auto\"> min depth\n" +
+    "            </p>\n" +
+    "\n" +
+    "            <p>\n" +
+    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxDepth\" type=\"number\"\n" +
+    "                       style=\"display: inline; width: auto\"> max depth\n" +
+    "            </p>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Steps to Learn (0 := never stop)</label>\n" +
+    "        <input ng-model=\"configuration.maxAmountOfStepsToLearn\" class=\"form-control\" type=\"text\" placeholder=\"0\">\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/views/directives/learner-result-chart-multiple-final.html", []).run(["$templateCache", function($templateCache) {
@@ -414,90 +508,6 @@ angular.module("app/views/directives/view-heading.html", []).run(["$templateCach
     "</div>");
 }]);
 
-angular.module("app/views/directives/widget-counter-examples.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/widget-counter-examples.html",
-    "<form class=\"form form-condensed\" ng-submit=\"addCounterExample()\">\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Click on the labels of the hypothesis\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input type=\"text\" class=\"form-control\" placeholder=\"input\" ng-model=\"newCounterExample.input\">\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input type=\"text\" class=\"form-control\" placeholder=\"output\" ng-model=\"newCounterExample.output\">\n" +
-    "    </div>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <button class=\"btn btn-primary btn-xs\">Add</button>\n" +
-    "        <a href class=\"btn btn-default btn-xs\" ng-click=\"testCounterExample(counterExample)\">Test</a>\n" +
-    "    </div>\n" +
-    "</form>\n" +
-    "<hr>\n" +
-    "\n" +
-    "<ul class=\"list-group\">\n" +
-    "    <li class=\"list-group-item\" ng-repeat=\"ce in counterExamples\">\n" +
-    "        <span class=\"btn btn-icon pull-right\" ng-click=\"removeCounterExample(ce, $index)\">\n" +
-    "            <i class=\"fa fa-trash\"></i>\n" +
-    "        </span>\n" +
-    "        {{ce.input}}<br>\n" +
-    "        {{ce.output}}\n" +
-    "    </li>\n" +
-    "</ul>");
-}]);
-
-angular.module("app/views/directives/widget-test-resume-settings.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/widget-test-resume-settings.html",
-    "<form class=\"form form-condensed\">\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">EQ Oracle</label><br>\n" +
-    "        <select class=\"form-control\" ng-model=\"configuration.eqOracle.type\" ng-options=\"k for (k,v) in eqOracles\">\n" +
-    "            <option value=\"\" disabled>select a method</option>\n" +
-    "        </select>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <div ng-if=\"configuration.eqOracle.type == eqOracles.RANDOM\">\n" +
-    "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.minLength\" type=\"number\"\n" +
-    "                       style=\"display: inline; width: auto\"> min length\n" +
-    "            </p>\n" +
-    "\n" +
-    "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxLength\" type=\"number\"\n" +
-    "                       style=\"display: inline; width: auto\"> max length\n" +
-    "            </p>\n" +
-    "\n" +
-    "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxNoOfTests\" type=\"number\"\n" +
-    "                       style=\"display: inline; width: auto\"> no of random words to be generated\n" +
-    "            </p>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div ng-if=\"configuration.eqOracle.type == eqOracles.COMPLETE\">\n" +
-    "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.minDepth\" type=\"number\"\n" +
-    "                       style=\"display: inline; width: auto\"> min depth\n" +
-    "            </p>\n" +
-    "\n" +
-    "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxDepth\" type=\"number\"\n" +
-    "                       style=\"display: inline; width: auto\"> max depth\n" +
-    "            </p>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Max Amount of Steps to Learn (0 := never stop)</label>\n" +
-    "        <input ng-model=\"configuration.maxAmountOfStepsToLearn\" class=\"form-control\" type=\"text\" placeholder=\"0\">\n" +
-    "    </div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
 angular.module("app/views/includes/action-forms.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/includes/action-forms.html",
@@ -661,6 +671,33 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "\n" +
     "</div>\n" +
     "<!-- END: SUBMIT -->\n" +
+    "\n" +
+    "\n" +
+    "<!-- BEGIN: SELECT -->\n" +
+    "<div ng-if=\"action.type === actionTypes.web.SELECT\">\n" +
+    "\n" +
+    "    <h4><strong>Select value</strong></h4>\n" +
+    "\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        Select a value from a select input\n" +
+    "    </p>\n" +
+    "    <hr>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">CSS selector</label>\n" +
+    "        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "    </div>\n" +
+    "    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
+    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "    </a>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Value</label>\n" +
+    "        <input class=\"form-control\" type=\"text\" placeholder=\"Selected value\" ng-model=\"action.value\">\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "<!-- END: SELECT -->\n" +
     "\n" +
     "\n" +
     "<!-- BEGIN: CALL_URL -->\n" +
@@ -1312,11 +1349,13 @@ angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$te
     "		</div>\n" +
     "\n" +
     "		<div class=\"form-group\">\n" +
-    "			<label class=\"control-label\">EQ Oracle</label><br> <span\n" +
-    "				class=\"text-muted\">Select how counter examples should be\n" +
-    "				found</span> <select class=\"form-control\" ng-model=\"selectedEqOracle\"\n" +
-    "                                     ng-options=\"(v|formatEqOracle) for (k,v) in eqOracles\">\n" +
-    "				<option value=\"\" disabled>select a method</option>\n" +
+    "            <label class=\"control-label\">EQ Oracle</label><br>\n" +
+    "            <span class=\"text-muted\">Select how counter examples should be found</span>\n" +
+    "            <select class=\"form-control\"\n" +
+    "                    ng-model=\"selectedEqOracle\"\n" +
+    "                    ng-change=\"setEqOracle()\"\n" +
+    "                    ng-options=\"(v|formatEqOracle) for (k,v) in eqOracles\">\n" +
+    "                <option value=\"\" disabled>select an EQ-Oracle</option>\n" +
     "			</select>\n" +
     "		</div>\n" +
     "\n" +
@@ -2035,7 +2074,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-right\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" open-learn-setup-settings-modal\n" +
+    "            <button class=\"btn btn-xs btn-default\" learn-setup-settings-modal-handle\n" +
     "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
     "                <i class=\"fa fa-gear\"></i>\n" +
     "            </button>\n" +
@@ -2051,7 +2090,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "    <div class=\"container symbol-group-list\">\n" +
     "\n" +
     "        <div class=\"alert alert-info alert-condensed clearfix\">\n" +
-    "            <button class=\"btn btn-xs btn-info pull-right\" open-learn-setup-settings-modal\n" +
+    "            <button class=\"btn btn-xs btn-info pull-right\" learn-setup-settings-modal-handle\n" +
     "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
     "                <i class=\"fa fa-gear\"></i>\n" +
     "            </button>\n" +
@@ -2143,7 +2182,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
 angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/learn-start.html",
-    "<div style=\"position: absolute; width: 100%; top: 42px; bottom: 0; overflow: auto;\">\n" +
+    "<div style=\"position: absolute; width: 100%; top: 42px; bottom: 0; overflow: hidden\">\n" +
     "\n" +
     "    <div ng-if=\"active == true\" class=\"container\" style=\"margin-top: 54px\">\n" +
     "        <div class=\"alert alert-info\">\n" +
@@ -2157,26 +2196,26 @@ angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", fu
     "\n" +
     "    <div ng-if=\"!active && results.length > 0\">\n" +
     "\n" +
-    "        <!--<div class=\"panel-sidebar\">-->\n" +
+    "        <div class=\"panel-sidebar\" ng-class=\"showSidebar === true ? 'show' : ''\">\n" +
+    "            <div widget widget-title=\"Configuration\" collapsed=\"false\">\n" +
+    "                <div learn-resume-settings-widget configuration=\"_.last(results).configuration\"></div>\n" +
+    "            </div>\n" +
     "\n" +
-    "        <!--<p>-->\n" +
-    "        <!--<br>-->\n" +
-    "        <!--<button class=\"btn btn-primary btn-sm btn-block\" ng-click=\"resumeLearning()\">Resume</button>-->\n" +
-    "        <!--</p>-->\n" +
+    "            <div widget widget-title=\"Counter Examples\" collapsed=\"false\"\n" +
+    "                 ng-if=\"_.last(results).configuration.eqOracle.type === 'sample'\">\n" +
+    "                <div counter-examples-widget\n" +
+    "                     counter-examples=\"_.last(results).configuration.eqOracle.counterExamples\"></div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "\n" +
-    "        <!--<div widget widget-title=\"Configuration\" collapsed=\"false\">-->\n" +
-    "        <!--<div widget-test-resume-settings configuration=\"_.last(results).configuration\"></div>-->\n" +
-    "        <!--</div>-->\n" +
-    "\n" +
-    "        <!--<div widget widget-title=\"Counter Examples\" collapsed=\"true\"-->\n" +
-    "        <!--ng-if=\"_.last(results).configuration.eqOracle.type === 'sample'\">-->\n" +
-    "        <!--<div widget-counter-examples counter-examples=\"_.last(results).configuration.eqOracle.counterExamples\"-->\n" +
-    "        <!--counter-example=\"counterExample\"></div>-->\n" +
-    "        <!--</div>-->\n" +
-    "\n" +
-    "        <!--</div>-->\n" +
-    "\n" +
-    "        <div learn-results-panel results=\"results\"></div>\n" +
+    "        <div learn-results-panel results=\"results\">\n" +
+    "            <div class=\"btn-group btn-group-xs\" style=\"margin-left: 7px\">\n" +
+    "                <button class=\"btn btn-success\" ng-click=\"resumeLearning()\">Resume</button>\n" +
+    "                <button class=\"btn btn-success\" ng-click=\"toggleSidebar()\">\n" +
+    "                    <i class=\"fa fa-fw\" ng-class=\"showSidebar ? 'fa-close' : 'fa-gear'\"></i>\n" +
+    "                </button>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "\n" +
     "    </div>\n" +
     "\n" +
@@ -3078,7 +3117,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             }
         }
     }
-}());;(function(){
+}());;(function () {
     'use strict';
 
     angular
@@ -3091,19 +3130,24 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .constant('graphlib', window.graphlib)  // graphlib
 
         // paths that are used in the application
-    	.constant('paths', {
-    		views: {
-    			BASE: 'app/views',
-    			DIRECTIVES: 'app/views/directives',
-    			MODALS: 'app/views/modals',
+        .constant('paths', {
+            views: {
+                BASE: 'app/views',
+                DIRECTIVES: 'app/views/directives',
+                MODALS: 'app/views/modals',
                 PAGES: 'app/views/pages',
                 INCLUDES: 'app/views/includes'
-    		},
-    		api: {
-    			URL: '/rest',
-    			PROXY_URL: '/rest/proxy?url='
-    		}
-    	})
+            },
+            api: {
+                URL: '/rest',
+                PROXY_URL: '/rest/proxy?url='
+            }
+        })
+
+        .constant('outputAlphabet', {
+            OK: 'OK',
+            FAILED: 'FAILED'
+        })
 
         // web action types
         .constant('actionTypes', {
@@ -3114,7 +3158,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 CLICK: 'web_click',
                 FILL: 'web_fill',
                 GO_TO: 'web_goto',
-                SUBMIT: 'web_submit'
+                SUBMIT: 'web_submit',
+                SELECT: 'web_select'
             },
             rest: {
                 CALL_URL: 'rest_call',
@@ -3150,7 +3195,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             EXTENSIBLE_LSTAR: 'EXTENSIBLE_LSTAR',
             DHC: 'DHC',
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
-            TTT : 'TTT'
+            TTT: 'TTT'
         })
 }());;(function () {
     'use strict';
@@ -3444,14 +3489,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          *
          * @type {LearnConfiguration}
          */
-        $scope.learnConfiguration = modalData.learnConfiguration;
+        $scope.learnConfiguration = modalData.learnConfiguration.copy();
 
-        // watch for the select input to change and create a new EqOracle based on the type
-        $scope.$watch('selectedEqOracle', function (type) {
-            if (type) {
-                $scope.learnConfiguration.eqOracle = EqOracle.createFromType(type);
-            }
-        });
+        /**
+         * Sets the Eq Oracle of the learn configuration depending on the selected value
+         */
+        $scope.setEqOracle = function () {
+            $scope.learnConfiguration.eqOracle = EqOracle.createFromType($scope.selectedEqOracle)
+        };
 
         /**
          * Close the modal dialog and pass the edited learn configuration instance.
@@ -4523,13 +4568,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         $scope.active = false;
 
         /**
-         *
-         * @type {{input: string, output: string}}
+         * Flag for showing or hiding the sidebar
+         * @type {boolean}
          */
-        $scope.counterExample = {
-            input: '',
-            output: ''
-        };
+        $scope.showSidebar = false;
 
         // initialize the controller
         (function init() {
@@ -4586,6 +4628,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             delete copy.algorithm;
             delete copy.symbols;
             delete copy.resetSymbol;
+
+            console.log(copy.eqOracle);
+            return;
+
             Learner.resume(project.id, _.last($scope.results).testNo, copy)
                 .then(poll)
         };
@@ -4600,13 +4646,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             }
         };
 
-        /**
-         * Test if a counter example really is one
-         *
-         * @param counterExample
-         */
-        $scope.testCounterExample = function (counterExample) {
-            
+        $scope.toggleSidebar = function () {
+            $scope.showSidebar = !$scope.showSidebar;
         }
     }
 }());
@@ -6002,7 +6043,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         FileDownloadService.downloadCSV(csv);
                     }
                 }
-            })
+            });
 
             /**
              * Creates CSV data from the entries of a HTML table element
@@ -6022,13 +6063,13 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     }
                 }
 
-                // add entreis from table row
+                // add entries from table row
                 if (rows.length > 0) {
                     for (var i = 0; i < rows.length; i++) {
                         var tds = rows[i].querySelectorAll('td');
                         if (tds.length > 0) {
                             for (var j = 0; j < tds.length; j++) {
-                                csv += tds[i].textContent.replace(',', ' ') + (j === tds.length - 1 ? '\n' : ',');
+                                csv += tds[j].textContent.replace(',', ' ') + (j === tds.length - 1 ? '\n' : ',');
                             }
                         }
                     }
@@ -6539,7 +6580,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     angular.module('weblearner.directives')
         .directive('hypothesis', hypothesis);
 
-    hypothesis.$inject = ['$window', 'paths'];
+    hypothesis.$inject = ['$window', 'paths', 'CounterExampleService'];
 
     function intersectNode(node, point) {
         return node.intersect(point);
@@ -6573,18 +6614,17 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         return line(points);
     }
 
-    function hypothesis($window, paths) {
+    function hypothesis($window, paths, CounterExampleService) {
 
-        var directive = {
+        return {
             scope: {
                 test: '=',
-                counterExample: '=',
-                layoutSettings: '='
+                layoutSettings: '=',
+                isSelectable: '@'
             },
             templateUrl: paths.views.DIRECTIVES + '/hypothesis.html',
             link: link
         };
-        return directive;
 
         //////////
 
@@ -6759,12 +6799,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
                 // attach click events for the selection of counter examples to the edge labels
                 // only if counterExamples is defined
-                if (angular.isDefined(scope.counterExample)) {
+                if (angular.isDefined(scope.isSelectable)) {
                     _svg.selectAll('.edgeLabel tspan').on('click', function () {
                         var label = this.innerHTML.split('/');
                         scope.$apply(function () {
-                            scope.counterExample.input += (label[0] + ',');
-                            scope.counterExample.output += (label[1] + ',');
+                            CounterExampleService.addIOPairToCurrentCounterexample(label[0], label[1]);
                         });
                     });
                 }
@@ -7164,6 +7203,49 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     angular
         .module('weblearner.directives')
+        .directive('learnSetupSettingsModalHandle', learnSetupSettingsModalHandle);
+
+    learnSetupSettingsModalHandle.$inject = ['$modal', 'paths'];
+
+    function learnSetupSettingsModalHandle($modal, paths) {
+
+        // the directive
+        return {
+            restrict: 'A',
+            scope: {
+                learnConfiguration: '=',
+                onOk: '&'
+            },
+            link: link
+        };
+
+        // the directives behaviour
+        function link(scope, el, attr) {
+            el.on('click', function () {
+                var modal = $modal.open({
+                    templateUrl: paths.views.MODALS + '/learn-setup-settings-modal.html',
+                    controller: 'LearnSetupSettingsModalController',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                learnConfiguration: scope.learnConfiguration
+                            };
+                        }
+                    }
+                });
+
+                // when successfully creating a symbol at the new to the list
+                modal.result.then(function (learnConfiguration) {
+                    scope.onOk()(learnConfiguration);
+                });
+            });
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
         .directive('loadScreen', loadScreen);
 
     loadScreen.$inject = ['$http', 'paths'];
@@ -7463,53 +7545,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     angular
         .module('weblearner.directives')
-        .directive('openLearnSetupSettingsModal', openLearnSetupSettingsModal);
-
-    openLearnSetupSettingsModal.$inject = ['$modal', 'paths'];
-
-    function openLearnSetupSettingsModal($modal, paths) {
-
-        var directive = {
-            restrict: 'EA',
-            scope: {
-                learnConfiguration: '=',
-                onOk: '&'
-            },
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attr) {
-
-            el.on('click', handleModal);
-
-            function handleModal() {
-                var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/learn-setup-settings-modal.html',
-                    controller: 'LearnSetupSettingsModalController',
-                    resolve: {
-                        modalData: function () {
-                            return {
-                                learnConfiguration: scope.learnConfiguration.copy()
-                            };
-                        }
-                    }
-                });
-
-                // when successfully creating a symbol at the new to the list
-                modal.result.then(function (learnConfiguration) {
-                    scope.onOk()(learnConfiguration);
-                });
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
         .directive('selectionCheckboxAll', selectionCheckboxAll)
         .directive('selectableListItem', selectableListItem);
 
@@ -7553,134 +7588,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             '           </div>'
         };
         return directive;
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
-        .directive('widget', widget);
-
-    function widget() {
-
-        var template = '' +
-            '<div class="panel panel-default">' +
-            '   <div class="panel-heading">' +
-            '       <div class="pull-right">' +
-            '           <span class="panel-collapse-handle" ng-click="toggleCollapse()">' +
-            '               <i class="fa" ng-class="collapsed? \'fa-plus-square\' : \'fa-minus-square\'"></i>' +
-            '           </span>' +
-            '       </div>' +
-            '       <strong class="text-muted" ng-bind="title"></strong>' +
-            '   </div>' +
-            '   <div class="panel-body" ng-show="!collapsed" ng-transclude></div>' +
-            '</div>';
-
-        ///////////
-
-        var directive = {
-            scope: {
-                collapsed: '='
-            },
-            template: template,
-            transclude: true,
-            link: link
-        };
-        return directive;
-
-        function link(scope, el, attrs) {
-
-            scope.title = attrs.widgetTitle || 'Untitled';
-            scope.collapsed = scope.collapsed || false;
-
-            scope.toggleCollapse = function () {
-                scope.collapsed = !scope.collapsed;
-            }
-        }
-    }
-
-
-    angular
-        .module('weblearner.directives')
-        .directive('widgetCounterExamples', widgetCounterExamples);
-
-    widgetCounterExamples.$inject = ['paths'];
-
-    function widgetCounterExamples(paths) {
-
-        return {
-            templateUrl: paths.views.DIRECTIVES + '/widget-counter-examples.html',
-            scope: {
-                counterExamples: '=',
-                newCounterExample: '=counterExample'
-            },
-            controller: ['$scope', controller]
-        };
-
-        function controller($scope) {
-
-            //$scope.$watch('counterExamples.length', function (n, o) {
-            //
-            //});
-
-            $scope.addCounterExample = function () {
-
-                var ce = {
-                    input: [],
-                    output: []
-                };
-
-                _.forEach($scope.newCounterExample.input.split(','), function (input) {
-                    if (input.trim() != '') {
-                        ce.input.push(input.trim())
-                    }
-                });
-
-                _.forEach($scope.newCounterExample.output.split(','), function (output) {
-                    if (output.trim() != '') {
-                        ce.output.push(output.trim())
-                    }
-                });
-
-                $scope.counterExamples.push(ce);
-                $scope.newCounterExample.input = '';
-                $scope.newCounterExample.output = '';
-            };
-
-            $scope.removeCounterExample = function (ce, index) {
-
-                $scope.counterExamples.splice(index, 1);
-            }
-        }
-    }
-
-
-    angular
-        .module('weblearner.directives')
-        .directive('widgetTestResumeSettings', widgetTestResumeSettings);
-
-    widgetTestResumeSettings.$inject = ['paths'];
-
-    function widgetTestResumeSettings(paths) {
-
-        return {
-            templateUrl: paths.views.DIRECTIVES + '/widget-test-resume-settings.html',
-            scope: {
-                configuration: '='
-            },
-            controller: ['$scope', 'eqOracles', 'EqOracle', controller]
-        };
-
-        function controller($scope, eqOracles, EqOracle) {
-
-            $scope.eqOracles = eqOracles;
-
-            //////////
-
-            $scope.$watch('configuration.eqOracle.type', function (type) {
-                $scope.configuration.eqOracle = EqOracle.createFromType(type);
-            });
-        }
     }
 }());;(function () {
     'use strict';
@@ -7977,6 +7884,149 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         }
     }
 }());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('widget', widget)
+        .directive('counterExamplesWidget', counterExamplesWidget)
+        .directive('learnResumeSettingsWidget', learnResumeSettingsWidget);
+
+    counterExamplesWidget.$inject = ['paths', 'CounterExampleService', 'LearnerService', 'ToastService', '_', 'outputAlphabet'];
+    learnResumeSettingsWidget.$inject = ['paths'];
+
+
+    function widget() {
+
+        var template = '' +
+            '<div class="panel panel-default">' +
+            '   <div class="panel-heading">' +
+            '       <div class="pull-right">' +
+            '           <span class="panel-collapse-handle" ng-click="toggleCollapse()">' +
+            '               <i class="fa" ng-class="collapsed? \'fa-plus-square\' : \'fa-minus-square\'"></i>' +
+            '           </span>' +
+            '       </div>' +
+            '       <strong class="text-muted" ng-bind="title"></strong>' +
+            '   </div>' +
+            '   <div class="panel-body" ng-show="!collapsed" ng-transclude></div>' +
+            '</div>';
+
+        var directive = {
+            scope: {
+                collapsed: '='
+            },
+            template: template,
+            transclude: true,
+            link: link
+        };
+        return directive;
+
+        function link(scope, el, attrs) {
+
+            scope.title = attrs.widgetTitle || 'Untitled';
+            scope.collapsed = scope.collapsed || false;
+
+            scope.toggleCollapse = function () {
+                scope.collapsed = !scope.collapsed;
+            }
+        }
+    }
+
+
+    function counterExamplesWidget(paths, CounterExampleService, Learner, Toast, _, outputAlphabet) {
+
+        return {
+            scope: {
+                counterExamples: '='
+            },
+            templateUrl: paths.views.DIRECTIVES + '/counter-examples-widget.html',
+            controller: ['$scope', controller]
+        };
+
+        function controller($scope) {
+
+            $scope.counterExample = [];
+            $scope.tmpCounterExamples = [];
+
+            function init() {
+                $scope.counterExample = CounterExampleService.getCurrentCounterexample();
+            }
+
+            function renewCounterexamples() {
+                $scope.counterExamples = {
+                    input: _.pluck($scope.tmpCounterExamples, 'input'),
+                    output: _.pluck($scope.tmpCounterExamples, 'output')
+                }
+            }
+
+            $scope.removeInputOutputAt = function (i) {
+                $scope.counterExample.splice(i, 1);
+            };
+
+            $scope.toggleOutputAt = function (i) {
+                if ($scope.counterExample[i].output === outputAlphabet.OK) {
+                    $scope.counterExample[i].output = outputAlphabet.FAILED
+                } else {
+                    $scope.counterExample[i].output = outputAlphabet.OK
+                }
+            };
+
+            $scope.addCounterExample = function () {
+                $scope.tmpCounterExamples.push($scope.counterExample);
+                CounterExampleService.resetCurrentCounterexample();
+                renewCounterexamples();
+                init();
+            };
+
+            $scope.removeCounterExampleAt = function (i) {
+                $scope.tmpCounterExamples.splice(i, 1);
+                renewCounterexamples();
+            };
+
+            $scope.selectCounterExampleAt = function (i) {
+                CounterExampleService.setCurrentCounterexample($scope.tmpCounterExamples[i]);
+                $scope.removeCounterExampleAt(i);
+                init();
+            };
+
+            $scope.testCounterExample = function () {
+                Learner.isCounterexample($scope.counterExample)
+                    .then(function (isCounterexample) {
+                        if (isCounterexample) {
+                            Toast.success('The selected path is a counterexample');
+                        } else {
+                            Toast.danger('The selected path is not a counterexample');
+                        }
+                    })
+            };
+
+            init();
+        }
+    }
+
+
+    function learnResumeSettingsWidget(paths) {
+
+        return {
+            templateUrl: paths.views.DIRECTIVES + '/learn-resume-settings-widget.html',
+            scope: {
+                configuration: '='
+            },
+            controller: ['$scope', 'eqOracles', 'EqOracle', controller]
+        };
+
+        function controller($scope, eqOracles, EqOracle) {
+
+            $scope.eqOracles = eqOracles;
+
+            $scope.selectedEqOracle = $scope.configuration.eqOracle.type;
+
+            $scope.setEqOracle = function () {
+                $scope.configuration.eqOracle = EqOracle.createFromType($scope.selectedEqOracle);
+            };
+        }
+    }
+}());;(function () {
 
     angular
         .module('weblearner.models')
@@ -7986,7 +8036,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     function ActionModel(actionTypes) {
 
-        function Action() {
+        function Action(type) {
+            this.type = type;
             this.negated = false;
             this.ignoreFailure = false;
         }
@@ -7995,8 +8046,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Web.SearchForText = function (value, isRegexp) {
-            Action.call(this);
-            this.type = actionTypes.web.SEARCH_FOR_TEXT;
+            Action.call(this, actionTypes.web.SEARCH_FOR_TEXT);
             this.value = value || null;
             this.regexp = isRegexp || false;
         };
@@ -8006,8 +8056,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Web.SearchForNode = function (value, isRegexp) {
-            Action.call(this);
-            this.type = actionTypes.web.SEARCH_FOR_NODE;
+            Action.call(this, actionTypes.web.SEARCH_FOR_NODE);
             this.value = value || null;
             this.regexp = isRegexp || false
         };
@@ -8017,8 +8066,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Web.Clear = function (node) {
-            Action.call(this);
-            this.type = actionTypes.web.CLEAR;
+            Action.call(this, actionTypes.web.CLEAR);
             this.node = node || null;
         };
 
@@ -8027,8 +8075,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Web.Click = function (node) {
-            Action.call(this);
-            this.type = actionTypes.web.CLICK;
+            Action.call(this, actionTypes.web.CLICK);
             this.node = node || null;
         };
 
@@ -8037,8 +8084,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Web.Fill = function (node, value) {
-            Action.call(this);
-            this.type = actionTypes.web.FILL;
+            Action.call(this, actionTypes.web.FILL);
             this.node = node || null;
             this.value = value || null
         };
@@ -8048,8 +8094,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Web.GoTo = function (url) {
-            Action.call(this);
-            this.type = actionTypes.web.GO_TO;
+            Action.call(this, actionTypes.web.GO_TO);
             this.url = url || null;
         };
 
@@ -8058,13 +8103,22 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Web.Submit = function (node) {
-            Action.call(this);
-            this.type = actionTypes.web.SUBMIT;
+            Action.call(this, actionTypes.web.SUBMIT);
             this.node = node || null;
         };
 
         Action.Web.Submit.prototype.toString = function () {
             return 'Submit element "' + this.node + '"';
+        };
+
+        Action.Web.Select = function (node, value) {
+            Action.call(this, actionTypes.web.SELECT);
+            this.node = node || null;
+            this.value = value || null;
+        };
+
+        Action.Web.Select.prototype.toString = function () {
+            return 'Select value "' + this.value + '" from select input "' + this.node + '"';
         };
 
         //////////
@@ -8073,8 +8127,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Rest.Call = function (method, url, data) {
-            Action.call(this);
-            this.type = actionTypes.rest.CALL_URL;
+            Action.call(this, actionTypes.rest.CALL_URL);
             this.method = method || null;
             this.url = url || null;
             this.data = data || null;
@@ -8085,8 +8138,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Rest.CheckStatus = function (statusCode) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_STATUS;
+            Action.call(this, actionTypes.rest.CHECK_STATUS);
             this.status = statusCode || null;
         };
 
@@ -8095,8 +8147,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Rest.CheckHeaderField = function (key, value, isRegexp) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_HEADER_FIELD;
+            Action.call(this, actionTypes.rest.CHECK_HEADER_FIELD);
             this.key = key || null;
             this.value = value || null;
             this.regexp = isRegexp || false;
@@ -8107,8 +8158,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Rest.CheckHttpBodyText = function (value, isRegexp) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_HTTP_BODY_TEXT;
+            Action.call(this, actionTypes.rest.CHECK_HTTP_BODY_TEXT);
             this.value = value || null;
             this.regexp = isRegexp || false;
         };
@@ -8118,8 +8168,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Rest.CheckAttributeExists = function (attribute) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_ATTRIBUTE_EXISTS;
+            Action.call(this, actionTypes.rest.CHECK_ATTRIBUTE_EXISTS);
             this.attribute = this.attribute = attribute || null;
         };
 
@@ -8128,8 +8177,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Rest.CheckAttributeValue = function (attribute, value, isRegexp) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_ATTRIBUTE_VALUE;
+            Action.call(this, actionTypes.rest.CHECK_ATTRIBUTE_VALUE);
             this.attribute = attribute || null;
             this.value = value || null;
             this.regexp = isRegexp || false
@@ -8140,8 +8188,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Rest.CheckAttributeType = function (attribute, jsonType) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_ATTRIBUTE_TYPE;
+            Action.call(this, actionTypes.rest.CHECK_ATTRIBUTE_TYPE);
             this.attribute = attribute || null;
             this.jsonType = jsonType || null;
         };
@@ -8156,8 +8203,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Other.Wait = function (duration) {
-            Action.call(this);
-            this.type = actionTypes.other.WAIT;
+            Action.call(this, actionTypes.other.WAIT);
             this.duration = duration || 0;
         };
 
@@ -8166,8 +8212,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Other.DeclareCounter = function (name) {
-            Action.call(this);
-            this.type = actionTypes.other.DECLARE_COUNTER;
+            Action.call(this, actionTypes.other.DECLARE_COUNTER);
             this.name = name || null;
         };
 
@@ -8176,8 +8221,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Other.DeclareVariable = function (name) {
-            Action.call(this);
-            this.type = actionTypes.other.DECLARE_VARIABLE;
+            Action.call(this, actionTypes.other.DECLARE_VARIABLE);
             this.name = name || null;
         };
 
@@ -8186,14 +8230,13 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Other.ExecuteSymbol = function (symbolName, idRevisionPair) {
-            Action.call(this);
+            Action.call(this, actionTypes.other.EXECUTE_SYMBOL);
 
             var _symbol = {
                 name: symbolName || null,
                 revision: null
             };
 
-            this.type = actionTypes.other.EXECUTE_SYMBOL;
             this.symbolToExecute = idRevisionPair || {id: null, revision: null};
 
             this.setSymbol = function (symbol) {
@@ -8217,8 +8260,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Other.IncrementCounter = function (name) {
-            Action.call(this);
-            this.type = actionTypes.other.INCREMENT_COUNTER;
+            Action.call(this, actionTypes.other.INCREMENT_COUNTER);
             this.name = name || null;
         };
 
@@ -8227,8 +8269,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Other.SetCounter = function (name, value) {
-            Action.call(this);
-            this.type = actionTypes.other.SET_COUNTER;
+            Action.call(this, actionTypes.other.SET_COUNTER);
             this.name = name || null;
             this.value = value || null;
         };
@@ -8238,8 +8279,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Other.SetVariable = function (name, value) {
-            Action.call(this);
-            this.type = actionTypes.other.SET_VARIABLE;
+            Action.call(this, actionTypes.other.SET_VARIABLE);
             this.name = name;
             this.value = value;
         };
@@ -8249,8 +8289,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Other.SetVariableByJSONAttribute = function (name, jsonAttribute) {
-            Action.call(this);
-            this.type = actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE;
+            Action.call(this, actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE);
             this.name = name || null;
             this.value = jsonAttribute || null;
         };
@@ -8260,8 +8299,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Other.SetVariableByNode = function (name, xPath) {
-            Action.call(this);
-            this.type = actionTypes.other.SET_VARIABLE_BY_NODE;
+            Action.call(this, actionTypes.other.SET_VARIABLE_BY_NODE);
             this.name = name || null;
             this.value = xPath || null;
         };
@@ -8296,6 +8334,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     break;
                 case actionTypes.web.SUBMIT:
                     action = new Action.Web.Submit(data.node);
+                    break;
+                case actionTypes.web.SELECT:
+                    action = new Action.Web.Select(data.node);
                     break;
 
                 // rest actions
@@ -8453,7 +8494,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
             switch (data.type) {
                 case eqOracles.RANDOM:
-                    eqOracle = new Random(data.minLength, data.maxLength);
+                    eqOracle = new Random(data.minLength, data.maxLength, data.maxNoOfTests);
                     break;
                 case eqOracles.COMPLETE:
                     eqOracle = new Complete(data.minDepth, data.maxDepth);
@@ -8500,15 +8541,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     function LearnConfigurationModel(learnAlgorithms, EqOracle) {
 
         /**
-         *
          * @constructor
          */
         function LearnConfiguration() {
             this.symbols = [];
             this.maxAmountOfStepsToLearn = 0;
-            this.eqOracle = new EqOracle.Complete();
+            this.eqOracle = new EqOracle.Random(1, 10, 20);
             this.algorithm = learnAlgorithms.EXTENSIBLE_LSTAR;
-            this.resetSymbol;
+            this.resetSymbol = null;
         }
 
         /**
@@ -9572,6 +9612,45 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     angular
         .module('weblearner.services')
+        .factory('CounterExampleService', CounterExampleService);
+
+    CounterExampleService.$inject = [];
+
+    function CounterExampleService() {
+
+        var counterexample = [];
+
+        return {
+            getCurrentCounterexample: getCurrentCounterexample,
+            setCurrentCounterexample: setCurrentCounterexample,
+            resetCurrentCounterexample: resetCurrentCounterexample,
+            addIOPairToCurrentCounterexample: addIOPairToCurrentCounterexample
+        };
+
+        function getCurrentCounterexample() {
+            return counterexample;
+        }
+
+        function setCurrentCounterexample(ce) {
+            counterexample = ce;
+        }
+
+        function resetCurrentCounterexample() {
+            counterexample = [];
+        }
+
+        function addIOPairToCurrentCounterexample(input, output) {
+            counterexample.push({
+                input: input,
+                output: output
+            })
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.services')
         .factory('FileDownloadService', FileDownloadService);
 
     FileDownloadService.$inject = ['PromptService'];
@@ -9925,7 +10004,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @param $http
      * @param $q
      * @param paths
-     * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive}}
+     * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive, isCounterexample: isCounterexample}}
      * @constructor
      */
     function LearnerService($http, $q, paths) {
@@ -9935,7 +10014,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             stop: stop,
             resume: resume,
             getStatus: getStatus,
-            isActive: isActive
+            isActive: isActive,
+            isCounterexample: isCounterexample
         };
 
         /**
@@ -9993,6 +10073,19 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             return $http.get(paths.api.URL + '/learner/active')
                 .then(function (response) {
                     return response.data;
+                })
+        }
+
+        /**
+         * Checks if the selected path is a counterexample.
+         *
+         * @param counterexample
+         * @returns {*}
+         */
+        function isCounterexample(projectId, counterexample) {
+            return $http.post(paths.api.URL + '/learner/active', {})
+                .then(function (response) {
+                    return true;
                 })
         }
     }

@@ -1,4 +1,42 @@
-angular.module('templates-all', ['app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget-counter-examples.html', 'app/views/directives/widget-test-resume-settings.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
+angular.module('templates-all', ['app/views/directives/counter-examples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
+
+angular.module("app/views/directives/counter-examples-widget.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/counter-examples-widget.html",
+    "<form class=\"form form-condensed\" ng-submit=\"addCounterExample()\">\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        <em>Click on the labels of the hypothesis to create a counterexample. Click on an output to toggle it.</em>\n" +
+    "    </p>\n" +
+    "\n" +
+    "    <div class=\"list-group list-group-condensed\" as-sortable ng-model=\"counterExample\">\n" +
+    "        <div class=\"list-group-item\" ng-repeat=\"io in counterExample\" as-sortable-item>\n" +
+    "\n" +
+    "            <i class=\"fa fa-fw fa-close pull-right\" ng-click=\"removeInputOutputAt($index)\"></i>\n" +
+    "            <i class=\"fa fa-fw fa-sort pull-right\" as-sortable-item-handle></i>\n" +
+    "\n" +
+    "            <span class=\"label label-primary\">{{io.input}}</span>\n" +
+    "            {{io.output === outputAlphabet.OK}}\n" +
+    "            <span class=\"label\" ng-class=\"io.output === outputAlphabet.OK ? 'label-success' : 'label-danger'\"\n" +
+    "                  ng-click=\"toggleOutputAt($index)\">{{io.output}}</span>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\" ng-show=\"counterExample.length > 0\">\n" +
+    "        <button class=\"btn btn-primary btn-xs\">Add</button>\n" +
+    "        <a href class=\"btn btn-default btn-xs\" ng-click=\"testCounterExample()\">Test</a>\n" +
+    "        <hr>\n" +
+    "    </div>\n" +
+    "</form>\n" +
+    "\n" +
+    "<ul class=\"list-group\">\n" +
+    "    <li class=\"list-group-item\" ng-repeat=\"ce in tmpCounterExamples\" ng-click=\"selectCounterExampleAt($index)\">\n" +
+    "        <span class=\"btn btn-icon pull-right\" ng-click=\"removeCounterExampleAt($index)\">\n" +
+    "            <i class=\"fa fa-trash\"></i>\n" +
+    "        </span>\n" +
+    "        {{ce}}\n" +
+    "    </li>\n" +
+    "</ul>");
+}]);
 
 angular.module("app/views/directives/html-element-picker.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -94,7 +132,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                        </button>\n" +
     "                        <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
     "                            <li>\n" +
-    "                                <a href learn-result-details-modal-handle result=\"getCurrentStep()\">\n" +
+    "                                <a href learn-result-details-modal-handle result=\"results[pointer]\">\n" +
     "                                    <i class=\"fa fa-info fa-fw\"></i> Details\n" +
     "                                </a>\n" +
     "                            </li>\n" +
@@ -103,7 +141,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                                <a href download-svg ancestor-or-element=\"#hypothesis-panel-{{index}}\">\n" +
     "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.svg\n" +
     "                                </a>\n" +
-    "                                <a href download-as-json data=\"getCurrentStep().hypothesis\">\n" +
+    "                                <a href download-as-json data=\"results[pointer].hypothesis\">\n" +
     "                                    <i class=\"fa fa-save fa-fw\"></i>&nbsp; Save as *.json\n" +
     "                                </a>\n" +
     "                            </li>\n" +
@@ -154,7 +192,11 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "    <div class=\"hypothesis-panel\" id=\"hypothesis-panel-{{index}}\">\n" +
     "\n" +
     "        <hypothesis id=\"hypothesis\" test=\"results[pointer]\" layout-settings=\"layoutSettings\"\n" +
-    "                    ng-if=\"mode === modes.HYPOTHESIS\" && pointer=== results.length - 1></hypothesis>\n" +
+    "                    ng-if=\"mode === modes.HYPOTHESIS && pointer === results.length - 1\"\n" +
+    "                    is-selectable=\"true\"></hypothesis>\n" +
+    "\n" +
+    "        <hypothesis id=\"hypothesis\" test=\"results[pointer]\" layout-settings=\"layoutSettings\"\n" +
+    "                    ng-if=\"mode === modes.HYPOTHESIS && pointer !== results.length - 1\"></hypothesis>\n" +
     "\n" +
     "        <observation-table data=\"results[pointer].algorithmInformation\"\n" +
     "                           ng-if=\"mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR\">\n" +
@@ -179,6 +221,58 @@ angular.module("app/views/directives/learn-results-slideshow-panel.html", []).ru
     "        <i class=\"fa fa-close\"></i>\n" +
     "    </button>\n" +
     "</learn-results-panel>");
+}]);
+
+angular.module("app/views/directives/learn-resume-settings-widget.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/directives/learn-resume-settings-widget.html",
+    "<form class=\"form form-condensed\">\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">EQ Oracle</label><br>\n" +
+    "        <select class=\"form-control\" ng-model=\"selectedEqOracle\" ng-change=\"setEqOracle()\"\n" +
+    "                ng-options=\"(v|formatEqOracle) for (k,v) in eqOracles\">\n" +
+    "            <option value=\"\" disabled>select a method</option>\n" +
+    "        </select>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <div ng-if=\"configuration.eqOracle.type == eqOracles.RANDOM\">\n" +
+    "            <p>\n" +
+    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.minLength\" type=\"number\"\n" +
+    "                       style=\"display: inline; width: auto\"> min length\n" +
+    "            </p>\n" +
+    "\n" +
+    "            <p>\n" +
+    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxLength\" type=\"number\"\n" +
+    "                       style=\"display: inline; width: auto\"> max length\n" +
+    "            </p>\n" +
+    "\n" +
+    "            <p>\n" +
+    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxNoOfTests\" type=\"number\"\n" +
+    "                       style=\"display: inline; width: auto\"> no of random words\n" +
+    "            </p>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div ng-if=\"configuration.eqOracle.type == eqOracles.COMPLETE\">\n" +
+    "            <p>\n" +
+    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.minDepth\" type=\"number\"\n" +
+    "                       style=\"display: inline; width: auto\"> min depth\n" +
+    "            </p>\n" +
+    "\n" +
+    "            <p>\n" +
+    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxDepth\" type=\"number\"\n" +
+    "                       style=\"display: inline; width: auto\"> max depth\n" +
+    "            </p>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Steps to Learn (0 := never stop)</label>\n" +
+    "        <input ng-model=\"configuration.maxAmountOfStepsToLearn\" class=\"form-control\" type=\"text\" placeholder=\"0\">\n" +
+    "    </div>\n" +
+    "\n" +
+    "</form>");
 }]);
 
 angular.module("app/views/directives/learner-result-chart-multiple-final.html", []).run(["$templateCache", function($templateCache) {
@@ -363,90 +457,6 @@ angular.module("app/views/directives/view-heading.html", []).run(["$templateCach
     "</div>");
 }]);
 
-angular.module("app/views/directives/widget-counter-examples.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/widget-counter-examples.html",
-    "<form class=\"form form-condensed\" ng-submit=\"addCounterExample()\">\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Click on the labels of the hypothesis\n" +
-    "    </p>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input type=\"text\" class=\"form-control\" placeholder=\"input\" ng-model=\"newCounterExample.input\">\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input type=\"text\" class=\"form-control\" placeholder=\"output\" ng-model=\"newCounterExample.output\">\n" +
-    "    </div>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <button class=\"btn btn-primary btn-xs\">Add</button>\n" +
-    "        <a href class=\"btn btn-default btn-xs\" ng-click=\"testCounterExample(counterExample)\">Test</a>\n" +
-    "    </div>\n" +
-    "</form>\n" +
-    "<hr>\n" +
-    "\n" +
-    "<ul class=\"list-group\">\n" +
-    "    <li class=\"list-group-item\" ng-repeat=\"ce in counterExamples\">\n" +
-    "        <span class=\"btn btn-icon pull-right\" ng-click=\"removeCounterExample(ce, $index)\">\n" +
-    "            <i class=\"fa fa-trash\"></i>\n" +
-    "        </span>\n" +
-    "        {{ce.input}}<br>\n" +
-    "        {{ce.output}}\n" +
-    "    </li>\n" +
-    "</ul>");
-}]);
-
-angular.module("app/views/directives/widget-test-resume-settings.html", []).run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("app/views/directives/widget-test-resume-settings.html",
-    "<form class=\"form form-condensed\">\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">EQ Oracle</label><br>\n" +
-    "        <select class=\"form-control\" ng-model=\"configuration.eqOracle.type\" ng-options=\"k for (k,v) in eqOracles\">\n" +
-    "            <option value=\"\" disabled>select a method</option>\n" +
-    "        </select>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <div ng-if=\"configuration.eqOracle.type == eqOracles.RANDOM\">\n" +
-    "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.minLength\" type=\"number\"\n" +
-    "                       style=\"display: inline; width: auto\"> min length\n" +
-    "            </p>\n" +
-    "\n" +
-    "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxLength\" type=\"number\"\n" +
-    "                       style=\"display: inline; width: auto\"> max length\n" +
-    "            </p>\n" +
-    "\n" +
-    "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxNoOfTests\" type=\"number\"\n" +
-    "                       style=\"display: inline; width: auto\"> no of random words to be generated\n" +
-    "            </p>\n" +
-    "        </div>\n" +
-    "\n" +
-    "        <div ng-if=\"configuration.eqOracle.type == eqOracles.COMPLETE\">\n" +
-    "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.minDepth\" type=\"number\"\n" +
-    "                       style=\"display: inline; width: auto\"> min depth\n" +
-    "            </p>\n" +
-    "\n" +
-    "            <p>\n" +
-    "                <input class=\"form-control\" ng-model=\"configuration.eqOracle.maxDepth\" type=\"number\"\n" +
-    "                       style=\"display: inline; width: auto\"> max depth\n" +
-    "            </p>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label\">Max Amount of Steps to Learn (0 := never stop)</label>\n" +
-    "        <input ng-model=\"configuration.maxAmountOfStepsToLearn\" class=\"form-control\" type=\"text\" placeholder=\"0\">\n" +
-    "    </div>\n" +
-    "\n" +
-    "</form>");
-}]);
-
 angular.module("app/views/includes/action-forms.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/includes/action-forms.html",
@@ -610,6 +620,33 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "\n" +
     "</div>\n" +
     "<!-- END: SUBMIT -->\n" +
+    "\n" +
+    "\n" +
+    "<!-- BEGIN: SELECT -->\n" +
+    "<div ng-if=\"action.type === actionTypes.web.SELECT\">\n" +
+    "\n" +
+    "    <h4><strong>Select value</strong></h4>\n" +
+    "\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        Select a value from a select input\n" +
+    "    </p>\n" +
+    "    <hr>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">CSS selector</label>\n" +
+    "        <input class=\"form-control\" type=\"text\" placeholder=\"CSS selector\" ng-model=\"action.node\">\n" +
+    "    </div>\n" +
+    "    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
+    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "    </a>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Value</label>\n" +
+    "        <input class=\"form-control\" type=\"text\" placeholder=\"Selected value\" ng-model=\"action.value\">\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "<!-- END: SELECT -->\n" +
     "\n" +
     "\n" +
     "<!-- BEGIN: CALL_URL -->\n" +
@@ -1261,11 +1298,13 @@ angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$te
     "		</div>\n" +
     "\n" +
     "		<div class=\"form-group\">\n" +
-    "			<label class=\"control-label\">EQ Oracle</label><br> <span\n" +
-    "				class=\"text-muted\">Select how counter examples should be\n" +
-    "				found</span> <select class=\"form-control\" ng-model=\"selectedEqOracle\"\n" +
-    "                                     ng-options=\"(v|formatEqOracle) for (k,v) in eqOracles\">\n" +
-    "				<option value=\"\" disabled>select a method</option>\n" +
+    "            <label class=\"control-label\">EQ Oracle</label><br>\n" +
+    "            <span class=\"text-muted\">Select how counter examples should be found</span>\n" +
+    "            <select class=\"form-control\"\n" +
+    "                    ng-model=\"selectedEqOracle\"\n" +
+    "                    ng-change=\"setEqOracle()\"\n" +
+    "                    ng-options=\"(v|formatEqOracle) for (k,v) in eqOracles\">\n" +
+    "                <option value=\"\" disabled>select an EQ-Oracle</option>\n" +
     "			</select>\n" +
     "		</div>\n" +
     "\n" +
@@ -1984,7 +2023,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-right\">\n" +
-    "            <button class=\"btn btn-xs btn-default\" open-learn-setup-settings-modal\n" +
+    "            <button class=\"btn btn-xs btn-default\" learn-setup-settings-modal-handle\n" +
     "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
     "                <i class=\"fa fa-gear\"></i>\n" +
     "            </button>\n" +
@@ -2000,7 +2039,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "    <div class=\"container symbol-group-list\">\n" +
     "\n" +
     "        <div class=\"alert alert-info alert-condensed clearfix\">\n" +
-    "            <button class=\"btn btn-xs btn-info pull-right\" open-learn-setup-settings-modal\n" +
+    "            <button class=\"btn btn-xs btn-info pull-right\" learn-setup-settings-modal-handle\n" +
     "                    learn-configuration=\"learnConfiguration\" on-ok=\"updateLearnConfiguration\">\n" +
     "                <i class=\"fa fa-gear\"></i>\n" +
     "            </button>\n" +
@@ -2092,7 +2131,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
 angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/learn-start.html",
-    "<div style=\"position: absolute; width: 100%; top: 42px; bottom: 0; overflow: auto;\">\n" +
+    "<div style=\"position: absolute; width: 100%; top: 42px; bottom: 0; overflow: hidden\">\n" +
     "\n" +
     "    <div ng-if=\"active == true\" class=\"container\" style=\"margin-top: 54px\">\n" +
     "        <div class=\"alert alert-info\">\n" +
@@ -2106,26 +2145,26 @@ angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", fu
     "\n" +
     "    <div ng-if=\"!active && results.length > 0\">\n" +
     "\n" +
-    "        <!--<div class=\"panel-sidebar\">-->\n" +
+    "        <div class=\"panel-sidebar\" ng-class=\"showSidebar === true ? 'show' : ''\">\n" +
+    "            <div widget widget-title=\"Configuration\" collapsed=\"false\">\n" +
+    "                <div learn-resume-settings-widget configuration=\"_.last(results).configuration\"></div>\n" +
+    "            </div>\n" +
     "\n" +
-    "        <!--<p>-->\n" +
-    "        <!--<br>-->\n" +
-    "        <!--<button class=\"btn btn-primary btn-sm btn-block\" ng-click=\"resumeLearning()\">Resume</button>-->\n" +
-    "        <!--</p>-->\n" +
+    "            <div widget widget-title=\"Counter Examples\" collapsed=\"false\"\n" +
+    "                 ng-if=\"_.last(results).configuration.eqOracle.type === 'sample'\">\n" +
+    "                <div counter-examples-widget\n" +
+    "                     counter-examples=\"_.last(results).configuration.eqOracle.counterExamples\"></div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "\n" +
-    "        <!--<div widget widget-title=\"Configuration\" collapsed=\"false\">-->\n" +
-    "        <!--<div widget-test-resume-settings configuration=\"_.last(results).configuration\"></div>-->\n" +
-    "        <!--</div>-->\n" +
-    "\n" +
-    "        <!--<div widget widget-title=\"Counter Examples\" collapsed=\"true\"-->\n" +
-    "        <!--ng-if=\"_.last(results).configuration.eqOracle.type === 'sample'\">-->\n" +
-    "        <!--<div widget-counter-examples counter-examples=\"_.last(results).configuration.eqOracle.counterExamples\"-->\n" +
-    "        <!--counter-example=\"counterExample\"></div>-->\n" +
-    "        <!--</div>-->\n" +
-    "\n" +
-    "        <!--</div>-->\n" +
-    "\n" +
-    "        <div learn-results-panel results=\"results\"></div>\n" +
+    "        <div learn-results-panel results=\"results\">\n" +
+    "            <div class=\"btn-group btn-group-xs\" style=\"margin-left: 7px\">\n" +
+    "                <button class=\"btn btn-success\" ng-click=\"resumeLearning()\">Resume</button>\n" +
+    "                <button class=\"btn btn-success\" ng-click=\"toggleSidebar()\">\n" +
+    "                    <i class=\"fa fa-fw\" ng-class=\"showSidebar ? 'fa-close' : 'fa-gear'\"></i>\n" +
+    "                </button>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "\n" +
     "    </div>\n" +
     "\n" +

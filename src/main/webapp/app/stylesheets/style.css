@@ -5496,15 +5496,22 @@ form.form-condensed .form-group {
 
 .panel-sidebar {
     position: absolute;
-    right: 0;
+    right: 0px;
+    transform: translate(320px, 0);
     bottom: 0;
-    top: 30px;
+    top: 38px;
     width: 320px;
-    background: #f8f8f8;
+    background: #f2f2f2;
     border: 1px solid #e7e7e7;
     z-index: 1;
     overflow: auto;
-    padding: 10px
+    padding: 10px;
+    transition: transform 200ms
+}
+
+.panel-sidebar.show {
+    transform: translate(0, 0);
+    box-shadow: -4px 0px 15px rgba(0, 0, 0, 0.3)
 }
 
 .panel-sidebar .panel {
@@ -5536,6 +5543,10 @@ form.form-condensed .form-group {
 .btn.btn-icon:active {
     box-shadow: none;
     outline: none
+}
+
+.list-group-condensed .list-group-item {
+    padding: 4px 6px
 }
 
 .panel {

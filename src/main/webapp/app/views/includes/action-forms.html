@@ -160,6 +160,33 @@
 <!-- END: SUBMIT -->
 
 
+<!-- BEGIN: SELECT -->
+<div ng-if="action.type === actionTypes.web.SELECT">
+
+    <h4><strong>Select value</strong></h4>
+
+    <p class="text-muted">
+        Select a value from a select input
+    </p>
+    <hr>
+
+    <div class="form-group">
+        <label class="control-label">CSS selector</label>
+        <input class="form-control" type="text" placeholder="CSS selector" ng-model="action.node">
+    </div>
+    <a class="btn btn-default btn-sm" html-element-picker model="action.node">
+        <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
+    </a>
+
+    <div class="form-group">
+        <label class="control-label">Value</label>
+        <input class="form-control" type="text" placeholder="Selected value" ng-model="action.value">
+    </div>
+
+</div>
+<!-- END: SELECT -->
+
+
 <!-- BEGIN: CALL_URL -->
 <div ng-if="action.type === actionTypes.rest.CALL_URL">
 

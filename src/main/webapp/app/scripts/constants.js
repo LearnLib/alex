@@ -1,4 +1,4 @@
-(function(){
+(function () {
     'use strict';
 
     angular
@@ -11,19 +11,24 @@
         .constant('graphlib', window.graphlib)  // graphlib
 
         // paths that are used in the application
-    	.constant('paths', {
-    		views: {
-    			BASE: 'app/views',
-    			DIRECTIVES: 'app/views/directives',
-    			MODALS: 'app/views/modals',
+        .constant('paths', {
+            views: {
+                BASE: 'app/views',
+                DIRECTIVES: 'app/views/directives',
+                MODALS: 'app/views/modals',
                 PAGES: 'app/views/pages',
                 INCLUDES: 'app/views/includes'
-    		},
-    		api: {
-    			URL: '/rest',
-    			PROXY_URL: '/rest/proxy?url='
-    		}
-    	})
+            },
+            api: {
+                URL: '/rest',
+                PROXY_URL: '/rest/proxy?url='
+            }
+        })
+
+        .constant('outputAlphabet', {
+            OK: 'OK',
+            FAILED: 'FAILED'
+        })
 
         // web action types
         .constant('actionTypes', {
@@ -34,7 +39,8 @@
                 CLICK: 'web_click',
                 FILL: 'web_fill',
                 GO_TO: 'web_goto',
-                SUBMIT: 'web_submit'
+                SUBMIT: 'web_submit',
+                SELECT: 'web_select'
             },
             rest: {
                 CALL_URL: 'rest_call',
@@ -70,6 +76,6 @@
             EXTENSIBLE_LSTAR: 'EXTENSIBLE_LSTAR',
             DHC: 'DHC',
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
-            TTT : 'TTT'
+            TTT: 'TTT'
         })
 }());

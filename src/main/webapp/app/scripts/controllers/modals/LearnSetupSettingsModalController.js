@@ -44,14 +44,14 @@
          *
          * @type {LearnConfiguration}
          */
-        $scope.learnConfiguration = modalData.learnConfiguration;
+        $scope.learnConfiguration = modalData.learnConfiguration.copy();
 
-        // watch for the select input to change and create a new EqOracle based on the type
-        $scope.$watch('selectedEqOracle', function (type) {
-            if (type) {
-                $scope.learnConfiguration.eqOracle = EqOracle.createFromType(type);
-            }
-        });
+        /**
+         * Sets the Eq Oracle of the learn configuration depending on the selected value
+         */
+        $scope.setEqOracle = function () {
+            $scope.learnConfiguration.eqOracle = EqOracle.createFromType($scope.selectedEqOracle)
+        };
 
         /**
          * Close the modal dialog and pass the edited learn configuration instance.

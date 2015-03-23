@@ -46,13 +46,10 @@
         $scope.active = false;
 
         /**
-         *
-         * @type {{input: string, output: string}}
+         * Flag for showing or hiding the sidebar
+         * @type {boolean}
          */
-        $scope.counterExample = {
-            input: '',
-            output: ''
-        };
+        $scope.showSidebar = false;
 
         // initialize the controller
         (function init() {
@@ -109,6 +106,10 @@
             delete copy.algorithm;
             delete copy.symbols;
             delete copy.resetSymbol;
+
+            console.log(copy.eqOracle);
+            return;
+
             Learner.resume(project.id, _.last($scope.results).testNo, copy)
                 .then(poll)
         };
@@ -123,13 +124,8 @@
             }
         };
 
-        /**
-         * Test if a counter example really is one
-         *
-         * @param counterExample
-         */
-        $scope.testCounterExample = function (counterExample) {
-            
+        $scope.toggleSidebar = function () {
+            $scope.showSidebar = !$scope.showSidebar;
         }
     }
 }());

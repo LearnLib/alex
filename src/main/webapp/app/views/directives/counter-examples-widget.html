@@ -1,0 +1,33 @@
+<form class="form form-condensed" ng-submit="addCounterExample()">
+    <p class="text-muted">
+        <em>Click on the labels of the hypothesis to create a counterexample. Click on an output to toggle it.</em>
+    </p>
+
+    <div class="list-group list-group-condensed" as-sortable ng-model="counterExample">
+        <div class="list-group-item" ng-repeat="io in counterExample" as-sortable-item>
+
+            <i class="fa fa-fw fa-close pull-right" ng-click="removeInputOutputAt($index)"></i>
+            <i class="fa fa-fw fa-sort pull-right" as-sortable-item-handle></i>
+
+            <span class="label label-primary">{{io.input}}</span>
+            {{io.output === outputAlphabet.OK}}
+            <span class="label" ng-class="io.output === outputAlphabet.OK ? 'label-success' : 'label-danger'"
+                  ng-click="toggleOutputAt($index)">{{io.output}}</span>
+        </div>
+    </div>
+
+    <div class="form-group" ng-show="counterExample.length > 0">
+        <button class="btn btn-primary btn-xs">Add</button>
+        <a href class="btn btn-default btn-xs" ng-click="testCounterExample()">Test</a>
+        <hr>
+    </div>
+</form>
+
+<ul class="list-group">
+    <li class="list-group-item" ng-repeat="ce in tmpCounterExamples" ng-click="selectCounterExampleAt($index)">
+        <span class="btn btn-icon pull-right" ng-click="removeCounterExampleAt($index)">
+            <i class="fa fa-trash"></i>
+        </span>
+        {{ce}}
+    </li>
+</ul>

@@ -2,7 +2,8 @@
 
     <div class="form-group">
         <label class="control-label">EQ Oracle</label><br>
-        <select class="form-control" ng-model="configuration.eqOracle.type" ng-options="k for (k,v) in eqOracles">
+        <select class="form-control" ng-model="selectedEqOracle" ng-change="setEqOracle()"
+                ng-options="(v|formatEqOracle) for (k,v) in eqOracles">
             <option value="" disabled>select a method</option>
         </select>
     </div>
@@ -21,7 +22,7 @@
 
             <p>
                 <input class="form-control" ng-model="configuration.eqOracle.maxNoOfTests" type="number"
-                       style="display: inline; width: auto"> no of random words to be generated
+                       style="display: inline; width: auto"> no of random words
             </p>
         </div>
 
@@ -39,7 +40,7 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label">Max Amount of Steps to Learn (0 := never stop)</label>
+        <label class="control-label">Steps to Learn (0 := never stop)</label>
         <input ng-model="configuration.maxAmountOfStepsToLearn" class="form-control" type="text" placeholder="0">
     </div>
 

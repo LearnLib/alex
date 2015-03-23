@@ -18,15 +18,14 @@
     function LearnConfigurationModel(learnAlgorithms, EqOracle) {
 
         /**
-         *
          * @constructor
          */
         function LearnConfiguration() {
             this.symbols = [];
             this.maxAmountOfStepsToLearn = 0;
-            this.eqOracle = new EqOracle.Complete();
+            this.eqOracle = new EqOracle.Random(1, 10, 20);
             this.algorithm = learnAlgorithms.EXTENSIBLE_LSTAR;
-            this.resetSymbol;
+            this.resetSymbol = null;
         }
 
         /**
