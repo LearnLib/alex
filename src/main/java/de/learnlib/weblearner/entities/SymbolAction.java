@@ -26,6 +26,7 @@ import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClearAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.FillAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.GotoAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.SelectAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.SubmitAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
@@ -74,6 +75,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
+        @JsonSubTypes.Type(name = "web_select", value = SelectAction.class),
         // REST Actions
         @JsonSubTypes.Type(name = "rest", value = RESTSymbolAction.class),
         @JsonSubTypes.Type(name = "rest_call", value = CallAction.class),

@@ -28,6 +28,7 @@ import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClearAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.FillAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.GotoAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.SelectAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.SubmitAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.WebSymbolAction;
 import org.apache.logging.log4j.LogManager;
@@ -83,6 +84,7 @@ public final class HibernateUtil {
             configuration.addAnnotatedClass(FillAction.class);
             configuration.addAnnotatedClass(GotoAction.class);
             configuration.addAnnotatedClass(SubmitAction.class);
+            configuration.addAnnotatedClass(SelectAction.class);
             // REST Symbols & Actions
             configuration.addAnnotatedClass(RESTSymbolAction.class);
             configuration.addAnnotatedClass(CallAction.class);
