@@ -7,12 +7,12 @@ import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.LearnerResumeConfiguration;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.learner.connectors.CounterStoreContextHandler;
+import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
 import de.learnlib.weblearner.learner.connectors.MultiContextHandler;
-import de.learnlib.weblearner.learner.connectors.VariableStoreContextHandler;
-import de.learnlib.weblearner.learner.connectors.WebServiceContextHandler;
-import de.learnlib.weblearner.learner.connectors.WebSiteContextHandler;
+import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;
+import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
+import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
 
 import java.util.List;
 
@@ -37,28 +37,24 @@ public class LearnerThreadFactory {
     /**
      * Create a LearnerThread suitable for the given parameter.
      *
+     *
+     * @param contextHandler
      * @param project
      *         The Project of the test run.
      * @param configuration
      *         The LearnerConfiguration to use for the learning.
      * @return A new thread ready to use for learning.
      */
-    public LearnerThread createThread(Project project, LearnerConfiguration configuration) {
+    public LearnerThread createThread(MultiContextHandler contextHandler,Project project,
+                                      LearnerConfiguration configuration) {
         if (configuration.getSymbols().isEmpty()) {
             throw new IllegalArgumentException("No Symbols found.");
         }
 
         LearnerResult learnerResult = createLearnerResult(project, configuration);
+        contextHandler.setResetSymbol(configuration.getResetSymbol());
 
-        MultiContextHandler context = new MultiContextHandler();
-        context.addHandler(createWebSiteContextHandler(project));
-        context.addHandler(createWebServiceContextHandler(project));
-        context.addHandler(new VariableStoreContextHandler());
-        context.addHandler(new CounterStoreContextHandler());
-
-        context.addResetSymbol(configuration.getResetSymbol());
-
-        return new LearnerThread(learnerResultDAO, learnerResult, context);
+        return new LearnerThread(learnerResultDAO, learnerResult, contextHandler);
     }
 
     /**
@@ -95,14 +91,6 @@ public class LearnerThreadFactory {
         learnerResult.setProject(project);
 
         return learnerResult;
-    }
-
-    private WebSiteContextHandler createWebSiteContextHandler(Project project) {
-        return new WebSiteContextHandler(project.getBaseUrl());
-    }
-
-    private WebServiceContextHandler createWebServiceContextHandler(Project project) {
-        return new WebServiceContextHandler(project.getBaseUrl());
     }
 
 }

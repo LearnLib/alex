@@ -83,6 +83,8 @@ public interface SymbolDAO {
      */
     List<Symbol> getAllWithLatestRevision(Long projectID, SymbolVisibilityLevel visibilityLevel);
 
+    Symbol get(Long projectId, IdRevisionPair idRevisionPair);
+
     /**
      * Get a specific symbol by its identifying parameters.
      * 

@@ -264,8 +264,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public Symbol get(Long projectId, Long id, Long revision) {
-        IdRevisionPair idRevisionPair = new IdRevisionPair(id, revision);
+    public Symbol get(Long projectId, IdRevisionPair idRevisionPair) {
         List<IdRevisionPair> idRevisionList =  new LinkedList<>();
         idRevisionList.add(idRevisionPair);
         List<Symbol> resultList = getAll(projectId, idRevisionList);
@@ -274,6 +273,12 @@ public class SymbolDAOImpl implements SymbolDAO {
             return null;
         }
         return resultList.get(0);
+    }
+
+    @Override
+    public Symbol get(Long projectId, Long id, Long revision) {
+        IdRevisionPair idRevisionPair = new IdRevisionPair(id, revision);
+        return get(projectId, idRevisionPair);
     }
 
     @Override

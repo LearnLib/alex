@@ -61,6 +61,10 @@ public class WebServiceConnector implements Connector {
         reset(resetUrl);
     }
 
+    @Override
+    public void reset() {
+        // nothing to do here
+    }
 
     /**
      * Get the response status of the last request.

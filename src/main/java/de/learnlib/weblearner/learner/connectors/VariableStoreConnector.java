@@ -11,7 +11,8 @@ public class VariableStoreConnector implements Connector {
         this.store = new HashMap<>();
     }
 
-    public void clear() {
+    @Override
+    public void reset() {
         store = new HashMap<>();
     }
 

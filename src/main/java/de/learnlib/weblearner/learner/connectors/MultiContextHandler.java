@@ -8,45 +8,31 @@ import java.util.List;
 
 public class MultiContextHandler implements ContextExecutableInputSUL.ContextHandler<MultiConnector> {
 
-    private List<ContextExecutableInputSUL.ContextHandler<? extends Connector>> handlers;
-
-    private List<Symbol> resetSymbols;
+    private Symbol resetSymbol;
 
     private MultiConnector connectors;
 
-    /** Keep track of the amount of learn iterations. Could also be used for a virtual reset. */
-    protected int counter;
-
     public MultiContextHandler() {
-        this.handlers = new LinkedList<>();
-        this.resetSymbols = new LinkedList<>();
         this.connectors = new MultiConnector();
-        resetCounter();
     }
 
-    public void addHandler(ContextExecutableInputSUL.ContextHandler<? extends Connector> handler) {
-        this.handlers.add(handler);
+    public void addConnector(Connector connector) {
+        this.connectors.addConnector(connector.getClass(), connector);
     }
 
-    public void addResetSymbol(Symbol resetSymbol) {
-        this.resetSymbols.add(resetSymbol);
+    public void setResetSymbol(Symbol resetSymbol) {
+        this.resetSymbol = resetSymbol;
     }
 
     @Override
     public MultiConnector createContext() {
-        incrementCounter();
-        connectors.clear();
-        for (ContextExecutableInputSUL.ContextHandler<? extends Connector> h : handlers) {
-            Connector newConnector = h.createContext();
-            connectors.addConnector(newConnector.getClass(), newConnector);
-        }
+        connectors.forEach(Connector::reset);
 
-        for (Symbol s : resetSymbols) {
-            try {
-                s.execute(connectors);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            resetSymbol.execute(connectors);
+        } catch (Exception e) {
+            // todo(alex.s): what shall we do with the broken reset symbol?
+            e.printStackTrace();
         }
 
         return connectors;
@@ -54,33 +40,7 @@ public class MultiContextHandler implements ContextExecutableInputSUL.ContextHan
 
     @Override
     public void disposeContext(MultiConnector connector) {
-        //TODO(alex.s): delegate disposeContext down
-//        for (ContextExecutableInputSUL.ContextHandler<? extends Connector> h : handlers) {
-//            Connector c = connector.getConnector(h.getClass());
-//            try {
-//                Class clazz = h.getClass();
-//                Method method = clazz.getMethod("disposeContext", c.getClass());
-//                method.invoke(c);
-//            } catch (NoSuchMethodException e) {
-//                e.printStackTrace();
-//            } catch (InvocationTargetException e) {
-//                e.printStackTrace();
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            }
-//        }
-    }
-
-    public int getCounter() {
-        return counter;
-    }
-
-    public void resetCounter() {
-        counter = 0;
-    }
-
-    public int incrementCounter() {
-        return ++counter;
+        // nothing to do here
     }
 
 }

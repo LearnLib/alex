@@ -5,6 +5,7 @@ import de.learnlib.weblearner.entities.LearnAlgorithms;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
+import de.learnlib.weblearner.learner.connectors.MultiContextHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,9 @@ public class LearnerThreadFactoryTest {
 
     @Mock
     private LearnerResultDAO learnerResultDAO;
+
+    @Mock
+    private MultiContextHandler contextHandler;
 
     @Mock
     private Project project;
@@ -49,7 +53,7 @@ public class LearnerThreadFactoryTest {
 
     @Test
     public void shouldCreateThreadForWebSymbols() {
-        LearnerThread<?> thread = factory.createThread(project, learnerConfiguration);
+        LearnerThread<?> thread = factory.createThread(contextHandler, project, learnerConfiguration);
 
         assertNotNull(thread);
     }
@@ -57,7 +61,7 @@ public class LearnerThreadFactoryTest {
     @Test
     public void shouldCreateThreadForRESTSymbols() {
         given(project.getBaseUrl()).willReturn(FAKE_URL);
-        LearnerThread<?> thread = factory.createThread(project, learnerConfiguration);
+        LearnerThread<?> thread = factory.createThread(contextHandler, project, learnerConfiguration);
 
         assertNotNull(thread);
     }
@@ -66,7 +70,7 @@ public class LearnerThreadFactoryTest {
     public void shouldFailWithoutSymbols() {
         learnerConfiguration.getSymbols().clear();
 
-        factory.createThread(project, learnerConfiguration); // should fail
+        factory.createThread(contextHandler, project, learnerConfiguration); // should fail
     }
 
 }

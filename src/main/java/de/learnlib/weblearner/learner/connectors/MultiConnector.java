@@ -1,17 +1,23 @@
 package de.learnlib.weblearner.learner.connectors;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-public class MultiConnector {
+public class MultiConnector implements Connector, Iterable<Connector> {
 
-    private Map<Class<?>, Connector> connectors;
+    private Map<Class<? extends Connector>, Connector> connectors;
 
     public MultiConnector() {
         this.connectors = new HashMap<>();
     }
 
-    public void addConnector(Class<?> type, Connector connector) {
+    @Override
+    public void reset() {
+        this.connectors.clear();
+    }
+
+    public void addConnector(Class<? extends Connector> type, Connector connector) {
         this.connectors.put(type, connector);
     }
 
@@ -19,8 +25,8 @@ public class MultiConnector {
         return (T) this.connectors.get(type);
     }
 
-    public void clear() {
-        this.connectors.clear();
+    @Override
+    public Iterator<Connector> iterator() {
+        return connectors.values().iterator();
     }
-
 }

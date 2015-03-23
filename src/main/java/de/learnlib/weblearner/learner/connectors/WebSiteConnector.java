@@ -46,7 +46,8 @@ public class WebSiteConnector implements Connector {
     /**
      * Try to clear all data from the browser, including Cookies, local storage & session storage.
      */
-    void clearBrowserData() {
+    @Override
+    public void reset() {
         this.driver.manage().deleteAllCookies();
 
         try {

@@ -11,8 +11,9 @@ public class CounterStoreConnector implements Connector {
         this.store = new HashMap<>();
     }
 
-    public void clear() {
-        store = new HashMap<>();
+    @Override
+    public void reset() {
+        // nothing to do here
     }
 
     public void declare(String name) throws IllegalArgumentException {
