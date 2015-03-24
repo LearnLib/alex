@@ -7,6 +7,7 @@ import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
 import de.learnlib.api.SUL;
+import de.learnlib.cache.sul.SULCaches;
 import de.learnlib.discriminationtree.DiscriminationTree;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.Mappers;
@@ -86,11 +87,12 @@ public class LearnerThread<C> extends Thread {
         List<Symbol> symbols = result.getConfiguration().getSymbols();
         Symbol[] symbolsArray = symbols.toArray(new Symbol[symbols.size()]);
         this.symbolMapper = new SymbolMapper<>(symbolsArray);
-
-        this.sul = Mappers.apply(symbolMapper, ceiSUL);
-
         this.sigma = symbolMapper.getAlphabet();
         result.setSigma(sigma);
+
+        SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
+        this.sul = SULCaches.createCache(this.sigma, mappedSUL);
+
         oracle = new SULOracle<>(sul);
 
         LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();

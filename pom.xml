@@ -163,6 +163,11 @@
         </dependency>
         <dependency>
             <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-cache</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
             <artifactId>learnlib-basic-eqtests</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
