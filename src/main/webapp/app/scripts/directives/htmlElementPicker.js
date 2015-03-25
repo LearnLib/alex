@@ -23,24 +23,26 @@
             scope: {
                 selectorModel: '=model'
             },
-            link: function (scope, el, attrs) {
-                var picker;
+            link: link
+        }
 
-                el.on('click', function () {
-                    picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
-                    $document.find('body').prepend(picker);
+        function link(scope, el, attrs) {
+            var picker;
 
-                    htmlElementPickerInstance.open()
-                        .then(function (selector) {
-                            if (angular.isDefined(scope.selectorModel)) {
-                                scope.selectorModel = selector;
-                            }
-                        })
-                        .finally(function () {
-                            picker.remove();
-                        })
-                })
-            }
+            el.on('click', function () {
+                picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
+                $document.find('body').prepend(picker);
+
+                htmlElementPickerInstance.open()
+                    .then(function (selector) {
+                        if (angular.isDefined(scope.selectorModel)) {
+                            scope.selectorModel = selector;
+                        }
+                    })
+                    .finally(function () {
+                        picker.remove();
+                    })
+            })
         }
     }
 
@@ -58,23 +60,31 @@
         var lastUrl = null;
 
         return {
-            close: function (selector) {
-                if (angular.isDefined(selector)) {
-                    deferred.resolve(selector)
-                } else {
-                    deferred.reject();
-                }
-            },
-            open: function () {
-                deferred = $q.defer();
-                return deferred.promise;
-            },
-            setUrl: function (url) {
-                lastUrl = url;
-            },
-            getUrl: function () {
-                return lastUrl;
+            close: close,
+            open: open,
+            setUrl: setUrl,
+            getUrl: getUrl
+        }
+
+        function close(selector) {
+            if (angular.isDefined(selector)) {
+                deferred.resolve(selector)
+            } else {
+                deferred.reject();
             }
+        }
+
+        function open() {
+            deferred = $q.defer();
+            return deferred.promise;
+        }
+
+        function setUrl(url) {
+            lastUrl = url;
+        }
+
+        function getUrl() {
+            return lastUrl;
         }
     }
 
@@ -255,8 +265,4 @@
             init();
         }
     }
-}
-
-()
-)
-;
+}());

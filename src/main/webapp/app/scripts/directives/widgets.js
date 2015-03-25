@@ -242,7 +242,7 @@
              * Creates a new eq oracle object from the selected type and assigns it to the configuration
              */
             scope.setEqOracle = function () {
-                scope.configuration.eqOracle = EqOracle.createFromType(scope.selectedEqOracle);
+                scope.learnConfiguration.eqOracle = EqOracle.createFromType(scope.selectedEqOracle);
             };
         }
     }

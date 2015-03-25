@@ -3,7 +3,10 @@
 
     angular
         .module('weblearner.filters')
-        .filter('first', first);
+        .filter('first', first)
+        .filter('selected', selected);
+
+    selected.$inject = ['SelectionService'];
 
     /**
      * Returns the first element of an array.
@@ -17,6 +20,20 @@
             } else {
                 return undefined;
             }
+        }
+    }
+
+    /**
+     * Filters an array of items and returns the selected ones.
+     *
+     * @param SelectionService
+     * @return {Function}
+     */
+    function selected(SelectionService) {
+        return function (items) {
+            return _.filter(items, function (item) {
+                return SelectionService.isSelected(item);
+            })
         }
     }
 }());

@@ -24,6 +24,8 @@
             downloadSVG: downloadSVG
         }
 
+        // private functions
+
         /**
          * Downloads a file.
          *

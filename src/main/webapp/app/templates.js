@@ -147,7 +147,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                        </ul>\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <button class=\"btn btn-default btn-xs\" open-hypothesis-layout-settings-modal\n" +
+    "                    <button class=\"btn btn-default btn-xs\" hypothesis-layout-settings-modal-handle\n" +
     "                            layout-settings=\"layoutSettings\">\n" +
     "                        <i class=\"fa fa-sliders fa-fw\"></i> Layout\n" +
     "                    </button>\n" +

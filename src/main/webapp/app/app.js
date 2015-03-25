@@ -198,7 +198,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                        </ul>\n" +
     "                    </div>\n" +
     "\n" +
-    "                    <button class=\"btn btn-default btn-xs\" open-hypothesis-layout-settings-modal\n" +
+    "                    <button class=\"btn btn-default btn-xs\" hypothesis-layout-settings-modal-handle\n" +
     "                            layout-settings=\"layoutSettings\">\n" +
     "                        <i class=\"fa fa-sliders fa-fw\"></i> Layout\n" +
     "                    </button>\n" +
@@ -6092,7 +6092,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             }
         }
     }
-}());;(function(){
+}());;(function () {
     'use strict';
 
     angular
@@ -6100,34 +6100,28 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .directive('dropdownHover', dropdownHover);
 
     /**
-     * dropdownHover
-     *
      * A directive in addition to the dropdown directive from ui-bootstrap. It opens the dropdown menu when entering the
      * trigger element of the menu with the mouse so you don't have to click on it. Place it as attribute 'dropdown-hover'
      * beside 'dropdown' in order to work as expected.
      *
      * @return {{require: string, link: link}}
      */
-    function dropdownHover(){
-
-        var directive = {
+    function dropdownHover() {
+        return {
             restrict: 'A',
             require: 'dropdown',
             link: link
         };
-        return directive;
-
-        //////////
 
         /**
          * @param scope
          * @param el
          * @param attrs
-         * @param ctrl - the dropdown controller
+         * @param ctrl - the ui.bootstrap dropdown controller
          */
         function link(scope, el, attrs, ctrl) {
-            el.on('mouseenter', function(){
-                scope.$apply(function(){
+            el.on('mouseenter', function () {
+                scope.$apply(function () {
                     ctrl.toggle(true);
                 })
             })
@@ -6229,7 +6223,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     function fitParentDimensions($window) {
 
         // the directive
-        var directive = {
+        return {
             restrict: 'A',
             scope: {
                 bindResize: '=',
@@ -6237,9 +6231,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             },
             link: link
         };
-        return directive;
-
-        //////////
 
         /**
          * @param scope
@@ -6352,24 +6343,26 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             scope: {
                 selectorModel: '=model'
             },
-            link: function (scope, el, attrs) {
-                var picker;
+            link: link
+        }
 
-                el.on('click', function () {
-                    picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
-                    $document.find('body').prepend(picker);
+        function link(scope, el, attrs) {
+            var picker;
 
-                    htmlElementPickerInstance.open()
-                        .then(function (selector) {
-                            if (angular.isDefined(scope.selectorModel)) {
-                                scope.selectorModel = selector;
-                            }
-                        })
-                        .finally(function () {
-                            picker.remove();
-                        })
-                })
-            }
+            el.on('click', function () {
+                picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
+                $document.find('body').prepend(picker);
+
+                htmlElementPickerInstance.open()
+                    .then(function (selector) {
+                        if (angular.isDefined(scope.selectorModel)) {
+                            scope.selectorModel = selector;
+                        }
+                    })
+                    .finally(function () {
+                        picker.remove();
+                    })
+            })
         }
     }
 
@@ -6387,23 +6380,31 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         var lastUrl = null;
 
         return {
-            close: function (selector) {
-                if (angular.isDefined(selector)) {
-                    deferred.resolve(selector)
-                } else {
-                    deferred.reject();
-                }
-            },
-            open: function () {
-                deferred = $q.defer();
-                return deferred.promise;
-            },
-            setUrl: function (url) {
-                lastUrl = url;
-            },
-            getUrl: function () {
-                return lastUrl;
+            close: close,
+            open: open,
+            setUrl: setUrl,
+            getUrl: getUrl
+        }
+
+        function close(selector) {
+            if (angular.isDefined(selector)) {
+                deferred.resolve(selector)
+            } else {
+                deferred.reject();
             }
+        }
+
+        function open() {
+            deferred = $q.defer();
+            return deferred.promise;
+        }
+
+        function setUrl(url) {
+            lastUrl = url;
+        }
+
+        function getUrl() {
+            return lastUrl;
         }
     }
 
@@ -6584,11 +6585,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             init();
         }
     }
-}
-
-()
-)
-;;(function () {
+}());;(function () {
 
     angular.module('weblearner.directives')
         .directive('hypothesis', hypothesis);
@@ -6649,8 +6646,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             var _graph;
             var _renderer;
 
-            //////////
-
             scope.$watch('test', function (test) {
                 if (angular.isDefined(test) && test != null) {
                     createHypothesis();
@@ -6662,8 +6657,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     createHypothesis();
                 }
             });
-
-            //////////
 
             function createHypothesis() {
                 clearSvg();
@@ -6815,7 +6808,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 if (angular.isDefined(scope.isSelectable)) {
                     _svg.selectAll('.edgeLabel tspan').on('click', function () {
                         var label = this.innerHTML.split('/');
-                        scope.$apply(function () {
+                        scope.$apply(function(){
                             CounterExampleService.addIOPairToCurrentCounterexample(label[0], label[1]);
                         });
                     });
@@ -6880,6 +6873,62 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     window.dispatchEvent(new Event('resize'));
                 }, 100);
             }
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('hypothesisLayoutSettingsModalHandle', hypothesisLayoutSettingsModalHandle);
+
+    hypothesisLayoutSettingsModalHandle.$inject = ['$modal', 'paths'];
+
+    /**
+     * The directive that handles the opening of the modal dialog for layout setting of a hypothesis. Has to be used
+     * as attribute. It attaches a click event to its element that opens the modal dialog.
+     *
+     * The corresponding controller should inject 'modalData' {Object}. It holds a property 'layoutSettings' which
+     * contains the layoutSettings model.
+     *
+     * Attribute 'layoutSettings' {Object} should be the model that is passed to the hypothesis directive.
+     *
+     * Use: '<button hypothesis-layout-settings-modal-handle layout-settings="...">Click Me!</button>'
+     *
+     * @param $modal - The ui.boostrap $modal service
+     * @param paths - The constant with application paths
+     * @returns {{restrict: string, scope: {layoutSettings: string}, link: link}}
+     */
+    function hypothesisLayoutSettingsModalHandle($modal, paths) {
+
+        // the directive
+        return {
+            restrict: 'A',
+            scope: {
+                layoutSettings: '='
+            },
+            link: link
+        };
+
+        // the directives behaviour
+        function link(scope, el, attrs) {
+            el.on('click', function () {
+                var modal = $modal.open({
+                    templateUrl: paths.views.MODALS + '/hypothesis-layout-settings-modal.html',
+                    controller: 'HypothesisLayoutSettingsController',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                layoutSettings: scope.layoutSettings
+                            }
+                        }
+                    }
+                });
+
+                modal.result.then(function (layoutSettings) {
+                    scope.layoutSettings = layoutSettings
+                })
+            });
         }
     }
 }());;(function () {
@@ -7511,53 +7560,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     angular
         .module('weblearner.directives')
-        .directive('openHypothesisLayoutSettingsModal', openHypothesisLayoutSettingsModal);
-
-    openHypothesisLayoutSettingsModal.$inject = ['$modal', 'paths'];
-
-    function openHypothesisLayoutSettingsModal($modal, paths) {
-
-        var directive = {
-            scope: {
-                layoutSettings: '='
-            },
-            link: link
-        };
-        return directive;
-
-        //////////
-
-        function link(scope, el, attrs) {
-
-            el.on('click', handleModal);
-
-            //////////
-
-            function handleModal() {
-
-                var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/hypothesis-layout-settings-modal.html',
-                    controller: 'HypothesisLayoutSettingsController',
-                    resolve: {
-                        modalData: function () {
-                            return {
-                                layoutSettings: scope.layoutSettings
-                            }
-                        }
-                    }
-                });
-
-                modal.result.then(function (layoutSettings) {
-                    scope.layoutSettings = layoutSettings
-                })
-            }
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.directives')
         .directive('selectionCheckboxAll', selectionCheckboxAll)
         .directive('selectableListItem', selectableListItem);
 
@@ -8140,7 +8142,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
              * Creates a new eq oracle object from the selected type and assigns it to the configuration
              */
             scope.setEqOracle = function () {
-                scope.configuration.eqOracle = EqOracle.createFromType(scope.selectedEqOracle);
+                scope.learnConfiguration.eqOracle = EqOracle.createFromType(scope.selectedEqOracle);
             };
         }
     }
@@ -9797,6 +9799,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             downloadSVG: downloadSVG
         }
 
+        // private functions
+
         /**
          * Downloads a file.
          *
@@ -10309,7 +10313,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          */
         var _propertyName = "_selected";
 
-        var service = {
+        return {
             getSelected: getSelected,
             select: select,
             deselect: deselect,
@@ -10319,7 +10323,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             isSelected: isSelected,
             getPropertyName: getPropertyName()
         };
-        return service;
 
         /**
          * Filters all objects where the property '_selected' doesn't exists or is false.
@@ -10402,7 +10405,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             return _propertyName;
         }
     }
-}());;(function(){
+}());;(function () {
     'use strict';
 
     angular
@@ -10412,29 +10415,25 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     SessionService.$inject = ['$rootScope', 'Project'];
 
     /**
-     * SessionService
-     *
      * The session that is used in this application to save data in the session storage of the browser to store data in
      * between page refreshes in the same tab. So the project doesn't have to be fetched from the server every time the
      * page refreshes
      *
      * @param $rootScope
+     * @param Project
      * @return {{project: {get: getProject, save: saveProject, remove: removeProject}}}
      * @constructor
      */
     function SessionService($rootScope, Project) {
 
         // the service
-        var service = {
+        return {
             project: {
                 get: getProject,
                 save: saveProject,
                 remove: removeProject
             }
         };
-        return service;
-
-        //////////
 
         /**
          * Get the stored project object from the session storage
@@ -10481,7 +10480,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @constructor
      */
     function ToastService(ngToast) {
-
         return {
             success: success,
             danger: danger,
@@ -10489,16 +10487,26 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         /**
+         * Creates a toast message.
+         *
+         * @param {string} type - a bootstrap alert class type: 'success', 'error', 'info' etc.
+         * @param {string} message - The message to be displayed
+         */
+        function createToast(type, message) {
+            ngToast.create({
+                class: type,
+                content: message,
+                dismissButton: true
+            });
+        }
+
+        /**
          * Create a success toast message
          *
          * @param {String} message - The message to be displayed
          */
         function success(message) {
-            ngToast.create({
-                class: 'success',
-                content: message,
-                dismissButton: true
-            });
+            createToast('success', message);
         }
 
         /**
@@ -10507,11 +10515,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * @param {String} message - The message to be displayed
          */
         function danger(message) {
-            ngToast.create({
-                class: 'danger',
-                content: message,
-                dismissButton: true
-            });
+            createToast('danger', message);
         }
 
         /**
@@ -10520,11 +10524,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * @param {String} message - The message to be displayed
          */
         function info(message) {
-            ngToast.create({
-                class: 'info',
-                content: message,
-                dismissButton: true
-            });
+            createToast('info', message);
         }
     }
 }());;(function () {
@@ -10532,7 +10532,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     angular
         .module('weblearner.filters')
-        .filter('first', first);
+        .filter('first', first)
+        .filter('selected', selected);
+
+    selected.$inject = ['SelectionService'];
 
     /**
      * Returns the first element of an array.
@@ -10546,6 +10549,20 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             } else {
                 return undefined;
             }
+        }
+    }
+
+    /**
+     * Filters an array of items and returns the selected ones.
+     *
+     * @param SelectionService
+     * @return {Function}
+     */
+    function selected(SelectionService) {
+        return function (items) {
+            return _.filter(items, function (item) {
+                return SelectionService.isSelected(item);
+            })
         }
     }
 }());;(function () {
@@ -10600,44 +10617,4 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         }
     }
 
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.filters')
-        .filter('selected', [
-            'SelectionService',
-            selected
-        ]);
-
-    /**
-     * Filters an array of items and returns the selected ones.
-     *
-     * @param SelectionService
-     * @return {Function}
-     */
-    function selected(SelectionService) {
-        return function (items) {
-            return _.filter(items, function (item) {
-                return SelectionService.isSelected(item);
-            })
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.filters')
-        .filter('capitalize', capitalize);
-
-    /**
-     * Capitalizes a given string
-     *
-     * @returns {Function} - The filter
-     */
-    function capitalize() {
-        return function (string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-    }
 }());

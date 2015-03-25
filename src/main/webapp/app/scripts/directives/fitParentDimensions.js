@@ -26,7 +26,7 @@
     function fitParentDimensions($window) {
 
         // the directive
-        var directive = {
+        return {
             restrict: 'A',
             scope: {
                 bindResize: '=',
@@ -34,9 +34,6 @@
             },
             link: link
         };
-        return directive;
-
-        //////////
 
         /**
          * @param scope

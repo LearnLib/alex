@@ -59,8 +59,6 @@
             var _graph;
             var _renderer;
 
-            //////////
-
             scope.$watch('test', function (test) {
                 if (angular.isDefined(test) && test != null) {
                     createHypothesis();
@@ -72,8 +70,6 @@
                     createHypothesis();
                 }
             });
-
-            //////////
 
             function createHypothesis() {
                 clearSvg();
@@ -225,7 +221,7 @@
                 if (angular.isDefined(scope.isSelectable)) {
                     _svg.selectAll('.edgeLabel tspan').on('click', function () {
                         var label = this.innerHTML.split('/');
-                        scope.$apply(function () {
+                        scope.$apply(function(){
                             CounterExampleService.addIOPairToCurrentCounterexample(label[0], label[1]);
                         });
                     });

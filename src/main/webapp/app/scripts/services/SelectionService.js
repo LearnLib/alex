@@ -5,89 +5,47 @@
         .module('weblearner.services')
         .factory('SelectionService', SelectionService);
 
+    SelectionService.$inject = ['_'];
+
     /**
-     * SelectionService
+     * Service with helper functions for selecting models.
      *
-     * The Service that is used in this application to mark javascript objects as selected by the user. There are
-     * filters, controllers & directives that make use of this service, but I don't want to list them all here... yet.
-     *
-     * @return {{getSelected: getSelected, select: select, deselect: deselect, selectAll: selectAll, deselectAll: deselectAll, removeSelection: removeSelection, isSelected: isSelected, getPropertyName: *}}
+     * @param _ - Lodash
+     * @returns {{getSelected: getSelected, removeSelection: removeSelection, isSelected: isSelected}}
      * @constructor
      */
-    function SelectionService() {
+    function SelectionService(_) {
 
         /**
          * The property whose value determines whether an object is selected or not.
-         *
          * @type {string}
          * @private
          */
         var _propertyName = "_selected";
 
-        var service = {
+        // the service
+        return {
             getSelected: getSelected,
-            select: select,
-            deselect: deselect,
-            selectAll: selectAll,
-            deselectAll: deselectAll,
             removeSelection: removeSelection,
             isSelected: isSelected,
-            getPropertyName: getPropertyName()
         };
-        return service;
 
         /**
          * Filters all objects where the property '_selected' doesn't exists or is false.
          *
-         * @param items
-         * @return {Array}
+         * @param {Object[]} items
+         * @return {Object[]|[]}
          */
         function getSelected(items) {
             return _.filter(items, function (item) {
-                return item[_propertyName] == true;
+                return item[_propertyName] === true;
             });
-        }
-
-        /**
-         * Sets the selected flag for an object to true.
-         *
-         * @param item
-         */
-        function select(item) {
-            item[_propertyName] = true;
-        }
-
-        /**
-         * Sets the selected flag for an object to false.
-         *
-         * @param item
-         */
-        function deselect(item) {
-            item[_propertyName] = false
-        }
-
-        /**
-         * Selects all items.
-         *
-         * @param items
-         */
-        function selectAll(items) {
-            _.forEach(items, select)
-        }
-
-        /**
-         * Deselects all items
-         *
-         * @param items
-         */
-        function deselectAll(items) {
-            _.forEach(items, deselect)
         }
 
         /**
          * Removes the property '_selected' from all items.
          *
-         * @param items
+         * @param {Object[]|Object} items
          */
         function removeSelection(items) {
             if (!angular.isArray(items)) {
@@ -99,22 +57,13 @@
         }
 
         /**
-         * Checks if the property '_selected' exists and what value it has.
+         * Checks if an object is selected.
          *
-         * @param item
-         * @return boolean
+         * @param {Object} item - The item whose status is checked
+         * @returns {boolean} - Whether or not the item is selected
          */
         function isSelected(item) {
             return angular.isUndefined(item._selected) ? false : item._selected;
-        }
-
-        /**
-         * Get the name of the property whose value marks an object as selected.
-         *
-         * @return {string}
-         */
-        function getPropertyName() {
-            return _propertyName;
         }
     }
 }());
