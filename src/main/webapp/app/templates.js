@@ -2120,7 +2120,8 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                         selection-model-selected-attribute=\"_selected\"\n" +
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
-    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
+    "                         ng-if=\"!symobl.hidden\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +

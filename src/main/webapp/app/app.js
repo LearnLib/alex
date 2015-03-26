@@ -2171,7 +2171,8 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                         selection-model-selected-attribute=\"_selected\"\n" +
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
-    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
+    "                         ng-if=\"!symobl.hidden\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
@@ -7995,11 +7996,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             scope.counterExample = [];
 
             /**
-             * A list of counterexamples for editing purposes without manipulation the actual model. Has a different
-             * format better for displaying than the one the model needs.
-             *
-             * [{input: .., output: ...}, ...] instead of {input: [...], output: [...]}
-             *
+             * A list of counterexamples for editing purposes without manipulation the actual model
              * @type {Object[]}
              */
             scope.tmpCounterExamples = [];
@@ -8015,15 +8012,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 scope.counterExample = CounterExampleService.getCurrentCounterexample();
             }
 
-            // update the model with the required format
+            // update the model
             function renewCounterexamples() {
-                scope.counterexamples = [];
-                for (var i = 0; i < scope.tmpCounterExamples.length; i++) {
-                    scope.counterexamples.push({
-                        input: _.pluck(scope.tmpCounterExamples[i], 'input'),
-                        output: _.pluck(scope.tmpCounterExamples[i], 'output')
-                    })
-                }
+                scope.counterexamples = scope.tmpCounterExamples;
             }
 
             /**
@@ -10131,12 +10122,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     /**
      * @param $http
-     * @param $q
      * @param paths
      * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive, isCounterexample: isCounterexample}}
      * @constructor
      */
-    function LearnerService($http, $q, paths) {
+    function LearnerService($http, paths) {
 
         return {
             start: start,
@@ -10173,6 +10163,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * so that the ongoing process parameters could be defined
          *
          * @param projectId
+         * @param testNo
          * @param learnConfiguration
          * @return {*}
          */
@@ -10207,13 +10198,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         /**
          * Checks if the selected path is a counterexample.
+         * TODO: implement
          *
          * @param counterexample
          * @returns {*}
          */
         function isCounterexample(projectId, counterexample) {
             return $http.post(paths.api.URL + '/learner/active', {})
-                .then(function (response) {
+                .then(function () {
                     return true;
                 })
         }
@@ -10294,88 +10286,47 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .module('weblearner.services')
         .factory('SelectionService', SelectionService);
 
+    SelectionService.$inject = ['_'];
+
     /**
-     * SelectionService
+     * Service with helper functions for selecting models.
      *
-     * The Service that is used in this application to mark javascript objects as selected by the user. There are
-     * filters, controllers & directives that make use of this service, but I don't want to list them all here... yet.
-     *
-     * @return {{getSelected: getSelected, select: select, deselect: deselect, selectAll: selectAll, deselectAll: deselectAll, removeSelection: removeSelection, isSelected: isSelected, getPropertyName: *}}
+     * @param _ - Lodash
+     * @returns {{getSelected: getSelected, removeSelection: removeSelection, isSelected: isSelected}}
      * @constructor
      */
-    function SelectionService() {
+    function SelectionService(_) {
 
         /**
          * The property whose value determines whether an object is selected or not.
-         *
          * @type {string}
          * @private
          */
         var _propertyName = "_selected";
 
+        // the service
         return {
             getSelected: getSelected,
-            select: select,
-            deselect: deselect,
-            selectAll: selectAll,
-            deselectAll: deselectAll,
             removeSelection: removeSelection,
             isSelected: isSelected,
-            getPropertyName: getPropertyName()
         };
 
         /**
          * Filters all objects where the property '_selected' doesn't exists or is false.
          *
-         * @param items
-         * @return {Array}
+         * @param {Object[]} items
+         * @return {Object[]|[]}
          */
         function getSelected(items) {
             return _.filter(items, function (item) {
-                return item[_propertyName] == true;
+                return item[_propertyName] === true;
             });
-        }
-
-        /**
-         * Sets the selected flag for an object to true.
-         *
-         * @param item
-         */
-        function select(item) {
-            item[_propertyName] = true;
-        }
-
-        /**
-         * Sets the selected flag for an object to false.
-         *
-         * @param item
-         */
-        function deselect(item) {
-            item[_propertyName] = false
-        }
-
-        /**
-         * Selects all items.
-         *
-         * @param items
-         */
-        function selectAll(items) {
-            _.forEach(items, select)
-        }
-
-        /**
-         * Deselects all items
-         *
-         * @param items
-         */
-        function deselectAll(items) {
-            _.forEach(items, deselect)
         }
 
         /**
          * Removes the property '_selected' from all items.
          *
-         * @param items
+         * @param {Object[]|Object} items
          */
         function removeSelection(items) {
             if (!angular.isArray(items)) {
@@ -10387,22 +10338,13 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         }
 
         /**
-         * Checks if the property '_selected' exists and what value it has.
+         * Checks if an object is selected.
          *
-         * @param item
-         * @return boolean
+         * @param {Object} item - The item whose status is checked
+         * @returns {boolean} - Whether or not the item is selected
          */
         function isSelected(item) {
             return angular.isUndefined(item._selected) ? false : item._selected;
-        }
-
-        /**
-         * Get the name of the property whose value marks an object as selected.
-         *
-         * @return {string}
-         */
-        function getPropertyName() {
-            return _propertyName;
         }
     }
 }());;(function () {
@@ -10577,16 +10519,40 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     formatEqOracle.$inject = ['eqOracles'];
     formatAlgorithm.$inject = ['learnAlgorithms'];
 
+    /**
+     * The filter that formats something like 'A_CONSTANT_KEY' to 'A Constant Key'
+     *
+     * @returns {filter}
+     */
     function formatEnumKey() {
-        return function (string) {
+        return filter;
+
+        /**
+         * @param {string} string - The enum key in upper snake case format
+         * @returns {string}
+         */
+        function filter(string) {
             return string.toLowerCase().split('_').join(' ').replace(/\w\S*/g, function (txt) {
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             })
         }
     }
 
+
+    /**
+     * The filter to format a EQ type constant to something more readable
+     *
+     * @param {Object} eqOracles - The EQ oracle constant
+     * @returns {filter}
+     */
     function formatEqOracle(eqOracles) {
-        return function (type) {
+        return filter;
+
+        /**
+         * @param {string} type - The eq oracle type
+         * @returns {string}
+         */
+        function filter(type) {
             switch (type) {
                 case eqOracles.RANDOM:
                     return 'Random Word';
@@ -10600,8 +10566,20 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         }
     }
 
+    /**
+     * The filter to format a learn algorithm name to something more readable
+
+     * @param {Object} learnAlgorithms - The dictionary of learn algorithms
+     * @returns {filter}
+     */
     function formatAlgorithm(learnAlgorithms) {
-        return function (name) {
+        return filter
+
+        /**
+         * @param {string} name - the name of a learn algorithm
+         * @returns {string}
+         */
+        function filter(name) {
             switch (name) {
                 case learnAlgorithms.EXTENSIBLE_LSTAR:
                     return 'L*';

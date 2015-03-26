@@ -95,11 +95,7 @@
             scope.counterExample = [];
 
             /**
-             * A list of counterexamples for editing purposes without manipulation the actual model. Has a different
-             * format better for displaying than the one the model needs.
-             *
-             * [{input: .., output: ...}, ...] instead of {input: [...], output: [...]}
-             *
+             * A list of counterexamples for editing purposes without manipulation the actual model
              * @type {Object[]}
              */
             scope.tmpCounterExamples = [];
@@ -115,15 +111,9 @@
                 scope.counterExample = CounterExampleService.getCurrentCounterexample();
             }
 
-            // update the model with the required format
+            // update the model
             function renewCounterexamples() {
-                scope.counterexamples = [];
-                for (var i = 0; i < scope.tmpCounterExamples.length; i++) {
-                    scope.counterexamples.push({
-                        input: _.pluck(scope.tmpCounterExamples[i], 'input'),
-                        output: _.pluck(scope.tmpCounterExamples[i], 'output')
-                    })
-                }
+                scope.counterexamples = scope.tmpCounterExamples;
             }
 
             /**

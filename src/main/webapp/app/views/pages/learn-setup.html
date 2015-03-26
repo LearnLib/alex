@@ -93,7 +93,8 @@
                          selection-model-selected-attribute="_selected"
                          selection-model-mode="multiple"
                          selection-model-selected-items="selectedSymbols"
-                         selection-model-cleanup-strategy="deselect">
+                         selection-model-cleanup-strategy="deselect"
+                         ng-if="!symobl.hidden">
 
                         <div selectable-list-item>
                             <a class="pull-right" ng-click="setResetSymbol(symbol)">
