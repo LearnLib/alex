@@ -21,10 +21,11 @@
         return {
             restrict: 'A',
             scope: {
-                selectorModel: '=model'
+                selectorModel: '=model',
+                textModel: '=text'
             },
             link: link
-        }
+        };
 
         function link(scope, el, attrs) {
             var picker;
@@ -34,9 +35,12 @@
                 $document.find('body').prepend(picker);
 
                 htmlElementPickerInstance.open()
-                    .then(function (selector) {
+                    .then(function (data) {
                         if (angular.isDefined(scope.selectorModel)) {
-                            scope.selectorModel = selector;
+                            scope.selectorModel = data.xPath;
+                        }
+                        if (angular.isDefined(scope.textModel)) {
+                            scope.textModel = data.textContent;
                         }
                     })
                     .finally(function () {
@@ -64,11 +68,11 @@
             open: open,
             setUrl: setUrl,
             getUrl: getUrl
-        }
+        };
 
-        function close(selector) {
-            if (angular.isDefined(selector)) {
-                deferred.resolve(selector)
+        function close(data) {
+            if (angular.isDefined(data)) {
+                deferred.resolve(data)
             } else {
                 deferred.reject();
             }
@@ -113,9 +117,15 @@
 
             /**
              * The XPath of the selected element
-             * @type {null}
+             * @type {null|string}
              */
             scope.selector = null;
+
+            /**
+             * The element.textContent value
+             * @type {null|string}
+             */
+            scope.textContent = null;
 
             /**
              * The url that is loaded in the iframe
@@ -168,6 +178,7 @@
                 }
                 lastTarget.style.outline = '5px solid red';
                 scope.selector = getCssPath(lastTarget);
+                scope.textContent = lastTarget.textContent;
                 scope.$apply();
             }
 
@@ -258,10 +269,13 @@
              */
             scope.ok = function () {
                 htmlElementPickerInstance.setUrl(scope.url);
-                htmlElementPickerInstance.close(scope.selector);
+                htmlElementPickerInstance.close({
+                    xPath: scope.selector,
+                    textContent: scope.textContent
+                });
             };
 
-            // init direcitve
+            // init directive
             init();
         }
     }

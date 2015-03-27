@@ -17,7 +17,7 @@
             <input type="checkbox" ng-model="action.regexp"> Use Regular Expression
         </label>
     </div>
-    <a class="btn btn-default btn-sm" html-element-picker>
+    <a class="btn btn-default btn-sm" html-element-picker text="action.value">
         <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
     </a>
 
@@ -91,6 +91,28 @@
 
 </div>
 <!-- END: CLICK -->
+
+
+<!-- BEGIN: CLICK_LINK_BY_TEXT -->
+<div ng-if="action.type === actionTypes.web.CLICK_LINK_BY_TEXT">
+
+    <h4><strong>Click Link By Its Text</strong></h4>
+
+    <p class="text-muted">
+        Finds a link element with a given text and clicks on it
+    </p>
+    <hr>
+
+    <div class="form-group">
+        <label class="control-label">Link Text</label>
+        <input class="form-control" type="text" placeholder="The text of the link" ng-model="action.value">
+    </div>
+    <a class="btn btn-default btn-sm" html-element-picker text="action.value">
+        <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
+    </a>
+
+</div>
+<!-- END: CLICK_LINK_BY_TEXT -->
 
 
 <!-- BEGIN: FILL -->
@@ -366,42 +388,6 @@
     </div>
 </div>
 <!-- END: WAIT -->
-
-
-<!-- BEGIN: DECLARE_COUNTER -->
-<div ng-if="action.type === actionTypes.other.DECLARE_COUNTER">
-    <h4><strong>Declare Counter</strong></h4>
-
-    <p class="text-muted">
-        Declare a counter variable that can be used in other actions
-    </p>
-    <hr>
-    <label>Name</label>
-
-    <div class="form-group">
-        <input type="text" class="form-control" ng-model="action.name"
-               placeholder="The name of the counter">
-    </div>
-</div>
-<!-- END: DECLARE_COUNTER -->
-
-
-<!-- BEGIN: DECLARE_VARIABLE -->
-<div ng-if="action.type === actionTypes.other.DECLARE_VARIABLE">
-    <h4><strong>Declare Variable</strong></h4>
-
-    <p class="text-muted">
-        Declare a variable that can be used in other actions
-    </p>
-    <hr>
-    <label>Name</label>
-
-    <div class="form-group">
-        <input type="text" class="form-control" ng-model="action.name"
-               placeholder="The name of the variable">
-    </div>
-</div>
-<!-- END: DECLARE_VARIABLE -->
 
 
 <!-- BEGIN: EXECUTE_SYMBOL -->

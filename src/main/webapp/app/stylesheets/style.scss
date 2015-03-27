@@ -135,10 +135,18 @@ form {
   .view-heading-title {
     margin: 0;
     margin-bottom: 5px;
+    display: inline-block;
+  }
+  .view-heading-title-pre {
+    display: inline-block;
   }
   .view-heading-sub-title {
     @extend .text-muted;
     margin: 0;
+  }
+  .back-button {
+    margin-right: 5px;
+    margin-bottom: 12px;
   }
 }
 

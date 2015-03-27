@@ -55,6 +55,15 @@
             return 'Click on element "' + this.node + '"';
         };
 
+        Action.Web.ClickLinkByText = function (value) {
+            Action.call(this, actionTypes.web.CLICK_LINK_BY_TEXT);
+            this.value = value || null;
+        };
+
+        Action.Web.ClickLinkByText.prototype.toString = function () {
+            return 'Click on link with text "' + this.value + '"';
+        };
+
         Action.Web.Fill = function (node, value) {
             Action.call(this, actionTypes.web.FILL);
             this.node = node || null;
@@ -183,24 +192,6 @@
             return 'Wait for ' + this.duration + 'ms'
         };
 
-        Action.Other.DeclareCounter = function (name) {
-            Action.call(this, actionTypes.other.DECLARE_COUNTER);
-            this.name = name || null;
-        };
-
-        Action.Other.DeclareCounter.prototype.toString = function () {
-            return 'Declare counter "' + this.name + '"';
-        };
-
-        Action.Other.DeclareVariable = function (name) {
-            Action.call(this, actionTypes.other.DECLARE_VARIABLE);
-            this.name = name || null;
-        };
-
-        Action.Other.DeclareVariable.prototype.toString = function () {
-            return 'Declare variable "' + this.name + '"';
-        };
-
         Action.Other.ExecuteSymbol = function (symbolName, idRevisionPair) {
             Action.call(this, actionTypes.other.EXECUTE_SYMBOL);
 
@@ -298,6 +289,9 @@
                 case actionTypes.web.CLICK:
                     action = new Action.Web.Click(data.node);
                     break;
+                case actionTypes.web.CLICK_LINK_BY_TEXT:
+                    action = new Action.Web.ClickLinkByText(data.value);
+                    break;
                 case actionTypes.web.FILL:
                     action = new Action.Web.Fill(data.node, data.value);
                     break;
@@ -337,12 +331,6 @@
                 // other actions
                 case actionTypes.other.WAIT:
                     action = new Action.Other.Wait(data.duration);
-                    break;
-                case actionTypes.other.DECLARE_COUNTER:
-                    action = new Action.Other.DeclareCounter(data.name);
-                    break;
-                case actionTypes.other.DECLARE_VARIABLE:
-                    action = new Action.Other.DeclareVariable(data.name);
                     break;
                 case actionTypes.other.EXECUTE_SYMBOL:
                     action = new Action.Other.ExecuteSymbol(data.symbolToExecuteName, data.symbolToExecute);

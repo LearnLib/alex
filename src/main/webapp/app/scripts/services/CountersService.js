@@ -9,9 +9,10 @@
 
     /**
      * The service that communicates with the API in order to read and delete counters. Counters are objects consisting
-     * of a unique 'name' property and a 'value' which holds the current value of the counter in the database.
+     * of a unique 'name' property, a 'value' which holds the current value of the counter in the database and 'project'
+     * for the projects id.
      *
-     * Example: {"name": "i", "value": 10}
+     * Example: {"name": "i", "value": 10, "project": 1}
      *
      * @param $http - angular $http service
      * @param paths - application paths constants
@@ -22,25 +23,10 @@
 
         // the services functions
         return {
-            get: get,
             getAll: getAll,
             delete: deleteOne,
             deleteSome: deleteSome
         };
-
-        /**
-         * Makes a GET request to /rest/projects/{projectId}/counters/{counterName} in order to fetch a single counter.
-         *
-         * @param {number} projectId - The id of a project
-         * @param {string} name - The name of the symbol to be fetched
-         * @returns {HttpPromise} - angular promise object of the request
-         */
-        function get(projectId, name) {
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/counters/' + name)
-                .then(function (response) {
-                    return response.data;
-                })
-        }
 
         /**
          * Makes a GET request to /rest/projects/{projectId}/counters in order to fetch all counter of the current

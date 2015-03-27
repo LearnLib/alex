@@ -37,6 +37,7 @@
                 SEARCH_FOR_NODE: 'web_checkForNode',
                 CLEAR: 'web_clear',
                 CLICK: 'web_click',
+                CLICK_LINK_BY_TEXT: 'web_clickLinkByText',
                 FILL: 'web_fill',
                 GO_TO: 'web_goto',
                 SUBMIT: 'web_submit',
@@ -52,8 +53,6 @@
                 CHECK_ATTRIBUTE_TYPE: 'rest_checkAttributeType'
             },
             other: {
-                DECLARE_COUNTER: 'declareCounter',
-                DECLARE_VARIABLE: 'declareVariable',
                 EXECUTE_SYMBOL: 'executeSymbol',
                 INCREMENT_COUNTER: 'incrementCounter',
                 SET_COUNTER: 'setCounter',

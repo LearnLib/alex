@@ -22,7 +22,7 @@
             downloadJson: downloadJson,
             downloadCSV: downloadCSV,
             downloadSVG: downloadSVG
-        }
+        };
 
         // private functions
 
@@ -73,7 +73,7 @@
         function downloadJson(jsonObject) {
             _prompt('JSON')
                 .then(function (filename) {
-                    var href = 'data:text/json;charset=utf-8,' + angular.toJson(jsonObject);
+                    var href = 'data:text/json;charset=utf-8,' + encodeURIComponent(angular.toJson(jsonObject));
                     _download(filename, 'json', href);
                 })
         }
@@ -99,7 +99,7 @@
         function downloadSVG(svg) {
             _prompt('SVG')
                 .then(function (filename) {
-                    var href = 'data:image/svg+xml;base64,\n';
+
 
                     // set proper xml attributes for downloadable file
                     svg.setAttribute('version', '1.1');
@@ -109,8 +109,7 @@
                     // base64 otherwise the file will not be completely downloaded
                     // what results in errors opening the file
                     var svgString = new XMLSerializer().serializeToString(svg);
-                    var encodedSvgString = window.btoa(svgString);
-                    href += encodedSvgString;
+                    var href = 'data:image/svg+xml;base64,\n' + window.btoa(svgString);
 
                     _download(filename, 'svg', href);
                 })

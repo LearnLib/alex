@@ -454,6 +454,7 @@ angular.module("app/views/directives/view-heading.html", []).run(["$templateCach
   $templateCache.put("app/views/directives/view-heading.html",
     "<div class=\"view-heading\">\n" +
     "    <div class=\"container\">\n" +
+    "        <div class=\"view-heading-title-pre\" ng-transclude></div>\n" +
     "        <h2 class=\"view-heading-title\" ng-bind=\"::title\"></h2>\n" +
     "\n" +
     "        <p class=\"view-heading-sub-title\" ng-bind=\"::subTitle\"></p>\n" +
@@ -499,7 +500,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "            <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
     "        </label>\n" +
     "    </div>\n" +
-    "    <a class=\"btn btn-default btn-sm\" html-element-picker>\n" +
+    "    <a class=\"btn btn-default btn-sm\" html-element-picker text=\"action.value\">\n" +
     "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "    </a>\n" +
     "\n" +
@@ -573,6 +574,28 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "\n" +
     "</div>\n" +
     "<!-- END: CLICK -->\n" +
+    "\n" +
+    "\n" +
+    "<!-- BEGIN: CLICK_LINK_BY_TEXT -->\n" +
+    "<div ng-if=\"action.type === actionTypes.web.CLICK_LINK_BY_TEXT\">\n" +
+    "\n" +
+    "    <h4><strong>Click Link By Its Text</strong></h4>\n" +
+    "\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        Finds a link element with a given text and clicks on it\n" +
+    "    </p>\n" +
+    "    <hr>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Link Text</label>\n" +
+    "        <input class=\"form-control\" type=\"text\" placeholder=\"The text of the link\" ng-model=\"action.value\">\n" +
+    "    </div>\n" +
+    "    <a class=\"btn btn-default btn-sm\" html-element-picker text=\"action.value\">\n" +
+    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "    </a>\n" +
+    "\n" +
+    "</div>\n" +
+    "<!-- END: CLICK_LINK_BY_TEXT -->\n" +
     "\n" +
     "\n" +
     "<!-- BEGIN: FILL -->\n" +
@@ -848,42 +871,6 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    </div>\n" +
     "</div>\n" +
     "<!-- END: WAIT -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: DECLARE_COUNTER -->\n" +
-    "<div ng-if=\"action.type === actionTypes.other.DECLARE_COUNTER\">\n" +
-    "    <h4><strong>Declare Counter</strong></h4>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Declare a counter variable that can be used in other actions\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
-    "    <label>Name</label>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
-    "               placeholder=\"The name of the counter\">\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "<!-- END: DECLARE_COUNTER -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: DECLARE_VARIABLE -->\n" +
-    "<div ng-if=\"action.type === actionTypes.other.DECLARE_VARIABLE\">\n" +
-    "    <h4><strong>Declare Variable</strong></h4>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Declare a variable that can be used in other actions\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
-    "    <label>Name</label>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
-    "               placeholder=\"The name of the variable\">\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "<!-- END: DECLARE_VARIABLE -->\n" +
     "\n" +
     "\n" +
     "<!-- BEGIN: EXECUTE_SYMBOL -->\n" +
@@ -1735,7 +1722,7 @@ angular.module("app/views/pages/counters.html", []).run(["$templateCache", funct
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\" selectable items=\"results\">\n" +
     "\n" +
-    "        <div class=\"alert alert-info alert-condensed\">\n" +
+    "        <div class=\"alert alert-info alert-condensed\" ng-show=\"counters.length > 0\">\n" +
     "            <i class=\"fa fa-info fa-fw\"></i>\n" +
     "            Deleted counters will be created as soon as they are used in a learning process, starting with value 0.\n" +
     "        </div>\n" +
@@ -2198,9 +2185,20 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "\n" +
     "                            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
     "\n" +
-    "                            <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                                <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                            </a>\n" +
+    "                            <p class=\"text-muted\">\n" +
+    "                                <a href ng-click=\"symbol._collapsed = !symbol._collapsed\">\n" +
+    "                                    <span ng-bind=\"symbol.actions.length\"></span>\n" +
+    "                                    Actions\n" +
+    "                                    <i class=\"fa fa-fw\"\n" +
+    "                                       ng-class=\"symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
+    "                                </a>\n" +
+    "\n" +
+    "                            <ol collapse=\"!symbol._collapsed\">\n" +
+    "                                <li ng-repeat=\"action in symbol.actions\">\n" +
+    "                                    {{action.toString()}}\n" +
+    "                                </li>\n" +
+    "                            </ol>\n" +
+    "                            </p>\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
@@ -2422,6 +2420,9 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "<div view-heading\n" +
     "     title=\"Actions\"\n" +
     "     sub-title=\"Create and manage the actions for symbol: {{symbol.name}}\">\n" +
+    "    <a class=\"back-button btn btn-default btn-xs\" ui-sref=\"symbols\">\n" +
+    "        <i class=\"fa fa-fw fa-arrow-left\"></i>\n" +
+    "    </a>\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
@@ -2530,11 +2531,11 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"allSymbols\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"allSymbols\">\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"pull-right\">\n" +
-    "            <button class=\"btn btn-xs btn-primary\" download-as-json data=\"getSelectedSymbols\">\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" download-as-json data=\"getDownloadableSymbols\">\n" +
     "                <i class=\"fa fa-download fa-fw\"></i> Download\n" +
     "            </button>\n" +
     "        </div>\n" +
@@ -2545,23 +2546,23 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "<div class=\"view-body\">\n" +
     "    <div class=\"container symbol-group-list\">\n" +
     "\n" +
-    "        <div ng-repeat=\"group in groups track by group.id\" class=\"symbol-group\"\n" +
-    "             ng-class=\"group._isCollapsed ? 'collapsed' :''\">\n" +
+    "        <div ng-repeat=\"group in groups track by $index\" class=\"symbol-group\"\n" +
+    "             ng-class=\"group._collapsed ? 'collapsed' :''\">\n" +
     "\n" +
     "            <div class=\"selectable-list symbol-group-header\">\n" +
     "                <div class=\"selectable-list-heading\">\n" +
-    "                    <div class=\"selectable-list-control\" selectable items=\"group.symbols\">\n" +
-    "                        <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "                    <div class=\"selectable-list-control\">\n" +
+    "                        <input type=\"checkbox\" selection-checkbox-all items=\"group.symbols\">\n" +
     "                    </div>\n" +
     "                    <div class=\"selectable-list-content\">\n" +
     "\n" +
-    "                        <span class=\"pull-right\" ng-click=\"group._isCollapsed = !group._isCollapsed\">\n" +
+    "                        <span class=\"pull-right\" ng-click=\"group._collapsed = !group._collapsed\">\n" +
     "                            <i class=\"fa fa-fw\"\n" +
-    "                               ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
+    "                               ng-class=\"group._collapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
     "                        </span>\n" +
     "\n" +
     "                        <h3 class=\"symbol-group-title\" ng-bind=\"group.name\"\n" +
-    "                            ng-click=\"group._isCollapsed = !group._isCollapsed\"></h3>\n" +
+    "                            ng-click=\"group._collapsed = !group._collapsed\"></h3>\n" +
     "\n" +
     "                        <p class=\"text-muted\">\n" +
     "                            <span ng-bind=\"group.symbols.length\"></span> Symbols\n" +
@@ -2571,24 +2572,31 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "                </div>\n" +
     "            </div>\n" +
     "\n" +
-    "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\">\n" +
+    "            <div class=\"symbol-group-body\" collapse=\"group._collapsed\">\n" +
+    "                <div class=\"selectable-list\">\n" +
+    "                    <div ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\"\n" +
+    "                         selection-model\n" +
+    "                         selection-model-type=\"checkbox\"\n" +
+    "                         selection-model-selected-attribute=\"_selected\"\n" +
+    "                         selection-model-mode=\"multiple\"\n" +
+    "                         selection-model-selected-items=\"selectedSymbols\"\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
+    "                         ng-if=\"!symbol.hidden\">\n" +
     "\n" +
-    "                <div selectable items=\"group.symbols\">\n" +
-    "                    <div selectable-list>\n" +
-    "                        <div selectable-list-item item=\"symbol\" ng-repeat=\"symbol in group.symbols\">\n" +
+    "                        <div selectable-list-item>\n" +
     "\n" +
     "                            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
     "\n" +
     "                            <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
     "                                <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
     "                            </a>\n" +
-    "\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
     "\n" +
     "            </div>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>");
 }]);
@@ -2651,7 +2659,7 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
   "use strict";
   $templateCache.put("app/views/pages/symbols-import.html",
     "<div view-heading\n" +
-    "     title=\"Symbol Upload\"\n" +
+    "     title=\"Symbols Upload\"\n" +
     "     sub-title=\"If you already have a *.json file with symbols, you can import them here to this project\">\n" +
     "</div>\n" +
     "\n" +
@@ -2659,7 +2667,7 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"symbols\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"selectedSymbols\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-right\">\n" +
@@ -2674,30 +2682,64 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div file-dropzone on-loaded=\"fileLoaded\" class=\"alert alert-info\">\n" +
-    "            Drag and drop *.json file here\n" +
+    "        <div ng-if=\"symbols.length === 0\">\n" +
+    "            <div file-dropzone on-loaded=\"fileLoaded\" class=\"alert alert-info\">\n" +
+    "                Drag and drop *.json file here\n" +
+    "            </div>\n" +
+    "            <hr>\n" +
     "        </div>\n" +
     "\n" +
-    "        <hr>\n" +
+    "        <div class=\"alert alert-info alert-condensed\" ng-show=\"symbols.length > 0\">\n" +
+    "            <i class=\"fa fa-fw fa-info\"></i>\n" +
+    "            For symbols with actions that invoke other symbols, please make sure you adjust the references after\n" +
+    "            uploading them\n" +
+    "        </div>\n" +
     "\n" +
-    "        <div selectable items=\"symbols\" ng-if=\"symbols.length > 0\">\n" +
-    "            <div selectable-list>\n" +
-    "                <div selectable-list-item ng-repeat=\"symbol in symbols\">\n" +
+    "        <div class=\"selectable-list\">\n" +
+    "            <div ng-repeat=\"symbol in symbols\"\n" +
+    "                 selectable-list-item\n" +
+    "                 selection-model\n" +
+    "                 selection-model-type=\"checkbox\"\n" +
+    "                 selection-model-selected-attribute=\"_selected\"\n" +
+    "                 selection-model-mode=\"multiple\"\n" +
+    "                 selection-model-selected-items=\"selectedSymbols\"\n" +
+    "                 selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
-    "                    <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
-    "\n" +
-    "                    <div class=\"text-muted\">\n" +
-    "                        <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                    </div>\n" +
-    "\n" +
+    "                <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover ng-if=\"$index !== 0\">\n" +
+    "                    <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                        <i class=\"fa fa-bars\"></i>\n" +
+    "                    </button>\n" +
+    "                    <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                        <li>\n" +
+    "                            <a href ng-click=\"restoreRevision(revision)\">\n" +
+    "                                <i class=\"fa fa-history fa-fw\"></i> Restore\n" +
+    "                            </a>\n" +
+    "                        </li>\n" +
+    "                    </ul>\n" +
     "                </div>\n" +
+    "\n" +
+    "                <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "\n" +
+    "                <p class=\"text-muted\">\n" +
+    "                    <a href ng-click=\"symbol._collapsed = !symbol._collapsed\">\n" +
+    "                        <span ng-bind=\"symbol.actions.length\"></span>\n" +
+    "                        Actions\n" +
+    "                        <i class=\"fa fa-fw\"\n" +
+    "                           ng-class=\"symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
+    "                    </a>\n" +
+    "\n" +
+    "                <ol collapse=\"!symbol._collapsed\">\n" +
+    "                    <li ng-repeat=\"action in symbol.actions\">\n" +
+    "                        {{action.toString()}}\n" +
+    "                    </li>\n" +
+    "                </ol>\n" +
+    "                </p>\n" +
+    "\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"container\">");
+    "</div>");
 }]);
 
 angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", function($templateCache) {

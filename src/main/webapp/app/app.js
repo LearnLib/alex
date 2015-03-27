@@ -38,6 +38,8 @@
     angular.module('weblearner.models', []);
 
     angular.module('weblearner')
+
+        // configure toast position
         .config(['ngToastProvider', function (ngToastProvider) {
             ngToastProvider.configure({
                 verticalPosition: 'top',
@@ -45,9 +47,18 @@
                 maxNumber: 1
             });
         }])
-        .run(['$rootScope', '_', 'paths', function ($rootScope, _, paths) {
+
+        .run(['$rootScope', '$state', '_', 'paths', function ($rootScope, $state, _, paths) {
+
+            // make some stuff available for use in templates
             $rootScope._ = _;
             $rootScope.paths = paths;
+
+            // workaround for go back in history button since ui.router does not support it
+            // save previous state in ui.router $state service
+            $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
+                $state.previous = fromState;
+            });
         }])
 }());;angular.module('templates-all', ['app/views/directives/counterexamples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/counters.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
 
@@ -505,6 +516,7 @@ angular.module("app/views/directives/view-heading.html", []).run(["$templateCach
   $templateCache.put("app/views/directives/view-heading.html",
     "<div class=\"view-heading\">\n" +
     "    <div class=\"container\">\n" +
+    "        <div class=\"view-heading-title-pre\" ng-transclude></div>\n" +
     "        <h2 class=\"view-heading-title\" ng-bind=\"::title\"></h2>\n" +
     "\n" +
     "        <p class=\"view-heading-sub-title\" ng-bind=\"::subTitle\"></p>\n" +
@@ -550,7 +562,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "            <input type=\"checkbox\" ng-model=\"action.regexp\"> Use Regular Expression\n" +
     "        </label>\n" +
     "    </div>\n" +
-    "    <a class=\"btn btn-default btn-sm\" html-element-picker>\n" +
+    "    <a class=\"btn btn-default btn-sm\" html-element-picker text=\"action.value\">\n" +
     "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "    </a>\n" +
     "\n" +
@@ -624,6 +636,28 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "\n" +
     "</div>\n" +
     "<!-- END: CLICK -->\n" +
+    "\n" +
+    "\n" +
+    "<!-- BEGIN: CLICK_LINK_BY_TEXT -->\n" +
+    "<div ng-if=\"action.type === actionTypes.web.CLICK_LINK_BY_TEXT\">\n" +
+    "\n" +
+    "    <h4><strong>Click Link By Its Text</strong></h4>\n" +
+    "\n" +
+    "    <p class=\"text-muted\">\n" +
+    "        Finds a link element with a given text and clicks on it\n" +
+    "    </p>\n" +
+    "    <hr>\n" +
+    "\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label\">Link Text</label>\n" +
+    "        <input class=\"form-control\" type=\"text\" placeholder=\"The text of the link\" ng-model=\"action.value\">\n" +
+    "    </div>\n" +
+    "    <a class=\"btn btn-default btn-sm\" html-element-picker text=\"action.value\">\n" +
+    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "    </a>\n" +
+    "\n" +
+    "</div>\n" +
+    "<!-- END: CLICK_LINK_BY_TEXT -->\n" +
     "\n" +
     "\n" +
     "<!-- BEGIN: FILL -->\n" +
@@ -899,42 +933,6 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    </div>\n" +
     "</div>\n" +
     "<!-- END: WAIT -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: DECLARE_COUNTER -->\n" +
-    "<div ng-if=\"action.type === actionTypes.other.DECLARE_COUNTER\">\n" +
-    "    <h4><strong>Declare Counter</strong></h4>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Declare a counter variable that can be used in other actions\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
-    "    <label>Name</label>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
-    "               placeholder=\"The name of the counter\">\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "<!-- END: DECLARE_COUNTER -->\n" +
-    "\n" +
-    "\n" +
-    "<!-- BEGIN: DECLARE_VARIABLE -->\n" +
-    "<div ng-if=\"action.type === actionTypes.other.DECLARE_VARIABLE\">\n" +
-    "    <h4><strong>Declare Variable</strong></h4>\n" +
-    "\n" +
-    "    <p class=\"text-muted\">\n" +
-    "        Declare a variable that can be used in other actions\n" +
-    "    </p>\n" +
-    "    <hr>\n" +
-    "    <label>Name</label>\n" +
-    "\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <input type=\"text\" class=\"form-control\" ng-model=\"action.name\"\n" +
-    "               placeholder=\"The name of the variable\">\n" +
-    "    </div>\n" +
-    "</div>\n" +
-    "<!-- END: DECLARE_VARIABLE -->\n" +
     "\n" +
     "\n" +
     "<!-- BEGIN: EXECUTE_SYMBOL -->\n" +
@@ -1786,7 +1784,7 @@ angular.module("app/views/pages/counters.html", []).run(["$templateCache", funct
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\" selectable items=\"results\">\n" +
     "\n" +
-    "        <div class=\"alert alert-info alert-condensed\">\n" +
+    "        <div class=\"alert alert-info alert-condensed\" ng-show=\"counters.length > 0\">\n" +
     "            <i class=\"fa fa-info fa-fw\"></i>\n" +
     "            Deleted counters will be created as soon as they are used in a learning process, starting with value 0.\n" +
     "        </div>\n" +
@@ -2249,9 +2247,20 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "\n" +
     "                            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
     "\n" +
-    "                            <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                                <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                            </a>\n" +
+    "                            <p class=\"text-muted\">\n" +
+    "                                <a href ng-click=\"symbol._collapsed = !symbol._collapsed\">\n" +
+    "                                    <span ng-bind=\"symbol.actions.length\"></span>\n" +
+    "                                    Actions\n" +
+    "                                    <i class=\"fa fa-fw\"\n" +
+    "                                       ng-class=\"symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
+    "                                </a>\n" +
+    "\n" +
+    "                            <ol collapse=\"!symbol._collapsed\">\n" +
+    "                                <li ng-repeat=\"action in symbol.actions\">\n" +
+    "                                    {{action.toString()}}\n" +
+    "                                </li>\n" +
+    "                            </ol>\n" +
+    "                            </p>\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
@@ -2473,6 +2482,9 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "<div view-heading\n" +
     "     title=\"Actions\"\n" +
     "     sub-title=\"Create and manage the actions for symbol: {{symbol.name}}\">\n" +
+    "    <a class=\"back-button btn btn-default btn-xs\" ui-sref=\"symbols\">\n" +
+    "        <i class=\"fa fa-fw fa-arrow-left\"></i>\n" +
+    "    </a>\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
@@ -2581,11 +2593,11 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"allSymbols\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"allSymbols\">\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"pull-right\">\n" +
-    "            <button class=\"btn btn-xs btn-primary\" download-as-json data=\"getSelectedSymbols\">\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" download-as-json data=\"getDownloadableSymbols\">\n" +
     "                <i class=\"fa fa-download fa-fw\"></i> Download\n" +
     "            </button>\n" +
     "        </div>\n" +
@@ -2596,23 +2608,23 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "<div class=\"view-body\">\n" +
     "    <div class=\"container symbol-group-list\">\n" +
     "\n" +
-    "        <div ng-repeat=\"group in groups track by group.id\" class=\"symbol-group\"\n" +
-    "             ng-class=\"group._isCollapsed ? 'collapsed' :''\">\n" +
+    "        <div ng-repeat=\"group in groups track by $index\" class=\"symbol-group\"\n" +
+    "             ng-class=\"group._collapsed ? 'collapsed' :''\">\n" +
     "\n" +
     "            <div class=\"selectable-list symbol-group-header\">\n" +
     "                <div class=\"selectable-list-heading\">\n" +
-    "                    <div class=\"selectable-list-control\" selectable items=\"group.symbols\">\n" +
-    "                        <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "                    <div class=\"selectable-list-control\">\n" +
+    "                        <input type=\"checkbox\" selection-checkbox-all items=\"group.symbols\">\n" +
     "                    </div>\n" +
     "                    <div class=\"selectable-list-content\">\n" +
     "\n" +
-    "                        <span class=\"pull-right\" ng-click=\"group._isCollapsed = !group._isCollapsed\">\n" +
+    "                        <span class=\"pull-right\" ng-click=\"group._collapsed = !group._collapsed\">\n" +
     "                            <i class=\"fa fa-fw\"\n" +
-    "                               ng-class=\"group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
+    "                               ng-class=\"group._collapsed ? 'fa-chevron-down' : 'fa-chevron-right'\"></i>\n" +
     "                        </span>\n" +
     "\n" +
     "                        <h3 class=\"symbol-group-title\" ng-bind=\"group.name\"\n" +
-    "                            ng-click=\"group._isCollapsed = !group._isCollapsed\"></h3>\n" +
+    "                            ng-click=\"group._collapsed = !group._collapsed\"></h3>\n" +
     "\n" +
     "                        <p class=\"text-muted\">\n" +
     "                            <span ng-bind=\"group.symbols.length\"></span> Symbols\n" +
@@ -2622,24 +2634,31 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "                </div>\n" +
     "            </div>\n" +
     "\n" +
-    "            <div class=\"symbol-group-body\" collapse=\"group._isCollapsed\">\n" +
+    "            <div class=\"symbol-group-body\" collapse=\"group._collapsed\">\n" +
+    "                <div class=\"selectable-list\">\n" +
+    "                    <div ng-repeat=\"symbol in group.symbols | orderBy:'-name':true\"\n" +
+    "                         selection-model\n" +
+    "                         selection-model-type=\"checkbox\"\n" +
+    "                         selection-model-selected-attribute=\"_selected\"\n" +
+    "                         selection-model-mode=\"multiple\"\n" +
+    "                         selection-model-selected-items=\"selectedSymbols\"\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
+    "                         ng-if=\"!symbol.hidden\">\n" +
     "\n" +
-    "                <div selectable items=\"group.symbols\">\n" +
-    "                    <div selectable-list>\n" +
-    "                        <div selectable-list-item item=\"symbol\" ng-repeat=\"symbol in group.symbols\">\n" +
+    "                        <div selectable-list-item>\n" +
     "\n" +
     "                            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
     "\n" +
     "                            <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
     "                                <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
     "                            </a>\n" +
-    "\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
     "\n" +
     "            </div>\n" +
     "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "</div>");
 }]);
@@ -2702,7 +2721,7 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
   "use strict";
   $templateCache.put("app/views/pages/symbols-import.html",
     "<div view-heading\n" +
-    "     title=\"Symbol Upload\"\n" +
+    "     title=\"Symbols Upload\"\n" +
     "     sub-title=\"If you already have a *.json file with symbols, you can import them here to this project\">\n" +
     "</div>\n" +
     "\n" +
@@ -2710,7 +2729,7 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "    <div class=\"container\">\n" +
     "\n" +
     "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"symbols\">\n" +
-    "            <input type=\"checkbox\" selectable-item-checkbox>\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"selectedSymbols\">\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-right\">\n" +
@@ -2725,30 +2744,64 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "<div class=\"view-body\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div file-dropzone on-loaded=\"fileLoaded\" class=\"alert alert-info\">\n" +
-    "            Drag and drop *.json file here\n" +
+    "        <div ng-if=\"symbols.length === 0\">\n" +
+    "            <div file-dropzone on-loaded=\"fileLoaded\" class=\"alert alert-info\">\n" +
+    "                Drag and drop *.json file here\n" +
+    "            </div>\n" +
+    "            <hr>\n" +
     "        </div>\n" +
     "\n" +
-    "        <hr>\n" +
+    "        <div class=\"alert alert-info alert-condensed\" ng-show=\"symbols.length > 0\">\n" +
+    "            <i class=\"fa fa-fw fa-info\"></i>\n" +
+    "            For symbols with actions that invoke other symbols, please make sure you adjust the references after\n" +
+    "            uploading them\n" +
+    "        </div>\n" +
     "\n" +
-    "        <div selectable items=\"symbols\" ng-if=\"symbols.length > 0\">\n" +
-    "            <div selectable-list>\n" +
-    "                <div selectable-list-item ng-repeat=\"symbol in symbols\">\n" +
+    "        <div class=\"selectable-list\">\n" +
+    "            <div ng-repeat=\"symbol in symbols\"\n" +
+    "                 selectable-list-item\n" +
+    "                 selection-model\n" +
+    "                 selection-model-type=\"checkbox\"\n" +
+    "                 selection-model-selected-attribute=\"_selected\"\n" +
+    "                 selection-model-mode=\"multiple\"\n" +
+    "                 selection-model-selected-items=\"selectedSymbols\"\n" +
+    "                 selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
-    "                    <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
-    "\n" +
-    "                    <div class=\"text-muted\">\n" +
-    "                        <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
-    "                    </div>\n" +
-    "\n" +
+    "                <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover ng-if=\"$index !== 0\">\n" +
+    "                    <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
+    "                        <i class=\"fa fa-bars\"></i>\n" +
+    "                    </button>\n" +
+    "                    <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
+    "                        <li>\n" +
+    "                            <a href ng-click=\"restoreRevision(revision)\">\n" +
+    "                                <i class=\"fa fa-history fa-fw\"></i> Restore\n" +
+    "                            </a>\n" +
+    "                        </li>\n" +
+    "                    </ul>\n" +
     "                </div>\n" +
+    "\n" +
+    "                <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
+    "\n" +
+    "                <p class=\"text-muted\">\n" +
+    "                    <a href ng-click=\"symbol._collapsed = !symbol._collapsed\">\n" +
+    "                        <span ng-bind=\"symbol.actions.length\"></span>\n" +
+    "                        Actions\n" +
+    "                        <i class=\"fa fa-fw\"\n" +
+    "                           ng-class=\"symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
+    "                    </a>\n" +
+    "\n" +
+    "                <ol collapse=\"!symbol._collapsed\">\n" +
+    "                    <li ng-repeat=\"action in symbol.actions\">\n" +
+    "                        {{action.toString()}}\n" +
+    "                    </li>\n" +
+    "                </ol>\n" +
+    "                </p>\n" +
+    "\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
-    "</div>\n" +
-    "\n" +
-    "<div class=\"container\">");
+    "</div>");
 }]);
 
 angular.module("app/views/pages/symbols-trash.html", []).run(["$templateCache", function($templateCache) {
@@ -3256,6 +3309,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 SEARCH_FOR_NODE: 'web_checkForNode',
                 CLEAR: 'web_clear',
                 CLICK: 'web_click',
+                CLICK_LINK_BY_TEXT: 'web_clickLinkByText',
                 FILL: 'web_fill',
                 GO_TO: 'web_goto',
                 SUBMIT: 'web_submit',
@@ -3271,8 +3325,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 CHECK_ATTRIBUTE_TYPE: 'rest_checkAttributeType'
             },
             other: {
-                DECLARE_COUNTER: 'declareCounter',
-                DECLARE_VARIABLE: 'declareVariable',
                 EXECUTE_SYMBOL: 'executeSymbol',
                 INCREMENT_COUNTER: 'incrementCounter',
                 SET_COUNTER: 'setCounter',
@@ -4108,13 +4160,18 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         /**
          * The counters of the project
-         * @type {{name: string, value: number}[]}
+         * TODO remove dummies when server is ready
+         * @type {{name: string, value: number, project: number}[]}
          */
-        $scope.counters = [{name: 'i', value: 0}, {name: 'j', value: 5}, {name: 'k', value: 1000}];
+        $scope.counters = [
+            {name: 'i', value: 0, project: 0},
+            {name: 'j', value: 5, project: 0},
+            {name: 'k', value: 1000, project: 0}
+        ];
 
         /**
          * The selected counters objects
-         * @type {{name: string, value: number}[]}
+         * @type {{name: string, value: number, project: number}[]}
          */
         $scope.selectedCounters = [];
 
@@ -4129,7 +4186,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         /**
          * Delete a counter from the server and on success from scope
          *
-         * @param {{name: string, value: number}} counter - The counter that should be deleted
+         * @param {{name: string, value: number, project: number}} counter - The counter that should be deleted
          */
         $scope.deleteCounter = function (counter) {
             Counters.delete(project.id, counter.name)
@@ -4922,20 +4979,26 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         $scope.project = Session.project.get();
         projectCopy = angular.copy($scope.project);
 
-        //////////
+        (function init() {
+
+            // check if the current project is used in learning and abort deletion
+            // because of unknown side effects
+            Learner.isActive()
+                .then(function () {
+                    Toast.info('Cannot edit the project. A learning process is still active.');
+                    $state.go('project');
+                });
+        }());
 
         /**
          * Updates a project and saves the updated project in the sessionStorage
          */
         $scope.updateProject = function () {
 
-            // delete this property because it is read only and the will throw an error otherwise
-            delete $scope.project.symbolAmount;
-
             // update the project on the server
             Project.Resource.update($scope.project)
                 .then(function (updatedProject) {
-                    SessionService.project.save(updatedProject);
+                    Session.project.save(updatedProject);
                     $scope.project = updatedProject;
                     projectCopy = angular.copy($scope.project);
                 })
@@ -4947,32 +5010,18 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          */
         $scope.deleteProject = function () {
             var message = 'Do you really want to delete this project with all its symbols and test results? This process can not be undone.';
-
-            // check if the current project is used in learning and abort deletion
-            // because of unknown side effects
-            Learner.isActive()
-                .then(function (data) {
-                    if (data.active !== false || (data.project !== $scope.project.id)) {
-                        confirmDeletion();
-                    } else {
-                        Toast.info('Project could not be deleted because there is an active learning process')
-                    }
-                });
-
-            function confirmDeletion() {
-                PromptService.confirm(message)
-                    .then(function () {
-                        Project.Resource.delete($scope.project)
-                            .then(function () {
-                                Toast.success('Project <strong>' + $scope.project.name + '</strong> deleted');
-                                Session.project.remove();
-                                $state.go('home');
-                            })
-                            .catch(function (response) {
-                                Toast.danger('<p><strong>Deleting project failed</strong></p>' + response.data.message);
-                            })
-                    })
-            }
+            PromptService.confirm(message)
+                .then(function () {
+                    Project.Resource.delete($scope.project)
+                        .then(function () {
+                            Toast.success('Project <strong>' + $scope.project.name + '</strong> deleted');
+                            Session.project.remove();
+                            $state.go('home');
+                        })
+                        .catch(function (response) {
+                            Toast.danger('<p><strong>Deleting project failed</strong></p>' + response.data.message);
+                        })
+                })
         };
 
         /**
@@ -5401,7 +5450,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          *
          * @returns {*} - The list of downloadable symbols without unneeded properties
          */
-        $scope.getSelectedSymbols = function () {
+        $scope.getDownloadableSymbols = function () {
             var selectedSymbols = angular.copy(SelectionService.getSelected($scope.allSymbols));
             SelectionService.removeSelection(selectedSymbols);
             _.forEach(selectedSymbols, function (symbol) {
@@ -5498,60 +5547,71 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .module('weblearner.controller')
         .controller('SymbolsImportController', SymbolsImportController);
 
-    SymbolsImportController.$inject = ['$scope', 'SessionService', 'Symbol', 'SelectionService', '_'];
+    SymbolsImportController.$inject = ['$scope', 'SessionService', 'Symbol', '_', 'ToastService'];
 
     /**
-     * Handles the import of symbols from a *.json file. The corresponding template for this controller is at
-     * 'views/pages/symbols-import.html'
+     * The controller that handles the import of symbols from a *.json file.
      *
-     * @param $scope
-     * @param Session
-     * @param Symbol
-     * @param SelectionService
-     * @param _
+     * Template: 'views/pages/symbols-import.html'
+     *
+     * @param $scope - The controllers scope
+     * @param Session - The SessionService
+     * @param Symbol - The factory for Symbols
+     * @param _ - Lodash
+     * @param Toast - The ToastService
      * @constructor
      */
-    function SymbolsImportController($scope, Session, Symbol, SelectionService, _) {
+    function SymbolsImportController($scope, Session, Symbol, _, Toast) {
 
         // The project that is saved in the sessionStorage
-        var _project = Session.project.get();
+        var project = Session.project.get();
 
         /**
          * The symbols that will be uploaded
-         *
          * @type {Symbol[]}
          */
         $scope.symbols = [];
 
         /**
-         * Creates instances of Symbols from the json string from the *.json file and puts them in the scope
+         * The list of selected symbols
+         * @type {Symbol[]}
+         */
+        $scope.selectedSymbols = [];
+
+        /**
+         * Creates instances of Symbols from the json string from the *.json file and puts them in the scope.
          *
          * @param data - The json string of loaded symbols
          */
         $scope.fileLoaded = function (data) {
             try {
-                var symbols = angular.fromJson(data);
                 $scope.$apply(function () {
-                    $scope.symbols = $scope.symbols.concat(symbols);
+                    $scope.symbols = Symbol.buildSome(angular.fromJson(data));
                 });
-            } catch(e) {
-                console.error(e);
+            } catch (e) {
+                Toast.danger('<p><strong>Loading json file failed</strong></p>' + e);
             }
         };
 
         /**
          * Makes an API request in order to create the selected symbols. Removes successfully created symbols from the
-         * scope
+         * scope.
          */
         $scope.uploadSelectedSymbols = function () {
-            var selectedSymbols = angular.copy(SelectionService.getSelected($scope.symbols));
-            if (selectedSymbols.length > 0) {
-                SelectionService.removeSelection(selectedSymbols);
-                Symbol.Resource.createSome(_project.id, selectedSymbols)
+            if ($scope.selectedSymbols.length > 0) {
+                var symbols = angular.copy($scope.selectedSymbols);
+                _.forEach(symbols, function (symbol) {
+                    delete symbol._collapsed;
+                    delete symbol._selected;
+                });
+                Symbol.Resource.createSome(project.id, symbols)
                     .then(function (createdSymbols) {
                         _.forEach(createdSymbols, function (symbol) {
                             _.remove($scope.symbols, {name: symbol.name})
                         })
+                    })
+                    .catch(function (response) {
+                        Toast.danger('<p><strong>Symbol upload failed</strong></p>' + response.data.message)
                     })
             }
         };
@@ -5990,11 +6050,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             })
         }
     }
-}());;(function() {
-	'use strict';
+}());;(function () {
+    'use strict';
 
-	angular
-		.module('weblearner.directives')
+    angular
+        .module('weblearner.directives')
         .directive('downloadAsJson', downloadAsJson);
 
     downloadAsJson.$inject = ['FileDownloadService'];
@@ -6015,34 +6075,26 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         // the directive
         return {
-			restrict: 'A',
-			scope:  {
-				data: '='
-			},
-			link: link
+            restrict: 'A',
+            scope: {
+                data: '='
+            },
+            link: link
         };
 
         // the directives behaviour
-		function link(scope, el, attrs) {
+        function link(scope, el, attrs) {
             el.on('click', function () {
                 if (angular.isDefined(scope.data)) {
-                    var json;
-
-                    // if data parameter was function call it otherwise just convert data into json
-                    if (angular.isObject(scope.data) || angular.isArray(scope.data)) {
-                        json += encodeURIComponent(angular.toJson(scope.data));
-                    } else if (angular.isFunction(scope.data)) {
-                        json += encodeURIComponent(angular.toJson(scope.data()));
+                    var data = scope.data;
+                    if (angular.isFunction(scope.data)) {
+                        data = scope.data();
                     }
-
-                    // download json
-                    if (angular.isDefined(json)) {
-                        FileDownloadService.downloadJson(json);
-                    }
+                    FileDownloadService.downloadJson(data);
                 }
             });
-		}
-	}
+        }
+    }
 }());;(function () {
     'use strict';
 
@@ -6506,10 +6558,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         return {
             restrict: 'A',
             scope: {
-                selectorModel: '=model'
+                selectorModel: '=model',
+                textModel: '=text'
             },
             link: link
-        }
+        };
 
         function link(scope, el, attrs) {
             var picker;
@@ -6519,9 +6572,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 $document.find('body').prepend(picker);
 
                 htmlElementPickerInstance.open()
-                    .then(function (selector) {
+                    .then(function (data) {
                         if (angular.isDefined(scope.selectorModel)) {
-                            scope.selectorModel = selector;
+                            scope.selectorModel = data.xPath;
+                        }
+                        if (angular.isDefined(scope.textModel)) {
+                            scope.textModel = data.textContent;
                         }
                     })
                     .finally(function () {
@@ -6549,11 +6605,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             open: open,
             setUrl: setUrl,
             getUrl: getUrl
-        }
+        };
 
-        function close(selector) {
-            if (angular.isDefined(selector)) {
-                deferred.resolve(selector)
+        function close(data) {
+            if (angular.isDefined(data)) {
+                deferred.resolve(data)
             } else {
                 deferred.reject();
             }
@@ -6598,9 +6654,15 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
             /**
              * The XPath of the selected element
-             * @type {null}
+             * @type {null|string}
              */
             scope.selector = null;
+
+            /**
+             * The element.textContent value
+             * @type {null|string}
+             */
+            scope.textContent = null;
 
             /**
              * The url that is loaded in the iframe
@@ -6653,6 +6715,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 }
                 lastTarget.style.outline = '5px solid red';
                 scope.selector = getCssPath(lastTarget);
+                scope.textContent = lastTarget.textContent;
                 scope.$apply();
             }
 
@@ -6743,10 +6806,13 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
              */
             scope.ok = function () {
                 htmlElementPickerInstance.setUrl(scope.url);
-                htmlElementPickerInstance.close(scope.selector);
+                htmlElementPickerInstance.close({
+                    xPath: scope.selector,
+                    textContent: scope.textContent
+                });
             };
 
-            // init direcitve
+            // init directive
             init();
         }
     }
@@ -8048,11 +8114,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * should have a header with a title and a sub-title. The directive accepts two parameters 'title' and 'subTile'
      * which both only accept static values.
      *
-     * Use it like '<view-heading title="..." sub-title="..."></view-heading>'
+     * Is transcludable so that child elements can be added before the title. So just add buttons or additional text
+     * there.
+     *
+     * Use it like '<view-heading title="..." sub-title="..."> ... </view-heading>'
      *
      * The template can be found and changed at 'views/directives/view-heading.html'
      *
-     * @returns {{scope: {title: string, subTitle: string}, templateUrl: string}}
+     * @returns {{scope: {title: string, subTitle: string}, transclude: boolean, templateUrl: string}}
      */
     function viewHeading(paths) {
         return {
@@ -8060,6 +8129,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 title: '@',
                 subTitle: '@'
             },
+            transclude: true,
             templateUrl: paths.views.DIRECTIVES + '/view-heading.html'
         }
     }
@@ -8358,6 +8428,15 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             return 'Click on element "' + this.node + '"';
         };
 
+        Action.Web.ClickLinkByText = function (value) {
+            Action.call(this, actionTypes.web.CLICK_LINK_BY_TEXT);
+            this.value = value || null;
+        };
+
+        Action.Web.ClickLinkByText.prototype.toString = function () {
+            return 'Click on link with text "' + this.value + '"';
+        };
+
         Action.Web.Fill = function (node, value) {
             Action.call(this, actionTypes.web.FILL);
             this.node = node || null;
@@ -8486,24 +8565,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             return 'Wait for ' + this.duration + 'ms'
         };
 
-        Action.Other.DeclareCounter = function (name) {
-            Action.call(this, actionTypes.other.DECLARE_COUNTER);
-            this.name = name || null;
-        };
-
-        Action.Other.DeclareCounter.prototype.toString = function () {
-            return 'Declare counter "' + this.name + '"';
-        };
-
-        Action.Other.DeclareVariable = function (name) {
-            Action.call(this, actionTypes.other.DECLARE_VARIABLE);
-            this.name = name || null;
-        };
-
-        Action.Other.DeclareVariable.prototype.toString = function () {
-            return 'Declare variable "' + this.name + '"';
-        };
-
         Action.Other.ExecuteSymbol = function (symbolName, idRevisionPair) {
             Action.call(this, actionTypes.other.EXECUTE_SYMBOL);
 
@@ -8601,6 +8662,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 case actionTypes.web.CLICK:
                     action = new Action.Web.Click(data.node);
                     break;
+                case actionTypes.web.CLICK_LINK_BY_TEXT:
+                    action = new Action.Web.ClickLinkByText(data.value);
+                    break;
                 case actionTypes.web.FILL:
                     action = new Action.Web.Fill(data.node, data.value);
                     break;
@@ -8640,12 +8704,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 // other actions
                 case actionTypes.other.WAIT:
                     action = new Action.Other.Wait(data.duration);
-                    break;
-                case actionTypes.other.DECLARE_COUNTER:
-                    action = new Action.Other.DeclareCounter(data.name);
-                    break;
-                case actionTypes.other.DECLARE_VARIABLE:
-                    action = new Action.Other.DeclareVariable(data.name);
                     break;
                 case actionTypes.other.EXECUTE_SYMBOL:
                     action = new Action.Other.ExecuteSymbol(data.symbolToExecuteName, data.symbolToExecute);
@@ -9939,9 +9997,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     /**
      * The service that communicates with the API in order to read and delete counters. Counters are objects consisting
-     * of a unique 'name' property and a 'value' which holds the current value of the counter in the database.
+     * of a unique 'name' property, a 'value' which holds the current value of the counter in the database and 'project'
+     * for the projects id.
      *
-     * Example: {"name": "i", "value": 10}
+     * Example: {"name": "i", "value": 10, "project": 1}
      *
      * @param $http - angular $http service
      * @param paths - application paths constants
@@ -9952,25 +10011,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         // the services functions
         return {
-            get: get,
             getAll: getAll,
             delete: deleteOne,
             deleteSome: deleteSome
         };
-
-        /**
-         * Makes a GET request to /rest/projects/{projectId}/counters/{counterName} in order to fetch a single counter.
-         *
-         * @param {number} projectId - The id of a project
-         * @param {string} name - The name of the symbol to be fetched
-         * @returns {HttpPromise} - angular promise object of the request
-         */
-        function get(projectId, name) {
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/counters/' + name)
-                .then(function (response) {
-                    return response.data;
-                })
-        }
 
         /**
          * Makes a GET request to /rest/projects/{projectId}/counters in order to fetch all counter of the current
@@ -10041,7 +10085,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             downloadJson: downloadJson,
             downloadCSV: downloadCSV,
             downloadSVG: downloadSVG
-        }
+        };
 
         // private functions
 
@@ -10092,7 +10136,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         function downloadJson(jsonObject) {
             _prompt('JSON')
                 .then(function (filename) {
-                    var href = 'data:text/json;charset=utf-8,' + angular.toJson(jsonObject);
+                    var href = 'data:text/json;charset=utf-8,' + encodeURIComponent(angular.toJson(jsonObject));
                     _download(filename, 'json', href);
                 })
         }
@@ -10118,7 +10162,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         function downloadSVG(svg) {
             _prompt('SVG')
                 .then(function (filename) {
-                    var href = 'data:image/svg+xml;base64,\n';
+
 
                     // set proper xml attributes for downloadable file
                     svg.setAttribute('version', '1.1');
@@ -10128,8 +10172,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     // base64 otherwise the file will not be completely downloaded
                     // what results in errors opening the file
                     var svgString = new XMLSerializer().serializeToString(svg);
-                    var encodedSvgString = window.btoa(svgString);
-                    href += encodedSvgString;
+                    var href = 'data:image/svg+xml;base64,\n' + window.btoa(svgString);
 
                     _download(filename, 'svg', href);
                 })

@@ -48,7 +48,7 @@
          *
          * @returns {*} - The list of downloadable symbols without unneeded properties
          */
-        $scope.getSelectedSymbols = function () {
+        $scope.getDownloadableSymbols = function () {
             var selectedSymbols = angular.copy(SelectionService.getSelected($scope.allSymbols));
             SelectionService.removeSelection(selectedSymbols);
             _.forEach(selectedSymbols, function (symbol) {

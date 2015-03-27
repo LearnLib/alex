@@ -26,13 +26,18 @@
 
         /**
          * The counters of the project
-         * @type {{name: string, value: number}[]}
+         * TODO remove dummies when server is ready
+         * @type {{name: string, value: number, project: number}[]}
          */
-        $scope.counters = [{name: 'i', value: 0}, {name: 'j', value: 5}, {name: 'k', value: 1000}];
+        $scope.counters = [
+            {name: 'i', value: 0, project: 0},
+            {name: 'j', value: 5, project: 0},
+            {name: 'k', value: 1000, project: 0}
+        ];
 
         /**
          * The selected counters objects
-         * @type {{name: string, value: number}[]}
+         * @type {{name: string, value: number, project: number}[]}
          */
         $scope.selectedCounters = [];
 
@@ -47,7 +52,7 @@
         /**
          * Delete a counter from the server and on success from scope
          *
-         * @param {{name: string, value: number}} counter - The counter that should be deleted
+         * @param {{name: string, value: number, project: number}} counter - The counter that should be deleted
          */
         $scope.deleteCounter = function (counter) {
             Counters.delete(project.id, counter.name)

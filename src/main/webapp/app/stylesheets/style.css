@@ -5470,11 +5470,21 @@ form.form-condensed .form-group {
 
 .view-heading .view-heading-title {
     margin: 0;
-    margin-bottom: 5px
+    margin-bottom: 5px;
+    display: inline-block
+}
+
+.view-heading .view-heading-title-pre {
+    display: inline-block
 }
 
 .view-heading .view-heading-sub-title {
     margin: 0
+}
+
+.view-heading .back-button {
+    margin-right: 5px;
+    margin-bottom: 12px
 }
 
 .view-body {

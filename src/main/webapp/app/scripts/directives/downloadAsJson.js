@@ -1,8 +1,8 @@
-(function() {
-	'use strict';
+(function () {
+    'use strict';
 
-	angular
-		.module('weblearner.directives')
+    angular
+        .module('weblearner.directives')
         .directive('downloadAsJson', downloadAsJson);
 
     downloadAsJson.$inject = ['FileDownloadService'];
@@ -23,32 +23,24 @@
 
         // the directive
         return {
-			restrict: 'A',
-			scope:  {
-				data: '='
-			},
-			link: link
+            restrict: 'A',
+            scope: {
+                data: '='
+            },
+            link: link
         };
 
         // the directives behaviour
-		function link(scope, el, attrs) {
+        function link(scope, el, attrs) {
             el.on('click', function () {
                 if (angular.isDefined(scope.data)) {
-                    var json;
-
-                    // if data parameter was function call it otherwise just convert data into json
-                    if (angular.isObject(scope.data) || angular.isArray(scope.data)) {
-                        json += encodeURIComponent(angular.toJson(scope.data));
-                    } else if (angular.isFunction(scope.data)) {
-                        json += encodeURIComponent(angular.toJson(scope.data()));
+                    var data = scope.data;
+                    if (angular.isFunction(scope.data)) {
+                        data = scope.data();
                     }
-
-                    // download json
-                    if (angular.isDefined(json)) {
-                        FileDownloadService.downloadJson(json);
-                    }
+                    FileDownloadService.downloadJson(data);
                 }
             });
-		}
-	}
+        }
+    }
 }());
