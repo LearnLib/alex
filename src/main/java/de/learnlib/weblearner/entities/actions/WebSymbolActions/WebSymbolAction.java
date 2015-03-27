@@ -35,7 +35,7 @@ public abstract class WebSymbolAction extends SymbolAction {
     protected abstract ExecuteResult execute(WebSiteConnector connector);
 
     protected String insertVariableValues(String text) {
-        return SearchHelper.insertVariableValues(multiConnector, text);
+        return SearchHelper.insertVariableValues(multiConnector, project.getId(), text);
     }
 
     /*

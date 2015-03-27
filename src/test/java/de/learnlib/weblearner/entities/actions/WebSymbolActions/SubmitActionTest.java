@@ -2,6 +2,7 @@ package de.learnlib.weblearner.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
+import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,11 +23,13 @@ import static org.mockito.Mockito.when;
 
 public class SubmitActionTest {
 
+    private static final Long PROJECT_ID = 42L;
     private SubmitAction s;
 
     @Before
     public void setUp() {
         s = new SubmitAction();
+        s.setProject(new Project(PROJECT_ID));
         s.setNode("#node");
     }
 

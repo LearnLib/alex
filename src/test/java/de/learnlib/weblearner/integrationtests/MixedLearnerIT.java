@@ -9,6 +9,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -66,7 +67,8 @@ public class MixedLearnerIT extends JerseyTest {
         json = "{\"project\": " + project.getId() + ", \"name\": \"Reset\", \"abbreviation\": \"reset\","
              + "\"actions\": ["
                 + "{\"type\": \"web_goto\", \"url\": \"/web/reset\"},"
-                + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/rest/reset\"}"
+                + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/rest/reset\"},"
+                + "{\"type\": \"incrementCounter\", \"name\" : \"the_counter\"}"
              + "]}";
         Symbol resetSymbol = testHelper.addSymbol(client, project, json);
         resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevisionPairListAsJSON(resetSymbol);
@@ -80,7 +82,8 @@ public class MixedLearnerIT extends JerseyTest {
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                     + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/test\"},"
-                    + "{\"type\": \"rest_checkStatus\", \"status\" : 200}"
+                    + "{\"type\": \"rest_checkStatus\", \"status\" : 200},"
+                    + "{\"type\": \"incrementCounter\", \"name\" : \"the_counter\"}"
                 + "]}";
         symbols[0] = testHelper.addSymbol(client, project, json);
 

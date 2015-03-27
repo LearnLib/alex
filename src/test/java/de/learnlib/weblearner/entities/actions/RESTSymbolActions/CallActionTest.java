@@ -2,6 +2,7 @@ package de.learnlib.weblearner.entities.actions.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
+import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
 import org.junit.Before;
@@ -25,6 +26,7 @@ public class CallActionTest {
     public static final String TEST_BASE_URL = "http://example.com/api";
     public static final String TEST_API_PATH = "/test";
     public static final String TEST_API_URL = TEST_BASE_URL + TEST_API_PATH;
+    private static final Long PROJECT_ID = 42L;
 
     @Mock
     private WebServiceConnector connector;
@@ -34,6 +36,7 @@ public class CallActionTest {
     @Before
     public void setUp() {
         c = new CallAction();
+        c.setProject(new Project(PROJECT_ID));
         c.setMethod(CallAction.Method.GET);
         c.setUrl(TEST_API_PATH);
         c.setData("{}");

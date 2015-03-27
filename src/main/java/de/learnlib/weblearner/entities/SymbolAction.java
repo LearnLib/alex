@@ -12,8 +12,6 @@ import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckHeaderFiel
 import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckStatusAction;
 import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.weblearner.entities.actions.RESTSymbolActions.RESTSymbolAction;
-import de.learnlib.weblearner.entities.actions.StoreSymbolActions.DeclareCounterAction;
-import de.learnlib.weblearner.entities.actions.StoreSymbolActions.DeclareVariableAction;
 import de.learnlib.weblearner.entities.actions.StoreSymbolActions.IncrementCounterAction;
 import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetCounterAction;
 import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableAction;
@@ -59,8 +57,6 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "executeSymbol", value = ExecuteSymbolAction.class),
         @JsonSubTypes.Type(name = "wait", value = WaitAction.class),
         // Counter & Variables
-        @JsonSubTypes.Type(name = "declareCounter", value = DeclareCounterAction.class),
-        @JsonSubTypes.Type(name = "declareVariable", value = DeclareVariableAction.class),
         @JsonSubTypes.Type(name = "incrementCounter", value = IncrementCounterAction.class),
         @JsonSubTypes.Type(name = "setCounter", value = SetCounterAction.class),
         @JsonSubTypes.Type(name = "setVariable", value = SetVariableAction.class),

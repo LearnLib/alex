@@ -2,6 +2,7 @@ package de.learnlib.weblearner.entities.actions.StoreSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
+import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.verify;
 
 public class SetCounterActionTest {
 
+    private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
     private static final Integer TEST_VALUE = 42;
 
@@ -29,6 +31,7 @@ public class SetCounterActionTest {
     @Before
     public void setUp() {
         setAction = new SetCounterAction();
+        setAction.setProject(new Project(PROJECT_ID));
         setAction.setName(TEST_NAME);
         setAction.setValue(TEST_VALUE);
     }
@@ -65,20 +68,19 @@ public class SetCounterActionTest {
         ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).set(TEST_NAME, TEST_VALUE);
+        verify(counters).set(PROJECT_ID, TEST_NAME, TEST_VALUE);
     }
 
     @Test
-    public void shouldFailIfCounterIsNotDeclared() {
+    public void shouldNotFailIfCounterIsNotDeclared() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        willThrow(IllegalStateException.class).given(counters).set(TEST_NAME, TEST_VALUE);
         MultiConnector connector = mock(MultiConnector.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
         ExecuteResult result = setAction.execute(connector);
 
-        assertEquals(ExecuteResult.FAILED, result);
-        verify(counters).set(TEST_NAME, TEST_VALUE);
+        assertEquals(ExecuteResult.OK, result);
+        verify(counters).set(PROJECT_ID, TEST_NAME, TEST_VALUE);
     }
 
 }

@@ -2,6 +2,7 @@ package de.learnlib.weblearner.entities.actions.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
+import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class CheckHeaderFieldActionTest {
 
+    private static final Long PROJECT_ID = 42L;
+
     @Mock
     private WebServiceConnector connector;
 
@@ -32,6 +35,7 @@ public class CheckHeaderFieldActionTest {
     @Before
     public void setUp() {
         c = new CheckHeaderFieldAction();
+        c.setProject(new Project(PROJECT_ID));
         c.setKey("Accept");
         c.setValue("text/html");
         c.setRegexp(false);

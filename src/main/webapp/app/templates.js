@@ -1708,64 +1708,64 @@ angular.module("app/views/pages/about.html", []).run(["$templateCache", function
     "</div>");
 }]);
 
-angular.module("app/views/pages/counters.html", []).run(["$templateCache", function ($templateCache) {
-    "use strict";
-    $templateCache.put("app/views/pages/counters.html",
-        "<div view-heading\n" +
-        "     title=\"Counters\"\n" +
-        "     sub-title=\"Manage counters for learning processes\">\n" +
-        "</div>\n" +
-        "\n" +
-        "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
-        "    <div class=\"container\">\n" +
-        "\n" +
-        "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-        "            <input type=\"checkbox\" selection-checkbox-all items=\"counters\">\n" +
-        "        </div>\n" +
-        "\n" +
-        "        <div class=\"pull-left\">\n" +
-        "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteSelectedCounters()\">\n" +
-        "                Delete\n" +
-        "            </button>\n" +
-        "        </div>\n" +
-        "\n" +
-        "    </div>\n" +
-        "</div>\n" +
-        "\n" +
-        "<div class=\"view-body\">\n" +
-        "    <div class=\"container\" selectable items=\"results\">\n" +
-        "\n" +
-        "        <div class=\"alert alert-info alert-condensed\">\n" +
-        "            <i class=\"fa fa-info fa-fw\"></i>\n" +
-        "            Deleted counters will be created as soon as they are used in a learning process, starting with value 0.\n" +
-        "        </div>\n" +
-        "\n" +
-        "        <div class=\"selectable-list\"\n" +
-        "             ng-if=\"counters.length > 0\">\n" +
-        "\n" +
-        "            <div ng-repeat=\"counter in counters\"\n" +
-        "                 selection-model\n" +
-        "                 selection-model-type=\"checkbox\"\n" +
-        "                 selection-model-selected-attribute=\"_selected\"\n" +
-        "                 selection-model-mode=\"multiple\"\n" +
-        "                 selection-model-selected-items=\"selectedCounters\"\n" +
-        "                 selection-model-cleanup-strategy=\"deselect\">\n" +
-        "\n" +
-        "                <div selectable-list-item>\n" +
-        "                    <button class=\"btn btn-xs btn-default btn-icon pull-right\"\n" +
-        "                            ng-click=\"deleteCounter(counter)\">\n" +
-        "                        <i class=\"fa fa-trash fa-fw\"></i>\n" +
-        "                    </button>\n" +
-        "\n" +
-        "                    <strong ng-bind=\"counter.name\"></strong><br>\n" +
-        "                    <span class=\"text-muted\">Value: <span ng-bind=\"counter.value\"></span></span>\n" +
-        "                </div>\n" +
-        "            </div>\n" +
-        "        </div>\n" +
-        "\n" +
-        "        <div class=\"alert alert-info\" ng-if=\"counters.length === 0\">\n" +
-        "            There aren't any counters yet\n" +
-        "        </div>\n" +
+angular.module("app/views/pages/counters.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/counters.html",
+    "<div view-heading\n" +
+    "     title=\"Counters\"\n" +
+    "     sub-title=\"Manage counters for learning processes\">\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
+    "    <div class=\"container\">\n" +
+    "\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"counters\">\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteSelectedCounters()\">\n" +
+    "                Delete\n" +
+    "            </button>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\" selectable items=\"results\">\n" +
+    "\n" +
+    "        <div class=\"alert alert-info alert-condensed\">\n" +
+    "            <i class=\"fa fa-info fa-fw\"></i>\n" +
+    "            Deleted counters will be created as soon as they are used in a learning process, starting with value 0.\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"selectable-list\"\n" +
+    "             ng-if=\"counters.length > 0\">\n" +
+    "\n" +
+    "            <div ng-repeat=\"counter in counters\"\n" +
+    "                 selection-model\n" +
+    "                 selection-model-type=\"checkbox\"\n" +
+    "                 selection-model-selected-attribute=\"_selected\"\n" +
+    "                 selection-model-mode=\"multiple\"\n" +
+    "                 selection-model-selected-items=\"selectedCounters\"\n" +
+    "                 selection-model-cleanup-strategy=\"deselect\">\n" +
+    "\n" +
+    "                <div selectable-list-item>\n" +
+    "                    <button class=\"btn btn-xs btn-default btn-icon pull-right\"\n" +
+    "                            ng-click=\"deleteCounter(counter)\">\n" +
+    "                        <i class=\"fa fa-trash fa-fw\"></i>\n" +
+    "                    </button>\n" +
+    "\n" +
+    "                    <strong ng-bind=\"counter.name\"></strong><br>\n" +
+    "                    <span class=\"text-muted\">Value: <span ng-bind=\"counter.value\"></span></span>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"alert alert-info\" ng-if=\"counters.length === 0\">\n" +
+    "            There aren't any counters yet\n" +
+    "        </div>\n" +
     "\n" +
     "    </div>\n" +
     "</div>");

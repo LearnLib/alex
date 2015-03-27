@@ -34,6 +34,6 @@ public abstract class RESTSymbolAction extends SymbolAction {
     protected abstract ExecuteResult execute(WebServiceConnector connector);
 
     protected String insertVariableValues(String text) {
-        return SearchHelper.insertVariableValues(multiConnector, text);
+        return SearchHelper.insertVariableValues(multiConnector, project.getId(), text);
     }
 }

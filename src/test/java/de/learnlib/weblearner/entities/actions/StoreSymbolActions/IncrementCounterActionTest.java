@@ -2,6 +2,7 @@ package de.learnlib.weblearner.entities.actions.StoreSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
+import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
 import de.learnlib.weblearner.learner.connectors.MultiConnector;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.verify;
 
 public class IncrementCounterActionTest {
 
+    private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
 
     private IncrementCounterAction incrementAction;
@@ -28,6 +30,7 @@ public class IncrementCounterActionTest {
     @Before
     public void setUp() {
         incrementAction = new IncrementCounterAction();
+        incrementAction.setProject(new Project(PROJECT_ID));
         incrementAction.setName(TEST_NAME);
     }
 
@@ -61,20 +64,20 @@ public class IncrementCounterActionTest {
         ExecuteResult result = incrementAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).increment(TEST_NAME);
+        verify(counters).increment(PROJECT_ID, TEST_NAME);
     }
 
     @Test
     public void shouldFailIncrementingIfCounterIsNotDeclared() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        willThrow(IllegalStateException.class).given(counters).increment(TEST_NAME);
+        willThrow(IllegalStateException.class).given(counters).increment(PROJECT_ID, TEST_NAME);
         MultiConnector connector = mock(MultiConnector.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
         ExecuteResult result = incrementAction.execute(connector);
 
         assertEquals(ExecuteResult.FAILED, result);
-        verify(counters).increment(TEST_NAME);
+        verify(counters).increment(PROJECT_ID, TEST_NAME);
     }
 
 }

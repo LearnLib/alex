@@ -2,6 +2,7 @@ package de.learnlib.weblearner.entities.actions.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
+import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,8 @@ import static org.mockito.BDDMockito.given;
 @RunWith(MockitoJUnitRunner.class)
 public class CheckAttributeTypeActionTest {
 
+    private static final Long PROJECT_ID = 42L;
+
     @Mock
     private WebServiceConnector connector;
 
@@ -28,6 +31,7 @@ public class CheckAttributeTypeActionTest {
     @Before
     public void setUp() {
         c = new CheckAttributeTypeAction();
+        c.setProject(new Project(PROJECT_ID));
         c.setAttribute("awesome_field");
         c.setJsonType(CheckAttributeTypeAction.JsonType.STRING);
     }

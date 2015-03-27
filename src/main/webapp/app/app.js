@@ -49,9 +49,7 @@
             $rootScope._ = _;
             $rootScope.paths = paths;
         }])
-}());
-;
-angular.module('templates-all', ['app/views/directives/counterexamples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/counters.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
+}());;angular.module('templates-all', ['app/views/directives/counterexamples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/counters.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
 
 angular.module("app/views/directives/counterexamples-widget.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -1761,67 +1759,67 @@ angular.module("app/views/pages/about.html", []).run(["$templateCache", function
     "</div>");
 }]);
 
-angular.module("app/views/pages/counters.html", []).run(["$templateCache", function ($templateCache) {
-    "use strict";
-    $templateCache.put("app/views/pages/counters.html",
-        "<div view-heading\n" +
-        "     title=\"Counters\"\n" +
-        "     sub-title=\"Manage counters for learning processes\">\n" +
-        "</div>\n" +
-        "\n" +
-        "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
-        "    <div class=\"container\">\n" +
-        "\n" +
-        "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
-        "            <input type=\"checkbox\" selection-checkbox-all items=\"counters\">\n" +
-        "        </div>\n" +
-        "\n" +
-        "        <div class=\"pull-left\">\n" +
-        "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteSelectedCounters()\">\n" +
-        "                Delete\n" +
-        "            </button>\n" +
-        "        </div>\n" +
-        "\n" +
-        "    </div>\n" +
-        "</div>\n" +
-        "\n" +
-        "<div class=\"view-body\">\n" +
-        "    <div class=\"container\" selectable items=\"results\">\n" +
-        "\n" +
-        "        <div class=\"alert alert-info alert-condensed\">\n" +
-        "            <i class=\"fa fa-info fa-fw\"></i>\n" +
-        "            Deleted counters will be created as soon as they are used in a learning process, starting with value 0.\n" +
-        "        </div>\n" +
-        "\n" +
-        "        <div class=\"selectable-list\"\n" +
-        "             ng-if=\"counters.length > 0\">\n" +
-        "\n" +
-        "            <div ng-repeat=\"counter in counters\"\n" +
-        "                 selection-model\n" +
-        "                 selection-model-type=\"checkbox\"\n" +
-        "                 selection-model-selected-attribute=\"_selected\"\n" +
-        "                 selection-model-mode=\"multiple\"\n" +
-        "                 selection-model-selected-items=\"selectedCounters\"\n" +
-        "                 selection-model-cleanup-strategy=\"deselect\">\n" +
-        "\n" +
-        "                <div selectable-list-item>\n" +
-        "                    <button class=\"btn btn-xs btn-default btn-icon pull-right\"\n" +
-        "                            ng-click=\"deleteCounter(counter)\">\n" +
-        "                        <i class=\"fa fa-trash fa-fw\"></i>\n" +
-        "                    </button>\n" +
-        "\n" +
-        "                    <strong ng-bind=\"counter.name\"></strong><br>\n" +
-        "                    <span class=\"text-muted\">Value: <span ng-bind=\"counter.value\"></span></span>\n" +
-        "                </div>\n" +
-        "            </div>\n" +
-        "        </div>\n" +
-        "\n" +
-        "        <div class=\"alert alert-info\" ng-if=\"counters.length === 0\">\n" +
-        "            There aren't any counters yet\n" +
-        "        </div>\n" +
-        "\n" +
-        "    </div>\n" +
-        "</div>");
+angular.module("app/views/pages/counters.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/pages/counters.html",
+    "<div view-heading\n" +
+    "     title=\"Counters\"\n" +
+    "     sub-title=\"Manage counters for learning processes\">\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
+    "    <div class=\"container\">\n" +
+    "\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"counters\">\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteSelectedCounters()\">\n" +
+    "                Delete\n" +
+    "            </button>\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"view-body\">\n" +
+    "    <div class=\"container\" selectable items=\"results\">\n" +
+    "\n" +
+    "        <div class=\"alert alert-info alert-condensed\">\n" +
+    "            <i class=\"fa fa-info fa-fw\"></i>\n" +
+    "            Deleted counters will be created as soon as they are used in a learning process, starting with value 0.\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"selectable-list\"\n" +
+    "             ng-if=\"counters.length > 0\">\n" +
+    "\n" +
+    "            <div ng-repeat=\"counter in counters\"\n" +
+    "                 selection-model\n" +
+    "                 selection-model-type=\"checkbox\"\n" +
+    "                 selection-model-selected-attribute=\"_selected\"\n" +
+    "                 selection-model-mode=\"multiple\"\n" +
+    "                 selection-model-selected-items=\"selectedCounters\"\n" +
+    "                 selection-model-cleanup-strategy=\"deselect\">\n" +
+    "\n" +
+    "                <div selectable-list-item>\n" +
+    "                    <button class=\"btn btn-xs btn-default btn-icon pull-right\"\n" +
+    "                            ng-click=\"deleteCounter(counter)\">\n" +
+    "                        <i class=\"fa fa-trash fa-fw\"></i>\n" +
+    "                    </button>\n" +
+    "\n" +
+    "                    <strong ng-bind=\"counter.name\"></strong><br>\n" +
+    "                    <span class=\"text-muted\">Value: <span ng-bind=\"counter.value\"></span></span>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"alert alert-info\" ng-if=\"counters.length === 0\">\n" +
+    "            There aren't any counters yet\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "</div>");
 }]);
 
 angular.module("app/views/pages/help.html", []).run(["$templateCache", function($templateCache) {
@@ -4162,9 +4160,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             }
         }
     }
-}());
-;
-(function () {
+}());;(function () {
     'use strict';
 
     angular
@@ -6145,7 +6141,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             scope: {
                 ancestorOrElement: '@'
             },
-            link: link,
+            link: link
         };
 
         // the directives behaviour
@@ -10021,9 +10017,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 })
         }
     }
-}());
-;
-(function () {
+}());;(function () {
     'use strict';
 
     angular
@@ -10568,7 +10562,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         return {
             getSelected: getSelected,
             removeSelection: removeSelection,
-            isSelected: isSelected,
+            isSelected: isSelected
         };
 
         /**

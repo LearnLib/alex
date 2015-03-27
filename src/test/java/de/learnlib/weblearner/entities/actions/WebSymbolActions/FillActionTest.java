@@ -2,6 +2,7 @@ package de.learnlib.weblearner.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
+import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,11 +23,13 @@ import static org.mockito.Mockito.when;
 
 public class FillActionTest {
 
+    private static final Long PROJECT_ID = 42L;
     private FillAction f;
 
     @Before
     public void setUp() {
         f = new FillAction();
+        f.setProject(new Project(PROJECT_ID));
         f.setNode("#node");
         f.setValue("Lorem Ipsum");
     }

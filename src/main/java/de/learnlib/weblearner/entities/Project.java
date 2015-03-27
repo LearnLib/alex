@@ -89,6 +89,11 @@ public class Project implements Serializable {
     @JsonIgnore
     private Set<LearnerResult> testResults;
 
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
+    @JsonIgnore
+    private Set<Counter> counters;
+
     /**
      * Default constructor.
      */

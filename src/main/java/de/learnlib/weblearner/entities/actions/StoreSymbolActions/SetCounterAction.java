@@ -38,7 +38,7 @@ public class SetCounterAction extends SymbolAction {
     public ExecuteResult execute(MultiConnector connector) {
         CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
         try {
-            storeConnector.set(name, counterValue);
+            storeConnector.set(project.getId(), name, counterValue);
             return getSuccessOutput();
         } catch (IllegalStateException e) {
             return getFailedOutput();

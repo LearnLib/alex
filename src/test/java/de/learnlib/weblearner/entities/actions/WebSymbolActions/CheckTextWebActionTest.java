@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
 import org.junit.Before;
@@ -19,11 +20,14 @@ import static org.mockito.Mockito.mock;
 
 public class CheckTextWebActionTest {
 
+    private static final Long PROJECT_ID = 42L;
+
     private CheckTextWebAction checkText;
 
     @Before
     public void setUp() {
         checkText = new CheckTextWebAction();
+        checkText.setProject(new Project(PROJECT_ID));
         checkText.setValue("Foobar");
         checkText.setRegexp(false);
     }

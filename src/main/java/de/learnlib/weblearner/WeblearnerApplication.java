@@ -1,5 +1,7 @@
 package de.learnlib.weblearner;
 
+import de.learnlib.weblearner.dao.CounterDAO;
+import de.learnlib.weblearner.dao.CounterDAOImpl;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.dao.LearnerResultDAOImpl;
 import de.learnlib.weblearner.dao.ProjectDAO;
@@ -23,7 +25,7 @@ public class WeblearnerApplication extends ResourceConfig {
      */
     public WeblearnerApplication() {
         // packages with REST resources classes
-        packages("de.learnlib.weblearner.rest");
+        packages(true, "de.learnlib.weblearner");
 
         // register some classes/ objects for IoC.
         register(new AbstractBinder() {
@@ -33,8 +35,9 @@ public class WeblearnerApplication extends ResourceConfig {
                 LearnerResultDAOImpl learnerResultDAO = new LearnerResultDAOImpl();
                 LearnerThreadFactory threadFactory = new LearnerThreadFactory(learnerResultDAO);
 
-                bind(new ProjectDAOImpl()).to(ProjectDAO.class);
-                bind(symbolGroupDAO).to(SymbolGroupDAO.class);
+                bind(ProjectDAOImpl.class).to(ProjectDAO.class);
+                bind(CounterDAOImpl.class).to(CounterDAO.class);
+                bind(SymbolGroupDAOImpl.class).to(SymbolGroupDAO.class);
                 bind(new SymbolDAOImpl(symbolGroupDAO)).to(SymbolDAO.class);
                 bind(learnerResultDAO).to(LearnerResultDAO.class);
                 bind(new Learner(threadFactory)).to(Learner.class);

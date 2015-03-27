@@ -1,5 +1,6 @@
 package de.learnlib.weblearner.utils;
 
+import de.learnlib.weblearner.entities.Counter;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
@@ -14,8 +15,6 @@ import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckHeaderFiel
 import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckStatusAction;
 import de.learnlib.weblearner.entities.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.weblearner.entities.actions.RESTSymbolActions.RESTSymbolAction;
-import de.learnlib.weblearner.entities.actions.StoreSymbolActions.DeclareCounterAction;
-import de.learnlib.weblearner.entities.actions.StoreSymbolActions.DeclareVariableAction;
 import de.learnlib.weblearner.entities.actions.StoreSymbolActions.IncrementCounterAction;
 import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetCounterAction;
 import de.learnlib.weblearner.entities.actions.StoreSymbolActions.SetVariableAction;
@@ -63,8 +62,7 @@ public final class HibernateUtil {
             configuration.addAnnotatedClass(Symbol.class);
 
             // Variable & Counter
-            configuration.addAnnotatedClass(DeclareCounterAction.class);
-            configuration.addAnnotatedClass(DeclareVariableAction.class);
+            configuration.addAnnotatedClass(Counter.class);
             configuration.addAnnotatedClass(IncrementCounterAction.class);
             configuration.addAnnotatedClass(SetCounterAction.class);
             configuration.addAnnotatedClass(SetVariableAction.class);
