@@ -2,22 +2,31 @@ package de.learnlib.weblearner.rest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Proxy class needed to workaround some 'iframe' restrictions when working with multiple domains.
@@ -43,7 +52,7 @@ public class IFrameProxyResource {
      */
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public Response doIt(@QueryParam("url") String url) {
+    public Response doGetProxy(@QueryParam("url") String url) {
         try {
             Document doc = Jsoup.connect(url).get();
             proxiefy(doc);
@@ -51,9 +60,45 @@ public class IFrameProxyResource {
 
         } catch (IllegalArgumentException e) { // Java 1.6 has no multi catch
             LOGGER.info("Bad URL: {}", url);
+            LOGGER.info(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown URL").build();
         } catch (IOException e) {
             LOGGER.info("Bad request type: {}", url);
+            LOGGER.info(e);
+            return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown request type").build();
+        }
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_HTML)
+    public Response doPostProxy(@QueryParam("url") String url, String body) {
+        try {
+            Connection connection = Jsoup.connect(url);
+
+            String[] keyValuePairs = body.split("&");
+            for (String keyValuePair : keyValuePairs) {
+                String[] split = keyValuePair.split("=");
+                connection = connection.data(split[0], split[1]);
+            }
+            connection = connection.method(Connection.Method.POST);
+
+            Connection.Response response = connection.execute();
+            Document doc = response.parse();
+            proxiefy(doc);
+            List<NewCookie> cookieList = new LinkedList<>();
+            response.cookies().forEach((key, value) -> cookieList.add(new NewCookie(key, value)));
+            NewCookie[] cookiesAsArray = cookieList.toArray(new NewCookie[cookieList.size()]);
+
+            return Response.ok(doc.html()).cookie(cookiesAsArray).build();
+
+        } catch (IllegalArgumentException e) {
+            LOGGER.info("Bad URL: {}", url);
+            LOGGER.info(e);
+            return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown URL").build();
+        } catch (IOException e) {
+            LOGGER.info("Bad request type: {}", url);
+            LOGGER.info(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown request type").build();
         }
     }
@@ -78,7 +123,12 @@ public class IFrameProxyResource {
 
         // links should use this proxy
         for (Element link : doc.getElementsByTag("a")) {
-            proxiefyLink(link);
+            proxiefy(link, "href");
+        }
+
+        // forms
+        for (Element form : doc.getElementsByTag("form")) {
+            proxiefy(form, "action");
         }
     }
 
@@ -100,17 +150,20 @@ public class IFrameProxyResource {
 
     /**
      * Changes the 'href' attribute of a link to a version which uses this proxy. Is 'proxiefy' a real word?
-     * 
-     * @param link
-     *            The Link-Element to proxiefy.
+     *
+     * @param elem
+     *         The Link-Element to proxiefy.
+     * @param attribute
+     *         The Attribute to change.
      */
-    private void proxiefyLink(Element link) {
-        absolutifyURL(link, "href");
+    private void proxiefy(Element elem, String attribute) {
+        absolutifyURL(elem, attribute);
         try {
-            link.attr("href", uriInfo.getAbsolutePath() + "?url=" + URLEncoder.encode(link.attr("href"), "UTF-8"));
+            elem.attr(attribute, uriInfo.getAbsolutePath() + "?url=" + URLEncoder.encode(elem.attr(attribute), "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             // should never happen
-            LOGGER.error("Could not encode the URL because of an unsopperted encoding", e);
+            LOGGER.error("Could not encode the URL because of an unsupported encoding", e);
         }
     }
+
 }
