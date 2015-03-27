@@ -2,10 +2,10 @@
     'use strict';
 
     angular
-        .module('weblearner.resources')
+        .module('weblearner.services')
         .factory('LearnerService', LearnerService);
 
-    LearnerService.$inject = ['$http', '$q', 'paths'];
+    LearnerService.$inject = ['$http', 'paths'];
 
     /**
      * @param $http
@@ -15,6 +15,7 @@
      */
     function LearnerService($http, paths) {
 
+        // the services functions
         return {
             start: start,
             stop: stop,

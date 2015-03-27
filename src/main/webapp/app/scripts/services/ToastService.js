@@ -15,6 +15,7 @@
      * @constructor
      */
     function ToastService(ngToast) {
+
         return {
             success: success,
             danger: danger,

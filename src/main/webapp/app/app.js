@@ -49,7 +49,9 @@
             $rootScope._ = _;
             $rootScope.paths = paths;
         }])
-}());;angular.module('templates-all', ['app/views/directives/counterexamples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
+}());
+;
+angular.module('templates-all', ['app/views/directives/counterexamples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/counters.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
 
 angular.module("app/views/directives/counterexamples-widget.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -419,7 +421,7 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                            <li><a class=\"disabled\" ui-sref=\"project\">Overview</a></li>\n" +
     "                            <li><a ui-sref=\"project.settings\">Settings</a></li>\n" +
     "                            <li class=\"divider\"></li>\n" +
-    "                            <li><a href=\"#/\" ng-click=\"closeProject()\">Close</a></li>\n" +
+    "                            <li><a href=\"#\" ng-click=\"closeProject()\">Close</a></li>\n" +
     "                        </ul>\n" +
     "                    </li>\n" +
     "                </ul>\n" +
@@ -439,9 +441,14 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                </ul>\n" +
     "\n" +
     "                <ul class=\"nav navbar-nav navbar-left\">\n" +
-    "                    <li>\n" +
-    "                        <a href=\"#\" ui-sref=\"learn.setup\" role=\"button\"\n" +
-    "                           aria-expanded=\"false\">Learn </a>\n" +
+    "                    <li class=\"dropdown\" dropdown dropdown-navigation>\n" +
+    "                        <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
+    "                           aria-expanded=\"false\">Learn <span class=\"caret\"></span></a>\n" +
+    "                        <ul class=\"dropdown-menu\" role=\"menu\">\n" +
+    "                            <li><a ui-sref=\"learn.setup\">Setup a Learn Process</a></li>\n" +
+    "                            <li class=\"divider\"></li>\n" +
+    "                            <li><a ui-sref=\"counters\">Manage Counters</a></li>\n" +
+    "                        </ul>\n" +
     "                    </li>\n" +
     "                </ul>\n" +
     "\n" +
@@ -1754,6 +1761,69 @@ angular.module("app/views/pages/about.html", []).run(["$templateCache", function
     "</div>");
 }]);
 
+angular.module("app/views/pages/counters.html", []).run(["$templateCache", function ($templateCache) {
+    "use strict";
+    $templateCache.put("app/views/pages/counters.html",
+        "<div view-heading\n" +
+        "     title=\"Counters\"\n" +
+        "     sub-title=\"Manage counters for learning processes\">\n" +
+        "</div>\n" +
+        "\n" +
+        "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
+        "    <div class=\"container\">\n" +
+        "\n" +
+        "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+        "            <input type=\"checkbox\" selection-checkbox-all items=\"counters\">\n" +
+        "        </div>\n" +
+        "\n" +
+        "        <div class=\"pull-left\">\n" +
+        "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteSelectedCounters()\">\n" +
+        "                Delete\n" +
+        "            </button>\n" +
+        "        </div>\n" +
+        "\n" +
+        "    </div>\n" +
+        "</div>\n" +
+        "\n" +
+        "<div class=\"view-body\">\n" +
+        "    <div class=\"container\" selectable items=\"results\">\n" +
+        "\n" +
+        "        <div class=\"alert alert-info alert-condensed\">\n" +
+        "            <i class=\"fa fa-info fa-fw\"></i>\n" +
+        "            Deleted counters will be created as soon as they are used in a learning process, starting with value 0.\n" +
+        "        </div>\n" +
+        "\n" +
+        "        <div class=\"selectable-list\"\n" +
+        "             ng-if=\"counters.length > 0\">\n" +
+        "\n" +
+        "            <div ng-repeat=\"counter in counters\"\n" +
+        "                 selection-model\n" +
+        "                 selection-model-type=\"checkbox\"\n" +
+        "                 selection-model-selected-attribute=\"_selected\"\n" +
+        "                 selection-model-mode=\"multiple\"\n" +
+        "                 selection-model-selected-items=\"selectedCounters\"\n" +
+        "                 selection-model-cleanup-strategy=\"deselect\">\n" +
+        "\n" +
+        "                <div selectable-list-item>\n" +
+        "                    <button class=\"btn btn-xs btn-default btn-icon pull-right\"\n" +
+        "                            ng-click=\"deleteCounter(counter)\">\n" +
+        "                        <i class=\"fa fa-trash fa-fw\"></i>\n" +
+        "                    </button>\n" +
+        "\n" +
+        "                    <strong ng-bind=\"counter.name\"></strong><br>\n" +
+        "                    <span class=\"text-muted\">Value: <span ng-bind=\"counter.value\"></span></span>\n" +
+        "                </div>\n" +
+        "            </div>\n" +
+        "        </div>\n" +
+        "\n" +
+        "        <div class=\"alert alert-info\" ng-if=\"counters.length === 0\">\n" +
+        "            There aren't any counters yet\n" +
+        "        </div>\n" +
+        "\n" +
+        "    </div>\n" +
+        "</div>");
+}]);
+
 angular.module("app/views/pages/help.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/help.html",
@@ -2972,6 +3042,22 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 }
             })
 
+
+            // =========================================================
+            // counter related routes
+
+
+            .state('counters', {
+                url: '/counters',
+                views: {
+                    '@': {
+                        templateUrl: paths.views.PAGES + '/counters.html',
+                        controller: 'CountersController'
+                    }
+                }
+            })
+
+
             // =========================================================
             // symbol related routes
 
@@ -3997,6 +4083,88 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         }
     }
 }());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
+        .controller('CountersController', CountersController);
+
+    CountersController.$inject = ['$scope', 'SessionService', 'CountersService', 'ToastService', '_'];
+
+    /**
+     * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
+     *
+     * Template: 'views/pages/counters.html';
+     *
+     * @param $scope - The projects scope
+     * @param Session - The SessionService
+     * @param Counters - The CountersService
+     * @param Toast - The ToastService
+     * @param _ - Lodash
+     * @constructor
+     */
+    function CountersController($scope, Session, Counters, Toast, _) {
+
+        // the sessions project
+        var project = Session.project.get();
+
+        /**
+         * The counters of the project
+         * @type {{name: string, value: number}[]}
+         */
+        $scope.counters = [{name: 'i', value: 0}, {name: 'j', value: 5}, {name: 'k', value: 1000}];
+
+        /**
+         * The selected counters objects
+         * @type {{name: string, value: number}[]}
+         */
+        $scope.selectedCounters = [];
+
+        // load all existing counters from the server
+        (function init() {
+            Counters.getAll(project.id)
+                .then(function (counters) {
+                    $scope.counters = counters;
+                });
+        }());
+
+        /**
+         * Delete a counter from the server and on success from scope
+         *
+         * @param {{name: string, value: number}} counter - The counter that should be deleted
+         */
+        $scope.deleteCounter = function (counter) {
+            Counters.delete(project.id, counter.name)
+                .then(function () {
+                    Toast.success('Counter "' + counter.name + '" deleted');
+                    _.remove($scope.counters, {name: counter.name});
+                })
+                .catch(function (response) {
+                    Toast.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + response.data.message);
+                })
+        };
+
+        /**
+         * Delete all selected counters from the server and on success from scope
+         */
+        $scope.deleteSelectedCounters = function () {
+            if ($scope.selectedCounters.length > 0) {
+                Counters.deleteSome(project.id, _.pluck($scope.counters, 'name'))
+                    .then(function () {
+                        Toast.success('Counters deleted');
+                        _.forEach($scope.selectedCounters, function (counter) {
+                            _.remove($scope.counters, {name: counter.name});
+                        })
+                    })
+                    .catch(function (response) {
+                        Toast.danger('<p><strong>Deleting counters failed</strong></p>' + response.data.message);
+                    })
+            }
+        }
+    }
+}());
+;
+(function () {
     'use strict';
 
     angular
@@ -9769,6 +9937,97 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     angular
         .module('weblearner.services')
+        .factory('CountersService', CountersService);
+
+    CountersService.$inject = ['$http', 'paths'];
+
+    /**
+     * The service that communicates with the API in order to read and delete counters. Counters are objects consisting
+     * of a unique 'name' property and a 'value' which holds the current value of the counter in the database.
+     *
+     * Example: {"name": "i", "value": 10}
+     *
+     * @param $http - angular $http service
+     * @param paths - application paths constants
+     * @returns {{get: get, getAll: getAll, delete: deleteOne, deleteSome: deleteSome}}
+     * @constructor
+     */
+    function CountersService($http, paths) {
+
+        // the services functions
+        return {
+            get: get,
+            getAll: getAll,
+            delete: deleteOne,
+            deleteSome: deleteSome
+        };
+
+        /**
+         * Makes a GET request to /rest/projects/{projectId}/counters/{counterName} in order to fetch a single counter.
+         *
+         * @param {number} projectId - The id of a project
+         * @param {string} name - The name of the symbol to be fetched
+         * @returns {HttpPromise} - angular promise object of the request
+         */
+        function get(projectId, name) {
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/counters/' + name)
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+
+        /**
+         * Makes a GET request to /rest/projects/{projectId}/counters in order to fetch all counter of the current
+         * project.
+         *
+         * @param {number} projectId - The id of a project
+         * @returns {HttpPromise} - angular promise object of the request
+         */
+        function getAll(projectId) {
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/counters')
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+
+        /**
+         * Makes a DELETE request to /rest/projects/{projectId}/counters/{counterName} in order to delete a counter from
+         * the database.
+         *
+         * @param {number} projectId - The id of a project
+         * @param {string} name - The name of a counter
+         * @returns {HttpPromise} - angular promise object of the request
+         */
+        function deleteOne(projectId, name) {
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/' + name)
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+
+        /**
+         * Makes a DELETE request to /rest/projects/{projectId}/counters/batch/{counterNames} in order to delete
+         * multiple counters from the database
+         *
+         * @param {number} projectId - The id of a project
+         * @param {string[]} names - A list of the names of counters
+         * @returns {HttpPromise} - angular promise object of the request
+         */
+        function deleteSome(projectId, names) {
+            names = names.join(',');
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/batch/' + names)
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+    }
+}());
+;
+(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.services')
         .factory('FileDownloadService', FileDownloadService);
 
     FileDownloadService.$inject = ['PromptService'];
@@ -10115,10 +10374,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.resources')
+        .module('weblearner.services')
         .factory('LearnerService', LearnerService);
 
-    LearnerService.$inject = ['$http', '$q', 'paths'];
+    LearnerService.$inject = ['$http', 'paths'];
 
     /**
      * @param $http
@@ -10128,6 +10387,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      */
     function LearnerService($http, paths) {
 
+        // the services functions
         return {
             start: start,
             stop: stop,
@@ -10422,6 +10682,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @constructor
      */
     function ToastService(ngToast) {
+
         return {
             success: success,
             danger: danger,

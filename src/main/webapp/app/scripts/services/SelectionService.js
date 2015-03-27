@@ -27,7 +27,7 @@
         return {
             getSelected: getSelected,
             removeSelection: removeSelection,
-            isSelected: isSelected,
+            isSelected: isSelected
         };
 
         /**

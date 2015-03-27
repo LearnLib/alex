@@ -52,7 +52,7 @@
                             <li><a class="disabled" ui-sref="project">Overview</a></li>
                             <li><a ui-sref="project.settings">Settings</a></li>
                             <li class="divider"></li>
-                            <li><a href="#/" ng-click="closeProject()">Close</a></li>
+                            <li><a href="#" ng-click="closeProject()">Close</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -72,9 +72,14 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-left">
-                    <li>
-                        <a href="#" ui-sref="learn.setup" role="button"
-                           aria-expanded="false">Learn </a>
+                    <li class="dropdown" dropdown dropdown-navigation>
+                        <a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">Learn <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a ui-sref="learn.setup">Setup a Learn Process</a></li>
+                            <li class="divider"></li>
+                            <li><a ui-sref="counters">Manage Counters</a></li>
+                        </ul>
                     </li>
                 </ul>
 

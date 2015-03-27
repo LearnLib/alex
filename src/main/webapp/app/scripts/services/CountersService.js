@@ -1,0 +1,90 @@
+(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.services')
+        .factory('CountersService', CountersService);
+
+    CountersService.$inject = ['$http', 'paths'];
+
+    /**
+     * The service that communicates with the API in order to read and delete counters. Counters are objects consisting
+     * of a unique 'name' property and a 'value' which holds the current value of the counter in the database.
+     *
+     * Example: {"name": "i", "value": 10}
+     *
+     * @param $http - angular $http service
+     * @param paths - application paths constants
+     * @returns {{get: get, getAll: getAll, delete: deleteOne, deleteSome: deleteSome}}
+     * @constructor
+     */
+    function CountersService($http, paths) {
+
+        // the services functions
+        return {
+            get: get,
+            getAll: getAll,
+            delete: deleteOne,
+            deleteSome: deleteSome
+        };
+
+        /**
+         * Makes a GET request to /rest/projects/{projectId}/counters/{counterName} in order to fetch a single counter.
+         *
+         * @param {number} projectId - The id of a project
+         * @param {string} name - The name of the symbol to be fetched
+         * @returns {HttpPromise} - angular promise object of the request
+         */
+        function get(projectId, name) {
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/counters/' + name)
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+
+        /**
+         * Makes a GET request to /rest/projects/{projectId}/counters in order to fetch all counter of the current
+         * project.
+         *
+         * @param {number} projectId - The id of a project
+         * @returns {HttpPromise} - angular promise object of the request
+         */
+        function getAll(projectId) {
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/counters')
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+
+        /**
+         * Makes a DELETE request to /rest/projects/{projectId}/counters/{counterName} in order to delete a counter from
+         * the database.
+         *
+         * @param {number} projectId - The id of a project
+         * @param {string} name - The name of a counter
+         * @returns {HttpPromise} - angular promise object of the request
+         */
+        function deleteOne(projectId, name) {
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/' + name)
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+
+        /**
+         * Makes a DELETE request to /rest/projects/{projectId}/counters/batch/{counterNames} in order to delete
+         * multiple counters from the database
+         *
+         * @param {number} projectId - The id of a project
+         * @param {string[]} names - A list of the names of counters
+         * @returns {HttpPromise} - angular promise object of the request
+         */
+        function deleteSome(projectId, names) {
+            names = names.join(',');
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/batch/' + names)
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+    }
+}());
