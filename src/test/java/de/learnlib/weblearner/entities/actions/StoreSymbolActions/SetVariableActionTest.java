@@ -3,7 +3,7 @@ package de.learnlib.weblearner.entities.actions.StoreSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.SymbolAction;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +59,7 @@ public class SetVariableActionTest {
     @Test
     public void shouldSuccessfulSetTheVariableValue() {
         VariableStoreConnector variables = mock(VariableStoreConnector.class);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
         ExecuteResult result = setAction.execute(connector);
@@ -72,7 +72,7 @@ public class SetVariableActionTest {
     public void shouldFailIfVariableIsNotDeclared() {
         VariableStoreConnector variables = mock(VariableStoreConnector.class);
         willThrow(IllegalStateException.class).given(variables).set(TEST_NAME, TEST_VALUE);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
         ExecuteResult result = setAction.execute(connector);

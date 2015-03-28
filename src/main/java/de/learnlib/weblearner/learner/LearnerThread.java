@@ -18,7 +18,8 @@ import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.entities.LearnAlgorithms;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorContextHandler;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.utils.DiscriminationTreeSerializer;
 import de.learnlib.weblearner.utils.TTTSerializer;
 import net.automatalib.util.graphs.dot.GraphDOT;
@@ -44,10 +45,10 @@ public class LearnerThread<C> extends Thread {
     private final SymbolMapper<C> symbolMapper;
 
     /** The SUL the thread will learn. */
-    private  final SULWIthStatistics<ContextExecutableInput<String, MultiConnector>, String, MultiConnector> ceiSUL;
+    private  final SULWIthStatistics<ContextExecutableInput<String, ConnectorManager>, String, ConnectorManager> ceiSUL;
 
     /** The context of the SUL. */
-    private final ContextExecutableInputSUL.ContextHandler<MultiConnector> context;
+    private final ConnectorContextHandler context;
 
     /** The System Under Learning used to do the actual learning. */
     private final SUL<String, String> sul;
@@ -77,7 +78,7 @@ public class LearnerThread<C> extends Thread {
  *         The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
      */
     public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result,
-                         ContextExecutableInputSUL.ContextHandler<MultiConnector> context) {
+                         ConnectorContextHandler context) {
         this.active = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
@@ -113,11 +114,8 @@ public class LearnerThread<C> extends Thread {
      * @param symbols
      *         The Symbols to use.
      */
-    public LearnerThread(LearnerResultDAO learnerResultDAO,
-                         LearnerResult result,
-                         ContextExecutableInputSUL.ContextHandler<MultiConnector> context,
-                         MealyLearner<String, String> learner,
-                         Symbol... symbols) {
+    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, ConnectorContextHandler context,
+                         MealyLearner<String, String> learner, Symbol... symbols) {
         this.active = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
@@ -156,7 +154,7 @@ public class LearnerThread<C> extends Thread {
      *
      * @return The current context.
      */
-    public ContextExecutableInputSUL.ContextHandler<MultiConnector> getContext() {
+    public ConnectorContextHandler getContext() {
         return context;
     }
 

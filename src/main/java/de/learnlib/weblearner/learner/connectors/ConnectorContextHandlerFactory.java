@@ -2,10 +2,10 @@ package de.learnlib.weblearner.learner.connectors;
 
 import de.learnlib.weblearner.entities.Project;
 
-public class MultiContextHandlerFactory {
+public class ConnectorContextHandlerFactory {
 
-    public MultiContextHandler createContext(Project project) {
-        MultiContextHandler context = new MultiContextHandler();
+    public ConnectorContextHandler createContext(Project project) {
+        ConnectorContextHandler context = new ConnectorContextHandler();
         String baseUrl = project.getBaseUrl();
 
         context.addConnector(new WebSiteConnector(baseUrl));

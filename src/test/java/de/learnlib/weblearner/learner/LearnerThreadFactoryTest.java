@@ -5,7 +5,7 @@ import de.learnlib.weblearner.entities.LearnAlgorithms;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.learner.connectors.MultiContextHandler;
+import de.learnlib.weblearner.learner.connectors.ConnectorContextHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ public class LearnerThreadFactoryTest {
     private LearnerResultDAO learnerResultDAO;
 
     @Mock
-    private MultiContextHandler contextHandler;
+    private ConnectorContextHandler contextHandler;
 
     @Mock
     private Project project;

@@ -7,12 +7,8 @@ import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.LearnerResumeConfiguration;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
-import de.learnlib.weblearner.learner.connectors.MultiContextHandler;
-import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;
-import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
-import de.learnlib.weblearner.learner.connectors.WebSiteConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
+import de.learnlib.weblearner.learner.connectors.ConnectorContextHandler;
 
 import java.util.List;
 
@@ -45,7 +41,7 @@ public class LearnerThreadFactory {
      *         The LearnerConfiguration to use for the learning.
      * @return A new thread ready to use for learning.
      */
-    public LearnerThread createThread(MultiContextHandler contextHandler,Project project,
+    public LearnerThread createThread(ConnectorContextHandler contextHandler,Project project,
                                       LearnerConfiguration configuration) {
         if (configuration.getSymbols().isEmpty()) {
             throw new IllegalArgumentException("No Symbols found.");
@@ -75,11 +71,8 @@ public class LearnerThreadFactory {
         LearningAlgorithm.MealyLearner<String, String> learner = thread.getLearner();
         Symbol[] symbols = symbolsList.toArray(new Symbol[symbolsList.size()]);
 
-        LearnerThread<MultiConnector> leanerThread = new LearnerThread<>(learnerResultDAO,
-                                                                         learnerResult,
-                                                                         thread.getContext(),
-                                                                         learner,
-                                                                         symbols);
+        LearnerThread<ConnectorManager> leanerThread = new LearnerThread<>(learnerResultDAO, learnerResult,
+                                                                           thread.getContext(), learner, symbols);
         leanerThread.getResult().getConfiguration().updateConfiguration(newConfiguration);
 
         return leanerThread;

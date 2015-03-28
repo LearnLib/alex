@@ -7,7 +7,7 @@ import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.IdRevisionPair;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolAction;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -56,7 +56,7 @@ public class ExecuteSymbolAction extends SymbolAction {
     }
 
     @Override
-    public ExecuteResult execute(MultiConnector connector) {
+    public ExecuteResult execute(ConnectorManager connector) {
         if (symbolToExecute == null) {
             System.err.println("ExecuteSymbolAction.execute: Symbol not found!"); //todo(alex.s): add proper logging or remove me
             return getFailedOutput();

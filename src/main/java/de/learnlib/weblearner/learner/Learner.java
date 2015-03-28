@@ -1,17 +1,15 @@
 package de.learnlib.weblearner.learner;
 
-import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.LearnerResult;
 import de.learnlib.weblearner.entities.LearnerResumeConfiguration;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
-import de.learnlib.weblearner.learner.connectors.MultiContextHandlerFactory;
-import de.learnlib.weblearner.learner.connectors.MultiContextHandler;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
+import de.learnlib.weblearner.learner.connectors.ConnectorContextHandlerFactory;
+import de.learnlib.weblearner.learner.connectors.ConnectorContextHandler;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -21,9 +19,9 @@ import java.util.concurrent.Executors;
  */
 public class Learner {
 
-    private MultiContextHandlerFactory contextHandlerFactory;
+    private ConnectorContextHandlerFactory contextHandlerFactory;
 
-    private MultiContextHandler contextHandler;
+    private ConnectorContextHandler contextHandler;
 
     /** Factory to create the {@link LearnerThread LearnerThreads}. */
     private LearnerThreadFactory learnThreadFactory;
@@ -32,7 +30,7 @@ public class Learner {
     private LearnerThread<?> learnThread;
 
     public Learner(LearnerThreadFactory threadFactory) {
-        this(threadFactory, new MultiContextHandlerFactory());
+        this(threadFactory, new ConnectorContextHandlerFactory());
     }
 
     /**
@@ -41,7 +39,7 @@ public class Learner {
      * @param learnThreadFactory
      *         The factory to use.
      */
-    public Learner(LearnerThreadFactory learnThreadFactory, MultiContextHandlerFactory contextHandlerFactory) {
+    public Learner(LearnerThreadFactory learnThreadFactory, ConnectorContextHandlerFactory contextHandlerFactory) {
         this.learnThreadFactory = learnThreadFactory;
         this.contextHandlerFactory = contextHandlerFactory;
     }
@@ -128,7 +126,7 @@ public class Learner {
         }
         contextHandler.setResetSymbol(resetSymbol);
 
-        MultiConnector connectors = contextHandler.createContext();
+        ConnectorManager connectors = contextHandler.createContext();
 
         String[] objects = symbols.stream().map(s -> s.execute(connectors)).toArray(String[]::new);
         return Arrays.asList(objects);

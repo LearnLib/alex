@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NaturalId;
@@ -32,7 +32,7 @@ import java.util.List;
  */
 @Entity
 @JsonPropertyOrder(alphabetic = true)
-public class Symbol implements ContextExecutableInput<String, MultiConnector>, Serializable {
+public class Symbol implements ContextExecutableInput<String, ConnectorManager>, Serializable {
 
     /** to be serializable. */
     private static final long serialVersionUID = 7987585761829495962L;
@@ -316,7 +316,7 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
     }
 
     @Override
-    public String execute(MultiConnector connector) throws SULException {
+    public String execute(ConnectorManager connector) throws SULException {
         for (SymbolAction action : actions) {
             ExecuteResult result = executeAction(action, connector);
             if (!action.isIgnoreFailure() && result != ExecuteResult.OK) {
@@ -327,7 +327,7 @@ public class Symbol implements ContextExecutableInput<String, MultiConnector>, S
         return ExecuteResult.OK.toString();
     }
 
-    private ExecuteResult executeAction(SymbolAction action, MultiConnector connector) {
+    private ExecuteResult executeAction(SymbolAction action, ConnectorManager connector) {
         try {
             return action.execute(connector);
         } catch (IllegalStateException e) {

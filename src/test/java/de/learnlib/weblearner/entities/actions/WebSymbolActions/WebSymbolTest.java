@@ -11,7 +11,7 @@ import de.learnlib.weblearner.entities.PropertyFilterMixIn;
 import de.learnlib.weblearner.entities.Symbol;
 import de.learnlib.weblearner.entities.SymbolGroup;
 import de.learnlib.weblearner.entities.actions.WaitAction;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -153,7 +153,7 @@ public class WebSymbolTest {
 
     @Test
     public void shouldReturnOkIfAllActionsRunSuccessfully() throws Exception {
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         WebSymbolAction action1 = mock(WebSymbolAction.class);
         given(action1.execute(connector)).willReturn(ExecuteResult.OK);
         WebSymbolAction action2 = mock(WebSymbolAction.class);
@@ -168,7 +168,7 @@ public class WebSymbolTest {
 
     @Test
     public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         WebSymbolAction action1 = mock(WebSymbolAction.class);
         given(action1.execute(connector)).willReturn(ExecuteResult.FAILED);
         WebSymbolAction action2 = mock(WebSymbolAction.class);

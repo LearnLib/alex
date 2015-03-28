@@ -28,7 +28,7 @@ import de.learnlib.weblearner.entities.actions.WebSymbolActions.GotoAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.SelectAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.SubmitAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.WebSymbolAction;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.DiscriminatorColumn;
@@ -190,7 +190,7 @@ public abstract class SymbolAction implements Serializable {
      * @return An {@link ExecuteResult} to indicate if the action
      *          run successfully or not.
      */
-    public abstract ExecuteResult execute(MultiConnector connector);
+    public abstract ExecuteResult execute(ConnectorManager connector);
 
     protected ExecuteResult getSuccessOutput() {
         if (negated) {

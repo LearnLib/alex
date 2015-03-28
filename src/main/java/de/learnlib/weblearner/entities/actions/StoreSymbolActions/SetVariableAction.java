@@ -3,7 +3,7 @@ package de.learnlib.weblearner.entities.actions.StoreSymbolActions;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.SymbolAction;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;
 
 import javax.persistence.DiscriminatorValue;
@@ -35,7 +35,7 @@ public class SetVariableAction extends SymbolAction {
     }
 
     @Override
-    public ExecuteResult execute(MultiConnector connector) {
+    public ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         try {
             storeConnector.set(name, value);

@@ -4,7 +4,7 @@ import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.mapper.api.Mapper;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +21,7 @@ import java.util.Map;
  * @param <CI>
  *            The type of the Concrete Input used in the Symbols to implement the execution.
  */
-public class SymbolMapper<CI> implements Mapper<String, String, ContextExecutableInput<String, MultiConnector>, String> {
+public class SymbolMapper<CI> implements Mapper<String, String, ContextExecutableInput<String, ConnectorManager>, String> {
 
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("learner");
@@ -38,7 +38,7 @@ public class SymbolMapper<CI> implements Mapper<String, String, ContextExecutabl
     }
 
     @Override
-    public ContextExecutableInput<String, MultiConnector> mapInput(String abstractInput) {
+    public ContextExecutableInput<String, ConnectorManager> mapInput(String abstractInput) {
         return symbols.get(abstractInput);
     }
 

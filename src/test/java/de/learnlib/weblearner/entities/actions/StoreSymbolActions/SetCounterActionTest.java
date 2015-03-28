@@ -5,7 +5,7 @@ import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -62,7 +62,7 @@ public class SetCounterActionTest {
     @Test
     public void shouldSuccessfulSetTheCounterValue() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
         ExecuteResult result = setAction.execute(connector);
@@ -74,7 +74,7 @@ public class SetCounterActionTest {
     @Test
     public void shouldNotFailIfCounterIsNotDeclared() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
         ExecuteResult result = setAction.execute(connector);

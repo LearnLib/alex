@@ -4,9 +4,9 @@ import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.entities.LearnerConfiguration;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.Symbol;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
-import de.learnlib.weblearner.learner.connectors.MultiContextHandler;
-import de.learnlib.weblearner.learner.connectors.MultiContextHandlerFactory;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
+import de.learnlib.weblearner.learner.connectors.ConnectorContextHandler;
+import de.learnlib.weblearner.learner.connectors.ConnectorContextHandlerFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,13 +32,13 @@ public class LearnerTest {
     private LearnerThreadFactory threadFactory;
 
     @Mock
-    private MultiContextHandlerFactory contextHandlerFactory;
+    private ConnectorContextHandlerFactory contextHandlerFactory;
 
     @Mock
     private LearnerThread thread;
 
     @Mock
-    private MultiContextHandler contextHandler;
+    private ConnectorContextHandler contextHandler;
 
     @Mock
     private Project project;
@@ -71,11 +71,11 @@ public class LearnerTest {
     @Test
     public void shouldReadTheCorrectOutputOfSomeSymbols() {
         Symbol resetSymbol = mock(Symbol.class);
-        given(resetSymbol.execute(any(MultiConnector.class))).willReturn("OK");
+        given(resetSymbol.execute(any(ConnectorManager.class))).willReturn("OK");
         List<Symbol> symbols = new LinkedList<>();
         for (int i = 0; i < 5; i++) {
             Symbol symbol = mock(Symbol.class);
-            given(symbol.execute(any(MultiConnector.class))).willReturn("OK");
+            given(symbol.execute(any(ConnectorManager.class))).willReturn("OK");
             symbols.add(symbol);
         }
 

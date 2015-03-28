@@ -1,7 +1,7 @@
 package de.learnlib.weblearner.utils;
 
 import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class SearchHelperTest {
         given(variables.get("name")).willReturn("Jon Doe");
         CounterStoreConnector counter = mock(CounterStoreConnector.class);
         given(counter.get(PROJECT_ID, "counter")).willReturn(42);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counter);
 
@@ -34,7 +34,7 @@ public class SearchHelperTest {
 
     @Test
     public void shouldNotReplaceAnythingIfTextContainsNoVariables() {
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
 
         String result = SearchHelper.insertVariableValues(connector, PROJECT_ID,
                                                           "Hello Jon Doe, you are user no. 42!");

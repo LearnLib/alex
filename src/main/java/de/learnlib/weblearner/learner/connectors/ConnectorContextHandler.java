@@ -3,17 +3,14 @@ package de.learnlib.weblearner.learner.connectors;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.weblearner.entities.Symbol;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class MultiContextHandler implements ContextExecutableInputSUL.ContextHandler<MultiConnector> {
+public class ConnectorContextHandler implements ContextExecutableInputSUL.ContextHandler<ConnectorManager> {
 
     private Symbol resetSymbol;
 
-    private MultiConnector connectors;
+    private ConnectorManager connectors;
 
-    public MultiContextHandler() {
-        this.connectors = new MultiConnector();
+    public ConnectorContextHandler() {
+        this.connectors = new ConnectorManager();
     }
 
     public void addConnector(Connector connector) {
@@ -25,7 +22,7 @@ public class MultiContextHandler implements ContextExecutableInputSUL.ContextHan
     }
 
     @Override
-    public MultiConnector createContext() {
+    public ConnectorManager createContext() {
         connectors.forEach(Connector::reset);
 
         try {
@@ -39,7 +36,7 @@ public class MultiContextHandler implements ContextExecutableInputSUL.ContextHan
     }
 
     @Override
-    public void disposeContext(MultiConnector connector) {
+    public void disposeContext(ConnectorManager connector) {
         // nothing to do here
     }
 

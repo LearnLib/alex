@@ -2,7 +2,7 @@ package de.learnlib.weblearner.entities.actions.StoreSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.entities.ExecuteResult;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;
 import de.learnlib.weblearner.learner.connectors.WebServiceConnector;
 import de.learnlib.weblearner.utils.JSONHelpers;
@@ -16,7 +16,7 @@ import javax.persistence.Entity;
 public class SetVariableByJSONAttributeAction extends SetVariableAction {
 
     @Override
-    public ExecuteResult execute(MultiConnector connector) {
+    public ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         WebServiceConnector webServiceConnector = connector.getConnector(WebServiceConnector.class);
 

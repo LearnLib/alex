@@ -5,7 +5,7 @@ import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.Project;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.connectors.CounterStoreConnector;
-import de.learnlib.weblearner.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,7 +58,7 @@ public class IncrementCounterActionTest {
     @Test
     public void shouldSuccessfulIncrementCounter() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
         ExecuteResult result = incrementAction.execute(connector);
@@ -71,7 +71,7 @@ public class IncrementCounterActionTest {
     public void shouldFailIncrementingIfCounterIsNotDeclared() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
         willThrow(IllegalStateException.class).given(counters).increment(PROJECT_ID, TEST_NAME);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
         ExecuteResult result = incrementAction.execute(connector);

@@ -4,15 +4,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MultiConnector implements Connector, Iterable<Connector> {
+public class ConnectorManager implements Iterable<Connector> {
 
     private Map<Class<? extends Connector>, Connector> connectors;
 
-    public MultiConnector() {
+    public ConnectorManager() {
         this.connectors = new HashMap<>();
     }
 
-    @Override
     public void reset() {
         this.connectors.clear();
     }
