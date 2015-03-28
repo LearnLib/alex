@@ -84,6 +84,10 @@ public class WebSiteConnector implements Connector {
         return driver.findElement(By.cssSelector(query));
     }
 
+    public WebElement getLinkByText(String text) throws NoSuchElementException {
+        return driver.findElement(By.linkText(text));
+    }
+
     /**
      * Get the source code of the current page.
      *

@@ -25,6 +25,7 @@ import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckNodeAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClearAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickLinkAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.FillAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.GotoAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.SelectAction;
@@ -79,6 +80,7 @@ public final class HibernateUtil {
             configuration.addAnnotatedClass(CheckNodeAction.class);
             configuration.addAnnotatedClass(ClearAction.class);
             configuration.addAnnotatedClass(ClickAction.class);
+            configuration.addAnnotatedClass(ClickLinkAction.class);
             configuration.addAnnotatedClass(FillAction.class);
             configuration.addAnnotatedClass(GotoAction.class);
             configuration.addAnnotatedClass(SubmitAction.class);

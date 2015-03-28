@@ -85,7 +85,8 @@ public class WebSymbolLearnerIT {
         symbolAbbr = "learnweb3";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                + "{\"type\": \"web_click\", \"node\" : \"#link2\"}"
+//                + "{\"type\": \"web_click\", \"node\" : \"#link2\"}"
+                    + "{\"type\": \"web_clickLinkByText\", \"value\" : \"The next awesome link\"}"
                 + "]}";
         symbols[2] = testHelper.addSymbol(client, project, json);
 

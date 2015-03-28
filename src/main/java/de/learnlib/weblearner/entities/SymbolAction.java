@@ -22,6 +22,7 @@ import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckNodeAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClearAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickAction;
+import de.learnlib.weblearner.entities.actions.WebSymbolActions.ClickLinkAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.FillAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.GotoAction;
 import de.learnlib.weblearner.entities.actions.WebSymbolActions.SelectAction;
@@ -68,6 +69,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web_checkForText", value = CheckTextWebAction.class),
         @JsonSubTypes.Type(name = "web_clear", value = ClearAction.class),
         @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
+        @JsonSubTypes.Type(name = "web_clickLinkByText", value = ClickLinkAction.class),
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
