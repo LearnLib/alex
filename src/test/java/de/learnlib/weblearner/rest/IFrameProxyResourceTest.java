@@ -31,8 +31,7 @@ public class IFrameProxyResourceTest {
     private Document doc;
 
     @Before
-    public void setUp() throws NoSuchFieldException, SecurityException, URISyntaxException, IllegalArgumentException,
-            IllegalAccessException, IOException {
+    public void setUp() throws Exception {
         UriInfo uriInfo = mock(UriInfo.class);
         given(uriInfo.getAbsolutePath()).willReturn(new URI("http://www.example.com/"));
 
@@ -65,20 +64,18 @@ public class IFrameProxyResourceTest {
     }
 
     @Test
-    public void testProxiefyLink() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, IOException, URISyntaxException, NoSuchFieldException {
-        Method proxiefyLink = IFrameProxyResource.class.getDeclaredMethod("proxiefyLink", Element.class);
+    public void testProxiefyLink() throws Exception {
+        Method proxiefyLink = IFrameProxyResource.class.getDeclaredMethod("proxiefy", Element.class, String.class);
         proxiefyLink.setAccessible(true);
 
         for (Element link : doc.getElementsByTag("a")) {
-            proxiefyLink.invoke(ifpt, link);
+            proxiefyLink.invoke(ifpt, link, "href");
             assertEquals(TEST_LINK_URL, link.attr("href"));
         }
     }
 
     @Test
-    public void testProxiefy() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
+    public void testProxiefy() throws Exception {
         Method proxiefy = IFrameProxyResource.class.getDeclaredMethod("proxiefy", Document.class);
         proxiefy.setAccessible(true);
 
