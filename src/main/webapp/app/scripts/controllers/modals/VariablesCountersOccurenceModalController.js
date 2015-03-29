@@ -35,7 +35,7 @@
 
                                 if (action.hasOwnProperty(prop) && angular.isString(action[prop])) {
                                     var foundCounters = action[prop].match(/{{#(.*?)}}/g);
-                                    var foundVariables = action[prop].match(/{{$(.*?)}}/g);
+                                    var foundVariables = action[prop].match(/{{\$(.*?)}}/g);
 
                                     if (foundCounters !== null) {
                                         _.forEach(foundCounters, function (counter) {
