@@ -132,14 +132,14 @@
          * @param {SymbolGroup} group - The group the symbols should be moved into
          */
         $scope.moveSymbolsToGroup = function (symbols, group) {
-            var group = _.find($scope.groups, {id: group.id});
+            var grp = _.find($scope.groups, {id: group.id});
 
             _.forEach(symbols, function (symbol) {
                 var g = _.find($scope.groups, {id: symbol.group});
                 var i = _.findIndex(g.symbols, {id: symbol.id});
                 g.symbols.splice(i, 1);
                 symbol.group = group.id;
-                group.symbols.push(symbol);
+                grp.symbols.push(symbol);
             })
         };
 
@@ -197,7 +197,7 @@
          */
         $scope.toggleCollapseAllGroups = function () {
             $scope.groupsCollapsed = !$scope.groupsCollapsed;
-            for (var i = 0; i < $scope.groups; i++) {
+            for (var i = 0; i < $scope.groups.length; i++) {
                 $scope.groups[i]._collapsed = $scope.groupsCollapsed;
             }
         }

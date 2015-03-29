@@ -1,4 +1,4 @@
-angular.module('templates-all', ['app/views/directives/counterexamples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/counters.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
+angular.module('templates-all', ['app/views/directives/counterexamples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/modals/variables-counters-occurrence-modal.html', 'app/views/pages/about.html', 'app/views/pages/counters.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
 
 angular.module("app/views/directives/counterexamples-widget.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -1662,6 +1662,63 @@ angular.module("app/views/modals/symbol-move-modal.html", []).run(["$templateCac
     "");
 }]);
 
+angular.module("app/views/modals/variables-counters-occurrence-modal.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/modals/variables-counters-occurrence-modal.html",
+    "<div class=\"modal-header\">\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"close()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
+    "    <h3 class=\"modal-title\">Occurrences</h3>\n" +
+    "    <span class=\"text-muted\">A list of all occurrences of used variables and counters</span>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-body\">\n" +
+    "\n" +
+    "    <table class=\"table table-condensed\">\n" +
+    "        <thead>\n" +
+    "            <tr>\n" +
+    "                <th>Name</th>\n" +
+    "                <th>Group</th>\n" +
+    "                <th>Symbol</th>\n" +
+    "                <th>Action No.</th>\n" +
+    "            </tr>\n" +
+    "        </thead>\n" +
+    "        <tbody>\n" +
+    "            <tr class=\"active\">\n" +
+    "                <td colspan=\"4\"><strong>Counters</strong></td>\n" +
+    "            </tr>\n" +
+    "\n" +
+    "            <tr ng-repeat=\"counter in occurrences.counters\">\n" +
+    "                <td><em ng-bind=\"counter.name\"></em></td>\n" +
+    "                <td ng-bind=\"counter.group\"></td>\n" +
+    "                <td ng-bind=\"counter.symbol\"></td>\n" +
+    "                <td ng-bind=\"counter.action\"></td>\n" +
+    "            </tr>\n" +
+    "\n" +
+    "            <tr class=\"active\">\n" +
+    "                <td colspan=\"4\"><strong>Variables</strong></td>\n" +
+    "            </tr>\n" +
+    "\n" +
+    "            <tr ng-repeat=\"variable in occurrences.variables\">\n" +
+    "                <td><em ng-bind=\"variable.name\"></em></td>\n" +
+    "                <td ng-bind=\"variable.group\"></td>\n" +
+    "                <td ng-bind=\"variable.symbol\"></td>\n" +
+    "                <td ng-bind=\"variable.action\"></td>\n" +
+    "            </tr>\n" +
+    "        </tbody>\n" +
+    "    </table>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-footer\">\n" +
+    "    <button class=\"btn btn-primary\" ng-click=\"close()\">Ok</button>\n" +
+    "</div>");
+}]);
+
 angular.module("app/views/pages/about.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/about.html",
@@ -2448,6 +2505,9 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-right\">\n" +
+    "            <button class=\"btn btn-default btn-xs\"\n" +
+    "                    variables-counters-occurrence-modal-handle>Occurrences\n" +
+    "            </button>\n" +
     "            <button class=\"btn btn-default btn-xs\" ng-click=\"revertChanges()\">Reset</button>\n" +
     "            <button class=\"btn btn-success btn-xs\" ng-click=\"saveChanges()\">Save</button>\n" +
     "        </div>\n" +
@@ -2953,7 +3013,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "\n" +
     "            </div>\n" +
     "        </div>\n" +
-    "\n" +
     "    </div>\n" +
     "</div>");
 }]);

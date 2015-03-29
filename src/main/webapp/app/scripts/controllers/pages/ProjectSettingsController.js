@@ -49,6 +49,9 @@
             copyProject();
         }());
 
+        /**
+         *
+         */
         function copyProject() {
             projectCopy = Project.build(angular.copy($scope.project));
         }
@@ -66,7 +69,7 @@
                     $scope.project = updatedProject;
                     copyProject();
                 })
-                .catch(function (response) {
+                .catch(function () {
                     Toast.danger('<p><strong>Project update failed!</strong></p> The project seems to exists already.');
                 })
         };
@@ -86,7 +89,8 @@
                             $state.go('home');
                         })
                         .catch(function (response) {
-                            Toast.danger('<p><strong>Deleting project failed</strong></p>' + response.data.message);
+                            Toast.danger('<p><strong>Dsu' +
+                            'eleting project failed</strong></p>' + response.data.message);
                         })
                 })
         };

@@ -60,7 +60,7 @@
                 $state.previous = fromState;
             });
         }])
-}());;angular.module('templates-all', ['app/views/directives/counterexamples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/pages/about.html', 'app/views/pages/counters.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
+}());;angular.module('templates-all', ['app/views/directives/counterexamples-widget.html', 'app/views/directives/html-element-picker.html', 'app/views/directives/hypothesis.html', 'app/views/directives/index-browser.html', 'app/views/directives/learn-results-panel.html', 'app/views/directives/learn-results-slideshow-panel.html', 'app/views/directives/learn-resume-settings-widget.html', 'app/views/directives/learner-result-chart-multiple-final.html', 'app/views/directives/load-screen.html', 'app/views/directives/navigation.html', 'app/views/directives/observation-table.html', 'app/views/directives/view-heading.html', 'app/views/directives/widget.html', 'app/views/includes/action-forms.html', 'app/views/modals/action-create-modal.html', 'app/views/modals/action-edit-modal.html', 'app/views/modals/confirm-dialog.html', 'app/views/modals/hypothesis-layout-settings-modal.html', 'app/views/modals/learn-result-details-modal.html', 'app/views/modals/learn-setup-settings-modal.html', 'app/views/modals/prompt-dialog.html', 'app/views/modals/symbol-create-modal.html', 'app/views/modals/symbol-edit-modal.html', 'app/views/modals/symbol-group-create-modal.html', 'app/views/modals/symbol-group-edit-modal.html', 'app/views/modals/symbol-move-modal.html', 'app/views/modals/variables-counters-occurrence-modal.html', 'app/views/pages/about.html', 'app/views/pages/counters.html', 'app/views/pages/help.html', 'app/views/pages/home.html', 'app/views/pages/learn-results-compare.html', 'app/views/pages/learn-results-statistics.html', 'app/views/pages/learn-results.html', 'app/views/pages/learn-setup.html', 'app/views/pages/learn-start.html', 'app/views/pages/project-create.html', 'app/views/pages/project-settings.html', 'app/views/pages/project.html', 'app/views/pages/symbols-actions.html', 'app/views/pages/symbols-export.html', 'app/views/pages/symbols-history.html', 'app/views/pages/symbols-import.html', 'app/views/pages/symbols-trash.html', 'app/views/pages/symbols.html']);
 
 angular.module("app/views/directives/counterexamples-widget.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
@@ -1724,6 +1724,63 @@ angular.module("app/views/modals/symbol-move-modal.html", []).run(["$templateCac
     "");
 }]);
 
+angular.module("app/views/modals/variables-counters-occurrence-modal.html", []).run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("app/views/modals/variables-counters-occurrence-modal.html",
+    "<div class=\"modal-header\">\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-icon pull-right\" ng-click=\"close()\">\n" +
+    "        <i class=\"fa fa-close fa-fw\"></i>\n" +
+    "    </a>\n" +
+    "\n" +
+    "    <h3 class=\"modal-title\">Occurrences</h3>\n" +
+    "    <span class=\"text-muted\">A list of all occurrences of used variables and counters</span>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-body\">\n" +
+    "\n" +
+    "    <table class=\"table table-condensed\">\n" +
+    "        <thead>\n" +
+    "            <tr>\n" +
+    "                <th>Name</th>\n" +
+    "                <th>Group</th>\n" +
+    "                <th>Symbol</th>\n" +
+    "                <th>Action No.</th>\n" +
+    "            </tr>\n" +
+    "        </thead>\n" +
+    "        <tbody>\n" +
+    "            <tr class=\"active\">\n" +
+    "                <td colspan=\"4\"><strong>Counters</strong></td>\n" +
+    "            </tr>\n" +
+    "\n" +
+    "            <tr ng-repeat=\"counter in occurrences.counters\">\n" +
+    "                <td><em ng-bind=\"counter.name\"></em></td>\n" +
+    "                <td ng-bind=\"counter.group\"></td>\n" +
+    "                <td ng-bind=\"counter.symbol\"></td>\n" +
+    "                <td ng-bind=\"counter.action\"></td>\n" +
+    "            </tr>\n" +
+    "\n" +
+    "            <tr class=\"active\">\n" +
+    "                <td colspan=\"4\"><strong>Variables</strong></td>\n" +
+    "            </tr>\n" +
+    "\n" +
+    "            <tr ng-repeat=\"variable in occurrences.variables\">\n" +
+    "                <td><em ng-bind=\"variable.name\"></em></td>\n" +
+    "                <td ng-bind=\"variable.group\"></td>\n" +
+    "                <td ng-bind=\"variable.symbol\"></td>\n" +
+    "                <td ng-bind=\"variable.action\"></td>\n" +
+    "            </tr>\n" +
+    "        </tbody>\n" +
+    "    </table>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "<div class=\"modal-footer\">\n" +
+    "    <button class=\"btn btn-primary\" ng-click=\"close()\">Ok</button>\n" +
+    "</div>");
+}]);
+
 angular.module("app/views/pages/about.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/pages/about.html",
@@ -2510,6 +2567,9 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-right\">\n" +
+    "            <button class=\"btn btn-default btn-xs\"\n" +
+    "                    variables-counters-occurrence-modal-handle>Occurrences\n" +
+    "            </button>\n" +
     "            <button class=\"btn btn-default btn-xs\" ng-click=\"revertChanges()\">Reset</button>\n" +
     "            <button class=\"btn btn-success btn-xs\" ng-click=\"saveChanges()\">Save</button>\n" +
     "        </div>\n" +
@@ -3015,7 +3075,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "\n" +
     "            </div>\n" +
     "        </div>\n" +
-    "\n" +
     "    </div>\n" +
     "</div>");
 }]);
@@ -4137,6 +4196,81 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     angular
         .module('weblearner.controller')
+        .controller('VariablesCountersOccurrenceModalController', VariablesCountersOccurrenceModalController);
+
+    VariablesCountersOccurrenceModalController.$inject = [
+        '$scope', '$modalInstance', 'SessionService', 'SymbolGroup'
+    ];
+
+    function VariablesCountersOccurrenceModalController($scope, $modalInstance, Session, SymbolGroup) {
+
+        var project = Session.project.get();
+
+        $scope.occurrences = null;
+
+        SymbolGroup.Resource.getAll(project.id, {embedSymbols: true})
+            .then(function (groups) {
+                $scope.occurrences = findOccurrences(groups);
+            });
+
+        function findOccurrences(groups) {
+
+            var occurrences = {
+                counters: [],
+                variables: []
+            };
+
+            _.forEach(groups, function (group) {
+                _.forEach(group.symbols, function (symbol) {
+                    if (!symbol.hidden) {
+                        _.forEach(symbol.actions, function (action, i) {
+                            for (var prop in action) {
+
+                                if (action.hasOwnProperty(prop) && angular.isString(action[prop])) {
+                                    var foundCounters = action[prop].match(/{{#(.*?)}}/g);
+                                    var foundVariables = action[prop].match(/{{$(.*?)}}/g);
+
+                                    if (foundCounters !== null) {
+                                        _.forEach(foundCounters, function (counter) {
+                                            occurrences.counters.push({
+                                                group: group.name,
+                                                symbol: symbol.name,
+                                                action: i,
+                                                name: counter.substring(2, counter.length - 2)
+                                            })
+                                        })
+                                    }
+
+                                    if (foundVariables !== null) {
+                                        _.forEach(foundVariables, function (variable) {
+                                            occurrences.variables.push({
+                                                group: group.name,
+                                                symbol: symbol.name,
+                                                action: i,
+                                                name: variable.substring(2, variable.length - 2)
+                                            })
+                                        })
+                                    }
+                                }
+                            }
+                        })
+                    }
+                })
+            });
+
+            return occurrences;
+        }
+
+        /** Close the modal dialog */
+        $scope.close = function () {
+            $modalInstance.dismiss();
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.controller')
         .controller('CountersController', CountersController);
 
     CountersController.$inject = ['$scope', 'SessionService', 'CountersService', 'ToastService', '_'];
@@ -4957,19 +5091,22 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     ];
 
     /**
-     * The controller that handles the deleting and updating of a project. Belongs to the template at
-     * '/views/pages/project-settings.html'
+     * The controller that handles the deleting and updating of a project. The page cannot be requested if the learner
+     * is actively learning the current project. Therefore it redirects to the projects dashboard.
      *
-     * @param $scope
-     * @param $state
-     * @param Project
-     * @param Session
-     * @param PromptService
-     * @param Toast
-     * @param Learner
+     * Template: '/views/pages/project-settings.html'
+     *
+     * @param $scope - The controllers scope
+     * @param $state - The ui.router $state service
+     * @param Project - The factory for Projects
+     * @param Session - The SessionService
+     * @param PromptService - The PromptService
+     * @param Toast - The ToastService
+     * @param Learner - The LearnerService for the API
      */
     function ProjectSettingsController($scope, $state, Project, Session, PromptService, Toast, Learner) {
 
+        // a copy of the sessions project for resetting the form
         var projectCopy;
 
         /**
@@ -4977,18 +5114,28 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * @type {Project}
          **/
         $scope.project = Session.project.get();
-        projectCopy = angular.copy($scope.project);
 
         (function init() {
 
             // check if the current project is used in learning and abort deletion
             // because of unknown side effects
             Learner.isActive()
-                .then(function () {
-                    Toast.info('Cannot edit the project. A learning process is still active.');
-                    $state.go('project');
+                .then(function (data) {
+                    if (data.active && data.project === $scope.project.id) {
+                        Toast.info('Cannot edit the project. A learning process is still active.');
+                        $state.go('project');
+                    }
                 });
+
+            copyProject();
         }());
+
+        /**
+         *
+         */
+        function copyProject() {
+            projectCopy = Project.build(angular.copy($scope.project));
+        }
 
         /**
          * Updates a project and saves the updated project in the sessionStorage
@@ -4998,9 +5145,13 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             // update the project on the server
             Project.Resource.update($scope.project)
                 .then(function (updatedProject) {
+                    Toast.success('Project updated');
                     Session.project.save(updatedProject);
                     $scope.project = updatedProject;
-                    projectCopy = angular.copy($scope.project);
+                    copyProject();
+                })
+                .catch(function () {
+                    Toast.danger('<p><strong>Project update failed!</strong></p> The project seems to exists already.');
                 })
         };
 
@@ -5019,7 +5170,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                             $state.go('home');
                         })
                         .catch(function (response) {
-                            Toast.danger('<p><strong>Deleting project failed</strong></p>' + response.data.message);
+                            Toast.danger('<p><strong>Dsu' +
+                            'eleting project failed</strong></p>' + response.data.message);
                         })
                 })
         };
@@ -5140,7 +5292,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * @param {Object} action
          */
         $scope.addAction = function (action) {
-            console.log(action)
             action._id = _.uniqueId();
             $scope.symbol.actions.push(action);
             Toast.success('Action created');
@@ -5330,14 +5481,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * @param {SymbolGroup} group - The group the symbols should be moved into
          */
         $scope.moveSymbolsToGroup = function (symbols, group) {
-            var group = _.find($scope.groups, {id: group.id});
+            var grp = _.find($scope.groups, {id: group.id});
 
             _.forEach(symbols, function (symbol) {
                 var g = _.find($scope.groups, {id: symbol.group});
                 var i = _.findIndex(g.symbols, {id: symbol.id});
                 g.symbols.splice(i, 1);
                 symbol.group = group.id;
-                group.symbols.push(symbol);
+                grp.symbols.push(symbol);
             })
         };
 
@@ -5395,7 +5546,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          */
         $scope.toggleCollapseAllGroups = function () {
             $scope.groupsCollapsed = !$scope.groupsCollapsed;
-            for (var i = 0; i < $scope.groups; i++) {
+            for (var i = 0; i < $scope.groups.length; i++) {
                 $scope.groups[i]._collapsed = $scope.groupsCollapsed;
             }
         }
@@ -8097,6 +8248,33 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 modal.result.then(function (data) {
                     scope.onMoved()(data.symbols, data.group);
                 })
+            });
+        }
+    }
+}());;(function () {
+    'use strict';
+
+    angular
+        .module('weblearner.directives')
+        .directive('variablesCountersOccurrenceModalHandle', variablesCountersOccurrenceModalHandle);
+
+    variablesCountersOccurrenceModalHandle.$inject = ['$modal', 'paths'];
+
+    function variablesCountersOccurrenceModalHandle($modal, paths) {
+
+        return {
+            restrict: 'A',
+            link: link
+        };
+
+        function link(scope, el, attrs) {
+
+            el.on('click', function () {
+                var modal = $modal.open({
+                    templateUrl: paths.views.MODALS + '/variables-counters-occurrence-modal.html',
+                    controller: 'VariablesCountersOccurrenceModalController',
+                    resolve: {}
+                });
             });
         }
     }
