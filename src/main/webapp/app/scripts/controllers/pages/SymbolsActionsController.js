@@ -107,7 +107,6 @@
          * @param {Object} action
          */
         $scope.addAction = function (action) {
-            console.log(action)
             action._id = _.uniqueId();
             $scope.symbol.actions.push(action);
             Toast.success('Action created');

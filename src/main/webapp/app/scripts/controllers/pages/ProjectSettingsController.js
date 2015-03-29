@@ -10,19 +10,22 @@
     ];
 
     /**
-     * The controller that handles the deleting and updating of a project. Belongs to the template at
-     * '/views/pages/project-settings.html'
+     * The controller that handles the deleting and updating of a project. The page cannot be requested if the learner
+     * is actively learning the current project. Therefore it redirects to the projects dashboard.
      *
-     * @param $scope
-     * @param $state
-     * @param Project
-     * @param Session
-     * @param PromptService
-     * @param Toast
-     * @param Learner
+     * Template: '/views/pages/project-settings.html'
+     *
+     * @param $scope - The controllers scope
+     * @param $state - The ui.router $state service
+     * @param Project - The factory for Projects
+     * @param Session - The SessionService
+     * @param PromptService - The PromptService
+     * @param Toast - The ToastService
+     * @param Learner - The LearnerService for the API
      */
     function ProjectSettingsController($scope, $state, Project, Session, PromptService, Toast, Learner) {
 
+        // a copy of the sessions project for resetting the form
         var projectCopy;
 
         /**
@@ -30,18 +33,25 @@
          * @type {Project}
          **/
         $scope.project = Session.project.get();
-        projectCopy = angular.copy($scope.project);
 
         (function init() {
 
             // check if the current project is used in learning and abort deletion
             // because of unknown side effects
             Learner.isActive()
-                .then(function () {
-                    Toast.info('Cannot edit the project. A learning process is still active.');
-                    $state.go('project');
+                .then(function (data) {
+                    if (data.active && data.project === $scope.project.id) {
+                        Toast.info('Cannot edit the project. A learning process is still active.');
+                        $state.go('project');
+                    }
                 });
+
+            copyProject();
         }());
+
+        function copyProject() {
+            projectCopy = Project.build(angular.copy($scope.project));
+        }
 
         /**
          * Updates a project and saves the updated project in the sessionStorage
@@ -51,9 +61,13 @@
             // update the project on the server
             Project.Resource.update($scope.project)
                 .then(function (updatedProject) {
+                    Toast.success('Project updated');
                     Session.project.save(updatedProject);
                     $scope.project = updatedProject;
-                    projectCopy = angular.copy($scope.project);
+                    copyProject();
+                })
+                .catch(function (response) {
+                    Toast.danger('<p><strong>Project update failed!</strong></p> The project seems to exists already.');
                 })
         };
 
