@@ -5,7 +5,7 @@
         .module('weblearner.controller')
         .controller('ActionEditModalController', ActionEditModalController);
 
-    ActionEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action'];
+    ActionEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action', 'Symbol', 'SessionService'];
 
     /**
      * The controller for the modal dialog that handles the editing of an action.
@@ -17,9 +17,14 @@
      * @param modalData - The data that is passed to this controller
      * @param actionTypes - The constant for action type names
      * @param Action - The Action model
+     * @param Symbol - The factory for symbols
+     * @param Session - The SessionService
      * @constructor
      */
-    function ActionEditModalController($scope, $modalInstance, modalData, actionTypes, Action) {
+    function ActionEditModalController($scope, $modalInstance, modalData, actionTypes, Action, Symbol, Session) {
+
+        // the project in the session
+        var project = Session.project.get();
 
         /**
          * The constant for actions type names
@@ -32,6 +37,19 @@
          * @type {Object}
          */
         $scope.action = angular.copy(modalData.action);
+
+        /**
+         *
+         * @type {Array}
+         */
+        $scope.symbols = [];
+
+        (function init() {
+            Symbol.Resource.getAll(project.id)
+                .then(function (symbols) {
+                    $scope.symbols = symbols;
+                })
+        }());
 
         /**
          * Close the modal dialog and pass the updated action to the handle that called it

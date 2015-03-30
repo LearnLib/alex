@@ -39,6 +39,10 @@
          */
         $scope.action = null;
 
+        /**
+         * All symbols of the project
+         * @type {Array}
+         */
         $scope.symbols = [];
 
         (function init() {

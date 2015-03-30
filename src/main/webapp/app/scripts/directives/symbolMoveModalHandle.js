@@ -8,13 +8,18 @@
     symbolMoveModalHandle.$inject = ['$modal', 'paths'];
 
     /**
+     * The directive for handling the opening of the modal for moving symbols into another group. Can only be used as
+     * an attribute and attaches a click event to its source element.
      *
-     * @param $modal
-     * @param paths
+     * Use: '<button symbol-move-modal-handle symbols="..." groups="..." onMoved="...">Click Me!</button>'
+     *
+     * @param $modal - The ui.bootstrap $modal service
+     * @param paths - The applications paths constant
      * @returns {{scope: {symbols: string, groups: string, onMoved: string}, link: link}}
      */
     function symbolMoveModalHandle($modal, paths) {
         return {
+            restrict: 'A',
             scope: {
                 symbols: '=',
                 groups: '=',

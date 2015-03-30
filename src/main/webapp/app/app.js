@@ -3453,6 +3453,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          */
         $scope.action = null;
 
+        /**
+         * All symbols of the project
+         * @type {Array}
+         */
         $scope.symbols = [];
 
         (function init() {
@@ -3502,7 +3506,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .module('weblearner.controller')
         .controller('ActionEditModalController', ActionEditModalController);
 
-    ActionEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action'];
+    ActionEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action', 'Symbol', 'SessionService'];
 
     /**
      * The controller for the modal dialog that handles the editing of an action.
@@ -3514,9 +3518,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @param modalData - The data that is passed to this controller
      * @param actionTypes - The constant for action type names
      * @param Action - The Action model
+     * @param Symbol - The factory for symbols
+     * @param Session - The SessionService
      * @constructor
      */
-    function ActionEditModalController($scope, $modalInstance, modalData, actionTypes, Action) {
+    function ActionEditModalController($scope, $modalInstance, modalData, actionTypes, Action, Symbol, Session) {
+
+        // the project in the session
+        var project = Session.project.get();
 
         /**
          * The constant for actions type names
@@ -3529,6 +3538,19 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * @type {Object}
          */
         $scope.action = angular.copy(modalData.action);
+
+        /**
+         *
+         * @type {Array}
+         */
+        $scope.symbols = [];
+
+        (function init() {
+            Symbol.Resource.getAll(project.id)
+                .then(function (symbols) {
+                    $scope.symbols = symbols;
+                })
+        }());
 
         /**
          * Close the modal dialog and pass the updated action to the handle that called it
@@ -7906,9 +7928,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             });
         }
     }
-}());
-;
-(function () {
+}());;(function () {
     'use strict';
 
     angular
@@ -8273,13 +8293,18 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     symbolGroupCreateModalHandle.$inject = ['$modal', 'paths'];
 
     /**
+     * The directive for handling the opening of the modal for creating a new symbol group. Can only be used as
+     * an attribute and attaches a click event to its source element.
      *
-     * @param $modal
-     * @param paths
-     * @returns {{scope: {projectId: string, onCreated: string}, link: link}}
+     * Use: '<button symbol-group-create-modal-handle project-id=".." on-created="..">Click Me!</button>'
+     *
+     * @param $modal - The ui.bootstrap $modal service
+     * @param paths - The applications paths constant
+     * @returns {{restrict: string, scope: {projectId: string, onCreated: string}, link: link}}
      */
     function symbolGroupCreateModalHandle($modal, paths) {
         return {
+            restrict: 'A',
             scope: {
                 projectId: '@',
                 onCreated: '&'
@@ -8288,7 +8313,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         function link(scope, el, attrs) {
-
             el.on('click', handleModal);
 
             function handleModal() {
@@ -8379,13 +8403,18 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     symbolMoveModalHandle.$inject = ['$modal', 'paths'];
 
     /**
+     * The directive for handling the opening of the modal for moving symbols into another group. Can only be used as
+     * an attribute and attaches a click event to its source element.
      *
-     * @param $modal
-     * @param paths
+     * Use: '<button symbol-move-modal-handle symbols="..." groups="..." onMoved="...">Click Me!</button>'
+     *
+     * @param $modal - The ui.bootstrap $modal service
+     * @param paths - The applications paths constant
      * @returns {{scope: {symbols: string, groups: string, onMoved: string}, link: link}}
      */
     function symbolMoveModalHandle($modal, paths) {
         return {
+            restrict: 'A',
             scope: {
                 symbols: '=',
                 groups: '=',

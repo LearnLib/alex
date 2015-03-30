@@ -8,13 +8,18 @@
     symbolGroupCreateModalHandle.$inject = ['$modal', 'paths'];
 
     /**
+     * The directive for handling the opening of the modal for creating a new symbol group. Can only be used as
+     * an attribute and attaches a click event to its source element.
      *
-     * @param $modal
-     * @param paths
-     * @returns {{scope: {projectId: string, onCreated: string}, link: link}}
+     * Use: '<button symbol-group-create-modal-handle project-id=".." on-created="..">Click Me!</button>'
+     *
+     * @param $modal - The ui.bootstrap $modal service
+     * @param paths - The applications paths constant
+     * @returns {{restrict: string, scope: {projectId: string, onCreated: string}, link: link}}
      */
     function symbolGroupCreateModalHandle($modal, paths) {
         return {
+            restrict: 'A',
             scope: {
                 projectId: '@',
                 onCreated: '&'
@@ -23,7 +28,6 @@
         };
 
         function link(scope, el, attrs) {
-
             el.on('click', handleModal);
 
             function handleModal() {
