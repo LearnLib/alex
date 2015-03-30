@@ -6,7 +6,7 @@
         .controller('ActionCreateModalController', ActionCreateModalController);
 
     ActionCreateModalController.$inject = [
-        '$scope', '$modalInstance', 'actionTypes', 'Action', 'Symbol', 'SessionService'
+        '$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action', 'Symbol', 'SessionService'
     ];
 
     /**
@@ -16,13 +16,14 @@
      *
      * @param $scope
      * @param $modalInstance
+     * @param modalData
      * @param actionTypes
      * @param Action
      * @param Symbol
      * @param Session
      * @constructor
      */
-    function ActionCreateModalController($scope, $modalInstance, actionTypes, Action, Symbol, Session) {
+    function ActionCreateModalController($scope, $modalInstance, modalData, actionTypes, Action, Symbol, Session) {
 
         var project = Session.project.get();
 
@@ -61,6 +62,14 @@
          */
         $scope.createAction = function () {
             $modalInstance.close($scope.action);
+        };
+
+        /**
+         * Creates a new action in the background without closing the diaalog
+         */
+        $scope.createActionAndContinue = function () {
+            modalData.addAction($scope.action);
+            $scope.action = null;
         };
 
         /**

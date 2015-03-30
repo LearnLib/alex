@@ -1,12 +1,15 @@
-<table class="table table-condensed obsevation-table">
+<table class="table table-condensed observation-table">
     <thead>
         <tr>
-            <th ng-repeat="th in table.header" ng-bind="::th"></th>
+            <th ng-repeat="th in table.header" ng-bind="th"></th>
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="tr in table.body track by $index">
-            <td ng-repeat="td in tr track by $index" ng-bind="::td"></td>
+    <tr ng-repeat="tr in table.body.s1 track by $index">
+        <td ng-repeat="td in tr track by $index" ng-bind="td"></td>
+    </tr>
+    <tr ng-repeat="tr in table.body.s2 track by $index" ng-class="$index === 0 ? 'line': ''">
+        <td ng-repeat="td in tr track by $index" ng-bind="td"></td>
         </tr>
     </tbody>
 </table>

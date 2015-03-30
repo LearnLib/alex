@@ -361,7 +361,7 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                    <li class=\"dropdown\" dropdown dropdown-navigation>\n" +
     "                        <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
     "                           aria-expanded=\"false\">\n" +
-    "                            <strong ng-bind=\"project.name\"></strong>\n" +
+    "                            <strong class=\"project-title\" ng-bind=\"project.name\"></strong>\n" +
     "                            <span class=\"caret\"></span>\n" +
     "                        </a>\n" +
     "                        <ul class=\"dropdown-menu\" role=\"menu\" ng-if=\"project\">\n" +
@@ -435,15 +435,18 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
 angular.module("app/views/directives/observation-table.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/directives/observation-table.html",
-    "<table class=\"table table-condensed obsevation-table\">\n" +
+    "<table class=\"table table-condensed observation-table\">\n" +
     "    <thead>\n" +
     "        <tr>\n" +
-    "            <th ng-repeat=\"th in table.header\" ng-bind=\"::th\"></th>\n" +
+    "            <th ng-repeat=\"th in table.header\" ng-bind=\"th\"></th>\n" +
     "        </tr>\n" +
     "    </thead>\n" +
     "    <tbody>\n" +
-    "        <tr ng-repeat=\"tr in table.body track by $index\">\n" +
-    "            <td ng-repeat=\"td in tr track by $index\" ng-bind=\"::td\"></td>\n" +
+    "    <tr ng-repeat=\"tr in table.body.s1 track by $index\">\n" +
+    "        <td ng-repeat=\"td in tr track by $index\" ng-bind=\"td\"></td>\n" +
+    "    </tr>\n" +
+    "    <tr ng-repeat=\"tr in table.body.s2 track by $index\" ng-class=\"$index === 0 ? 'line': ''\">\n" +
+    "        <td ng-repeat=\"td in tr track by $index\" ng-bind=\"td\"></td>\n" +
     "        </tr>\n" +
     "    </tbody>\n" +
     "</table>");
@@ -909,7 +912,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <h4><strong>Increment Counter</strong></h4>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Increment an <strong>already declared</strong> counter variable\n" +
+    "        Increment a counter variable\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "    <label>Name</label>\n" +
@@ -927,7 +930,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <h4><strong>Set Counter</strong></h4>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Set the value of an <strong>already declared</strong> counter variable\n" +
+    "        Set the value of a counter variable\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "    <label>Name</label>\n" +
@@ -950,7 +953,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <h4><strong>Set Variable</strong></h4>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Set the value of an <strong>already declared</strong> variable\n" +
+    "        Set the value of a variable\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "    <label>Name</label>\n" +
@@ -973,7 +976,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <h4><strong>Set Variable By JSON Attribute</strong></h4>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Set the value of an <strong>already declared</strong> variable to the content of a JSON\n" +
+    "        Set the value of a variable to the content of a JSON\n" +
     "        attribute\n" +
     "    </p>\n" +
     "    <hr>\n" +
@@ -997,7 +1000,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <h4><strong>Set Variable By Node Value</strong></h4>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Set the value of an <strong>already declared</strong> variable to the content of a HTML element\n" +
+    "        Set the value of a variable to the content of a HTML element\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "    <label>Name</label>\n" +
@@ -1094,6 +1097,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
+    "        <a href class=\"btn btn-info btn-sm\" ng-click=\"createActionAndContinue()\">Create and Continue</a>\n" +
     "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Create</button>\n" +
     "    </div>\n" +
     "\n" +
@@ -1272,7 +1276,7 @@ angular.module("app/views/modals/learn-result-details-modal.html", []).run(["$te
     "</div>\n" +
     "\n" +
     "<div class=\"modal-footer\">\n" +
-    "    <button class=\"btn btn-primary\" ng-click=\"ok()\">Ok</button>\n" +
+    "    <button class=\"btn btn-sm btn-primary\" ng-click=\"ok()\">Ok</button>\n" +
     "</div>");
 }]);
 
@@ -1408,7 +1412,7 @@ angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$te
     "	</div>\n" +
     "\n" +
     "	<div class=\"modal-footer\">\n" +
-    "        <button class=\"btn btn-primary\" type=\"submit\">Ok</button>\n" +
+    "        <button class=\"btn btn-sm btn-primary\" type=\"submit\">Ok</button>\n" +
     "	</div>\n" +
     "\n" +
     "</form>");
@@ -1579,7 +1583,7 @@ angular.module("app/views/modals/symbol-group-create-modal.html", []).run(["$tem
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
-    "        <button class=\"btn btn-primary\" type=\"submit\">Create Symbol Group</button>\n" +
+    "        <button class=\"btn btn-sm btn-primary\" type=\"submit\">Create Symbol Group</button>\n" +
     "    </div>\n" +
     "\n" +
     "</form>");
@@ -1617,8 +1621,8 @@ angular.module("app/views/modals/symbol-group-edit-modal.html", []).run(["$templ
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
-    "        <a href class=\"btn btn-default\" ng-if=\"group.id !== 0\" ng-click=\"deleteGroup()\">Delete</a>\n" +
-    "        <button class=\"btn btn-primary\" type=\"submit\">Update</button>\n" +
+    "        <a href class=\"btn btn-sm btn-default\" ng-if=\"group.id !== 0\" ng-click=\"deleteGroup()\">Delete</a>\n" +
+    "        <button class=\"btn btn-sm btn-primary\" type=\"submit\">Update</button>\n" +
     "    </div>\n" +
     "\n" +
     "</form>");
@@ -1689,7 +1693,7 @@ angular.module("app/views/modals/variables-counters-occurrence-modal.html", []).
     "        </thead>\n" +
     "        <tbody>\n" +
     "            <tr class=\"active\">\n" +
-    "                <td colspan=\"4\"><strong>Counters</strong></td>\n" +
+    "                <td colspan=\"4\"><strong>Counters (#)</strong></td>\n" +
     "            </tr>\n" +
     "\n" +
     "            <tr ng-repeat=\"counter in occurrences.counters\">\n" +
@@ -1700,7 +1704,7 @@ angular.module("app/views/modals/variables-counters-occurrence-modal.html", []).
     "            </tr>\n" +
     "\n" +
     "            <tr class=\"active\">\n" +
-    "                <td colspan=\"4\"><strong>Variables</strong></td>\n" +
+    "                <td colspan=\"4\"><strong>Variables ($)</strong></td>\n" +
     "            </tr>\n" +
     "\n" +
     "            <tr ng-repeat=\"variable in occurrences.variables\">\n" +
@@ -1715,7 +1719,7 @@ angular.module("app/views/modals/variables-counters-occurrence-modal.html", []).
     "</div>\n" +
     "\n" +
     "<div class=\"modal-footer\">\n" +
-    "    <button class=\"btn btn-primary\" ng-click=\"close()\">Ok</button>\n" +
+    "    <button class=\"btn btn-sm btn-primary\" ng-click=\"close()\">Ok</button>\n" +
     "</div>");
 }]);
 
@@ -2457,8 +2461,8 @@ angular.module("app/views/pages/project.html", []).run(["$templateCache", functi
   "use strict";
   $templateCache.put("app/views/pages/project.html",
     "<div view-heading\n" +
-    "     title=\"{{project.name}} Dashboard\"\n" +
-    "     sub-title=\"asdasdasd\">\n" +
+    "     title=\"Dashboard\"\n" +
+    "     sub-title=\"sub-title\">\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +

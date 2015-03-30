@@ -15,7 +15,7 @@
     /**
      * The directive for displaying a collapsable widget without content. Use is a a wrapper for any content you like.
      *
-     * Attribute 'collapsed' {boolean} can be applied to tell wheter the widgets content should be displayed or not.
+     * Attribute 'collapsed' {boolean} can be applied to tell whether the widgets content should be displayed or not.
      * Attribute 'widgetTitle' {string} can be applied for displaying a widget title.
      *
      * Use: '<widget widget-title="..." collapsed="..."></widget>'
@@ -51,6 +51,9 @@
              */
             scope.collapsed = scope.collapsed || false;
 
+            /**
+             * Collapses or uncollapses the widget content
+             */
             scope.toggleCollapse = function () {
                 scope.collapsed = !scope.collapsed;
             }

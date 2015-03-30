@@ -5237,6 +5237,13 @@ button.close {
     border-bottom: 1px #191e24
 }
 
+.navbar-application .project-title {
+    max-width: 50px;
+    white-space: nowrap;
+    display: inline-flex;
+    overflow: hidden
+}
+
 .navbar-application .navbar-nav > li > a, .navbar-application .navbar-brand {
     padding-top: 12px;
     padding-bottom: 12px;
@@ -5498,6 +5505,10 @@ form.form-condensed .form-group {
 .ng-toast .alert {
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.5);
     max-width: 450px
+}
+
+.observation-table .line {
+    border-top: 2px solid #666
 }
 
 .alert-condensed {

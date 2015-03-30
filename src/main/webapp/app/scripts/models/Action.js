@@ -24,7 +24,7 @@
         };
 
         Action.Web.SearchForText.prototype.toString = function () {
-            return 'Search for ' + (this.regexp ? 'regexp' : 'string') + '"' + this.value + '"';
+            return 'Search for ' + (this.regexp ? 'regexp' : 'string') + ' "' + this.value + '"';
         };
 
         Action.Web.SearchForNode = function (value, isRegexp) {

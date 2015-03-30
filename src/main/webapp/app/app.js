@@ -423,7 +423,7 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "                    <li class=\"dropdown\" dropdown dropdown-navigation>\n" +
     "                        <a href=\"#\" dropdown-toggle class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\"\n" +
     "                           aria-expanded=\"false\">\n" +
-    "                            <strong ng-bind=\"project.name\"></strong>\n" +
+    "                            <strong class=\"project-title\" ng-bind=\"project.name\"></strong>\n" +
     "                            <span class=\"caret\"></span>\n" +
     "                        </a>\n" +
     "                        <ul class=\"dropdown-menu\" role=\"menu\" ng-if=\"project\">\n" +
@@ -497,15 +497,18 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
 angular.module("app/views/directives/observation-table.html", []).run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("app/views/directives/observation-table.html",
-    "<table class=\"table table-condensed obsevation-table\">\n" +
+    "<table class=\"table table-condensed observation-table\">\n" +
     "    <thead>\n" +
     "        <tr>\n" +
-    "            <th ng-repeat=\"th in table.header\" ng-bind=\"::th\"></th>\n" +
+    "            <th ng-repeat=\"th in table.header\" ng-bind=\"th\"></th>\n" +
     "        </tr>\n" +
     "    </thead>\n" +
     "    <tbody>\n" +
-    "        <tr ng-repeat=\"tr in table.body track by $index\">\n" +
-    "            <td ng-repeat=\"td in tr track by $index\" ng-bind=\"::td\"></td>\n" +
+    "    <tr ng-repeat=\"tr in table.body.s1 track by $index\">\n" +
+    "        <td ng-repeat=\"td in tr track by $index\" ng-bind=\"td\"></td>\n" +
+    "    </tr>\n" +
+    "    <tr ng-repeat=\"tr in table.body.s2 track by $index\" ng-class=\"$index === 0 ? 'line': ''\">\n" +
+    "        <td ng-repeat=\"td in tr track by $index\" ng-bind=\"td\"></td>\n" +
     "        </tr>\n" +
     "    </tbody>\n" +
     "</table>");
@@ -971,7 +974,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <h4><strong>Increment Counter</strong></h4>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Increment an <strong>already declared</strong> counter variable\n" +
+    "        Increment a counter variable\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "    <label>Name</label>\n" +
@@ -989,7 +992,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <h4><strong>Set Counter</strong></h4>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Set the value of an <strong>already declared</strong> counter variable\n" +
+    "        Set the value of a counter variable\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "    <label>Name</label>\n" +
@@ -1012,7 +1015,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <h4><strong>Set Variable</strong></h4>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Set the value of an <strong>already declared</strong> variable\n" +
+    "        Set the value of a variable\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "    <label>Name</label>\n" +
@@ -1035,7 +1038,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <h4><strong>Set Variable By JSON Attribute</strong></h4>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Set the value of an <strong>already declared</strong> variable to the content of a JSON\n" +
+    "        Set the value of a variable to the content of a JSON\n" +
     "        attribute\n" +
     "    </p>\n" +
     "    <hr>\n" +
@@ -1059,7 +1062,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <h4><strong>Set Variable By Node Value</strong></h4>\n" +
     "\n" +
     "    <p class=\"text-muted\">\n" +
-    "        Set the value of an <strong>already declared</strong> variable to the content of a HTML element\n" +
+    "        Set the value of a variable to the content of a HTML element\n" +
     "    </p>\n" +
     "    <hr>\n" +
     "    <label>Name</label>\n" +
@@ -1156,6 +1159,7 @@ angular.module("app/views/modals/action-create-modal.html", []).run(["$templateC
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
+    "        <a href class=\"btn btn-info btn-sm\" ng-click=\"createActionAndContinue()\">Create and Continue</a>\n" +
     "        <button class=\"btn btn-primary btn-sm\" type=\"submit\">Create</button>\n" +
     "    </div>\n" +
     "\n" +
@@ -1334,7 +1338,7 @@ angular.module("app/views/modals/learn-result-details-modal.html", []).run(["$te
     "</div>\n" +
     "\n" +
     "<div class=\"modal-footer\">\n" +
-    "    <button class=\"btn btn-primary\" ng-click=\"ok()\">Ok</button>\n" +
+    "    <button class=\"btn btn-sm btn-primary\" ng-click=\"ok()\">Ok</button>\n" +
     "</div>");
 }]);
 
@@ -1470,7 +1474,7 @@ angular.module("app/views/modals/learn-setup-settings-modal.html", []).run(["$te
     "	</div>\n" +
     "\n" +
     "	<div class=\"modal-footer\">\n" +
-    "        <button class=\"btn btn-primary\" type=\"submit\">Ok</button>\n" +
+    "        <button class=\"btn btn-sm btn-primary\" type=\"submit\">Ok</button>\n" +
     "	</div>\n" +
     "\n" +
     "</form>");
@@ -1641,7 +1645,7 @@ angular.module("app/views/modals/symbol-group-create-modal.html", []).run(["$tem
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
-    "        <button class=\"btn btn-primary\" type=\"submit\">Create Symbol Group</button>\n" +
+    "        <button class=\"btn btn-sm btn-primary\" type=\"submit\">Create Symbol Group</button>\n" +
     "    </div>\n" +
     "\n" +
     "</form>");
@@ -1679,8 +1683,8 @@ angular.module("app/views/modals/symbol-group-edit-modal.html", []).run(["$templ
     "    </div>\n" +
     "\n" +
     "    <div class=\"modal-footer\">\n" +
-    "        <a href class=\"btn btn-default\" ng-if=\"group.id !== 0\" ng-click=\"deleteGroup()\">Delete</a>\n" +
-    "        <button class=\"btn btn-primary\" type=\"submit\">Update</button>\n" +
+    "        <a href class=\"btn btn-sm btn-default\" ng-if=\"group.id !== 0\" ng-click=\"deleteGroup()\">Delete</a>\n" +
+    "        <button class=\"btn btn-sm btn-primary\" type=\"submit\">Update</button>\n" +
     "    </div>\n" +
     "\n" +
     "</form>");
@@ -1751,7 +1755,7 @@ angular.module("app/views/modals/variables-counters-occurrence-modal.html", []).
     "        </thead>\n" +
     "        <tbody>\n" +
     "            <tr class=\"active\">\n" +
-    "                <td colspan=\"4\"><strong>Counters</strong></td>\n" +
+    "                <td colspan=\"4\"><strong>Counters (#)</strong></td>\n" +
     "            </tr>\n" +
     "\n" +
     "            <tr ng-repeat=\"counter in occurrences.counters\">\n" +
@@ -1762,7 +1766,7 @@ angular.module("app/views/modals/variables-counters-occurrence-modal.html", []).
     "            </tr>\n" +
     "\n" +
     "            <tr class=\"active\">\n" +
-    "                <td colspan=\"4\"><strong>Variables</strong></td>\n" +
+    "                <td colspan=\"4\"><strong>Variables ($)</strong></td>\n" +
     "            </tr>\n" +
     "\n" +
     "            <tr ng-repeat=\"variable in occurrences.variables\">\n" +
@@ -1777,7 +1781,7 @@ angular.module("app/views/modals/variables-counters-occurrence-modal.html", []).
     "</div>\n" +
     "\n" +
     "<div class=\"modal-footer\">\n" +
-    "    <button class=\"btn btn-primary\" ng-click=\"close()\">Ok</button>\n" +
+    "    <button class=\"btn btn-sm btn-primary\" ng-click=\"close()\">Ok</button>\n" +
     "</div>");
 }]);
 
@@ -2519,8 +2523,8 @@ angular.module("app/views/pages/project.html", []).run(["$templateCache", functi
   "use strict";
   $templateCache.put("app/views/pages/project.html",
     "<div view-heading\n" +
-    "     title=\"{{project.name}} Dashboard\"\n" +
-    "     sub-title=\"asdasdasd\">\n" +
+    "     title=\"Dashboard\"\n" +
+    "     sub-title=\"sub-title\">\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
@@ -3416,7 +3420,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .controller('ActionCreateModalController', ActionCreateModalController);
 
     ActionCreateModalController.$inject = [
-        '$scope', '$modalInstance', 'actionTypes', 'Action', 'Symbol', 'SessionService'
+        '$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action', 'Symbol', 'SessionService'
     ];
 
     /**
@@ -3426,13 +3430,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      *
      * @param $scope
      * @param $modalInstance
+     * @param modalData
      * @param actionTypes
      * @param Action
      * @param Symbol
      * @param Session
      * @constructor
      */
-    function ActionCreateModalController($scope, $modalInstance, actionTypes, Action, Symbol, Session) {
+    function ActionCreateModalController($scope, $modalInstance, modalData, actionTypes, Action, Symbol, Session) {
 
         var project = Session.project.get();
 
@@ -3471,6 +3476,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          */
         $scope.createAction = function () {
             $modalInstance.close($scope.action);
+        };
+
+        /**
+         * Creates a new action in the background without closing the diaalog
+         */
+        $scope.createActionAndContinue = function () {
+            modalData.addAction($scope.action);
+            $scope.action = null;
         };
 
         /**
@@ -4202,53 +4215,99 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         '$scope', '$modalInstance', 'SessionService', 'SymbolGroup'
     ];
 
+    /**
+     * The controller of the modal dialog that shows all occurrences of used variables and counters in a project in
+     * all visible symbols.
+     *
+     * @param $scope - The controllers scope
+     * @param $modalInstance - the ui.bootstrap $modalInstance service
+     * @param Session - The SessionService
+     * @param SymbolGroup - The factory for symbol groups
+     * @constructor
+     */
     function VariablesCountersOccurrenceModalController($scope, $modalInstance, Session, SymbolGroup) {
 
+        // the project in the session
         var project = Session.project.get();
 
+        /**
+         * The occurrences of all variables and counter that where found.
+         *
+         * occurrence object: {group: ..., symbol: ..., action: ..., name: ...} where
+         *   group  := symbol group name
+         *   symbol := symbol name
+         *   action := action position
+         *   name   := variable/counter name
+         *
+         * @type {null|{counters: Array, variables: Array}}
+         */
         $scope.occurrences = null;
 
+        // load all symbol groups and symbols
         SymbolGroup.Resource.getAll(project.id, {embedSymbols: true})
             .then(function (groups) {
                 $scope.occurrences = findOccurrences(groups);
             });
 
+        /**
+         * Finds all occurrences of variables and counters in all existing actions of the project.
+         *
+         * @param {SymbolGroup[]} groups - All symbol groups
+         * @returns {{counters: Array, variables: Array}} - The occurrences
+         */
         function findOccurrences(groups) {
-
             var occurrences = {
                 counters: [],
                 variables: []
             };
 
+            // list of found counters of a single action property
+            var foundCounters;
+
+            // list of found variables of a single action property
+            var foundVariables;
+
+            /**
+             * Creates an occurrence object
+             *
+             * @param {SymbolGroup} group - The symbol group where the variable/counter is found
+             * @param {Symbol} symbol - The symbol where the variable/counter is found
+             * @param {number} actionPos - The position of the action in the symbol
+             * @param {string} counterOrVariable - the name of the variable with prefix $ or #
+             * @returns {{group: (group.name|*), symbol: *, action: *, name: string}}
+             */
+            function createOccurrence(group, symbol, actionPos, counterOrVariable) {
+                return {
+                    group: group.name,
+                    symbol: symbol.name,
+                    action: actionPos,
+                    name: counterOrVariable.substring(3, counterOrVariable.length - 2)
+                }
+            }
+
+            // iterate over all groups, each symbol and each action
             _.forEach(groups, function (group) {
                 _.forEach(group.symbols, function (symbol) {
+
+                    // don't check deleted symbols since they don't matter
                     if (!symbol.hidden) {
                         _.forEach(symbol.actions, function (action, i) {
+
+                            // check for each action property if a counter or a variable was found
                             for (var prop in action) {
-
                                 if (action.hasOwnProperty(prop) && angular.isString(action[prop])) {
-                                    var foundCounters = action[prop].match(/{{#(.*?)}}/g);
-                                    var foundVariables = action[prop].match(/{{\$(.*?)}}/g);
+                                    foundCounters = action[prop].match(/{{#(.*?)}}/g);
+                                    foundVariables = action[prop].match(/{{\$(.*?)}}/g);
 
+                                    // add found variables and counters to occurrences
                                     if (foundCounters !== null) {
                                         _.forEach(foundCounters, function (counter) {
-                                            occurrences.counters.push({
-                                                group: group.name,
-                                                symbol: symbol.name,
-                                                action: i,
-                                                name: counter.substring(2, counter.length - 2)
-                                            })
+                                            occurrences.counters.push(createOccurrence(group, symbol, i, counter));
                                         })
                                     }
-
                                     if (foundVariables !== null) {
                                         _.forEach(foundVariables, function (variable) {
-                                            occurrences.variables.push({
-                                                group: group.name,
-                                                symbol: symbol.name,
-                                                action: i,
-                                                name: variable.substring(2, variable.length - 2)
-                                            })
+                                            occurrences.variables.push(createOccurrence(group, symbol, i, variable));
                                         })
                                     }
                                 }
@@ -5170,8 +5229,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                             $state.go('home');
                         })
                         .catch(function (response) {
-                            Toast.danger('<p><strong>Dsu' +
-                            'eleting project failed</strong></p>' + response.data.message);
+                            Toast.danger('<p><strong>Deleting project failed</strong></p>' + response.data.message);
                         })
                 })
         };
@@ -5891,7 +5949,18 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 // create the modal
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/action-create-modal.html',
-                    controller: 'ActionCreateModalController'
+                    controller: 'ActionCreateModalController',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                addAction: function (action) {
+                                    if (action !== null) {
+                                        scope.onCreated()(action);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 });
 
                 // call the callback on success
@@ -6504,50 +6573,50 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     /**
      * This directives makes any element a place to drop files from the local pc. Currently this directive only
-     * supports to read files as a text.
+     * supports to read files as a text. It can only be used as an attribute.
+     *
+     * Attribute 'onLoaded' expects to be a function with one parameter that represents the value of the loaded
+     * file as string
+     *
+     * Use: '<div file-dropzone on-loaded="load">' with function load(contents) { ... }
      *
      * @return {{restrict: string, scope: {onLoaded: string}, link: link}}
      */
     function fileDropzone() {
-
-        var directive = {
+        return {
             restrict: 'A',
             scope: {
                 onLoaded: '&'
             },
             link: link
         };
-        return directive;
-
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         */
         function link(scope, el, attrs) {
+            var reader = new FileReader();
 
-            var _reader = new FileReader();
-
-            _reader.onload = function (e) {
-                scope.onLoaded()(e.target.result);
+            // call the callback as soon as a file is loaded
+            reader.onload = function (e) {
+                if (angular.isDefined(scope.onLoaded)) {
+                    scope.onLoaded()(e.target.result);
+                }
             };
 
+            // attach some styles to the element on dragover etc.
             el.on('dragover', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 e.dataTransfer.dropEffect = 'copy';
             });
 
-            el.on('dragenter', function(){
-                el[0].style.outline = '2px solid rgba(0,0,0,0.2)'
-            }).on('dragleave', function(){
-                el[0].style.outline = '0'
+            el.on('dragenter', function () {
+                el[0].style.outline = '2px solid rgba(0,0,0,0.2)';
+            }).on('dragleave', function () {
+                el[0].style.outline = '0';
             });
 
             el.on('drop', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                el[0].style.outline = '0'
+                el[0].style.outline = '0';
                 readFiles(e.dataTransfer.files);
             });
 
@@ -6558,7 +6627,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
              */
             function readFiles(files) {
                 for (var i = 0; i < files.length; i++) {
-                    _reader.readAsText(files[i]);
+                    reader.readAsText(files[i]);
                 }
             }
         }
@@ -6637,21 +6706,32 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 	
 	angular
 		.module('weblearner.directives')
-		.directive('fixOnScroll', [
-			'$window',
-			fixOnScroll
-		]);
+        .directive('fixOnScroll', fixOnScroll);
 
+    fixOnScroll.$inject = ['$window'];
+
+    /**
+     * The directive that should be used for fixing elements as soon as a certain scroll point in the browser is
+     * reached. Can only be used as an attribute. It automatically creates a placeholder element with the same height
+     * of the fixed one for smooth scrolling. Best is you use it only on divs...
+     *
+     * Attribute fixOnScroll should contain a JSON string with properties 'top' and 'class' where top is the amount of
+     * pixels that should be scrolled down before applying 'class'.
+     *
+     * !! Does not automatically fix the element, the toggles css class should do that !!
+     *
+     * Use: '<div fix-on-scroll="{top:120, class:'aCSSClass'}"></div>'
+     *
+     * @param $window - The angular window wrapper
+     * @returns {{link: link}}
+     */
 	function fixOnScroll($window) {
-	
-		var directive = {
+        return {
+            restrict: 'A',
 			link: link
 		};
-		return directive;
-		
-		//////////
-		
-		function link (scope, el, attrs) {
+
+        function link (scope, el, attrs) {
 		
 			// get settings from attribute (top & class)
 			var settings = scope.$eval(attrs.fixOnScroll);
@@ -6700,9 +6780,18 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     htmlElementPickerInstance.$inject = ['$q'];
 
     /**
-     * @param $document
-     * @param $compile
-     * @param htmlElementPickerInstance
+     * The directive that creates a new HTML element picker. Can only be used as an attribute and attaches a click
+     * event to the source element that opens the picker. On first start, it loads the page that is defined in the
+     * projects baseUrl. On following calls the last visited page is loaded.
+     *
+     * Attribute 'model' is the model for the XPath
+     * Attribute 'text' is the model for the .textContent value of the selected element
+     *
+     * Use: '<button html-element-picker model="..." text="...">Click Me!</button>'
+     *
+     * @param $document - angular document wrapper
+     * @param $compile - angular $compile service
+     * @param htmlElementPickerInstance - Holds the promise and methods for opening and closing the picker
      * @returns {{restrict: string, scope: {selectorModel: string}, link: Function}}
      */
     function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
@@ -6714,16 +6803,22 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             },
             link: link
         };
-
         function link(scope, el, attrs) {
+
+            // The HTML picker element that is dynamically appended and removed to/from the pages DOM tree
             var picker;
 
             el.on('click', function () {
+
+                // create a new element picker under the current scope and append to the body
                 picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
                 $document.find('body').prepend(picker);
 
+                // open the picker
                 htmlElementPickerInstance.open()
                     .then(function (data) {
+
+                        // copy the selected XPath and .textContent value to the scopes models
                         if (angular.isDefined(scope.selectorModel)) {
                             scope.selectorModel = data.xPath;
                         }
@@ -6731,6 +6826,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                             scope.textModel = data.textContent;
                         }
                     })
+
+                    // remove the picker from the dom on close
                     .finally(function () {
                         picker.remove();
                     })
@@ -6739,7 +6836,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     }
 
     /**
-     * The instance for the HTML element picker that holds the promise and the last url
+     * The instance for the HTML element picker that holds the promise offers methods to persist the last opened url as
+     * well as opening and closing the HTML element picker
      *
      * @returns {{close: Function, open: Function, setUrl: Function, getUrl: Function}}
      */
@@ -6758,6 +6856,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             getUrl: getUrl
         };
 
+        /**
+         * Resolves the promise with selected data or cancels the promise of no data is defined
+         *
+         * @param {Object} data - The object that should contain an XPath and a .textContent value
+         */
         function close(data) {
             if (angular.isDefined(data)) {
                 deferred.resolve(data)
@@ -6766,6 +6869,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             }
         }
 
+        /**
+         * Creates the promise that is used to pass data between the directive and the picker
+         *
+         * @returns {d.promise|promise|qFactory.Deferred.promise|p.ready.promise|fd.g.promise}
+         */
         function open() {
             deferred = $q.defer();
             return deferred.promise;
@@ -6780,9 +6888,21 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         }
     }
 
+    /**
+     * The actual HTML element picker. Handles the complete window including the selection of elements and loading
+     * of urls. Works as a 'mini embedded browser'
+     *
+     * Use: '<html-element-picker-window></html-element-picker-window>'
+     *
+     * @param $window - angular window wrapper
+     * @param Session - The SessionService
+     * @param paths - The applications paths
+     * @param htmlElementPickerInstance - @see{@link htmlElementPickerInstance}
+     * @returns {{scope: {}, templateUrl: string, link: link}}
+     */
     function htmlElementPickerWindow($window, Session, paths, htmlElementPickerInstance) {
-
         return {
+            restrict: 'E',
             scope: {},
             templateUrl: paths.views.DIRECTIVES + '/html-element-picker.html',
             link: link
@@ -6903,7 +7023,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 }
             }
 
-            // init
+            // load project, create proxy address and load the last url in the iframe
             function init() {
                 project = Session.project.get();
                 proxyUrl = $window.location.origin + paths.api.PROXY_URL;
@@ -7414,6 +7534,18 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     indexBrowser.$inject = ['paths'];
 
+    /**
+     * The directive that displays a pagination like button group for clicking through elements of a list. Displays
+     * the current index and the length of the list.
+     *
+     * Attribute 'index' is the model of the current index
+     * Attribute 'length' should be the length of the list as string
+     *
+     * Use: '<index-browser index="..." length="{{list.length}}"></index-browser>'
+     *
+     * @param paths - the application paths constant
+     * @returns {{templateUrl: string, scope: {length: string, index: string}, link: link}}
+     */
     function indexBrowser(paths) {
 
         return {
@@ -7651,6 +7783,17 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     learnSetupSettingsModalHandle.$inject = ['$modal', 'paths'];
 
+    /**
+     * The directive that handles the opening of the modal dialog for manipulating a learn configuration. Can only be
+     * used as an attribute and attaches a click event to the source element that opens the modal.
+     *
+     * Attribute 'learnConfiguration' should be the model with a LearnConfiguration object instance.
+     * Attribute 'onOk' should be a callback function with one parameter where the modified config is passed.
+     *
+     * @param $modal - The ui.boostrap $modal service
+     * @param paths - The applications path constant
+     * @returns {{restrict: string, scope: {learnConfiguration: string, onOk: string}, link: link}}
+     */
     function learnSetupSettingsModalHandle($modal, paths) {
 
         // the directive
@@ -7677,10 +7820,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         }
                     }
                 });
-
-                // when successfully creating a symbol at the new to the list
                 modal.result.then(function (learnConfiguration) {
-                    scope.onOk()(learnConfiguration);
+                    if (angular.isDefined(scope.onOk)) {
+                        scope.onOk()(learnConfiguration);
+                    }
                 });
             });
         }
@@ -7748,7 +7891,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
 	function navigation(paths) {
 
-		var directive = {
+        return {
 			templateUrl: paths.views.DIRECTIVES + '/navigation.html',
 			link: link,
             controller: [
@@ -7756,7 +7899,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 controller
             ]
 		};
-		return directive;
     }
 
 		//////////
@@ -7885,7 +8027,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     //		}
     //	}
     //}
-}());;(function(){
+}());;(function () {
     'use strict';
 
     angular
@@ -7894,9 +8036,20 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     observationTable.$inject = ['paths'];
 
-    function observationTable(paths){
-
+    /**
+     * The directive that renders an observation table from an ascii representation into a html table. Can only be used
+     * as a tag.
+     *
+     * Attribute 'data' should be the ascii string representation of the table from the LearnLib.
+     *
+     * Use: <observation-table data="..."></observation-table>
+     *
+     * @param paths - The applications paths constant
+     * @returns {{restrict: string, scope: {data: string}, link: link, templateUrl: string}}
+     */
+    function observationTable(paths) {
         return {
+            restrict: 'E',
             scope: {
                 data: '='
             },
@@ -7905,32 +8058,65 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         function link(scope, el, attrs) {
+
+            // the object of the table for the template
             scope.table = {
                 header: [],
-                body: []
+                body: {
+                    s1: [],
+                    s2: []
+                }
             };
 
-            scope.$watch('data', function(n){
+            // render the observation table as soon as the data changes
+            scope.$watch('data', function (n) {
                 if (angular.isDefined(n)) {
                     createObservationTable();
                 }
             });
 
-            function createObservationTable(){
-                var rows = scope.data.split('\n');
+            /**
+             * Parses the ascii representation of the observation table and stores it into scope.table
+             */
+            function createObservationTable() {
+
+                var rows = scope.data.split('\n');  // the rows of the table
+                var marker = 0;                     // a flag that is used to indicate on which set of the table I am
 
                 if (rows.length > 1) {
-                    for (var i = 1; i < rows.length; i+=2) {
-                        rows[i] = rows[i].split('|');
-                        rows[i].shift();
-                        rows[i].pop();
-                        for (var j = 0; j < rows[i].length; j++) {
-                            rows[i][j] = rows[i][j].trim();
+                    for (var i = 0; i < rows.length - 1; i++) {
+
+                        // +=====+======+ ... + is checked
+                        // before the third occurrence of this pattern we are in set S\Sigma
+                        // after that we are in set S
+                        if (new RegExp('^(\\+\\=+)+\\+$').test(rows[i])) {
+                            marker++;
+                            continue;
                         }
-                        if (i === 1) {
-                            scope.table.header = rows[i];
-                        } else {
-                            scope.table.body.push(rows[i]);
+
+                        // only check each second row because all others are only separators
+                        if (i % 2 === 1) {
+
+                            //remove column separators and white spaces around the entry content
+                            rows[i] = rows[i].split('|');
+                            rows[i].shift();
+                            rows[i].pop();
+                            for (var j = 0; j < rows[i].length; j++) {
+                                rows[i][j] = rows[i][j].trim();
+                            }
+
+                            // fill the table
+                            if (i === 1) {
+                                scope.table.header = rows[i];
+                            } else {
+
+                                // depending on which set of the table i am
+                                if (marker === 2) {
+                                    scope.table.body.s1.push(rows[i]);
+                                } else {
+                                    scope.table.body.s2.push(rows[i]);
+                                }
+                            }
                         }
                     }
                 }
@@ -8260,20 +8446,26 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     variablesCountersOccurrenceModalHandle.$inject = ['$modal', 'paths'];
 
+    /**
+     * The directive that handles the opening of the modal dialog that shows occurrences of variables and counters. Can
+     * only be used as an attribute and attaches a click event to the element that opens the modal.#
+     *
+     * Use: <button variabales-counters-occurrence-modal-handle>Click Me!</button>
+     *
+     * @param $modal - The ui.bootstrap $modal service
+     * @param paths - The application constant with paths
+     * @returns {{restrict: string, link: link}}
+     */
     function variablesCountersOccurrenceModalHandle($modal, paths) {
-
         return {
             restrict: 'A',
             link: link
         };
-
         function link(scope, el, attrs) {
-
             el.on('click', function () {
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/variables-counters-occurrence-modal.html',
-                    controller: 'VariablesCountersOccurrenceModalController',
-                    resolve: {}
+                    controller: 'VariablesCountersOccurrenceModalController'
                 });
             });
         }
@@ -8328,7 +8520,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     /**
      * The directive for displaying a collapsable widget without content. Use is a a wrapper for any content you like.
      *
-     * Attribute 'collapsed' {boolean} can be applied to tell wheter the widgets content should be displayed or not.
+     * Attribute 'collapsed' {boolean} can be applied to tell whether the widgets content should be displayed or not.
      * Attribute 'widgetTitle' {string} can be applied for displaying a widget title.
      *
      * Use: '<widget widget-title="..." collapsed="..."></widget>'
@@ -8364,6 +8556,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
              */
             scope.collapsed = scope.collapsed || false;
 
+            /**
+             * Collapses or uncollapses the widget content
+             */
             scope.toggleCollapse = function () {
                 scope.collapsed = !scope.collapsed;
             }
@@ -8575,7 +8770,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         Action.Web.SearchForText.prototype.toString = function () {
-            return 'Search for ' + (this.regexp ? 'regexp' : 'string') + '"' + this.value + '"';
+            return 'Search for ' + (this.regexp ? 'regexp' : 'string') + ' "' + this.value + '"';
         };
 
         Action.Web.SearchForNode = function (value, isRegexp) {
@@ -8989,9 +9184,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          *
          * @constructor
          */
-        function Sample() {
+        function Sample(counterExamples) {
             this.type = eqOracles.SAMPLE;
-            this.counterExamples = [];
+            this.counterExamples = counterExamples || [];
         }
 
         /**
@@ -9011,7 +9206,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     eqOracle = new Complete(data.minDepth, data.maxDepth);
                     break;
                 case eqOracles.SAMPLE:
-                    eqOracle = new Sample();
+                    eqOracle = new Sample(data.counterExamples);
                     break;
                 default :
                     break;

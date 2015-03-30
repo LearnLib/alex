@@ -10,7 +10,7 @@
 
 	function navigation(paths) {
 
-		var directive = {
+        return {
 			templateUrl: paths.views.DIRECTIVES + '/navigation.html',
 			link: link,
             controller: [
@@ -18,7 +18,6 @@
                 controller
             ]
 		};
-		return directive;
     }
 
 		//////////

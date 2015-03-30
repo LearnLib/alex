@@ -12,9 +12,18 @@
     htmlElementPickerInstance.$inject = ['$q'];
 
     /**
-     * @param $document
-     * @param $compile
-     * @param htmlElementPickerInstance
+     * The directive that creates a new HTML element picker. Can only be used as an attribute and attaches a click
+     * event to the source element that opens the picker. On first start, it loads the page that is defined in the
+     * projects baseUrl. On following calls the last visited page is loaded.
+     *
+     * Attribute 'model' is the model for the XPath
+     * Attribute 'text' is the model for the .textContent value of the selected element
+     *
+     * Use: '<button html-element-picker model="..." text="...">Click Me!</button>'
+     *
+     * @param $document - angular document wrapper
+     * @param $compile - angular $compile service
+     * @param htmlElementPickerInstance - Holds the promise and methods for opening and closing the picker
      * @returns {{restrict: string, scope: {selectorModel: string}, link: Function}}
      */
     function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
@@ -26,16 +35,22 @@
             },
             link: link
         };
-
         function link(scope, el, attrs) {
+
+            // The HTML picker element that is dynamically appended and removed to/from the pages DOM tree
             var picker;
 
             el.on('click', function () {
+
+                // create a new element picker under the current scope and append to the body
                 picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
                 $document.find('body').prepend(picker);
 
+                // open the picker
                 htmlElementPickerInstance.open()
                     .then(function (data) {
+
+                        // copy the selected XPath and .textContent value to the scopes models
                         if (angular.isDefined(scope.selectorModel)) {
                             scope.selectorModel = data.xPath;
                         }
@@ -43,6 +58,8 @@
                             scope.textModel = data.textContent;
                         }
                     })
+
+                    // remove the picker from the dom on close
                     .finally(function () {
                         picker.remove();
                     })
@@ -51,7 +68,8 @@
     }
 
     /**
-     * The instance for the HTML element picker that holds the promise and the last url
+     * The instance for the HTML element picker that holds the promise offers methods to persist the last opened url as
+     * well as opening and closing the HTML element picker
      *
      * @returns {{close: Function, open: Function, setUrl: Function, getUrl: Function}}
      */
@@ -70,6 +88,11 @@
             getUrl: getUrl
         };
 
+        /**
+         * Resolves the promise with selected data or cancels the promise of no data is defined
+         *
+         * @param {Object} data - The object that should contain an XPath and a .textContent value
+         */
         function close(data) {
             if (angular.isDefined(data)) {
                 deferred.resolve(data)
@@ -78,6 +101,11 @@
             }
         }
 
+        /**
+         * Creates the promise that is used to pass data between the directive and the picker
+         *
+         * @returns {d.promise|promise|qFactory.Deferred.promise|p.ready.promise|fd.g.promise}
+         */
         function open() {
             deferred = $q.defer();
             return deferred.promise;
@@ -92,9 +120,21 @@
         }
     }
 
+    /**
+     * The actual HTML element picker. Handles the complete window including the selection of elements and loading
+     * of urls. Works as a 'mini embedded browser'
+     *
+     * Use: '<html-element-picker-window></html-element-picker-window>'
+     *
+     * @param $window - angular window wrapper
+     * @param Session - The SessionService
+     * @param paths - The applications paths
+     * @param htmlElementPickerInstance - @see{@link htmlElementPickerInstance}
+     * @returns {{scope: {}, templateUrl: string, link: link}}
+     */
     function htmlElementPickerWindow($window, Session, paths, htmlElementPickerInstance) {
-
         return {
+            restrict: 'E',
             scope: {},
             templateUrl: paths.views.DIRECTIVES + '/html-element-picker.html',
             link: link
@@ -215,7 +255,7 @@
                 }
             }
 
-            // init
+            // load project, create proxy address and load the last url in the iframe
             function init() {
                 project = Session.project.get();
                 proxyUrl = $window.location.origin + paths.api.PROXY_URL;

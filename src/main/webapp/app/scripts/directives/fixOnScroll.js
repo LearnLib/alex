@@ -3,21 +3,32 @@
 	
 	angular
 		.module('weblearner.directives')
-		.directive('fixOnScroll', [
-			'$window',
-			fixOnScroll
-		]);
+        .directive('fixOnScroll', fixOnScroll);
 
+    fixOnScroll.$inject = ['$window'];
+
+    /**
+     * The directive that should be used for fixing elements as soon as a certain scroll point in the browser is
+     * reached. Can only be used as an attribute. It automatically creates a placeholder element with the same height
+     * of the fixed one for smooth scrolling. Best is you use it only on divs...
+     *
+     * Attribute fixOnScroll should contain a JSON string with properties 'top' and 'class' where top is the amount of
+     * pixels that should be scrolled down before applying 'class'.
+     *
+     * !! Does not automatically fix the element, the toggles css class should do that !!
+     *
+     * Use: '<div fix-on-scroll="{top:120, class:'aCSSClass'}"></div>'
+     *
+     * @param $window - The angular window wrapper
+     * @returns {{link: link}}
+     */
 	function fixOnScroll($window) {
-	
-		var directive = {
+        return {
+            restrict: 'A',
 			link: link
 		};
-		return directive;
-		
-		//////////
-		
-		function link (scope, el, attrs) {
+
+        function link (scope, el, attrs) {
 		
 			// get settings from attribute (top & class)
 			var settings = scope.$eval(attrs.fixOnScroll);
