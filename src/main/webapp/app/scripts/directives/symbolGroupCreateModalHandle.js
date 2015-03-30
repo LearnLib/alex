@@ -9,14 +9,13 @@
 
     function symbolGroupCreateModalHandle($modal, paths) {
 
-        var directive = {
+        return {
             scope: {
                 projectId: '@',
                 onCreated: '&'
             },
             link: link
         };
-        return directive;
 
         function link(scope, el, attrs) {
 

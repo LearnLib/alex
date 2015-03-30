@@ -20,8 +20,7 @@
      * @returns {{restrict: string, scope: {projectId: string, onCreated: string}, link: link}}
      */
     function symbolCreateModalHandle($modal, paths) {
-
-        var directive = {
+        return {
             restrict: 'A',
             scope: {
                 projectId: '@',
@@ -29,13 +28,7 @@
             },
             link: link
         };
-        return directive;
 
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         */
         function link(scope, el, attrs) {
 
             el.on('click', handleModal);
