@@ -17,6 +17,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -52,12 +53,13 @@ public class IFrameProxyResource {
      */
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public Response doGetProxy(@QueryParam("url") String url) {
+    public Response doGetProxy(@QueryParam("url") String url, @HeaderParam("Cookie") String cookies) {
         try {
-            Document doc = Jsoup.connect(url).get();
-            proxiefy(doc);
-            return Response.ok(doc.html()).build();
+            Connection connection = Jsoup.connect(url);
+            connection = parseAndProcessCookies(connection, cookies);
+            connection = connection.method(Connection.Method.GET);
 
+            return createResponse(connection);
         } catch (IllegalArgumentException e) { // Java 1.6 has no multi catch
             LOGGER.info("Bad URL: {}", url);
             LOGGER.info(e);
@@ -72,26 +74,14 @@ public class IFrameProxyResource {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
-    public Response doPostProxy(@QueryParam("url") String url, String body) {
+    public Response doPostProxy(@QueryParam("url") String url, @HeaderParam("Cookie") String cookies, MultivaluedMap<String, String> body) {
         try {
             Connection connection = Jsoup.connect(url);
-
-            String[] keyValuePairs = body.split("&");
-            for (String keyValuePair : keyValuePairs) {
-                String[] split = keyValuePair.split("=");
-                connection = connection.data(split[0], split[1]);
-            }
+            connection = parseAndProcessCookies(connection, cookies);
+            connection = parseAndProcessFormData(connection, body);
             connection = connection.method(Connection.Method.POST);
 
-            Connection.Response response = connection.execute();
-            Document doc = response.parse();
-            proxiefy(doc);
-            List<NewCookie> cookieList = new LinkedList<>();
-            response.cookies().forEach((key, value) -> cookieList.add(new NewCookie(key, value)));
-            NewCookie[] cookiesAsArray = cookieList.toArray(new NewCookie[cookieList.size()]);
-
-            return Response.ok(doc.html()).cookie(cookiesAsArray).build();
-
+            return createResponse(connection);
         } catch (IllegalArgumentException e) {
             LOGGER.info("Bad URL: {}", url);
             LOGGER.info(e);
@@ -101,6 +91,37 @@ public class IFrameProxyResource {
             LOGGER.info(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown request type").build();
         }
+    }
+
+    private Connection parseAndProcessCookies(Connection connection, String cookies) {
+        for (String cookie : cookies.split(";")) {
+            String[] keyValuePair = cookie.split("=");
+            String key = keyValuePair[0].trim();
+            String value = keyValuePair[1].trim();
+            connection = connection.cookie(key, value);
+        }
+        return connection;
+    }
+
+    private Connection parseAndProcessFormData(Connection connection, MultivaluedMap<String, String> body) {
+        for (String key : body.keySet()) {
+            List<String> values = body.get(key);
+            for (String value : values) {
+                connection = connection.data(key, value);
+            }
+        }
+        return connection;
+    }
+
+    private Response createResponse(Connection connection) throws IOException {
+        Connection.Response response = connection.execute();
+        Document doc = response.parse();
+        proxiefy(doc);
+        List<NewCookie> cookieList = new LinkedList<>();
+        response.cookies().forEach((key, value) -> cookieList.add(new NewCookie(key, value)));
+        NewCookie[] cookiesAsArray = cookieList.toArray(new NewCookie[cookieList.size()]);
+
+        return Response.status(response.statusCode()).cookie(cookiesAsArray).entity(doc.html()).build();
     }
 
     /**
@@ -157,9 +178,12 @@ public class IFrameProxyResource {
      *         The Attribute to change.
      */
     private void proxiefy(Element elem, String attribute) {
-        absolutifyURL(elem, attribute);
         try {
-            elem.attr(attribute, uriInfo.getAbsolutePath() + "?url=" + URLEncoder.encode(elem.attr(attribute), "UTF-8"));
+            String originalReference = elem.attr(attribute);
+            if (!originalReference.startsWith("#")) {
+                absolutifyURL(elem, attribute);
+                elem.attr(attribute, uriInfo.getAbsolutePath() + "?url=" + URLEncoder.encode(elem.attr(attribute), "UTF-8"));
+            }
         } catch (UnsupportedEncodingException e) {
             // should never happen
             LOGGER.error("Could not encode the URL because of an unsupported encoding", e);
