@@ -6986,7 +6986,13 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 }
                 lastTarget.style.outline = '5px solid red';
                 scope.selector = getCssPath(lastTarget);
-                scope.textContent = lastTarget.textContent;
+
+                if (lastTarget.nodeName().toLowerCase() === 'input') {
+                    scope.textContent = lastTarget.value;
+                } else {
+                    scope.textContent = lastTarget.textContent;
+                }
+
                 scope.$apply();
             }
 
