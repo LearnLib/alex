@@ -47,16 +47,6 @@ public class CounterStoreConnector implements Connector {
     public void increment(Long projectId, String name) throws IllegalStateException {
         Counter counter;
         try {
-            if (counterDAO == null) {
-                System.out.println("====================================");
-                System.out.println("====================================");
-                System.out.println("====================================");
-                System.out.println("counterDAO Injection Failed!");
-                System.out.println("====================================");
-                System.out.println("====================================");
-                System.out.println("====================================");
-            }
-
             counter = counterDAO.get(projectId, name);
             counter.setValue(counter.getValue() + 1);
             counterDAO.update(counter);
@@ -69,8 +59,6 @@ public class CounterStoreConnector implements Connector {
         try {
             Counter counter;
             counter = counterDAO.get(projectId, name);
-            counter.setValue(counter.getValue() + 1);
-            counterDAO.update(counter);
             return counter.getValue();
         } catch (NoSuchElementException e) {
             throw new IllegalStateException("A counter must be declared before the first use.");

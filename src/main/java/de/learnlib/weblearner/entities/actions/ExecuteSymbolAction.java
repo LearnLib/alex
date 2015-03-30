@@ -29,7 +29,7 @@ public class ExecuteSymbolAction extends SymbolAction {
 
     public IdRevisionPair getSymbolToExecuteAsIdRevisionPair() {
         if (symbolToExecuteAsIdRevisionPair == null) {
-            return new IdRevisionPair(symbol.getId(), symbol.getRevision());
+            return new IdRevisionPair(symbolToExecute.getId(), symbolToExecute.getRevision());
         }
         return symbolToExecuteAsIdRevisionPair;
     }
