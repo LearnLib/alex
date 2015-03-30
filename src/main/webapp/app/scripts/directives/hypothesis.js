@@ -3,7 +3,7 @@
     angular.module('weblearner.directives')
         .directive('hypothesis', hypothesis);
 
-    hypothesis.$inject = ['$window', 'paths', 'CounterExampleService'];
+    hypothesis.$inject = ['$window', 'paths', 'CounterExampleService', '_', 'dagreD3', 'd3', 'graphlib'];
 
     function intersectNode(node, point) {
         return node.intersect(point);
@@ -37,7 +37,7 @@
         return line(points);
     }
 
-    function hypothesis($window, paths, CounterExampleService) {
+    function hypothesis($window, paths, CounterExampleService, _, dagreD3, d3, graphlib) {
 
         return {
             scope: {
@@ -123,13 +123,20 @@
 
                 // add nodes to the graph
                 _.forEach(scope.test.hypothesis.nodes, function (node, i) {
-                    _graph.setNode("" + i, {
+                    var n = {
                         shape: 'circle',
                         label: node.toString(),
                         width: 25,
-                        style: 'fill: #fff; stroke: #000; stroke-width: 1',
                         labelStyle: 'font-size: 1.25em; font-weight: bold'
-                    });
+                    };
+
+                    if (node === scope.test.hypothesis.initNode) {
+                        n.style = 'fill: #B3E6B3; stroke: #5cb85c; stroke-width: 3';
+                    } else {
+                        n.style = 'fill: #fff; stroke: #000; stroke-width: 1';
+                    }
+
+                    _graph.setNode("" + i, n);
                 });
 
                 // add edges to the graph
@@ -156,13 +163,20 @@
 
                 // add nodes to the rendered graph
                 _.forEach(scope.test.hypothesis.nodes, function (node, i) {
-                    _graph.setNode("" + i, {
+                    var n = {
                         shape: 'circle',
                         label: node.toString(),
                         width: 25,
-                        style: 'fill: #fff; stroke: #000; stroke-width: 1',
-                        labelStyle: 'font-size: 1.5em; font-weight: bold'
-                    });
+                        labelStyle: 'font-size: 1.25em; font-weight: bold'
+                    };
+
+                    if (node === scope.test.hypothesis.initNode) {
+                        n.style = 'fill: #B3E6B3; stroke: #5cb85c; stroke-width: 3';
+                    } else {
+                        n.style = 'fill: #fff; stroke: #000; stroke-width: 1';
+                    }
+
+                    _graph.setNode("" + i, n);
                 });
 
                 // build data structure for the alternative representation by
@@ -221,7 +235,7 @@
                 if (angular.isDefined(scope.isSelectable)) {
                     _svg.selectAll('.edgeLabel tspan').on('click', function () {
                         var label = this.innerHTML.split('/');
-                        scope.$apply(function(){
+                        scope.$apply(function () {
                             CounterExampleService.addIOPairToCurrentCounterexample(label[0], label[1]);
                         });
                     });
