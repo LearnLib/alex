@@ -7,9 +7,14 @@
 
     symbolMoveModalHandle.$inject = ['$modal', 'paths'];
 
+    /**
+     *
+     * @param $modal
+     * @param paths
+     * @returns {{scope: {symbols: string, groups: string, onMoved: string}, link: link}}
+     */
     function symbolMoveModalHandle($modal, paths) {
-
-        var directive = {
+        return {
             scope: {
                 symbols: '=',
                 groups: '=',
@@ -17,10 +22,7 @@
             },
             link: link
         };
-        return directive;
-
         function link(scope, el, attrs) {
-
             el.on('click', function () {
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/symbol-move-modal.html',

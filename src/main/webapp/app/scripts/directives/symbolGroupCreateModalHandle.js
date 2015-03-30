@@ -7,8 +7,13 @@
 
     symbolGroupCreateModalHandle.$inject = ['$modal', 'paths'];
 
+    /**
+     *
+     * @param $modal
+     * @param paths
+     * @returns {{scope: {projectId: string, onCreated: string}, link: link}}
+     */
     function symbolGroupCreateModalHandle($modal, paths) {
-
         return {
             scope: {
                 projectId: '@',

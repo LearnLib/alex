@@ -155,6 +155,9 @@
             // the url of the proxy
             var proxyUrl = null;
 
+            // flag for selection mode
+            var isSelectable = false;
+
             /**
              * The XPath of the selected element
              * @type {null|string}
@@ -219,7 +222,7 @@
                 lastTarget.style.outline = '5px solid red';
                 scope.selector = getCssPath(lastTarget);
 
-                if (lastTarget.nodeName().toLowerCase() === 'input') {
+                if (lastTarget.nodeName.toLowerCase() === 'input') {
                     scope.textContent = lastTarget.value;
                 } else {
                     scope.textContent = lastTarget.textContent;
@@ -243,6 +246,7 @@
 
                 lastTarget.style.outline = '0px';
                 lastTarget = null;
+                isSelectable = false;
 
                 angular.element(iframe.contents()[0].body).off('mousemove', handleMouseMove);
                 angular.element(iframe.contents()[0].body).off('click', handleClick);
@@ -278,12 +282,14 @@
                 iframe[0].onload = function () {
                     angular.element(iframe.contents()[0].body.getElementsByTagName('a'))
                         .on('click', function () {
-                            var _this = this;
-                            if (_this.getAttribute('href') !== '' && _this.getAttribute('href') !== '#') {
-                                scope.$apply(function () {
-                                    scope.url = decodeURIComponent(_this.getAttribute('href'))
-                                        .replace(proxyUrl + project.baseUrl + '/', '')
-                                })
+                            if (!isSelectable) {
+                                var _this = this;
+                                if (_this.getAttribute('href') !== '' && _this.getAttribute('href') !== '#') {
+                                    scope.$apply(function () {
+                                        scope.url = decodeURIComponent(_this.getAttribute('href'))
+                                            .replace(proxyUrl + project.baseUrl + '/', '')
+                                    })
+                                }
                             }
                         }
                     )
@@ -298,6 +304,7 @@
                 iframeBody.on('mousemove', handleMouseMove);
                 iframeBody.one('click', handleClick);
                 angular.element(document.body).on('keyup', handleKeyUp);
+                isSelectable = true;
             };
 
 

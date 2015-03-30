@@ -681,7 +681,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "        <label class=\"control-label\">The value to fill the element with</label>\n" +
     "        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
     "    </div>\n" +
-    "    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
+    "    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\" text=\"action.value\">\n" +
     "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "    </a>\n" +
     "\n" +
@@ -6923,6 +6923,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             // the url of the proxy
             var proxyUrl = null;
 
+            // flag for selection mode
+            var isSelectable = false;
+
             /**
              * The XPath of the selected element
              * @type {null|string}
@@ -6987,7 +6990,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 lastTarget.style.outline = '5px solid red';
                 scope.selector = getCssPath(lastTarget);
 
-                if (lastTarget.nodeName().toLowerCase() === 'input') {
+                if (lastTarget.nodeName.toLowerCase() === 'input') {
                     scope.textContent = lastTarget.value;
                 } else {
                     scope.textContent = lastTarget.textContent;
@@ -7011,6 +7014,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
                 lastTarget.style.outline = '0px';
                 lastTarget = null;
+                isSelectable = false;
 
                 angular.element(iframe.contents()[0].body).off('mousemove', handleMouseMove);
                 angular.element(iframe.contents()[0].body).off('click', handleClick);
@@ -7046,12 +7050,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 iframe[0].onload = function () {
                     angular.element(iframe.contents()[0].body.getElementsByTagName('a'))
                         .on('click', function () {
-                            var _this = this;
-                            if (_this.getAttribute('href') !== '' && _this.getAttribute('href') !== '#') {
-                                scope.$apply(function () {
-                                    scope.url = decodeURIComponent(_this.getAttribute('href'))
-                                        .replace(proxyUrl + project.baseUrl + '/', '')
-                                })
+                            if (!isSelectable) {
+                                var _this = this;
+                                if (_this.getAttribute('href') !== '' && _this.getAttribute('href') !== '#') {
+                                    scope.$apply(function () {
+                                        scope.url = decodeURIComponent(_this.getAttribute('href'))
+                                            .replace(proxyUrl + project.baseUrl + '/', '')
+                                    })
+                                }
                             }
                         }
                     )
@@ -7066,6 +7072,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 iframeBody.on('mousemove', handleMouseMove);
                 iframeBody.one('click', handleClick);
                 angular.element(document.body).on('keyup', handleKeyUp);
+                isSelectable = true;
             };
 
 
@@ -7899,154 +7906,87 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             });
         }
     }
-}());;(function(){
-	'use strict';
+}());
+;
+(function () {
+    'use strict';
 
-	angular
-		.module('weblearner.directives')
-		.directive('navigation', [
-            'paths',
-            navigation
-        ]);
+    angular
+        .module('weblearner.directives')
+        .directive('navigation', navigation);
 
-	function navigation(paths) {
+    navigation.$inject = ['paths', '$state', 'SessionService'];
 
+    /**
+     * The directive for the main navigation of the app. Converts into a off screen navigation as soon as the screen
+     * is minimized.
+     *
+     * Use: '<navigation></navigation>'
+     *
+     * !! Place it at the top of your DOM before the main content part
+     *
+     * @param paths - The applications paths constant
+     * @param $state - The ui.router $state service
+     * @param Session - The SessionService
+     * @returns {{scope: {}, templateUrl: string, link: link}}
+     */
+    function navigation(paths, $state, Session) {
         return {
-			templateUrl: paths.views.DIRECTIVES + '/navigation.html',
-			link: link,
-            controller: [
-                '$scope', '$window', '$state', 'SessionService',
-                controller
-            ]
-		};
-    }
+            scope: {},
+            templateUrl: paths.views.DIRECTIVES + '/navigation.html',
+            link: link
+        };
 
-		//////////
+        function link(scope, el, attrs) {
 
-		function link(scope, el, attrs) {
-
+            // the button that is used to show or hide the hidden sidebar
             var handle = angular.element(el[0].getElementsByClassName('navbar-menu-handle'));
+
+            // the container of the element that holds the navigation items
             var offscreen = angular.element(el[0].getElementsByClassName('navbar-offscreen'));
+
+            // the css class applied to the nav when it should be displayed off screen
             var offscreenClass = 'show';
 
-            handle.on('click', toggleNavigation);
+            /**
+             * The project that is stored in the session
+             * @type {Project|null}
+             */
+            scope.project = Session.project.get();
 
+            // handle events and stuff
+            (function init() {
+                handle.on('click', toggleNavigation);
+
+                // load project into scope when projectOpened is emitted
+                scope.$on('project.opened', function () {
+                    scope.project = Session.project.get();
+                });
+
+                // delete project from scope when projectOpened is emitted
+                scope.$on('project.closed', function () {
+                    scope.project = null;
+                });
+            }());
+
+            /**
+             * Removes the project object from the session and redirect to the start page
+             */
+            scope.closeProject = function () {
+                Session.project.remove();
+                $state.go('home');
+            };
+
+            /**
+             * Toggles the class for the navigation so that it is displayed off screen or not
+             * @param e - js event
+             */
             function toggleNavigation(e) {
                 e.stopPropagation();
                 offscreen.toggleClass(offscreenClass);
             }
-
-            function hideNavigation(e) {
-                if (e.target.tagName == 'A' && e.target.getAttribute('href') != '#') {
-                    offscreen.removeClass(offscreenClass);
-                }
-            }
         }
-
-    //
-    //	//////////
-    //
-    function controller($scope, $window, $state, Session) {
-        //
-        //		var mediaQuery;
-        //
-        //		//////////
-        //
-        //		/** the project */
-        $scope.project = Session.project.get();
-        //		$scope.hover = false;
-        //		$scope.offScreen = false;
-        //
-        //        //////////
-        //
-        //		this.setHover = function(hover){
-        //			$scope.hover = hover;
-        //		};
-        //
-        //		this.isHover = function(){
-        //			return $scope.hover;
-        //		};
-        //
-        //		this.isOffScreen = function(){
-        //			return $scope.offScreen;
-        //		};
-        //
-        //		//////////
-        //
-	        // load project into scope when projectOpened is emitted
-	        $scope.$on('project.opened', function () {
-                $scope.project = Session.project.get();
-	        });
-
-	        // delete project from scope when projectOpened is emitted
-	        $scope.$on('project.closed', function () {
-	            $scope.project = null;
-	        });
-        //
-        //		// watch for media query event
-        //		mediaQuery = window.matchMedia('screen and (max-width: 768px)');
-        //		mediaQuery.addListener(mediaQueryMatches);
-        //		mediaQueryMatches(null, mediaQuery.matches);
-        //
-        //		//////////
-        //
-        //		function mediaQueryMatches(evt, matches){
-        //			if (evt === null) {
-        //				$scope.offScreen = matches ? true : false;
-        //			} else {
-        //				$scope.offScreen = evt.matches;
-        //			}
-        //		}
-        //
-        //        //////////
-        //
-	        /**
-	         * remove the project object from the session and redirect to the start page
-	         */
-	        $scope.closeProject = function () {
-                Session.project.remove();
-	            $state.go('home');
-	        }
-		}
-
-    //}
-    //
-    //angular
-    //	.module('weblearner.directives')
-    //	.directive('dropdownNavigation', ['$document', dropdownNavigation]);
-    //
-    //function dropdownNavigation($document){
-    //	return {
-    //		require: ['dropdown', '^navigation'],
-    //		link: function(scope, el, attrs, ctrls) {
-    //
-    //			var dropDownCtrl = ctrls[0];
-    //			var navigationCtrl = ctrls[1];
-    //
-    //			el.on('click', function(e){
-    //				e.stopPropagation();
-    //
-    //				if (!navigationCtrl.isOffScreen()){
-    //					if (!navigationCtrl.isHover()){
-    //						navigationCtrl.setHover(true);
-    //						$document.on('click', closeDropDown);
-    //					}
-    //				}
-    //			}).on('mouseenter', function(){
-    //				if (navigationCtrl.isHover()){
-    //					scope.$apply(function(){
-    //						dropDownCtrl.toggle(true);
-    //					})
-    //				}
-    //			});
-    //
-    //			function closeDropDown() {
-    //				navigationCtrl.setHover(false);
-    //				$document.off('click', closeDropDown);
-    //			}
-    //		}
-    //	}
-    //}
+    }
 }());;(function () {
     'use strict';
 
@@ -8151,25 +8091,35 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .directive('selectionCheckboxAll', selectionCheckboxAll)
         .directive('selectableListItem', selectableListItem);
 
+    /**
+     * Directive to select multiple items at once. Can only be used as an attribute to a input[type=checkbox] element.
+     * On change, toggles property '_selected' of each item.
+     *
+     * Attribute 'items' should be the list of selectable items or a function that returns this list.
+     *
+     * Use: '<input type="checkbox" selection-checkbox-all items="..."/>'
+     *
+     * @returns {{restrict: string, scope: {items: string}, link: link}}
+     */
     function selectionCheckboxAll() {
-
-        var directive = {
+        return {
+            restrict: 'A',
             scope: {
                 items: '&'
             },
             link: link
         };
-        return directive;
-
-        function link(scope, el, attrs, ctrl) {
+        function link(scope, el, attrs) {
             el.on('change', function () {
                 var _this = this;
                 var items = scope.items();
 
+                // if attribute was function get items
                 if (angular.isFunction(items)) {
                     items = items();
                 }
 
+                // select or deselect all items
                 scope.$apply(function () {
                     for (var i = 0; i < items.length; i++) {
                         items[i]._selected = _this.checked;
@@ -8179,9 +8129,16 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         }
     }
 
+    /**
+     * The directive serves only as a template to reduce HTML code. Use it to display a selectable item and fill it with
+     * stuff you want.
+     *
+     * Use: '<div selectable-list-item> ... </div>';
+     *
+     * @returns {{transclude: boolean, template: string}}
+     */
     function selectableListItem() {
-
-        var directive = {
+        return {
             transclude: true,
             template: ' <div class="selectable-list-item">' +
             '               <div class="selectable-list-control">' +
@@ -8190,7 +8147,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             '               <div class="selectable-list-content" ng-transclude></div>' +
             '           </div>'
         };
-        return directive;
     }
 }());;(function () {
     'use strict';
@@ -8214,8 +8170,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @returns {{restrict: string, scope: {projectId: string, onCreated: string}, link: link}}
      */
     function symbolCreateModalHandle($modal, paths) {
-
-        var directive = {
+        return {
             restrict: 'A',
             scope: {
                 projectId: '@',
@@ -8223,13 +8178,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             },
             link: link
         };
-        return directive;
 
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         */
         function link(scope, el, attrs) {
 
             el.on('click', handleModal);
@@ -8323,16 +8272,20 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     symbolGroupCreateModalHandle.$inject = ['$modal', 'paths'];
 
+    /**
+     *
+     * @param $modal
+     * @param paths
+     * @returns {{scope: {projectId: string, onCreated: string}, link: link}}
+     */
     function symbolGroupCreateModalHandle($modal, paths) {
-
-        var directive = {
+        return {
             scope: {
                 projectId: '@',
                 onCreated: '&'
             },
             link: link
         };
-        return directive;
 
         function link(scope, el, attrs) {
 
@@ -8366,14 +8319,22 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     symbolGroupEditModalHandle.$inject = ['$modal', 'paths'];
 
     /**
+     * The directive that handles the opening of the modal for editing or deleting a symbol group. Can only be used as
+     * attribute and attaches a click event to the source element that opens the modal.
      *
-     * @param $modal
-     * @param paths
+     * Attribute 'group' - The model for the symbol group
+     * Attribute 'onUpdated' - The callback function with two parameters. First the updated and second the old group
+     * Attribute 'onDeleted' - The callback function with one parameter - the deleted group object
+     *
+     * Use: '<button symbol-group-edit-modal group="..." on-updated="..." on-deleted="...">Click Me!</button>'
+     *
+     * @param $modal - The ui.bootstrap $modal service
+     * @param paths - The applications paths constant
      * @returns {{scope: {group: string, onUpdated: string, onDeleted: string}, link: link}}
      */
     function symbolGroupEditModalHandle($modal, paths) {
-
-        var directive = {
+        return {
+            restrict: 'A',
             scope: {
                 group: '=',
                 onUpdated: '&',
@@ -8381,15 +8342,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             },
             link: link
         };
-        return directive;
 
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         */
         function link(scope, el, attrs) {
-
             el.on('click', handleModal);
 
             function handleModal() {
@@ -8424,9 +8378,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     symbolMoveModalHandle.$inject = ['$modal', 'paths'];
 
+    /**
+     *
+     * @param $modal
+     * @param paths
+     * @returns {{scope: {symbols: string, groups: string, onMoved: string}, link: link}}
+     */
     function symbolMoveModalHandle($modal, paths) {
-
-        var directive = {
+        return {
             scope: {
                 symbols: '=',
                 groups: '=',
@@ -8434,10 +8393,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             },
             link: link
         };
-        return directive;
-
         function link(scope, el, attrs) {
-
             el.on('click', function () {
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/symbol-move-modal.html',

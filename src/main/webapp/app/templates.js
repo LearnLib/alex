@@ -619,7 +619,7 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "        <label class=\"control-label\">The value to fill the element with</label>\n" +
     "        <input class=\"form-control\" type=\"text\" placeholder=\"value\" ng-model=\"action.value\">\n" +
     "    </div>\n" +
-    "    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\">\n" +
+    "    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.node\" text=\"action.value\">\n" +
     "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
     "    </a>\n" +
     "\n" +
