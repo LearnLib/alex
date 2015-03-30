@@ -616,7 +616,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
             if (action instanceof ExecuteSymbolAction) {
                 ExecuteSymbolAction executeSymbolAction = (ExecuteSymbolAction) action;
-                IdRevisionPair idAndRevision =  executeSymbolAction.getSymbolToExecuteAsIdRevisionPair();
+                IdRevisionPair idAndRevision = executeSymbolAction.getSymbolToExecuteAsIdRevisionPair();
 
                 if (idAndRevision != null) {
                     Symbol symbolToExecute = (Symbol) session.byNaturalId(Symbol.class)
@@ -624,7 +624,9 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                                 .using("id", idAndRevision.getId())
                                                                 .using("revision", idAndRevision.getRevision())
                                                                 .load();
-                    executeSymbolAction.setSymbolToExecute(symbolToExecute);
+                    if (symbolToExecute != null) {
+                        executeSymbolAction.setSymbolToExecute(symbolToExecute);
+                    }
                 }
             }
         }
