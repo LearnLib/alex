@@ -94,6 +94,10 @@ public class IFrameProxyResource {
     }
 
     private Connection parseAndProcessCookies(Connection connection, String cookies) {
+        if (cookies == null) {
+            return connection;
+        }
+
         for (String cookie : cookies.split(";")) {
             String[] keyValuePair = cookie.split("=");
             String key = keyValuePair[0].trim();
