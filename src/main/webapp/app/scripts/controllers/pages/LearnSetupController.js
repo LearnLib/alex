@@ -72,7 +72,7 @@
                     } else {
 
                         // load all symbols in case there isn't any active learning process
-                        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+                        SymbolGroup.Resource.getAll(project.id, {embedSymbols: true})
                             .then(function (groups) {
                                 $scope.groups = groups;
                                 $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
