@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.weblearner.learner.connectors.ConnectorManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NaturalId;
@@ -36,6 +38,9 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
 
     /** to be serializable. */
     private static final long serialVersionUID = 7987585761829495962L;
+
+    /** Use the logger for the server part. */
+    private static final Logger LOGGER = LogManager.getLogger("server");
 
     /** The ID of the Symbol in the DB. */
     @Id
@@ -318,7 +323,13 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
     @Override
     public String execute(ConnectorManager connector) throws SULException {
         for (SymbolAction action : actions) {
-            ExecuteResult result = executeAction(action, connector);
+            ExecuteResult result;
+            try {
+                result = executeAction(action, connector);
+            } catch (Exception e) {
+                LOGGER.info("Error while executing the action '" + action + "' in the symbol '" + this + "':", e);
+                result = ExecuteResult.FAILED;
+            }
             if (!action.isIgnoreFailure() && result != ExecuteResult.OK) {
                 return result.toString();
             }

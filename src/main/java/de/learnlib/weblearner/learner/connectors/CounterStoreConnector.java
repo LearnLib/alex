@@ -61,7 +61,7 @@ public class CounterStoreConnector implements Connector {
             counter = counterDAO.get(projectId, name);
             return counter.getValue();
         } catch (NoSuchElementException e) {
-            throw new IllegalStateException("A counter must be declared before the first use.");
+            throw new IllegalStateException("The counter '" + name + "' was not set and has no value!");
         }
     }
 

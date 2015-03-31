@@ -5,17 +5,21 @@ import de.learnlib.weblearner.entities.ExecuteResult;
 import de.learnlib.weblearner.entities.SymbolAction;
 import de.learnlib.weblearner.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.learner.connectors.VariableStoreConnector;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @DiscriminatorValue("setVariable")
 @JsonTypeName("setVariable")
 public class SetVariableAction extends SymbolAction {
 
+    @NotBlank
     protected String name;
 
+    @NotNull
     protected String value;
 
     public String getName() {
