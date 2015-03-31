@@ -62,8 +62,13 @@
                     delete symbol._collapsed;
                     delete symbol._selected;
                 });
+                symbols = _.sortBy(symbols, function (n) {
+                    return n.id
+                });
+                // TODO: delete ids
                 Symbol.Resource.createSome(project.id, symbols)
                     .then(function (createdSymbols) {
+                        Toast.success('Symbols uploaded');
                         _.forEach(createdSymbols, function (symbol) {
                             _.remove($scope.symbols, {name: symbol.name})
                         })
