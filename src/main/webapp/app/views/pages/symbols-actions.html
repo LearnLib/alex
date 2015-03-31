@@ -17,7 +17,7 @@
             <button class="btn btn-xs btn-primary" action-create-modal-handle on-created="addAction">
                 Create
             </button>
-            <button class="btn btn-xs btn-default" action-edit-modal-handle action="(selectedActions | first)"
+            <button class="btn btn-xs btn-default" action-edit-modal-handle action="selectedActions[0]"
                     on-updated="updateAction"
                     ng-class="selectedActions.length !== 1 ? 'disabled': ''">
                 Edit

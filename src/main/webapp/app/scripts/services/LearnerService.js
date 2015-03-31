@@ -8,14 +8,14 @@
     LearnerService.$inject = ['$http', 'paths'];
 
     /**
-     * @param $http
-     * @param paths
+     * The service for interacting with the learner
+     *
+     * @param $http - angular $http service
+     * @param paths - The applications paths constant
      * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive, isCounterexample: isCounterexample}}
      * @constructor
      */
     function LearnerService($http, paths) {
-
-        // the services functions
         return {
             start: start,
             stop: stop,

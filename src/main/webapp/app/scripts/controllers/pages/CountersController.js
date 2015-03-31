@@ -26,14 +26,9 @@
 
         /**
          * The counters of the project
-         * TODO remove dummies when server is ready
          * @type {{name: string, value: number, project: number}[]}
          */
-        $scope.counters = [
-            {name: 'i', value: 0, project: 0},
-            {name: 'j', value: 5, project: 0},
-            {name: 'k', value: 1000, project: 0}
-        ];
+        $scope.counters = [];
 
         /**
          * The selected counters objects

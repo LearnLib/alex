@@ -111,7 +111,7 @@
 
                 $scope.learnConfiguration.setResetSymbol($scope.resetSymbol);
 
-                Learner.start($scope.project.id, $scope.learnConfiguration)
+                Learner.start(project.id, $scope.learnConfiguration)
                     .then(function () {
                         Toast.success('Learn process started successfully.');
                         $state.go('learn.start')

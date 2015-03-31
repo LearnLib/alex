@@ -100,7 +100,6 @@
             _prompt('SVG')
                 .then(function (filename) {
 
-
                     // set proper xml attributes for downloadable file
                     svg.setAttribute('version', '1.1');
                     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');

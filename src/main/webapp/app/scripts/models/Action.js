@@ -243,8 +243,8 @@
 
         Action.Other.SetVariable = function (name, value) {
             Action.call(this, actionTypes.other.SET_VARIABLE);
-            this.name = name;
-            this.value = value;
+            this.name = name || null;
+            this.value = value || '';
         };
 
         Action.Other.SetVariable.prototype.toString = function () {

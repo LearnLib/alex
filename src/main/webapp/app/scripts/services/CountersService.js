@@ -16,7 +16,7 @@
      *
      * @param $http - angular $http service
      * @param paths - application paths constants
-     * @returns {{get: get, getAll: getAll, delete: deleteOne, deleteSome: deleteSome}}
+     * @returns {{getAll: getAll, delete: deleteOne, deleteSome: deleteSome}}
      * @constructor
      */
     function CountersService($http, paths) {
@@ -33,7 +33,7 @@
          * project.
          *
          * @param {number} projectId - The id of a project
-         * @returns {HttpPromise} - angular promise object of the request
+         * @returns angular promise object of the request
          */
         function getAll(projectId) {
             return $http.get(paths.api.URL + '/projects/' + projectId + '/counters')
@@ -48,7 +48,7 @@
          *
          * @param {number} projectId - The id of a project
          * @param {string} name - The name of a counter
-         * @returns {HttpPromise} - angular promise object of the request
+         * @returns angular promise object of the request
          */
         function deleteOne(projectId, name) {
             return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/' + name)
@@ -63,7 +63,7 @@
          *
          * @param {number} projectId - The id of a project
          * @param {string[]} names - A list of the names of counters
-         * @returns {HttpPromise} - angular promise object of the request
+         * @returns angular promise object of the request
          */
         function deleteSome(projectId, names) {
             names = names.join(',');
