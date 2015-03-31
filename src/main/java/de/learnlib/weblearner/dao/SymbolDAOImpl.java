@@ -43,11 +43,13 @@ public class SymbolDAOImpl implements SymbolDAO {
         try {
             // create the symbol
             create(session, symbol);
+            setExecuteToSymbols(session, symbol);
             HibernateUtil.commitTransaction();
 
         // error handling
         } catch (javax.validation.ConstraintViolationException
-                 | org.hibernate.exception.ConstraintViolationException e) {
+                 | org.hibernate.exception.ConstraintViolationException
+                 | IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
             symbol.setId(0L);
             symbol.setRevision(0L);
@@ -65,11 +67,15 @@ public class SymbolDAOImpl implements SymbolDAO {
             for (Symbol symbol : symbols) {
                 create(session, symbol);
             }
+            for (Symbol symbol : symbols) {
+                setExecuteToSymbols(session, symbol);
+            }
             HibernateUtil.commitTransaction();
 
             // error handling
         } catch (javax.validation.ConstraintViolationException
-                | org.hibernate.exception.ConstraintViolationException e) {
+                | org.hibernate.exception.ConstraintViolationException
+                | IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
             for (Symbol symbol : symbols) {
                 symbol.setId(null);
@@ -110,7 +116,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
         group.addSymbol(symbol);
 
-        beforeSymbolSave(session, symbol);
+        beforeSymbolSave(symbol);
 
         session.save(symbol);
     }
@@ -143,9 +149,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             ));
         }
         DetachedCriteria symbolIds = DetachedCriteria.forClass(Symbol.class)
-                .add(Restrictions.eq("project.id", projectId))
-                .add(symbolIdRestrictions)
-                .setProjection(Projections.property("symbolId"));
+                                                        .add(Restrictions.eq("project.id", projectId))
+                                                        .add(symbolIdRestrictions)
+                                                        .setProjection(Projections.property("symbolId"));
 
         // get the symbols
         @SuppressWarnings("unchecked") // should return a list of Symbols
@@ -336,12 +342,14 @@ public class SymbolDAOImpl implements SymbolDAO {
         // update
         try {
             update(session, symbol);
+            setExecuteToSymbols(session, symbol);
 
             HibernateUtil.commitTransaction();
 
         // error handling
         } catch (javax.validation.ConstraintViolationException
-                 | org.hibernate.exception.ConstraintViolationException e) {
+                 | org.hibernate.exception.ConstraintViolationException
+                 | IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("Could not update the Symbol because it is not valid.", e);
         } catch (IllegalArgumentException e) {
@@ -361,12 +369,16 @@ public class SymbolDAOImpl implements SymbolDAO {
             for (Symbol symbol : symbols) {
                 update(session, symbol);
             }
+            for (Symbol symbol : symbols) {
+                setExecuteToSymbols(session, symbol);
+            }
 
             HibernateUtil.commitTransaction();
 
             // error handling
         } catch (javax.validation.ConstraintViolationException
-                | org.hibernate.exception.ConstraintViolationException e) {
+                | org.hibernate.exception.ConstraintViolationException
+                | IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
             for (Symbol symbol : symbols) {
                 symbol.setId(null);
@@ -416,7 +428,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.setRevision(symbol.getRevision() + 1);
         symbol.setGroup(newGroup);
 
-        beforeSymbolSave(session, symbol);
+        beforeSymbolSave(symbol);
 
         session.save(symbol);
 
@@ -606,28 +618,35 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private void beforeSymbolSave(Session session, Symbol symbol) {
+    private void beforeSymbolSave(Symbol symbol) {
         for (int i = 0; i < symbol.getActions().size(); i++) {
             SymbolAction action = symbol.getActions().get(i);
             action.setId(null);
             action.setProject(symbol.getProject());
             action.setSymbol(symbol);
             action.setNumber(i);
+        }
+    }
+
+    private void setExecuteToSymbols(Session session, Symbol symbol) {
+        for (int i = 0; i < symbol.getActions().size(); i++) {
+            SymbolAction action = symbol.getActions().get(i);
 
             if (action instanceof ExecuteSymbolAction) {
                 ExecuteSymbolAction executeSymbolAction = (ExecuteSymbolAction) action;
                 IdRevisionPair idAndRevision = executeSymbolAction.getSymbolToExecuteAsIdRevisionPair();
 
-                if (idAndRevision != null) {
-                    Symbol symbolToExecute = (Symbol) session.byNaturalId(Symbol.class)
-                                                                .using("project", action.getProject())
-                                                                .using("id", idAndRevision.getId())
-                                                                .using("revision", idAndRevision.getRevision())
-                                                                .load();
-                    if (symbolToExecute != null) {
-                        executeSymbolAction.setSymbolToExecute(symbolToExecute);
-                    }
+                Symbol symbolToExecute = (Symbol) session.byNaturalId(Symbol.class)
+                                                            .using("project", action.getProject())
+                                                            .using("id", idAndRevision.getId())
+                                                            .using("revision", idAndRevision.getRevision())
+                                                            .load();
+                if (symbolToExecute == null) {
+                    throw new IllegalStateException("Could not find the symbol with the id "
+                                                        + idAndRevision.getId() + " and the revision "
+                                                        + idAndRevision.getRevision() + ", but it was referenced");
                 }
+                executeSymbolAction.setSymbolToExecute(symbolToExecute);
             }
         }
     }
