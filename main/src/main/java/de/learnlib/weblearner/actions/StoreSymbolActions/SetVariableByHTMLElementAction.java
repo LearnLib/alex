@@ -2,7 +2,7 @@ package de.learnlib.weblearner.actions.StoreSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
-import de.learnlib.weblearner.core.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.weblearner.core.learner.connectors.WebSiteConnector;
 import org.openqa.selenium.NoSuchElementException;
@@ -16,7 +16,7 @@ import javax.persistence.Entity;
 public class SetVariableByHTMLElementAction extends SetVariableAction {
 
     @Override
-    public ExecuteResult execute(MultiConnector connector) {
+    public ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         WebSiteConnector webSiteConnector = connector.getConnector(WebSiteConnector.class);
 

@@ -23,16 +23,26 @@
         };
 
         /**
+         * Creates a toast message.
+         *
+         * @param {string} type - a bootstrap alert class type: 'success', 'error', 'info' etc.
+         * @param {string} message - The message to be displayed
+         */
+        function createToast(type, message) {
+            ngToast.create({
+                class: type,
+                content: message,
+                dismissButton: true
+            });
+        }
+
+        /**
          * Create a success toast message
          *
          * @param {String} message - The message to be displayed
          */
         function success(message) {
-            ngToast.create({
-                class: 'success',
-                content: message,
-                dismissButton: true
-            });
+            createToast('success', message);
         }
 
         /**
@@ -41,11 +51,7 @@
          * @param {String} message - The message to be displayed
          */
         function danger(message) {
-            ngToast.create({
-                class: 'danger',
-                content: message,
-                dismissButton: true
-            });
+            createToast('danger', message);
         }
 
         /**
@@ -54,11 +60,7 @@
          * @param {String} message - The message to be displayed
          */
         function info(message) {
-            ngToast.create({
-                class: 'info',
-                content: message,
-                dismissButton: true
-            });
+            createToast('info', message);
         }
     }
 }());

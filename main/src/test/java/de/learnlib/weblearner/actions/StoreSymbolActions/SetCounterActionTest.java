@@ -2,9 +2,10 @@ package de.learnlib.weblearner.actions.StoreSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
+import de.learnlib.weblearner.core.entities.Project;
 import de.learnlib.weblearner.core.entities.SymbolAction;
 import de.learnlib.weblearner.core.learner.connectors.CounterStoreConnector;
-import de.learnlib.weblearner.core.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.verify;
 
 public class SetCounterActionTest {
 
+    private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
     private static final Integer TEST_VALUE = 42;
 
@@ -29,6 +31,7 @@ public class SetCounterActionTest {
     @Before
     public void setUp() {
         setAction = new SetCounterAction();
+        setAction.setProject(new Project(PROJECT_ID));
         setAction.setName(TEST_NAME);
         setAction.setValue(TEST_VALUE);
     }
@@ -47,7 +50,7 @@ public class SetCounterActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/StoreSymbolActions/SetCounterTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/StoreSymbolActions/SetCounterTestData.json").toURI());
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof SetCounterAction);
@@ -59,26 +62,25 @@ public class SetCounterActionTest {
     @Test
     public void shouldSuccessfulSetTheCounterValue() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
         ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).set(TEST_NAME, TEST_VALUE);
+        verify(counters).set(PROJECT_ID, TEST_NAME, TEST_VALUE);
     }
 
     @Test
-    public void shouldFailIfCounterIsNotDeclared() {
+    public void shouldNotFailIfCounterIsNotDeclared() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        willThrow(IllegalStateException.class).given(counters).set(TEST_NAME, TEST_VALUE);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
         ExecuteResult result = setAction.execute(connector);
 
-        assertEquals(ExecuteResult.FAILED, result);
-        verify(counters).set(TEST_NAME, TEST_VALUE);
+        assertEquals(ExecuteResult.OK, result);
+        verify(counters).set(PROJECT_ID, TEST_NAME, TEST_VALUE);
     }
 
 }

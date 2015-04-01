@@ -11,21 +11,12 @@ public class VariableStoreConnector implements Connector {
         this.store = new HashMap<>();
     }
 
-    public void clear() {
+    @Override
+    public void reset() {
         store = new HashMap<>();
     }
 
-    public void declare(String name) throws IllegalArgumentException {
-        if (store.containsKey(name)) {
-            throw new IllegalArgumentException("Counter already declared.");
-        }
-        store.put(name, "");
-    }
-
-    public void set(String name, String value) throws IllegalStateException {
-        if (!store.containsKey(name)) {
-            throw new IllegalStateException("A variable must be declared before the first use.");
-        }
+    public void set(String name, String value) {
         store.put(name, value);
     }
 
@@ -33,10 +24,10 @@ public class VariableStoreConnector implements Connector {
         return store.containsKey(name);
     }
 
-    public String get(String name) throws IllegalStateException {
+    public String get(String name) throws IllegalArgumentException {
         String result = store.get(name);
         if (result == null) {
-            throw new IllegalStateException("A variable must be declared before the first use.");
+            throw new IllegalArgumentException("The variable '" + name + "' was not set and has no value!");
         }
         return result;
     }

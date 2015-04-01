@@ -85,7 +85,8 @@ public class WebSymbolLearnerIT {
         symbolAbbr = "learnweb3";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                + "{\"type\": \"web_click\", \"node\" : \"#link2\"}"
+//                + "{\"type\": \"web_click\", \"node\" : \"#link2\"}"
+                    + "{\"type\": \"web_clickLinkByText\", \"value\" : \"The next awesome link\"}"
                 + "]}";
         symbols[2] = testHelper.addSymbol(client, project, json);
 
@@ -204,10 +205,10 @@ public class WebSymbolLearnerIT {
         // resume learning
         path = "/learner/resume/" + project.getId() + "/1";
         json = "{\"maxAmountOfStepsToLearn\": 0, \"eqOracle\":"
-                + "{\"type\": \"sample\", \"counterExamples\": [{"
-                    + "\"input\": [\"learnweb2\", \"learnweb2\", \"learnweb3\"],"
-                    + "\"output\": [\"OK\", \"OK\", \"OK\"]}]"
-                + "}}";
+                + "{\"type\": \"sample\", \"counterExamples\": ["
+                    + "[{\"input\": \"learnweb2\", \"output\": \"OK\"}, {\"input\": \"learnweb2\", \"output\": \"OK\"},"
+                        + "{\"input\": \"learnweb3\", \"output\": \"OK\"}]"
+                + "]}}";
         response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 

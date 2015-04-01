@@ -6,12 +6,12 @@
 <div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
     <div class="container">
 
-        <div class="pull-left" style="margin-right: 16px" selectable items="allSymbols">
-            <input type="checkbox" selectable-item-checkbox>
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" selection-checkbox-all items="allSymbols">
         </div>
 
-        <div class="pull-right">
-            <button class="btn btn-xs btn-primary" download-as-json data="getSelectedSymbols">
+        <div class="pull-left">
+            <button class="btn btn-xs btn-primary" download-as-json data="getDownloadableSymbols">
                 <i class="fa fa-download fa-fw"></i> Download
             </button>
         </div>
@@ -22,23 +22,23 @@
 <div class="view-body">
     <div class="container symbol-group-list">
 
-        <div ng-repeat="group in groups track by group.id" class="symbol-group"
-             ng-class="group._isCollapsed ? 'collapsed' :''">
+        <div ng-repeat="group in groups track by $index" class="symbol-group"
+             ng-class="group._collapsed ? 'collapsed' :''">
 
             <div class="selectable-list symbol-group-header">
                 <div class="selectable-list-heading">
-                    <div class="selectable-list-control" selectable items="group.symbols">
-                        <input type="checkbox" selectable-item-checkbox>
+                    <div class="selectable-list-control">
+                        <input type="checkbox" selection-checkbox-all items="group.symbols">
                     </div>
                     <div class="selectable-list-content">
 
-                        <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
+                        <span class="pull-right" ng-click="group._collapsed = !group._collapsed">
                             <i class="fa fa-fw"
-                               ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                               ng-class="group._collapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
                         </span>
 
                         <h3 class="symbol-group-title" ng-bind="group.name"
-                            ng-click="group._isCollapsed = !group._isCollapsed"></h3>
+                            ng-click="group._collapsed = !group._collapsed"></h3>
 
                         <p class="text-muted">
                             <span ng-bind="group.symbols.length"></span> Symbols
@@ -48,23 +48,30 @@
                 </div>
             </div>
 
-            <div class="symbol-group-body" collapse="group._isCollapsed">
+            <div class="symbol-group-body" collapse="group._collapsed">
+                <div class="selectable-list">
+                    <div ng-repeat="symbol in group.symbols | orderBy:'-name':true"
+                         selection-model
+                         selection-model-type="checkbox"
+                         selection-model-selected-attribute="_selected"
+                         selection-model-mode="multiple"
+                         selection-model-selected-items="selectedSymbols"
+                         selection-model-cleanup-strategy="deselect"
+                         ng-if="!symbol.hidden">
 
-                <div selectable items="group.symbols">
-                    <div selectable-list>
-                        <div selectable-list-item item="symbol" ng-repeat="symbol in group.symbols">
+                        <div selectable-list-item>
 
                             <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
 
                             <a ui-sref="symbols.actions({symbolId:symbol.id})">
                                 <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
                             </a>
-
                         </div>
                     </div>
                 </div>
 
             </div>
         </div>
+
     </div>
 </div>

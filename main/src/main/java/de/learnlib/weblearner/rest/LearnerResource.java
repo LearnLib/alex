@@ -8,6 +8,7 @@ import de.learnlib.weblearner.core.entities.LearnerResumeConfiguration;
 import de.learnlib.weblearner.core.entities.LearnerStatus;
 import de.learnlib.weblearner.core.entities.Project;
 import de.learnlib.weblearner.core.entities.Symbol;
+import de.learnlib.weblearner.core.entities.SymbolSet;
 import de.learnlib.weblearner.core.learner.Learner;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
 import org.apache.logging.log4j.LogManager;
@@ -182,4 +183,21 @@ public class LearnerResource {
         return Response.ok(learner.getResult()).build();
     }
 
+    @POST
+    @Path("/outputs/{project_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet) {
+        Project project = projectDAO.getByID(projectId);
+
+        Symbol resetSymbol = symbolDAO.get(projectId, symbolSet.getResetSymbolAsIdRevisionPair());
+        symbolSet.setResetSymbol(resetSymbol);
+
+        List<Symbol> symbols = symbolDAO.getAll(projectId, symbolSet.getSymbolsAsIdRevisionPairs());
+        symbolSet.setSymbols(symbols);
+
+        List<String> results = learner.readOutputs(project, resetSymbol, symbols);
+
+        return Response.ok(results).build();
+    }
 }

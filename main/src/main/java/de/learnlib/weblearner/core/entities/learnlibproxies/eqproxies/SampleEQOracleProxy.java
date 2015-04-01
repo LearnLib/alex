@@ -7,8 +7,11 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
+import javax.sound.midi.Soundbank;
+import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Proxy around a SampleSetEQOracle.
@@ -19,59 +22,47 @@ import java.util.List;
 @JsonTypeName("sample")
 public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
 
-    /**
-     * Class to hold all information about a (possible) counter example.
-     */
-    public static class SampleCounterExample {
+    public static class InputOutputPair {
 
-        /** The list of inputs that is leading to the unexpected behavior. */
-        private List<String> input;
+        /** The input. */
+        private String input;
 
         /** The output that should occur. */
-        private List<String> output;
+        private String output;
 
-        /**
-         * Get the input sequence of the counter example, i.e. a combination of inputs which lead to a wrong transition
-         * within the hypothesis.
-         *
-         * @return The input sequence of the counter example.
-         */
-        public List<String> getInput() {
+        public InputOutputPair() {
+        }
+
+        public InputOutputPair(String input, String output) {
+            this.input = input;
+            this.output = output;
+        }
+
+        public String getInput() {
             return input;
         }
 
-        /**
-         * Set a input sequence which leads to a wrong transition in the hypothesis.
-         *
-         * @param input
-         *         The input sequence of the counter example.
-         */
-        public void setInput(List<String> input) {
+        public void setInput(String input) {
             this.input = input;
         }
 
-        /**
-         * Get the expected output which is triggered by the input sequence.
-         *
-         * @return The expect output of the counter example.
-         */
-        public List<String> getOutput() {
+        public String getOutput() {
             return output;
         }
 
-        /**
-         * Set the expected output of the counter example.
-         *
-         * @param output
-         *         The expected output.
-         */
-        public void setOutput(List<String> output) {
+        public void setOutput(String output) {
             this.output = output;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + input + "/" + output + ")";
         }
     }
 
+
     /** A list of counter examples. */
-    private List<SampleCounterExample> counterExamples;
+    private List<List<InputOutputPair>> counterExamples;
 
     /**
      * Default constructor.
@@ -85,7 +76,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
      *
      * @return A list of counter examples.
      */
-    public List<SampleCounterExample> getCounterExamples() {
+    public List<List<InputOutputPair>> getCounterExamples() {
         return counterExamples;
     }
 
@@ -95,19 +86,14 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
      * @param counterExamples
      *         The new counter examples to check.
      */
-    public void setCounterExamples(List<SampleCounterExample> counterExamples) {
+    public void setCounterExamples(List<List<InputOutputPair>> counterExamples) {
         this.counterExamples = counterExamples;
     }
 
     @Override
     public void checkParameters() throws IllegalArgumentException {
-        for (SampleCounterExample counterExample : counterExamples) {
-            int inputSize = counterExample.getInput().size();
-            int outputSize = counterExample.getOutput().size();
-            if (inputSize != outputSize) {
-                throw new IllegalArgumentException(
-                        "Sample EQ Oracle: The amount of inputs and outputs must be the same.");
-            }
+        if (counterExamples.isEmpty()) {
+            throw new IllegalArgumentException("You need to specify at least one counter example!");
         }
     }
 
@@ -117,7 +103,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
      * @param counterExample
      *         The new example to verify.
      */
-    public void addCounterExample(SampleCounterExample counterExample) {
+    public void addCounterExample(List<InputOutputPair> counterExample) {
         this.counterExamples.add(counterExample);
     }
 
@@ -126,8 +112,14 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
     createEqOracle(SULOracle<String, String> membershipOracle) {
         SampleSetEQOracle newEQ = new SampleSetEQOracle(false);
 
-        for (SampleCounterExample counterExample : counterExamples) {
-            newEQ.add(Word.fromList(counterExample.getInput()), Word.fromList(counterExample.getOutput()));
+        for (List<InputOutputPair> counterExample : counterExamples) {
+            Stream<InputOutputPair> inputOutputPairStream = counterExample.stream();
+            String[] inputs = inputOutputPairStream.map(InputOutputPair::getInput).toArray(String[]::new);
+            Word input = Word.fromArray(inputs, 0, inputs.length);
+            inputOutputPairStream = counterExample.stream();
+            String[] outputs = inputOutputPairStream.map(InputOutputPair::getOutput).toArray(String[]::new);
+            Word output = Word.fromArray(outputs, 0, outputs.length);
+            newEQ.add(input, output);
         }
 
         return newEQ;

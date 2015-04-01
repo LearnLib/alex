@@ -104,16 +104,6 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     }
 
     /**
-     * Get the LearnerAlgorithm that should be used for the learning process.
-     *
-     * @return The selected LearnerAlgorithm.
-     */
-    @Transient
-    public LearnAlgorithms getAlgorithm() {
-        return algorithm;
-    }
-
-    /**
      * Get the IdRevisionPair of the reset symbol.
      *
      * @return The link to the reset symbol.
@@ -147,6 +137,16 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     public void setResetSymbol(Symbol resetSymbol) {
         this.resetSymbol = resetSymbol;
+    }
+
+    /**
+     * Get the LearnerAlgorithm that should be used for the learning process.
+     *
+     * @return The selected LearnerAlgorithm.
+     */
+    @Transient
+    public LearnAlgorithms getAlgorithm() {
+        return algorithm;
     }
 
     /**

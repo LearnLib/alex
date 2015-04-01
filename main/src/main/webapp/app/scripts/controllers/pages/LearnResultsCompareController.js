@@ -63,7 +63,7 @@
         function loadComplete(testNos, index) {
             testNos = testNos.split(',');
             _.forEach(testNos, function (testNo) {
-                LearnResult.Resource.getComplete($scope.project.id, testNo)
+                LearnResult.Resource.getComplete(project.id, testNo)
                     .then(function (completeTestResult) {
                         if (angular.isUndefined(index)) {
                             $scope.panels.push(completeTestResult);

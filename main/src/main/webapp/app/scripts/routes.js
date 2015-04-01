@@ -72,6 +72,22 @@
                 }
             })
 
+
+            // =========================================================
+            // counter related routes
+
+
+            .state('counters', {
+                url: '/counters',
+                views: {
+                    '@': {
+                        templateUrl: paths.views.PAGES + '/counters.html',
+                        controller: 'CountersController'
+                    }
+                }
+            })
+
+
             // =========================================================
             // symbol related routes
 

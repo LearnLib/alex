@@ -2,9 +2,9 @@ package de.learnlib.weblearner.integrationtests;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.weblearner.actions.WebSymbolActions.WebSymbolTest;
 import de.learnlib.weblearner.core.entities.Project;
 import de.learnlib.weblearner.core.entities.Symbol;
+import de.learnlib.weblearner.actions.WebSymbolActions.WebSymbolTest;
 import de.learnlib.weblearner.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.util.automata.equivalence.DeterministicEquivalenceTest;

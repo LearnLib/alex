@@ -72,7 +72,7 @@
                     } else {
 
                         // load all symbols in case there isn't any active learning process
-                        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+                        SymbolGroup.Resource.getAll(project.id, {embedSymbols: true})
                             .then(function (groups) {
                                 $scope.groups = groups;
                                 $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
@@ -111,7 +111,7 @@
 
                 $scope.learnConfiguration.setResetSymbol($scope.resetSymbol);
 
-                Learner.start($scope.project.id, $scope.learnConfiguration)
+                Learner.start(project.id, $scope.learnConfiguration)
                     .then(function () {
                         Toast.success('Learn process started successfully.');
                         $state.go('learn.start')

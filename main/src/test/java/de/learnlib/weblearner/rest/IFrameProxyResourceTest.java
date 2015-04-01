@@ -17,7 +17,11 @@ import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class IFrameProxyResourceTest {
 
@@ -27,19 +31,18 @@ public class IFrameProxyResourceTest {
     private static final String TEST_STYLE_URL = "http://www.example.com/css/style.css";
     private static final Object TEST_SCRIPT_URL = "http://www.example.com/js/script.js";
 
-    private IFrameProxyResource ifpt;
+    private IFrameProxyResource iFrameProxyResource;
     private Document doc;
 
     @Before
-    public void setUp() throws NoSuchFieldException, SecurityException, URISyntaxException, IllegalArgumentException,
-            IllegalAccessException, IOException {
+    public void setUp() throws Exception {
         UriInfo uriInfo = mock(UriInfo.class);
         given(uriInfo.getAbsolutePath()).willReturn(new URI("http://www.example.com/"));
 
-        ifpt = new IFrameProxyResource();
+        iFrameProxyResource = new IFrameProxyResource();
         Field uriInfoField = IFrameProxyResource.class.getDeclaredField("uriInfo");
         uriInfoField.setAccessible(true);
-        uriInfoField.set(ifpt, uriInfo);
+        uriInfoField.set(iFrameProxyResource, uriInfo);
 
         File file = new File(getClass().getResource("/rest/IFrameProxyTestData.html").toURI());
         doc = Jsoup.parse(file, "UTF-8", "http://www.example.com/");
@@ -53,36 +56,34 @@ public class IFrameProxyResourceTest {
         absolutifyURL.setAccessible(true);
 
         for (Element image : doc.getElementsByTag("img")) {
-            absolutifyURL.invoke(ifpt, image, "src");
+            absolutifyURL.invoke(iFrameProxyResource, image, "src");
             assertEquals(TEST_IMG_URL, image.attr("src"));
         }
 
         // special cases
         Element firstImg = doc.getElementsByTag("img").first();
         String originalSrc = firstImg.attr("src");
-        absolutifyURL.invoke(ifpt, firstImg, "");
+        absolutifyURL.invoke(iFrameProxyResource, firstImg, "");
         assertEquals(originalSrc, firstImg.attr("src"));
     }
 
     @Test
-    public void testProxiefyLink() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, IOException, URISyntaxException, NoSuchFieldException {
-        Method proxiefyLink = IFrameProxyResource.class.getDeclaredMethod("proxiefyLink", Element.class);
+    public void testProxiefyLink() throws Exception {
+        Method proxiefyLink = IFrameProxyResource.class.getDeclaredMethod("proxiefy", Element.class, String.class);
         proxiefyLink.setAccessible(true);
 
         for (Element link : doc.getElementsByTag("a")) {
-            proxiefyLink.invoke(ifpt, link);
+            proxiefyLink.invoke(iFrameProxyResource, link, "href");
             assertEquals(TEST_LINK_URL, link.attr("href"));
         }
     }
 
     @Test
-    public void testProxiefy() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
+    public void testProxiefy() throws Exception {
         Method proxiefy = IFrameProxyResource.class.getDeclaredMethod("proxiefy", Document.class);
         proxiefy.setAccessible(true);
 
-        proxiefy.invoke(ifpt, doc);
+        proxiefy.invoke(iFrameProxyResource, doc);
 
         for (Element image : doc.getElementsByTag("link")) {
             assertEquals(TEST_STYLE_URL, image.attr("href"));
@@ -99,6 +100,18 @@ public class IFrameProxyResourceTest {
         for (Element link : doc.getElementsByTag("a")) {
             assertEquals(TEST_LINK_URL, link.attr("href"));
         }
+    }
+
+    @Test
+    public void shouldNotProxiefySiteAnchors() throws  Exception {
+        Method proxiefy = IFrameProxyResource.class.getDeclaredMethod("proxiefy", Element.class, String.class);
+        proxiefy.setAccessible(true);
+        Element element = mock(Element.class);
+        given(element.attr("href")).willReturn("#foobar");
+
+        proxiefy.invoke(iFrameProxyResource, element, "href");
+
+        verify(element, never()).attr(eq("href"), anyString());
     }
 
 }

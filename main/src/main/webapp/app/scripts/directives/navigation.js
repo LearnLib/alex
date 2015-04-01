@@ -1,150 +1,80 @@
-(function(){
-	'use strict';
+(function () {
+    'use strict';
 
-	angular
-		.module('weblearner.directives')
-		.directive('navigation', [
-            'paths',
-            navigation
-        ]);
+    angular
+        .module('weblearner.directives')
+        .directive('navigation', navigation);
 
-	function navigation(paths) {
+    navigation.$inject = ['paths', '$state', 'SessionService'];
 
-		var directive = {
-			templateUrl: paths.views.DIRECTIVES + '/navigation.html',
-			link: link,
-            controller: [
-                '$scope', '$window', '$state', 'SessionService',
-                controller
-            ]
-		};
-		return directive;
-    }
+    /**
+     * The directive for the main navigation of the app. Converts into a off screen navigation as soon as the screen
+     * is minimized.
+     *
+     * Use: '<navigation></navigation>'
+     *
+     * !! Place it at the top of your DOM before the main content part
+     *
+     * @param paths - The applications paths constant
+     * @param $state - The ui.router $state service
+     * @param Session - The SessionService
+     * @returns {{scope: {}, templateUrl: string, link: link}}
+     */
+    function navigation(paths, $state, Session) {
+        return {
+            scope: {},
+            templateUrl: paths.views.DIRECTIVES + '/navigation.html',
+            link: link
+        };
 
-		//////////
+        function link(scope, el, attrs) {
 
-		function link(scope, el, attrs) {
-
+            // the button that is used to show or hide the hidden sidebar
             var handle = angular.element(el[0].getElementsByClassName('navbar-menu-handle'));
+
+            // the container of the element that holds the navigation items
             var offscreen = angular.element(el[0].getElementsByClassName('navbar-offscreen'));
+
+            // the css class applied to the nav when it should be displayed off screen
             var offscreenClass = 'show';
 
-            handle.on('click', toggleNavigation);
+            /**
+             * The project that is stored in the session
+             * @type {Project|null}
+             */
+            scope.project = Session.project.get();
 
+            // handle events and stuff
+            (function init() {
+                handle.on('click', toggleNavigation);
+
+                // load project into scope when projectOpened is emitted
+                scope.$on('project.opened', function () {
+                    scope.project = Session.project.get();
+                });
+
+                // delete project from scope when projectOpened is emitted
+                scope.$on('project.closed', function () {
+                    scope.project = null;
+                });
+            }());
+
+            /**
+             * Removes the project object from the session and redirect to the start page
+             */
+            scope.closeProject = function () {
+                Session.project.remove();
+                $state.go('home');
+            };
+
+            /**
+             * Toggles the class for the navigation so that it is displayed off screen or not
+             * @param e - js event
+             */
             function toggleNavigation(e) {
                 e.stopPropagation();
                 offscreen.toggleClass(offscreenClass);
             }
-
-            function hideNavigation(e) {
-                if (e.target.tagName == 'A' && e.target.getAttribute('href') != '#') {
-                    offscreen.removeClass(offscreenClass);
-                }
-            }
         }
-
-    //
-    //	//////////
-    //
-    function controller($scope, $window, $state, Session) {
-        //
-        //		var mediaQuery;
-        //
-        //		//////////
-        //
-        //		/** the project */
-        $scope.project = Session.project.get();
-        //		$scope.hover = false;
-        //		$scope.offScreen = false;
-        //
-        //        //////////
-        //
-        //		this.setHover = function(hover){
-        //			$scope.hover = hover;
-        //		};
-        //
-        //		this.isHover = function(){
-        //			return $scope.hover;
-        //		};
-        //
-        //		this.isOffScreen = function(){
-        //			return $scope.offScreen;
-        //		};
-        //
-        //		//////////
-        //
-	        // load project into scope when projectOpened is emitted
-	        $scope.$on('project.opened', function () {
-                $scope.project = Session.project.get();
-	        });
-
-	        // delete project from scope when projectOpened is emitted
-	        $scope.$on('project.closed', function () {
-	            $scope.project = null;
-	        });
-        //
-        //		// watch for media query event
-        //		mediaQuery = window.matchMedia('screen and (max-width: 768px)');
-        //		mediaQuery.addListener(mediaQueryMatches);
-        //		mediaQueryMatches(null, mediaQuery.matches);
-        //
-        //		//////////
-        //
-        //		function mediaQueryMatches(evt, matches){
-        //			if (evt === null) {
-        //				$scope.offScreen = matches ? true : false;
-        //			} else {
-        //				$scope.offScreen = evt.matches;
-        //			}
-        //		}
-        //
-        //        //////////
-        //
-	        /**
-	         * remove the project object from the session and redirect to the start page
-	         */
-	        $scope.closeProject = function () {
-                Session.project.remove();
-	            $state.go('home');
-	        }
-		}
-
-    //}
-    //
-    //angular
-    //	.module('weblearner.directives')
-    //	.directive('dropdownNavigation', ['$document', dropdownNavigation]);
-    //
-    //function dropdownNavigation($document){
-    //	return {
-    //		require: ['dropdown', '^navigation'],
-    //		link: function(scope, el, attrs, ctrls) {
-    //
-    //			var dropDownCtrl = ctrls[0];
-    //			var navigationCtrl = ctrls[1];
-    //
-    //			el.on('click', function(e){
-    //				e.stopPropagation();
-    //
-    //				if (!navigationCtrl.isOffScreen()){
-    //					if (!navigationCtrl.isHover()){
-    //						navigationCtrl.setHover(true);
-    //						$document.on('click', closeDropDown);
-    //					}
-    //				}
-    //			}).on('mouseenter', function(){
-    //				if (navigationCtrl.isHover()){
-    //					scope.$apply(function(){
-    //						dropDownCtrl.toggle(true);
-    //					})
-    //				}
-    //			});
-    //
-    //			function closeDropDown() {
-    //				navigationCtrl.setHover(false);
-    //				$document.off('click', closeDropDown);
-    //			}
-    //		}
-    //	}
-    //}
+    }
 }());

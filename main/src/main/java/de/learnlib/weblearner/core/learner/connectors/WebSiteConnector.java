@@ -46,7 +46,8 @@ public class WebSiteConnector implements Connector {
     /**
      * Try to clear all data from the browser, including Cookies, local storage & session storage.
      */
-    void clearBrowserData() {
+    @Override
+    public void reset() {
         this.driver.manage().deleteAllCookies();
 
         try {
@@ -81,6 +82,10 @@ public class WebSiteConnector implements Connector {
      */
     public WebElement getElement(String query) throws NoSuchElementException {
         return driver.findElement(By.cssSelector(query));
+    }
+
+    public WebElement getLinkByText(String text) throws NoSuchElementException {
+        return driver.findElement(By.linkText(text));
     }
 
     /**

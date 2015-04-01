@@ -2,6 +2,7 @@ package de.learnlib.weblearner.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
+import de.learnlib.weblearner.core.entities.Project;
 import de.learnlib.weblearner.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.verify;
 
 public class GotoActionTest {
 
+    private static final Long PROJECT_ID = 42L;
     private static final String FAKE_URL = "http://example.com";
 
     private GotoAction g;
@@ -24,6 +26,7 @@ public class GotoActionTest {
     @Before
     public void setUp() {
         g = new GotoAction();
+        g.setProject(new Project(PROJECT_ID));
         g.setUrl(FAKE_URL);
     }
 
@@ -40,7 +43,7 @@ public class GotoActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/websymbolactions/GotoTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/websymbolactions/GotoTestData.json").toURI());
         WebSymbolAction obj = mapper.readValue(file, WebSymbolAction.class);
 
         assertTrue(obj instanceof GotoAction);

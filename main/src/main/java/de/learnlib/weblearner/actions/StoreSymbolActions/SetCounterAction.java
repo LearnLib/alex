@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
 import de.learnlib.weblearner.core.entities.SymbolAction;
 import de.learnlib.weblearner.core.learner.connectors.CounterStoreConnector;
-import de.learnlib.weblearner.core.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -35,10 +35,10 @@ public class SetCounterAction extends SymbolAction {
     }
 
     @Override
-    public ExecuteResult execute(MultiConnector connector) {
+    public ExecuteResult execute(ConnectorManager connector) {
         CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
         try {
-            storeConnector.set(name, counterValue);
+            storeConnector.set(project.getId(), name, counterValue);
             return getSuccessOutput();
         } catch (IllegalStateException e) {
             return getFailedOutput();

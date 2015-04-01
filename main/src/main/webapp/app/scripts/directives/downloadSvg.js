@@ -27,7 +27,7 @@
             scope: {
                 ancestorOrElement: '@'
             },
-            link: link,
+            link: link
         };
 
         // the directives behaviour

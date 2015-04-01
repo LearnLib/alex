@@ -7,6 +7,18 @@
 
     indexBrowser.$inject = ['paths'];
 
+    /**
+     * The directive that displays a pagination like button group for clicking through elements of a list. Displays
+     * the current index and the length of the list.
+     *
+     * Attribute 'index' is the model of the current index
+     * Attribute 'length' should be the length of the list as string
+     *
+     * Use: '<index-browser index="..." length="{{list.length}}"></index-browser>'
+     *
+     * @param paths - the application paths constant
+     * @returns {{templateUrl: string, scope: {length: string, index: string}, link: link}}
+     */
     function indexBrowser(paths) {
 
         return {

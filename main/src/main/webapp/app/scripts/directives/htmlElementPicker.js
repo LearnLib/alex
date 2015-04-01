@@ -12,40 +12,64 @@
     htmlElementPickerInstance.$inject = ['$q'];
 
     /**
-     * @param $document
-     * @param $compile
-     * @param htmlElementPickerInstance
+     * The directive that creates a new HTML element picker. Can only be used as an attribute and attaches a click
+     * event to the source element that opens the picker. On first start, it loads the page that is defined in the
+     * projects baseUrl. On following calls the last visited page is loaded.
+     *
+     * Attribute 'model' is the model for the XPath
+     * Attribute 'text' is the model for the .textContent value of the selected element
+     *
+     * Use: '<button html-element-picker model="..." text="...">Click Me!</button>'
+     *
+     * @param $document - angular document wrapper
+     * @param $compile - angular $compile service
+     * @param htmlElementPickerInstance - Holds the promise and methods for opening and closing the picker
      * @returns {{restrict: string, scope: {selectorModel: string}, link: Function}}
      */
     function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
         return {
             restrict: 'A',
             scope: {
-                selectorModel: '=model'
+                selectorModel: '=model',
+                textModel: '=text'
             },
-            link: function (scope, el, attrs) {
-                var picker;
+            link: link
+        };
+        function link(scope, el, attrs) {
 
-                el.on('click', function () {
-                    picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
-                    $document.find('body').prepend(picker);
+            // The HTML picker element that is dynamically appended and removed to/from the pages DOM tree
+            var picker;
 
-                    htmlElementPickerInstance.open()
-                        .then(function (selector) {
-                            if (angular.isDefined(scope.selectorModel)) {
-                                scope.selectorModel = selector;
-                            }
-                        })
-                        .finally(function () {
-                            picker.remove();
-                        })
-                })
-            }
+            el.on('click', function () {
+
+                // create a new element picker under the current scope and append to the body
+                picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
+                $document.find('body').prepend(picker);
+
+                // open the picker
+                htmlElementPickerInstance.open()
+                    .then(function (data) {
+
+                        // copy the selected XPath and .textContent value to the scopes models
+                        if (angular.isDefined(scope.selectorModel)) {
+                            scope.selectorModel = data.xPath;
+                        }
+                        if (angular.isDefined(scope.textModel)) {
+                            scope.textModel = data.textContent;
+                        }
+                    })
+
+                    // remove the picker from the dom on close
+                    .finally(function () {
+                        picker.remove();
+                    })
+            })
         }
     }
 
     /**
-     * The instance for the HTML element picker that holds the promise and the last url
+     * The instance for the HTML element picker that holds the promise offers methods to persist the last opened url as
+     * well as opening and closing the HTML element picker
      *
      * @returns {{close: Function, open: Function, setUrl: Function, getUrl: Function}}
      */
@@ -58,29 +82,59 @@
         var lastUrl = null;
 
         return {
-            close: function (selector) {
-                if (angular.isDefined(selector)) {
-                    deferred.resolve(selector)
-                } else {
-                    deferred.reject();
-                }
-            },
-            open: function () {
-                deferred = $q.defer();
-                return deferred.promise;
-            },
-            setUrl: function (url) {
-                lastUrl = url;
-            },
-            getUrl: function () {
-                return lastUrl;
+            close: close,
+            open: open,
+            setUrl: setUrl,
+            getUrl: getUrl
+        };
+
+        /**
+         * Resolves the promise with selected data or cancels the promise of no data is defined
+         *
+         * @param {Object} data - The object that should contain an XPath and a .textContent value
+         */
+        function close(data) {
+            if (angular.isDefined(data)) {
+                deferred.resolve(data)
+            } else {
+                deferred.reject();
             }
+        }
+
+        /**
+         * Creates the promise that is used to pass data between the directive and the picker
+         *
+         * @returns {d.promise|promise|qFactory.Deferred.promise|p.ready.promise|fd.g.promise}
+         */
+        function open() {
+            deferred = $q.defer();
+            return deferred.promise;
+        }
+
+        function setUrl(url) {
+            lastUrl = url;
+        }
+
+        function getUrl() {
+            return lastUrl;
         }
     }
 
+    /**
+     * The actual HTML element picker. Handles the complete window including the selection of elements and loading
+     * of urls. Works as a 'mini embedded browser'
+     *
+     * Use: '<html-element-picker-window></html-element-picker-window>'
+     *
+     * @param $window - angular window wrapper
+     * @param Session - The SessionService
+     * @param paths - The applications paths
+     * @param htmlElementPickerInstance - @see{@link htmlElementPickerInstance}
+     * @returns {{scope: {}, templateUrl: string, link: link}}
+     */
     function htmlElementPickerWindow($window, Session, paths, htmlElementPickerInstance) {
-
         return {
+            restrict: 'E',
             scope: {},
             templateUrl: paths.views.DIRECTIVES + '/html-element-picker.html',
             link: link
@@ -101,11 +155,20 @@
             // the url of the proxy
             var proxyUrl = null;
 
+            // flag for selection mode
+            var isSelectable = false;
+
             /**
              * The XPath of the selected element
-             * @type {null}
+             * @type {null|string}
              */
             scope.selector = null;
+
+            /**
+             * The element.textContent value
+             * @type {null|string}
+             */
+            scope.textContent = null;
 
             /**
              * The url that is loaded in the iframe
@@ -158,6 +221,13 @@
                 }
                 lastTarget.style.outline = '5px solid red';
                 scope.selector = getCssPath(lastTarget);
+
+                if (lastTarget.nodeName.toLowerCase() === 'input') {
+                    scope.textContent = lastTarget.value;
+                } else {
+                    scope.textContent = lastTarget.textContent;
+                }
+
                 scope.$apply();
             }
 
@@ -176,6 +246,7 @@
 
                 lastTarget.style.outline = '0px';
                 lastTarget = null;
+                isSelectable = false;
 
                 angular.element(iframe.contents()[0].body).off('mousemove', handleMouseMove);
                 angular.element(iframe.contents()[0].body).off('click', handleClick);
@@ -194,7 +265,7 @@
                 }
             }
 
-            // init
+            // load project, create proxy address and load the last url in the iframe
             function init() {
                 project = Session.project.get();
                 proxyUrl = $window.location.origin + paths.api.PROXY_URL;
@@ -211,12 +282,14 @@
                 iframe[0].onload = function () {
                     angular.element(iframe.contents()[0].body.getElementsByTagName('a'))
                         .on('click', function () {
-                            var _this = this;
-                            if (_this.getAttribute('href') !== '' && _this.getAttribute('href') !== '#') {
-                                scope.$apply(function () {
-                                    scope.url = decodeURIComponent(_this.getAttribute('href'))
-                                        .replace(proxyUrl + project.baseUrl + '/', '')
-                                })
+                            if (!isSelectable) {
+                                var _this = this;
+                                if (_this.getAttribute('href') !== '' && _this.getAttribute('href') !== '#') {
+                                    scope.$apply(function () {
+                                        scope.url = decodeURIComponent(_this.getAttribute('href'))
+                                            .replace(proxyUrl + project.baseUrl + '/', '')
+                                    })
+                                }
                             }
                         }
                     )
@@ -231,6 +304,7 @@
                 iframeBody.on('mousemove', handleMouseMove);
                 iframeBody.one('click', handleClick);
                 angular.element(document.body).on('keyup', handleKeyUp);
+                isSelectable = true;
             };
 
 
@@ -248,15 +322,14 @@
              */
             scope.ok = function () {
                 htmlElementPickerInstance.setUrl(scope.url);
-                htmlElementPickerInstance.close(scope.selector);
+                htmlElementPickerInstance.close({
+                    xPath: scope.selector,
+                    textContent: scope.textContent
+                });
             };
 
-            // init direcitve
+            // init directive
             init();
         }
     }
-}
-
-()
-)
-;
+}());

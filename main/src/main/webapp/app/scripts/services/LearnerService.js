@@ -2,26 +2,27 @@
     'use strict';
 
     angular
-        .module('weblearner.resources')
+        .module('weblearner.services')
         .factory('LearnerService', LearnerService);
 
-    LearnerService.$inject = ['$http', '$q', 'paths'];
+    LearnerService.$inject = ['$http', 'paths'];
 
     /**
-     * @param $http
-     * @param $q
-     * @param paths
-     * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive}}
+     * The service for interacting with the learner
+     *
+     * @param $http - angular $http service
+     * @param paths - The applications paths constant
+     * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive, isCounterexample: isCounterexample}}
      * @constructor
      */
-    function LearnerService($http, $q, paths) {
-
+    function LearnerService($http, paths) {
         return {
             start: start,
             stop: stop,
             resume: resume,
             getStatus: getStatus,
-            isActive: isActive
+            isActive: isActive,
+            isCounterexample: isCounterexample
         };
 
         /**
@@ -50,6 +51,7 @@
          * so that the ongoing process parameters could be defined
          *
          * @param projectId
+         * @param testNo
          * @param learnConfiguration
          * @return {*}
          */
@@ -79,6 +81,20 @@
             return $http.get(paths.api.URL + '/learner/active')
                 .then(function (response) {
                     return response.data;
+                })
+        }
+
+        /**
+         * Checks if the selected path is a counterexample.
+         * TODO: implement
+         *
+         * @param counterexample
+         * @returns {*}
+         */
+        function isCounterexample(projectId, counterexample) {
+            return $http.post(paths.api.URL + '/learner/active', {})
+                .then(function () {
+                    return true;
                 })
         }
     }

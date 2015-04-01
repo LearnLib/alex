@@ -11,7 +11,7 @@ import de.learnlib.weblearner.core.entities.PropertyFilterMixIn;
 import de.learnlib.weblearner.core.entities.Symbol;
 import de.learnlib.weblearner.core.entities.SymbolGroup;
 import de.learnlib.weblearner.actions.WaitAction;
-import de.learnlib.weblearner.core.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -129,7 +129,7 @@ public class WebSymbolTest {
     @Test
     public void shouldReadJSONFileCorrectly() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
-        File file = new File(getClass().getResource("/entities/websymbolactions/WebSymbolTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/websymbolactions/WebSymbolTestData.json").toURI());
         symbol = mapper.readValue(file, Symbol.class);
 
         assertEquals("Test Symbol", symbol.getName());
@@ -153,7 +153,7 @@ public class WebSymbolTest {
 
     @Test
     public void shouldReturnOkIfAllActionsRunSuccessfully() throws Exception {
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         WebSymbolAction action1 = mock(WebSymbolAction.class);
         given(action1.execute(connector)).willReturn(ExecuteResult.OK);
         WebSymbolAction action2 = mock(WebSymbolAction.class);
@@ -168,7 +168,7 @@ public class WebSymbolTest {
 
     @Test
     public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         WebSymbolAction action1 = mock(WebSymbolAction.class);
         given(action1.execute(connector)).willReturn(ExecuteResult.FAILED);
         WebSymbolAction action2 = mock(WebSymbolAction.class);

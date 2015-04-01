@@ -1,7 +1,7 @@
 package de.learnlib.weblearner.utils;
 
 import de.learnlib.weblearner.core.learner.connectors.CounterStoreConnector;
-import de.learnlib.weblearner.core.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.core.learner.connectors.VariableStoreConnector;
 
 import java.util.regex.Matcher;
@@ -59,7 +59,7 @@ public final class SearchHelper {
         return matcher.matches();
     }
 
-    public static String insertVariableValues(MultiConnector connector, String text) {
+    public static String insertVariableValues(ConnectorManager connector, Long projectId, String text) {
         StringBuilder result = new StringBuilder();
         int variableStartPos = text.indexOf("{{");
         int variableEndPos = -2; // because of the length of '}}' we will always +2 to the endPos,
@@ -72,7 +72,7 @@ public final class SearchHelper {
             boolean variableIsCounter = text.charAt(variableStartPos + 2) == '#';
             String variableName = text.substring(variableStartPos + 3, variableEndPos);
 
-            String variableValue = getValue(connector, variableName, variableIsCounter);
+            String variableValue = getValue(connector, projectId, variableName, variableIsCounter);
             result.append(variableValue);
 
             variableStartPos = text.indexOf("{{", variableEndPos); // prepare next step
@@ -83,9 +83,9 @@ public final class SearchHelper {
         return result.toString();
     }
 
-    private static String getValue(MultiConnector connector, String variableName, boolean counter) {
+    private static String getValue(ConnectorManager connector, Long projectId, String variableName, boolean counter) {
         if (counter) {
-            return String.valueOf(connector.getConnector(CounterStoreConnector.class).get(variableName));
+            return String.valueOf(connector.getConnector(CounterStoreConnector.class).get(projectId, variableName));
         } else {
             return connector.getConnector(VariableStoreConnector.class).get(variableName);
         }

@@ -40,7 +40,7 @@ public class WaitActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/websymbolactions/WaitTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/WaitTestData.json").toURI());
         WebSymbolAction obj = mapper.readValue(file, WebSymbolAction.class);
 
         assertTrue(obj instanceof WaitAction);

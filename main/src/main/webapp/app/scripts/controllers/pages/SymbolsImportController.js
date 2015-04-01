@@ -5,60 +5,77 @@
         .module('weblearner.controller')
         .controller('SymbolsImportController', SymbolsImportController);
 
-    SymbolsImportController.$inject = ['$scope', 'SessionService', 'Symbol', 'SelectionService', '_'];
+    SymbolsImportController.$inject = ['$scope', 'SessionService', 'Symbol', '_', 'ToastService'];
 
     /**
-     * Handles the import of symbols from a *.json file. The corresponding template for this controller is at
-     * 'views/pages/symbols-import.html'
+     * The controller that handles the import of symbols from a *.json file.
      *
-     * @param $scope
-     * @param Session
-     * @param Symbol
-     * @param SelectionService
-     * @param _
+     * Template: 'views/pages/symbols-import.html'
+     *
+     * @param $scope - The controllers scope
+     * @param Session - The SessionService
+     * @param Symbol - The factory for Symbols
+     * @param _ - Lodash
+     * @param Toast - The ToastService
      * @constructor
      */
-    function SymbolsImportController($scope, Session, Symbol, SelectionService, _) {
+    function SymbolsImportController($scope, Session, Symbol, _, Toast) {
 
         // The project that is saved in the sessionStorage
-        var _project = Session.project.get();
+        var project = Session.project.get();
 
         /**
          * The symbols that will be uploaded
-         *
          * @type {Symbol[]}
          */
         $scope.symbols = [];
 
         /**
-         * Creates instances of Symbols from the json string from the *.json file and puts them in the scope
+         * The list of selected symbols
+         * @type {Symbol[]}
+         */
+        $scope.selectedSymbols = [];
+
+        /**
+         * Creates instances of Symbols from the json string from the *.json file and puts them in the scope.
          *
          * @param data - The json string of loaded symbols
          */
         $scope.fileLoaded = function (data) {
             try {
-                var symbols = angular.fromJson(data);
                 $scope.$apply(function () {
-                    $scope.symbols = $scope.symbols.concat(symbols);
+                    $scope.symbols = Symbol.buildSome(angular.fromJson(data));
                 });
-            } catch(e) {
-                console.error(e);
+            } catch (e) {
+                Toast.danger('<p><strong>Loading json file failed</strong></p>' + e);
             }
         };
 
         /**
          * Makes an API request in order to create the selected symbols. Removes successfully created symbols from the
-         * scope
+         * scope.
          */
         $scope.uploadSelectedSymbols = function () {
-            var selectedSymbols = angular.copy(SelectionService.getSelected($scope.symbols));
-            if (selectedSymbols.length > 0) {
-                SelectionService.removeSelection(selectedSymbols);
-                Symbol.Resource.createSome(_project.id, selectedSymbols)
+            if ($scope.selectedSymbols.length > 0) {
+                var symbols = angular.copy($scope.selectedSymbols);
+                symbols = _.sortBy(symbols, function (n) {
+                    return n.id
+                });
+                _.forEach(symbols, function (symbol) {
+                    delete symbol._collapsed;
+                    delete symbol._selected;
+                    delete symbol.id;
+                });
+                // TODO: delete ids
+                Symbol.Resource.createSome(project.id, symbols)
                     .then(function (createdSymbols) {
+                        Toast.success('Symbols uploaded');
                         _.forEach(createdSymbols, function (symbol) {
                             _.remove($scope.symbols, {name: symbol.name})
                         })
+                    })
+                    .catch(function (response) {
+                        Toast.danger('<p><strong>Symbol upload failed</strong></p>' + response.data.message)
                     })
             }
         };

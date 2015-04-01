@@ -1,6 +1,7 @@
 package de.learnlib.weblearner.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.weblearner.core.entities.Project;
 import de.learnlib.weblearner.core.entities.SymbolAction;
 import de.learnlib.weblearner.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
@@ -19,11 +20,14 @@ import static org.mockito.Mockito.mock;
 
 public class CheckTextWebActionTest {
 
+    private static final Long PROJECT_ID = 42L;
+
     private CheckTextWebAction checkText;
 
     @Before
     public void setUp() {
         checkText = new CheckTextWebAction();
+        checkText.setProject(new Project(PROJECT_ID));
         checkText.setValue("Foobar");
         checkText.setRegexp(false);
     }
@@ -41,7 +45,7 @@ public class CheckTextWebActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/websymbolactions/CheckTextTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/websymbolactions/CheckTextTestData.json").toURI());
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof CheckTextWebAction);

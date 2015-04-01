@@ -41,7 +41,18 @@
                 // create the modal
                 var modal = $modal.open({
                     templateUrl: paths.views.MODALS + '/action-create-modal.html',
-                    controller: 'ActionCreateModalController'
+                    controller: 'ActionCreateModalController',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                addAction: function (action) {
+                                    if (action !== null) {
+                                        scope.onCreated()(action);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 });
 
                 // call the callback on success

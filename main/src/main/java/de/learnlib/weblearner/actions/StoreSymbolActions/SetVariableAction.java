@@ -3,19 +3,23 @@ package de.learnlib.weblearner.actions.StoreSymbolActions;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
 import de.learnlib.weblearner.core.entities.SymbolAction;
-import de.learnlib.weblearner.core.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.core.learner.connectors.VariableStoreConnector;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @DiscriminatorValue("setVariable")
 @JsonTypeName("setVariable")
 public class SetVariableAction extends SymbolAction {
 
+    @NotBlank
     protected String name;
 
+    @NotNull
     protected String value;
 
     public String getName() {
@@ -35,7 +39,7 @@ public class SetVariableAction extends SymbolAction {
     }
 
     @Override
-    public ExecuteResult execute(MultiConnector connector) {
+    public ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         try {
             storeConnector.set(name, value);

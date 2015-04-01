@@ -12,8 +12,6 @@ import de.learnlib.weblearner.actions.RESTSymbolActions.CheckHeaderFieldAction;
 import de.learnlib.weblearner.actions.RESTSymbolActions.CheckStatusAction;
 import de.learnlib.weblearner.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.weblearner.actions.RESTSymbolActions.RESTSymbolAction;
-import de.learnlib.weblearner.actions.StoreSymbolActions.DeclareCounterAction;
-import de.learnlib.weblearner.actions.StoreSymbolActions.DeclareVariableAction;
 import de.learnlib.weblearner.actions.StoreSymbolActions.IncrementCounterAction;
 import de.learnlib.weblearner.actions.StoreSymbolActions.SetCounterAction;
 import de.learnlib.weblearner.actions.StoreSymbolActions.SetVariableAction;
@@ -24,11 +22,13 @@ import de.learnlib.weblearner.actions.WebSymbolActions.CheckNodeAction;
 import de.learnlib.weblearner.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.weblearner.actions.WebSymbolActions.ClearAction;
 import de.learnlib.weblearner.actions.WebSymbolActions.ClickAction;
+import de.learnlib.weblearner.actions.WebSymbolActions.ClickLinkAction;
 import de.learnlib.weblearner.actions.WebSymbolActions.FillAction;
 import de.learnlib.weblearner.actions.WebSymbolActions.GotoAction;
+import de.learnlib.weblearner.actions.WebSymbolActions.SelectAction;
 import de.learnlib.weblearner.actions.WebSymbolActions.SubmitAction;
 import de.learnlib.weblearner.actions.WebSymbolActions.WebSymbolAction;
-import de.learnlib.weblearner.core.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.DiscriminatorColumn;
@@ -58,8 +58,6 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "executeSymbol", value = ExecuteSymbolAction.class),
         @JsonSubTypes.Type(name = "wait", value = WaitAction.class),
         // Counter & Variables
-        @JsonSubTypes.Type(name = "declareCounter", value = DeclareCounterAction.class),
-        @JsonSubTypes.Type(name = "declareVariable", value = DeclareVariableAction.class),
         @JsonSubTypes.Type(name = "incrementCounter", value = IncrementCounterAction.class),
         @JsonSubTypes.Type(name = "setCounter", value = SetCounterAction.class),
         @JsonSubTypes.Type(name = "setVariable", value = SetVariableAction.class),
@@ -71,9 +69,11 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web_checkForText", value = CheckTextWebAction.class),
         @JsonSubTypes.Type(name = "web_clear", value = ClearAction.class),
         @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
+        @JsonSubTypes.Type(name = "web_clickLinkByText", value = ClickLinkAction.class),
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
+        @JsonSubTypes.Type(name = "web_select", value = SelectAction.class),
         // REST Actions
         @JsonSubTypes.Type(name = "rest", value = RESTSymbolAction.class),
         @JsonSubTypes.Type(name = "rest_call", value = CallAction.class),
@@ -190,7 +190,7 @@ public abstract class SymbolAction implements Serializable {
      * @return An {@link ExecuteResult} to indicate if the action
      *          run successfully or not.
      */
-    public abstract ExecuteResult execute(MultiConnector connector);
+    public abstract ExecuteResult execute(ConnectorManager connector);
 
     protected ExecuteResult getSuccessOutput() {
         if (negated) {

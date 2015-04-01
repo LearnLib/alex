@@ -45,7 +45,7 @@ public class CheckStatusActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/restsymbolactions/CheckStatusTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/restsymbolactions/CheckStatusTestData.json").toURI());
         RESTSymbolAction obj = mapper.readValue(file, RESTSymbolAction.class);
 
         assertTrue(obj instanceof CheckStatusAction);

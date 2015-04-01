@@ -3,7 +3,7 @@ package de.learnlib.weblearner.actions.StoreSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
 import de.learnlib.weblearner.core.entities.SymbolAction;
-import de.learnlib.weblearner.core.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.core.learner.connectors.VariableStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class SetVariableActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/StoreSymbolActions/SetVariableTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/StoreSymbolActions/SetVariableTestData.json").toURI());
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof SetVariableAction);
@@ -59,7 +59,7 @@ public class SetVariableActionTest {
     @Test
     public void shouldSuccessfulSetTheVariableValue() {
         VariableStoreConnector variables = mock(VariableStoreConnector.class);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
         ExecuteResult result = setAction.execute(connector);
@@ -72,7 +72,7 @@ public class SetVariableActionTest {
     public void shouldFailIfVariableIsNotDeclared() {
         VariableStoreConnector variables = mock(VariableStoreConnector.class);
         willThrow(IllegalStateException.class).given(variables).set(TEST_NAME, TEST_VALUE);
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
         ExecuteResult result = setAction.execute(connector);

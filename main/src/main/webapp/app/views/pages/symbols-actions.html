@@ -1,12 +1,15 @@
 <div view-heading
      title="Actions"
      sub-title="Create and manage the actions for symbol: {{symbol.name}}">
+    <a class="back-button btn btn-default btn-xs" ui-sref="symbols">
+        <i class="fa fa-fw fa-arrow-left"></i>
+    </a>
 </div>
 
 <div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
     <div class="container">
 
-        <div class="pull-left" style="margin-right: 16px" selectable="symbol.actions">
+        <div class="pull-left" style="margin-right: 16px">
             <input type="checkbox" selection-checkbox-all items="symbol.actions">
         </div>
 
@@ -14,7 +17,7 @@
             <button class="btn btn-xs btn-primary" action-create-modal-handle on-created="addAction">
                 Create
             </button>
-            <button class="btn btn-xs btn-default" action-edit-modal-handle action="(selectedActions | first)"
+            <button class="btn btn-xs btn-default" action-edit-modal-handle action="selectedActions[0]"
                     on-updated="updateAction"
                     ng-class="selectedActions.length !== 1 ? 'disabled': ''">
                 Edit
@@ -26,6 +29,9 @@
         </div>
 
         <div class="pull-right">
+            <button class="btn btn-default btn-xs"
+                    variables-counters-occurrence-modal-handle>Occurrences
+            </button>
             <button class="btn btn-default btn-xs" ng-click="revertChanges()">Reset</button>
             <button class="btn btn-success btn-xs" ng-click="saveChanges()">Save</button>
         </div>

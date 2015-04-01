@@ -1,5 +1,12 @@
 module.exports = function (grunt) {
 
+    var scripts = ['app/scripts/init.js', 'app/templates.js', 'app/scripts/routes.js', 'app/scripts/constants.js',
+        'app/scripts/controllers/**/*.js',
+        'app/scripts/directives/*.js',
+        'app/scripts/models/*.js',
+        'app/scripts/resources/*.js',
+        'app/scripts/services/*.js', 'app/scripts/filters/*.js'];
+
     grunt
         .initConfig({
             pkg: grunt.file.readJSON('bower.json'),
@@ -18,12 +25,7 @@ module.exports = function (grunt) {
                     separator: ';'
                 },
                 app: {
-                    src: ['app/scripts/init.js', 'app/templates.js', 'app/scripts/routes.js', 'app/scripts/constants.js',
-                        'app/scripts/controllers/**/*.js',
-                        'app/scripts/directives/*.js',
-                        'app/scripts/models/*.js',
-                        'app/scripts/resources/*.js',
-                        'app/scripts/services/*.js', 'app/scripts/filters/*.js'],
+                    src: scripts,
                     dest: './app/app.js'
                 },
                 libs: {
@@ -98,7 +100,26 @@ module.exports = function (grunt) {
                 }
             },
 
-            jasmine: {}
+            jasmine: {
+                src: scripts,
+                options: {
+                    specs: 'tests/unit/**/*.js',
+                    vendor: ['app/libs.min.js'],
+                    display: 'full',
+                    summary: true,
+                    template: require('grunt-template-jasmine-istanbul'),
+                    templateOptions: {
+                        coverage: 'bin/coverage/coverage.json',
+                        report: 'bin/coverage',
+                        thresholds: {
+                            lines: 0,
+                            statements: 0,
+                            branches: 0,
+                            functions: 0
+                        }
+                    }
+                }
+            }
         });
 
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -112,5 +133,5 @@ module.exports = function (grunt) {
     grunt.registerTask('build-css', ['sass']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-js']);
-
+    grunt.registerTask('test', ['jasmine'])
 };

@@ -1,11 +1,11 @@
 package de.learnlib.weblearner.core.dao;
 
-import de.learnlib.weblearner.actions.WaitAction;
-import de.learnlib.weblearner.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.weblearner.core.entities.LearnerResult;
 import de.learnlib.weblearner.core.entities.Project;
 import de.learnlib.weblearner.core.entities.Symbol;
 import de.learnlib.weblearner.core.entities.SymbolAction;
+import de.learnlib.weblearner.actions.WaitAction;
+import de.learnlib.weblearner.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.weblearner.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;

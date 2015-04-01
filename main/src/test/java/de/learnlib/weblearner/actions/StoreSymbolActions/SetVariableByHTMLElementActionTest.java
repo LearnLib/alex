@@ -36,7 +36,7 @@ public class SetVariableByHTMLElementActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/StoreSymbolActions/SetVariableByHTMLElementTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/StoreSymbolActions/SetVariableByHTMLElementTestData.json").toURI());
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof SetVariableByHTMLElementAction);

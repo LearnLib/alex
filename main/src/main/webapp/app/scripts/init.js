@@ -38,6 +38,8 @@
     angular.module('weblearner.models', []);
 
     angular.module('weblearner')
+
+        // configure toast position
         .config(['ngToastProvider', function (ngToastProvider) {
             ngToastProvider.configure({
                 verticalPosition: 'top',
@@ -45,8 +47,17 @@
                 maxNumber: 1
             });
         }])
-        .run(['$rootScope', '_', 'paths', function ($rootScope, _, paths) {
+
+        .run(['$rootScope', '$state', '_', 'paths', function ($rootScope, $state, _, paths) {
+
+            // make some stuff available for use in templates
             $rootScope._ = _;
             $rootScope.paths = paths;
+
+            // workaround for go back in history button since ui.router does not support it
+            // save previous state in ui.router $state service
+            $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
+                $state.previous = fromState;
+            });
         }])
 }());

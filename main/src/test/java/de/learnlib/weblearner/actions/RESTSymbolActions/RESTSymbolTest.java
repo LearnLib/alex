@@ -2,7 +2,7 @@ package de.learnlib.weblearner.actions.RESTSymbolActions;
 
 import de.learnlib.weblearner.core.entities.ExecuteResult;
 import de.learnlib.weblearner.core.entities.Symbol;
-import de.learnlib.weblearner.core.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class RESTSymbolTest {
 
     @Test
     public void shouldReturnOkIfAllActionsRunSuccessfully() throws Exception {
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(action1.execute(connector)).willReturn(ExecuteResult.OK);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 
@@ -41,7 +41,7 @@ public class RESTSymbolTest {
 
     @Test
     public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(action1.execute(connector)).willReturn(ExecuteResult.FAILED);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 
@@ -53,7 +53,7 @@ public class RESTSymbolTest {
 
     @Test
     public void shouldReturnFailedIfOneActionsThrowsAnException() throws Exception {
-        MultiConnector connector = mock(MultiConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         given(action1.execute(connector)).willThrow(IllegalStateException.class);
         given(action2.execute(connector)).willReturn(ExecuteResult.OK);
 

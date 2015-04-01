@@ -12,11 +12,14 @@
      * should have a header with a title and a sub-title. The directive accepts two parameters 'title' and 'subTile'
      * which both only accept static values.
      *
-     * Use it like '<view-heading title="..." sub-title="..."></view-heading>'
+     * Is transcludable so that child elements can be added before the title. So just add buttons or additional text
+     * there.
+     *
+     * Use it like '<view-heading title="..." sub-title="..."> ... </view-heading>'
      *
      * The template can be found and changed at 'views/directives/view-heading.html'
      *
-     * @returns {{scope: {title: string, subTitle: string}, templateUrl: string}}
+     * @returns {{scope: {title: string, subTitle: string}, transclude: boolean, templateUrl: string}}
      */
     function viewHeading(paths) {
         return {
@@ -24,6 +27,7 @@
                 title: '@',
                 subTitle: '@'
             },
+            transclude: true,
             templateUrl: paths.views.DIRECTIVES + '/view-heading.html'
         }
     }

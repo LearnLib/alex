@@ -1,0 +1,5 @@
+{
+    "type" : "web_select",
+    "node" : "#input",
+    "value" : "Lorem Ipsum"
+}

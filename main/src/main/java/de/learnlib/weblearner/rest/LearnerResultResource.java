@@ -2,6 +2,7 @@ package de.learnlib.weblearner.rest;
 
 import de.learnlib.weblearner.core.dao.LearnerResultDAO;
 import de.learnlib.weblearner.utils.IdsList;
+import de.learnlib.weblearner.utils.JSONHelpers;
 import de.learnlib.weblearner.utils.ResourceErrorHandler;
 
 import javax.inject.Inject;

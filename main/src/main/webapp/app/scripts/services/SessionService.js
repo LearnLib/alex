@@ -1,4 +1,4 @@
-(function(){
+(function () {
     'use strict';
 
     angular
@@ -8,29 +8,25 @@
     SessionService.$inject = ['$rootScope', 'Project'];
 
     /**
-     * SessionService
-     *
      * The session that is used in this application to save data in the session storage of the browser to store data in
      * between page refreshes in the same tab. So the project doesn't have to be fetched from the server every time the
      * page refreshes
      *
      * @param $rootScope
+     * @param Project
      * @return {{project: {get: getProject, save: saveProject, remove: removeProject}}}
      * @constructor
      */
     function SessionService($rootScope, Project) {
 
         // the service
-        var service = {
+        return {
             project: {
                 get: getProject,
                 save: saveProject,
                 remove: removeProject
             }
         };
-        return service;
-
-        //////////
 
         /**
          * Get the stored project object from the session storage

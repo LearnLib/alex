@@ -36,7 +36,7 @@ public class SetVariableByJSONAttributeActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/StoreSymbolActions/SetVariableByJSONAttributeTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/StoreSymbolActions/SetVariableByJSONAttributeTestData.json").toURI());
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof SetVariableByJSONAttributeAction);

@@ -8,7 +8,8 @@
 
     function ActionModel(actionTypes) {
 
-        function Action() {
+        function Action(type) {
+            this.type = type;
             this.negated = false;
             this.ignoreFailure = false;
         }
@@ -17,19 +18,17 @@
         };
 
         Action.Web.SearchForText = function (value, isRegexp) {
-            Action.call(this);
-            this.type = actionTypes.web.SEARCH_FOR_TEXT;
+            Action.call(this, actionTypes.web.SEARCH_FOR_TEXT);
             this.value = value || null;
             this.regexp = isRegexp || false;
         };
 
         Action.Web.SearchForText.prototype.toString = function () {
-            return 'Search for ' + (this.regexp ? 'regexp' : 'string') + '"' + this.value + '"';
+            return 'Search for ' + (this.regexp ? 'regexp' : 'string') + ' "' + this.value + '"';
         };
 
         Action.Web.SearchForNode = function (value, isRegexp) {
-            Action.call(this);
-            this.type = actionTypes.web.SEARCH_FOR_NODE;
+            Action.call(this, actionTypes.web.SEARCH_FOR_NODE);
             this.value = value || null;
             this.regexp = isRegexp || false
         };
@@ -39,8 +38,7 @@
         };
 
         Action.Web.Clear = function (node) {
-            Action.call(this);
-            this.type = actionTypes.web.CLEAR;
+            Action.call(this, actionTypes.web.CLEAR);
             this.node = node || null;
         };
 
@@ -49,8 +47,7 @@
         };
 
         Action.Web.Click = function (node) {
-            Action.call(this);
-            this.type = actionTypes.web.CLICK;
+            Action.call(this, actionTypes.web.CLICK);
             this.node = node || null;
         };
 
@@ -58,9 +55,17 @@
             return 'Click on element "' + this.node + '"';
         };
 
+        Action.Web.ClickLinkByText = function (value) {
+            Action.call(this, actionTypes.web.CLICK_LINK_BY_TEXT);
+            this.value = value || null;
+        };
+
+        Action.Web.ClickLinkByText.prototype.toString = function () {
+            return 'Click on link with text "' + this.value + '"';
+        };
+
         Action.Web.Fill = function (node, value) {
-            Action.call(this);
-            this.type = actionTypes.web.FILL;
+            Action.call(this, actionTypes.web.FILL);
             this.node = node || null;
             this.value = value || null
         };
@@ -70,8 +75,7 @@
         };
 
         Action.Web.GoTo = function (url) {
-            Action.call(this);
-            this.type = actionTypes.web.GO_TO;
+            Action.call(this, actionTypes.web.GO_TO);
             this.url = url || null;
         };
 
@@ -80,13 +84,22 @@
         };
 
         Action.Web.Submit = function (node) {
-            Action.call(this);
-            this.type = actionTypes.web.SUBMIT;
+            Action.call(this, actionTypes.web.SUBMIT);
             this.node = node || null;
         };
 
         Action.Web.Submit.prototype.toString = function () {
             return 'Submit element "' + this.node + '"';
+        };
+
+        Action.Web.Select = function (node, value) {
+            Action.call(this, actionTypes.web.SELECT);
+            this.node = node || null;
+            this.value = value || null;
+        };
+
+        Action.Web.Select.prototype.toString = function () {
+            return 'Select value "' + this.value + '" from select input "' + this.node + '"';
         };
 
         //////////
@@ -95,8 +108,7 @@
         };
 
         Action.Rest.Call = function (method, url, data) {
-            Action.call(this);
-            this.type = actionTypes.rest.CALL_URL;
+            Action.call(this, actionTypes.rest.CALL_URL);
             this.method = method || null;
             this.url = url || null;
             this.data = data || null;
@@ -107,8 +119,7 @@
         };
 
         Action.Rest.CheckStatus = function (statusCode) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_STATUS;
+            Action.call(this, actionTypes.rest.CHECK_STATUS);
             this.status = statusCode || null;
         };
 
@@ -117,8 +128,7 @@
         };
 
         Action.Rest.CheckHeaderField = function (key, value, isRegexp) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_HEADER_FIELD;
+            Action.call(this, actionTypes.rest.CHECK_HEADER_FIELD);
             this.key = key || null;
             this.value = value || null;
             this.regexp = isRegexp || false;
@@ -129,8 +139,7 @@
         };
 
         Action.Rest.CheckHttpBodyText = function (value, isRegexp) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_HTTP_BODY_TEXT;
+            Action.call(this, actionTypes.rest.CHECK_HTTP_BODY_TEXT);
             this.value = value || null;
             this.regexp = isRegexp || false;
         };
@@ -140,8 +149,7 @@
         };
 
         Action.Rest.CheckAttributeExists = function (attribute) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_ATTRIBUTE_EXISTS;
+            Action.call(this, actionTypes.rest.CHECK_ATTRIBUTE_EXISTS);
             this.attribute = this.attribute = attribute || null;
         };
 
@@ -150,8 +158,7 @@
         };
 
         Action.Rest.CheckAttributeValue = function (attribute, value, isRegexp) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_ATTRIBUTE_VALUE;
+            Action.call(this, actionTypes.rest.CHECK_ATTRIBUTE_VALUE);
             this.attribute = attribute || null;
             this.value = value || null;
             this.regexp = isRegexp || false
@@ -162,8 +169,7 @@
         };
 
         Action.Rest.CheckAttributeType = function (attribute, jsonType) {
-            Action.call(this);
-            this.type = actionTypes.rest.CHECK_ATTRIBUTE_TYPE;
+            Action.call(this, actionTypes.rest.CHECK_ATTRIBUTE_TYPE);
             this.attribute = attribute || null;
             this.jsonType = jsonType || null;
         };
@@ -178,8 +184,7 @@
         };
 
         Action.Other.Wait = function (duration) {
-            Action.call(this);
-            this.type = actionTypes.other.WAIT;
+            Action.call(this, actionTypes.other.WAIT);
             this.duration = duration || 0;
         };
 
@@ -187,35 +192,14 @@
             return 'Wait for ' + this.duration + 'ms'
         };
 
-        Action.Other.DeclareCounter = function (name) {
-            Action.call(this);
-            this.type = actionTypes.other.DECLARE_COUNTER;
-            this.name = name || null;
-        };
-
-        Action.Other.DeclareCounter.prototype.toString = function () {
-            return 'Declare counter "' + this.name + '"';
-        };
-
-        Action.Other.DeclareVariable = function (name) {
-            Action.call(this);
-            this.type = actionTypes.other.DECLARE_VARIABLE;
-            this.name = name || null;
-        };
-
-        Action.Other.DeclareVariable.prototype.toString = function () {
-            return 'Declare variable "' + this.name + '"';
-        };
-
         Action.Other.ExecuteSymbol = function (symbolName, idRevisionPair) {
-            Action.call(this);
+            Action.call(this, actionTypes.other.EXECUTE_SYMBOL);
 
             var _symbol = {
                 name: symbolName || null,
                 revision: null
             };
 
-            this.type = actionTypes.other.EXECUTE_SYMBOL;
             this.symbolToExecute = idRevisionPair || {id: null, revision: null};
 
             this.setSymbol = function (symbol) {
@@ -239,8 +223,7 @@
         };
 
         Action.Other.IncrementCounter = function (name) {
-            Action.call(this);
-            this.type = actionTypes.other.INCREMENT_COUNTER;
+            Action.call(this, actionTypes.other.INCREMENT_COUNTER);
             this.name = name || null;
         };
 
@@ -249,8 +232,7 @@
         };
 
         Action.Other.SetCounter = function (name, value) {
-            Action.call(this);
-            this.type = actionTypes.other.SET_COUNTER;
+            Action.call(this, actionTypes.other.SET_COUNTER);
             this.name = name || null;
             this.value = value || null;
         };
@@ -260,10 +242,9 @@
         };
 
         Action.Other.SetVariable = function (name, value) {
-            Action.call(this);
-            this.type = actionTypes.other.SET_VARIABLE;
-            this.name = name;
-            this.value = value;
+            Action.call(this, actionTypes.other.SET_VARIABLE);
+            this.name = name || null;
+            this.value = value || '';
         };
 
         Action.Other.SetVariable.prototype.toString = function () {
@@ -271,8 +252,7 @@
         };
 
         Action.Other.SetVariableByJSONAttribute = function (name, jsonAttribute) {
-            Action.call(this);
-            this.type = actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE;
+            Action.call(this, actionTypes.other.SET_VARIABLE_BY_JSON_ATTRIBUTE);
             this.name = name || null;
             this.value = jsonAttribute || null;
         };
@@ -282,8 +262,7 @@
         };
 
         Action.Other.SetVariableByNode = function (name, xPath) {
-            Action.call(this);
-            this.type = actionTypes.other.SET_VARIABLE_BY_NODE;
+            Action.call(this, actionTypes.other.SET_VARIABLE_BY_NODE);
             this.name = name || null;
             this.value = xPath || null;
         };
@@ -310,6 +289,9 @@
                 case actionTypes.web.CLICK:
                     action = new Action.Web.Click(data.node);
                     break;
+                case actionTypes.web.CLICK_LINK_BY_TEXT:
+                    action = new Action.Web.ClickLinkByText(data.value);
+                    break;
                 case actionTypes.web.FILL:
                     action = new Action.Web.Fill(data.node, data.value);
                     break;
@@ -318,6 +300,9 @@
                     break;
                 case actionTypes.web.SUBMIT:
                     action = new Action.Web.Submit(data.node);
+                    break;
+                case actionTypes.web.SELECT:
+                    action = new Action.Web.Select(data.node);
                     break;
 
                 // rest actions
@@ -346,12 +331,6 @@
                 // other actions
                 case actionTypes.other.WAIT:
                     action = new Action.Other.Wait(data.duration);
-                    break;
-                case actionTypes.other.DECLARE_COUNTER:
-                    action = new Action.Other.DeclareCounter(data.name);
-                    break;
-                case actionTypes.other.DECLARE_VARIABLE:
-                    action = new Action.Other.DeclareVariable(data.name);
                     break;
                 case actionTypes.other.EXECUTE_SYMBOL:
                     action = new Action.Other.ExecuteSymbol(data.symbolToExecuteName, data.symbolToExecute);

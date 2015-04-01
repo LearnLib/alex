@@ -27,12 +27,26 @@ public class IdRevisionPair implements Serializable {
 
     /**
      * Advanced constructor which sets all the fields.
-     * @param id The ID.
-     * @param revision The revision.
+     *
+     * @param id
+     *         The ID.
+     * @param revision
+     *         The revision.
      */
     public IdRevisionPair(long id, long revision) {
         this.id = id;
         this.revision = revision;
+    }
+
+    /**
+     * Advanced constructor which sets all the fields according to a Symbol.
+     *
+     * @param symbol
+     *         The symbol to copy the ID and Revision from..
+     */
+    public IdRevisionPair(Symbol symbol) {
+        this.id = symbol.getId();
+        this.revision = symbol.getRevision();
     }
 
     /**

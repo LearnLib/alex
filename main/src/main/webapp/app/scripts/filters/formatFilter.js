@@ -10,16 +10,40 @@
     formatEqOracle.$inject = ['eqOracles'];
     formatAlgorithm.$inject = ['learnAlgorithms'];
 
+    /**
+     * The filter that formats something like 'A_CONSTANT_KEY' to 'A Constant Key'
+     *
+     * @returns {filter}
+     */
     function formatEnumKey() {
-        return function (string) {
+        return filter;
+
+        /**
+         * @param {string} string - The enum key in upper snake case format
+         * @returns {string}
+         */
+        function filter(string) {
             return string.toLowerCase().split('_').join(' ').replace(/\w\S*/g, function (txt) {
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             })
         }
     }
 
+
+    /**
+     * The filter to format a EQ type constant to something more readable
+     *
+     * @param {Object} eqOracles - The EQ oracle constant
+     * @returns {filter}
+     */
     function formatEqOracle(eqOracles) {
-        return function (type) {
+        return filter;
+
+        /**
+         * @param {string} type - The eq oracle type
+         * @returns {string}
+         */
+        function filter(type) {
             switch (type) {
                 case eqOracles.RANDOM:
                     return 'Random Word';
@@ -33,8 +57,20 @@
         }
     }
 
+    /**
+     * The filter to format a learn algorithm name to something more readable
+
+     * @param {Object} learnAlgorithms - The dictionary of learn algorithms
+     * @returns {filter}
+     */
     function formatAlgorithm(learnAlgorithms) {
-        return function (name) {
+        return filter
+
+        /**
+         * @param {string} name - the name of a learn algorithm
+         * @returns {string}
+         */
+        function filter(name) {
             switch (name) {
                 case learnAlgorithms.EXTENSIBLE_LSTAR:
                     return 'L*';

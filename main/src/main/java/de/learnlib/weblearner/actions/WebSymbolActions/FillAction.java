@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
 import de.learnlib.weblearner.core.learner.connectors.WebSiteConnector;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -83,7 +84,9 @@ public class FillAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.getElement(getNodeWithVariableValues()).sendKeys(getValueWithVariableValues());
+            WebElement element = connector.getElement(getNodeWithVariableValues());
+            element.clear();
+            element.sendKeys(getValueWithVariableValues());
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             return getFailedOutput();

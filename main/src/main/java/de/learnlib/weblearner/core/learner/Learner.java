@@ -4,7 +4,13 @@ import de.learnlib.weblearner.core.entities.LearnerConfiguration;
 import de.learnlib.weblearner.core.entities.LearnerResult;
 import de.learnlib.weblearner.core.entities.LearnerResumeConfiguration;
 import de.learnlib.weblearner.core.entities.Project;
+import de.learnlib.weblearner.core.entities.Symbol;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorContextHandlerFactory;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorContextHandler;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executors;
 
 /**
@@ -13,11 +19,19 @@ import java.util.concurrent.Executors;
  */
 public class Learner {
 
+    private ConnectorContextHandlerFactory contextHandlerFactory;
+
+    private ConnectorContextHandler contextHandler;
+
     /** Factory to create the {@link LearnerThread LearnerThreads}. */
     private LearnerThreadFactory learnThreadFactory;
 
     /** The current learning thread. Could be null. */
-    private LearnerThread<?> learnThread;
+    private LearnerThread learnThread;
+
+    public Learner(LearnerThreadFactory threadFactory) {
+        this(threadFactory, new ConnectorContextHandlerFactory());
+    }
 
     /**
      * Constructor that initialises only the LearnerThreadFactory.
@@ -25,8 +39,9 @@ public class Learner {
      * @param learnThreadFactory
      *         The factory to use.
      */
-    public Learner(LearnerThreadFactory learnThreadFactory) {
+    public Learner(LearnerThreadFactory learnThreadFactory, ConnectorContextHandlerFactory contextHandlerFactory) {
         this.learnThreadFactory = learnThreadFactory;
+        this.contextHandlerFactory = contextHandlerFactory;
     }
 
     /**
@@ -49,7 +64,8 @@ public class Learner {
 
         configuration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
 
-        learnThread = learnThreadFactory.createThread(project, configuration);
+        contextHandler = contextHandlerFactory.createContext(project);
+        learnThread = learnThreadFactory.createThread(contextHandler, project, configuration);
         Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
         thread.start();
     }
@@ -102,6 +118,18 @@ public class Learner {
         } else {
             return null;
         }
+    }
+
+    public List<String> readOutputs(Project project, Symbol resetSymbol, List<Symbol> symbols) {
+        if (contextHandler == null) {
+            contextHandler = contextHandlerFactory.createContext(project);
+        }
+        contextHandler.setResetSymbol(resetSymbol);
+
+        ConnectorManager connectors = contextHandler.createContext();
+
+        String[] objects = symbols.stream().map(s -> s.execute(connectors)).toArray(String[]::new);
+        return Arrays.asList(objects);
     }
 
 }

@@ -24,11 +24,13 @@
 		</div>
 
 		<div class="form-group">
-			<label class="control-label">EQ Oracle</label><br> <span
-				class="text-muted">Select how counter examples should be
-				found</span> <select class="form-control" ng-model="selectedEqOracle"
-                                     ng-options="(v|formatEqOracle) for (k,v) in eqOracles">
-				<option value="" disabled>select a method</option>
+            <label class="control-label">EQ Oracle</label><br>
+            <span class="text-muted">Select how counter examples should be found</span>
+            <select class="form-control"
+                    ng-model="selectedEqOracle"
+                    ng-change="setEqOracle()"
+                    ng-options="(v|formatEqOracle) for (k,v) in eqOracles">
+                <option value="" disabled>select an EQ-Oracle</option>
 			</select>
 		</div>
 
@@ -125,7 +127,7 @@
 	</div>
 
 	<div class="modal-footer">
-        <button class="btn btn-primary" type="submit">Ok</button>
+        <button class="btn btn-sm btn-primary" type="submit">Ok</button>
 	</div>
 
 </form>

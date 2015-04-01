@@ -17,7 +17,7 @@
             <input type="checkbox" ng-model="action.regexp"> Use Regular Expression
         </label>
     </div>
-    <a class="btn btn-default btn-sm" html-element-picker>
+    <a class="btn btn-default btn-sm" html-element-picker text="action.value">
         <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
     </a>
 
@@ -93,6 +93,28 @@
 <!-- END: CLICK -->
 
 
+<!-- BEGIN: CLICK_LINK_BY_TEXT -->
+<div ng-if="action.type === actionTypes.web.CLICK_LINK_BY_TEXT">
+
+    <h4><strong>Click Link By Its Text</strong></h4>
+
+    <p class="text-muted">
+        Finds a link element with a given text and clicks on it
+    </p>
+    <hr>
+
+    <div class="form-group">
+        <label class="control-label">Link Text</label>
+        <input class="form-control" type="text" placeholder="The text of the link" ng-model="action.value">
+    </div>
+    <a class="btn btn-default btn-sm" html-element-picker text="action.value">
+        <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
+    </a>
+
+</div>
+<!-- END: CLICK_LINK_BY_TEXT -->
+
+
 <!-- BEGIN: FILL -->
 <div ng-if="action.type === actionTypes.web.FILL">
 
@@ -111,7 +133,7 @@
         <label class="control-label">The value to fill the element with</label>
         <input class="form-control" type="text" placeholder="value" ng-model="action.value">
     </div>
-    <a class="btn btn-default btn-sm" html-element-picker model="action.node">
+    <a class="btn btn-default btn-sm" html-element-picker model="action.node" text="action.value">
         <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
     </a>
 
@@ -158,6 +180,33 @@
 
 </div>
 <!-- END: SUBMIT -->
+
+
+<!-- BEGIN: SELECT -->
+<div ng-if="action.type === actionTypes.web.SELECT">
+
+    <h4><strong>Select value</strong></h4>
+
+    <p class="text-muted">
+        Select a value from a select input
+    </p>
+    <hr>
+
+    <div class="form-group">
+        <label class="control-label">CSS selector</label>
+        <input class="form-control" type="text" placeholder="CSS selector" ng-model="action.node">
+    </div>
+    <a class="btn btn-default btn-sm" html-element-picker model="action.node">
+        <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
+    </a>
+
+    <div class="form-group">
+        <label class="control-label">Value</label>
+        <input class="form-control" type="text" placeholder="Selected value" ng-model="action.value">
+    </div>
+
+</div>
+<!-- END: SELECT -->
 
 
 <!-- BEGIN: CALL_URL -->
@@ -341,42 +390,6 @@
 <!-- END: WAIT -->
 
 
-<!-- BEGIN: DECLARE_COUNTER -->
-<div ng-if="action.type === actionTypes.other.DECLARE_COUNTER">
-    <h4><strong>Declare Counter</strong></h4>
-
-    <p class="text-muted">
-        Declare a counter variable that can be used in other actions
-    </p>
-    <hr>
-    <label>Name</label>
-
-    <div class="form-group">
-        <input type="text" class="form-control" ng-model="action.name"
-               placeholder="The name of the counter">
-    </div>
-</div>
-<!-- END: DECLARE_COUNTER -->
-
-
-<!-- BEGIN: DECLARE_VARIABLE -->
-<div ng-if="action.type === actionTypes.other.DECLARE_VARIABLE">
-    <h4><strong>Declare Variable</strong></h4>
-
-    <p class="text-muted">
-        Declare a variable that can be used in other actions
-    </p>
-    <hr>
-    <label>Name</label>
-
-    <div class="form-group">
-        <input type="text" class="form-control" ng-model="action.name"
-               placeholder="The name of the variable">
-    </div>
-</div>
-<!-- END: DECLARE_VARIABLE -->
-
-
 <!-- BEGIN: EXECUTE_SYMBOL -->
 <div ng-if="action.type === actionTypes.other.EXECUTE_SYMBOL">
     <h4><strong>Execute Symbol</strong></h4>
@@ -413,7 +426,7 @@
     <h4><strong>Increment Counter</strong></h4>
 
     <p class="text-muted">
-        Increment an <strong>already declared</strong> counter variable
+        Increment a counter variable
     </p>
     <hr>
     <label>Name</label>
@@ -431,7 +444,7 @@
     <h4><strong>Set Counter</strong></h4>
 
     <p class="text-muted">
-        Set the value of an <strong>already declared</strong> counter variable
+        Set the value of a counter variable
     </p>
     <hr>
     <label>Name</label>
@@ -454,7 +467,7 @@
     <h4><strong>Set Variable</strong></h4>
 
     <p class="text-muted">
-        Set the value of an <strong>already declared</strong> variable
+        Set the value of a variable
     </p>
     <hr>
     <label>Name</label>
@@ -477,7 +490,7 @@
     <h4><strong>Set Variable By JSON Attribute</strong></h4>
 
     <p class="text-muted">
-        Set the value of an <strong>already declared</strong> variable to the content of a JSON
+        Set the value of a variable to the content of a JSON
         attribute
     </p>
     <hr>
@@ -501,7 +514,7 @@
     <h4><strong>Set Variable By Node Value</strong></h4>
 
     <p class="text-muted">
-        Set the value of an <strong>already declared</strong> variable to the content of a HTML element
+        Set the value of a variable to the content of a HTML element
     </p>
     <hr>
     <label>Name</label>
@@ -515,6 +528,10 @@
     <div class="form-group">
         <input class="form-control" ng-model="action.value" placeholder="The CSS3 XPath to the element">
     </div>
+
+    <a class="btn btn-default btn-sm" html-element-picker model="action.value">
+        <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
+    </a>
 </div>
 <!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->
 

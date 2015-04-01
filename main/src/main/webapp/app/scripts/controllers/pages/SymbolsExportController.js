@@ -5,7 +5,7 @@
         .module('weblearner.controller')
         .controller('SymbolsExportController', SymbolsExportController);
 
-    SymbolsExportController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService'];
+    SymbolsExportController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService', 'actionTypes'];
 
     /**
      * The controller that handles the export of symbols. The corresponding template is at
@@ -15,9 +15,10 @@
      * @param Session
      * @param SymbolGroup
      * @param SelectionService
+     * @param actionTypes
      * @constructor
      */
-    function SymbolsExportController($scope, Session, SymbolGroup, SelectionService) {
+    function SymbolsExportController($scope, Session, SymbolGroup, SelectionService, actionTypes) {
 
         // the project that is saved in session storage
         var _project = Session.project.get();
@@ -48,15 +49,19 @@
          *
          * @returns {*} - The list of downloadable symbols without unneeded properties
          */
-        $scope.getSelectedSymbols = function () {
+        $scope.getDownloadableSymbols = function () {
             var selectedSymbols = angular.copy(SelectionService.getSelected($scope.allSymbols));
             SelectionService.removeSelection(selectedSymbols);
             _.forEach(selectedSymbols, function (symbol) {
-                delete symbol.id;
                 delete symbol.revision;
                 delete symbol.project;
                 delete symbol.group;
                 delete symbol.hidden;
+                _.forEach(symbol.actions, function (action) {
+                    if (action.type === actionTypes.EXECUTE_SYMBOL) {
+                        action.symbolToExecute.revision = 1;
+                    }
+                })
             });
             return selectedSymbols;
         };

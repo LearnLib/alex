@@ -126,7 +126,7 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
         if (typeInBody != null && typeInBody.equals(jsonType.getRelatedType())) {
             return getSuccessOutput();
         } else {
-            return  ExecuteResult.FAILED;
+            return  getFailedOutput();
         }
     }
 

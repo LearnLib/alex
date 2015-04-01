@@ -7,9 +7,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.weblearner.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,11 +59,11 @@ public class LearnerResult implements Serializable {
         private long duration;
 
         /** The amount of SUL resets if available. Otherwise -1. */
-        private int eqsUsed;
+        private long eqsUsed;
 
-        private int mqsUsed;
+        private long mqsUsed;
 
-        private int symbolsUsed;
+        private long symbolsUsed;
 
         public Statistics() {
             this.startTime = new Date(0);
@@ -110,7 +112,7 @@ public class LearnerResult implements Serializable {
          *
          * @return The amount of resets during the learn step.
          */
-        public int getEqsUsed() {
+        public long getEqsUsed() {
             return eqsUsed;
         }
 
@@ -120,23 +122,23 @@ public class LearnerResult implements Serializable {
          * @param eqsUsed
          *         The amount of resets during the learn step.
          */
-        public void setEqsUsed(int eqsUsed) {
+        public void setEqsUsed(long eqsUsed) {
             this.eqsUsed = eqsUsed;
         }
 
-        public int getMqsUsed() {
+        public long getMqsUsed() {
             return mqsUsed;
         }
 
-        public void setMqsUsed(int mqsUsed) {
+        public void setMqsUsed(long mqsUsed) {
             this.mqsUsed = mqsUsed;
         }
 
-        public int getSymbolsUsed() {
+        public long getSymbolsUsed() {
             return symbolsUsed;
         }
 
-        public void setSymbolsUsed(int symbolsUsed) {
+        public void setSymbolsUsed(long symbolsUsed) {
             this.symbolsUsed = symbolsUsed;
         }
     }
@@ -171,6 +173,8 @@ public class LearnerResult implements Serializable {
 
     /** The hypothesis of the result. */
     private CompactMealyMachineProxy hypothesis;
+
+    private DefaultQuery<String, Word<String>> counterExample;
 
     /** This is an optional property and can contain things like the internal data structure. */
     private String algorithmInformation;
@@ -409,6 +413,27 @@ public class LearnerResult implements Serializable {
         this.jsonChanged = true;
     }
 
+    @JsonIgnore
+    @Transient
+    public DefaultQuery<String, Word<String>> getCounterExample() {
+        return counterExample;
+    }
+
+    @JsonProperty("counterExample")
+    @Transient
+    public String getCounterExampleAsString() {
+        if (counterExample == null) {
+            return "";
+        } else {
+            return counterExample.toString();
+        }
+    }
+
+    public void setCounterExample(DefaultQuery<String, Word<String>> counterExample) {
+        this.counterExample = counterExample;
+        this.jsonChanged = true;
+    }
+
     @Column(length = Integer.MAX_VALUE)
     public String getAlgorithmInformation() {
         return algorithmInformation;
@@ -471,6 +496,7 @@ public class LearnerResult implements Serializable {
             setConfiguration(newResult.getConfiguration());
             setSigma(newResult.getSigma());
             setHypothesis(newResult.getHypothesis());
+            setCounterExample(newResult.getCounterExample());
             setAlgorithmInformation(newResult.getAlgorithmInformation());
 
             this.json = json;

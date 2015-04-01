@@ -12,7 +12,7 @@
                         </button>
                         <ul class="dropdown-menu pull-left" role="menu">
                             <li>
-                                <a href learn-result-details-modal-handle result="getCurrentStep()">
+                                <a href learn-result-details-modal-handle result="results[pointer]">
                                     <i class="fa fa-info fa-fw"></i> Details
                                 </a>
                             </li>
@@ -21,14 +21,14 @@
                                 <a href download-svg ancestor-or-element="#hypothesis-panel-{{index}}">
                                     <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
                                 </a>
-                                <a href download-as-json data="getCurrentStep().hypothesis">
+                                <a href download-as-json data="results[pointer].hypothesis">
                                     <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
                                 </a>
                             </li>
                         </ul>
                     </div>
 
-                    <button class="btn btn-default btn-xs" open-hypothesis-layout-settings-modal
+                    <button class="btn btn-default btn-xs" hypothesis-layout-settings-modal-handle
                             layout-settings="layoutSettings">
                         <i class="fa fa-sliders fa-fw"></i> Layout
                     </button>
@@ -72,7 +72,11 @@
     <div class="hypothesis-panel" id="hypothesis-panel-{{index}}">
 
         <hypothesis id="hypothesis" test="results[pointer]" layout-settings="layoutSettings"
-                    ng-if="mode === modes.HYPOTHESIS" && pointer=== results.length - 1></hypothesis>
+                    ng-if="mode === modes.HYPOTHESIS && pointer === results.length - 1"
+                    is-selectable="true"></hypothesis>
+
+        <hypothesis id="hypothesis" test="results[pointer]" layout-settings="layoutSettings"
+                    ng-if="mode === modes.HYPOTHESIS && pointer !== results.length - 1"></hypothesis>
 
         <observation-table data="results[pointer].algorithmInformation"
                            ng-if="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR">

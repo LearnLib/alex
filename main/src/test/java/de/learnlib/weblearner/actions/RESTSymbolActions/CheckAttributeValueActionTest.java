@@ -2,6 +2,7 @@ package de.learnlib.weblearner.actions.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
+import de.learnlib.weblearner.core.entities.Project;
 import de.learnlib.weblearner.core.learner.connectors.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,8 @@ import static org.mockito.BDDMockito.given;
 @RunWith(MockitoJUnitRunner.class)
 public class CheckAttributeValueActionTest {
 
+    private static final Long PROJECT_ID = 42L;
+    
     @Mock
     private WebServiceConnector connector;
 
@@ -28,6 +31,7 @@ public class CheckAttributeValueActionTest {
     @Before
     public void setUp() {
         c = new CheckAttributeValueAction();
+        c.setProject(new Project(PROJECT_ID));
         c.setAttribute("awesome_field");
         c.setValue("Hello World!");
         c.setRegexp(false);
@@ -48,7 +52,7 @@ public class CheckAttributeValueActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        String path = "/entities/restsymbolactions/CheckAttributeValueTestData.json";
+        String path = "/actions/restsymbolactions/CheckAttributeValueTestData.json";
         File file = new File(getClass().getResource(path).toURI());
         RESTSymbolAction obj = mapper.readValue(file, RESTSymbolAction.class);
 

@@ -1,13 +1,13 @@
 <div view-heading
-     title="Symbol Upload"
+     title="Symbols Upload"
      sub-title="If you already have a *.json file with symbols, you can import them here to this project">
 </div>
 
 <div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}" ng-if="symbols.length > 0">
     <div class="container">
 
-        <div class="pull-left" style="margin-right: 16px" selectable items="symbols">
-            <input type="checkbox" selectable-item-checkbox>
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" selection-checkbox-all items="symbols">
         </div>
 
         <div class="pull-right">
@@ -22,27 +22,61 @@
 <div class="view-body">
     <div class="container">
 
-        <div file-dropzone on-loaded="fileLoaded" class="alert alert-info">
-            Drag and drop *.json file here
+        <div ng-if="symbols.length === 0">
+            <div file-dropzone on-loaded="fileLoaded" class="alert alert-info">
+                Drag and drop *.json file here
+            </div>
+            <hr>
         </div>
 
-        <hr>
+        <div class="alert alert-info alert-condensed" ng-show="symbols.length > 0">
+            <i class="fa fa-fw fa-info"></i>
+            For symbols with actions that invoke other symbols, please make sure you adjust the references after
+            uploading them
+        </div>
 
-        <div selectable items="symbols" ng-if="symbols.length > 0">
-            <div selectable-list>
-                <div selectable-list-item ng-repeat="symbol in symbols">
+        <div class="selectable-list">
+            <div ng-repeat="symbol in symbols"
+                 selectable-list-item
+                 selection-model
+                 selection-model-type="checkbox"
+                 selection-model-selected-attribute="_selected"
+                 selection-model-mode="multiple"
+                 selection-model-selected-items="selectedSymbols"
+                 selection-model-cleanup-strategy="deselect">
 
-                    <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
-
-                    <div class="text-muted">
-                        <span ng-bind="symbol.actions.length"></span> Actions <i class="fa fa-edit"></i>
-                    </div>
-
+                <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover ng-if="$index !== 0">
+                    <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <ul class="dropdown-menu pull-left" role="menu">
+                        <li>
+                            <a href ng-click="restoreRevision(revision)">
+                                <i class="fa fa-history fa-fw"></i> Restore
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+
+                <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
+
+                <p class="text-muted">
+                    <a href ng-click="symbol._collapsed = !symbol._collapsed">
+                        <span ng-bind="symbol.actions.length"></span>
+                        Actions
+                        <i class="fa fa-fw"
+                           ng-class="symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
+                    </a>
+
+                <ol collapse="!symbol._collapsed">
+                    <li ng-repeat="action in symbol.actions">
+                        {{action.toString()}}
+                    </li>
+                </ol>
+                </p>
+
             </div>
         </div>
 
     </div>
 </div>
-
-<div class="container">

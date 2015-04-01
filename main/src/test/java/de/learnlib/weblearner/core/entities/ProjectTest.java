@@ -57,7 +57,7 @@ public class ProjectTest {
     public void shouldBeAbleToDeserializeTheTestData() throws URISyntaxException, IOException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/ProjectTestData.json").toURI());
+        File file = new File(getClass().getResource("/core/entities/ProjectTestData.json").toURI());
         Project p = mapper.readValue(file, Project.class);
 
         assertEquals("Test Project", p.getName());

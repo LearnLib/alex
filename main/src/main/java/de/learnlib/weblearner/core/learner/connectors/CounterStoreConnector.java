@@ -1,60 +1,77 @@
 package de.learnlib.weblearner.core.learner.connectors;
 
+import de.learnlib.weblearner.core.dao.CounterDAO;
+import de.learnlib.weblearner.core.dao.CounterDAOImpl;
+import de.learnlib.weblearner.core.entities.Counter;
+import de.learnlib.weblearner.core.entities.Project;
+import org.jvnet.hk2.annotations.Service;
+
+import javax.inject.Inject;
+import javax.ws.rs.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class CounterStoreConnector implements Connector {
 
-    private Map<String, Integer> store;
+    private CounterDAO counterDAO;
 
     public CounterStoreConnector() {
-        this.store = new HashMap<>();
+        this(new CounterDAOImpl());
     }
 
-    public void clear() {
-        store = new HashMap<>();
+    public CounterStoreConnector(CounterDAO counterDAO) {
+        this.counterDAO = counterDAO;
     }
 
-    public void declare(String name) throws IllegalArgumentException {
-        if (store.containsKey(name)) {
-            throw new IllegalArgumentException("Counter already declared.");
+    @Override
+    public void reset() {
+        // nothing to do here
+    }
+
+    public void set(Long projectId, String name, Integer value) {
+        Counter counter;
+        try {
+            counter = counterDAO.get(projectId, name);
+            counter.setValue(value);
+            counterDAO.update(counter);
+        } catch (NoSuchElementException e) {
+            createCounter(projectId, name, value);
         }
-        store.put(name, 0);
     }
 
-    public void set(String name, Integer value) throws IllegalStateException {
-        if (!store.containsKey(name)) {
-            throw new IllegalStateException("A counter must be declared before the first use.");
+    public void reset(Long projectId, String name) throws IllegalStateException {
+        set(projectId, name, 0);
+    }
+
+    public void increment(Long projectId, String name) throws IllegalStateException {
+        Counter counter;
+        try {
+            counter = counterDAO.get(projectId, name);
+            counter.setValue(counter.getValue() + 1);
+            counterDAO.update(counter);
+        } catch (NoSuchElementException e) {
+            createCounter(projectId, name, 1);
         }
-        store.put(name, value);
     }
 
-    public void reset(String name) throws IllegalStateException {
-        if (!store.containsKey(name)) {
-            throw new IllegalStateException("A counter must be declared before the first use.");
+    public Integer get(Long projectId, String name) throws IllegalStateException {
+        try {
+            Counter counter;
+            counter = counterDAO.get(projectId, name);
+            return counter.getValue();
+        } catch (NoSuchElementException e) {
+            throw new IllegalStateException("The counter '" + name + "' was not set and has no value!");
         }
-        store.put(name, 0);
     }
 
-    public void increment(String name) throws IllegalStateException {
-        Integer currentValue = store.get(name);
-        if (currentValue == null) {
-            throw new IllegalStateException("A counter must be declared before the first use.");
-        }
-        store.put(name, currentValue + 1);
+    void createCounter(Long projectId, String name, Integer value) {
+        Counter counter;
+        counter = new Counter();
+        counter.setProject(new Project(projectId));
+        counter.setName(name);
+        counter.setValue(value);
+        counterDAO.create(counter);
     }
-
-    public boolean contains(String name) {
-        return store.containsKey(name);
-    }
-
-    public Integer get(String name) throws IllegalStateException {
-        Integer result = store.get(name);
-        if (result == null) {
-            throw new IllegalStateException("A counter must be declared before the first use.");
-        }
-        return result;
-    }
-
 
 }

@@ -3,7 +3,7 @@ package de.learnlib.weblearner.actions.RESTSymbolActions;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
 import de.learnlib.weblearner.core.entities.SymbolAction;
-import de.learnlib.weblearner.core.learner.connectors.MultiConnector;
+import de.learnlib.weblearner.core.learner.connectors.ConnectorManager;
 import de.learnlib.weblearner.core.learner.connectors.WebServiceConnector;
 import de.learnlib.weblearner.utils.SearchHelper;
 
@@ -23,17 +23,17 @@ public abstract class RESTSymbolAction extends SymbolAction {
     private static final long serialVersionUID = -897337751104947135L;
 
     @Transient
-    private MultiConnector multiConnector;
+    private ConnectorManager connectorManager;
 
     @Override
-    public ExecuteResult execute(MultiConnector connector) {
-        this.multiConnector = connector;
+    public ExecuteResult execute(ConnectorManager connector) {
+        this.connectorManager = connector;
         return execute(connector.getConnector(WebServiceConnector.class));
     }
 
     protected abstract ExecuteResult execute(WebServiceConnector connector);
 
     protected String insertVariableValues(String text) {
-        return SearchHelper.insertVariableValues(multiConnector, text);
+        return SearchHelper.insertVariableValues(connectorManager, project.getId(), text);
     }
 }

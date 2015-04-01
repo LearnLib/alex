@@ -8,14 +8,22 @@
     symbolGroupEditModalHandle.$inject = ['$modal', 'paths'];
 
     /**
+     * The directive that handles the opening of the modal for editing or deleting a symbol group. Can only be used as
+     * attribute and attaches a click event to the source element that opens the modal.
      *
-     * @param $modal
-     * @param paths
+     * Attribute 'group' - The model for the symbol group
+     * Attribute 'onUpdated' - The callback function with two parameters. First the updated and second the old group
+     * Attribute 'onDeleted' - The callback function with one parameter - the deleted group object
+     *
+     * Use: '<button symbol-group-edit-modal group="..." on-updated="..." on-deleted="...">Click Me!</button>'
+     *
+     * @param $modal - The ui.bootstrap $modal service
+     * @param paths - The applications paths constant
      * @returns {{scope: {group: string, onUpdated: string, onDeleted: string}, link: link}}
      */
     function symbolGroupEditModalHandle($modal, paths) {
-
-        var directive = {
+        return {
+            restrict: 'A',
             scope: {
                 group: '=',
                 onUpdated: '&',
@@ -23,15 +31,8 @@
             },
             link: link
         };
-        return directive;
 
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         */
         function link(scope, el, attrs) {
-
             el.on('click', handleModal);
 
             function handleModal() {

@@ -2,6 +2,7 @@ package de.learnlib.weblearner.actions.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
+import de.learnlib.weblearner.core.entities.Project;
 import de.learnlib.weblearner.core.entities.SymbolAction;
 import de.learnlib.weblearner.core.learner.connectors.WebServiceConnector;
 import org.junit.Before;
@@ -25,6 +26,7 @@ public class CallActionTest {
     public static final String TEST_BASE_URL = "http://example.com/api";
     public static final String TEST_API_PATH = "/test";
     public static final String TEST_API_URL = TEST_BASE_URL + TEST_API_PATH;
+    private static final Long PROJECT_ID = 42L;
 
     @Mock
     private WebServiceConnector connector;
@@ -34,6 +36,7 @@ public class CallActionTest {
     @Before
     public void setUp() {
         c = new CallAction();
+        c.setProject(new Project(PROJECT_ID));
         c.setMethod(CallAction.Method.GET);
         c.setUrl(TEST_API_PATH);
         c.setData("{}");
@@ -54,7 +57,7 @@ public class CallActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/restsymbolactions/CallActionTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/restsymbolactions/CallActionTestData.json").toURI());
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof CallAction);

@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -18,11 +18,16 @@ public class SampleEQOracleProxyTest {
 
     @Before
     public void setUp() {
-        SampleEQOracleProxy.SampleCounterExample counterExample = new SampleEQOracleProxy.SampleCounterExample();
-        counterExample.setInput(Arrays.asList(new String[]{"input1", "input2"}));
-        counterExample.setOutput(Arrays.asList(new String[]{"output1", "output2"}));
+        List<SampleEQOracleProxy.InputOutputPair> counterExample1 = new LinkedList<>();
+        counterExample1.add(new SampleEQOracleProxy.InputOutputPair("input1", "output1"));
+        counterExample1.add(new SampleEQOracleProxy.InputOutputPair("input2", "output2"));
+        List<SampleEQOracleProxy.InputOutputPair> counterExample2 = new LinkedList<>();
+        counterExample2.add(new SampleEQOracleProxy.InputOutputPair("input3", "output3"));
+        counterExample2.add(new SampleEQOracleProxy.InputOutputPair("input4", "output4"));
+
         eqOracle = new SampleEQOracleProxy();
-        eqOracle.addCounterExample(counterExample);
+        eqOracle.addCounterExample(counterExample1);
+        eqOracle.addCounterExample(counterExample2);
     }
 
     @Test
@@ -30,8 +35,10 @@ public class SampleEQOracleProxyTest {
         ObjectMapper mapper = new ObjectMapper();
         String actualJSON = mapper.writeValueAsString(eqOracle);
 
-        String expectedJSON  = "{\"type\":\"sample\",\"counterExamples\":[{\"input\":[\"input1\",\"input2\"],"
-                                                                         + "\"output\":[\"output1\",\"output2\"]}]}";
+        String expectedJSON  = "{\"type\":\"sample\",\"counterExamples\":["
+                                    + "[{\"input\":\"input1\",\"output\":\"output1\"},{\"input\":\"input2\",\"output\":\"output2\"}],"
+                                    + "[{\"input\":\"input3\",\"output\":\"output3\"},{\"input\":\"input4\",\"output\":\"output4\"}]"
+                                + "]}";
         assertEquals(expectedJSON, actualJSON);
     }
 
@@ -42,24 +49,9 @@ public class SampleEQOracleProxyTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void ensureThatIfTheParametersAreInvalidAnExceptionWillBeThrown() {
-        SampleEQOracleProxy.SampleCounterExample counterExample = new SampleEQOracleProxy.SampleCounterExample();
-        counterExample.setInput(Arrays.asList(new String[]{"input1", "input2"}));
-        counterExample.setOutput(Arrays.asList(new String[]{"output1"}));
-        eqOracle.addCounterExample(counterExample);
+        eqOracle.getCounterExamples().clear();
 
         eqOracle.checkParameters(); // should fail
     }
 
-    @Test
-    public void shouldCreateEqOracleWithEmptyInputAndOutputFromJSON() throws IOException {
-        String json = "{ \"type\": \"sample\", \"counterExamples\": [{ \"input\": [], \"output\": [] }] }";
-
-        ObjectMapper mapper = new ObjectMapper();
-        AbstractEquivalenceOracleProxy eqOracle = mapper.readValue(json, AbstractEquivalenceOracleProxy.class);
-        assertTrue(eqOracle instanceof SampleEQOracleProxy);
-        SampleEQOracleProxy sampleEQOracle = (SampleEQOracleProxy) eqOracle;
-        assertEquals(1, sampleEQOracle.getCounterExamples().size());
-        assertEquals(0, sampleEQOracle.getCounterExamples().get(0).getInput().size());
-        assertEquals(0, sampleEQOracle.getCounterExamples().get(0).getOutput().size());
-    }
 }

@@ -2,6 +2,7 @@ package de.learnlib.weblearner.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.weblearner.core.entities.ExecuteResult;
+import de.learnlib.weblearner.core.entities.Project;
 import de.learnlib.weblearner.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,11 +23,13 @@ import static org.mockito.Mockito.when;
 
 public class SubmitActionTest {
 
+    private static final Long PROJECT_ID = 42L;
     private SubmitAction s;
 
     @Before
     public void setUp() {
         s = new SubmitAction();
+        s.setProject(new Project(PROJECT_ID));
         s.setNode("#node");
     }
 
@@ -43,7 +46,7 @@ public class SubmitActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/entities/websymbolactions/SubmitTestData.json").toURI());
+        File file = new File(getClass().getResource("/actions/websymbolactions/SubmitTestData.json").toURI());
         WebSymbolAction obj = mapper.readValue(file, WebSymbolAction.class);
 
         assertTrue(obj instanceof SubmitAction);
