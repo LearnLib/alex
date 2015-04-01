@@ -53,7 +53,6 @@
             var selectedSymbols = angular.copy(SelectionService.getSelected($scope.allSymbols));
             SelectionService.removeSelection(selectedSymbols);
             _.forEach(selectedSymbols, function (symbol) {
-                //delete symbol.id;
                 delete symbol.revision;
                 delete symbol.project;
                 delete symbol.group;

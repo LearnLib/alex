@@ -58,12 +58,13 @@
         $scope.uploadSelectedSymbols = function () {
             if ($scope.selectedSymbols.length > 0) {
                 var symbols = angular.copy($scope.selectedSymbols);
+                symbols = _.sortBy(symbols, function (n) {
+                    return n.id
+                });
                 _.forEach(symbols, function (symbol) {
                     delete symbol._collapsed;
                     delete symbol._selected;
-                });
-                symbols = _.sortBy(symbols, function (n) {
-                    return n.id
+                    delete symbol.id;
                 });
                 // TODO: delete ids
                 Symbol.Resource.createSome(project.id, symbols)
