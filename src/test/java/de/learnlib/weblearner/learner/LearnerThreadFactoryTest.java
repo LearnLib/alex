@@ -53,7 +53,7 @@ public class LearnerThreadFactoryTest {
 
     @Test
     public void shouldCreateThreadForWebSymbols() {
-        LearnerThread<?> thread = factory.createThread(contextHandler, project, learnerConfiguration);
+        LearnerThread thread = factory.createThread(contextHandler, project, learnerConfiguration);
 
         assertNotNull(thread);
     }
@@ -61,7 +61,7 @@ public class LearnerThreadFactoryTest {
     @Test
     public void shouldCreateThreadForRESTSymbols() {
         given(project.getBaseUrl()).willReturn(FAKE_URL);
-        LearnerThread<?> thread = factory.createThread(contextHandler, project, learnerConfiguration);
+        LearnerThread thread = factory.createThread(contextHandler, project, learnerConfiguration);
 
         assertNotNull(thread);
     }

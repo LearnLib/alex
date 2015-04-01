@@ -138,6 +138,11 @@
         <!-- LearnLib -->
         <dependency>
             <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-core</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
             <artifactId>learnlib-discrimination-tree</artifactId>
             <version>${learnlib.version}</version>
         </dependency>

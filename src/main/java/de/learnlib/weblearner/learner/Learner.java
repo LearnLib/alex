@@ -27,7 +27,7 @@ public class Learner {
     private LearnerThreadFactory learnThreadFactory;
 
     /** The current learning thread. Could be null. */
-    private LearnerThread<?> learnThread;
+    private LearnerThread learnThread;
 
     public Learner(LearnerThreadFactory threadFactory) {
         this(threadFactory, new ConnectorContextHandlerFactory());

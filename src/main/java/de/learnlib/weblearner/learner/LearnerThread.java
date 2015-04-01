@@ -7,13 +7,16 @@ import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
 import de.learnlib.api.SUL;
+import de.learnlib.cache.sul.SULCache;
 import de.learnlib.cache.sul.SULCaches;
 import de.learnlib.discriminationtree.DiscriminationTree;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.Mappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.oracles.DefaultQuery;
+import de.learnlib.oracles.ResetCounterSUL;
 import de.learnlib.oracles.SULOracle;
+import de.learnlib.oracles.SymbolCounterSUL;
 import de.learnlib.weblearner.dao.LearnerResultDAO;
 import de.learnlib.weblearner.entities.LearnAlgorithms;
 import de.learnlib.weblearner.entities.LearnerResult;
@@ -33,25 +36,20 @@ import java.util.List;
 /**
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests.
  * This class contains the actual learning loop.
- * 
- * @param <C> Type used in the Symbol to implement the symbol execution.
  */
-public class LearnerThread<C> extends Thread {
+public class LearnerThread extends Thread {
 
     /** Is the thread still running? */
     private boolean active;
 
     /** Mapper to match the Alphabet to the right symbols. */
-    private final SymbolMapper<C> symbolMapper;
-
-    /** The SUL the thread will learn. */
-    private  final SULWIthStatistics<ContextExecutableInput<String, ConnectorManager>, String, ConnectorManager> ceiSUL;
-
-    /** The context of the SUL. */
-    private final ConnectorContextHandler context;
+    private final SymbolMapper symbolMapper;
 
     /** The System Under Learning used to do the actual learning. */
     private final SUL<String, String> sul;
+    private SULCache<String, String> cachedSUL;
+    private final ResetCounterSUL<String, String>  resetCounterSUL;
+    private final SymbolCounterSUL<String, String> symbolCounterSUL;
 
     /** The DAO to remember the learn results. */
     private final LearnerResultDAO learnerResultDAO;
@@ -66,7 +64,10 @@ public class LearnerThread<C> extends Thread {
     private final Alphabet<String> sigma;
 
     /** The membership oracle. */
-    private final SULOracle<String, String> oracle;
+    private final SULOracle<String, String> mqOracle;
+
+    private DefaultQuery<String, Word<String>> counterExample;
+
 
     /**
      * Constructor to set the LearnerThread up.
@@ -82,53 +83,64 @@ public class LearnerThread<C> extends Thread {
         this.active = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
-        this.ceiSUL = new SULWIthStatistics<>(context);
-        this.context = context;
 
-        List<Symbol> symbols = result.getConfiguration().getSymbols();
-        Symbol[] symbolsArray = symbols.toArray(new Symbol[symbols.size()]);
-        this.symbolMapper = new SymbolMapper<>(symbolsArray);
+        Symbol[] symbolsArray = readSymbolArray(result);
+        this.symbolMapper = new SymbolMapper(symbolsArray);
         this.sigma = symbolMapper.getAlphabet();
         result.setSigma(sigma);
 
+        ContextExecutableInputSUL<ContextExecutableInput<String, ConnectorManager>, String, ConnectorManager> ceiSUL;
+        ceiSUL = new ContextExecutableInputSUL<>(context);
         SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
-        this.sul = SULCaches.createCache(this.sigma, mappedSUL);
+        this.cachedSUL = SULCaches.createCache(this.sigma, mappedSUL);
+        resetCounterSUL = new ResetCounterSUL<>("reset counter", this.cachedSUL);
+        symbolCounterSUL = new SymbolCounterSUL<>("symbol counter", resetCounterSUL);
+        this.sul = symbolCounterSUL;
 
-        oracle = new SULOracle<>(sul);
+        this.mqOracle = new SULOracle<>(sul);
 
         LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
-        this.learner = LearnerAlgorithmFactory.createLearner(algorithm, sigma, oracle);
+        this.learner = LearnerAlgorithmFactory.createLearner(algorithm, sigma, mqOracle);
     }
 
     /**
      * Advanced constructor to set the LearnerThread up.
+     * Most likly to be used when resuming a learn process.
      *
      * @param learnerResultDAO
      *         The DAO to persists the results.
      * @param result
      *         The result to update, including the proper configuration.
-     * @param context
-     *         The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
+     * @param existingSUL
+     *         The existing SULCache.
      * @param learner
      *         Don't create a new learner, instead use this one.
      * @param symbols
      *         The Symbols to use.
      */
-    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, ConnectorContextHandler context,
+    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, SULCache<String, String> existingSUL,
                          MealyLearner<String, String> learner, Symbol... symbols) {
         this.active = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
-        this.context = context;
-        this.ceiSUL = new SULWIthStatistics<>(context);
-        this.symbolMapper = new SymbolMapper<>(symbols);
-        this.sul = Mappers.apply(symbolMapper, ceiSUL);
 
+        this.symbolMapper = new SymbolMapper(symbols);
         this.sigma = symbolMapper.getAlphabet();
         result.setSigma(sigma);
-        this.oracle = new SULOracle<>(sul);
+
+        this.cachedSUL = existingSUL;
+        resetCounterSUL = new ResetCounterSUL<>("reset counter", this.cachedSUL);
+        symbolCounterSUL = new SymbolCounterSUL<>("symbol counter", resetCounterSUL);
+        this.sul = symbolCounterSUL;
+
+        this.mqOracle = new SULOracle<>(sul);
 
         this.learner = learner;
+    }
+
+    private Symbol[] readSymbolArray(LearnerResult result) {
+        List<Symbol> symbols = result.getConfiguration().getSymbols();
+        return symbols.toArray(new Symbol[symbols.size()]);
     }
 
     /**
@@ -149,13 +161,8 @@ public class LearnerThread<C> extends Thread {
         return result;
     }
 
-    /**
-     * Get the context used for the SUL.
-     *
-     * @return The current context.
-     */
-    public ConnectorContextHandler getContext() {
-        return context;
+    public SULCache<String, String> getCachedSUL() {
+        return cachedSUL;
     }
 
     /**
@@ -192,26 +199,33 @@ public class LearnerThread<C> extends Thread {
         do {
             shouldDoAnotherStep = learnOneStep();
         } while (continueLearning(shouldDoAnotherStep, maxStepCount));
+
+        counterExample = null;
     }
 
     private boolean learnOneStep() {
-        boolean shouldDoAnotherStep = false;
-
         result.getStatistics().setStartTime(new Date());
 
         if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
             learnFirstHypothesis();
-            shouldDoAnotherStep = true;
+            counterExample = findCounterExample();
+            result.setCounterExample(counterExample);
+            learnerResultDAO.create(result);
         } else {
-            DefaultQuery<String, Word<String>> counterExample = findCounterExample();
+            if (counterExample == null) {
+                counterExample = findCounterExample();
+                result.setCounterExample(counterExample);
+            }
 
             if (counterExample != null) {
                 refineHypothesis(counterExample);
-                shouldDoAnotherStep = true;
+                counterExample = findCounterExample();
+                result.setCounterExample(counterExample);
             }
             learnerResultDAO.update(result);
         }
 
+        boolean shouldDoAnotherStep = counterExample != null;
         return shouldDoAnotherStep;
     }
 
@@ -226,11 +240,10 @@ public class LearnerThread<C> extends Thread {
         learner.startLearning();
         result.createHypothesisFrom(learner.getHypothesisModel());
         rememberMetaData();
-        learnerResultDAO.create(result);
     }
 
     private DefaultQuery<String, Word<String>> findCounterExample() {
-        EquivalenceOracle randomWords = result.getConfiguration().getEqOracle().createEqOracle(oracle);
+        EquivalenceOracle randomWords = result.getConfiguration().getEqOracle().createEqOracle(mqOracle);
         result.getStatistics().setEqsUsed(result.getStatistics().getEqsUsed() + 1);
         return randomWords.findCounterExample(learner.getHypothesisModel(), sigma);
     }
@@ -245,8 +258,9 @@ public class LearnerThread<C> extends Thread {
         long startTime = result.getStatistics().getStartTime().getTime();
         long currentTime = new Date().getTime();
         result.getStatistics().setDuration(currentTime - startTime);
-        result.getStatistics().setMqsUsed(ceiSUL.getMqs());
-        result.getStatistics().setSymbolsUsed(ceiSUL.getSymbols());
+        //todo(alex.s): save #MQs and amount of symbol
+        result.getStatistics().setMqsUsed(resetCounterSUL.getStatisticalData().getCount());
+        result.getStatistics().setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount());
         saveInternalDataStructure();
     }
 

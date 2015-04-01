@@ -17,11 +17,8 @@ import java.util.Map;
 
 /**
  * Class to map the Symbols and their result to the values used in the learning process.
- *
- * @param <CI>
- *            The type of the Concrete Input used in the Symbols to implement the execution.
  */
-public class SymbolMapper<CI> implements Mapper<String, String, ContextExecutableInput<String, ConnectorManager>, String> {
+public class SymbolMapper implements Mapper<String, String, ContextExecutableInput<String, ConnectorManager>, String> {
 
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("learner");
