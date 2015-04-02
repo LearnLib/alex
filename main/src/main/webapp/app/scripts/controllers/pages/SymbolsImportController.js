@@ -58,15 +58,10 @@
         $scope.uploadSelectedSymbols = function () {
             if ($scope.selectedSymbols.length > 0) {
                 var symbols = angular.copy($scope.selectedSymbols);
-                symbols = _.sortBy(symbols, function (n) {
-                    return n.id
-                });
                 _.forEach(symbols, function (symbol) {
                     delete symbol._collapsed;
                     delete symbol._selected;
-                    delete symbol.id;
                 });
-                // TODO: delete ids
                 Symbol.Resource.createSome(project.id, symbols)
                     .then(function (createdSymbols) {
                         Toast.success('Symbols uploaded');
@@ -79,5 +74,38 @@
                     })
             }
         };
+
+        /**
+         * Changes the name and/or the abbreviation a symbol before uploading it to prevent naming conflicts in the
+         * database.
+         *
+         * @param {Symbol} updatedSymbol - The updated symbol
+         * @param {Symbol} oldSymbol - The old symbol
+         */
+        $scope.updateSymbol = function (updatedSymbol, oldSymbol) {
+            var symbol;
+
+            // check whether name or abbreviation already exist and don't update symbol
+            if (angular.equals(updatedSymbol, oldSymbol)) {
+                return
+            } else if (updatedSymbol.name !== oldSymbol.name &&
+                updatedSymbol.abbreviation === oldSymbol.abbreviation) {
+                if (_.where($scope.symbols, {name: updatedSymbol.name}).length > 0) {
+                    Toast.danger('Name <strong>' + updatedSymbol.name + '</strong> already exists');
+                    return;
+                }
+            } else if (updatedSymbol.abbreviation !== oldSymbol.abbreviation &&
+                updatedSymbol.name === oldSymbol.name) {
+                if (_.where($scope.symbols, {abbreviation: updatedSymbol.abbreviation}).length > 0) {
+                    Toast.danger('Abbreviation <strong>' + updatedSymbol.abbreviation + '</strong> already exists');
+                    return;
+                }
+            }
+
+            // update symbol in scope
+            symbol = _.find($scope.symbols, {name: oldSymbol.name});
+            symbol.name = updatedSymbol.name;
+            symbol.abbreviation = updatedSymbol.abbreviation;
+        }
     }
 }());

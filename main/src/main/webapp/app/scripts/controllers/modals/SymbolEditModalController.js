@@ -39,6 +39,15 @@
             // remove the selection from the symbol in case there is any
             SelectionService.removeSelection($scope.symbol);
 
+            // do not update on server
+            if (angular.isDefined(modalData.updateOnServer) && !modalData.updateOnServer) {
+                $modalInstance.close({
+                    new: $scope.symbol,
+                    old: copy
+                });
+                return;
+            }
+
             // update the symbol and close the modal dialog on success with the updated symbol
             Symbol.Resource.update($scope.symbol.project, $scope.symbol)
                 .then(function (updatedSymbol) {

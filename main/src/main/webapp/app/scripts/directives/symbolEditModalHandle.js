@@ -21,15 +21,15 @@
      */
     function symbolEditModalHandle($modal, paths) {
 
-        var directive = {
-            restrict: 'EA',
+        return {
+            restrict: 'A',
             scope: {
                 symbol: '=',
-                onUpdated: '&'
+                onUpdated: '&',
+                updateOnServer: '='
             },
             link: link
         };
-        return directive;
 
         /**
          * @param scope
@@ -37,7 +37,6 @@
          * @param attrs
          */
         function link(scope, el, attrs) {
-
             el.on('click', handleModal);
 
             function handleModal() {
@@ -47,7 +46,8 @@
                     resolve: {
                         modalData: function () {
                             return {
-                                symbol: scope.symbol.copy()
+                                symbol: scope.symbol.copy(),
+                                updateOnServer: scope.updateOnServer
                             };
                         }
                     }

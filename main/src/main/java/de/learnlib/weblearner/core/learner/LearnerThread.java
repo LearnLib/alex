@@ -100,7 +100,7 @@ public class LearnerThread extends Thread {
         this.mqOracle = new SULOracle<>(sul);
 
         LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
-        this.learner = algorithm.getFactory().createLearner(sigma, mqOracle);
+        this.learner = algorithm.createLearner(sigma, mqOracle);
     }
 
     /**
@@ -255,48 +255,22 @@ public class LearnerThread extends Thread {
     }
 
     private void rememberMetaData() {
-        long startTime = result.getStatistics().getStartTime().getTime();
+        LearnerResult.Statistics statistics = result.getStatistics();
+
+        long startTime = statistics.getStartTime().getTime();
         long currentTime = new Date().getTime();
-        result.getStatistics().setDuration(currentTime - startTime);
-        //todo(alex.s): save #MQs and amount of symbol
-        result.getStatistics().setMqsUsed(resetCounterSUL.getStatisticalData().getCount());
-        result.getStatistics().setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount());
-        saveInternalDataStructure();
-    }
+        statistics.setDuration(currentTime - startTime);
+        statistics.setMqsUsed(resetCounterSUL.getStatisticalData().getCount());
+        statistics.setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount());
 
-    private void saveInternalDataStructure() {
-        if (learner instanceof ExtensibleLStarMealy) {
-            StringBuilder observationTable = new StringBuilder();
-            new ObservationTableASCIIWriter<String, String>().write(((ExtensibleLStarMealy) learner).getObservationTable(), observationTable);
-            result.setAlgorithmInformation(observationTable.toString());
-        } else if (learner instanceof DTLearnerMealy) {
-            DiscriminationTree discriminationTree = ((DTLearnerMealy) learner).getDiscriminationTree();
-            DiscriminationTree.GraphView graphView = discriminationTree.graphView();
-            String treeAsJSON = DiscriminationTreeSerializer.toJSON(discriminationTree);
-            System.out.println("========================");
-            try {
-                GraphDOT.write(graphView, System.out, graphView.getGraphDOTHelper());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            result.setAlgorithmInformation(treeAsJSON);
-            System.out.println(result.getAlgorithmInformation());
-            System.out.println("========================");
-        } else if (learner instanceof TTTLearnerMealy) {
-            TTTLearnerMealy tttLearner = (TTTLearnerMealy) learner;
-            String treeAsJSON = TTTSerializer.toJSON(tttLearner.getDiscriminationTree());
-            de.learnlib.algorithms.ttt.base.DiscriminationTree.GraphView graphView = tttLearner.getDiscriminationTree().graphView();
-            System.out.println("========================");
-            try {
-                GraphDOT.write(graphView, System.out, graphView.getGraphDOTHelper());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            result.setAlgorithmInformation(treeAsJSON);
-            System.out.println(result.getAlgorithmInformation());
-            System.out.println("========================");
+        LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
+        String algorithmInformation;
+        try {
+            algorithmInformation = algorithm.getInternalData(learner);
+        } catch (IllegalStateException e) { // algorithm has no internal data to show
+            algorithmInformation = "";
         }
+        result.setAlgorithmInformation(algorithmInformation);
     }
-
 
 }

@@ -15,4 +15,12 @@
 
     <name>WebLearner - Annotations</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-core</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>

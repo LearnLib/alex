@@ -10,7 +10,7 @@
             <input type="checkbox" selection-checkbox-all items="symbols">
         </div>
 
-        <div class="pull-right">
+        <div class="pull-left">
             <button class="btn btn-xs btn-primary" ng-click="uploadSelectedSymbols()">
                 <i class="fa fa-upload fa-fw"></i> Upload
             </button>
@@ -45,18 +45,10 @@
                  selection-model-selected-items="selectedSymbols"
                  selection-model-cleanup-strategy="deselect">
 
-                <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover ng-if="$index !== 0">
-                    <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <ul class="dropdown-menu pull-left" role="menu">
-                        <li>
-                            <a href ng-click="restoreRevision(revision)">
-                                <i class="fa fa-history fa-fw"></i> Restore
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                <button class="btn btn-xs btn-default btn-icon pull-right"
+                        symbol-edit-modal-handle symbol="symbol" on-updated="updateSymbol" update-on-server="false">
+                    <i class="fa fa-edit"></i>
+                </button>
 
                 <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
 
