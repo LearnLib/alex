@@ -52,11 +52,15 @@
         $scope.getDownloadableSymbols = function () {
             var selectedSymbols = angular.copy(SelectionService.getSelected($scope.allSymbols));
             SelectionService.removeSelection(selectedSymbols);
+            selectedSymbols = _.sortBy(selectedSymbols, function (n) {
+                return n.id
+            });
             _.forEach(selectedSymbols, function (symbol) {
                 delete symbol.revision;
                 delete symbol.project;
                 delete symbol.group;
                 delete symbol.hidden;
+                delete symbol.id;
                 _.forEach(symbol.actions, function (action) {
                     if (action.type === actionTypes.EXECUTE_SYMBOL) {
                         action.symbolToExecute.revision = 1;

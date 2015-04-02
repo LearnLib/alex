@@ -127,6 +127,13 @@
                     Duration
                 </button>
             </div>
+            <hr>
+
+            <div ng-repeat="result in selectedResults | orderBy:'-testNo'">
+                <strong>Test <span ng-bind="result.testNo"></span></strong>:
+                [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>],
+                <span ng-bind="(result.configuration.eqOracle.type|formatEqOracle)"></span>
+            </div>
 
         </div>
 
