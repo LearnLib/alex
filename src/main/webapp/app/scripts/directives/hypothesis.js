@@ -143,7 +143,7 @@
                         n.style = 'fill: #fff; stroke: #000; stroke-width: 1';
                     }
 
-                    _graph.setNode("" + i, n);
+                    _graph.setNode(node.toString(), n);
                 });
 
                 // add edges to the graph
@@ -183,7 +183,7 @@
                         n.style = 'fill: #fff; stroke: #000; stroke-width: 1';
                     }
 
-                    _graph.setNode("" + i, n);
+                    _graph.setNode(node.toString(), n);
                 });
 
                 // build data structure for the alternative representation by
