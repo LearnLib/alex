@@ -58,20 +58,20 @@
         };
 
         /**
+         * Fetches multiple complete test results.
          *
-         * @param projectId
-         * @param testNos
+         * @param {number} projectId - The id of the project
+         * @param {number[]} testNos - The numbers of the tests
          * @returns {*}
          */
         LearnResultResource.prototype.getSomeComplete = function (projectId, testNos) {
-            var _this = this;
-            testNos = testNos.join(',');
+            var numbers = testNos.join(',');
 
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNos + '/complete')
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + numbers + '/complete')
                 .then(function (response) {
                     return response.data;
                 })
-        }
+        };
 
         /**
          * Wrapper for deleteSome for a single testNo
@@ -91,9 +91,9 @@
          * @returns {*} - A promise
          */
         LearnResultResource.prototype.deleteSome = function (projectId, testNos) {
-            testNos = testNos.join(',');
+            var numbers = testNos.join(',');
 
-            return $http.delete(paths.api.URL + '/projects/' + projectId + '/results/' + testNos, {})
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/results/' + numbers, {})
         };
 
         /**

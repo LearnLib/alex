@@ -1014,6 +1014,10 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <div class=\"form-group\">\n" +
     "        <input class=\"form-control\" ng-model=\"action.value\" placeholder=\"The CSS3 XPath to the element\">\n" +
     "    </div>\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.value\">\n" +
+    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "    </a>\n" +
     "</div>\n" +
     "<!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->\n" +
     "\n" +
@@ -2046,6 +2050,13 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "                    Duration\n" +
     "                </button>\n" +
     "            </div>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div ng-repeat=\"result in selectedResults | orderBy:'-testNo'\">\n" +
+    "                <strong>Test <span ng-bind=\"result.testNo\"></span></strong>:\n" +
+    "                [<span ng-bind=\"(result.configuration.algorithm|formatAlgorithm)\"></span>],\n" +
+    "                <span ng-bind=\"(result.configuration.eqOracle.type|formatEqOracle)\"></span>\n" +
+    "            </div>\n" +
     "\n" +
     "        </div>\n" +
     "\n" +
@@ -2489,7 +2500,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable=\"symbol.actions\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
     "            <input type=\"checkbox\" selection-checkbox-all items=\"symbol.actions\">\n" +
     "        </div>\n" +
     "\n" +
@@ -2497,7 +2508,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "            <button class=\"btn btn-xs btn-primary\" action-create-modal-handle on-created=\"addAction\">\n" +
     "                Create\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" action-edit-modal-handle action=\"(selectedActions | first)\"\n" +
+    "            <button class=\"btn btn-xs btn-default\" action-edit-modal-handle action=\"selectedActions[0]\"\n" +
     "                    on-updated=\"updateAction\"\n" +
     "                    ng-class=\"selectedActions.length !== 1 ? 'disabled': ''\">\n" +
     "                Edit\n" +
@@ -2594,7 +2605,7 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"allSymbols\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
     "            <input type=\"checkbox\" selection-checkbox-all items=\"allSymbols\">\n" +
     "        </div>\n" +
     "\n" +
@@ -2730,11 +2741,11 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\" ng-if=\"symbols.length > 0\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"symbols\">\n" +
-    "            <input type=\"checkbox\" selection-checkbox-all items=\"selectedSymbols\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"symbols\">\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"pull-right\">\n" +
+    "        <div class=\"pull-left\">\n" +
     "            <button class=\"btn btn-xs btn-primary\" ng-click=\"uploadSelectedSymbols()\">\n" +
     "                <i class=\"fa fa-upload fa-fw\"></i> Upload\n" +
     "            </button>\n" +
@@ -2769,18 +2780,10 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "                 selection-model-selected-items=\"selectedSymbols\"\n" +
     "                 selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
-    "                <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover ng-if=\"$index !== 0\">\n" +
-    "                    <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                        <i class=\"fa fa-bars\"></i>\n" +
-    "                    </button>\n" +
-    "                    <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                        <li>\n" +
-    "                            <a href ng-click=\"restoreRevision(revision)\">\n" +
-    "                                <i class=\"fa fa-history fa-fw\"></i> Restore\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                    </ul>\n" +
-    "                </div>\n" +
+    "                <button class=\"btn btn-xs btn-default btn-icon pull-right\"\n" +
+    "                        symbol-edit-modal-handle symbol=\"symbol\" on-updated=\"updateSymbol\" update-on-server=\"false\">\n" +
+    "                    <i class=\"fa fa-edit\"></i>\n" +
+    "                </button>\n" +
     "\n" +
     "                <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
     "\n" +

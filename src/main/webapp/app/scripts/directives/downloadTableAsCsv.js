@@ -11,7 +11,7 @@
      * The directive that downloads a HTML table element as CSV. It attaches a click event to the directives element
      * which downloads the file. The directive must be used as an attribute.
      *
-     * It expects one attribute 'ancestorOrElement' which should contain the selector to the table or the an ancester
+     * It expects one attribute 'ancestorOrElement' which should contain the selector to the table or the an ancestor
      * of the table.
      *
      * Use it like "<button download-table-as-csv ancestor-or-element="#table">Click Me!</button>"
@@ -77,7 +77,7 @@
 
                 // add entries from table row
                 if (rows.length > 0) {
-                    for (var i = 0; i < rows.length; i++) {
+                    for (i = 0; i < rows.length; i++) {
                         var tds = rows[i].querySelectorAll('td');
                         if (tds.length > 0) {
                             for (var j = 0; j < tds.length; j++) {

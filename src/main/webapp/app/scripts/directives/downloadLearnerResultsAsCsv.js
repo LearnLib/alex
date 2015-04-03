@@ -5,7 +5,7 @@
         .module('weblearner.directives')
         .directive('downloadLearnerResultsAsCsv', downloadLearnerResultsAsCsv);
 
-    downloadLearnerResultsAsCsv.$inject = ['PromptService', 'FileDownloadService'];
+    downloadLearnerResultsAsCsv.$inject = ['FileDownloadService'];
 
     /**
      * The directive to download statistics from learner results as csv file. Attaches a click event to the directives
@@ -15,11 +15,10 @@
      *
      * Use it like <button download-learner-results-as-csv results="...">Click Me!</button>
      *
-     * @param PromptService - The service that prompts
      * @param FileDownloadService - The service to download files
      * @returns {{restrict: string, scope: {results: string}, link: link}}
      */
-    function downloadLearnerResultsAsCsv(PromptService, FileDownloadService) {
+    function downloadLearnerResultsAsCsv(FileDownloadService) {
 
         // the directive
         return {

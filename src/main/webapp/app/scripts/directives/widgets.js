@@ -8,7 +8,7 @@
         .directive('learnResumeSettingsWidget', learnResumeSettingsWidget);
 
     widget.$inject = ['paths'];
-    counterexamplesWidget.$inject = ['paths', 'CounterExampleService', 'LearnerService', 'ToastService', '_', 'outputAlphabet'];
+    counterexamplesWidget.$inject = ['paths', 'CounterExampleService', 'LearnerService', 'ToastService', 'outputAlphabet'];
     learnResumeSettingsWidget.$inject = ['paths', 'eqOracles', 'EqOracle'];
 
 
@@ -71,13 +71,12 @@
      *
      * @param paths - The application paths constant
      * @param CounterExampleService - The service for sharing a counterexample with a hypothesis
-     * @param Learner - The LearnerServive for communication with the Learner
+     * @param Learner - The LearnerService for communication with the Learner
      * @param Toast - The ToastService
-     * @param _ - Lodash
      * @param outputAlphabet - The dictionary for the output alphabet
      * @returns {{scope: {counterexamples: string}, templateUrl: string, link: link}}
      */
-    function counterexamplesWidget(paths, CounterExampleService, Learner, Toast, _, outputAlphabet) {
+    function counterexamplesWidget(paths, CounterExampleService, Learner, Toast, outputAlphabet) {
 
         // the directive
         return {
@@ -173,7 +172,7 @@
             };
 
             /**
-             * Tests if the entered couterexample really is one by sending it to the server for testing purposes.
+             * Tests if the entered counterexample really is one by sending it to the server for testing purposes.
              */
             scope.testCounterExample = function () {
                 Learner.isCounterexample(scope.counterExample)

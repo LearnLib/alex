@@ -43,7 +43,7 @@
                 .then(function (symbols) {
                     $scope.symbols = symbols;
                 });
-        }())
+        }());
 
         /**
          * Recovers a deleted symbol by calling the API and removes the recovered symbol from the symbol list on success

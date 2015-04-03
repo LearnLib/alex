@@ -49,8 +49,6 @@
             link: link
         };
 
-        //////////
-
         function link(scope, el, attrs) {
 
             var _svg;
@@ -58,6 +56,10 @@
             var _svgContainer;
             var _graph;
             var _renderer;
+
+            var labelStyle = 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline;';
+            var labelStyleEdge = labelStyle + 'font-size: 10px';
+            var labelStyleNode = labelStyle + 'font-size: 12px';
 
             scope.$watch('test', function (test) {
                 if (angular.isDefined(test) && test != null) {
@@ -88,6 +90,11 @@
                 _svg = d3.select(el.find('svg')[0]);
                 _svgGroup = _svg.append("g");
                 _svgContainer = _svg.node().parentNode;
+
+                _svg.style('font-family', '"Helvetica Neue",Helvetica,Arial,sans-serif');
+                _svg.style('font-size', '12px');
+                _svg.style('line-height', '1.42857');
+                _svg.style('color', '#333');
 
                 _graph = new graphlib.Graph({
                     directed: true,
@@ -127,7 +134,7 @@
                         shape: 'circle',
                         label: node.toString(),
                         width: 25,
-                        labelStyle: 'font-size: 1.25em; font-weight: bold'
+                        labelStyle: labelStyleNode
                     };
 
                     if (node === scope.test.hypothesis.initNode) {
@@ -147,7 +154,7 @@
                         labeloffset: 5,
                         lineInterpolate: 'basis',
                         style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
-                        labelStyle: 'font-size: 1.2em'
+                        labelStyle: labelStyleEdge
                     }, edgeName);
                 });
 
@@ -167,7 +174,7 @@
                         shape: 'circle',
                         label: node.toString(),
                         width: 25,
-                        labelStyle: 'font-size: 1.25em; font-weight: bold'
+                        labelStyle: labelStyleNode
                     };
 
                     if (node === scope.test.hypothesis.initNode) {
@@ -181,7 +188,7 @@
 
                 // build data structure for the alternative representation by
                 // pushing some data
-                _.forEach(scope.test.hypothesis.edges, function (edge, i) {
+                _.forEach(scope.test.hypothesis.edges, function (edge) {
                     if (!graph[edge.from]) {
                         graph[edge.from] = {};
                         graph[edge.from][edge.to] = [edge.input + "/"
@@ -205,7 +212,7 @@
                             labeloffset: 5,
                             lineInterpolate: 'basis',
                             style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
-                            labelStyle: 'font-size: 1.2em'
+                            labelStyle: labelStyleEdge
                         }, (from + '' + to));
                     });
                 });
@@ -223,6 +230,12 @@
                 // Center graph horizontally
                 var xCenterOffset = (_svgContainer.clientWidth - _graph.graph().width) / 2;
                 _svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
+
+                // swap defs and paths children of .edgepaths because arrows are not shown
+                // on export otherwise <.<
+                _.forEach(el.find('svg')[0].querySelectorAll('.edgePath'), function(edgePath){
+                    edgePath.insertBefore(edgePath.childNodes[1],edgePath.firstChild);
+                })
             }
 
             function handleEvents() {
@@ -269,7 +282,7 @@
                     .call(drag);
 
                 // prevent pan effect while dragging nodes
-                function dragstart(d) {
+                function dragstart() {
                     d3.event.sourceEvent.stopPropagation();
                 }
 

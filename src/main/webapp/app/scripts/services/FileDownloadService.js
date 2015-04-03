@@ -53,7 +53,7 @@
          * Opens a prompt dialog that asks for a file name.
          *
          * @param {string} fileExtension - The file extension of the file that should be downloaded
-         * @returns {HttpPromise} - The promise with the filename
+         * @returns {Promise} - The promise with the filename
          * @private
          */
         function _prompt(fileExtension) {
@@ -66,7 +66,7 @@
         // available service functions
 
         /**
-         * Downloads an object as a json file. Promts for a file name.
+         * Downloads an object as a json file. Prompts for a file name.
          *
          * @param {Object} jsonObject - The object that should be downloaded
          */

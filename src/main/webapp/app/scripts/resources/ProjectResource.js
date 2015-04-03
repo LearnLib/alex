@@ -26,7 +26,7 @@
         }
 
         /**
-         * Make a GET http request to /rest/projects in order to fetch all existings projects
+         * Make a GET http request to /rest/projects in order to fetch all existing projects
          *
          * @return {*}
          */

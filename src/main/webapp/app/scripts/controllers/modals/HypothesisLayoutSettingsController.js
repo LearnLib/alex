@@ -17,7 +17,7 @@
 			multigraph: false
 		};
 		
-		$scope.layoutSettings;
+		$scope.layoutSettings = {};
 		
 		//////////
 		

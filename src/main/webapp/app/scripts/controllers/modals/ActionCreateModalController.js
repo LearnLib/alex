@@ -69,7 +69,7 @@
         };
 
         /**
-         * Creates a new action in the background without closing the diaalog
+         * Creates a new action in the background without closing the dialog
          */
         $scope.createActionAndContinue = function () {
             modalData.addAction($scope.action);

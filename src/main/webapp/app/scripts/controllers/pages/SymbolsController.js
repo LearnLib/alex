@@ -155,7 +155,7 @@
                     $scope.removeSymbols([symbol]);
                 })
                 .catch(function (response) {
-                    Toast.danger('<p><strong>Deleting symbol failed</strong></p>' + response.data.messageł);
+                    Toast.danger('<p><strong>Deleting symbol failed</strong></p>' + response.data.message);
                 })
         };
 

@@ -31,7 +31,7 @@
         /**
          * Get the stored project object from the session storage
          *
-         * @return {ProjectModel.Project}
+         * @return {Project}
          */
         function getProject() {
             var project = angular.fromJson(sessionStorage.getItem('project'));

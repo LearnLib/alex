@@ -61,8 +61,8 @@
          * @param {number} index - The index of the panel the complete learn result should be displayed in
          */
         function loadComplete(testNos, index) {
-            testNos = testNos.split(',');
-            _.forEach(testNos, function (testNo) {
+            var numbers = testNos.split(',');
+            _.forEach(numbers, function (testNo) {
                 LearnResult.Resource.getComplete(project.id, testNo)
                     .then(function (completeTestResult) {
                         if (angular.isUndefined(index)) {

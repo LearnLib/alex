@@ -1076,6 +1076,10 @@ angular.module("app/views/includes/action-forms.html", []).run(["$templateCache"
     "    <div class=\"form-group\">\n" +
     "        <input class=\"form-control\" ng-model=\"action.value\" placeholder=\"The CSS3 XPath to the element\">\n" +
     "    </div>\n" +
+    "\n" +
+    "    <a class=\"btn btn-default btn-sm\" html-element-picker model=\"action.value\">\n" +
+    "        <i class=\"fa fa-magic fa-fw\"></i>&nbsp; WebPicker\n" +
+    "    </a>\n" +
     "</div>\n" +
     "<!-- END: SET_VARIABLE_BY_JSON_ATTRIBUTE -->\n" +
     "\n" +
@@ -2108,6 +2112,13 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "                    Duration\n" +
     "                </button>\n" +
     "            </div>\n" +
+    "            <hr>\n" +
+    "\n" +
+    "            <div ng-repeat=\"result in selectedResults | orderBy:'-testNo'\">\n" +
+    "                <strong>Test <span ng-bind=\"result.testNo\"></span></strong>:\n" +
+    "                [<span ng-bind=\"(result.configuration.algorithm|formatAlgorithm)\"></span>],\n" +
+    "                <span ng-bind=\"(result.configuration.eqOracle.type|formatEqOracle)\"></span>\n" +
+    "            </div>\n" +
     "\n" +
     "        </div>\n" +
     "\n" +
@@ -2551,7 +2562,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:115,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable=\"symbol.actions\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
     "            <input type=\"checkbox\" selection-checkbox-all items=\"symbol.actions\">\n" +
     "        </div>\n" +
     "\n" +
@@ -2559,7 +2570,7 @@ angular.module("app/views/pages/symbols-actions.html", []).run(["$templateCache"
     "            <button class=\"btn btn-xs btn-primary\" action-create-modal-handle on-created=\"addAction\">\n" +
     "                Create\n" +
     "            </button>\n" +
-    "            <button class=\"btn btn-xs btn-default\" action-edit-modal-handle action=\"(selectedActions | first)\"\n" +
+    "            <button class=\"btn btn-xs btn-default\" action-edit-modal-handle action=\"selectedActions[0]\"\n" +
     "                    on-updated=\"updateAction\"\n" +
     "                    ng-class=\"selectedActions.length !== 1 ? 'disabled': ''\">\n" +
     "                Edit\n" +
@@ -2656,7 +2667,7 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"allSymbols\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
     "            <input type=\"checkbox\" selection-checkbox-all items=\"allSymbols\">\n" +
     "        </div>\n" +
     "\n" +
@@ -2792,11 +2803,11 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "<div class=\"sub-nav\" fix-on-scroll=\"{top:120,class:'fixed'}\" ng-if=\"symbols.length > 0\">\n" +
     "    <div class=\"container\">\n" +
     "\n" +
-    "        <div class=\"pull-left\" style=\"margin-right: 16px\" selectable items=\"symbols\">\n" +
-    "            <input type=\"checkbox\" selection-checkbox-all items=\"selectedSymbols\">\n" +
+    "        <div class=\"pull-left\" style=\"margin-right: 16px\">\n" +
+    "            <input type=\"checkbox\" selection-checkbox-all items=\"symbols\">\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"pull-right\">\n" +
+    "        <div class=\"pull-left\">\n" +
     "            <button class=\"btn btn-xs btn-primary\" ng-click=\"uploadSelectedSymbols()\">\n" +
     "                <i class=\"fa fa-upload fa-fw\"></i> Upload\n" +
     "            </button>\n" +
@@ -2831,18 +2842,10 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "                 selection-model-selected-items=\"selectedSymbols\"\n" +
     "                 selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
-    "                <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover ng-if=\"$index !== 0\">\n" +
-    "                    <button type=\"button\" class=\"btn btn-default btn-icon dropdown-toggle\" dropdown-toggle>\n" +
-    "                        <i class=\"fa fa-bars\"></i>\n" +
-    "                    </button>\n" +
-    "                    <ul class=\"dropdown-menu pull-left\" role=\"menu\">\n" +
-    "                        <li>\n" +
-    "                            <a href ng-click=\"restoreRevision(revision)\">\n" +
-    "                                <i class=\"fa fa-history fa-fw\"></i> Restore\n" +
-    "                            </a>\n" +
-    "                        </li>\n" +
-    "                    </ul>\n" +
-    "                </div>\n" +
+    "                <button class=\"btn btn-xs btn-default btn-icon pull-right\"\n" +
+    "                        symbol-edit-modal-handle symbol=\"symbol\" on-updated=\"updateSymbol\" update-on-server=\"false\">\n" +
+    "                    <i class=\"fa fa-edit\"></i>\n" +
+    "                </button>\n" +
     "\n" +
     "                <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]\n" +
     "\n" +
@@ -3483,7 +3486,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         /**
-         * Creates a new action in the background without closing the diaalog
+         * Creates a new action in the background without closing the dialog
          */
         $scope.createActionAndContinue = function () {
             modalData.addAction($scope.action);
@@ -3629,7 +3632,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 			multigraph: false
 		};
 		
-		$scope.layoutSettings;
+		$scope.layoutSettings = {};
 		
 		//////////
 		
@@ -3828,6 +3831,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @param modalData
      * @param Symbol
      * @param SymbolGroup
+     * @param Toast
      * @constructor
      */
     function SymbolCreateModalController($scope, $modalInstance, modalData, Symbol, SymbolGroup, Toast) {
@@ -3919,6 +3923,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @param modalData
      * @param Symbol
      * @param SelectionService
+     * @oaram Toast
      * @constructor
      */
     function SymbolEditModalController($scope, $modalInstance, modalData, Symbol, SelectionService, Toast) {
@@ -3926,6 +3931,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         /** The symbol that is passed to the modal. @type {Symbol} */
         $scope.symbol = modalData.symbol;
 
+        /**
+         * The error message that is displayed when update fails
+         * @type {null|string}
+         */
         $scope.errorMsg = null;
 
         // The copy of the symbol that will be passed back together with the updated one
@@ -3939,6 +3948,15 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
             // remove the selection from the symbol in case there is any
             SelectionService.removeSelection($scope.symbol);
+
+            // do not update on server
+            if (angular.isDefined(modalData.updateOnServer) && !modalData.updateOnServer) {
+                $modalInstance.close({
+                    new: $scope.symbol,
+                    old: copy
+                });
+                return;
+            }
 
             // update the symbol and close the modal dialog on success with the updated symbol
             Symbol.Resource.update($scope.symbol.project, $scope.symbol)
@@ -4375,14 +4393,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         /**
          * The counters of the project
-         * TODO remove dummies when server is ready
          * @type {{name: string, value: number, project: number}[]}
          */
-        $scope.counters = [
-            {name: 'i', value: 0, project: 0},
-            {name: 'j', value: 5, project: 0},
-            {name: 'k', value: 1000, project: 0}
-        ];
+        $scope.counters = [];
 
         /**
          * The selected counters objects
@@ -4548,9 +4561,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * @param {number} index - The index of the panel the complete learn result should be displayed in
          */
         function loadComplete(testNos, index) {
-            testNos = testNos.split(',');
-            _.forEach(testNos, function (testNo) {
-                LearnResult.Resource.getComplete($scope.project.id, testNo)
+            var numbers = testNos.split(',');
+            _.forEach(numbers, function (testNo) {
+                LearnResult.Resource.getComplete(project.id, testNo)
                     .then(function (completeTestResult) {
                         if (angular.isUndefined(index)) {
                             $scope.panels.push(completeTestResult);
@@ -4613,7 +4626,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         (function init() {
 
             // get all final test results
-            LearnResult.Resource.getAllFinal($scope.project.id)
+            LearnResult.Resource.getAllFinal(project.id)
                 .then(function (results) {
                     $scope.results = results;
                     console.log(results)
@@ -4902,7 +4915,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     } else {
 
                         // load all symbols in case there isn't any active learning process
-                        SymbolGroup.Resource.getAll($scope.project.id, {embedSymbols: true})
+                        SymbolGroup.Resource.getAll(project.id, {embedSymbols: true})
                             .then(function (groups) {
                                 $scope.groups = groups;
                                 $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
@@ -4941,7 +4954,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
                 $scope.learnConfiguration.setResetSymbol($scope.resetSymbol);
 
-                Learner.start($scope.project.id, $scope.learnConfiguration)
+                Learner.start(project.id, $scope.learnConfiguration)
                     .then(function () {
                         Toast.success('Learn process started successfully.');
                         $state.go('learn.start')
@@ -5140,10 +5153,15 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @param $scope
      * @param $state
      * @param Project
+     * @param Toast
      * @constructor
      */
     function ProjectCreateController($scope, $state, Project, Toast) {
 
+        /**
+         * The model for the new project
+         * @type {Project}
+         */
         $scope.project = new Project();
 
         /**
@@ -5584,7 +5602,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     $scope.removeSymbols([symbol]);
                 })
                 .catch(function (response) {
-                    Toast.danger('<p><strong>Deleting symbol failed</strong></p>' + response.data.messageł);
+                    Toast.danger('<p><strong>Deleting symbol failed</strong></p>' + response.data.message);
                 })
         };
 
@@ -5638,7 +5656,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .module('weblearner.controller')
         .controller('SymbolsExportController', SymbolsExportController);
 
-    SymbolsExportController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService'];
+    SymbolsExportController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService', 'actionTypes'];
 
     /**
      * The controller that handles the export of symbols. The corresponding template is at
@@ -5648,9 +5666,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @param Session
      * @param SymbolGroup
      * @param SelectionService
+     * @param actionTypes
      * @constructor
      */
-    function SymbolsExportController($scope, Session, SymbolGroup, SelectionService) {
+    function SymbolsExportController($scope, Session, SymbolGroup, SelectionService, actionTypes) {
 
         // the project that is saved in session storage
         var _project = Session.project.get();
@@ -5684,12 +5703,20 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         $scope.getDownloadableSymbols = function () {
             var selectedSymbols = angular.copy(SelectionService.getSelected($scope.allSymbols));
             SelectionService.removeSelection(selectedSymbols);
+            selectedSymbols = _.sortBy(selectedSymbols, function (n) {
+                return n.id
+            });
             _.forEach(selectedSymbols, function (symbol) {
-                delete symbol.id;
                 delete symbol.revision;
                 delete symbol.project;
                 delete symbol.group;
                 delete symbol.hidden;
+                delete symbol.id;
+                _.forEach(symbol.actions, function (action) {
+                    if (action.type === actionTypes.EXECUTE_SYMBOL) {
+                        action.symbolToExecute.revision = 1;
+                    }
+                })
             });
             return selectedSymbols;
         };
@@ -5837,6 +5864,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 });
                 Symbol.Resource.createSome(project.id, symbols)
                     .then(function (createdSymbols) {
+                        Toast.success('Symbols uploaded');
                         _.forEach(createdSymbols, function (symbol) {
                             _.remove($scope.symbols, {name: symbol.name})
                         })
@@ -5846,6 +5874,39 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     })
             }
         };
+
+        /**
+         * Changes the name and/or the abbreviation a symbol before uploading it to prevent naming conflicts in the
+         * database.
+         *
+         * @param {Symbol} updatedSymbol - The updated symbol
+         * @param {Symbol} oldSymbol - The old symbol
+         */
+        $scope.updateSymbol = function (updatedSymbol, oldSymbol) {
+            var symbol;
+
+            // check whether name or abbreviation already exist and don't update symbol
+            if (angular.equals(updatedSymbol, oldSymbol)) {
+                return
+            } else if (updatedSymbol.name !== oldSymbol.name &&
+                updatedSymbol.abbreviation === oldSymbol.abbreviation) {
+                if (_.where($scope.symbols, {name: updatedSymbol.name}).length > 0) {
+                    Toast.danger('Name <strong>' + updatedSymbol.name + '</strong> already exists');
+                    return;
+                }
+            } else if (updatedSymbol.abbreviation !== oldSymbol.abbreviation &&
+                updatedSymbol.name === oldSymbol.name) {
+                if (_.where($scope.symbols, {abbreviation: updatedSymbol.abbreviation}).length > 0) {
+                    Toast.danger('Abbreviation <strong>' + updatedSymbol.abbreviation + '</strong> already exists');
+                    return;
+                }
+            }
+
+            // update symbol in scope
+            symbol = _.find($scope.symbols, {name: oldSymbol.name});
+            symbol.name = updatedSymbol.name;
+            symbol.abbreviation = updatedSymbol.abbreviation;
+        }
     }
 }());;(function () {
     'use strict';
@@ -5892,7 +5953,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 .then(function (symbols) {
                     $scope.symbols = symbols;
                 });
-        }())
+        }());
 
         /**
          * Recovers a deleted symbol by calling the API and removes the recovered symbol from the symbol list on success
@@ -6066,7 +6127,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * The directive for displaying a discrimination tree in an svg element. Can be used as an attribute or an element.
      * Expects another property 'data' which holds the string representation of the discrimination tree.
      *
-     * Use it like: '<discrimination-tree data="...."></discriminaion-tree>'
+     * Use it like: '<discrimination-tree data="...."></discrimination-tree>'
      *
      * @param _ - Lodash
      * @param d3 - D3
@@ -6098,7 +6159,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             // the parent of the svg to fit its size accordingly
             var svgContainer = el[0].parentNode;
 
-            // render the new discrimation tree when property 'data' changes
+            // render the new discrimination tree when property 'data' changes
             scope.$watch('data', function (newValue) {
                 if (angular.isDefined(newValue)) {
                     var data = angular.fromJson(newValue);
@@ -6186,7 +6247,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 _graph.setGraph({});
 
                 // add nodes to the graph
-                _.forEach(graph.nodes, function (node, i) {
+                _.forEach(graph.nodes, function (node) {
                     _graph.setNode(node, {
                         shape: node[0] === 'q' ? 'rect' : 'circle',     // draw a rectangle when node is a leaf
                         label: node,
@@ -6197,7 +6258,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 });
 
                 //add edges to the graph
-                _.forEach(graph.edges, function (edge, i) {
+                _.forEach(graph.edges, function (edge) {
                     _graph.setEdge(edge.from, edge.to, {
                         lineInterpolate: 'basis',
                         style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
@@ -6344,7 +6405,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .module('weblearner.directives')
         .directive('downloadLearnerResultsAsCsv', downloadLearnerResultsAsCsv);
 
-    downloadLearnerResultsAsCsv.$inject = ['PromptService', 'FileDownloadService'];
+    downloadLearnerResultsAsCsv.$inject = ['FileDownloadService'];
 
     /**
      * The directive to download statistics from learner results as csv file. Attaches a click event to the directives
@@ -6354,11 +6415,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      *
      * Use it like <button download-learner-results-as-csv results="...">Click Me!</button>
      *
-     * @param PromptService - The service that prompts
      * @param FileDownloadService - The service to download files
      * @returns {{restrict: string, scope: {results: string}, link: link}}
      */
-    function downloadLearnerResultsAsCsv(PromptService, FileDownloadService) {
+    function downloadLearnerResultsAsCsv(FileDownloadService) {
 
         // the directive
         return {
@@ -6471,7 +6531,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * The directive that downloads a HTML table element as CSV. It attaches a click event to the directives element
      * which downloads the file. The directive must be used as an attribute.
      *
-     * It expects one attribute 'ancestorOrElement' which should contain the selector to the table or the an ancester
+     * It expects one attribute 'ancestorOrElement' which should contain the selector to the table or the an ancestor
      * of the table.
      *
      * Use it like "<button download-table-as-csv ancestor-or-element="#table">Click Me!</button>"
@@ -6537,7 +6597,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
                 // add entries from table row
                 if (rows.length > 0) {
-                    for (var i = 0; i < rows.length; i++) {
+                    for (i = 0; i < rows.length; i++) {
                         var tds = rows[i].querySelectorAll('td');
                         if (tds.length > 0) {
                             for (var j = 0; j < tds.length; j++) {
@@ -7173,8 +7233,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             link: link
         };
 
-        //////////
-
         function link(scope, el, attrs) {
 
             var _svg;
@@ -7182,6 +7240,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             var _svgContainer;
             var _graph;
             var _renderer;
+
+            var labelStyle = 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline;';
+            var labelStyleEdge = labelStyle + 'font-size: 10px';
+            var labelStyleNode = labelStyle + 'font-size: 12px';
 
             scope.$watch('test', function (test) {
                 if (angular.isDefined(test) && test != null) {
@@ -7212,6 +7274,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 _svg = d3.select(el.find('svg')[0]);
                 _svgGroup = _svg.append("g");
                 _svgContainer = _svg.node().parentNode;
+
+                _svg.style('font-family', '"Helvetica Neue",Helvetica,Arial,sans-serif');
+                _svg.style('font-size', '12px');
+                _svg.style('line-height', '1.42857');
+                _svg.style('color', '#333');
 
                 _graph = new graphlib.Graph({
                     directed: true,
@@ -7251,7 +7318,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         shape: 'circle',
                         label: node.toString(),
                         width: 25,
-                        labelStyle: 'font-size: 1.25em; font-weight: bold'
+                        labelStyle: labelStyleNode
                     };
 
                     if (node === scope.test.hypothesis.initNode) {
@@ -7271,7 +7338,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         labeloffset: 5,
                         lineInterpolate: 'basis',
                         style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
-                        labelStyle: 'font-size: 1.2em'
+                        labelStyle: labelStyleEdge
                     }, edgeName);
                 });
 
@@ -7291,7 +7358,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         shape: 'circle',
                         label: node.toString(),
                         width: 25,
-                        labelStyle: 'font-size: 1.25em; font-weight: bold'
+                        labelStyle: labelStyleNode
                     };
 
                     if (node === scope.test.hypothesis.initNode) {
@@ -7305,7 +7372,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
                 // build data structure for the alternative representation by
                 // pushing some data
-                _.forEach(scope.test.hypothesis.edges, function (edge, i) {
+                _.forEach(scope.test.hypothesis.edges, function (edge) {
                     if (!graph[edge.from]) {
                         graph[edge.from] = {};
                         graph[edge.from][edge.to] = [edge.input + "/"
@@ -7329,7 +7396,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                             labeloffset: 5,
                             lineInterpolate: 'basis',
                             style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
-                            labelStyle: 'font-size: 1.2em'
+                            labelStyle: labelStyleEdge
                         }, (from + '' + to));
                     });
                 });
@@ -7347,6 +7414,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 // Center graph horizontally
                 var xCenterOffset = (_svgContainer.clientWidth - _graph.graph().width) / 2;
                 _svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
+
+                // swap defs and paths children of .edgepaths because arrows are not shown
+                // on export otherwise <.<
+                _.forEach(el.find('svg')[0].querySelectorAll('.edgePath'), function(edgePath){
+                    edgePath.insertBefore(edgePath.childNodes[1],edgePath.firstChild);
+                })
             }
 
             function handleEvents() {
@@ -7393,7 +7466,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     .call(drag);
 
                 // prevent pan effect while dragging nodes
-                function dragstart(d) {
+                function dragstart() {
                     d3.event.sourceEvent.stopPropagation();
                 }
 
@@ -7497,7 +7570,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             '   <div style="position: absolute; left: 0; top: 0; bottom: 0; right: 40px; background: #fff" ng-transclude></div>' +
             '</div>';
 
-        var directive = {
+        return {
             template: template,
             transclude: true,
             scope: {
@@ -7508,7 +7581,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 controller
             ]
         };
-        return directive;
 
         //////////
 
@@ -7543,7 +7615,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         var template = '<div class="panel" style="position: absolute; top: 0; bottom: 0; width: 100%;" ng-transclude></div>';
 
-        var directive = {
+        return {
             require: '^panelManager',
             template: template,
             transclude: true,
@@ -7552,7 +7624,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 index: '=panelIndex'
             }
         };
-        return directive;
 
         //////////
 
@@ -8245,15 +8316,15 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      */
     function symbolEditModalHandle($modal, paths) {
 
-        var directive = {
-            restrict: 'EA',
+        return {
+            restrict: 'A',
             scope: {
                 symbol: '=',
-                onUpdated: '&'
+                onUpdated: '&',
+                updateOnServer: '='
             },
             link: link
         };
-        return directive;
 
         /**
          * @param scope
@@ -8261,7 +8332,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * @param attrs
          */
         function link(scope, el, attrs) {
-
             el.on('click', handleModal);
 
             function handleModal() {
@@ -8271,7 +8341,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     resolve: {
                         modalData: function () {
                             return {
-                                symbol: scope.symbol.copy()
+                                symbol: scope.symbol.copy(),
+                                updateOnServer: scope.updateOnServer
                             };
                         }
                     }
@@ -8518,7 +8589,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .directive('learnResumeSettingsWidget', learnResumeSettingsWidget);
 
     widget.$inject = ['paths'];
-    counterexamplesWidget.$inject = ['paths', 'CounterExampleService', 'LearnerService', 'ToastService', '_', 'outputAlphabet'];
+    counterexamplesWidget.$inject = ['paths', 'CounterExampleService', 'LearnerService', 'ToastService', 'outputAlphabet'];
     learnResumeSettingsWidget.$inject = ['paths', 'eqOracles', 'EqOracle'];
 
 
@@ -8581,13 +8652,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      *
      * @param paths - The application paths constant
      * @param CounterExampleService - The service for sharing a counterexample with a hypothesis
-     * @param Learner - The LearnerServive for communication with the Learner
+     * @param Learner - The LearnerService for communication with the Learner
      * @param Toast - The ToastService
-     * @param _ - Lodash
      * @param outputAlphabet - The dictionary for the output alphabet
      * @returns {{scope: {counterexamples: string}, templateUrl: string, link: link}}
      */
-    function counterexamplesWidget(paths, CounterExampleService, Learner, Toast, _, outputAlphabet) {
+    function counterexamplesWidget(paths, CounterExampleService, Learner, Toast, outputAlphabet) {
 
         // the directive
         return {
@@ -8683,7 +8753,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             };
 
             /**
-             * Tests if the entered couterexample really is one by sending it to the server for testing purposes.
+             * Tests if the entered counterexample really is one by sending it to the server for testing purposes.
              */
             scope.testCounterExample = function () {
                 Learner.isCounterexample(scope.counterExample)
@@ -8994,8 +9064,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         Action.Other.SetVariable = function (name, value) {
             Action.call(this, actionTypes.other.SET_VARIABLE);
-            this.name = name;
-            this.value = value;
+            this.name = name || null;
+            this.value = value || '';
         };
 
         Action.Other.SetVariable.prototype.toString = function () {
@@ -9709,20 +9779,20 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         /**
+         * Fetches multiple complete test results.
          *
-         * @param projectId
-         * @param testNos
+         * @param {number} projectId - The id of the project
+         * @param {number[]} testNos - The numbers of the tests
          * @returns {*}
          */
         LearnResultResource.prototype.getSomeComplete = function (projectId, testNos) {
-            var _this = this;
-            testNos = testNos.join(',');
+            var numbers = testNos.join(',');
 
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNos + '/complete')
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + numbers + '/complete')
                 .then(function (response) {
                     return response.data;
                 })
-        }
+        };
 
         /**
          * Wrapper for deleteSome for a single testNo
@@ -9742,9 +9812,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * @returns {*} - A promise
          */
         LearnResultResource.prototype.deleteSome = function (projectId, testNos) {
-            testNos = testNos.join(',');
+            var numbers = testNos.join(',');
 
-            return $http.delete(paths.api.URL + '/projects/' + projectId + '/results/' + testNos, {})
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/results/' + numbers, {})
         };
 
         /**
@@ -9799,7 +9869,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         }
 
         /**
-         * Make a GET http request to /rest/projects in order to fetch all existings projects
+         * Make a GET http request to /rest/projects in order to fetch all existing projects
          *
          * @return {*}
          */
@@ -10001,7 +10071,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * Makes a PUT request to /rest/projects/{projectId}/groups in order to update an existing symbol group.
          *
          * @param {number} projectId - The id of the project of the symbol group
-         * @param {number} group - The symbol group that should be updated
+         * @param {SymbolGroup} group - The symbol group that should be updated
          * @returns {*} - An angular promise
          */
         SymbolGroupResource.prototype.update = function (projectId, group) {
@@ -10019,7 +10089,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * the id 0.
          *
          * @param {number} projectId - The id of the project of the symbol group
-         * @param {number} group - The symbol group that should be deleted
+         * @param {SymbolGroup} group - The symbol group that should be deleted
          * @returns {*} - An angular promise
          */
         SymbolGroupResource.prototype.delete = function (projectId, group) {
@@ -10243,8 +10313,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             var _this = this;
 
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id + '/hide', {})
-                .then(function (resonse) {
-                    return _this.build(resonse.data);
+                .then(function (response) {
+                    return _this.build(response.data);
                 });
         };
 
@@ -10334,8 +10404,16 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     CounterExampleService.$inject = [];
 
+    /**
+     * The service that is used to share a counterexample between the counter example widget and a hypothesis.
+     * A counterexample is defined by a list of objects with input & output property
+     *
+     * @returns {{getCurrentCounterexample: getCurrentCounterexample, setCurrentCounterexample: setCurrentCounterexample, resetCurrentCounterexample: resetCurrentCounterexample, addIOPairToCurrentCounterexample: addIOPairToCurrentCounterexample}}
+     * @constructor
+     */
     function CounterExampleService() {
 
+        // the counterexample
         var counterexample = [];
 
         return {
@@ -10345,18 +10423,37 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             addIOPairToCurrentCounterexample: addIOPairToCurrentCounterexample
         };
 
+        /**
+         * Gets the counterexample
+         *
+         * @returns {Object[]} - The counterexample
+         */
         function getCurrentCounterexample() {
             return counterexample;
         }
 
+        /**
+         * Sets the counterexample
+         *
+         * @param {Object[]} ce - The list of input/output pairs that define a counterexample
+         */
         function setCurrentCounterexample(ce) {
             counterexample = ce;
         }
 
+        /**
+         * Removes all input / output pairs from the counterexample
+         */
         function resetCurrentCounterexample() {
             counterexample = [];
         }
 
+        /**
+         * Adds a new input / output pair to the counterexample
+         *
+         * @param {string} input - The input symbol
+         * @param {string} output - The output symbol
+         */
         function addIOPairToCurrentCounterexample(input, output) {
             counterexample.push({
                 input: input,
@@ -10382,7 +10479,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      *
      * @param $http - angular $http service
      * @param paths - application paths constants
-     * @returns {{get: get, getAll: getAll, delete: deleteOne, deleteSome: deleteSome}}
+     * @returns {{getAll: getAll, delete: deleteOne, deleteSome: deleteSome}}
      * @constructor
      */
     function CountersService($http, paths) {
@@ -10399,7 +10496,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * project.
          *
          * @param {number} projectId - The id of a project
-         * @returns {HttpPromise} - angular promise object of the request
+         * @returns angular promise object of the request
          */
         function getAll(projectId) {
             return $http.get(paths.api.URL + '/projects/' + projectId + '/counters')
@@ -10414,7 +10511,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          *
          * @param {number} projectId - The id of a project
          * @param {string} name - The name of a counter
-         * @returns {HttpPromise} - angular promise object of the request
+         * @returns angular promise object of the request
          */
         function deleteOne(projectId, name) {
             return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/' + name)
@@ -10429,11 +10526,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          *
          * @param {number} projectId - The id of a project
          * @param {string[]} names - A list of the names of counters
-         * @returns {HttpPromise} - angular promise object of the request
+         * @returns angular promise object of the request
          */
         function deleteSome(projectId, names) {
-            names = names.join(',');
-            return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/batch/' + names)
+            var n = names.join(',');
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/batch/' + n)
                 .then(function (response) {
                     return response.data;
                 })
@@ -10494,7 +10591,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * Opens a prompt dialog that asks for a file name.
          *
          * @param {string} fileExtension - The file extension of the file that should be downloaded
-         * @returns {HttpPromise} - The promise with the filename
+         * @returns {Promise} - The promise with the filename
          * @private
          */
         function _prompt(fileExtension) {
@@ -10507,7 +10604,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         // available service functions
 
         /**
-         * Downloads an object as a json file. Promts for a file name.
+         * Downloads an object as a json file. Prompts for a file name.
          *
          * @param {Object} jsonObject - The object that should be downloaded
          */
@@ -10541,7 +10638,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             _prompt('SVG')
                 .then(function (filename) {
 
-
                     // set proper xml attributes for downloadable file
                     svg.setAttribute('version', '1.1');
                     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -10569,8 +10665,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * The service to create n3 line chart data from learner results. Can create bar chart data from multiple final
      * learner results and area chart data from multiple complete learner results.
      *
-     * @param _ - The Lodash library
-     * @returns {{createDataFromMultipleFinalResults: createDataFromMultipleFinalResults, createDataFromMultipleCompleteResults: createDataFromMultipleCompleteResults, properties: {RESETS: string, SYMBOLS: string, DURATION: string}}}
+     * @param _ - Lodash
+     * @returns {{createDataFromMultipleFinalResults: createDataFromMultipleFinalResults, createDataFromMultipleCompleteResults: createDataFromMultipleCompleteResults, properties: {MQS: string, EQS: string, SYMBOL_CALLS: string, SIGMA: string, DURATION: string}}}
      * @constructor
      */
     function LearnerResultChartService(_) {
@@ -10795,14 +10891,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     LearnerService.$inject = ['$http', 'paths'];
 
     /**
-     * @param $http
-     * @param paths
+     * The service for interacting with the learner
+     *
+     * @param $http - angular $http service
+     * @param paths - The applications paths constant
      * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive, isCounterexample: isCounterexample}}
      * @constructor
      */
     function LearnerService($http, paths) {
-
-        // the services functions
         return {
             start: start,
             stop: stop,
@@ -10875,7 +10971,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * Checks if the selected path is a counterexample.
          * TODO: implement
          *
-         * @param counterexample
+         * @param {number} projectId
+         * @param {{input: string, output: string}[]} counterexample
          * @returns {*}
          */
         function isCounterexample(projectId, counterexample) {
@@ -11055,7 +11152,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         /**
          * Get the stored project object from the session storage
          *
-         * @return {ProjectModel.Project}
+         * @return {Project}
          */
         function getProject() {
             var project = angular.fromJson(sessionStorage.getItem('project'));
@@ -11143,44 +11240,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          */
         function info(message) {
             createToast('info', message);
-        }
-    }
-}());;(function () {
-    'use strict';
-
-    angular
-        .module('weblearner.filters')
-        .filter('first', first)
-        .filter('selected', selected);
-
-    selected.$inject = ['SelectionService'];
-
-    /**
-     * Returns the first element of an array.
-     *
-     * @return {Function}
-     */
-    function first() {
-        return function (items) {
-            if (angular.isArray(items) && items.length > 0) {
-                return _.first(items);
-            } else {
-                return undefined;
-            }
-        }
-    }
-
-    /**
-     * Filters an array of items and returns the selected ones.
-     *
-     * @param SelectionService
-     * @return {Function}
-     */
-    function selected(SelectionService) {
-        return function (items) {
-            return _.filter(items, function (item) {
-                return SelectionService.isSelected(item);
-            })
         }
     }
 }());;(function () {
