@@ -14,15 +14,13 @@
      * @constructor
      */
     function EqOracleModel(eqOracles) {
-
-        var EqOracle = {
+        return {
             Random: Random,
             Complete: Complete,
             Sample: Sample,
             build: build,
             createFromType: createFromType
         };
-        return EqOracle;
 
         /**
          * The model for an eq oracle that searches randomly for counter examples

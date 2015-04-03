@@ -69,7 +69,16 @@
 
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + numbers + '/complete')
                 .then(function (response) {
-                    return response.data;
+                    var data = response.data;
+                    if (data.length > 0) {
+                        if (!angular.isArray(data[0])) {
+                            return [data]
+                        } else {
+                            return data;
+                        }
+                    } else {
+                        return [[]];
+                    }
                 })
         };
 
