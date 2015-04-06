@@ -57,7 +57,7 @@
                     _.remove($scope.symbols, {id: recoveredSymbol.id});
                 })
                 .catch(function (response) {
-                    Toast.error('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + response.data.message);
+                    Toast.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + response.data.message);
                 })
         };
 
@@ -71,10 +71,11 @@
                         Toast.success('Symbols recovered');
                         _.forEach($scope.selectedSymbols, function (symbol) {
                             _.remove($scope.symbols, {id: symbol.id})
-                        })
+                        });
+                        $scope.selectedSymbols = [];
                     })
                     .catch(function (response) {
-                        Toast.error('<p><strong>Error recovering symbols!</strong></p>' + response.data.message);
+                        Toast.danger('<p><strong>Error recovering symbols!</strong></p>' + response.data.message);
                     })
             }
         }

@@ -13,10 +13,10 @@
             </div>
 
             <div class="btn-group btn-group-xs pull-left" dropdown dropdown-hover>
-                <button class="btn btn-primary">
+                <button class="btn btn-primary" ng-class="selectedResults.length > 0 ? '' : 'disabled'">
                     Create Chart
                 </button>
-                <ul class="dropdown-menu" role="menu">
+                <ul class="dropdown-menu" role="menu" ng-show="selectedResults.length > 0">
                     <li>
                         <a href ng-click="createChartFromFinalResults()">
                             <i class="fa fa-fw fa-bar-chart"></i> Final Results
@@ -31,13 +31,18 @@
             </div>
 
             <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
-                <button class="btn btn-default">
+                <button class="btn btn-default" ng-class="selectedResults.length > 0 ? '' : 'disabled'">
                     <i class="fa fa-fw fa-download"></i> Download as *.csv
                 </button>
-                <ul class="dropdown-menu" role="menu">
+                <ul class="dropdown-menu" role="menu" ng-show="selectedResults.length > 0">
                     <li>
-                        <a href download-learner-results-as-csv results="results">
-                            All Final Results
+                        <a href download-learner-results-as-csv results="selectedResults">
+                            Selected Final Results
+                        </a>
+                    </li>
+                    <li ng-show="selectedResults.length === 1">
+                        <a href download-learner-results-as-csv results="selectedResults">
+                            Selected Complete Result
                         </a>
                     </li>
                 </ul>

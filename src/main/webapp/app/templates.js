@@ -319,7 +319,7 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "    <div class=\"container-fluid\">\n" +
     "\n" +
     "        <div class=\"navbar-header\">\n" +
-    "            <a class=\"navbar-brand\" ui-sref=\"home\"><strong>Wl</strong></a>\n" +
+    "            <a class=\"navbar-brand\" ui-sref=\"home\"><strong>ALEX</strong></a>\n" +
     "        </div>\n" +
     "\n" +
     "        <ul class=\"nav navbar-nav navbar-left navbar-menu-handle\">\n" +
@@ -1936,10 +1936,10 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "            </div>\n" +
     "\n" +
     "            <div class=\"btn-group btn-group-xs pull-left\" dropdown dropdown-hover>\n" +
-    "                <button class=\"btn btn-primary\">\n" +
+    "                <button class=\"btn btn-primary\" ng-class=\"selectedResults.length > 0 ? '' : 'disabled'\">\n" +
     "                    Create Chart\n" +
     "                </button>\n" +
-    "                <ul class=\"dropdown-menu\" role=\"menu\">\n" +
+    "                <ul class=\"dropdown-menu\" role=\"menu\" ng-show=\"selectedResults.length > 0\">\n" +
     "                    <li>\n" +
     "                        <a href ng-click=\"createChartFromFinalResults()\">\n" +
     "                            <i class=\"fa fa-fw fa-bar-chart\"></i> Final Results\n" +
@@ -1954,13 +1954,18 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "            </div>\n" +
     "\n" +
     "            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                <button class=\"btn btn-default\">\n" +
+    "                <button class=\"btn btn-default\" ng-class=\"selectedResults.length > 0 ? '' : 'disabled'\">\n" +
     "                    <i class=\"fa fa-fw fa-download\"></i> Download as *.csv\n" +
     "                </button>\n" +
-    "                <ul class=\"dropdown-menu\" role=\"menu\">\n" +
+    "                <ul class=\"dropdown-menu\" role=\"menu\" ng-show=\"selectedResults.length > 0\">\n" +
     "                    <li>\n" +
-    "                        <a href download-learner-results-as-csv results=\"results\">\n" +
-    "                            All Final Results\n" +
+    "                        <a href download-learner-results-as-csv results=\"selectedResults\">\n" +
+    "                            Selected Final Results\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                    <li ng-show=\"selectedResults.length === 1\">\n" +
+    "                        <a href download-learner-results-as-csv results=\"selectedResults\">\n" +
+    "                            Selected Complete Result\n" +
     "                        </a>\n" +
     "                    </li>\n" +
     "                </ul>\n" +
@@ -2055,7 +2060,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "            <div ng-repeat=\"result in selectedResults | orderBy:'-testNo'\">\n" +
     "                <strong>Test <span ng-bind=\"result.testNo\"></span></strong>:\n" +
     "                [<span ng-bind=\"(result.configuration.algorithm|formatAlgorithm)\"></span>],\n" +
-    "                <span ng-bind=\"(result.configuration.eqOracle.type|formatEqOracle)\"></span>\n" +
+    "                {{result.configuration.eqOracle}}\n" +
     "            </div>\n" +
     "\n" +
     "        </div>\n" +

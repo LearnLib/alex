@@ -381,7 +381,7 @@ angular.module("app/views/directives/navigation.html", []).run(["$templateCache"
     "    <div class=\"container-fluid\">\n" +
     "\n" +
     "        <div class=\"navbar-header\">\n" +
-    "            <a class=\"navbar-brand\" ui-sref=\"home\"><strong>Wl</strong></a>\n" +
+    "            <a class=\"navbar-brand\" ui-sref=\"home\"><strong>ALEX</strong></a>\n" +
     "        </div>\n" +
     "\n" +
     "        <ul class=\"nav navbar-nav navbar-left navbar-menu-handle\">\n" +
@@ -1998,10 +1998,10 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "            </div>\n" +
     "\n" +
     "            <div class=\"btn-group btn-group-xs pull-left\" dropdown dropdown-hover>\n" +
-    "                <button class=\"btn btn-primary\">\n" +
+    "                <button class=\"btn btn-primary\" ng-class=\"selectedResults.length > 0 ? '' : 'disabled'\">\n" +
     "                    Create Chart\n" +
     "                </button>\n" +
-    "                <ul class=\"dropdown-menu\" role=\"menu\">\n" +
+    "                <ul class=\"dropdown-menu\" role=\"menu\" ng-show=\"selectedResults.length > 0\">\n" +
     "                    <li>\n" +
     "                        <a href ng-click=\"createChartFromFinalResults()\">\n" +
     "                            <i class=\"fa fa-fw fa-bar-chart\"></i> Final Results\n" +
@@ -2016,13 +2016,18 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "            </div>\n" +
     "\n" +
     "            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
-    "                <button class=\"btn btn-default\">\n" +
+    "                <button class=\"btn btn-default\" ng-class=\"selectedResults.length > 0 ? '' : 'disabled'\">\n" +
     "                    <i class=\"fa fa-fw fa-download\"></i> Download as *.csv\n" +
     "                </button>\n" +
-    "                <ul class=\"dropdown-menu\" role=\"menu\">\n" +
+    "                <ul class=\"dropdown-menu\" role=\"menu\" ng-show=\"selectedResults.length > 0\">\n" +
     "                    <li>\n" +
-    "                        <a href download-learner-results-as-csv results=\"results\">\n" +
-    "                            All Final Results\n" +
+    "                        <a href download-learner-results-as-csv results=\"selectedResults\">\n" +
+    "                            Selected Final Results\n" +
+    "                        </a>\n" +
+    "                    </li>\n" +
+    "                    <li ng-show=\"selectedResults.length === 1\">\n" +
+    "                        <a href download-learner-results-as-csv results=\"selectedResults\">\n" +
+    "                            Selected Complete Result\n" +
     "                        </a>\n" +
     "                    </li>\n" +
     "                </ul>\n" +
@@ -2117,7 +2122,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "            <div ng-repeat=\"result in selectedResults | orderBy:'-testNo'\">\n" +
     "                <strong>Test <span ng-bind=\"result.testNo\"></span></strong>:\n" +
     "                [<span ng-bind=\"(result.configuration.algorithm|formatAlgorithm)\"></span>],\n" +
-    "                <span ng-bind=\"(result.configuration.eqOracle.type|formatEqOracle)\"></span>\n" +
+    "                {{result.configuration.eqOracle}}\n" +
     "            </div>\n" +
     "\n" +
     "        </div>\n" +
@@ -4629,7 +4634,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             LearnResult.Resource.getAllFinal(project.id)
                 .then(function (results) {
                     $scope.results = results;
-                    console.log(results)
                 });
         }());
 
@@ -5967,7 +5971,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     _.remove($scope.symbols, {id: recoveredSymbol.id});
                 })
                 .catch(function (response) {
-                    Toast.error('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + response.data.message);
+                    Toast.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + response.data.message);
                 })
         };
 
@@ -5981,10 +5985,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         Toast.success('Symbols recovered');
                         _.forEach($scope.selectedSymbols, function (symbol) {
                             _.remove($scope.symbols, {id: symbol.id})
-                        })
+                        });
+                        $scope.selectedSymbols = [];
                     })
                     .catch(function (response) {
-                        Toast.error('<p><strong>Error recovering symbols!</strong></p>' + response.data.message);
+                        Toast.danger('<p><strong>Error recovering symbols!</strong></p>' + response.data.message);
                     })
             }
         }
@@ -7327,7 +7332,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         n.style = 'fill: #fff; stroke: #000; stroke-width: 1';
                     }
 
-                    _graph.setNode("" + i, n);
+                    _graph.setNode(node.toString(), n);
                 });
 
                 // add edges to the graph
@@ -7367,7 +7372,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         n.style = 'fill: #fff; stroke: #000; stroke-width: 1';
                     }
 
-                    _graph.setNode("" + i, n);
+                    _graph.setNode(node.toString(), n);
                 });
 
                 // build data structure for the alternative representation by
@@ -7667,7 +7672,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @returns {{templateUrl: string, scope: {length: string, index: string}, link: link}}
      */
     function indexBrowser(paths) {
-
         return {
             templateUrl: paths.views.DIRECTIVES + '/index-browser.html',
             scope: {
@@ -7679,7 +7683,16 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         function link(scope, el, attrs) {
 
+            // the length of the array
             var length = parseInt(scope.length);
+
+            // update length on change so that it can be clicked that far in the template
+            scope.$watch('length', function (n) {
+                if (angular.isDefined(n)) {
+                    length = n;
+                    scope.lastStep();
+                }
+            });
 
             scope.firstStep = function () {
                 scope.index = 0;
@@ -7790,8 +7803,6 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @returns {{scope: {results: string}, transclude: boolean, templateUrl: string, controller: *[]}}
      */
     function learnResultsPanel(paths, learnAlgorithms) {
-
-        // the directive
         return {
             scope: {
                 results: '=',
@@ -9215,15 +9226,13 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @constructor
      */
     function EqOracleModel(eqOracles) {
-
-        var EqOracle = {
+        return {
             Random: Random,
             Complete: Complete,
             Sample: Sample,
             build: build,
             createFromType: createFromType
         };
-        return EqOracle;
 
         /**
          * The model for an eq oracle that searches randomly for counter examples
@@ -9790,7 +9799,16 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + numbers + '/complete')
                 .then(function (response) {
-                    return response.data;
+                    var data = response.data;
+                    if (data.length > 0) {
+                        if (!angular.isArray(data[0])) {
+                            return [data]
+                        } else {
+                            return data;
+                        }
+                    } else {
+                        return [[]];
+                    }
                 })
         };
 
@@ -10804,6 +10822,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     _.forEach(results, function (result) {
                         dataValues.push(_(result).pluck('statistics').pluck(properties.MQS).value());
                     });
+
                     break;
                 case properties.EQS:
                     _.forEach(results, function (result) {
@@ -10848,16 +10867,16 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             }
 
             // create data sets
-            for (i = 0; i < dataValues.length; i++) {
+            for (i = 0; i < maxSteps; i++) {
                 var data = {x: i};
-                for (j = 0; j < maxSteps; j++) {
+                for (j = 0; j < dataValues.length; j++) {
                     data['val_' + j] = dataValues[j][i];
                 }
                 dataSets.push(data);
             }
 
             // create options for each test
-            for (i = 0; i < dataSets.length; i++) {
+            for (i = 0; i < results.length; i++) {
                 options.series.push({
                     y: 'val_' + i,
                     color: colors[i % colors.length],
