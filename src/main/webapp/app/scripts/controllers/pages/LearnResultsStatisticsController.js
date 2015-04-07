@@ -136,6 +136,8 @@
             if ($scope.selectedResults.length > 0) {
                 LearnResult.Resource.getSomeComplete(project.id, _.pluck($scope.selectedResults, 'testNo'))
                     .then(function (completeResults) {
+                        completeResults.shift();  // remove the complete result set from the top
+
                         chartData =
                             LearnerResultChartService
                                 .createDataFromMultipleCompleteResults(completeResults, $scope.selectedChartProperty);

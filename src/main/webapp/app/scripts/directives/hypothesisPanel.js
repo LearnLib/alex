@@ -35,7 +35,6 @@
 
             this.closePanelAt = function (index) {
                 $scope.panels.splice(index, 1);
-                $scope.$apply();
 
                 // has to call resize so that the hypothesis svg is rezsied properly
                 window.dispatchEvent(new Event('resize'));

@@ -65,6 +65,7 @@
             _.forEach(numbers, function (testNo) {
                 LearnResult.Resource.getComplete(project.id, testNo)
                     .then(function (completeTestResult) {
+                        completeTestResult.shift();
                         if (angular.isUndefined(index)) {
                             $scope.panels.push(completeTestResult);
                         } else {

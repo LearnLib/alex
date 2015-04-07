@@ -84,6 +84,7 @@
             function loadComplete(result) {
                 LearnResult.Resource.getComplete(project.id, result.testNo)
                     .then(function (results) {
+                        results.shift();
                         $scope.results = results;
                     });
             }
