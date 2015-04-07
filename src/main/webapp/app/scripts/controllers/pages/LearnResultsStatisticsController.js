@@ -103,6 +103,7 @@
             }
         };
 
+
         /**
          * Creates n3 line chart data from the selected final learner results and saves it into the scope. Sets the
          * displayable chart mode to MULTIPLE_FINAL
