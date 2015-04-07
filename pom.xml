@@ -55,6 +55,7 @@
         <module>api</module>
         <module>processors</module>
         <module>main</module>
+        <module>standalone</module>
     </modules>
 
     <!--===== properties ======-->
