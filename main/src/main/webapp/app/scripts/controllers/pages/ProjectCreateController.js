@@ -15,10 +15,15 @@
      * @param $scope
      * @param $state
      * @param Project
+     * @param Toast
      * @constructor
      */
     function ProjectCreateController($scope, $state, Project, Toast) {
 
+        /**
+         * The model for the new project
+         * @type {Project}
+         */
         $scope.project = new Project();
 
         /**

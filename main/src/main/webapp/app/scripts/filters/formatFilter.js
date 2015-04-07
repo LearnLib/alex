@@ -72,7 +72,7 @@
          */
         function filter(name) {
             switch (name) {
-                case learnAlgorithms.LSTAR:
+                case learnAlgorithms.EXTENSIBLE_LSTAR:
                     return 'L*';
                 case learnAlgorithms.DHC:
                     return 'DHC';

@@ -11,8 +11,8 @@
      * The service to create n3 line chart data from learner results. Can create bar chart data from multiple final
      * learner results and area chart data from multiple complete learner results.
      *
-     * @param _ - The Lodash library
-     * @returns {{createDataFromMultipleFinalResults: createDataFromMultipleFinalResults, createDataFromMultipleCompleteResults: createDataFromMultipleCompleteResults, properties: {RESETS: string, SYMBOLS: string, DURATION: string}}}
+     * @param _ - Lodash
+     * @returns {{createDataFromMultipleFinalResults: createDataFromMultipleFinalResults, createDataFromMultipleCompleteResults: createDataFromMultipleCompleteResults, properties: {MQS: string, EQS: string, SYMBOL_CALLS: string, SIGMA: string, DURATION: string}}}
      * @constructor
      */
     function LearnerResultChartService(_) {
@@ -150,6 +150,7 @@
                     _.forEach(results, function (result) {
                         dataValues.push(_(result).pluck('statistics').pluck(properties.MQS).value());
                     });
+
                     break;
                 case properties.EQS:
                     _.forEach(results, function (result) {
@@ -194,16 +195,16 @@
             }
 
             // create data sets
-            for (i = 0; i < dataValues.length; i++) {
+            for (i = 0; i < maxSteps; i++) {
                 var data = {x: i};
-                for (j = 0; j < maxSteps; j++) {
+                for (j = 0; j < dataValues.length; j++) {
                     data['val_' + j] = dataValues[j][i];
                 }
                 dataSets.push(data);
             }
 
             // create options for each test
-            for (i = 0; i < dataSets.length; i++) {
+            for (i = 0; i < results.length; i++) {
                 options.series.push({
                     y: 'val_' + i,
                     color: colors[i % colors.length],

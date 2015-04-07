@@ -18,6 +18,7 @@
      * @param modalData
      * @param Symbol
      * @param SelectionService
+     * @oaram Toast
      * @constructor
      */
     function SymbolEditModalController($scope, $modalInstance, modalData, Symbol, SelectionService, Toast) {
@@ -25,6 +26,10 @@
         /** The symbol that is passed to the modal. @type {Symbol} */
         $scope.symbol = modalData.symbol;
 
+        /**
+         * The error message that is displayed when update fails
+         * @type {null|string}
+         */
         $scope.errorMsg = null;
 
         // The copy of the symbol that will be passed back together with the updated one

@@ -20,7 +20,6 @@
      * @returns {{templateUrl: string, scope: {length: string, index: string}, link: link}}
      */
     function indexBrowser(paths) {
-
         return {
             templateUrl: paths.views.DIRECTIVES + '/index-browser.html',
             scope: {
@@ -32,7 +31,16 @@
 
         function link(scope, el, attrs) {
 
+            // the length of the array
             var length = parseInt(scope.length);
+
+            // update length on change so that it can be clicked that far in the template
+            scope.$watch('length', function (n) {
+                if (angular.isDefined(n)) {
+                    length = n;
+                    scope.lastStep();
+                }
+            });
 
             scope.firstStep = function () {
                 scope.index = 0;

@@ -41,7 +41,7 @@
                         Hypothesis
                     </button>
                     <button class="btn btn-default btn-xs"
-                            ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.LSTAR"
+                            ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR"
                             download-table-as-csv ancestor-or-element="#hypothesis-panel-{{index}}">
                         Download CSV
                     </button>
@@ -79,7 +79,7 @@
                     ng-if="mode === modes.HYPOTHESIS && pointer !== results.length - 1"></hypothesis>
 
         <observation-table data="results[pointer].algorithmInformation"
-                           ng-if="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.LSTAR">
+                           ng-if="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR">
         </observation-table>
 
         <discrimination-tree data="results[pointer].algorithmInformation"

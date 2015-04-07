@@ -60,7 +60,7 @@ public class LearnerResultDAOImplTest {
         learnerResultDAO.create(learnerResult);
 
         assertTrue(learnerResult.getTestNo() > 0);
-        assertTrue(learnerResult.getStepNo() == 1);
+        assertTrue(learnerResult.getStepNo() == 0);
 
         String jsonFromDB = learnerResultDAO.getAsJSON(project.getId(), learnerResult.getTestNo(),
                                                        learnerResult.getStepNo());
@@ -79,7 +79,7 @@ public class LearnerResultDAOImplTest {
         /* check learnerResult 1 */
         String expectedJSON = generateExpectedJSON(learnerResult);
         assertTrue(learnerResult.getTestNo() > 0);
-        assertTrue(learnerResult.getStepNo() == 1);
+        assertTrue(learnerResult.getStepNo() == 0L);
         String jsonFromDB = learnerResultDAO.getAsJSON(project.getId(), learnerResult.getTestNo(),
                                                         learnerResult.getStepNo());
         assertEquals(expectedJSON, jsonFromDB);
@@ -87,7 +87,7 @@ public class LearnerResultDAOImplTest {
         /* check learnerResult 2 */
         expectedJSON = generateExpectedJSON(result2);
         assertTrue(result2.getTestNo() > 0);
-        assertTrue(result2.getStepNo() == 1);
+        assertTrue(result2.getStepNo() == 0);
         jsonFromDB = learnerResultDAO.getAsJSON(project.getId(), result2.getTestNo(), result2.getStepNo());
         assertEquals(expectedJSON, jsonFromDB);
 
@@ -122,11 +122,13 @@ public class LearnerResultDAOImplTest {
         List<String> resultsInDBAsJSON = learnerResultDAO.getAllAsJSON(project.getId());
 
         assertEquals(results.size(), resultsInDBAsJSON.size());
-        for (LearnerResult x : results) {
-            String expectedJSON = x.getJSON();
+        for (int i = 0; i < results.size(); i++) {
+            LearnerResult expectedResult = results.get(i);
+            expectedResult.setStepNo(0L);
+            String expectedJSON = expectedResult.getJSON();
+            String actualJSON   = resultsInDBAsJSON.get(i);
 
-            int index = resultsInDBAsJSON.indexOf(expectedJSON);
-            assertTrue(index > -1);
+            assertEquals(expectedJSON, actualJSON);
         }
     }
 
@@ -158,7 +160,7 @@ public class LearnerResultDAOImplTest {
                                         + "\"duration\":0,\"eqsUsed\":0,\"mqsUsed\":0,"
                                         + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0"
                                     + "},"
-                                    + "\"stepNo\":" + (i + 1) + ",\"testNo\":" + result.getTestNo() + "}";
+                                    + "\"stepNo\":" + i + ",\"testNo\":" + result.getTestNo() + "}";
             String resultAsJSON = resultsInDBAsJSON.get(i);
 
             assertEquals(expectedJSON, resultAsJSON);
@@ -184,6 +186,7 @@ public class LearnerResultDAOImplTest {
         }
 
         LearnerResult resultInDB = learnerResultDAO.get(project.getId(), learnerResult.getTestNo());
+        learnerResult.setStepNo(0L);
         assertEquals(learnerResult, resultInDB);
     }
 
@@ -206,18 +209,19 @@ public class LearnerResultDAOImplTest {
         }
 
         String jsonInDB = learnerResultDAO.getAsJSON(project.getId(), learnerResult.getTestNo());
+        learnerResult.setStepNo(0L);
         assertEquals(learnerResult.getJSON(), jsonInDB);
     }
 
     @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingOneFinalResultAsJSONThrowsAnExceptionIfTheProjectIdIsInvalid() {
-    learnerResultDAO.create(learnerResult);
-    learnerResultDAO.getAsJSON(-1L, learnerResult.getTestNo()); // should fail
-}
+        learnerResultDAO.create(learnerResult);
+        learnerResultDAO.getAsJSON(-1L, learnerResult.getTestNo()); // should fail
+    }
 
     @Test(expected = NoSuchElementException.class)
     public void ensureThatGettingOneFinalResultAsJSONThrowsAnExceptionIfTheResultIdIsInvalid() {
-        learnerResultDAO.getAsJSON(project.getId(), -1L); // should
+        learnerResultDAO.getAsJSON(project.getId(), -1L); // should fail
     }
 
     @Test
@@ -226,7 +230,9 @@ public class LearnerResultDAOImplTest {
         learnerResultDAO.create(learnerResult);
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             if (i == (RESULTS_AMOUNT / 2) - 1) {
+                learnerResult.setStepNo(2L);
                 middleResult = learnerResult.getJSON();
+                learnerResult.setStepNo(1L);
             }
 
             learnerResultDAO.update(learnerResult);

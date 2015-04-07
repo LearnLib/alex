@@ -11,7 +11,7 @@
      * The directive for displaying a discrimination tree in an svg element. Can be used as an attribute or an element.
      * Expects another property 'data' which holds the string representation of the discrimination tree.
      *
-     * Use it like: '<discrimination-tree data="...."></discriminaion-tree>'
+     * Use it like: '<discrimination-tree data="...."></discrimination-tree>'
      *
      * @param _ - Lodash
      * @param d3 - D3
@@ -43,7 +43,7 @@
             // the parent of the svg to fit its size accordingly
             var svgContainer = el[0].parentNode;
 
-            // render the new discrimation tree when property 'data' changes
+            // render the new discrimination tree when property 'data' changes
             scope.$watch('data', function (newValue) {
                 if (angular.isDefined(newValue)) {
                     var data = angular.fromJson(newValue);
@@ -131,7 +131,7 @@
                 _graph.setGraph({});
 
                 // add nodes to the graph
-                _.forEach(graph.nodes, function (node, i) {
+                _.forEach(graph.nodes, function (node) {
                     _graph.setNode(node, {
                         shape: node[0] === 'q' ? 'rect' : 'circle',     // draw a rectangle when node is a leaf
                         label: node,
@@ -142,7 +142,7 @@
                 });
 
                 //add edges to the graph
-                _.forEach(graph.edges, function (edge, i) {
+                _.forEach(graph.edges, function (edge) {
                     _graph.setEdge(edge.from, edge.to, {
                         lineInterpolate: 'basis',
                         style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",

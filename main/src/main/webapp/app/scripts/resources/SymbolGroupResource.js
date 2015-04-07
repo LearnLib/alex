@@ -108,7 +108,7 @@
          * Makes a PUT request to /rest/projects/{projectId}/groups in order to update an existing symbol group.
          *
          * @param {number} projectId - The id of the project of the symbol group
-         * @param {number} group - The symbol group that should be updated
+         * @param {SymbolGroup} group - The symbol group that should be updated
          * @returns {*} - An angular promise
          */
         SymbolGroupResource.prototype.update = function (projectId, group) {
@@ -126,7 +126,7 @@
          * the id 0.
          *
          * @param {number} projectId - The id of the project of the symbol group
-         * @param {number} group - The symbol group that should be deleted
+         * @param {SymbolGroup} group - The symbol group that should be deleted
          * @returns {*} - An angular promise
          */
         SymbolGroupResource.prototype.delete = function (projectId, group) {

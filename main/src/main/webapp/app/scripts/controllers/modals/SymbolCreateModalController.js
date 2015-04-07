@@ -19,6 +19,7 @@
      * @param modalData
      * @param Symbol
      * @param SymbolGroup
+     * @param Toast
      * @constructor
      */
     function SymbolCreateModalController($scope, $modalInstance, modalData, Symbol, SymbolGroup, Toast) {

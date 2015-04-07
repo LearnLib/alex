@@ -88,7 +88,8 @@
          * Checks if the selected path is a counterexample.
          * TODO: implement
          *
-         * @param counterexample
+         * @param {number} projectId
+         * @param {{input: string, output: string}[]} counterexample
          * @returns {*}
          */
         function isCounterexample(projectId, counterexample) {

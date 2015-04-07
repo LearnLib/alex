@@ -42,7 +42,6 @@
             LearnResult.Resource.getAllFinal(project.id)
                 .then(function (results) {
                     $scope.results = results;
-                    console.log(results)
                 });
         }());
 

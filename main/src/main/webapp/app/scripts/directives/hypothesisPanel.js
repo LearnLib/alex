@@ -13,7 +13,7 @@
             '   <div style="position: absolute; left: 0; top: 0; bottom: 0; right: 40px; background: #fff" ng-transclude></div>' +
             '</div>';
 
-        var directive = {
+        return {
             template: template,
             transclude: true,
             scope: {
@@ -24,7 +24,6 @@
                 controller
             ]
         };
-        return directive;
 
         //////////
 
@@ -59,7 +58,7 @@
 
         var template = '<div class="panel" style="position: absolute; top: 0; bottom: 0; width: 100%;" ng-transclude></div>';
 
-        var directive = {
+        return {
             require: '^panelManager',
             template: template,
             transclude: true,
@@ -68,7 +67,6 @@
                 index: '=panelIndex'
             }
         };
-        return directive;
 
         //////////
 

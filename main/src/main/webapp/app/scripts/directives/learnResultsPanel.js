@@ -31,8 +31,6 @@
      * @returns {{scope: {results: string}, transclude: boolean, templateUrl: string, controller: *[]}}
      */
     function learnResultsPanel(paths, learnAlgorithms) {
-
-        // the directive
         return {
             scope: {
                 results: '=',

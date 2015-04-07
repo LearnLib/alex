@@ -72,7 +72,7 @@
 
         // learn algorithms
         .constant('learnAlgorithms', {
-            LSTAR: 'LSTAR',
+            EXTENSIBLE_LSTAR: 'EXTENSIBLE_LSTAR',
             DHC: 'DHC',
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
             TTT: 'TTT'

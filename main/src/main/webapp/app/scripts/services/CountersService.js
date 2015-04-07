@@ -66,8 +66,8 @@
          * @returns angular promise object of the request
          */
         function deleteSome(projectId, names) {
-            names = names.join(',');
-            return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/batch/' + names)
+            var n = names.join(',');
+            return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/batch/' + n)
                 .then(function (response) {
                     return response.data;
                 })

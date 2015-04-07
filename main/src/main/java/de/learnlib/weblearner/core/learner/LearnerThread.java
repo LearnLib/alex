@@ -68,7 +68,6 @@ public class LearnerThread extends Thread {
 
     private DefaultQuery<String, Word<String>> counterExample;
 
-
     /**
      * Constructor to set the LearnerThread up.
      *  @param learnerResultDAO
@@ -87,7 +86,7 @@ public class LearnerThread extends Thread {
         Symbol[] symbolsArray = readSymbolArray(result);
         this.symbolMapper = new SymbolMapper(symbolsArray);
         this.sigma = symbolMapper.getAlphabet();
-        result.setSigma(sigma);
+        this.result.setSigma(sigma);
 
         ContextExecutableInputSUL<ContextExecutableInput<String, ConnectorManager>, String, ConnectorManager> ceiSUL;
         ceiSUL = new ContextExecutableInputSUL<>(context);
@@ -105,7 +104,7 @@ public class LearnerThread extends Thread {
 
     /**
      * Advanced constructor to set the LearnerThread up.
-     * Most likly to be used when resuming a learn process.
+     * Most likely to be used when resuming a learn process.
      *
      * @param learnerResultDAO
      *         The DAO to persists the results.
@@ -207,10 +206,11 @@ public class LearnerThread extends Thread {
         result.getStatistics().setStartTime(new Date());
 
         if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
+            learnerResultDAO.create(result);
             learnFirstHypothesis();
             counterExample = findCounterExample();
             result.setCounterExample(counterExample);
-            learnerResultDAO.create(result);
+            rememberMetaData();
         } else {
             if (counterExample == null) {
                 counterExample = findCounterExample();
@@ -218,11 +218,11 @@ public class LearnerThread extends Thread {
             }
 
             if (counterExample != null) {
-                refineHypothesis(counterExample);
+                refineHypothesis(); // use counter example to refine the hypothesis
                 counterExample = findCounterExample();
                 result.setCounterExample(counterExample);
             }
-            learnerResultDAO.update(result);
+            rememberMetaData();
         }
 
         boolean shouldDoAnotherStep = counterExample != null;
@@ -239,7 +239,6 @@ public class LearnerThread extends Thread {
     private void learnFirstHypothesis() {
         learner.startLearning();
         result.createHypothesisFrom(learner.getHypothesisModel());
-        rememberMetaData();
     }
 
     private DefaultQuery<String, Word<String>> findCounterExample() {
@@ -248,29 +247,55 @@ public class LearnerThread extends Thread {
         return randomWords.findCounterExample(learner.getHypothesisModel(), sigma);
     }
 
-    private void refineHypothesis(DefaultQuery<String, Word<String>> counterExample) {
+    private void refineHypothesis() {
         learner.refineHypothesis(counterExample);
         result.createHypothesisFrom(learner.getHypothesisModel());
-        rememberMetaData();
     }
 
     private void rememberMetaData() {
-        LearnerResult.Statistics statistics = result.getStatistics();
-
-        long startTime = statistics.getStartTime().getTime();
+        long startTime = result.getStatistics().getStartTime().getTime();
         long currentTime = new Date().getTime();
-        statistics.setDuration(currentTime - startTime);
-        statistics.setMqsUsed(resetCounterSUL.getStatisticalData().getCount());
-        statistics.setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount());
-
-        LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
-        String algorithmInformation;
-        try {
-            algorithmInformation = algorithm.getInternalData(learner);
-        } catch (IllegalStateException e) { // algorithm has no internal data to show
-            algorithmInformation = "";
-        }
-        result.setAlgorithmInformation(algorithmInformation);
+        result.getStatistics().setDuration(currentTime - startTime);
+        //todo(alex.s): save #MQs and amount of symbol
+        result.getStatistics().setMqsUsed(resetCounterSUL.getStatisticalData().getCount());
+        result.getStatistics().setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount());
+        saveInternalDataStructure();
+        learnerResultDAO.update(result);
     }
+
+    private void saveInternalDataStructure() {
+        if (learner instanceof ExtensibleLStarMealy) {
+            StringBuilder observationTable = new StringBuilder();
+            new ObservationTableASCIIWriter<String, String>().write(((ExtensibleLStarMealy) learner).getObservationTable(), observationTable);
+            result.setAlgorithmInformation(observationTable.toString());
+        } else if (learner instanceof DTLearnerMealy) {
+            DiscriminationTree discriminationTree = ((DTLearnerMealy) learner).getDiscriminationTree();
+            DiscriminationTree.GraphView graphView = discriminationTree.graphView();
+            String treeAsJSON = DiscriminationTreeSerializer.toJSON(discriminationTree);
+            System.out.println("========================");
+            try {
+                GraphDOT.write(graphView, System.out, graphView.getGraphDOTHelper());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            result.setAlgorithmInformation(treeAsJSON);
+            System.out.println(result.getAlgorithmInformation());
+            System.out.println("========================");
+        } else if (learner instanceof TTTLearnerMealy) {
+            TTTLearnerMealy tttLearner = (TTTLearnerMealy) learner;
+            String treeAsJSON = TTTSerializer.toJSON(tttLearner.getDiscriminationTree());
+            de.learnlib.algorithms.ttt.base.DiscriminationTree.GraphView graphView = tttLearner.getDiscriminationTree().graphView();
+            System.out.println("========================");
+            try {
+                GraphDOT.write(graphView, System.out, graphView.getGraphDOTHelper());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            result.setAlgorithmInformation(treeAsJSON);
+            System.out.println(result.getAlgorithmInformation());
+            System.out.println("========================");
+        }
+    }
+
 
 }

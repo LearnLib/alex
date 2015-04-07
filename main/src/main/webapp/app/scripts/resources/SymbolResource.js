@@ -186,8 +186,8 @@
             var _this = this;
 
             return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbol.id + '/hide', {})
-                .then(function (resonse) {
-                    return _this.build(resonse.data);
+                .then(function (response) {
+                    return _this.build(response.data);
                 });
         };
 
