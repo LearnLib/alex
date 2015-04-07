@@ -1,2 +1,2 @@
-de.learnlib.weblearner.annotations.processor.LearnAlgorithmProcessor
-de.learnlib.weblearner.annotations.processor.EntityProcessor
+de.learnlib.alex.annotations.processor.LearnAlgorithmProcessor
+de.learnlib.alex.annotations.processor.EntityProcessor

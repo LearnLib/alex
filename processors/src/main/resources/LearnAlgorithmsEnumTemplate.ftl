@@ -1,8 +1,8 @@
-package de.learnlib.weblearner.core.entities;
+package de.learnlib.alex.core.entities;
 
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
-import de.learnlib.weblearner.algorithms.LearnAlgorithmFactory;
+import de.learnlib.alex.algorithms.LearnAlgorithmFactory;
 import net.automatalib.words.Alphabet;
 
 /**

@@ -1,4 +1,4 @@
-package de.learnlib.weblearner.utils;
+package de.learnlib.alex.utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -3,15 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>weblearner-parent</artifactId>
-        <groupId>de.learnlib.weblearner</groupId>
+        <artifactId>alex-parent</artifactId>
+        <groupId>de.learnlib.alex</groupId>
         <version>0.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>standalone</artifactId>
 
-    <name>WebLearner - Standalone</name>
+    <name>ALEX - Standalone</name>
 
     <dependencies>
         <dependency>
@@ -40,7 +40,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.learnlib.weblearner.standalone.Main</mainClass>
+                            <mainClass>de.learnlib.alex.standalone.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -63,7 +63,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.learnlib.weblearner.standalone.Main</mainClass>
+                            <mainClass>de.learnlib.alex.standalone.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

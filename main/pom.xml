@@ -6,8 +6,8 @@
 
 
     <parent>
-        <groupId>de.learnlib.weblearner</groupId>
-        <artifactId>weblearner-parent</artifactId>
+        <groupId>de.learnlib.alex</groupId>
+        <artifactId>alex-parent</artifactId>
         <version>0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -16,7 +16,7 @@
     <version>0.4-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>WebLearner - Main</name>
+    <name>ALEX - Main</name>
     <description>
         A RESTful application with a fancy web frontend to configure and run automata learning algorithms on websites and webservices.
     </description>
@@ -24,14 +24,14 @@
     <!--===== dependencies ======-->
     <dependencies>
         <dependency>
-            <groupId>de.learnlib.weblearner</groupId>
+            <groupId>de.learnlib.alex</groupId>
             <artifactId>api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>de.learnlib.weblearner</groupId>
+            <groupId>de.learnlib.alex</groupId>
             <artifactId>processors</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

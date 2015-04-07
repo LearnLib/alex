@@ -8,8 +8,8 @@
     <version>0.4-SNAPSHOT</version>
 
     <parent>
-        <groupId>de.learnlib.weblearner</groupId>
-        <artifactId>weblearner-parent</artifactId>
+        <groupId>de.learnlib.alex</groupId>
+        <artifactId>alex-parent</artifactId>
         <version>0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -25,7 +25,7 @@
         </dependency>
 
         <dependency>
-            <groupId>de.learnlib.weblearner</groupId>
+            <groupId>de.learnlib.alex</groupId>
             <artifactId>api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

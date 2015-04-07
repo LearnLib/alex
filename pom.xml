@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.learnlib.weblearner</groupId>
-    <artifactId>weblearner-parent</artifactId>
+    <groupId>de.learnlib.alex</groupId>
+    <artifactId>alex-parent</artifactId>
     <version>0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>WebLearner</name>
+    <name>Automata Learning Experience (ALEX)</name>
     <description>
-        A RESTful application with a fancy web frontend to configure and run automata learning algorithms on websites and webservices.
+        A RESTful application with a fancy web frontend to configure and run automata learning algorithms on websites and web services.
     </description>
 
     <developers>

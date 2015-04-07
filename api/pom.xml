@@ -5,15 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>weblearner-parent</artifactId>
-        <groupId>de.learnlib.weblearner</groupId>
+        <artifactId>alex-parent</artifactId>
+        <groupId>de.learnlib.alex</groupId>
         <version>0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>api</artifactId>
 
-    <name>WebLearner - Annotations</name>
+    <name>ALEX - Annotations</name>
 
     <dependencies>
         <dependency>
