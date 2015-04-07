@@ -68,7 +68,6 @@ public class LearnerThread extends Thread {
 
     private DefaultQuery<String, Word<String>> counterExample;
 
-
     /**
      * Constructor to set the LearnerThread up.
      *  @param learnerResultDAO
@@ -87,7 +86,7 @@ public class LearnerThread extends Thread {
         Symbol[] symbolsArray = readSymbolArray(result);
         this.symbolMapper = new SymbolMapper(symbolsArray);
         this.sigma = symbolMapper.getAlphabet();
-        result.setSigma(sigma);
+        this.result.setSigma(sigma);
 
         ContextExecutableInputSUL<ContextExecutableInput<String, ConnectorManager>, String, ConnectorManager> ceiSUL;
         ceiSUL = new ContextExecutableInputSUL<>(context);
@@ -99,13 +98,13 @@ public class LearnerThread extends Thread {
 
         this.mqOracle = new SULOracle<>(sul);
 
-        LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
+        LearnAlgorithms algorithm = this.result.getConfiguration().getAlgorithm();
         this.learner = LearnerAlgorithmFactory.createLearner(algorithm, sigma, mqOracle);
     }
 
     /**
      * Advanced constructor to set the LearnerThread up.
-     * Most likly to be used when resuming a learn process.
+     * Most likely to be used when resuming a learn process.
      *
      * @param learnerResultDAO
      *         The DAO to persists the results.
@@ -207,10 +206,11 @@ public class LearnerThread extends Thread {
         result.getStatistics().setStartTime(new Date());
 
         if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
+            learnerResultDAO.create(result);
             learnFirstHypothesis();
             counterExample = findCounterExample();
             result.setCounterExample(counterExample);
-            learnerResultDAO.create(result);
+            rememberMetaData();
         } else {
             if (counterExample == null) {
                 counterExample = findCounterExample();
@@ -218,11 +218,11 @@ public class LearnerThread extends Thread {
             }
 
             if (counterExample != null) {
-                refineHypothesis(counterExample);
+                refineHypothesis(); // use counter example to refine the hypothesis
                 counterExample = findCounterExample();
                 result.setCounterExample(counterExample);
             }
-            learnerResultDAO.update(result);
+            rememberMetaData();
         }
 
         boolean shouldDoAnotherStep = counterExample != null;
@@ -239,7 +239,6 @@ public class LearnerThread extends Thread {
     private void learnFirstHypothesis() {
         learner.startLearning();
         result.createHypothesisFrom(learner.getHypothesisModel());
-        rememberMetaData();
     }
 
     private DefaultQuery<String, Word<String>> findCounterExample() {
@@ -248,10 +247,9 @@ public class LearnerThread extends Thread {
         return randomWords.findCounterExample(learner.getHypothesisModel(), sigma);
     }
 
-    private void refineHypothesis(DefaultQuery<String, Word<String>> counterExample) {
+    private void refineHypothesis() {
         learner.refineHypothesis(counterExample);
         result.createHypothesisFrom(learner.getHypothesisModel());
-        rememberMetaData();
     }
 
     private void rememberMetaData() {
@@ -262,6 +260,7 @@ public class LearnerThread extends Thread {
         result.getStatistics().setMqsUsed(resetCounterSUL.getStatisticalData().getCount());
         result.getStatistics().setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount());
         saveInternalDataStructure();
+        learnerResultDAO.update(result);
     }
 
     private void saveInternalDataStructure() {
