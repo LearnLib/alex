@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('CountersController', CountersController);
 
     CountersController.$inject = ['$scope', 'SessionService', 'CountersService', 'ToastService', '_'];

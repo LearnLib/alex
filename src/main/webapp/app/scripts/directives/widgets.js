@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('widget', widget)
         .directive('counterexamplesWidget', counterexamplesWidget)
         .directive('learnResumeSettingsWidget', learnResumeSettingsWidget);

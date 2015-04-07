@@ -1,7 +1,7 @@
 (function () {
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('Action', ActionModel);
 
     ActionModel.$inject = ['actionTypes'];

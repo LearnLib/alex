@@ -11,7 +11,9 @@
         </div>
 
         <div class="pull-left">
-            <button class="btn btn-xs btn-primary" ng-click="deleteResults()">
+            <button class="btn btn-xs btn-primary"
+                    ng-click="deleteResults()"
+                    ng-class="selectedResults.length === 0 ? 'disabled' : ''">
                 Delete
             </button>
         </div>

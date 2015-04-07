@@ -1,7 +1,7 @@
 (function () {
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnStartController', LearnStartController);
 
     LearnStartController.$inject = [
@@ -84,7 +84,6 @@
             function loadComplete(result) {
                 LearnResult.Resource.getComplete(project.id, result.testNo)
                     .then(function (results) {
-                        results.shift();
                         $scope.results = results;
                     });
             }

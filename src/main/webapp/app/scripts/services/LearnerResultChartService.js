@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .factory('LearnerResultChartService', LearnerResultChartService);
 
     LearnerResultChartService.$inject = ['_'];

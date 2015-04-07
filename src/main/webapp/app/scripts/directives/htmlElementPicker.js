@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('htmlElementPicker', htmlElementPicker)
         .directive('htmlElementPickerWindow', htmlElementPickerWindow)
         .factory('htmlElementPickerInstance', htmlElementPickerInstance);

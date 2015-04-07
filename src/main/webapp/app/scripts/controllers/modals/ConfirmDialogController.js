@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('ConfirmDialogController', ConfirmDialogController);
 
     ConfirmDialogController.$inject = ['$scope', '$modalInstance', 'modalData'];

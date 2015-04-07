@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.routes')
+        .module('ALEX.routes')
         .config([
             '$stateProvider', '$urlRouterProvider', 'paths',
             config

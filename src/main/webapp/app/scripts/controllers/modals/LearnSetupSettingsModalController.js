@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnSetupSettingsModalController', LearnSetupSettingsModalController);
 
     LearnSetupSettingsModalController.$inject = [

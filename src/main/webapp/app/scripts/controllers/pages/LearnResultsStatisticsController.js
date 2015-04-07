@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnResultsStatisticsController', LearnResultsStatisticsController);
 
     LearnResultsStatisticsController.$inject = [
@@ -103,7 +103,6 @@
             }
         };
 
-
         /**
          * Creates n3 line chart data from the selected final learner results and saves it into the scope. Sets the
          * displayable chart mode to MULTIPLE_FINAL
@@ -136,8 +135,6 @@
             if ($scope.selectedResults.length > 0) {
                 LearnResult.Resource.getSomeComplete(project.id, _.pluck($scope.selectedResults, 'testNo'))
                     .then(function (completeResults) {
-                        completeResults.shift();  // remove the complete result set from the top
-
                         chartData =
                             LearnerResultChartService
                                 .createDataFromMultipleCompleteResults(completeResults, $scope.selectedChartProperty);

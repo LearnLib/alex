@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('Symbol', SymbolModel);
 
     SymbolModel.$inject = ['SymbolResource', 'Action'];

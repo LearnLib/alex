@@ -97,14 +97,14 @@
                          ng-if="!symobl.hidden">
 
                         <div selectable-list-item>
-                            <a class="pull-right" ng-click="setResetSymbol(symbol)">
+                            <a class="pull-right" ng-click="setResetSymbol(symbol)" selection-model-ignore>
                                 <i class="fa" ng-class="resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'"></i>
                             </a>
 
                             <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
 
                             <p class="text-muted">
-                                <a href ng-click="symbol._collapsed = !symbol._collapsed">
+                                <a href ng-click="symbol._collapsed = !symbol._collapsed" selection-model-ignore>
                                     <span ng-bind="symbol.actions.length"></span>
                                     Actions
                                     <i class="fa fa-fw"

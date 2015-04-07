@@ -1,7 +1,7 @@
 (function () {
 
     angular
-        .module('weblearner.resources')
+        .module('ALEX.resources')
         .factory('SymbolGroupResource', Resource);
 
     Resource.$inject = ['$http', 'paths'];

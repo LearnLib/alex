@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.resources')
+        .module('ALEX.resources')
         .factory('ProjectResource', ProjectResource);
 
     ProjectResource.$inject = ['$http', 'paths'];

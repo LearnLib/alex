@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnResultsCompareController', LearnResultsCompareController);
 
     LearnResultsCompareController.$inject = ['$scope', '$stateParams', 'SessionService', 'LearnResult', '_'];
@@ -65,7 +65,6 @@
             _.forEach(numbers, function (testNo) {
                 LearnResult.Resource.getComplete(project.id, testNo)
                     .then(function (completeTestResult) {
-                        completeTestResult.shift();
                         if (angular.isUndefined(index)) {
                             $scope.panels.push(completeTestResult);
                         } else {

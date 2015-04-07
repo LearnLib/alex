@@ -1,7 +1,7 @@
 (function () {
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('SymbolGroup', SymbolGroupModel);
 
     SymbolGroupModel.$inject = ['SymbolGroupResource', 'Symbol', '_'];

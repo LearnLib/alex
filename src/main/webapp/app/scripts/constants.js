@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.constants')
+        .module('ALEX.constants')
 
         // make global libraries a constant for better testing
         .constant('_', window._)                // lodash

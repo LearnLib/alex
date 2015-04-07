@@ -1,6 +1,6 @@
 (function () {
 
-    angular.module('weblearner.directives')
+    angular.module('ALEX.directives')
         .directive('hypothesis', hypothesis);
 
     hypothesis.$inject = ['$window', 'paths', 'CounterExampleService', '_', 'dagreD3', 'd3', 'graphlib'];

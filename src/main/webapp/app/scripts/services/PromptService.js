@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .service('PromptService', PromptService);
 
     PromptService.$inject = ['$modal', 'paths'];

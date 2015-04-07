@@ -1,7 +1,7 @@
 (function () {
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('EqOracle', EqOracleModel);
 
     EqOracleModel.$inject = ['eqOracles'];
