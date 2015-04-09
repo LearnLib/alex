@@ -3,9 +3,9 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
-import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Cascade;
@@ -323,13 +323,8 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
     @Override
     public String execute(ConnectorManager connector) throws SULException {
         for (SymbolAction action : actions) {
-            ExecuteResult result;
-            try {
-                result = executeAction(action, connector);
-            } catch (Exception e) {
-                LOGGER.info("Error while executing the action '" + action + "' in the symbol '" + this + "':", e);
-                result = ExecuteResult.FAILED;
-            }
+            ExecuteResult result = executeAction(action, connector);
+
             if (!action.isIgnoreFailure() && result != ExecuteResult.OK) {
                 return result.toString();
             }
@@ -340,8 +335,9 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
 
     private ExecuteResult executeAction(SymbolAction action, ConnectorManager connector) {
         try {
-            return action.execute(connector);
-        } catch (IllegalStateException e) {
+            return action.executeAction(connector);
+        } catch (Exception e) {
+            LOGGER.info("Error while executing the action '" + action + "' in the symbol '" + this + "':", e);
             return ExecuteResult.FAILED;
         }
     }

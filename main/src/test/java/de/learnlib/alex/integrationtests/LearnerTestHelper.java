@@ -2,9 +2,9 @@ package de.learnlib.alex.integrationtests;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.actions.WebSymbolActions.WebSymbolTest;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.actions.WebSymbolActions.WebSymbolTest;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.util.automata.equivalence.DeterministicEquivalenceTest;

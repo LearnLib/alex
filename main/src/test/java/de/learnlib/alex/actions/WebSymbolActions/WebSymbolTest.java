@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.PropertyFilterMixIn;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
-import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +27,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class WebSymbolTest {
+
+    private static final Long ONE_SECOND = 1000L;
 
     private Symbol symbol;
 
@@ -58,7 +60,8 @@ public class WebSymbolTest {
         a2.setValue("F[oO0]+");
         a2.setRegexp(true);
         symbol.addAction(a2);
-        WebSymbolAction a3 = new WaitAction();
+        WaitAction a3 = new WaitAction();
+        a3.setDuration(ONE_SECOND);
         symbol.addAction(a3);
     }
 
@@ -95,7 +98,7 @@ public class WebSymbolTest {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
                     + "{\"type\":\"web_click\",\"negated\":false,\"ignoreFailure\":false,\"node\":null},"
                     + "{\"type\":\"web_checkForText\",\"negated\":false,\"ignoreFailure\":false,\"value\":\"F[oO0]+\",\"regexp\":true},"
-                    + "{\"type\":\"wait\",\"negated\":false,\"ignoreFailure\":false,\"duration\":0}"
+                    + "{\"type\":\"wait\",\"negated\":false,\"ignoreFailure\":false,\"duration\":" + ONE_SECOND + "}"
                 + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":0,\"revision\":null}";
         symbol.setProject(null);
 
@@ -117,7 +120,8 @@ public class WebSymbolTest {
                                         + "\"node\":null},"
                                     + "{\"type\":\"web_checkForText\",\"negated\":false,\"ignoreFailure\":false,"
                                         + "\"value\":\"F[oO0]+\",\"regexp\":true},"
-                                    + "{\"type\":\"wait\",\"negated\":false,\"ignoreFailure\":false,\"duration\":0}"
+                                    + "{\"type\":\"wait\",\"negated\":false,\"ignoreFailure\":false,"
+                                        + "\"duration\":" + ONE_SECOND + "}"
                                 + "],\"group\":2,\"hidden\":false,\"id\":null,\"name\":\"WebSymbol\",\"project\":1,"
                                 + "\"revision\":null}";
         ObjectMapper mapper = new ObjectMapper();
@@ -155,9 +159,9 @@ public class WebSymbolTest {
     public void shouldReturnOkIfAllActionsRunSuccessfully() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
         WebSymbolAction action1 = mock(WebSymbolAction.class);
-        given(action1.execute(connector)).willReturn(ExecuteResult.OK);
+        given(action1.executeAction(connector)).willReturn(ExecuteResult.OK);
         WebSymbolAction action2 = mock(WebSymbolAction.class);
-        given(action2.execute(connector)).willReturn(ExecuteResult.OK);
+        given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
 
         symbol = new Symbol();
         symbol.addAction(action1);
@@ -170,9 +174,9 @@ public class WebSymbolTest {
     public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
         WebSymbolAction action1 = mock(WebSymbolAction.class);
-        given(action1.execute(connector)).willReturn(ExecuteResult.FAILED);
+        given(action1.executeAction(connector)).willReturn(ExecuteResult.FAILED);
         WebSymbolAction action2 = mock(WebSymbolAction.class);
-        given(action2.execute(connector)).willReturn(ExecuteResult.OK);
+        given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
 
         symbol = new Symbol();
         symbol.addAction(action1);

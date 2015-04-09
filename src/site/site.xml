@@ -23,22 +23,38 @@
                 <column>reports</column>
             </bottomNav>
             <bottomDescription quote="false">
-                <![CDATA[
-                <a href="http://www.cs.tu-dortmund.de/"
-                   target="_blank"
-                   class="text-center span3">
-                    <img src="http://www.cs.tu-dortmund.de/nps/Medienpool/Bereichsbilder/tu_fk04.png"
-                         title="TU Dortmund - Fakultät für Informatik"
-                         class="" />
-                </a>
-                <a href="http://ls5-www.cs.tu-dortmund.de/"
-                   target="_blank"
-                   class="span3 text-center">
-                    <img src="http://ls5-www.cs.tu-dortmund.de/cms/Medienpool/Bereichsbilder/tu_ls_5_PS.png"
-                         title="TU Dortmund - Fakultät für Informatik - Lehrstuhl 5 für Programmiersysteme"
-                         class="" />
-                </a>
-                ]]>
+            <![CDATA[
+                <ul class="nav nav-list">
+                    <li class="nav-header">
+                        Powered by:
+                    </li>
+                    <li>
+                        <a href="http://www.tu-dortmund.de/"
+                            title="Site of the TU Dortmund University, Germany"
+                            target="_blank">
+                                <img src="http://www.tu-dortmund.de/Medienpool/Seitenbilder/logo_tu.png"
+                                    title="TU Dortmund University"
+                                    alt="Logo of the TU Dortmund University" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://www.cs.tu-dortmund.de/"
+                            title="Site of the Department of Computer Science at TU Dortmund University, Germany"
+                            target="_blank">
+                                <img src="http://www.cs.tu-dortmund.de/nps/Medienpool/Bereichsbilder/tu_fk04.png"
+                                    title="TU Dortmund University - Department of Computer Science"
+                                    alt="Logo of the Department of Computer Science at TU Dortmund University" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://ls5-www.cs.tu-dortmund.de/"
+                            title="Site of the Chair for Programming Systems at TU Dortmund University, Germany"
+                            target="_blank">
+                                Chair for Programming Systems
+                        </a>
+                    </li>
+                </ul>
+            ]]>
             </bottomDescription>
         </reflowSkin>
     </custom>

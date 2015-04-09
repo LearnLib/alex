@@ -343,7 +343,7 @@ public class SymbolResource {
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(projectId,
                                                                         symbolIds.toArray(new Long[symbolIds.size()]));
             if (symbols.isEmpty()) {
-                throw new IllegalArgumentException("Symbols with the ids '" + symbolIds+ "' not found!");
+                throw new IllegalArgumentException("Symbols with the ids '" + symbolIds + "' not found!");
             }
             symbolDAO.move(symbols, groupId);
 

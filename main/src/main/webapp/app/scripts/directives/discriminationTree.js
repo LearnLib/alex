@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('discriminationTree', discriminationTree);
 
     discriminationTree.$inject = ['_', 'd3', 'dagreD3', 'graphlib', '$window'];

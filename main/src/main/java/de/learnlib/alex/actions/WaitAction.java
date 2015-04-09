@@ -1,8 +1,8 @@
 package de.learnlib.alex.actions;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.actions.WebSymbolActions.WebSymbolAction;
+import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,15 +24,18 @@ public class WaitAction extends WebSymbolAction {
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("server");
 
-    /** The duration to wait in ms. */
-    private int duration;
+    /**
+     * The duration to wait in ms.
+     * @requiredField
+     */
+    private Long duration;
 
     /**
      * Get the duration of the wait.
      *
      * @return The duration in milliseconds.
      */
-    public int getDuration() {
+    public Long getDuration() {
         return duration;
     }
 
@@ -40,9 +43,9 @@ public class WaitAction extends WebSymbolAction {
      * Set the duration to wait.
      *
      * @param duration
-     *            The new duration in milliseconds.
+     *         The new duration in milliseconds.
      */
-    public void setDuration(int duration) {
+    public void setDuration(Long duration) {
         this.duration = duration;
     }
 

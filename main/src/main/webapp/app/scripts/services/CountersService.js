@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .factory('CountersService', CountersService);
 
     CountersService.$inject = ['$http', 'paths'];

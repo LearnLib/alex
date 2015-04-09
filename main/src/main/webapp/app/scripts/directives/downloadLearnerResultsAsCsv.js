@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('downloadLearnerResultsAsCsv', downloadLearnerResultsAsCsv);
 
     downloadLearnerResultsAsCsv.$inject = ['FileDownloadService'];
@@ -49,17 +49,17 @@
                 var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,|Sigma|,#MQs,#EQs,#Symbol Calls,Duration (ms)\n';
 
                 for (var i = 0; i < results.length; i++) {
-                    csv += result[i].project + ',';
-                    csv += result[i].testNo + ',';
-                    csv += '"' + result[i].statistics.startTime + '",';
-                    csv += result[i].stepNo + ',';
-                    csv += result[i].configuration.algorithm + ',';
-                    csv += result[i].configuration.eqOracle.type + ',';
-                    csv += result[i].configuration.symbols.length + ',';
-                    csv += result[i].statistics.mqsUsed + ',';
-                    csv += result[i].statistics.eqsUsed + ',';
-                    csv += result[i].statistics.symbolsUsed + ',';
-                    csv += result[i].statistics.duration + '\n';
+                    csv += results[i].project + ',';
+                    csv += results[i].testNo + ',';
+                    csv += '"' + results[i].statistics.startTime + '",';
+                    csv += results[i].stepNo + ',';
+                    csv += results[i].configuration.algorithm + ',';
+                    csv += results[i].configuration.eqOracle.type + ',';
+                    csv += results[i].configuration.symbols.length + ',';
+                    csv += results[i].statistics.mqsUsed + ',';
+                    csv += results[i].statistics.eqsUsed + ',';
+                    csv += results[i].statistics.symbolsUsed + ',';
+                    csv += results[i].statistics.duration + '\n';
                 }
 
                 return csv;

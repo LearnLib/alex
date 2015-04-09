@@ -1,5 +1,13 @@
 package de.learnlib.alex.core.learner;
 
+import de.learnlib.alex.core.dao.LearnerResultDAO;
+import de.learnlib.alex.core.entities.LearnAlgorithms;
+import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
+import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.utils.DiscriminationTreeSerializer;
+import de.learnlib.alex.utils.TTTSerializer;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.algorithms.features.observationtable.writer.ObservationTableASCIIWriter;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
@@ -17,14 +25,6 @@ import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.oracles.ResetCounterSUL;
 import de.learnlib.oracles.SULOracle;
 import de.learnlib.oracles.SymbolCounterSUL;
-import de.learnlib.alex.core.dao.LearnerResultDAO;
-import de.learnlib.alex.core.entities.LearnAlgorithms;
-import de.learnlib.alex.core.entities.LearnerResult;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
-import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.alex.utils.DiscriminationTreeSerializer;
-import de.learnlib.alex.utils.TTTSerializer;
 import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -191,7 +191,7 @@ public class LearnerThread extends Thread {
 
     private void learn() {
         int maxAmountOfStepsToLearn = result.getConfiguration().getMaxAmountOfStepsToLearn();
-        long currentStepNo = result.getStepNo() == null ? 0L : result.getStepNo();
+        long currentStepNo = calculateCurrentStepNo();
         long maxStepCount =  currentStepNo + maxAmountOfStepsToLearn;
         boolean shouldDoAnotherStep;
 
@@ -200,6 +200,14 @@ public class LearnerThread extends Thread {
         } while (continueLearning(shouldDoAnotherStep, maxStepCount));
 
         counterExample = null;
+    }
+
+    private long calculateCurrentStepNo() {
+        if (result.getStepNo() == null) {
+            return 0L;
+        } else {
+            return result.getStepNo();
+        }
     }
 
     private boolean learnOneStep() {
@@ -242,9 +250,9 @@ public class LearnerThread extends Thread {
     }
 
     private DefaultQuery<String, Word<String>> findCounterExample() {
-        EquivalenceOracle randomWords = result.getConfiguration().getEqOracle().createEqOracle(mqOracle);
+        EquivalenceOracle eqOracle = result.getConfiguration().getEqOracle().createEqOracle(mqOracle);
         result.getStatistics().setEqsUsed(result.getStatistics().getEqsUsed() + 1);
-        return randomWords.findCounterExample(learner.getHypothesisModel(), sigma);
+        return eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
     }
 
     private void refineHypothesis() {
@@ -253,49 +261,27 @@ public class LearnerThread extends Thread {
     }
 
     private void rememberMetaData() {
-        long startTime = result.getStatistics().getStartTime().getTime();
+        LearnerResult.Statistics statistics = result.getStatistics();
+
+        long startTime = statistics.getStartTime().getTime();
         long currentTime = new Date().getTime();
-        result.getStatistics().setDuration(currentTime - startTime);
-        //todo(alex.s): save #MQs and amount of symbol
-        result.getStatistics().setMqsUsed(resetCounterSUL.getStatisticalData().getCount());
-        result.getStatistics().setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount());
-        saveInternalDataStructure();
+
+        statistics.setDuration(currentTime - startTime);
+        statistics.setMqsUsed(resetCounterSUL.getStatisticalData().getCount());
+        statistics.setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount());
+
+        LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
+        String algorithmInformation;
+        try {
+            algorithmInformation = algorithm.getInternalData(learner);
+        } catch (IllegalStateException e) { // algorithm has no internal data to show
+            algorithmInformation = "";
+        }
+        result.setAlgorithmInformation(algorithmInformation);
+
         learnerResultDAO.update(result);
     }
 
-    private void saveInternalDataStructure() {
-        if (learner instanceof ExtensibleLStarMealy) {
-            StringBuilder observationTable = new StringBuilder();
-            new ObservationTableASCIIWriter<String, String>().write(((ExtensibleLStarMealy) learner).getObservationTable(), observationTable);
-            result.setAlgorithmInformation(observationTable.toString());
-        } else if (learner instanceof DTLearnerMealy) {
-            DiscriminationTree discriminationTree = ((DTLearnerMealy) learner).getDiscriminationTree();
-            DiscriminationTree.GraphView graphView = discriminationTree.graphView();
-            String treeAsJSON = DiscriminationTreeSerializer.toJSON(discriminationTree);
-            System.out.println("========================");
-            try {
-                GraphDOT.write(graphView, System.out, graphView.getGraphDOTHelper());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            result.setAlgorithmInformation(treeAsJSON);
-            System.out.println(result.getAlgorithmInformation());
-            System.out.println("========================");
-        } else if (learner instanceof TTTLearnerMealy) {
-            TTTLearnerMealy tttLearner = (TTTLearnerMealy) learner;
-            String treeAsJSON = TTTSerializer.toJSON(tttLearner.getDiscriminationTree());
-            de.learnlib.algorithms.ttt.base.DiscriminationTree.GraphView graphView = tttLearner.getDiscriminationTree().graphView();
-            System.out.println("========================");
-            try {
-                GraphDOT.write(graphView, System.out, graphView.getGraphDOTHelper());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            result.setAlgorithmInformation(treeAsJSON);
-            System.out.println(result.getAlgorithmInformation());
-            System.out.println("========================");
-        }
-    }
 
 
 }

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('ActionEditModalController', ActionEditModalController);
 
     ActionEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action', 'Symbol', 'SessionService'];

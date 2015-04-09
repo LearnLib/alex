@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.SearchHelper;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -22,9 +23,11 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
     private static final long serialVersionUID = -7234083244640666736L;
 
     /** The key of the header field to check for the value. */
+    @NotBlank
     private String key;
 
     /** The expected value which should be in the header field. */
+    @NotBlank
     private String value;
 
     /** Field to determine if the search string is a regular expression. */
@@ -58,6 +61,12 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
         return value;
     }
 
+    /**
+     * Get the expected value of the header field.
+     * All variables and counters will be replaced with their values.
+     *
+     * @return The value to search for.
+     */
     @JsonIgnore
     public String getValueWithVariableValues() {
         return insertVariableValues(value);

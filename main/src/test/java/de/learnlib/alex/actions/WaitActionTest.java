@@ -1,8 +1,8 @@
 package de.learnlib.alex.actions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.actions.WebSymbolActions.WebSymbolAction;
+import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 
 public class WaitActionTest {
 
-    private static final int ONE_SECOND = 100;
+    private static final Long ONE_SECOND = 1000L;
 
     private WaitAction w;
 

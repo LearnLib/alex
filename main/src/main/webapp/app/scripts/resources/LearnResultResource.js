@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.resources')
+        .module('ALEX.resources')
         .factory('LearnResultResource', Resource);
 
     Resource.$inject = ['$http', 'paths'];
@@ -41,6 +41,23 @@
         };
 
         /**
+         * Makes a GET request to 'rest/projects/{projectId}/results/{testNo}' in order to get the final cumulated
+         * learn result from a test
+         *
+         * @param {number} projectId - The id of the project
+         * @param {number} testNo - The number of the test run
+         * @returns {*} - A promise
+         */
+        LearnResultResource.prototype.getFinal = function (projectId, testNo) {
+            var _this = this;
+
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo)
+                .then(function (response) {
+                    return _this.build(response.data);
+                })
+        };
+
+        /**
          * Makes a GET request to 'rest/projects/{projectId}/results/{testNo}/complete in order to get all intermediate
          * results of a test.
          *
@@ -53,6 +70,7 @@
 
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
                 .then(function (response) {
+                    response.data.shift();
                     return _this.buildSome(response.data);
                 })
         };
@@ -72,8 +90,14 @@
                     var data = response.data;
                     if (data.length > 0) {
                         if (!angular.isArray(data[0])) {
+                            data.shift();
                             return [data]
                         } else {
+
+                            // remove cumulated results from the beginning
+                            for(var i = 0; i < data.length; i++) {
+                                data[i].shift();
+                            }
                             return data;
                         }
                     } else {

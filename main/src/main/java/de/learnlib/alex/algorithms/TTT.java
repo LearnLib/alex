@@ -1,11 +1,12 @@
 package de.learnlib.alex.algorithms;
 
+import de.learnlib.alex.annotations.LearnAlgorithm;
+import de.learnlib.alex.utils.TTTSerializer;
+import de.learnlib.algorithms.ttt.base.DiscriminationTree;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
-import de.learnlib.alex.annotations.LearnAlgorithm;
-import de.learnlib.alex.utils.TTTSerializer;
 import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
 
@@ -28,7 +29,7 @@ public class TTT implements LearnAlgorithmFactory {
 
         TTTLearnerMealy tttLearner = (TTTLearnerMealy) learner;
         String treeAsJSON = TTTSerializer.toJSON(tttLearner.getDiscriminationTree());
-        de.learnlib.algorithms.ttt.base.DiscriminationTree.GraphView graphView = tttLearner.getDiscriminationTree().graphView();
+        DiscriminationTree.GraphView graphView = tttLearner.getDiscriminationTree().graphView();
         System.out.println("========================");
         try {
             GraphDOT.write(graphView, System.out, graphView.getGraphDOTHelper());

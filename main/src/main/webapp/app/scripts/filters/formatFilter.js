@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.filters')
+        .module('ALEX.filters')
         .filter('formatEnumKey', formatEnumKey)
         .filter('formatEqOracle', formatEqOracle)
         .filter('formatAlgorithm', formatAlgorithm);

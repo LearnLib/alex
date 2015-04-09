@@ -1,10 +1,10 @@
 package de.learnlib.alex.core.learner;
 
+import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.mapper.api.Mapper;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;

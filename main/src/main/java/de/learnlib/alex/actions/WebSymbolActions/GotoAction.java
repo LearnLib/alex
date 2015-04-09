@@ -36,6 +36,12 @@ public class GotoAction extends WebSymbolAction {
         return url;
     }
 
+    /**
+     * Get the URL this action will navigate to.
+     * All variables and counters will be replaced with their values.
+     *
+     * @return The site URL the element is on.
+     */
     @JsonIgnore
     public String getURLWithVariableValues() {
         return insertVariableValues(url);

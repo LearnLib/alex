@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('LearnConfiguration', LearnConfigurationModel);
 
     LearnConfigurationModel.$inject = ['learnAlgorithms', 'EqOracle'];

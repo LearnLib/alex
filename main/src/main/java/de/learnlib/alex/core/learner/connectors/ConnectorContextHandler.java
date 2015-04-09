@@ -1,7 +1,7 @@
 package de.learnlib.alex.core.learner.connectors;
 
-import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.mapper.ContextExecutableInputSUL;
 
 public class ConnectorContextHandler implements ContextExecutableInputSUL.ContextHandler<ConnectorManager> {
 

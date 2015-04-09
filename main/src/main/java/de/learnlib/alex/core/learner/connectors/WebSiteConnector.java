@@ -2,6 +2,8 @@ package de.learnlib.alex.core.learner.connectors;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import de.learnlib.alex.core.learner.BaseUrlManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -22,6 +24,9 @@ public class WebSiteConnector implements Connector {
 
     /** Max. time to wait for a request before timing out. Introduced by Selenium. */
     private static final int PAGE_LOAD_TIMEOUT_TIME = 30;
+
+    /** Use the logger for the server part. */
+    private static final Logger LOGGER = LogManager.getLogger("server");
 
     /** The driver used to send and receive data to a WebSite. */
     private WebDriver driver;
@@ -57,6 +62,8 @@ public class WebSiteConnector implements Connector {
         } catch (UnsupportedOperationException e) {
             // JavaScript is not enabled in the Driver
             // -> assume that localStorage and sessionStorage are not available and therefor must not be cleared.
+            LOGGER.info("Could not reset the local storage and the session storage, because JavaScript is not enabled"
+                                + "in the Driver.");
         }
     }
 

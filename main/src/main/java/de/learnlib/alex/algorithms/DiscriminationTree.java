@@ -1,11 +1,11 @@
 package de.learnlib.alex.algorithms;
 
+import de.learnlib.alex.annotations.LearnAlgorithm;
+import de.learnlib.alex.utils.DiscriminationTreeSerializer;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
-import de.learnlib.alex.annotations.LearnAlgorithm;
-import de.learnlib.alex.utils.DiscriminationTreeSerializer;
 import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
 

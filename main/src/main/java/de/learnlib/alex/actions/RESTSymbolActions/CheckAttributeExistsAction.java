@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.JSONHelpers;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -21,6 +22,7 @@ public class CheckAttributeExistsAction extends RESTSymbolAction {
     private static final long serialVersionUID = 6739027451651950338L;
 
     /** The name of the attribute to check for. */
+    @NotBlank
     private String attribute;
 
     /**
@@ -32,6 +34,12 @@ public class CheckAttributeExistsAction extends RESTSymbolAction {
         return attribute;
     }
 
+    /**
+     * Get the field name of the requested attribute.
+     * All variables and counters will be replaced with their values.
+     *
+     * @return The name of the attribute.
+     */
     @JsonIgnore
     public String getAttributeWithVariableValues() {
         return insertVariableValues(attribute);

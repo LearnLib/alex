@@ -2,7 +2,6 @@ package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.utils.IdsList;
-import de.learnlib.alex.utils.JSONHelpers;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 
 import javax.inject.Inject;

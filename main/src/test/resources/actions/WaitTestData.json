@@ -1,4 +1,4 @@
 {
     "type": "wait",
-    "duration": 100
+    "duration": 1000
 }

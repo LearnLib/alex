@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolsImportController', SymbolsImportController);
 
     SymbolsImportController.$inject = ['$scope', 'SessionService', 'Symbol', '_', 'ToastService'];

@@ -7,8 +7,6 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
-import javax.sound.midi.Soundbank;
-import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;

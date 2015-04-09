@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('LearnResult', LearnResultModel);
 
     LearnResultModel.$inject = ['LearnConfiguration', 'LearnResultResource'];

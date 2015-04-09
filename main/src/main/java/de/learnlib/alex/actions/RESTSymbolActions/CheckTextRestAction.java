@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.SearchHelper;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -21,6 +22,7 @@ public class CheckTextRestAction extends RESTSymbolAction {
     private static final long serialVersionUID = -681951086735590790L;
 
     /** The expected text in the response body of the last request. */
+    @NotBlank
     private String value;
 
     /** Field to determine if the search string is a regular expression. */
@@ -35,6 +37,12 @@ public class CheckTextRestAction extends RESTSymbolAction {
         return value;
     }
 
+    /**
+     * Get the value which should be in the body of the last request.
+     * All variables and counters will be replaced with their values.
+     *
+     * @return The value to search for.
+     */
     @JsonIgnore
     public String getValueWithVariableValues() {
         return insertVariableValues(value);

@@ -1,11 +1,11 @@
 package de.learnlib.alex.algorithms;
 
+import de.learnlib.alex.annotations.LearnAlgorithm;
 import de.learnlib.algorithms.features.observationtable.writer.ObservationTableASCIIWriter;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
-import de.learnlib.alex.annotations.LearnAlgorithm;
 import net.automatalib.words.Alphabet;
 
 @LearnAlgorithm(name = "LSTAR", prettyName = "L*")

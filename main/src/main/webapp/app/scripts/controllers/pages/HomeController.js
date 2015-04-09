@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('HomeController', HomeController);
 
     HomeController.$inject = ['$scope', '$state', 'Project', 'SessionService'];

@@ -4,12 +4,7 @@ import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.CounterDAOImpl;
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
-import org.jvnet.hk2.annotations.Service;
 
-import javax.inject.Inject;
-import javax.ws.rs.Path;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class CounterStoreConnector implements Connector {
@@ -40,11 +35,11 @@ public class CounterStoreConnector implements Connector {
         }
     }
 
-    public void reset(Long projectId, String name) throws IllegalStateException {
+    public void reset(Long projectId, String name) {
         set(projectId, name, 0);
     }
 
-    public void increment(Long projectId, String name) throws IllegalStateException {
+    public void increment(Long projectId, String name) {
         Counter counter;
         try {
             counter = counterDAO.get(projectId, name);

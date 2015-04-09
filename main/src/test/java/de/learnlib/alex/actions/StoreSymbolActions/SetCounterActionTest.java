@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolAction;
-import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +16,6 @@ import java.net.URISyntaxException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 

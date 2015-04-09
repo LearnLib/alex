@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .factory('SelectionService', SelectionService);
 
     SelectionService.$inject = ['_'];

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.resources')
+        .module('ALEX.resources')
         .factory('SymbolResource', Resource);
 
     Resource.$inject = ['$http', 'paths', '_'];

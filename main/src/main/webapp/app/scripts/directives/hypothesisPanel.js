@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('panelManager', panelManager);
 
     function panelManager() {
@@ -20,14 +20,12 @@
                 panels: '=panelManager'
             },
             controller: [
-                '$scope',
+                '$scope', '$timeout',
                 controller
             ]
         };
 
-        //////////
-
-        function controller($scope) {
+        function controller($scope, $timeout) {
 
             this.getPanels = function () {
                 return $scope.panels;
@@ -35,13 +33,12 @@
 
             this.closePanelAt = function (index) {
                 $scope.panels.splice(index, 1);
-                $scope.$apply();
 
                 // has to call resize so that the hypothesis svg is rezsied properly
-                window.dispatchEvent(new Event('resize'));
+                $timeout(function(){
+                    window.dispatchEvent(new Event('resize'));
+                }, 100)
             };
-
-            //////////
 
             $scope.addPanel = function () {
                 $scope.panels.push(null)
@@ -51,7 +48,7 @@
 
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('panel', panel);
 
     function panel() {
@@ -68,19 +65,13 @@
             }
         };
 
-        //////////
-
         function link(scope, el, attrs, ctrl) {
 
             var panel = el.children()[0];
             scope.panels = ctrl.getPanels();
 
-            //////////
-
             scope.$watch('panels.length', init);
             init();
-
-            //////////
 
             function init() {
                 panel.style.width = (100 / scope.panels.length) + '%';

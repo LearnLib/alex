@@ -6,6 +6,7 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.JSONHelpers;
 import de.learnlib.alex.utils.SearchHelper;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -22,9 +23,11 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
     private static final long serialVersionUID = -3411541294360335382L;
 
     /** The name of the attribute to check for. */
+    @NotBlank
     private String attribute;
 
     /** The expected value of the attribute. */
+    @NotBlank
     private String value;
 
     /** Field to determine if the search string is a regular expression. */
@@ -39,6 +42,12 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
         return attribute;
     }
 
+    /**
+     * Get the field name of the requested attribute.
+     * All variables and counters will be replaced with their values.
+     *
+     * @return The name of the attribute.
+     */
     @JsonIgnore
     public String getAttributeWithVariableValues() {
         return insertVariableValues(attribute);
@@ -63,6 +72,12 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
         return value;
     }
 
+    /**
+     * Get the expected value of the attribute.
+     * All variables and counters will be replaced with their values.
+     *
+     * @return The expected attribute value.
+     */
     @JsonIgnore
     public String getValueWithVariableValues() {
         return insertVariableValues(value);

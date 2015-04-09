@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
 import javax.persistence.DiscriminatorValue;
@@ -21,6 +22,7 @@ public class CheckNodeAction extends WebSymbolAction {
     private static final long serialVersionUID = -3884454109124323412L;
 
     /** The value the site is checked for. */
+    @NotBlank
     private String value;
 
     /**
@@ -32,6 +34,12 @@ public class CheckNodeAction extends WebSymbolAction {
         return value;
     }
 
+    /**
+     * Get the value to check.
+     * All variables and counters will be replaced with their values.
+     *
+     * @return The value to check.
+     */
     @JsonIgnore
     public String getValueWithVariableValues() {
         return insertVariableValues(value);

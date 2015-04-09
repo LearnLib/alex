@@ -5,11 +5,9 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
-import de.learnlib.alex.utils.SearchHelper;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 
 /**
  * Base for the different action a test could do.
@@ -23,26 +21,19 @@ public abstract class WebSymbolAction extends SymbolAction {
     /** to be serializable. */
     private static final long serialVersionUID = -1990239222213631726L;
 
-    @Transient
-    private ConnectorManager connectorManager;
-
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
-        this.connectorManager = connector;
         return execute(connector.getConnector(WebSiteConnector.class));
     }
 
+    /**
+     * Execute a Web action, i.e. an action that interacts with a web site over an browser.
+     *
+     * @param connector The connector to connect to web site (via Selenium).
+     * @return An indicator of the action was executed successfully or not.
+     */
     protected abstract ExecuteResult execute(WebSiteConnector connector);
 
-    protected String insertVariableValues(String text) {
-        return SearchHelper.insertVariableValues(connectorManager, project.getId(), text);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "WebSymbolsAction[" + id + "] " + getClass().getName();

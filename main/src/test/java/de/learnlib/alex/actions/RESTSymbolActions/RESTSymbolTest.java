@@ -31,8 +31,8 @@ public class RESTSymbolTest {
     @Test
     public void shouldReturnOkIfAllActionsRunSuccessfully() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
-        given(action1.execute(connector)).willReturn(ExecuteResult.OK);
-        given(action2.execute(connector)).willReturn(ExecuteResult.OK);
+        given(action1.executeAction(connector)).willReturn(ExecuteResult.OK);
+        given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
 
         String result = symbol.execute(connector);
 
@@ -42,25 +42,25 @@ public class RESTSymbolTest {
     @Test
     public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
-        given(action1.execute(connector)).willReturn(ExecuteResult.FAILED);
-        given(action2.execute(connector)).willReturn(ExecuteResult.OK);
+        given(action1.executeAction(connector)).willReturn(ExecuteResult.FAILED);
+        given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
 
         String result = symbol.execute(connector);
 
         assertEquals(ExecuteResult.FAILED.name(), result);
-        verify(action2, never()).execute(connector);
+        verify(action2, never()).executeAction(connector);
     }
 
     @Test
     public void shouldReturnFailedIfOneActionsThrowsAnException() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
-        given(action1.execute(connector)).willThrow(IllegalStateException.class);
-        given(action2.execute(connector)).willReturn(ExecuteResult.OK);
+        given(action1.executeAction(connector)).willThrow(IllegalStateException.class);
+        given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
 
         String result = symbol.execute(connector);
 
         assertEquals(ExecuteResult.FAILED.name(), result);
-        verify(action2, never()).execute(connector);
+        verify(action2, never()).executeAction(connector);
     }
 
 }

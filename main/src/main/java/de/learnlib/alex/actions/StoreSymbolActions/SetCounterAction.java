@@ -3,8 +3,8 @@ package de.learnlib.alex.actions.StoreSymbolActions;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
-import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

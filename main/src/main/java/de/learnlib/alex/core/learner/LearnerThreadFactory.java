@@ -1,6 +1,5 @@
 package de.learnlib.alex.core.learner;
 
-import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
@@ -8,6 +7,7 @@ import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
+import de.learnlib.api.LearningAlgorithm;
 
 import java.util.List;
 

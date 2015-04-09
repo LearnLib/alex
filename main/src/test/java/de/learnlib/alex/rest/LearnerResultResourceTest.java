@@ -142,7 +142,7 @@ public class LearnerResultResourceTest extends JerseyTest {
         for (long i = 0; i < TEST_RESULT_AMOUNT; i++) {
             List<String> tmpList = new LinkedList<>();
 
-            for(Long j = 0L; j < TEST_RESULT_AMOUNT; j++) {
+            for (Long j = 0L; j < TEST_RESULT_AMOUNT; j++) {
                 Alphabet<String> sigma = new SimpleAlphabet<>();
                 sigma.add("0");
                 sigma.add("1");

@@ -1,11 +1,5 @@
 package de.learnlib.alex.core.dao;
 
-import de.learnlib.alex.core.entities.IdRevisionPair;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.SymbolAction;
-import de.learnlib.alex.core.entities.SymbolGroup;
-import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.actions.ExecuteSymbolAction;
 import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckTextWebAction;
@@ -14,7 +8,12 @@ import de.learnlib.alex.actions.WebSymbolActions.ClickAction;
 import de.learnlib.alex.actions.WebSymbolActions.FillAction;
 import de.learnlib.alex.actions.WebSymbolActions.GotoAction;
 import de.learnlib.alex.actions.WebSymbolActions.SubmitAction;
-import de.learnlib.alex.actions.WebSymbolActions.WebSymbolAction;
+import de.learnlib.alex.core.entities.IdRevisionPair;
+import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -76,23 +75,29 @@ public class SymbolDAOImplTest {
         symbol.setName("SymbolDAOImplTest Symbol - Web ");
         symbol.setAbbreviation("webtest");
 
-        WebSymbolAction a1 = new CheckTextWebAction();
+        CheckTextWebAction a1 = new CheckTextWebAction();
+        a1.setValue("Lorem Ipsum");
         symbol.addAction(a1);
-        WebSymbolAction a2 = new ClearAction();
+        ClearAction a2 = new ClearAction();
+        a2.setNode("#node-id");
         symbol.addAction(a2);
         ClickAction a3 = new ClickAction();
         a3.setNode("#node-id");
         symbol.addAction(a3);
-        WebSymbolAction a4 = new FillAction();
+        FillAction a4 = new FillAction();
+        a4.setNode("#node-id");
+        a4.setValue("Lorem Ipsum");
         symbol.addAction(a4);
-        WebSymbolAction a5 = new GotoAction();
+        GotoAction a5 = new GotoAction();
+        a5.setUrl("http://localhost");
         symbol.addAction(a5);
-        WebSymbolAction a6 = new SubmitAction();
+        SubmitAction a6 = new SubmitAction();
+        a6.setNode("#node-id");
         symbol.addAction(a6);
-        WebSymbolAction a7 = new WaitAction();
+        WaitAction a7 = new WaitAction();
         symbol.addAction(a7);
-        SymbolAction a8 = new ExecuteSymbolAction();
-        ((ExecuteSymbolAction) a8).setSymbolToExecute(symbol);
+        ExecuteSymbolAction a8 = new ExecuteSymbolAction();
+        a8.setSymbolToExecute(symbol);
         symbol.addAction(a8);
 
         // create symbol 2
@@ -686,7 +691,8 @@ public class SymbolDAOImplTest {
 
             if (i > SYMBOL_COUNT / 2) {
                 s.setName(s.getName() + " 2");
-                WebSymbolAction newAction = new ClearAction();
+                ClearAction newAction = new ClearAction();
+                newAction.setNode("#node-id");
                 s.addAction(newAction);
                 if (i == SYMBOL_COUNT - 1) {
                     s.setHidden(true);

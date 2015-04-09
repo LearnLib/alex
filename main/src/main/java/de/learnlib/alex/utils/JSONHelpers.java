@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Helper class for some JSON stuff.
@@ -22,7 +21,7 @@ public final class JSONHelpers {
      */
     private JSONHelpers() {
     }
-    
+
     /**
      * Get the value of an attribute from a JSON encoded String.
      *

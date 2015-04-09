@@ -11,6 +11,9 @@ import org.openqa.selenium.support.ui.UnexpectedTagNameException;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+/**
+ * Action to select an entry from a select field by its value.
+ */
 @Entity
 @DiscriminatorValue("web_select")
 @JsonTypeName("web_select")

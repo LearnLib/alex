@@ -24,10 +24,10 @@ public class VariableStoreConnector implements Connector {
         return store.containsKey(name);
     }
 
-    public String get(String name) throws IllegalArgumentException {
+    public String get(String name) throws IllegalStateException {
         String result = store.get(name);
         if (result == null) {
-            throw new IllegalArgumentException("The variable '" + name + "' was not set and has no value!");
+            throw new IllegalStateException("The variable '" + name + "' was not set and has no value!");
         }
         return result;
     }

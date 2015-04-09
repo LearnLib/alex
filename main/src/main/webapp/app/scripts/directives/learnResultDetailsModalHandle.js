@@ -1,7 +1,7 @@
 (function () {
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('learnResultDetailsModalHandle', learnResultDetailsModalHandle);
 
     learnResultDetailsModalHandle.$inject = ['$modal', 'paths'];

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner', [
+        .module('ALEX', [
 
             // modules from external libraries
             'ngAnimate',
@@ -18,26 +18,26 @@
             'templates-all',
 
             // application specific modules
-            'weblearner.controller',
-            'weblearner.resources',
-            'weblearner.directives',
-            'weblearner.services',
-            'weblearner.filters',
-            'weblearner.routes',
-            'weblearner.constants',
-            'weblearner.models'
+            'ALEX.controller',
+            'ALEX.resources',
+            'ALEX.directives',
+            'ALEX.services',
+            'ALEX.filters',
+            'ALEX.routes',
+            'ALEX.constants',
+            'ALEX.models'
         ]);
 
-    angular.module('weblearner.controller', []);
-    angular.module('weblearner.resources', []);
-    angular.module('weblearner.directives', []);
-    angular.module('weblearner.services', []);
-    angular.module('weblearner.filters', []);
-    angular.module('weblearner.routes', ['weblearner.constants', 'templates-all', 'ui.router']);
-    angular.module('weblearner.constants', []);
-    angular.module('weblearner.models', []);
+    angular.module('ALEX.controller', []);
+    angular.module('ALEX.resources', []);
+    angular.module('ALEX.directives', []);
+    angular.module('ALEX.services', []);
+    angular.module('ALEX.filters', []);
+    angular.module('ALEX.routes', ['ALEX.constants', 'templates-all', 'ui.router']);
+    angular.module('ALEX.constants', []);
+    angular.module('ALEX.models', []);
 
-    angular.module('weblearner')
+    angular.module('ALEX')
 
         // configure toast position
         .config(['ngToastProvider', function (ngToastProvider) {

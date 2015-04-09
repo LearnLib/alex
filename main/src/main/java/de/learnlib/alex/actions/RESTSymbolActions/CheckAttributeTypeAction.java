@@ -6,9 +6,11 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.JSONHelpers;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * RESTSymbolAction to check if the request body of the last request has a JSON attribute with a specific type.
@@ -70,9 +72,11 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
     }
 
     /** The name of the attribute to check for. */
+    @NotBlank
     private  String attribute;
 
     /** The JSON type the attribute should have. */
+    @NotNull
     private JsonType jsonType;
 
     /**
@@ -84,6 +88,12 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
         return attribute;
     }
 
+    /**
+     * Get the field name of the requested attribute.
+     * All variables and counters will be replaced with their values.
+     *
+     * @return The name of the attribute.
+     */
     @JsonIgnore
     public String getAttributeWithVariableValues() {
         return insertVariableValues(attribute);

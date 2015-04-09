@@ -39,7 +39,7 @@ public class WeblearnerApplication extends ResourceConfig {
                 bind(CounterDAOImpl.class).to(CounterDAO.class);
                 bind(SymbolGroupDAOImpl.class).to(SymbolGroupDAO.class);
                 bind(new SymbolDAOImpl(symbolGroupDAO)).to(SymbolDAO.class);
-                bind(learnerResultDAO).to(LearnerResultDAO.class);
+                bind(LearnerResultDAOImpl.class).to(LearnerResultDAO.class);
                 bind(new Learner(threadFactory)).to(Learner.class);
             }
         });

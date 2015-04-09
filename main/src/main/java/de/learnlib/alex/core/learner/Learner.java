@@ -5,9 +5,9 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
+import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
+import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 
 import java.util.Arrays;
 import java.util.List;

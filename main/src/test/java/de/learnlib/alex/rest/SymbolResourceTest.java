@@ -524,7 +524,8 @@ public class SymbolResourceTest extends JerseyTest {
         given(symbolDAO.getByIdsWithLatestRevision(PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
                 .willReturn(symbols);
 
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId() + "/show";
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + ","
+                                                                         + symbol2.getId() + "/show";
         Response response = target(path).request().post(null);
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());

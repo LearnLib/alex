@@ -6,9 +6,11 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * RESTSymbolAction to make a request to the API.
@@ -42,9 +44,11 @@ public class CallAction extends RESTSymbolAction {
     }
 
     /** The method to use for the call. */
+    @NotNull
     private Method method;
 
     /** The url to call. This is just the suffix which will be appended to the base url. */
+    @NotBlank
     private String url;
 
     /** Optional data to sent with a POST or PUT request. */
@@ -78,6 +82,12 @@ public class CallAction extends RESTSymbolAction {
         return url;
     }
 
+    /**
+     * Get the URL the request will go to.
+     * In the URL all the variables and counters will be replace with their values.
+     *
+     * @return The URL which will be called.
+     */
     @JsonIgnore
     public String getUrlWithVariableValues() {
         return insertVariableValues(url);
@@ -102,6 +112,12 @@ public class CallAction extends RESTSymbolAction {
         return data;
     }
 
+    /**
+     * Get the optional data which will be send together with a POST or PUT request.
+     * All variables and counters will be replaced with their values.
+     *
+     * @return The data to include in the next POST/ PUT request.
+     */
     @JsonIgnore
     public String getDataWithVariableValues() {
         return insertVariableValues(data);

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('downloadSvg', downloadSvg);
 
     downloadSvg.$inject = ['FileDownloadService'];

@@ -1,9 +1,9 @@
 package de.learnlib.alex.algorithms;
 
+import de.learnlib.alex.annotations.LearnAlgorithm;
 import de.learnlib.algorithms.dhc.mealy.MealyDHCBuilder;
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
-import de.learnlib.alex.annotations.LearnAlgorithm;
 import net.automatalib.words.Alphabet;
 
 @LearnAlgorithm(name = "DHC")

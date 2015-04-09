@@ -1,7 +1,7 @@
 (function () {
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('Action', ActionModel);
 
     ActionModel.$inject = ['actionTypes'];
@@ -333,6 +333,9 @@
                     action = new Action.Other.Wait(data.duration);
                     break;
                 case actionTypes.other.EXECUTE_SYMBOL:
+                    if (!angular.isDefined(data.symbolToExecuteName) && angular.isFunction(data.getSymbol)) {
+                        data.symbolToExecuteName = data.getSymbol().name
+                    }
                     action = new Action.Other.ExecuteSymbol(data.symbolToExecuteName, data.symbolToExecute);
                     break;
                 case actionTypes.other.INCREMENT_COUNTER:
