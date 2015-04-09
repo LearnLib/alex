@@ -226,7 +226,7 @@ public class SymbolDAOImplTest {
         assertEquals(symbol.getRevision(), symbolInDB.getRevision());
         assertEquals(symbol.getProject(), symbolInDB.getProject());
         assertEquals(project, project2);
-        assertEquals(new Long(idBefore + 2), project2.getNextSymbolId());
+        assertEquals(Long.valueOf(idBefore + 2), project2.getNextSymbolId());
 
         assertNotNull(websymbolInDB.getActions());
         assertEquals(symbol.getActions().size(), websymbolInDB.getActions().size());
@@ -249,7 +249,7 @@ public class SymbolDAOImplTest {
         } catch (ValidationException e) {
             // creation failed -> success
             assertEquals(idBefore, project.getNextSymbolId());
-            assertEquals(new Long(1), symbol.getId());
+            assertEquals(Long.valueOf(1), symbol.getId());
             assertEquals(null, symbol.getRevision());
             assertEquals(null, symbol2.getId());
             assertEquals(null, symbol2.getRevision());
@@ -269,7 +269,7 @@ public class SymbolDAOImplTest {
             // creation failed -> success
             assertEquals(idBefore, project.getNextSymbolId());
             assertEquals(null, symbol.getId());
-            assertEquals(new Long(1), symbol.getRevision());
+            assertEquals(Long.valueOf(1), symbol.getRevision());
             assertEquals(null, symbol2.getId());
             assertEquals(null, symbol2.getRevision());
         }
@@ -461,7 +461,7 @@ public class SymbolDAOImplTest {
 
         Symbol symbolInDB = symbolDAO.getWithLatestRevision(symbol.getProject().getId(), symbol.getId());
         assertEquals(symbol.getId(), symbolInDB.getId());
-        assertEquals(new Long(oldRevision + 1), symbolInDB.getRevision());
+        assertEquals(Long.valueOf(oldRevision + 1), symbolInDB.getRevision());
         assertEquals(symbol.getName(), symbolInDB.getName());
         assertEquals(group, symbolInDB.getGroup());
 

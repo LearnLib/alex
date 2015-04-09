@@ -268,7 +268,7 @@ public class LearnerResultDAOImplTest {
         learnerResultDAO.update(learnerResult);
         assertEquals(project.getId(), learnerResult.getProject().getId());
         assertEquals(oldId, learnerResult.getTestNo());
-        assertEquals(new Long(oldStepNo + 1L), learnerResult.getStepNo());
+        assertEquals(Long.valueOf(oldStepNo + 1L), learnerResult.getStepNo());
     }
 
     @Test

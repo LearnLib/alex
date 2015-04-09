@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Processor to collect all entities and create the HibernateUtl class with them.
+ */
 @SupportedAnnotationTypes("javax.persistence.Entity")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class EntityProcessor extends AbstractProcessor {

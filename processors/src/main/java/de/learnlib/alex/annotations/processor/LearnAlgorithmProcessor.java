@@ -22,9 +22,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Processor to collect all LearnAlgorithms and put them into an enum.
+ */
 @SupportedAnnotationTypes("de.learnlib.alex.annotations.LearnAlgorithm")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class LearnAlgorithmProcessor extends AbstractProcessor {
+
+    /** The name of the annotation to mark a LearnAlgorithm as such. */
+    private static final String ANNOTATION_NAME = "de.learnlib.alex.core.entities.LearnAlgorithms";
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
@@ -51,7 +57,7 @@ public class LearnAlgorithmProcessor extends AbstractProcessor {
             Configuration templateConfig = FreeMarkerSingleton.getConfiguration();
 
             Template template = templateConfig.getTemplate("LearnAlgorithmsEnumTemplate.ftl");
-            JavaFileObject jfo = processingEnv.getFiler().createSourceFile("de.learnlib.alex.core.entities.LearnAlgorithms");
+            JavaFileObject jfo = processingEnv.getFiler().createSourceFile(ANNOTATION_NAME);
 
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,
                                                      "creating source file: " + jfo.toUri());

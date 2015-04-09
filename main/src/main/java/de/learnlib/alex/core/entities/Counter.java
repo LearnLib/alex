@@ -10,12 +10,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * A simple counter class.
  */
 @Entity
-public class Counter {
+public class Counter implements Serializable {
+
+    /** to be serializable. */
+    private static final long serialVersionUID = 5495935413098569457L;
 
     /** The ID of the counter in the DB. */
     @Id

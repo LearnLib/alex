@@ -42,7 +42,6 @@ public class LearnerTestHelper {
         System.out.println("web symbol in response: " + responseJSON);
 
         assertEquals(responseJSON, Response.Status.CREATED.getStatusCode(), response.getStatus());
-        ObjectMapper mapper = new ObjectMapper();
         return WebSymbolTest.readSymbol(responseJSON);
     }
 

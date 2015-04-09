@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
@@ -52,7 +53,10 @@ public class LearnerResult implements Serializable {
      */
     @Embeddable
     @JsonPropertyOrder(alphabetic = true)
-    public static class Statistics {
+    public static class Statistics implements Serializable {
+
+        /** to be serializable. */
+        private static final long serialVersionUID = -5221139436025380739L;
 
         /**
          * Date and Time when the learning step was started.
@@ -523,8 +527,8 @@ public class LearnerResult implements Serializable {
 
         LearnerResult result = (LearnerResult) o;
 
-        if (stepNo != result.stepNo) return false;
-        if (testNo != result.testNo) return false;
+        if (!Objects.equals(stepNo, result.stepNo)) return false;
+        if (!Objects.equals(testNo, result.testNo)) return false;
         if (project != null ? !project.equals(result.project) : result.project != null) return false;
 
         return true;
