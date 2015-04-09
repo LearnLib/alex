@@ -51,7 +51,7 @@ public class SymbolDAOImplTest {
     public static void beforeClass() {
         projectDAO = new ProjectDAOImpl();
         symbolGroupDAO = new SymbolGroupDAOImpl();
-        symbolDAO = new SymbolDAOImpl(symbolGroupDAO);
+        symbolDAO = new SymbolDAOImpl();
     }
 
     @Before
@@ -248,12 +248,12 @@ public class SymbolDAOImplTest {
             fail("creation didn't fail.");
         } catch (ValidationException e) {
             // creation failed -> success
+            assertEquals(idBefore, project.getNextSymbolId());
+            assertEquals(new Long(1), symbol.getId());
+            assertEquals(null, symbol.getRevision());
+            assertEquals(null, symbol2.getId());
+            assertEquals(null, symbol2.getRevision());
         }
-        assertEquals(idBefore, project.getNextSymbolId());
-        assertEquals(new Long(1), symbol.getId());
-        assertEquals(null, symbol.getRevision());
-        assertEquals(null, symbol2.getId());
-        assertEquals(null, symbol2.getRevision());
     }
 
     @Test
@@ -267,12 +267,12 @@ public class SymbolDAOImplTest {
             fail("creation didn't fail.");
         } catch (ValidationException e) {
             // creation failed -> success
+            assertEquals(idBefore, project.getNextSymbolId());
+            assertEquals(null, symbol.getId());
+            assertEquals(new Long(1), symbol.getRevision());
+            assertEquals(null, symbol2.getId());
+            assertEquals(null, symbol2.getRevision());
         }
-        assertEquals(idBefore, project.getNextSymbolId());
-        assertEquals(null, symbol.getId());
-        assertEquals(new Long(1), symbol.getRevision());
-        assertEquals(null, symbol2.getId());
-        assertEquals(null, symbol2.getRevision());
     }
 
     @Test
@@ -286,12 +286,12 @@ public class SymbolDAOImplTest {
             fail("creation didn't fail.");
         } catch (ValidationException e) {
             // creation failed -> success
+            assertEquals(idBefore, project.getNextSymbolId());
+            assertEquals(null, symbol.getId());
+            assertEquals(null, symbol.getRevision());
+            assertEquals(null, symbol2.getId());
+            assertEquals(null, symbol2.getRevision());
         }
-        assertEquals(idBefore, project.getNextSymbolId());
-        assertEquals(null, symbol.getId());
-        assertEquals(null, symbol.getRevision());
-        assertEquals(null, symbol2.getId());
-        assertEquals(null, symbol2.getRevision());
     }
 
     @Test
@@ -304,6 +304,7 @@ public class SymbolDAOImplTest {
             symbolDAO.create(symbols); // should fail
             fail("creation didn't fail.");
         } catch (ValidationException e) {
+            // creation failed -> success
             assertEquals(idBefore, project.getNextSymbolId());
             assertEquals(null, symbol.getId());
             assertEquals(null, symbol.getRevision());
@@ -326,10 +327,10 @@ public class SymbolDAOImplTest {
             fail("creation didn't fail.");
         } catch (ValidationException e) {
             // creation failed -> success
+            assertEquals(idBefore, project.getNextSymbolId());
+            assertEquals(null, symbol2.getId());
+            assertEquals(null, symbol2.getRevision());
         }
-        assertEquals(idBefore, project.getNextSymbolId());
-        assertEquals(null, symbol2.getId());
-        assertEquals(null, symbol2.getRevision());
     }
 
     @Test

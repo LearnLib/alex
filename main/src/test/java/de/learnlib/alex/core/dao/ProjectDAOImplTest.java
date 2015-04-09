@@ -52,7 +52,8 @@ public class ProjectDAOImplTest {
         try {
             dao.delete(project.getId());
         } catch (IllegalArgumentException e) {
-            // nothing to do
+            // nothing to worry about
+            System.out.println("ProjectDAOImplTest.tearDown(): project deletion failed.");
         }
     }
 

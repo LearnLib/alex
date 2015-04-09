@@ -6,6 +6,7 @@ import de.learnlib.eqtests.basic.SampleSetEQOracle;
 import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,12 +21,17 @@ import java.util.stream.Stream;
 @JsonTypeName("sample")
 public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
 
+    /**
+     * Construct to hold a pair of an input and output string.
+     */
     public static class InputOutputPair {
 
         /** The input. */
+        @NotBlank
         private String input;
 
         /** The output that should occur. */
+        @NotBlank
         private String output;
 
         public InputOutputPair() {

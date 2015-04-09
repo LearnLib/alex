@@ -31,14 +31,13 @@ public class WeblearnerApplication extends ResourceConfig {
         register(new AbstractBinder() {
             @Override
             protected void configure() {
-                SymbolGroupDAO symbolGroupDAO = new SymbolGroupDAOImpl();
                 LearnerResultDAOImpl learnerResultDAO = new LearnerResultDAOImpl();
                 LearnerThreadFactory threadFactory = new LearnerThreadFactory(learnerResultDAO);
 
                 bind(ProjectDAOImpl.class).to(ProjectDAO.class);
                 bind(CounterDAOImpl.class).to(CounterDAO.class);
                 bind(SymbolGroupDAOImpl.class).to(SymbolGroupDAO.class);
-                bind(new SymbolDAOImpl(symbolGroupDAO)).to(SymbolDAO.class);
+                bind(SymbolDAOImpl.class).to(SymbolDAO.class);
                 bind(LearnerResultDAOImpl.class).to(LearnerResultDAO.class);
                 bind(new Learner(threadFactory)).to(Learner.class);
             }

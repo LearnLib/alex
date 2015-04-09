@@ -11,14 +11,19 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Set a variable to a specific value.
+ */
 @Entity
 @DiscriminatorValue("setVariable")
 @JsonTypeName("setVariable")
 public class SetVariableAction extends SymbolAction {
 
+    /** The name of the variable to set a new value to. */
     @NotBlank
     protected String name;
 
+    /** The new value. */
     @NotNull
     protected String value;
 

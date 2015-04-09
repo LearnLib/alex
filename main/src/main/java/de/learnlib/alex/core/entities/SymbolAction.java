@@ -94,12 +94,14 @@ public abstract class SymbolAction implements Serializable {
     @JsonIgnore
     protected Long id;
 
+    /** The project the actions belongs to. */
     @NaturalId
     @ManyToOne
     @JoinColumn(name = "projectId")
     @JsonIgnore
     protected Project project;
 
+    /** The symbol the action belongs to. */
     @NaturalId
     @ManyToOne
     @JoinColumn(name = "symbolId")
@@ -111,10 +113,13 @@ public abstract class SymbolAction implements Serializable {
     @JsonIgnore
     protected int number;
 
+    /** Negate the outcome of the action? */
     protected boolean negated;
 
+    /** Ignore if the execution of the action failed? */
     protected boolean ignoreFailure;
 
+    /** The connections that the action can use. */
     @Transient
     @JsonIgnore
     private ConnectorManager connectorManager;

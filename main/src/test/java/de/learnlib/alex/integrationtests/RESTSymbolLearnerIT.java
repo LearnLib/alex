@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 public class RESTSymbolLearnerIT extends JerseyTest {
 
     private static final int MAX_TIME_TO_WAIT_FOR_LEARNER = 180000; // three minutes !!
-
+    private static final int SYMBOLS_AMOUNT = 3;
     private static final String BASE_LEARNER_URL = "http://localhost:8080/rest";
     private static final String BASE_TEST_URL = "http://localhost:9998/test";
 
@@ -72,7 +72,7 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevisionPairListAsJSON(resetSymbol);
 
         // create test symbols
-        Symbol[] symbols = new Symbol[3];
+        Symbol[] symbols = new Symbol[SYMBOLS_AMOUNT];
 
         // symbol 1
         String symbolName = "RESTSymbolLearnerIT REST Symbol 1";

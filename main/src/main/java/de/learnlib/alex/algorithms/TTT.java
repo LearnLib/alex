@@ -12,6 +12,9 @@ import net.automatalib.words.Alphabet;
 
 import java.io.IOException;
 
+/**
+ * Class that provides the LearnLib implementation of the TTT algorithm for ALEX.
+ */
 @LearnAlgorithm(name = "TTT")
 public class TTT implements LearnAlgorithmFactory {
 
@@ -24,7 +27,8 @@ public class TTT implements LearnAlgorithmFactory {
     @Override
     public String getInternalData(LearningAlgorithm.MealyLearner<String, String> learner) {
         if (!(learner instanceof TTTLearnerMealy)) {
-            throw new IllegalArgumentException("Can not read the internal data because the algorithm types were different");
+            throw new IllegalArgumentException("Can not read the internal data because the algorithm types"
+                                                       + "were different");
         }
 
         TTTLearnerMealy tttLearner = (TTTLearnerMealy) learner;

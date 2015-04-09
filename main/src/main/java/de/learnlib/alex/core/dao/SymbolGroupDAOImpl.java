@@ -21,10 +21,15 @@ import java.util.Set;
  */
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
-    private SymbolDAOImpl symbolDAO;
+    /** The SymbolDAO to use. */
+    private final SymbolDAOImpl symbolDAO;
 
+    /**
+     * Constructor.
+     * Creates a new SymbolDAOImpl for internal use.
+     */
     public SymbolGroupDAOImpl() {
-        this.symbolDAO = new SymbolDAOImpl(this);
+        this.symbolDAO = new SymbolDAOImpl();
     }
 
     @Override
@@ -183,7 +188,10 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                 SymbolDAOImpl.loadLazyRelations(symbol);
             }
         } else if (fieldsToLoad.contains("symbols")) {
-            List<IdRevisionPair> idRevisionPairs = symbolDAO.getIdRevisionPairs(session, group.getProjectId(), group.getId(), SymbolVisibilityLevel.ALL);
+            List<IdRevisionPair> idRevisionPairs = symbolDAO.getIdRevisionPairs(session,
+                                                                                group.getProjectId(),
+                                                                                group.getId(),
+                                                                                SymbolVisibilityLevel.ALL);
             List<Symbol> symbols = symbolDAO.getAll(session, group.getProjectId(), idRevisionPairs);
             group.setSymbols(new HashSet<>(symbols));
         } else {

@@ -97,7 +97,8 @@ public class WebSymbolTest {
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
                     + "{\"type\":\"web_click\",\"negated\":false,\"ignoreFailure\":false,\"node\":null},"
-                    + "{\"type\":\"web_checkForText\",\"negated\":false,\"ignoreFailure\":false,\"value\":\"F[oO0]+\",\"regexp\":true},"
+                    + "{\"type\":\"web_checkForText\",\"negated\":false,\"ignoreFailure\":false,\"value\":\"F[oO0]+\","
+                        + "\"regexp\":true},"
                     + "{\"type\":\"wait\",\"negated\":false,\"ignoreFailure\":false,\"duration\":" + ONE_SECOND + "}"
                 + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":0,\"revision\":null}";
         symbol.setProject(null);

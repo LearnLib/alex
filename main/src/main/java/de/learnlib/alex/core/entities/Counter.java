@@ -3,28 +3,39 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
+/**
+ * A simple counter class.
+ */
 @Entity
 public class Counter {
 
+    /** The ID of the counter in the DB. */
     @Id
     @GeneratedValue
     @JsonIgnore
     private Long counterId;
 
+    /** The project the counter belongs to. */
     @ManyToOne
     @NaturalId
     @JsonIgnore
     private Project project;
 
+    /** The name of the counter. */
     @NaturalId
+    @NotBlank
     private String name;
 
+    /** The value of the counter. */
+    @NotNull
     private Integer value;
 
     public Long getCounterId() {

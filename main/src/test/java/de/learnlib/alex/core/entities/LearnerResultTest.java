@@ -23,7 +23,7 @@ public class LearnerResultTest {
     private static final Long STEP_NO = 3L;
     private static final Date TEST_DATE = new Date(0);
     private static final long TEST_DURATION = 9001;
-    public static final int TEST_RESET_AMOUNT = 123;
+    private static final int EQS_USED = 123;
     private static final String EXPECTED_JSON = "{\"configuration\":{"
                                                     + "\"algorithm\":\"TTT\",\"eqOracle\":"
                                                     + "{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,"
@@ -92,9 +92,9 @@ public class LearnerResultTest {
                         + "]},"
                         + "\"testNo\":" + ID + ",\"project\":" + PROJECT_ID + ","
                         + "\"sigma\":[\"0\",\"1\"],\"stepNo\":" + STEP_NO + ", \"statistics\": {"
-                            + "\"eqsUsed\":123, \"duration\": " + TEST_DURATION + ", \"mqsUsed\":0,"
+                            + "\"eqsUsed\":" + EQS_USED + ", \"duration\": " + TEST_DURATION + ", \"mqsUsed\":0,"
                             + "\"startTime\": \"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0}"
-                        +"}";
+                        + "}";
 
         LearnerResult resultFromJSON = new LearnerResult();
         Method method = LearnerResult.class.getDeclaredMethod("setJSON", String.class);
@@ -102,7 +102,7 @@ public class LearnerResultTest {
         method.invoke(resultFromJSON, json);
 
         LearnerResult.Statistics statistics = new LearnerResult.Statistics();
-        statistics.setEqsUsed(123);
+        statistics.setEqsUsed(EQS_USED);
         statistics.setStartTime(TEST_DATE);
         statistics.setDuration(TEST_DURATION);
 

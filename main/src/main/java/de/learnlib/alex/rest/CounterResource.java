@@ -13,12 +13,23 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+/**
+ * Resource to read and delete Counters.
+ */
 @Path("/projects/{project_id}/counters")
 public class CounterResource {
 
+    /** The CounterDAO to use. */
     @Inject
     private  CounterDAO counterDAO;
 
+    /**
+     * Get all counters of a project.
+     *
+     * @param projectId
+     *         The Project ID.
+     * @return A List of the counters within the project.
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCounters(@PathParam("project_id") Long projectId) {
@@ -26,6 +37,15 @@ public class CounterResource {
         return Response.ok(counters).build();
     }
 
+    /**
+     * Delete one counter.
+     *
+     * @param projectId
+     *         The Project ID.
+     * @param name
+     *         The name of the counter to remove.
+     * @return Nothing if everything went OK.
+     */
     @DELETE
     @Path("/{counter_name}")
     public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name) {

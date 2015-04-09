@@ -1,6 +1,7 @@
 package de.learnlib.alex.algorithms;
 
 import de.learnlib.alex.annotations.LearnAlgorithm;
+import de.learnlib.algorithms.features.observationtable.ObservationTable;
 import de.learnlib.algorithms.features.observationtable.writer.ObservationTableASCIIWriter;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealyBuilder;
@@ -8,6 +9,9 @@ import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
 import net.automatalib.words.Alphabet;
 
+/**
+ * Class that provides the LearnLib implementation of the extended L* algorithm for ALEX.
+ */
 @LearnAlgorithm(name = "LSTAR", prettyName = "L*")
 public class LStar implements LearnAlgorithmFactory {
 
@@ -20,12 +24,14 @@ public class LStar implements LearnAlgorithmFactory {
     @Override
     public String getInternalData(LearningAlgorithm.MealyLearner<String, String> learner) {
         if (!(learner instanceof ExtensibleLStarMealy)) {
-            throw new IllegalArgumentException("Can not read the internal data because the algorithm types were different");
+            throw new IllegalArgumentException("Can not read the internal data because the algorithm types"
+                                                       + "were different");
         }
 
-        StringBuilder observationTable = new StringBuilder();
-        new ObservationTableASCIIWriter<String, String>().write(((ExtensibleLStarMealy) learner).getObservationTable(), observationTable);
-        return observationTable.toString();
+        ObservationTable observationTable = ((ExtensibleLStarMealy) learner).getObservationTable();
+        StringBuilder observationTableAsString = new StringBuilder();
+        new ObservationTableASCIIWriter<String, String>().write(observationTable, observationTableAsString);
+        return observationTableAsString.toString();
     }
 
 }

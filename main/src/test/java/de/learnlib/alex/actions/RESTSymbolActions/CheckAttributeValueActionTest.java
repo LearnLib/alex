@@ -22,7 +22,7 @@ import static org.mockito.BDDMockito.given;
 public class CheckAttributeValueActionTest {
 
     private static final Long PROJECT_ID = 42L;
-    
+
     @Mock
     private WebServiceConnector connector;
 

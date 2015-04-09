@@ -4,10 +4,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Manager to manage a set of connectors.
+ */
 public class ConnectorManager implements Iterable<Connector> {
 
+    /** Map of all the connectors by their type. */
     private Map<Class<? extends Connector>, Connector> connectors;
 
+    /**
+     * Default constructor.
+     */
     public ConnectorManager() {
         this.connectors = new HashMap<>();
     }

@@ -6,18 +6,11 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.alex.utils.DiscriminationTreeSerializer;
-import de.learnlib.alex.utils.TTTSerializer;
-import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
-import de.learnlib.algorithms.features.observationtable.writer.ObservationTableASCIIWriter;
-import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
-import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
 import de.learnlib.api.SUL;
 import de.learnlib.cache.sul.SULCache;
 import de.learnlib.cache.sul.SULCaches;
-import de.learnlib.discriminationtree.DiscriminationTree;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.Mappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
@@ -25,11 +18,9 @@ import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.oracles.ResetCounterSUL;
 import de.learnlib.oracles.SULOracle;
 import de.learnlib.oracles.SymbolCounterSUL;
-import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -45,10 +36,16 @@ public class LearnerThread extends Thread {
     /** Mapper to match the Alphabet to the right symbols. */
     private final SymbolMapper symbolMapper;
 
-    /** The System Under Learning used to do the actual learning. */
+    /** The System Under Learning used to do the learning on. */
     private final SUL<String, String> sul;
+
+    /** The actual System Under Learning put into a cache. */
     private SULCache<String, String> cachedSUL;
+
+    /** SUL that counts the resets/ mqs and will call the cachedSUL for the learning. */
     private final ResetCounterSUL<String, String>  resetCounterSUL;
+
+    /** SUL that counts the amount of symbols used and will call the resetCounterSUL for the learning. */
     private final SymbolCounterSUL<String, String> symbolCounterSUL;
 
     /** The DAO to remember the learn results. */
@@ -66,6 +63,7 @@ public class LearnerThread extends Thread {
     /** The membership oracle. */
     private final SULOracle<String, String> mqOracle;
 
+    /** The last found counterexample. */
     private DefaultQuery<String, Word<String>> counterExample;
 
     /**
@@ -83,7 +81,7 @@ public class LearnerThread extends Thread {
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
 
-        Symbol[] symbolsArray = readSymbolArray(result);
+        Symbol[] symbolsArray = readSymbolArray(); // use the symbols in the result to create the symbol array.
         this.symbolMapper = new SymbolMapper(symbolsArray);
         this.sigma = symbolMapper.getAlphabet();
         this.result.setSigma(sigma);
@@ -137,7 +135,7 @@ public class LearnerThread extends Thread {
         this.learner = learner;
     }
 
-    private Symbol[] readSymbolArray(LearnerResult result) {
+    private Symbol[] readSymbolArray() {
         List<Symbol> symbols = result.getConfiguration().getSymbols();
         return symbols.toArray(new Symbol[symbols.size()]);
     }
@@ -160,6 +158,11 @@ public class LearnerThread extends Thread {
         return result;
     }
 
+    /**
+     * Get the actual SUL used for the learning process wrapped in a cache..
+     *
+     * @return The SUL used for the learning process put into a cache.
+     */
     public SULCache<String, String> getCachedSUL() {
         return cachedSUL;
     }

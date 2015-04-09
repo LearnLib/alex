@@ -4,10 +4,22 @@ import de.learnlib.algorithms.ttt.base.DTNode;
 import de.learnlib.algorithms.ttt.base.DiscriminationTree;
 import net.automatalib.words.Word;
 
+/**
+ * Custom serializer that converts the (LearnLib) TTT data structures into nice JSON.
+ * Currently only parse the discrimination tree.
+ */
 public final class TTTSerializer {
 
-    private TTTSerializer() {}
+    private TTTSerializer() {
+    }
 
+    /**
+     * Serializes the discrimination tree of the TTT algorithm into JSON.
+     *
+     * @param tree
+     *         The tree to convert into nice JSON.
+     * @return The JSON string of the given tree.
+     */
     public static String toJSON(DiscriminationTree<String, Word> tree) {
         return toJSON(tree.getRoot());
     }

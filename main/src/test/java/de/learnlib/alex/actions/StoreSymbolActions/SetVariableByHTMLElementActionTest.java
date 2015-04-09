@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +27,7 @@ public class SetVariableByHTMLElementActionTest {
     public void testJSON() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(setAction);
-        SetVariableByHTMLElementAction declareAction2 = (SetVariableByHTMLElementAction) mapper.readValue(json, SymbolAction.class);
+        SetVariableByHTMLElementAction declareAction2 = mapper.readValue(json, SetVariableByHTMLElementAction.class);
 
         assertEquals(setAction.getName(), declareAction2.getName());
         assertEquals(setAction.getValue(), declareAction2.getValue());
@@ -36,7 +37,8 @@ public class SetVariableByHTMLElementActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/actions/StoreSymbolActions/SetVariableByHTMLElementTestData.json").toURI());
+        URI uri = getClass().getResource("/actions/StoreSymbolActions/SetVariableByHTMLElementTestData.json").toURI();
+        File file = new File(uri);
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof SetVariableByHTMLElementAction);

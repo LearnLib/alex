@@ -6,6 +6,9 @@ import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
 import net.automatalib.words.Alphabet;
 
+/**
+ * Class that provides the LearnLib implementation of the DHC algorithm for ALEX.
+ */
 @LearnAlgorithm(name = "DHC")
 public class DHC implements LearnAlgorithmFactory {
 

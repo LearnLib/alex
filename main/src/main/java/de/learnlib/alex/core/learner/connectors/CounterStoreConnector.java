@@ -7,10 +7,18 @@ import de.learnlib.alex.core.entities.Project;
 
 import java.util.NoSuchElementException;
 
+/**
+ * Connector to store and manage counters.
+ */
 public class CounterStoreConnector implements Connector {
 
+    /** The DAO to persist the counters to and fetch the counters from. */
     private CounterDAO counterDAO;
 
+    /**
+     * Default constructor.
+     * Creates a new CounterDAO object.
+     */
     public CounterStoreConnector() {
         this(new CounterDAOImpl());
     }

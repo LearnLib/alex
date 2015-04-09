@@ -15,6 +15,8 @@ import static org.junit.Assert.fail;
 
 public class CounterDAOImplTest {
 
+    private static final int COUNTER_VALUE = 42;
+
     private static ProjectDAO projectDAO;
     private static CounterDAO counterDAO;
 
@@ -38,6 +40,7 @@ public class CounterDAOImplTest {
         counter = new Counter();
         counter.setProject(project);
         counter.setName("Counter No. 1");
+        counter.setValue(COUNTER_VALUE);
     }
 
     @After
@@ -56,6 +59,7 @@ public class CounterDAOImplTest {
             Counter counter = new Counter();
             counter.setProject(project);
             counter.setName("Counter No. " + i);
+            counter.setValue(i);
             counterDAO.create(counter);
         }
 
@@ -67,9 +71,8 @@ public class CounterDAOImplTest {
     @Test
     public void shouldUpdateACounter() {
         counterDAO.create(counter);
-        counter.setValue(42);
+        counter.setValue(COUNTER_VALUE + 1);
 
-        System.out.println(counter.getProject());
         counterDAO.update(counter);
     }
 

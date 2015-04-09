@@ -35,8 +35,10 @@ public class SampleEQOracleProxyTest {
         String actualJSON = mapper.writeValueAsString(eqOracle);
 
         String expectedJSON  = "{\"type\":\"sample\",\"counterExamples\":["
-                                    + "[{\"input\":\"input1\",\"output\":\"output1\"},{\"input\":\"input2\",\"output\":\"output2\"}],"
-                                    + "[{\"input\":\"input3\",\"output\":\"output3\"},{\"input\":\"input4\",\"output\":\"output4\"}]"
+                                    + "[{\"input\":\"input1\",\"output\":\"output1\"},"
+                                        + "{\"input\":\"input2\",\"output\":\"output2\"}],"
+                                    + "[{\"input\":\"input3\",\"output\":\"output3\"}"
+                                        + ",{\"input\":\"input4\",\"output\":\"output4\"}]"
                                 + "]}";
         assertEquals(expectedJSON, actualJSON);
     }

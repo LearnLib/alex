@@ -7,6 +7,13 @@ import java.util.LinkedList;
  */
 public class IdsList extends LinkedList<Long> {
 
+    /**
+     * Constructor
+     * This is neede for Jersey, so that an IdList can be used as PathParameter.
+     *
+     * @param value
+     *         The ids as comma separated list.
+     */
     public IdsList(String value) {
         String[] parts = value.split(",");
         if (parts.length == 0) {

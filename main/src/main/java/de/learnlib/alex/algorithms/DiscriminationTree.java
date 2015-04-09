@@ -11,6 +11,9 @@ import net.automatalib.words.Alphabet;
 
 import java.io.IOException;
 
+/**
+ * Class that provides the LearnLib implementation of the Discrimination Tree algorithm for ALEX.
+ */
 @LearnAlgorithm(name = "DISCRIMINATION_TREE", prettyName = "Discrimination Tree")
 public class DiscriminationTree implements LearnAlgorithmFactory {
 
@@ -23,9 +26,11 @@ public class DiscriminationTree implements LearnAlgorithmFactory {
     @Override
     public String getInternalData(LearningAlgorithm.MealyLearner<String, String> learner) {
         if (!(learner instanceof DTLearnerMealy)) {
-            throw new IllegalArgumentException("Can not read the internal data because the algorithm types were different");
+            throw new IllegalArgumentException("Can not read the internal data because the algorithm types"
+                                                       + "were different");
         }
-        de.learnlib.discriminationtree.DiscriminationTree discriminationTree = ((DTLearnerMealy) learner).getDiscriminationTree();
+        de.learnlib.discriminationtree.DiscriminationTree discriminationTree;
+        discriminationTree = ((DTLearnerMealy) learner).getDiscriminationTree();
         de.learnlib.discriminationtree.DiscriminationTree.GraphView graphView = discriminationTree.graphView();
         String treeAsJSON = DiscriminationTreeSerializer.toJSON(discriminationTree);
         System.out.println("========================");

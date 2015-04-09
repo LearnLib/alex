@@ -55,6 +55,7 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
     @JsonIgnore
     private Project project;
 
+    /** The group the symbol belongs to. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @Cascade({ CascadeType.SAVE_UPDATE})
     @JsonIgnore

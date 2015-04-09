@@ -19,8 +19,10 @@ import java.util.concurrent.Executors;
  */
 public class Learner {
 
+    /** Factory to create a new ContextHandler. */
     private ConnectorContextHandlerFactory contextHandlerFactory;
 
+    /** The current ContextHandler. */
     private ConnectorContextHandler contextHandler;
 
     /** Factory to create the {@link LearnerThread LearnerThreads}. */
@@ -29,6 +31,13 @@ public class Learner {
     /** The current learning thread. Could be null. */
     private LearnerThread learnThread;
 
+    /**
+     * Constructor which only set the thread factory.
+     * This constructor creates a new ConnectorContextHandlerFactory for internal use.
+     *
+     * @param threadFactory
+     *         The thread factory to use.
+     */
     public Learner(LearnerThreadFactory threadFactory) {
         this(threadFactory, new ConnectorContextHandlerFactory());
     }
@@ -37,7 +46,7 @@ public class Learner {
      * Constructor that initialises only the LearnerThreadFactory.
      *
      * @param learnThreadFactory
-     *         The factory to use.
+     *         The thread factory to use.
      */
     public Learner(LearnerThreadFactory learnThreadFactory, ConnectorContextHandlerFactory contextHandlerFactory) {
         this.learnThreadFactory = learnThreadFactory;

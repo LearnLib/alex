@@ -72,7 +72,8 @@ public class IFrameProxyResource {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
-    public Response doPostProxy(@QueryParam("url") String url, @HeaderParam("Cookie") String cookies, MultivaluedMap<String, String> body) {
+    public Response doPostProxy(@QueryParam("url") String url, @HeaderParam("Cookie") String cookies,
+                                MultivaluedMap<String, String> body) {
         try {
             Connection connection = Jsoup.connect(url);
             connection = parseAndProcessCookies(connection, cookies);
@@ -184,7 +185,8 @@ public class IFrameProxyResource {
             String originalReference = elem.attr(attribute);
             if (!originalReference.startsWith("#")) {
                 absolutifyURL(elem, attribute);
-                elem.attr(attribute, uriInfo.getAbsolutePath() + "?url=" + URLEncoder.encode(elem.attr(attribute), "UTF-8"));
+                String newUrl = uriInfo.getAbsolutePath() + "?url=" + URLEncoder.encode(elem.attr(attribute), "UTF-8");
+                elem.attr(attribute, newUrl);
             }
         } catch (UnsupportedEncodingException e) {
             // should never happen

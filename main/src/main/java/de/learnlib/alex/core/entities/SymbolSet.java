@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Transient;
 import java.util.List;
 
+/**
+ * Set of symbols to manage a reset symbol and a list of symbols together.
+ */
 public class SymbolSet {
 
     /**

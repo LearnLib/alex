@@ -26,6 +26,7 @@ import static org.mockito.Mockito.mock;
 public class LearnerTest {
 
     private static final String FAKE_URL = "http://example.com";
+    private static final int SYMBOL_AMOUNT = 5;
 
     @Mock
     private LearnerThreadFactory threadFactory;
@@ -72,7 +73,7 @@ public class LearnerTest {
         Symbol resetSymbol = mock(Symbol.class);
         given(resetSymbol.execute(any(ConnectorManager.class))).willReturn("OK");
         List<Symbol> symbols = new LinkedList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < SYMBOL_AMOUNT; i++) {
             Symbol symbol = mock(Symbol.class);
             given(symbol.execute(any(ConnectorManager.class))).willReturn("OK");
             symbols.add(symbol);

@@ -47,22 +47,30 @@ public class LearnerResult implements Serializable {
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("server");
 
+    /**
+     * Embeddable statistics object to hold all the statistics together.
+     */
     @Embeddable
     @JsonPropertyOrder(alphabetic = true)
     public static class Statistics {
 
-        /** Date and Time when the learning step was started. The format is conform with the ISO 8601 (JavaScript-Style). */
+        /**
+         * Date and Time when the learning step was started.
+         * The format is conform with the ISO 8601 (JavaScript-Style).
+         */
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
         private Date startTime;
 
         /** The duration of the learn step. */
         private long duration;
 
-        /** The amount of SUL resets if available. Otherwise -1. */
+        /** The amount of equivalence queries.. */
         private long eqsUsed;
 
+        /** The amount of membership queries/ SUL resets. */
         private long mqsUsed;
 
+        /** The amount of actual symbols called during the learning process. */
         private long symbolsUsed;
 
         public Statistics() {
@@ -165,8 +173,8 @@ public class LearnerResult implements Serializable {
     /** The LearnerConfiguration which was used to create the result. */
     private LearnerConfiguration configuration;
 
+    /** The statistics of the result. */
     private Statistics statistics;
-
 
     /** The Alphabet used while learning. */
     private Alphabet<String> sigma;
@@ -174,6 +182,7 @@ public class LearnerResult implements Serializable {
     /** The hypothesis of the result. */
     private CompactMealyMachineProxy hypothesis;
 
+    /** The last found counterexample. */
     private DefaultQuery<String, Word<String>> counterExample;
 
     /** This is an optional property and can contain things like the internal data structure. */

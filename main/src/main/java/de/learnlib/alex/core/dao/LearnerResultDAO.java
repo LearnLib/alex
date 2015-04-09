@@ -46,6 +46,17 @@ public interface LearnerResultDAO {
      */
     List<String> getAllAsJSON(Long projectId, Long testNo) throws NoSuchElementException;
 
+    /**
+     * Get a list of lists of JSON data containing all the steps of a given TestRun for a given Project.
+     *
+     * @param projectId
+     *         The project id if the test run.
+     * @param testNos
+     *         The list of test nos. of the test runs.
+     * @return A list of list containing LearnerResults as JSON data.
+     * @throws NoSuchElementException
+     *         If the project id or test no. was invalid.
+     */
     List<List<String>> getAllAsJson(Long projectId, List<Long> testNos) throws NoSuchElementException;
 
     /**

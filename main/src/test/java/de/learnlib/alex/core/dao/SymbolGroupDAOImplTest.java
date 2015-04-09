@@ -33,7 +33,7 @@ public class SymbolGroupDAOImplTest {
     public static void beforeClass() {
         projectDAO = new ProjectDAOImpl();
         symbolGroupDAO = new SymbolGroupDAOImpl();
-        symbolDAO = new SymbolDAOImpl(symbolGroupDAO);
+        symbolDAO = new SymbolDAOImpl();
     }
 
     @Before

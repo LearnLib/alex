@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 
 /**
  * REST API to manage groups.
+ *
  * @resourcePath groups
  * @resourceDescription Operations for groups
  */
@@ -36,9 +37,11 @@ public class SymbolGroupResource {
     @Context
     private UriInfo uri;
 
+    /** The SymbolGroupDAO to use. */
     @Inject
     private SymbolGroupDAO symbolGroupDAO;
 
+    /** The SymbolDAO to use. */
     @Inject
     private SymbolDAO symbolDAO;
 
@@ -75,10 +78,12 @@ public class SymbolGroupResource {
      *
      * @param projectId
      *         The ID of the project.
+     * @param embed
+     *         The properties to embed in the response.
      * @return All groups in a list. If the project contains no groups the list will be empty.
      * @responseType java.util.List<de.learnlib.alex.core.entities.SymbolGroup>
      * @successResponse 200 OK
-     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -103,6 +108,8 @@ public class SymbolGroupResource {
      *         The ID of the project.
      * @param id
      *            The ID of the group within the project.
+     * @param embed
+     *         The properties to embed in the response.
      * @return The project or an error message.
      * @responseType de.learnlib.alex.core.entities.SymbolGroup
      * @successResponse 200 OK

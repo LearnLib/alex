@@ -10,6 +10,9 @@ import org.openqa.selenium.NoSuchElementException;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+/**
+ * Action to set a variable to a value received from an element of the DOM tree.
+ */
 @Entity
 @DiscriminatorValue("setVariableByHTML")
 @JsonTypeName("setVariableByHTML")

@@ -5,10 +5,21 @@ import de.learnlib.discriminationtree.DTNode;
 import de.learnlib.discriminationtree.DiscriminationTree;
 import net.automatalib.words.Word;
 
+/**
+ * Custom serializer that converts a (LearnLib) Discrimination Tree into nice JSON.
+ */
 public final class DiscriminationTreeSerializer {
 
-    private DiscriminationTreeSerializer() {}
+    private DiscriminationTreeSerializer() {
+    }
 
+    /**
+     * Serializes the discrimination tree of the discrimination tree algorithm into JSON.
+     *
+     * @param tree
+     *         The tree to convert into nice JSON.
+     * @return The JSON string of the given tree.
+     */
     public static String toJSON(DiscriminationTree<String, Word, HState> tree) {
         return toJSON(tree.getRoot());
     }

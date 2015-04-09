@@ -313,6 +313,17 @@ public class SymbolResource {
         }
     }
 
+    /**
+     * Move a Symbol to a new group.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param symbolId
+     *         The ID of the symbol.
+     * @param groupId
+     *         The ID of the new group.
+     * @return On success the moved symbol (enhanced with information from the DB); An error message on failure.
+     */
     @PUT
     @Path("/{symbol_id}/moveTo/{group_id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -333,6 +344,17 @@ public class SymbolResource {
         }
     }
 
+    /**
+     * Move a bunch of Symbols to a new group.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param symbolIds
+     *         The ID of the symbols.
+     * @param groupId
+     *         The ID of the new group.
+     * @return On success the moved symbols (enhanced with information from the DB); An error message on failure.
+     */
     @PUT
     @Path("/batch/{symbol_ids}/moveTo/{group_id}")
     @Produces(MediaType.APPLICATION_JSON)

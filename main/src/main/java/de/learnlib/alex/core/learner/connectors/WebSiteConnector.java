@@ -91,6 +91,15 @@ public class WebSiteConnector implements Connector {
         return driver.findElement(By.cssSelector(query));
     }
 
+    /**
+     * Get a Get a {@link WebElement} of a link by its visible text.
+     *
+     * @param text
+     *         The visible text of the link to look for.
+     * @return The link with the text.
+     * @throws NoSuchElementException
+     *         If no Element was found.
+     */
     public WebElement getLinkByText(String text) throws NoSuchElementException {
         return driver.findElement(By.linkText(text));
     }

@@ -10,6 +10,9 @@ import de.learnlib.alex.utils.JSONHelpers;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+/**
+ * Action to set a variable to a value received from an element of the current (JSON) body.
+ */
 @Entity
 @DiscriminatorValue("setVariableByJSON")
 @JsonTypeName("setVariableByJSON")

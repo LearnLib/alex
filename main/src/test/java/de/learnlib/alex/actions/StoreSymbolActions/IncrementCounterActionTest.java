@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
@@ -47,7 +48,8 @@ public class IncrementCounterActionTest {
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new File(getClass().getResource("/actions/StoreSymbolActions/IncrementCounterTestData.json").toURI());
+        URI uri = getClass().getResource("/actions/StoreSymbolActions/IncrementCounterTestData.json").toURI();
+        File file = new File(uri);
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof IncrementCounterAction);

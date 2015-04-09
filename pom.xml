@@ -75,7 +75,7 @@
         <surefire-report.version>2.18.1</surefire-report.version>
         <war-plugin.version>2.6</war-plugin.version>
 
-        <checkstyle.version>2.14</checkstyle.version>
+        <checkstyle.version>2.15</checkstyle.version>
         <cobertura.version>2.6</cobertura.version>
         <findbugs.version>3.0.0</findbugs.version>
         <pmd.version>3.4</pmd.version>

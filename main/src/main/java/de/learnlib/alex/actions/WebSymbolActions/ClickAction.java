@@ -32,6 +32,12 @@ public class ClickAction extends WebSymbolAction {
         return node;
     }
 
+    /**
+     * Get the node to look for.
+     * All variables and counters will be replaced with their values.
+     *
+     * @return The node to look for.
+     */
     @JsonIgnore
     public String getNodeWithVariableValues() {
         return insertVariableValues(node);

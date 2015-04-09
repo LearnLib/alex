@@ -9,6 +9,9 @@ import org.hibernate.criterion.Restrictions;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Implementation of a CounterDAO using Hibernate.
+ */
 public class CounterDAOImpl implements CounterDAO {
 
     @Override

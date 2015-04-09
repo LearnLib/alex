@@ -32,8 +32,8 @@ public class LearnerThreadFactory {
     /**
      * Create a LearnerThread suitable for the given parameter.
      *
-     *
      * @param contextHandler
+     *         The current ContextHandler to use.
      * @param project
      *         The Project of the test run.
      * @param configuration

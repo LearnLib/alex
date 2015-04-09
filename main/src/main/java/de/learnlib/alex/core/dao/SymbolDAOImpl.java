@@ -28,13 +28,6 @@ import java.util.Objects;
  */
 public class SymbolDAOImpl implements SymbolDAO {
 
-    private final SymbolGroupDAO symbolGroupDAO;
-    private SymbolAction action;
-
-    public SymbolDAOImpl(SymbolGroupDAO symbolGroupDAO) {
-        this.symbolGroupDAO = symbolGroupDAO;
-    }
-
     @Override
     public void create(Symbol symbol) throws ValidationException {
         // start session
@@ -659,7 +652,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             ExecuteSymbolAction action = (ExecuteSymbolAction) a;
             Symbol symbolToExecute = action.getSymbolToExecute();
 
-            if (symbolToExecute != null && (!Hibernate.isInitialized(symbolToExecute) || !Hibernate.isInitialized(symbolToExecute.getActions()))) {
+            if (symbolToExecute != null
+                    && (!Hibernate.isInitialized(symbolToExecute)
+                            || !Hibernate.isInitialized(symbolToExecute.getActions()))) {
                 Hibernate.initialize(symbolToExecute);
                 Hibernate.initialize(symbolToExecute.getActions());
                 loadLazyRelations(symbolToExecute);

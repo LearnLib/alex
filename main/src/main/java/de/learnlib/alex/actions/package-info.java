@@ -1,4 +1,4 @@
 /**
  * All the actions!!
  */
-package de.learnlib.weblearner.actions;
+package de.learnlib.alex.actions;
