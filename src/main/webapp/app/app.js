@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('weblearner', [
+        .module('ALEX', [
 
             // modules from external libraries
             'ngAnimate',
@@ -18,26 +18,26 @@
             'templates-all',
 
             // application specific modules
-            'weblearner.controller',
-            'weblearner.resources',
-            'weblearner.directives',
-            'weblearner.services',
-            'weblearner.filters',
-            'weblearner.routes',
-            'weblearner.constants',
-            'weblearner.models'
+            'ALEX.controller',
+            'ALEX.resources',
+            'ALEX.directives',
+            'ALEX.services',
+            'ALEX.filters',
+            'ALEX.routes',
+            'ALEX.constants',
+            'ALEX.models'
         ]);
 
-    angular.module('weblearner.controller', []);
-    angular.module('weblearner.resources', []);
-    angular.module('weblearner.directives', []);
-    angular.module('weblearner.services', []);
-    angular.module('weblearner.filters', []);
-    angular.module('weblearner.routes', ['weblearner.constants', 'templates-all', 'ui.router']);
-    angular.module('weblearner.constants', []);
-    angular.module('weblearner.models', []);
+    angular.module('ALEX.controller', []);
+    angular.module('ALEX.resources', []);
+    angular.module('ALEX.directives', []);
+    angular.module('ALEX.services', []);
+    angular.module('ALEX.filters', []);
+    angular.module('ALEX.routes', ['ALEX.constants', 'templates-all', 'ui.router']);
+    angular.module('ALEX.constants', []);
+    angular.module('ALEX.models', []);
 
-    angular.module('weblearner')
+    angular.module('ALEX')
 
         // configure toast position
         .config(['ngToastProvider', function (ngToastProvider) {
@@ -509,7 +509,7 @@ angular.module("app/views/directives/observation-table.html", []).run(["$templat
     "    </tr>\n" +
     "    <tr ng-repeat=\"tr in table.body.s2 track by $index\" ng-class=\"$index === 0 ? 'line': ''\">\n" +
     "        <td ng-repeat=\"td in tr track by $index\" ng-bind=\"td\"></td>\n" +
-    "        </tr>\n" +
+    "    </tr>\n" +
     "    </tbody>\n" +
     "</table>");
 }]);
@@ -520,9 +520,9 @@ angular.module("app/views/directives/view-heading.html", []).run(["$templateCach
     "<div class=\"view-heading\">\n" +
     "    <div class=\"container\">\n" +
     "        <div class=\"view-heading-title-pre\" ng-transclude></div>\n" +
-    "        <h2 class=\"view-heading-title\" ng-bind=\"::title\"></h2>\n" +
+    "        <h2 class=\"view-heading-title\" ng-bind=\"title\"></h2>\n" +
     "\n" +
-    "        <p class=\"view-heading-sub-title\" ng-bind=\"::subTitle\"></p>\n" +
+    "        <p class=\"view-heading-sub-title\" ng-bind=\"subTitle\"></p>\n" +
     "    </div>\n" +
     "</div>");
 }]);
@@ -1279,65 +1279,71 @@ angular.module("app/views/modals/learn-result-details-modal.html", []).run(["$te
     "\n" +
     "<div class=\"modal-body\">\n" +
     "\n" +
-    "    <table class=\"table table-condensed\">\n" +
+    "    <tabset justified=\"true\">\n" +
+    "        <tab ng-repeat=\"tab in tabs\" heading=\"{{tab.heading}}\">\n" +
     "\n" +
-    "        <tr class=\"active\">\n" +
-    "            <td colspan=\"2\"><strong>About This Test</strong></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>nth Test</td>\n" +
-    "            <td ng-bind=\"result.testNo\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>nth Hypothesis</td>\n" +
-    "            <td ng-bind=\"result.stepNo\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Started</td>\n" +
-    "            <td ng-bind=\"(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
-    "        </tr>\n" +
+    "            <table class=\"table table-condensed\">\n" +
     "\n" +
-    "        <tr class=\"active\">\n" +
-    "            <td colspan=\"2\"><strong>Configuration</strong></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Algorithm</td>\n" +
-    "            <td ng-bind=\"(result.configuration.algorithm | formatAlgorithm)\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>EQ Oracle</td>\n" +
-    "            <td ng-bind=\"(result.configuration.eqOracle.type | formatEqOracle)\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Steps to Learn</td>\n" +
-    "            <td ng-bind=\"result.configuration.maxAmountOfStepsToLearn\"></td>\n" +
-    "        </tr>\n" +
+    "                <tr class=\"active\">\n" +
+    "                    <td colspan=\"2\"><strong>About This Test</strong></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>nth Test</td>\n" +
+    "                    <td ng-bind=\"tab.result.testNo\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr ng-hide=\"tab.result.stepNo === 0\">\n" +
+    "                    <td>nth Step</td>\n" +
+    "                    <td ng-bind=\"tab.result.stepNo\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>Started</td>\n" +
+    "                    <td ng-bind=\"(tab.result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
+    "                </tr>\n" +
     "\n" +
-    "        <tr class=\"active\">\n" +
-    "            <td colspan=\"2\"><strong>Numbers</strong></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Duration</td>\n" +
-    "            <td><span ng-bind=\"result.statistics.duration\"></span> ms</td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>#Membership Queries</td>\n" +
-    "            <td ng-bind=\"result.statistics.mqsUsed\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>#Equivalence Queries</td>\n" +
-    "            <td ng-bind=\"result.statistics.eqsUsed\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>#Symbol Calls</td>\n" +
-    "            <td ng-bind=\"result.statistics.symbolsUsed\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>|Sigma|</td>\n" +
-    "            <td ng-bind=\"result.sigma.length\"></td>\n" +
-    "        </tr>\n" +
+    "                <tr class=\"active\">\n" +
+    "                    <td colspan=\"2\"><strong>Configuration</strong></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>Algorithm</td>\n" +
+    "                    <td ng-bind=\"(tab.result.configuration.algorithm | formatAlgorithm)\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr ng-hide=\"tab.result.stepNo === 0\">\n" +
+    "                    <td>EQ Oracle</td>\n" +
+    "                    <td ng-bind=\"(tab.result.configuration.eqOracle.type | formatEqOracle)\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr ng-hide=\"tab.result.stepNo === 0\">\n" +
+    "                    <td>Steps to Learn</td>\n" +
+    "                    <td ng-bind=\"tab.result.configuration.maxAmountOfStepsToLearn\"></td>\n" +
+    "                </tr>\n" +
     "\n" +
-    "    </table>\n" +
+    "                <tr class=\"active\">\n" +
+    "                    <td colspan=\"2\"><strong>Numbers</strong></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>Duration</td>\n" +
+    "                    <td><span ng-bind=\"tab.result.statistics.duration\"></span> ms</td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>#Membership Queries</td>\n" +
+    "                    <td ng-bind=\"tab.result.statistics.mqsUsed\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>#Equivalence Queries</td>\n" +
+    "                    <td ng-bind=\"tab.result.statistics.eqsUsed\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>#Symbol Calls</td>\n" +
+    "                    <td ng-bind=\"tab.result.statistics.symbolsUsed\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>|Sigma|</td>\n" +
+    "                    <td ng-bind=\"tab.result.sigma.length\"></td>\n" +
+    "                </tr>\n" +
+    "\n" +
+    "            </table>\n" +
+    "\n" +
+    "        </tab>\n" +
+    "    </tabset>\n" +
     "\n" +
     "</div>\n" +
     "\n" +
@@ -1945,6 +1951,8 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
     "\n" +
     "            <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
     "\n" +
+    "\n" +
+    "\n" +
     "                <ul class=\"list-group\">\n" +
     "                    <li class=\"list-group-item\" ng-repeat=\"result in results\"\n" +
     "                        ng-click=\"fillPanel(result, $parent.$index)\">\n" +
@@ -2151,7 +2159,9 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteResults()\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\"\n" +
+    "                    ng-click=\"deleteResults()\"\n" +
+    "                    ng-class=\"selectedResults.length === 0 ? 'disabled' : ''\">\n" +
     "                Delete\n" +
     "            </button>\n" +
     "        </div>\n" +
@@ -2318,14 +2328,14 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                         ng-if=\"!symobl.hidden\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
-    "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
+    "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\" selection-model-ignore>\n" +
     "                                <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'\"></i>\n" +
     "                            </a>\n" +
     "\n" +
     "                            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
     "\n" +
     "                            <p class=\"text-muted\">\n" +
-    "                                <a href ng-click=\"symbol._collapsed = !symbol._collapsed\">\n" +
+    "                                <a href ng-click=\"symbol._collapsed = !symbol._collapsed\" selection-model-ignore>\n" +
     "                                    <span ng-bind=\"symbol.actions.length\"></span>\n" +
     "                                    Actions\n" +
     "                                    <i class=\"fa fa-fw\"\n" +
@@ -2827,6 +2837,7 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "        <div ng-if=\"symbols.length === 0\">\n" +
     "            <div file-dropzone on-loaded=\"fileLoaded\" class=\"alert alert-info\">\n" +
     "                Drag and drop *.json file here\n" +
+    "                <button class=\"btn btn-xs btn-primary pull-right\" file-upload-button on-loaded=\"fileLoaded\">Choose File</button>\n" +
     "            </div>\n" +
     "            <hr>\n" +
     "        </div>\n" +
@@ -3094,7 +3105,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.routes')
+        .module('ALEX.routes')
         .config([
             '$stateProvider', '$urlRouterProvider', 'paths',
             config
@@ -3345,7 +3356,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.constants')
+        .module('ALEX.constants')
 
         // make global libraries a constant for better testing
         .constant('_', window._)                // lodash
@@ -3424,7 +3435,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('ActionCreateModalController', ActionCreateModalController);
 
     ActionCreateModalController.$inject = [
@@ -3511,7 +3522,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('ActionEditModalController', ActionEditModalController);
 
     ActionEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action', 'Symbol', 'SessionService'];
@@ -3584,7 +3595,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('ConfirmDialogController', ConfirmDialogController);
 
     ConfirmDialogController.$inject = ['$scope', '$modalInstance', 'modalData'];
@@ -3622,7 +3633,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 	'use strict';
 	
 	angular
-		.module('weblearner.controller')
+		.module('ALEX.controller')
 		.controller('HypothesisLayoutSettingsController', [
 	         '$scope', '$modalInstance', 'modalData',
 	         HypothesisLayoutSettingsController
@@ -3665,10 +3676,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnResultDetailsModalController', LearnResultDetailsModalController);
 
-    LearnResultDetailsModalController.$inject = ['$scope', '$modalInstance', 'modalData'];
+    LearnResultDetailsModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'LearnResult'];
 
     /**
      * The controller that is used to display the details of a learn result in a modal dialog. The data that is passed
@@ -3680,15 +3691,26 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @param $scope - The controllers scope
      * @param $modalInstance - The ui.bootstrap $modalInstance service
      * @param modalData - The data that is passed to the controller from its handle
+     * @param LearnResult - The factory for LearnResult
      * @constructor
      */
-    function LearnResultDetailsModalController($scope, $modalInstance, modalData) {
+    function LearnResultDetailsModalController($scope, $modalInstance, modalData, LearnResult) {
 
-        /**
-         * The learn result whose details should be displayed
-         * @type {LearnResult}
-         */
-        $scope.result = modalData.result;
+        $scope.tabs = [
+            {heading: 'Current', result: modalData.result}
+        ];
+
+        if (modalData.result.stepNo > 0) {
+            LearnResult.Resource.getFinal(modalData.result.project, modalData.result.testNo)
+                .then(function(res){
+                    $scope.tabs.push({
+                        heading: 'Cumulated',
+                        result: res
+                    })
+                });
+        } else {
+            $scope.tabs[0].heading = 'Cumulated';
+        }
 
         /**
          * Close the modal dialog without passing any data
@@ -3701,7 +3723,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnSetupSettingsModalController', LearnSetupSettingsModalController);
 
     LearnSetupSettingsModalController.$inject = [
@@ -3770,7 +3792,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('PromptDialogController', PromptDialogController);
 
     PromptDialogController.$inject = ['$scope', '$modalInstance', 'modalData'];
@@ -3819,7 +3841,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolCreateModalController', SymbolCreateModalController);
 
     SymbolCreateModalController.$inject = [
@@ -3912,7 +3934,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolEditModalController', SymbolEditModalController);
 
     SymbolEditModalController.$inject = [
@@ -3988,7 +4010,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolGroupCreateModalController', SymbolGroupCreateModalController);
 
     SymbolGroupCreateModalController.$inject = [
@@ -4071,7 +4093,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolGroupEditModalController', SymbolGroupEditModalController);
 
     SymbolGroupEditModalController.$inject = [
@@ -4161,7 +4183,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolMoveModalController', SymbolMoveModalController);
 
     SymbolMoveModalController.$inject = [
@@ -4253,7 +4275,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('VariablesCountersOccurrenceModalController', VariablesCountersOccurrenceModalController);
 
     VariablesCountersOccurrenceModalController.$inject = [
@@ -4374,7 +4396,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('CountersController', CountersController);
 
     CountersController.$inject = ['$scope', 'SessionService', 'CountersService', 'ToastService', '_'];
@@ -4454,7 +4476,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('HomeController', HomeController);
 
     HomeController.$inject = ['$scope', '$state', 'Project', 'SessionService'];
@@ -4507,7 +4529,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnResultsCompareController', LearnResultsCompareController);
 
     LearnResultsCompareController.$inject = ['$scope', '$stateParams', 'SessionService', 'LearnResult', '_'];
@@ -4594,7 +4616,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnResultsController', LearnResultsController);
 
     LearnResultsController.$inject = ['$scope', 'SessionService', 'LearnResult', 'PromptService', 'ToastService'];
@@ -4685,7 +4707,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnResultsStatisticsController', LearnResultsStatisticsController);
 
     LearnResultsStatisticsController.$inject = [
@@ -4849,7 +4871,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnSetupController', LearnSetupController);
 
     LearnSetupController.$inject = [
@@ -4992,7 +5014,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 }());;(function () {
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('LearnStartController', LearnStartController);
 
     LearnStartController.$inject = [
@@ -5122,7 +5144,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('ProjectController', ProjectController);
 
     ProjectController.$inject = ['$scope', 'SessionService'];
@@ -5144,7 +5166,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('ProjectCreateController', ProjectCreateController);
 
     ProjectCreateController.$inject = ['$scope', '$state', 'Project', 'ToastService'];
@@ -5186,7 +5208,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('ProjectSettingsController', ProjectSettingsController);
 
     ProjectSettingsController.$inject = [
@@ -5289,7 +5311,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolsActionsController', SymbolsActionsController);
 
     SymbolsActionsController.$inject = [
@@ -5453,7 +5475,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolsController', SymbolsController);
 
     SymbolsController.$inject = ['$scope', 'SessionService', 'Symbol', 'SymbolGroup', '_', 'ToastService'];
@@ -5657,7 +5679,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolsExportController', SymbolsExportController);
 
     SymbolsExportController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService', 'actionTypes'];
@@ -5729,7 +5751,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolsHistoryController', SymbolsHistoryController);
 
     SymbolsHistoryController.$inject = ['$scope', '$stateParams', 'Symbol', 'SessionService', 'ToastService'];
@@ -5806,7 +5828,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolsImportController', SymbolsImportController);
 
     SymbolsImportController.$inject = ['$scope', 'SessionService', 'Symbol', '_', 'ToastService'];
@@ -5916,7 +5938,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.controller')
+        .module('ALEX.controller')
         .controller('SymbolsTrashController', SymbolsTrashController);
 
     SymbolsTrashController.$inject = ['$scope', 'SessionService', 'Symbol', '_', 'ToastService'];
@@ -5998,7 +6020,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('actionCreateModalHandle', actionCreateModalHandle);
 
     actionCreateModalHandle.$inject = ['$modal', 'paths'];
@@ -6062,7 +6084,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('actionEditModalHandle', actionEditModalHandle);
 
     actionEditModalHandle.$inject = ['$modal', 'paths'];
@@ -6123,7 +6145,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('discriminationTree', discriminationTree);
 
     discriminationTree.$inject = ['_', 'd3', 'dagreD3', 'graphlib', '$window'];
@@ -6323,7 +6345,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('dispatchResize', dispatchResize);
 
     /**
@@ -6362,7 +6384,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('downloadAsJson', downloadAsJson);
 
     downloadAsJson.$inject = ['FileDownloadService'];
@@ -6407,7 +6429,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('downloadLearnerResultsAsCsv', downloadLearnerResultsAsCsv);
 
     downloadLearnerResultsAsCsv.$inject = ['FileDownloadService'];
@@ -6454,17 +6476,17 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 var csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,|Sigma|,#MQs,#EQs,#Symbol Calls,Duration (ms)\n';
 
                 for (var i = 0; i < results.length; i++) {
-                    csv += result[i].project + ',';
-                    csv += result[i].testNo + ',';
-                    csv += '"' + result[i].statistics.startTime + '",';
-                    csv += result[i].stepNo + ',';
-                    csv += result[i].configuration.algorithm + ',';
-                    csv += result[i].configuration.eqOracle.type + ',';
-                    csv += result[i].configuration.symbols.length + ',';
-                    csv += result[i].statistics.mqsUsed + ',';
-                    csv += result[i].statistics.eqsUsed + ',';
-                    csv += result[i].statistics.symbolsUsed + ',';
-                    csv += result[i].statistics.duration + '\n';
+                    csv += results[i].project + ',';
+                    csv += results[i].testNo + ',';
+                    csv += '"' + results[i].statistics.startTime + '",';
+                    csv += results[i].stepNo + ',';
+                    csv += results[i].configuration.algorithm + ',';
+                    csv += results[i].configuration.eqOracle.type + ',';
+                    csv += results[i].configuration.symbols.length + ',';
+                    csv += results[i].statistics.mqsUsed + ',';
+                    csv += results[i].statistics.eqsUsed + ',';
+                    csv += results[i].statistics.symbolsUsed + ',';
+                    csv += results[i].statistics.duration + '\n';
                 }
 
                 return csv;
@@ -6475,7 +6497,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('downloadSvg', downloadSvg);
 
     downloadSvg.$inject = ['FileDownloadService'];
@@ -6527,7 +6549,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('downloadTableAsCsv', downloadTableAsCsv);
 
     downloadTableAsCsv.$inject = ['FileDownloadService'];
@@ -6620,7 +6642,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('dropdownHover', dropdownHover);
 
     /**
@@ -6655,7 +6677,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('fileDropzone', fileDropzone);
 
     /**
@@ -6719,11 +6741,62 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             }
         }
     }
+}());;(function(){
+    'use strict';
+
+    angular
+        .module('ALEX.directives')
+        .directive('fileUploadButton', fileUploadButton);
+
+    /**
+     * Directive as a replacement for <input type="file"/>. Can only be used as an attribute and loads file as strings.
+     *
+     * Attribute onLoaded should be the callback with one parameter where the string is passed
+     *
+     * Use: <button file-upload-button on-loaded="...">Choose File</button>
+     *
+     * @returns {{restrict: string, scope: {onLoaded: string}, link: link}}
+     */
+    function fileUploadButton() {
+        return {
+            restrict: 'A',
+            scope: {
+                onLoaded: '&'
+            },
+            link: link
+        };
+        function link(scope, el, attrs) {
+            var reader = new FileReader();
+
+            // call the callback with the loaded text string
+            reader.onload = function (e) {
+                if (angular.isDefined(scope.onLoaded)) {
+                    scope.onLoaded()(e.target.result);
+                }
+            };
+
+            // create input field and simulate click
+            el.on('click', function(){
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.addEventListener('change', handleFileSelect, false);
+                input.click();
+            });
+
+            // read files from input
+            function handleFileSelect(e) {
+                var files = e.target.files;
+                for(var i = 0; i < files.length; i++) {
+                    reader.readAsText(files[i]);
+                }
+            }
+        }
+    }
 }());;(function () {
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('fitParentDimensions', [
             '$window',
             fitParentDimensions
@@ -6792,7 +6865,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 	'use strict';
 	
 	angular
-		.module('weblearner.directives')
+		.module('ALEX.directives')
         .directive('fixOnScroll', fixOnScroll);
 
     fixOnScroll.$inject = ['$window'];
@@ -6857,7 +6930,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('htmlElementPicker', htmlElementPicker)
         .directive('htmlElementPickerWindow', htmlElementPickerWindow)
         .factory('htmlElementPickerInstance', htmlElementPickerInstance);
@@ -7189,7 +7262,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     }
 }());;(function () {
 
-    angular.module('weblearner.directives')
+    angular.module('ALEX.directives')
         .directive('hypothesis', hypothesis);
 
     hypothesis.$inject = ['$window', 'paths', 'CounterExampleService', '_', 'dagreD3', 'd3', 'graphlib'];
@@ -7508,7 +7581,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('hypothesisLayoutSettingsModalHandle', hypothesisLayoutSettingsModalHandle);
 
     hypothesisLayoutSettingsModalHandle.$inject = ['$modal', 'paths'];
@@ -7564,7 +7637,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('panelManager', panelManager);
 
     function panelManager() {
@@ -7582,14 +7655,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 panels: '=panelManager'
             },
             controller: [
-                '$scope',
+                '$scope', '$timeout',
                 controller
             ]
         };
 
-        //////////
-
-        function controller($scope) {
+        function controller($scope, $timeout) {
 
             this.getPanels = function () {
                 return $scope.panels;
@@ -7597,13 +7668,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
             this.closePanelAt = function (index) {
                 $scope.panels.splice(index, 1);
-                $scope.$apply();
 
                 // has to call resize so that the hypothesis svg is rezsied properly
-                window.dispatchEvent(new Event('resize'));
+                $timeout(function(){
+                    window.dispatchEvent(new Event('resize'));
+                }, 100)
             };
-
-            //////////
 
             $scope.addPanel = function () {
                 $scope.panels.push(null)
@@ -7613,7 +7683,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('panel', panel);
 
     function panel() {
@@ -7630,19 +7700,13 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             }
         };
 
-        //////////
-
         function link(scope, el, attrs, ctrl) {
 
             var panel = el.children()[0];
             scope.panels = ctrl.getPanels();
 
-            //////////
-
             scope.$watch('panels.length', init);
             init();
-
-            //////////
 
             function init() {
                 panel.style.width = (100 / scope.panels.length) + '%';
@@ -7654,7 +7718,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('indexBrowser', indexBrowser);
 
     indexBrowser.$inject = ['paths'];
@@ -7722,7 +7786,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 }());;(function () {
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('learnResultDetailsModalHandle', learnResultDetailsModalHandle);
 
     learnResultDetailsModalHandle.$inject = ['$modal', 'paths'];
@@ -7774,7 +7838,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('learnResultsPanel', learnResultsPanel)
         .directive('learnResultsSlideshowPanel', learnResultsSlideshowPanel);
 
@@ -7909,7 +7973,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('learnSetupSettingsModalHandle', learnSetupSettingsModalHandle);
 
     learnSetupSettingsModalHandle.$inject = ['$modal', 'paths'];
@@ -7963,7 +8027,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('loadScreen', loadScreen);
 
     loadScreen.$inject = ['$http', 'paths'];
@@ -8014,7 +8078,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('navigation', navigation);
 
     navigation.$inject = ['paths', '$state', 'SessionService'];
@@ -8093,7 +8157,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('observationTable', observationTable);
 
     observationTable.$inject = ['paths'];
@@ -8189,7 +8253,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('selectionCheckboxAll', selectionCheckboxAll)
         .directive('selectableListItem', selectableListItem);
 
@@ -8254,7 +8318,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('symbolCreateModalHandle', symbolCreateModalHandle);
 
     symbolCreateModalHandle.$inject = ['$modal', 'paths'];
@@ -8308,7 +8372,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('symbolEditModalHandle', symbolEditModalHandle);
 
     symbolEditModalHandle.$inject = ['$modal', 'paths'];
@@ -8369,7 +8433,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('symbolGroupCreateModalHandle', symbolGroupCreateModalHandle);
 
     symbolGroupCreateModalHandle.$inject = ['$modal', 'paths'];
@@ -8419,7 +8483,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('symbolGroupEditModalHandle', symbolGroupEditModalHandle);
 
     symbolGroupEditModalHandle.$inject = ['$modal', 'paths'];
@@ -8479,7 +8543,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('symbolMoveModalHandle', symbolMoveModalHandle);
 
     symbolMoveModalHandle.$inject = ['$modal', 'paths'];
@@ -8528,7 +8592,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('variablesCountersOccurrenceModalHandle', variablesCountersOccurrenceModalHandle);
 
     variablesCountersOccurrenceModalHandle.$inject = ['$modal', 'paths'];
@@ -8561,7 +8625,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('viewHeading', viewHeading);
 
     viewHeading.$inject = ['paths'];
@@ -8594,7 +8658,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.directives')
+        .module('ALEX.directives')
         .directive('widget', widget)
         .directive('counterexamplesWidget', counterexamplesWidget)
         .directive('learnResumeSettingsWidget', learnResumeSettingsWidget);
@@ -8833,7 +8897,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 }());;(function () {
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('Action', ActionModel);
 
     ActionModel.$inject = ['actionTypes'];
@@ -9165,6 +9229,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     action = new Action.Other.Wait(data.duration);
                     break;
                 case actionTypes.other.EXECUTE_SYMBOL:
+                    if (!angular.isDefined(data.symbolToExecuteName) && angular.isFunction(data.getSymbol)) {
+                        data.symbolToExecuteName = data.getSymbol().name
+                    }
                     action = new Action.Other.ExecuteSymbol(data.symbolToExecuteName, data.symbolToExecute);
                     break;
                 case actionTypes.other.INCREMENT_COUNTER:
@@ -9213,7 +9280,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 }());;(function () {
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('EqOracle', EqOracleModel);
 
     EqOracleModel.$inject = ['eqOracles'];
@@ -9315,7 +9382,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('LearnConfiguration', LearnConfigurationModel);
 
     LearnConfigurationModel.$inject = ['learnAlgorithms', 'EqOracle'];
@@ -9400,7 +9467,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('LearnResult', LearnResultModel);
 
     LearnResultModel.$inject = ['LearnConfiguration', 'LearnResultResource'];
@@ -9487,7 +9554,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('Project', ProjectModel);
 
     ProjectModel.$inject = ['ProjectResource'];
@@ -9560,7 +9627,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('Symbol', SymbolModel);
 
     SymbolModel.$inject = ['SymbolResource', 'Action'];
@@ -9653,7 +9720,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 }());;(function () {
 
     angular
-        .module('weblearner.models')
+        .module('ALEX.models')
         .factory('SymbolGroup', SymbolGroupModel);
 
     SymbolGroupModel.$inject = ['SymbolGroupResource', 'Symbol', '_'];
@@ -9732,7 +9799,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.resources')
+        .module('ALEX.resources')
         .factory('LearnResultResource', Resource);
 
     Resource.$inject = ['$http', 'paths'];
@@ -9771,6 +9838,23 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         };
 
         /**
+         * Makes a GET request to 'rest/projects/{projectId}/results/{testNo}' in order to get the final cumulated
+         * learn result from a test
+         *
+         * @param {number} projectId - The id of the project
+         * @param {number} testNo - The number of the test run
+         * @returns {*} - A promise
+         */
+        LearnResultResource.prototype.getFinal = function (projectId, testNo) {
+            var _this = this;
+
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo)
+                .then(function (response) {
+                    return _this.build(response.data);
+                })
+        };
+
+        /**
          * Makes a GET request to 'rest/projects/{projectId}/results/{testNo}/complete in order to get all intermediate
          * results of a test.
          *
@@ -9783,6 +9867,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo + '/complete')
                 .then(function (response) {
+                    response.data.shift();
                     return _this.buildSome(response.data);
                 })
         };
@@ -9802,8 +9887,14 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     var data = response.data;
                     if (data.length > 0) {
                         if (!angular.isArray(data[0])) {
+                            data.shift();
                             return [data]
                         } else {
+
+                            // remove cumulated results from the beginning
+                            for(var i = 0; i < data.length; i++) {
+                                data[i].shift();
+                            }
                             return data;
                         }
                     } else {
@@ -9863,7 +9954,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.resources')
+        .module('ALEX.resources')
         .factory('ProjectResource', ProjectResource);
 
     ProjectResource.$inject = ['$http', 'paths'];
@@ -9982,7 +10073,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 }());;(function () {
 
     angular
-        .module('weblearner.resources')
+        .module('ALEX.resources')
         .factory('SymbolGroupResource', Resource);
 
     Resource.$inject = ['$http', 'paths'];
@@ -10147,7 +10238,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.resources')
+        .module('ALEX.resources')
         .factory('SymbolResource', Resource);
 
     Resource.$inject = ['$http', 'paths', '_'];
@@ -10417,7 +10508,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .factory('CounterExampleService', CounterExampleService);
 
     CounterExampleService.$inject = [];
@@ -10483,7 +10574,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .factory('CountersService', CountersService);
 
     CountersService.$inject = ['$http', 'paths'];
@@ -10558,7 +10649,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .factory('FileDownloadService', FileDownloadService);
 
     FileDownloadService.$inject = ['PromptService'];
@@ -10674,7 +10765,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .factory('LearnerResultChartService', LearnerResultChartService);
 
     LearnerResultChartService.$inject = ['_'];
@@ -10904,7 +10995,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .factory('LearnerService', LearnerService);
 
     LearnerService.$inject = ['$http', 'paths'];
@@ -11005,7 +11096,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .service('PromptService', PromptService);
 
     PromptService.$inject = ['$modal', 'paths'];
@@ -11074,7 +11165,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .factory('SelectionService', SelectionService);
 
     SelectionService.$inject = ['_'];
@@ -11142,7 +11233,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .factory('SessionService', SessionService);
 
     SessionService.$inject = ['$rootScope', 'Project'];
@@ -11200,7 +11291,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.services')
+        .module('ALEX.services')
         .service('ToastService', ToastService);
 
     ToastService.$inject = ['ngToast'];
@@ -11265,7 +11356,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     'use strict';
 
     angular
-        .module('weblearner.filters')
+        .module('ALEX.filters')
         .filter('formatEnumKey', formatEnumKey)
         .filter('formatEqOracle', formatEqOracle)
         .filter('formatAlgorithm', formatAlgorithm);

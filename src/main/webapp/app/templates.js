@@ -447,7 +447,7 @@ angular.module("app/views/directives/observation-table.html", []).run(["$templat
     "    </tr>\n" +
     "    <tr ng-repeat=\"tr in table.body.s2 track by $index\" ng-class=\"$index === 0 ? 'line': ''\">\n" +
     "        <td ng-repeat=\"td in tr track by $index\" ng-bind=\"td\"></td>\n" +
-    "        </tr>\n" +
+    "    </tr>\n" +
     "    </tbody>\n" +
     "</table>");
 }]);
@@ -458,9 +458,9 @@ angular.module("app/views/directives/view-heading.html", []).run(["$templateCach
     "<div class=\"view-heading\">\n" +
     "    <div class=\"container\">\n" +
     "        <div class=\"view-heading-title-pre\" ng-transclude></div>\n" +
-    "        <h2 class=\"view-heading-title\" ng-bind=\"::title\"></h2>\n" +
+    "        <h2 class=\"view-heading-title\" ng-bind=\"title\"></h2>\n" +
     "\n" +
-    "        <p class=\"view-heading-sub-title\" ng-bind=\"::subTitle\"></p>\n" +
+    "        <p class=\"view-heading-sub-title\" ng-bind=\"subTitle\"></p>\n" +
     "    </div>\n" +
     "</div>");
 }]);
@@ -1217,65 +1217,71 @@ angular.module("app/views/modals/learn-result-details-modal.html", []).run(["$te
     "\n" +
     "<div class=\"modal-body\">\n" +
     "\n" +
-    "    <table class=\"table table-condensed\">\n" +
+    "    <tabset justified=\"true\">\n" +
+    "        <tab ng-repeat=\"tab in tabs\" heading=\"{{tab.heading}}\">\n" +
     "\n" +
-    "        <tr class=\"active\">\n" +
-    "            <td colspan=\"2\"><strong>About This Test</strong></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>nth Test</td>\n" +
-    "            <td ng-bind=\"result.testNo\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>nth Hypothesis</td>\n" +
-    "            <td ng-bind=\"result.stepNo\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Started</td>\n" +
-    "            <td ng-bind=\"(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
-    "        </tr>\n" +
+    "            <table class=\"table table-condensed\">\n" +
     "\n" +
-    "        <tr class=\"active\">\n" +
-    "            <td colspan=\"2\"><strong>Configuration</strong></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Algorithm</td>\n" +
-    "            <td ng-bind=\"(result.configuration.algorithm | formatAlgorithm)\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>EQ Oracle</td>\n" +
-    "            <td ng-bind=\"(result.configuration.eqOracle.type | formatEqOracle)\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Steps to Learn</td>\n" +
-    "            <td ng-bind=\"result.configuration.maxAmountOfStepsToLearn\"></td>\n" +
-    "        </tr>\n" +
+    "                <tr class=\"active\">\n" +
+    "                    <td colspan=\"2\"><strong>About This Test</strong></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>nth Test</td>\n" +
+    "                    <td ng-bind=\"tab.result.testNo\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr ng-hide=\"tab.result.stepNo === 0\">\n" +
+    "                    <td>nth Step</td>\n" +
+    "                    <td ng-bind=\"tab.result.stepNo\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>Started</td>\n" +
+    "                    <td ng-bind=\"(tab.result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')\"></td>\n" +
+    "                </tr>\n" +
     "\n" +
-    "        <tr class=\"active\">\n" +
-    "            <td colspan=\"2\"><strong>Numbers</strong></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>Duration</td>\n" +
-    "            <td><span ng-bind=\"result.statistics.duration\"></span> ms</td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>#Membership Queries</td>\n" +
-    "            <td ng-bind=\"result.statistics.mqsUsed\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>#Equivalence Queries</td>\n" +
-    "            <td ng-bind=\"result.statistics.eqsUsed\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>#Symbol Calls</td>\n" +
-    "            <td ng-bind=\"result.statistics.symbolsUsed\"></td>\n" +
-    "        </tr>\n" +
-    "        <tr>\n" +
-    "            <td>|Sigma|</td>\n" +
-    "            <td ng-bind=\"result.sigma.length\"></td>\n" +
-    "        </tr>\n" +
+    "                <tr class=\"active\">\n" +
+    "                    <td colspan=\"2\"><strong>Configuration</strong></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>Algorithm</td>\n" +
+    "                    <td ng-bind=\"(tab.result.configuration.algorithm | formatAlgorithm)\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr ng-hide=\"tab.result.stepNo === 0\">\n" +
+    "                    <td>EQ Oracle</td>\n" +
+    "                    <td ng-bind=\"(tab.result.configuration.eqOracle.type | formatEqOracle)\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr ng-hide=\"tab.result.stepNo === 0\">\n" +
+    "                    <td>Steps to Learn</td>\n" +
+    "                    <td ng-bind=\"tab.result.configuration.maxAmountOfStepsToLearn\"></td>\n" +
+    "                </tr>\n" +
     "\n" +
-    "    </table>\n" +
+    "                <tr class=\"active\">\n" +
+    "                    <td colspan=\"2\"><strong>Numbers</strong></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>Duration</td>\n" +
+    "                    <td><span ng-bind=\"tab.result.statistics.duration\"></span> ms</td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>#Membership Queries</td>\n" +
+    "                    <td ng-bind=\"tab.result.statistics.mqsUsed\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>#Equivalence Queries</td>\n" +
+    "                    <td ng-bind=\"tab.result.statistics.eqsUsed\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>#Symbol Calls</td>\n" +
+    "                    <td ng-bind=\"tab.result.statistics.symbolsUsed\"></td>\n" +
+    "                </tr>\n" +
+    "                <tr>\n" +
+    "                    <td>|Sigma|</td>\n" +
+    "                    <td ng-bind=\"tab.result.sigma.length\"></td>\n" +
+    "                </tr>\n" +
+    "\n" +
+    "            </table>\n" +
+    "\n" +
+    "        </tab>\n" +
+    "    </tabset>\n" +
     "\n" +
     "</div>\n" +
     "\n" +
@@ -1883,6 +1889,8 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
     "\n" +
     "            <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
     "\n" +
+    "\n" +
+    "\n" +
     "                <ul class=\"list-group\">\n" +
     "                    <li class=\"list-group-item\" ng-repeat=\"result in results\"\n" +
     "                        ng-click=\"fillPanel(result, $parent.$index)\">\n" +
@@ -2089,7 +2097,9 @@ angular.module("app/views/pages/learn-results.html", []).run(["$templateCache", 
     "        </div>\n" +
     "\n" +
     "        <div class=\"pull-left\">\n" +
-    "            <button class=\"btn btn-xs btn-primary\" ng-click=\"deleteResults()\">\n" +
+    "            <button class=\"btn btn-xs btn-primary\"\n" +
+    "                    ng-click=\"deleteResults()\"\n" +
+    "                    ng-class=\"selectedResults.length === 0 ? 'disabled' : ''\">\n" +
     "                Delete\n" +
     "            </button>\n" +
     "        </div>\n" +
@@ -2256,14 +2266,14 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                         ng-if=\"!symobl.hidden\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
-    "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\">\n" +
+    "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\" selection-model-ignore>\n" +
     "                                <i class=\"fa\" ng-class=\"resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'\"></i>\n" +
     "                            </a>\n" +
     "\n" +
     "                            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
     "\n" +
     "                            <p class=\"text-muted\">\n" +
-    "                                <a href ng-click=\"symbol._collapsed = !symbol._collapsed\">\n" +
+    "                                <a href ng-click=\"symbol._collapsed = !symbol._collapsed\" selection-model-ignore>\n" +
     "                                    <span ng-bind=\"symbol.actions.length\"></span>\n" +
     "                                    Actions\n" +
     "                                    <i class=\"fa fa-fw\"\n" +
@@ -2765,6 +2775,7 @@ angular.module("app/views/pages/symbols-import.html", []).run(["$templateCache",
     "        <div ng-if=\"symbols.length === 0\">\n" +
     "            <div file-dropzone on-loaded=\"fileLoaded\" class=\"alert alert-info\">\n" +
     "                Drag and drop *.json file here\n" +
+    "                <button class=\"btn btn-xs btn-primary pull-right\" file-upload-button on-loaded=\"fileLoaded\">Choose File</button>\n" +
     "            </div>\n" +
     "            <hr>\n" +
     "        </div>\n" +

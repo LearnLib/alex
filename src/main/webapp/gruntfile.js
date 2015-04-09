@@ -119,19 +119,34 @@ module.exports = function (grunt) {
                         }
                     }
                 }
+            },
+
+            cssmin: {
+                target: {
+                    files: {
+                        'app/style.min.css': [
+                            'bower_components/ngtoast/dist/ngToast.min.css',
+                            'bower_components/ng-sortable/dist/ng-sortable.min.css',
+                            'app/stylesheets/style.css'
+                        ]
+                    }
+                }
             }
         });
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
 
     grunt.registerTask('build-js', ['html2js', 'concat', 'uglify']);
-    grunt.registerTask('build-css', ['sass']);
+    grunt.registerTask('build-css', ['sass', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-js']);
-    grunt.registerTask('test', ['jasmine'])
+    grunt.registerTask('test', ['jasmine']);
+    grunt.registerTask('minify-css', ['cssmin'])
+
 };
