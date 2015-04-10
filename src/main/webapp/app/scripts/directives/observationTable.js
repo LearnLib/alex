@@ -31,13 +31,7 @@
         function link(scope, el, attrs) {
 
             // the object of the table for the template
-            scope.table = {
-                header: [],
-                body: {
-                    s1: [],
-                    s2: []
-                }
-            };
+            scope.table = null;
 
             // render the observation table as soon as the data changes
             scope.$watch('data', function (n) {
@@ -50,6 +44,15 @@
              * Parses the ascii representation of the observation table and stores it into scope.table
              */
             function createObservationTable() {
+
+                // init table structure
+                scope.table = {
+                    header: [],
+                    body: {
+                        s1: [],
+                        s2: []
+                    }
+                };
 
                 var rows = scope.data.split('\n');  // the rows of the table
                 var marker = 0;                     // a flag that is used to indicate on which set of the table I am

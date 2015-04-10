@@ -170,7 +170,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                        Download SVG\n" +
     "                    </button>\n" +
     "                    <button class=\"btn btn-default btn-xs\"\n" +
-    "                            ng-show=\"mode === modes.HYPOTHESIS\"\n" +
+    "                            ng-show=\"mode === modes.HYPOTHESIS && (results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE || results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR)\"\n" +
     "                            ng-click=\"showInternalDataStructure()\">\n" +
     "                        Internal\n" +
     "                    </button>\n" +
@@ -1888,8 +1888,6 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
     "            </div>\n" +
     "\n" +
     "            <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
-    "\n" +
-    "\n" +
     "\n" +
     "                <ul class=\"list-group\">\n" +
     "                    <li class=\"list-group-item\" ng-repeat=\"result in results\"\n" +

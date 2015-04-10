@@ -32,9 +32,16 @@
             };
 
             this.closePanelAt = function (index) {
-                $scope.panels.splice(index, 1);
 
-                // has to call resize so that the hypothesis svg is rezsied properly
+                // this is a little odd ...
+                // but otherwise some scope values are transferred to the element with index + 1 that takes the place
+                // in the list after a normal splice
+                $scope.panels[index] = null;
+                $timeout(function(){
+                    $scope.panels.splice(index, 1);
+                }, 0);
+
+                // has to call resize so that the hypothesis svg is resized properly
                 $timeout(function(){
                     window.dispatchEvent(new Event('resize'));
                 }, 100)

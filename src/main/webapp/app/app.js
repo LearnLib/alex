@@ -232,7 +232,7 @@ angular.module("app/views/directives/learn-results-panel.html", []).run(["$templ
     "                        Download SVG\n" +
     "                    </button>\n" +
     "                    <button class=\"btn btn-default btn-xs\"\n" +
-    "                            ng-show=\"mode === modes.HYPOTHESIS\"\n" +
+    "                            ng-show=\"mode === modes.HYPOTHESIS && (results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE || results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR)\"\n" +
     "                            ng-click=\"showInternalDataStructure()\">\n" +
     "                        Internal\n" +
     "                    </button>\n" +
@@ -1950,8 +1950,6 @@ angular.module("app/views/pages/learn-results-compare.html", []).run(["$template
     "            </div>\n" +
     "\n" +
     "            <div ng-if=\"!result\" style=\"padding: 30px\">\n" +
-    "\n" +
-    "\n" +
     "\n" +
     "                <ul class=\"list-group\">\n" +
     "                    <li class=\"list-group-item\" ng-repeat=\"result in results\"\n" +
@@ -6177,6 +6175,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         // handle the directives logic
         function link(scope, el, attrs) {
 
+
+            var labelStyle = 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline;';
+            var labelStyleEdge = labelStyle + 'font-size: 10px';
+            var labelStyleNode = labelStyle + 'font-size: 12px';
+
+
             // the svg where the discrimination tree is drawn into
             var svg = d3.select(el.find('svg')[0]);
 
@@ -6280,7 +6284,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         label: node,
                         width: 25,
                         style: 'fill: #fff; stroke: #000; stroke-width: 1',
-                        labelStyle: 'font-size: 1.25em; font-weight: bold'
+                        labelStyle: labelStyleNode
                     });
                 });
 
@@ -6289,7 +6293,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                     _graph.setEdge(edge.from, edge.to, {
                         lineInterpolate: 'basis',
                         style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
-                        label: edge.label
+                        label: edge.label,
+                        labelStyle: labelStyleEdge
                     });
                 });
 
@@ -6312,6 +6317,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 // position it in the center of the svg parent
                 var xCenterOffset = (svgContainer.clientWidth - graph.graph().width) / 2;
                 svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
+
+                // swap defs and paths children of .edgepaths because arrows are not shown
+                // on export otherwise <.<
+                _.forEach(el.find('svg')[0].querySelectorAll('.edgePath'), function(edgePath){
+                    edgePath.insertBefore(edgePath.childNodes[1],edgePath.firstChild);
+                });
 
                 // Create and handle zoom  & pan event
                 var zoom = d3.behavior.zoom().scaleExtent([0.1, 10])
@@ -7667,9 +7678,16 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             };
 
             this.closePanelAt = function (index) {
-                $scope.panels.splice(index, 1);
 
-                // has to call resize so that the hypothesis svg is rezsied properly
+                // this is a little odd ...
+                // but otherwise some scope values are transferred to the element with index + 1 that takes the place
+                // in the list after a normal splice
+                $scope.panels[index] = null;
+                $timeout(function(){
+                    $scope.panels.splice(index, 1);
+                }, 0);
+
+                // has to call resize so that the hypothesis svg is resized properly
                 $timeout(function(){
                     window.dispatchEvent(new Event('resize'));
                 }, 100)
@@ -7874,10 +7892,10 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             },
             transclude: true,
             templateUrl: paths.views.DIRECTIVES + '/learn-results-panel.html',
-            controller: ['$scope', controller]
+            link: link
         };
 
-        function controller($scope) {
+        function link(scope, el, attrs) {
 
             /**
              * Enum for displayable modes.
@@ -7885,7 +7903,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
              * 1 := show internal data structure
              * @type {{HYPOTHESIS: number, INTERNAL: number}}
              */
-            $scope.modes = {
+            scope.modes = {
                 HYPOTHESIS: 0,
                 INTERNAL: 1
             };
@@ -7894,47 +7912,47 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
              * Available learn algorithms
              * @type {Object}
              */
-            $scope.learnAlgorithms = learnAlgorithms;
+            scope.learnAlgorithms = learnAlgorithms;
 
             /**
              * The layout settings for the displayed hypothesis
              * @type {undefined|Object}
              */
-            $scope.layoutSettings;
+            scope.layoutSettings;
 
             /**
              * The mode that is used
              * @type {number}
              */
-            $scope.mode = $scope.modes.HYPOTHESIS;
+            scope.mode = scope.modes.HYPOTHESIS;
 
             /**
              * The index of the step from the results that should be shown
              * @type {number}
              */
-            $scope.pointer = $scope.results.length - 1;
+            scope.pointer = scope.results.length - 1;
 
             /**
              * Checks if the property 'algorithmInformation' is define which holds the internal data structure
              * for the algorithm of a learn result
              * @returns {boolean|*}
              */
-            $scope.hasInternalDataStructure = function () {
-                return angular.isDefined($scope.results[$scope.pointer].algorithmInformation);
+            scope.hasInternalDataStructure = function () {
+                return angular.isDefined(scope.results[scope.pointer].algorithmInformation);
             };
 
             /**
              * Switches the mode to the one to display the internal data structure
              */
-            $scope.showInternalDataStructure = function () {
-                $scope.mode = $scope.modes.INTERNAL;
+            scope.showInternalDataStructure = function () {
+                scope.mode = scope.modes.INTERNAL;
             };
 
             /**
              * Switches the mode to the one to display the hypothesis
              */
-            $scope.showHypothesis = function () {
-                $scope.mode = $scope.modes.HYPOTHESIS;
+            scope.showHypothesis = function () {
+                scope.mode = scope.modes.HYPOTHESIS;
             }
         }
     }
@@ -8186,13 +8204,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         function link(scope, el, attrs) {
 
             // the object of the table for the template
-            scope.table = {
-                header: [],
-                body: {
-                    s1: [],
-                    s2: []
-                }
-            };
+            scope.table = null;
 
             // render the observation table as soon as the data changes
             scope.$watch('data', function (n) {
@@ -8205,6 +8217,15 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
              * Parses the ascii representation of the observation table and stores it into scope.table
              */
             function createObservationTable() {
+
+                // init table structure
+                scope.table = {
+                    header: [],
+                    body: {
+                        s1: [],
+                        s2: []
+                    }
+                };
 
                 var rows = scope.data.split('\n');  // the rows of the table
                 var marker = 0;                     // a flag that is used to indicate on which set of the table I am
