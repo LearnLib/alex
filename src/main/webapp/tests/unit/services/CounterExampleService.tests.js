@@ -9,8 +9,8 @@
             {input: 'c', output: 'd'}
         ];
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.services'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.services'));
 
         beforeEach(angular.mock.inject(function (_CounterExampleService_) {
             service = _CounterExampleService_;

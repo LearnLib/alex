@@ -10,8 +10,8 @@
 
         var project;
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.controller'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.controller'));
 
         beforeEach(angular.mock.inject(function (_$rootScope_, _$controller_, _Project_, _SessionService_, _$httpBackend_, _paths_, _$state_) {
             $rootScope = _$rootScope_;

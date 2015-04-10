@@ -10,8 +10,8 @@
         var case3;
         var case4;
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.services'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.services'));
 
         beforeEach(angular.mock.inject(function (_SelectionService_, ___) {
             SelectionService = _SelectionService_;

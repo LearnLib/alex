@@ -9,8 +9,8 @@
         // dummies
         var symbols = [];
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.controller'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.controller'));
 
         beforeEach(angular.mock.inject(function (_$rootScope_, _$controller_, _Symbol_, _SessionService_, _$httpBackend_, _paths_, ___) {
             $rootScope = _$rootScope_;

@@ -10,8 +10,8 @@
 
         var updateProjectRequestHandler, deleteProjectRequestHandler, learnerActiveRequestHandler;
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.controller'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.controller'));
 
         beforeEach(angular.mock.inject(function (_$rootScope_, _$controller_, _$state_, _Project_, _SessionService_, _$httpBackend_, _paths_) {
             $rootScope = _$rootScope_;

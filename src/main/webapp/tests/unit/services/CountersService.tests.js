@@ -15,8 +15,8 @@
             {name: 'b', value: 0, project: 1}
         ];
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.services'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.services'));
 
         beforeEach(angular.mock.inject(function (_CountersService_, _$httpBackend_, _paths_) {
             CountersService = _CountersService_;

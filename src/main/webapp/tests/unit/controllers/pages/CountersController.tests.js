@@ -15,8 +15,8 @@
             {name: 'b', value: 0, project: 1}
         ];
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.controller'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.controller'));
 
         beforeEach(angular.mock.inject(function (_$rootScope_, _$controller_, _Project_, _SessionService_, _$httpBackend_, _paths_, ___) {
             $scope = _$rootScope_.$new();

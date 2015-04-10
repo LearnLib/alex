@@ -8,9 +8,9 @@
 
         var projects = [];
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.controller'));
-        beforeEach(angular.mock.module('weblearner.services'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.controller'));
+        beforeEach(angular.mock.module('ALEX.services'));
 
         beforeEach(angular.mock.inject(function($rootScope, $controller, Project, SessionService, _$state_) {
             scope = $rootScope.$new();

@@ -3185,6 +3185,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         templateUrl: paths.views.PAGES + '/counters.html',
                         controller: 'CountersController'
                     }
+                },
+                data: {
+                    requiresProject: false
                 }
             })
 

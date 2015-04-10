@@ -147,6 +147,6 @@ module.exports = function (grunt) {
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-js']);
     grunt.registerTask('test', ['jasmine']);
-    grunt.registerTask('minify-css', ['cssmin'])
+    grunt.registerTask('minify-css', ['cssmin']);
 
 };

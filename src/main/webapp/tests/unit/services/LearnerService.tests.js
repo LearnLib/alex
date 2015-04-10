@@ -4,7 +4,7 @@
     describe('LearnerService', function () {
         var LearnerService;
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.services'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.services'));
     });
 }());

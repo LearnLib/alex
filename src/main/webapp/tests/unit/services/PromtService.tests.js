@@ -4,8 +4,8 @@
     describe('PromptService', function(){
         var service;
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.services'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.services'));
 
         beforeEach(angular.mock.inject(function (_PromptService_) {
             service = _PromptService_;

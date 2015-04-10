@@ -84,6 +84,9 @@
                         templateUrl: paths.views.PAGES + '/counters.html',
                         controller: 'CountersController'
                     }
+                },
+                data: {
+                    requiresProject: false
                 }
             })
 
