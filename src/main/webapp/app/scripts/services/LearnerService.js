@@ -86,7 +86,7 @@
 
         /**
          * Checks if the selected path is a counterexample.
-         * TODO: implement
+         * TODO: implement as soon as the api has an interface for that
          *
          * @param {number} projectId
          * @param {{input: string, output: string}[]} counterexample

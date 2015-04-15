@@ -1970,7 +1970,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "                        </a>\n" +
     "                    </li>\n" +
     "                    <li ng-show=\"selectedResults.length === 1\">\n" +
-    "                        <a href download-learner-results-as-csv results=\"selectedResults\">\n" +
+    "                        <a href download-learner-results-as-csv results=\"selectedResults\" complete>\n" +
     "                            Selected Complete Result\n" +
     "                        </a>\n" +
     "                    </li>\n" +
@@ -2261,7 +2261,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
     "                         selection-model-cleanup-strategy=\"deselect\"\n" +
-    "                         ng-if=\"!symobl.hidden\">\n" +
+    "                         ng-if=\"!symbol.hidden\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\" selection-model-ignore>\n" +
@@ -2695,6 +2695,9 @@ angular.module("app/views/pages/symbols-history.html", []).run(["$templateCache"
     "<div view-heading\n" +
     "     title=\"Symbols History\"\n" +
     "     sub-title=\"Restore and older version of a symbol\">\n" +
+    "    <a class=\"back-button btn btn-default btn-xs\" ui-sref=\"symbols\">\n" +
+    "        <i class=\"fa fa-fw fa-arrow-left\"></i>\n" +
+    "    </a>\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
@@ -3026,8 +3029,20 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
     "\n" +
     "                            <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                                <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
+    "                                <span ng-bind=\"symbol.actions.length\"></span> Actions &nbsp;<i class=\"fa fa-edit\"></i>\n" +
     "                            </a>\n" +
+    "\n" +
+    "                            <a href ng-click=\"symbol._collapsed = !symbol._collapsed\" selection-model-ignore>\n" +
+    "                                <i class=\"fa fa-fw\"\n" +
+    "                                   ng-class=\"symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
+    "                            </a>\n" +
+    "\n" +
+    "                            <ol collapse=\"!symbol._collapsed\">\n" +
+    "                                <li ng-repeat=\"action in symbol.actions\">\n" +
+    "                                    {{action.toString()}}\n" +
+    "                                </li>\n" +
+    "                            </ol>\n" +
+    "\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +

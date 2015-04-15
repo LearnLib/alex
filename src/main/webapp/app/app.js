@@ -2032,7 +2032,7 @@ angular.module("app/views/pages/learn-results-statistics.html", []).run(["$templ
     "                        </a>\n" +
     "                    </li>\n" +
     "                    <li ng-show=\"selectedResults.length === 1\">\n" +
-    "                        <a href download-learner-results-as-csv results=\"selectedResults\">\n" +
+    "                        <a href download-learner-results-as-csv results=\"selectedResults\" complete>\n" +
     "                            Selected Complete Result\n" +
     "                        </a>\n" +
     "                    </li>\n" +
@@ -2323,7 +2323,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
     "                         selection-model-cleanup-strategy=\"deselect\"\n" +
-    "                         ng-if=\"!symobl.hidden\">\n" +
+    "                         ng-if=\"!symbol.hidden\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\" selection-model-ignore>\n" +
@@ -2757,6 +2757,9 @@ angular.module("app/views/pages/symbols-history.html", []).run(["$templateCache"
     "<div view-heading\n" +
     "     title=\"Symbols History\"\n" +
     "     sub-title=\"Restore and older version of a symbol\">\n" +
+    "    <a class=\"back-button btn btn-default btn-xs\" ui-sref=\"symbols\">\n" +
+    "        <i class=\"fa fa-fw fa-arrow-left\"></i>\n" +
+    "    </a>\n" +
     "</div>\n" +
     "\n" +
     "<div class=\"view-body\">\n" +
@@ -3088,8 +3091,20 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                            <strong ng-bind=\"symbol.name\"></strong> [<span ng-bind=\"symbol.abbreviation\"></span>]<br>\n" +
     "\n" +
     "                            <a ui-sref=\"symbols.actions({symbolId:symbol.id})\">\n" +
-    "                                <span ng-bind=\"symbol.actions.length\"></span> Actions <i class=\"fa fa-edit\"></i>\n" +
+    "                                <span ng-bind=\"symbol.actions.length\"></span> Actions &nbsp;<i class=\"fa fa-edit\"></i>\n" +
     "                            </a>\n" +
+    "\n" +
+    "                            <a href ng-click=\"symbol._collapsed = !symbol._collapsed\" selection-model-ignore>\n" +
+    "                                <i class=\"fa fa-fw\"\n" +
+    "                                   ng-class=\"symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'\"></i>\n" +
+    "                            </a>\n" +
+    "\n" +
+    "                            <ol collapse=\"!symbol._collapsed\">\n" +
+    "                                <li ng-repeat=\"action in symbol.actions\">\n" +
+    "                                    {{action.toString()}}\n" +
+    "                                </li>\n" +
+    "                            </ol>\n" +
+    "\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "                </div>\n" +
@@ -5486,12 +5501,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      *
      * The template can be found at 'views/pages/symbols.html'.
      *
-     * @param $scope
-     * @param Session
-     * @param Symbol
-     * @param SymbolGroup
-     * @param _
-     * @param Toast
+     * @param $scope - angular scope object
+     * @param Session - The SessionService
+     * @param Symbol - The Symbol factory
+     * @param SymbolGroup - The SymbolGroup factory
+     * @param _ - Lodash
+     * @param Toast - The ToastService
      * @constructor
      */
     function SymbolsController($scope, Session, Symbol, SymbolGroup, _, Toast) {
@@ -5566,6 +5581,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             var group;
             _.forEach(symbols, function (symbol) {
                 delete symbol._selected;
+                delete symbol._collapsed;
                 group = findGroupFromSymbol(symbol);
                 _.remove(group.symbols, {id: symbol.id});
             })
@@ -5594,7 +5610,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                 if (i > -1) {
                     group.symbols[i].name = symbol.name;
                     group.symbols[i].abbreviation = symbol.abbreviation;
-                    group.symbols[i].group = symbol.group
+                    group.symbols[i].group = symbol.group;
+                    group.symbols[i].revision = symbol.revision;
                 }
             })
         };
@@ -6446,20 +6463,22 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         .module('ALEX.directives')
         .directive('downloadLearnerResultsAsCsv', downloadLearnerResultsAsCsv);
 
-    downloadLearnerResultsAsCsv.$inject = ['FileDownloadService'];
+    downloadLearnerResultsAsCsv.$inject = ['FileDownloadService', 'LearnResult'];
 
     /**
      * The directive to download statistics from learner results as csv file. Attaches a click event to the directives
      * element that starts the download.
      *
      * Expects an attribute "results" which value should be the learn results to download.
+     * Optional attribute "complete" with no value loads all steps of the first result and downloads these
      *
      * Use it like <button download-learner-results-as-csv results="...">Click Me!</button>
      *
      * @param FileDownloadService - The service to download files
+     * @param LearnResult - The LearnResult factory
      * @returns {{restrict: string, scope: {results: string}, link: link}}
      */
-    function downloadLearnerResultsAsCsv(FileDownloadService) {
+    function downloadLearnerResultsAsCsv(FileDownloadService, LearnResult) {
 
         // the directive
         return {
@@ -6476,7 +6495,16 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
             // download csv on click
             el.on('click', function () {
                 if (angular.isDefined(scope.results)) {
-                    FileDownloadService.downloadCSV(createCsvData(scope.results));
+
+                    // load all steps and load those
+                    if (angular.isDefined(attrs.complete)) {
+                        LearnResult.Resource.getComplete(scope.results[0].project, scope.results[0].testNo)
+                            .then(function (results) {
+                                FileDownloadService.downloadCSV(createCsvData(results));
+                            })
+                    } else {
+                        FileDownloadService.downloadCSV(createCsvData(scope.results));
+                    }
                 }
             });
 
@@ -11103,7 +11131,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
         /**
          * Checks if the selected path is a counterexample.
-         * TODO: implement
+         * TODO: implement as soon as the api has an interface for that
          *
          * @param {number} projectId
          * @param {{input: string, output: string}[]} counterexample
