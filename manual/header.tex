@@ -1,0 +1,22 @@
+\documentclass[11pt]{report}
+
+% ===============================================
+% load packages
+\usepackage{hyperref}
+\usepackage[english]{babel}
+\usepackage{titlesec}
+
+% ===============================================
+% configure packages
+
+% hyperrefpackage
+\hypersetup{pdfborder=0 0 0}
+
+% change chapter formatting
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\LARGE}
+\titlespacing*{\chapter}{0pt}{0pt}{25pt}
+
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries}
+\titleformat*{\subsubsection}{\normalsize\bfseries}
