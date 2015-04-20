@@ -11,8 +11,8 @@
         // variables
         var project;
 
-        beforeEach(angular.mock.module('weblearner'));
-        beforeEach(angular.mock.module('weblearner.services'));
+        beforeEach(angular.mock.module('ALEX'));
+        beforeEach(angular.mock.module('ALEX.services'));
 
         beforeEach(angular.mock.inject(function (_$rootScope_, _Project_, _SessionService_) {
             Project = _Project_;
@@ -23,7 +23,7 @@
 
         afterEach(function () {
             sessionStorage.clear();
-        })
+        });
 
         it('should get no project from storage', function () {
             expect(SessionService.project.get()).toBeNull();

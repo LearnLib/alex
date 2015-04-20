@@ -51,7 +51,7 @@
                         Download SVG
                     </button>
                     <button class="btn btn-default btn-xs"
-                            ng-show="mode === modes.HYPOTHESIS"
+                            ng-show="mode === modes.HYPOTHESIS && (results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE || results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR)"
                             ng-click="showInternalDataStructure()">
                         Internal
                     </button>

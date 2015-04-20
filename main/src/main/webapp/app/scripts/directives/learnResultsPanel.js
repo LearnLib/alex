@@ -38,10 +38,10 @@
             },
             transclude: true,
             templateUrl: paths.views.DIRECTIVES + '/learn-results-panel.html',
-            controller: ['$scope', controller]
+            link: link
         };
 
-        function controller($scope) {
+        function link(scope, el, attrs) {
 
             /**
              * Enum for displayable modes.
@@ -49,7 +49,7 @@
              * 1 := show internal data structure
              * @type {{HYPOTHESIS: number, INTERNAL: number}}
              */
-            $scope.modes = {
+            scope.modes = {
                 HYPOTHESIS: 0,
                 INTERNAL: 1
             };
@@ -58,47 +58,47 @@
              * Available learn algorithms
              * @type {Object}
              */
-            $scope.learnAlgorithms = learnAlgorithms;
+            scope.learnAlgorithms = learnAlgorithms;
 
             /**
              * The layout settings for the displayed hypothesis
              * @type {undefined|Object}
              */
-            $scope.layoutSettings;
+            scope.layoutSettings;
 
             /**
              * The mode that is used
              * @type {number}
              */
-            $scope.mode = $scope.modes.HYPOTHESIS;
+            scope.mode = scope.modes.HYPOTHESIS;
 
             /**
              * The index of the step from the results that should be shown
              * @type {number}
              */
-            $scope.pointer = $scope.results.length - 1;
+            scope.pointer = scope.results.length - 1;
 
             /**
              * Checks if the property 'algorithmInformation' is define which holds the internal data structure
              * for the algorithm of a learn result
              * @returns {boolean|*}
              */
-            $scope.hasInternalDataStructure = function () {
-                return angular.isDefined($scope.results[$scope.pointer].algorithmInformation);
+            scope.hasInternalDataStructure = function () {
+                return angular.isDefined(scope.results[scope.pointer].algorithmInformation);
             };
 
             /**
              * Switches the mode to the one to display the internal data structure
              */
-            $scope.showInternalDataStructure = function () {
-                $scope.mode = $scope.modes.INTERNAL;
+            scope.showInternalDataStructure = function () {
+                scope.mode = scope.modes.INTERNAL;
             };
 
             /**
              * Switches the mode to the one to display the hypothesis
              */
-            $scope.showHypothesis = function () {
-                $scope.mode = $scope.modes.HYPOTHESIS;
+            scope.showHypothesis = function () {
+                scope.mode = scope.modes.HYPOTHESIS;
             }
         }
     }

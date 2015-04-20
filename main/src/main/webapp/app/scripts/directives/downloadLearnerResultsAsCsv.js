@@ -5,20 +5,22 @@
         .module('ALEX.directives')
         .directive('downloadLearnerResultsAsCsv', downloadLearnerResultsAsCsv);
 
-    downloadLearnerResultsAsCsv.$inject = ['FileDownloadService'];
+    downloadLearnerResultsAsCsv.$inject = ['FileDownloadService', 'LearnResult'];
 
     /**
      * The directive to download statistics from learner results as csv file. Attaches a click event to the directives
      * element that starts the download.
      *
      * Expects an attribute "results" which value should be the learn results to download.
+     * Optional attribute "complete" with no value loads all steps of the first result and downloads these
      *
      * Use it like <button download-learner-results-as-csv results="...">Click Me!</button>
      *
      * @param FileDownloadService - The service to download files
+     * @param LearnResult - The LearnResult factory
      * @returns {{restrict: string, scope: {results: string}, link: link}}
      */
-    function downloadLearnerResultsAsCsv(FileDownloadService) {
+    function downloadLearnerResultsAsCsv(FileDownloadService, LearnResult) {
 
         // the directive
         return {
@@ -35,7 +37,16 @@
             // download csv on click
             el.on('click', function () {
                 if (angular.isDefined(scope.results)) {
-                    FileDownloadService.downloadCSV(createCsvData(scope.results));
+
+                    // load all steps and load those
+                    if (angular.isDefined(attrs.complete)) {
+                        LearnResult.Resource.getComplete(scope.results[0].project, scope.results[0].testNo)
+                            .then(function (results) {
+                                FileDownloadService.downloadCSV(createCsvData(results));
+                            })
+                    } else {
+                        FileDownloadService.downloadCSV(createCsvData(scope.results));
+                    }
                 }
             });
 

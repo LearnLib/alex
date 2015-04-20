@@ -12,12 +12,12 @@
      *
      * The template can be found at 'views/pages/symbols.html'.
      *
-     * @param $scope
-     * @param Session
-     * @param Symbol
-     * @param SymbolGroup
-     * @param _
-     * @param Toast
+     * @param $scope - angular scope object
+     * @param Session - The SessionService
+     * @param Symbol - The Symbol factory
+     * @param SymbolGroup - The SymbolGroup factory
+     * @param _ - Lodash
+     * @param Toast - The ToastService
      * @constructor
      */
     function SymbolsController($scope, Session, Symbol, SymbolGroup, _, Toast) {
@@ -92,6 +92,7 @@
             var group;
             _.forEach(symbols, function (symbol) {
                 delete symbol._selected;
+                delete symbol._collapsed;
                 group = findGroupFromSymbol(symbol);
                 _.remove(group.symbols, {id: symbol.id});
             })
@@ -120,7 +121,8 @@
                 if (i > -1) {
                     group.symbols[i].name = symbol.name;
                     group.symbols[i].abbreviation = symbol.abbreviation;
-                    group.symbols[i].group = symbol.group
+                    group.symbols[i].group = symbol.group;
+                    group.symbols[i].revision = symbol.revision;
                 }
             })
         };

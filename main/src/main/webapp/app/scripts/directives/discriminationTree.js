@@ -34,6 +34,12 @@
         // handle the directives logic
         function link(scope, el, attrs) {
 
+
+            var labelStyle = 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline;';
+            var labelStyleEdge = labelStyle + 'font-size: 10px';
+            var labelStyleNode = labelStyle + 'font-size: 12px';
+
+
             // the svg where the discrimination tree is drawn into
             var svg = d3.select(el.find('svg')[0]);
 
@@ -137,7 +143,7 @@
                         label: node,
                         width: 25,
                         style: 'fill: #fff; stroke: #000; stroke-width: 1',
-                        labelStyle: 'font-size: 1.25em; font-weight: bold'
+                        labelStyle: labelStyleNode
                     });
                 });
 
@@ -146,7 +152,8 @@
                     _graph.setEdge(edge.from, edge.to, {
                         lineInterpolate: 'basis',
                         style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
-                        label: edge.label
+                        label: edge.label,
+                        labelStyle: labelStyleEdge
                     });
                 });
 
@@ -169,6 +176,12 @@
                 // position it in the center of the svg parent
                 var xCenterOffset = (svgContainer.clientWidth - graph.graph().width) / 2;
                 svgGroup.attr("transform", "translate(" + xCenterOffset + ", 100)");
+
+                // swap defs and paths children of .edgepaths because arrows are not shown
+                // on export otherwise <.<
+                _.forEach(el.find('svg')[0].querySelectorAll('.edgePath'), function(edgePath){
+                    edgePath.insertBefore(edgePath.childNodes[1],edgePath.firstChild);
+                });
 
                 // Create and handle zoom  & pan event
                 var zoom = d3.behavior.zoom().scaleExtent([0.1, 10])
