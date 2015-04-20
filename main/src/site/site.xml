@@ -4,6 +4,7 @@
 
     <menu name="Developer resources">
         <item href="REST.html" name="REST API" />
+        <item href="extend.html" name="Extend ALEX" />
     </menu>
 
 </body>

@@ -4,9 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>processors</artifactId>
-    <version>0.4-SNAPSHOT</version>
-
     <parent>
         <groupId>de.learnlib.alex</groupId>
         <artifactId>alex-parent</artifactId>
@@ -14,7 +11,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>WebLearner - Processors</name>
+    <artifactId>processors</artifactId>
+
+    <name>ALEX - Processors</name>
 
     <dependencies>
         <dependency>
@@ -28,7 +27,6 @@
             <groupId>de.learnlib.alex</groupId>
             <artifactId>api</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -36,7 +34,6 @@
             <artifactId>freemarker</artifactId>
             <version>2.3.22</version>
         </dependency>
-
     </dependencies>
 
     <build>
