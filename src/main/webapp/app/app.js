@@ -2322,8 +2322,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                         selection-model-selected-attribute=\"_selected\"\n" +
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
-    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
-    "                         ng-if=\"!symbol.hidden\">\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\" selection-model-ignore>\n" +
@@ -2382,7 +2381,8 @@ angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", fu
     "            <div widget widget-title=\"Counter Examples\" collapsed=\"false\"\n" +
     "                 ng-if=\"_.last(results).configuration.eqOracle.type === 'sample'\">\n" +
     "                <div counterexamples-widget\n" +
-    "                     counterexamples=\"_.last(results).configuration.eqOracle.counterExamples\"></div>\n" +
+    "                     counterexamples=\"_.last(results).configuration.eqOracle.counterExamples\"\n" +
+    "                     learn-result=\"_.last(results)\"></div>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
@@ -2730,8 +2730,7 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "                         selection-model-selected-attribute=\"_selected\"\n" +
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
-    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
-    "                         ng-if=\"!symbol.hidden\">\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "\n" +
@@ -3048,8 +3047,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                         selection-model-selected-attribute=\"_selected\"\n" +
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
-    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
-    "                         ng-if=\"!symbol.hidden\">\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "                            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
@@ -4892,7 +4890,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
 
     LearnSetupController.$inject = [
         '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'LearnConfiguration',
-        'LearnerService', 'ToastService'
+        'LearnerService', 'ToastService', '_'
     ];
 
     /**
@@ -4908,10 +4906,11 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * @param LearnConfiguration
      * @param Learner
      * @param Toast
+     * @param _
      * @constructor
      */
     function LearnSetupController($scope, $state, SymbolGroup, Session, SelectionService, LearnConfiguration,
-                                  Learner, Toast) {
+                                  Learner, Toast, _) {
 
         // the project that is stored in the session
         var project = Session.project.get();
@@ -4960,7 +4959,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
                         SymbolGroup.Resource.getAll(project.id, {embedSymbols: true})
                             .then(function (groups) {
                                 $scope.groups = groups;
-                                $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
+                                $scope.allSymbols = _($scope.groups).pluck('symbols').flatten().value();
                             });
                     }
                 });
@@ -8774,8 +8773,9 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
      * Should be included into a <widget></widget> directive for visual appeal.
      *
      * Attribute 'counterexamples' {array} should be the model where the created counterexamples are put into.
+     * Attribute 'learnResult' should be the latest learn result of a test run
      *
-     * Use: '<div counterexamples-widget counterexamples="..."></div>'
+     * Use: '<div counterexamples-widget counterexamples="..." learn-result="..."></div>'
      *
      * @param paths - The application paths constant
      * @param CounterExampleService - The service for sharing a counterexample with a hypothesis
@@ -8789,7 +8789,8 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         // the directive
         return {
             scope: {
-                counterexamples: '='
+                counterexamples: '=',
+                learnResult: '='
             },
             templateUrl: paths.views.DIRECTIVES + '/counterexamples-widget.html',
             link: link
@@ -8883,9 +8884,31 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
              * Tests if the entered counterexample really is one by sending it to the server for testing purposes.
              */
             scope.testCounterExample = function () {
-                Learner.isCounterexample(scope.counterExample)
-                    .then(function (isCounterexample) {
-                        if (isCounterexample) {
+
+                var resetSymbol = scope.learnResult.configuration.resetSymbol;
+                var symbols = [];
+
+                // find id/revision pairs of symbols from abbreviation in learnResult
+                // works under the premise that sigma[i] corresponds to symbols[i] in learn result
+                // can't this be done nicer??
+                for (var i = 0; i < scope.counterExample.length; i++) {
+                    for (var j = 0; j < scope.learnResult.sigma.length; j++) {
+                        if (scope.counterExample[i].input === scope.learnResult.sigma[j]) {
+                            symbols.push(scope.learnResult.configuration.symbols[j]);
+                        }
+                    }
+                }
+
+                Learner.isCounterexample(scope.learnResult.project, resetSymbol, symbols)
+                    .then(function (ce) {
+                        var ceFound = false;
+                        for (var i = 0; i < ce.length; i++) {
+                            if (ce[i] !== scope.counterExample[i].output) {
+                                ceFound = true;
+                                break;
+                            }
+                        }
+                        if (ceFound) {
                             Toast.success('The selected word is a counterexample');
                         } else {
                             Toast.danger('The selected word is not a counterexample');
@@ -9814,12 +9837,12 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
          * Creates an instance of a SymbolGroup from a given object
          *
          * @param {Object} data - The object the SymbolGroup should be build from
-         * @returns {SymbolGroupModel.SymbolGroup} - A new instance of SymbolGroup with the data
+         * @returns {SymbolGroup} - A new instance of SymbolGroup with the data
          */
         SymbolGroup.build = function (data) {
             var group = new SymbolGroup(data.name);
             group.id = data.id;
-            group.symbols = Symbol.buildSome(data.symbols);
+            group.symbols = Symbol.buildSome(_.filter(data.symbols, {hidden: false}));
             group.project = data.project;
             return group;
         };
@@ -11130,18 +11153,20 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
         }
 
         /**
-         * Checks if the selected path is a counterexample.
-         * TODO: implement as soon as the api has an interface for that
+         * Verifies a possible counterexample
          *
          * @param {number} projectId
-         * @param {{input: string, output: string}[]} counterexample
+         * @param {{id: number, revision: number}} resetSymbol - The id/revision pair of the reset symbol
+         * @param {{id: number, revision: number}[]} symbols - The list of id/revision pairs of symbols
          * @returns {*}
          */
-        function isCounterexample(projectId, counterexample) {
-            return $http.post(paths.api.URL + '/learner/active', {})
-                .then(function () {
-                    return true;
-                })
+        function isCounterexample(projectId, resetSymbol, symbols) {
+            return $http.post(paths.api.URL + '/learner/outputs/' + projectId, {
+                resetSymbol: resetSymbol,
+                symbols: symbols
+            }).then(function (response) {
+                return response.data;
+            })
         }
     }
 }());;(function () {

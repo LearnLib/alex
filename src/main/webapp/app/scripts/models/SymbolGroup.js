@@ -43,12 +43,12 @@
          * Creates an instance of a SymbolGroup from a given object
          *
          * @param {Object} data - The object the SymbolGroup should be build from
-         * @returns {SymbolGroupModel.SymbolGroup} - A new instance of SymbolGroup with the data
+         * @returns {SymbolGroup} - A new instance of SymbolGroup with the data
          */
         SymbolGroup.build = function (data) {
             var group = new SymbolGroup(data.name);
             group.id = data.id;
-            group.symbols = Symbol.buildSome(data.symbols);
+            group.symbols = Symbol.buildSome(_.filter(data.symbols, {hidden: false}));
             group.project = data.project;
             return group;
         };

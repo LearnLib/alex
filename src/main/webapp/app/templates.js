@@ -2260,8 +2260,7 @@ angular.module("app/views/pages/learn-setup.html", []).run(["$templateCache", fu
     "                         selection-model-selected-attribute=\"_selected\"\n" +
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
-    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
-    "                         ng-if=\"!symbol.hidden\">\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "                            <a class=\"pull-right\" ng-click=\"setResetSymbol(symbol)\" selection-model-ignore>\n" +
@@ -2320,7 +2319,8 @@ angular.module("app/views/pages/learn-start.html", []).run(["$templateCache", fu
     "            <div widget widget-title=\"Counter Examples\" collapsed=\"false\"\n" +
     "                 ng-if=\"_.last(results).configuration.eqOracle.type === 'sample'\">\n" +
     "                <div counterexamples-widget\n" +
-    "                     counterexamples=\"_.last(results).configuration.eqOracle.counterExamples\"></div>\n" +
+    "                     counterexamples=\"_.last(results).configuration.eqOracle.counterExamples\"\n" +
+    "                     learn-result=\"_.last(results)\"></div>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
@@ -2668,8 +2668,7 @@ angular.module("app/views/pages/symbols-export.html", []).run(["$templateCache",
     "                         selection-model-selected-attribute=\"_selected\"\n" +
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
-    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
-    "                         ng-if=\"!symbol.hidden\">\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "\n" +
@@ -2986,8 +2985,7 @@ angular.module("app/views/pages/symbols.html", []).run(["$templateCache", functi
     "                         selection-model-selected-attribute=\"_selected\"\n" +
     "                         selection-model-mode=\"multiple\"\n" +
     "                         selection-model-selected-items=\"selectedSymbols\"\n" +
-    "                         selection-model-cleanup-strategy=\"deselect\"\n" +
-    "                         ng-if=\"!symbol.hidden\">\n" +
+    "                         selection-model-cleanup-strategy=\"deselect\">\n" +
     "\n" +
     "                        <div selectable-list-item>\n" +
     "                            <div class=\"btn-group btn-group-xs pull-right\" dropdown dropdown-hover>\n" +
