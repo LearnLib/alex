@@ -2,6 +2,7 @@ package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
+import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
@@ -24,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -203,11 +205,24 @@ public class LearnerResource {
         Symbol resetSymbol = symbolDAO.get(projectId, symbolSet.getResetSymbolAsIdRevisionPair());
         symbolSet.setResetSymbol(resetSymbol);
 
-        List<Symbol> symbols = symbolDAO.getAll(projectId, symbolSet.getSymbolsAsIdRevisionPairs());
+        List<Symbol> symbols = loadSymbols(projectId, symbolSet.getSymbolsAsIdRevisionPairs());
         symbolSet.setSymbols(symbols);
 
         List<String> results = learner.readOutputs(project, resetSymbol, symbols);
 
         return Response.ok(results).build();
     }
+
+    // load all from SymbolDAO always orders the Symbols by ID
+    private List<Symbol> loadSymbols(Long projectId, List<IdRevisionPair> idRevisionPairs) {
+        List<Symbol> symbols = new LinkedList<>();
+
+        idRevisionPairs.forEach(pair -> {
+            Symbol symbol = symbolDAO.get(projectId, pair);
+            symbols.add(symbol);
+        });
+
+        return symbols;
+    }
+
 }
