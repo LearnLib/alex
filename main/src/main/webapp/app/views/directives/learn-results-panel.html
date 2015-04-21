@@ -41,7 +41,7 @@
                         Hypothesis
                     </button>
                     <button class="btn btn-default btn-xs"
-                            ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR"
+                            ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.LSTAR"
                             download-table-as-csv ancestor-or-element="#hypothesis-panel-{{index}}">
                         Download CSV
                     </button>
@@ -51,7 +51,7 @@
                         Download SVG
                     </button>
                     <button class="btn btn-default btn-xs"
-                            ng-show="mode === modes.HYPOTHESIS && (results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE || results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR)"
+                            ng-show="mode === modes.HYPOTHESIS && (results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE || results[pointer].configuration.algorithm === learnAlgorithms.LSTAR)"
                             ng-click="showInternalDataStructure()">
                         Internal
                     </button>
@@ -79,7 +79,7 @@
                     ng-if="mode === modes.HYPOTHESIS && pointer !== results.length - 1"></hypothesis>
 
         <observation-table data="results[pointer].algorithmInformation"
-                           ng-if="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.EXTENSIBLE_LSTAR">
+                           ng-if="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.LSTAR">
         </observation-table>
 
         <discrimination-tree data="results[pointer].algorithmInformation"
