@@ -1,0 +1,59 @@
+<div class="modal-header">
+
+    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+    <h3 class="modal-title">Create Action</h3>
+    <span class="text-muted">Create a new action for a symbol</span>
+</div>
+
+<form ng-submit="createAction()" id="action-create-form">
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xs-5">
+
+                <accordion close-others="true" class="action-types-accordion">
+                    <accordion-group is-open="true">
+                        <accordion-heading>
+                            <div><strong>Web</strong></div>
+                        </accordion-heading>
+                        <a href ng-repeat="(k,v) in actionTypes.web" ng-click="selectNewActionType(v)"
+                           ng-bind="::(k|formatEnumKey)"></a>
+                    </accordion-group>
+                    <accordion-group>
+                        <accordion-heading>
+                            <div><strong>Rest</strong></div>
+                        </accordion-heading>
+                        <a href ng-repeat="(k,v) in actionTypes.rest" ng-click="selectNewActionType(v)"
+                           ng-bind="::(k|formatEnumKey)"></a>
+                    </accordion-group>
+                    <accordion-group>
+                        <accordion-heading>
+                            <div><strong>Other</strong></div>
+                        </accordion-heading>
+                        <a href ng-repeat="(k,v) in actionTypes.other" ng-click="selectNewActionType(v)"
+                           ng-bind="::(k|formatEnumKey)"></a>
+                    </accordion-group>
+                </accordion>
+
+            </div>
+            <div class="col-xs-7">
+
+                <div class="alert alert-info alert-condensed" ng-show="action === null">
+                    Please select an action type
+                </div>
+
+                <ng-include src="paths.views.INCLUDES + '/action-forms.html'"></ng-include>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <a href class="btn btn-info btn-sm" ng-click="createActionAndContinue()">Create and Continue</a>
+        <button class="btn btn-primary btn-sm" type="submit">Create</button>
+    </div>
+
+</form>

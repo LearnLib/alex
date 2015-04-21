@@ -1,0 +1,22 @@
+<div id="learn-result-chart">
+    <linechart data="dataSets" options="options" mode="" width="" height="500"></linechart>
+    <hr>
+
+    <div class="text-center">
+        <button class="btn btn-xs"
+                ng-class="selectedMode === modes.RESETS ? 'btn-primary':'btn-default'"
+                ng-click="selectedMode = modes.RESETS">
+            #Resets
+        </button>
+        <button class="btn btn-xs"
+                ng-class="selectedMode === modes.SYMBOLS ? 'btn-primary':'btn-default'"
+                ng-click="selectedMode = modes.SYMBOLS">
+            #Symbols
+        </button>
+        <button class="btn btn-xs"
+                ng-class="selectedMode === modes.DURATION ? 'btn-primary':'btn-default'"
+                ng-click="selectedMode = modes.DURATION">
+            Duration
+        </button>
+    </div>
+</div>

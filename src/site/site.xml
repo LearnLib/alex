@@ -1,17 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Dokumentation der ToDo-App">
+<project name="${project.name}">
 
     <skin>
-        <groupId>org.apache.maven.skins</groupId>
-        <artifactId>maven-fluido-skin</artifactId>
-        <version>1.3.1</version>
+        <groupId>lt.velykis.maven.skins</groupId>
+        <artifactId>reflow-maven-skin</artifactId>
+        <version>1.1.1</version>
     </skin>
 
     <custom>
-        <fluidoSkin>
-            <topBarEnabled>false</topBarEnabled>
-            <sideBarEnabled>true</sideBarEnabled>
-        </fluidoSkin>
+        <reflowSkin>
+            <theme>bootswatch-spacelab</theme>
+            <highlightJs>true</highlightJs>
+            <highlightJsTheme>github</highlightJsTheme>
+            <brand>
+                <name>${project.name}</name>
+                <href>index.html</href>
+            </brand>
+            <toc>sidebar</toc>
+            <breadcrumbs>true</breadcrumbs>
+            <topNav>Overview|Usage|Developer resources|modules|reports</topNav>
+            <bottomNav>
+                <column>Overview|parent|modules</column>
+                <column>Usage|Developer resources</column>
+                <column>reports</column>
+            </bottomNav>
+            <bottomDescription quote="false">
+            <![CDATA[
+                <ul class="nav nav-list">
+                    <li class="nav-header">
+                        Powered by:
+                    </li>
+                    <li>
+                        <a href="http://www.tu-dortmund.de/"
+                            title="Site of the TU Dortmund University, Germany"
+                            target="_blank">
+                                <img src="http://www.tu-dortmund.de/Medienpool/Seitenbilder/logo_tu.png"
+                                    title="TU Dortmund University"
+                                    alt="Logo of the TU Dortmund University" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://www.cs.tu-dortmund.de/"
+                            title="Site of the Department of Computer Science at TU Dortmund University, Germany"
+                            target="_blank">
+                                <img src="http://www.cs.tu-dortmund.de/nps/Medienpool/Bereichsbilder/tu_fk04.png"
+                                    title="TU Dortmund University - Department of Computer Science"
+                                    alt="Logo of the Department of Computer Science at TU Dortmund University" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://ls5-www.cs.tu-dortmund.de/"
+                            title="Site of the Chair for Programming Systems at TU Dortmund University, Germany"
+                            target="_blank">
+                                Chair for Programming Systems
+                        </a>
+                    </li>
+                </ul>
+            ]]>
+            </bottomDescription>
+            <pages>
+                <index project="alex-parent">
+                    <breadcrumbs>false</breadcrumbs>
+                    <toc>false</toc>
+                    <sections>
+                        <carousel />
+                        <body />
+                    </sections>
+                </index>
+                <dependency-updates-report>
+                    <toc>false</toc>
+                </dependency-updates-report>
+                <plugin-updates-report>
+                    <toc>false</toc>
+                </plugin-updates-report>
+                <property-updates-report>
+                    <toc>false</toc>
+                </property-updates-report>
+                <checkstyle>
+                    <toc>false</toc>
+                </checkstyle>
+                <cpd>
+                    <toc>false</toc>
+                </cpd>
+                <pmd>
+                    <toc>false</toc>
+                </pmd>
+                <findbugs>
+                    <toc>false</toc>
+                </findbugs>
+                <surefire-report>
+                    <toc>false</toc>
+                </surefire-report>
+
+            </pages>
+        </reflowSkin>
     </custom>
 
     <version position="right" />
@@ -19,11 +101,11 @@
 
     <poweredBy>
         <logo name="TU Dortmund - Fakultät für Informatik" href="http://www.cs.tu-dortmund.de/"
-            img="http://www.cs.tu-dortmund.de/nps/Medienpool/Bereichsbilder/tu_fk04.png" />
+              img="http://www.cs.tu-dortmund.de/nps/Medienpool/Bereichsbilder/tu_fk04.png" />
         <logo
-            name="TU Dortmund - Fakultät für Informatik - Lehrstuhl 5 für Programmiersysteme"
-            href="http://ls5-www.cs.tu-dortmund.de/"
-            img="http://ls5-www.cs.tu-dortmund.de/cms/Medienpool/Bereichsbilder/tu_ls_5_PS.png" />
+                name="TU Dortmund - Fakultät für Informatik - Lehrstuhl 5 für Programmiersysteme"
+                href="http://ls5-www.cs.tu-dortmund.de/"
+                img="http://ls5-www.cs.tu-dortmund.de/cms/Medienpool/Bereichsbilder/tu_ls_5_PS.png" />
     </poweredBy>
 
     <body>
@@ -32,15 +114,20 @@
             <item name="Home" href="index.html" />
         </breadcrumbs>
 
-        <menu name="Project">
-            <item name="Home" href="index.html" />
+        <menu name="Overview">
+            <item name="Introduction" href="index.html" />
+            <item name="Project Structure" href="project-structure.html" />
         </menu>
 
-        <menu name="Developer resources">
-            <item href="REST.html" name="REST API" />
+        <menu name="Usage">
+            <item name="Usage" href="usage.html" />
+            <item name="Automata Learning" href="automate-learning.html" />
         </menu>
 
-        <menu ref="reports" />
+        <menu ref="parent" inherit="top" />
+        <menu ref="modules" inherit="top" />
+
+        <menu ref="reports" inherit="bottom" />
 
     </body>
 </project>

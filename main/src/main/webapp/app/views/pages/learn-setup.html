@@ -1,0 +1,128 @@
+<div view-heading
+     title="Learn Setup"
+     sub-title="Include or exclude symbols & groups you want to use for the following test">
+</div>
+
+<div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
+    <div class="container">
+
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" selection-checkbox-all items="getAllSymbols">
+        </div>
+
+        <div class="pull-right">
+            <button class="btn btn-xs btn-default" learn-setup-settings-modal-handle
+                    learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
+                <i class="fa fa-gear"></i>
+            </button>
+            <button class="btn btn-xs btn-primary" ng-click="startLearning()">
+                Start Learning
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="view-body">
+    <div class="container symbol-group-list">
+
+        <div class="alert alert-info alert-condensed clearfix">
+            <button class="btn btn-xs btn-info pull-right" learn-setup-settings-modal-handle
+                    learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
+                <i class="fa fa-gear"></i>
+            </button>
+
+            <p>
+                Using algorithm <strong ng-bind="(learnConfiguration.algorithm | formatAlgorithm)"></strong>
+                with EQ-Oracle <strong ng-bind="(learnConfiguration.eqOracle.type | formatEqOracle)"></strong>
+                <span ng-if="learnConfiguration.eqOracle.type === 'complete'">
+                    (min-depth: <span ng-bind="learnConfiguration.eqOracle.minDepth"></span>, max-depth: <span
+                        ng-bind="learnConfiguration.eqOracle.maxDepth"></span>)
+                </span>
+                <span ng-if="learnConfiguration.eqOracle.type === 'random_word'">
+                    (
+                    min-length: <span ng-bind="learnConfiguration.eqOracle.minLength"></span>,
+                    max-length: <span ng-bind="learnConfiguration.eqOracle.maxLength"></span>,
+                    #words: <span ng-bind="learnConfiguration.eqOracle.maxNoOfTests"></span>
+                    )
+                </span>
+            </p>
+
+            <p ng-show="resetSymbol === null">
+                <em>Please select a reset symbol by clicking on the blue circle</em>
+            </p>
+
+            <p ng-show="resetSymbol !== null">
+                Reset symbol is <strong ng-bind="resetSymbol.name"></strong>
+            </p>
+
+        </div>
+        <hr>
+
+        <div ng-repeat="group in groups" class="symbol-group"
+             ng-class="group._isCollapsed ? 'collapsed' :''">
+
+            <div class="selectable-list symbol-group-header">
+                <div class="selectable-list-heading">
+                    <div class="selectable-list-control">
+                        <input type="checkbox" selection-checkbox-all items="group.symbols">
+                    </div>
+                    <div class="selectable-list-content">
+
+                        <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
+                        <i class="fa fa-fw"
+                           ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                        </span>
+
+                        <h3 class="symbol-group-title" ng-bind="group.name"
+                            ng-click="group._isCollapsed = !group._isCollapsed"></h3>
+
+                        <p class="text-muted">
+                            <span ng-bind="group.symbols.length"></span> Symbols
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="symbol-group-body" collapse="group._isCollapsed">
+                <div class="selectable-list">
+                    <div ng-repeat="symbol in group.symbols | orderBy:'-name':true"
+                         selection-model
+                         selection-model-type="checkbox"
+                         selection-model-selected-attribute="_selected"
+                         selection-model-mode="multiple"
+                         selection-model-selected-items="selectedSymbols"
+                         selection-model-cleanup-strategy="deselect"
+                         ng-if="!symbol.hidden">
+
+                        <div selectable-list-item>
+                            <a class="pull-right" ng-click="setResetSymbol(symbol)" selection-model-ignore>
+                                <i class="fa" ng-class="resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'"></i>
+                            </a>
+
+                            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
+
+                            <p class="text-muted">
+                                <a href ng-click="symbol._collapsed = !symbol._collapsed" selection-model-ignore>
+                                    <span ng-bind="symbol.actions.length"></span>
+                                    Actions
+                                    <i class="fa fa-fw"
+                                       ng-class="symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
+                                </a>
+
+                            <ol collapse="!symbol._collapsed">
+                                <li ng-repeat="action in symbol.actions">
+                                    {{action.toString()}}
+                                </li>
+                            </ol>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
