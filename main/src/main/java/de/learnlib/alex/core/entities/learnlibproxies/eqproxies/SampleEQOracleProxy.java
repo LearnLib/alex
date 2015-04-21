@@ -34,6 +34,9 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
         @NotBlank
         private String output;
 
+        /**
+         * Default constructor.
+         */
         public InputOutputPair() {
         }
 
@@ -63,7 +66,6 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
             return "(" + input + "/" + output + ")";
         }
     }
-
 
     /** A list of counter examples. */
     private List<List<InputOutputPair>> counterExamples;

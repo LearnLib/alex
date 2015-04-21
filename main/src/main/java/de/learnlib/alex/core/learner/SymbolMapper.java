@@ -30,7 +30,8 @@ public class SymbolMapper implements Mapper<String, String, ContextExecutableInp
         this.symbols = new HashMap<>();
 
         for (Symbol s : symbols) {
-            this.symbols.put(s.getAbbreviation(), s);
+            //todo(alex.s): can we use the IdRevisionPair class here?
+            this.symbols.put(s.getAbbreviation() + " (" + s.getId() + "/" + s.getRevision() + ")", s);
         }
     }
 
