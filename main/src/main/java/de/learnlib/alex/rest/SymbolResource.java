@@ -126,7 +126,7 @@ public class SymbolResource {
             symbol.setProjectId(projectId);
         } else if (!Objects.equals(symbol.getProjectId(), projectId)) {
             throw new IllegalArgumentException("The symbol should not have a project"
-                    + "or at least the project id should be the one in the get parameter");
+                    + " or at least the project id should be the one provided via the get parameter");
         }
     }
 
@@ -390,7 +390,7 @@ public class SymbolResource {
     @POST
     @Path("/{id}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
+    public Response hide(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         try {
             symbolDAO.hide(projectId, id);
             Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);

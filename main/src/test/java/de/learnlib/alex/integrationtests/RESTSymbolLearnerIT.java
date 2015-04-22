@@ -5,6 +5,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.ProjectTest;
 import de.learnlib.alex.core.entities.Symbol;
 import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.After;
@@ -142,7 +143,9 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         String resultAsJSON = response.readEntity(String.class);
         System.out.println(resultAsJSON);
         result.setJSON(resultAsJSON);
-        assertTrue(testHelper.hypothesisIsEqualToTheExpectedOne(result.getHypothesis(), testAlphabet, "rest"));
+
+        Word<String> separatingWord = testHelper.getSeparatingWord(result.getHypothesis(), testAlphabet, "rest");
+        assertTrue("The hypothesis is not correct: " + separatingWord, separatingWord == null);
     }
 
 }

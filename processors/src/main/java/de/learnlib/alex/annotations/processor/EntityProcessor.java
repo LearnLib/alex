@@ -11,6 +11,7 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -35,6 +36,10 @@ public class EntityProcessor extends AbstractProcessor {
         List<TypeElement> entities = new LinkedList<>();
 
         for (Element element : roundEnvironment.getElementsAnnotatedWith(Entity.class)) {
+            TypeElement classElement = (TypeElement) element;
+            entities.add(classElement);
+        }
+        for (Element element : roundEnvironment.getElementsAnnotatedWith(Embeddable.class)) {
             TypeElement classElement = (TypeElement) element;
             entities.add(classElement);
         }

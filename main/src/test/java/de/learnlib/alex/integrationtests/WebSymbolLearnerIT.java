@@ -5,8 +5,10 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.ProjectTest;
 import de.learnlib.alex.core.entities.Symbol;
 import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -149,7 +151,8 @@ public class WebSymbolLearnerIT {
         System.out.println("----------------------");
         result.setJSON(resultAsJSON);
 
-        assertTrue(testHelper.hypothesisIsEqualToTheExpectedOne(result.getHypothesis(), testAlphabet, "web"));
+        Word<String> separatingWord = testHelper.getSeparatingWord(result.getHypothesis(), testAlphabet, "web");
+        assertTrue("The hypothesis is not correct: " + separatingWord, separatingWord == null);
         assertTrue(result.getStatistics().getDuration() > 0);
         assertTrue(result.getStatistics().getEqsUsed() > 0);
     }
@@ -185,7 +188,8 @@ public class WebSymbolLearnerIT {
         String resultAsJSON = response.readEntity(String.class);
         result.setJSON(resultAsJSON);
 
-        assertTrue(testHelper.hypothesisIsEqualToTheExpectedOne(result.getHypothesis(), testAlphabet, "web"));
+        Word<String> separatingWord = testHelper.getSeparatingWord(result.getHypothesis(), testAlphabet, "web");
+        assertTrue("The hypothesis is not correct: " + separatingWord, separatingWord == null);
     }
 
     @Test(timeout = MAX_TIME_TO_WAIT_FOR_LEARNER)
@@ -205,10 +209,11 @@ public class WebSymbolLearnerIT {
         // resume learning
         path = "/learner/resume/" + project.getId() + "/1";
         json = "{\"maxAmountOfStepsToLearn\": 0, \"eqOracle\":"
-                + "{\"type\": \"sample\", \"counterExamples\": ["
-                    + "[{\"input\": \"learnweb2\", \"output\": \"OK\"}, {\"input\": \"learnweb2\", \"output\": \"OK\"},"
-                        + "{\"input\": \"learnweb3\", \"output\": \"OK\"}]"
-                + "]}}";
+                + "{\"type\": \"sample\", \"counterExamples\": [["
+                    + "{\"input\": \"learnweb2 (3/1)\", \"output\": \"OK\"},"
+                    + "{\"input\": \"learnweb2 (3/1)\", \"output\": \"OK\"},"
+                    + "{\"input\": \"learnweb3 (4/1)\", \"output\": \"OK\"}"
+                + "]]}}";
         response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
@@ -222,7 +227,8 @@ public class WebSymbolLearnerIT {
         String resultAsJSON = response.readEntity(String.class);
         result.setJSON(resultAsJSON);
 
-        assertTrue(testHelper.hypothesisIsEqualToTheExpectedOne(result.getHypothesis(), testAlphabet, "web"));
+        Word<String> separatingWord = testHelper.getSeparatingWord(result.getHypothesis(), testAlphabet, "web");
+        assertTrue("The hypothesis is not correct: " + separatingWord, separatingWord == null);
     }
 
 }

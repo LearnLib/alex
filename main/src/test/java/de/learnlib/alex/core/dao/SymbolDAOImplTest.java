@@ -471,8 +471,8 @@ public class SymbolDAOImplTest {
         @SuppressWarnings("unchecked") // should return a list of Symbols
         List<Symbol> symbolsInDB = session.createCriteria(Symbol.class)
                                             .add(Restrictions.eq("project.id", symbol.getProjectId()))
-                                            .add(Restrictions.eq("id", symbol.getId()))
-                                            .add(Restrictions.eq("revision", symbol.getRevision()))
+                                            .add(Restrictions.eq("idRevisionPair.id", symbol.getId()))
+                                            .add(Restrictions.eq("idRevisionPair.revision", symbol.getRevision()))
                                             .list();
 
         assertNotNull(symbolsInDB);

@@ -63,7 +63,7 @@ public class LearnerTestHelper {
     public Alphabet createTestAlphabet(Symbol... symbols) {
         Alphabet sigma = new SimpleAlphabet<>();
         for (Symbol symbol : symbols) {
-            sigma.add(symbol.getAbbreviation());
+            sigma.add(symbol.getAbbreviation() + " " + symbol.getIdRevisionPair());
         }
         return sigma;
     }
@@ -82,19 +82,24 @@ public class LearnerTestHelper {
         } while (responseAsJSON.startsWith("{\"active\":true"));
     }
 
+    @Deprecated
     public boolean hypothesisIsEqualToTheExpectedOne(CompactMealyMachineProxy hypothesis,
                                                      Alphabet<String> testAlphabet, String type) {
-        MealyMachine expectedMealy = getExpectedHypothesis(type).createMealyMachine(testAlphabet);
-        MealyMachine actualMealy = hypothesis.createMealyMachine(testAlphabet);
-
-        Word<String> separatingWord = DeterministicEquivalenceTest.findSeparatingWord(expectedMealy,
-                                                                                      actualMealy,
-                                                                                      testAlphabet);
+        Word<String> separatingWord = getSeparatingWord(hypothesis, testAlphabet, type);
 
         System.out.println("separatingWord: " + separatingWord);
 
         return separatingWord == null;
     }
+
+    public Word<String> getSeparatingWord(CompactMealyMachineProxy hypothesis, Alphabet<String> testAlphabet,
+                                          String type) {
+        MealyMachine expectedMealy = getExpectedHypothesis(type).createMealyMachine(testAlphabet);
+        MealyMachine actualMealy = hypothesis.createMealyMachine(testAlphabet);
+
+        return DeterministicEquivalenceTest.findSeparatingWord(expectedMealy, actualMealy, testAlphabet);
+    }
+
 
     private CompactMealyMachineProxy getExpectedHypothesis(String type) {
         CompactMealyMachineProxy mealy = null;

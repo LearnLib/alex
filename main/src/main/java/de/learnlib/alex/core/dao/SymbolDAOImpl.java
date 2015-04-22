@@ -136,10 +136,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         // prepare the subquerys for the id/ revision pairs
         Disjunction symbolIdRestrictions = Restrictions.disjunction();
         for (IdRevisionPair pair : idRevPairs) {
-            symbolIdRestrictions.add(Restrictions.and(
-                    Restrictions.eq("id", pair.getId()),
-                    Restrictions.eq("revision", pair.getRevision())
-            ));
+            symbolIdRestrictions.add(Restrictions.eq("idRevisionPair", pair));
         }
         DetachedCriteria symbolIds = DetachedCriteria.forClass(Symbol.class)
                                                         .add(Restrictions.eq("project.id", projectId))
@@ -150,7 +147,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         @SuppressWarnings("unchecked") // should return a list of Symbols
         List<Symbol> result = session.createCriteria(Symbol.class)
                                         .add(Subqueries.propertyIn("symbolId", symbolIds))
-                                        .addOrder(Order.asc("id"))
+                                        .addOrder(Order.asc("idRevisionPair.id"))
                                         .list();
 
         // load the lazy relations
@@ -194,8 +191,8 @@ public class SymbolDAOImpl implements SymbolDAO {
                                             .add(Restrictions.eq("group", group))
                                             .add(visibilityLevel.getCriterion())
                                             .setProjection(Projections.projectionList()
-                                                                   .add(Projections.groupProperty("id"))
-                                                                   .add(Projections.max("revision")))
+                                                               .add(Projections.groupProperty("idRevisionPair.id"))
+                                                               .add(Projections.max("idRevisionPair.revision")))
                                             .list();
         return createIdRevisionPairList(idRevList);
     }
@@ -226,11 +223,11 @@ public class SymbolDAOImpl implements SymbolDAO {
         @SuppressWarnings("unchecked") // should return a list of objects arrays which contain 2 Long values.
         List<Object[]> idRevList = session.createCriteria(Symbol.class)
                                             .add(Restrictions.eq("project.id", projectId))
-                                            .add(Restrictions.in("id", ids))
+                                            .add(Restrictions.in("idRevisionPair.id", ids))
                                             .add(visibilityLevel.getCriterion())
                                             .setProjection(Projections.projectionList()
-                                                                       .add(Projections.groupProperty("id"))
-                                                                       .add(Projections.max("revision"))
+                                                                   .add(Projections.groupProperty("idRevisionPair.id"))
+                                                                   .add(Projections.max("idRevisionPair.revision"))
                                             ).list();
 
 
@@ -251,7 +248,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         @SuppressWarnings("unchecked") // should return a list of Symbols
         List<Long> ids = session.createCriteria(Symbol.class)
                                     .add(Restrictions.eq("project.id", projectId))
-                                    .setProjection(Projections.property("id"))
+                                    .setProjection(Projections.property("idRevisionPair.id"))
                                     .list();
 
         HibernateUtil.commitTransaction();
@@ -309,9 +306,9 @@ public class SymbolDAOImpl implements SymbolDAO {
         @SuppressWarnings("unchecked") // should return a list of revisions (type: Long)
         List<Long> revisions = session.createCriteria(Symbol.class)
                                         .add(Restrictions.eq("project.id", projectId))
-                                        .add(Restrictions.eq("id", id))
-                                        .setProjection(Projections.property("revision"))
-                                        .addOrder(Order.asc("revision"))
+                                        .add(Restrictions.eq("idRevisionPair.id", id))
+                                        .setProjection(Projections.property("idRevisionPair.revision"))
+                                        .addOrder(Order.asc("idRevisionPair.revision"))
                                         .list();
 
         HibernateUtil.commitTransaction();
@@ -429,7 +426,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         if (!newGroup.equals(oldGroup)) {
             List<Symbol> symbols = session.createCriteria(Symbol.class)
                                             .add(Restrictions.eq("project", symbol.getProject()))
-                                            .add(Restrictions.eq("id", symbol.getId()))
+                                            .add(Restrictions.eq("idRevisionPair.id", symbol.getId()))
                                             .list();
             symbols.remove(symbol);
 
@@ -483,7 +480,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         if (!newGroup.equals(oldGroup)) {
             List<Symbol> symbols = session.createCriteria(Symbol.class)
                                             .add(Restrictions.eq("project", symbol.getProject()))
-                                            .add(Restrictions.eq("id", symbol.getId()))
+                                            .add(Restrictions.eq("idRevisionPair.id", symbol.getId()))
                                             .list();
             symbols.forEach(newGroup::addSymbol);
         }
@@ -566,7 +563,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         @SuppressWarnings("should return a list of Symbols")
         List<Symbol> symbols = session.createCriteria(Symbol.class)
                                         .add(Restrictions.eq("project.id", projectId))
-                                        .add(Restrictions.eq("id", symbolId))
+                                        .add(Restrictions.eq("idRevisionPair.id", symbolId))
                                         .list();
 
         if (symbols.size() == 0) {
@@ -595,7 +592,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                  .add(Restrictions.eq("name", symbol.getName()))
                                                  .add(Restrictions.eq("abbreviation", symbol.getAbbreviation())));
         if (symbol.getId() != null) {
-            restrictions = restrictions.add(Restrictions.ne("id", symbol.getId()));
+            restrictions = restrictions.add(Restrictions.ne("idRevisionPair.id", symbol.getId()));
         }
 
         @SuppressWarnings("unchecked") // should return list of symbols
@@ -629,11 +626,16 @@ public class SymbolDAOImpl implements SymbolDAO {
                 ExecuteSymbolAction executeSymbolAction = (ExecuteSymbolAction) action;
                 IdRevisionPair idAndRevision = executeSymbolAction.getSymbolToExecuteAsIdRevisionPair();
 
-                Symbol symbolToExecute = (Symbol) session.byNaturalId(Symbol.class)
-                                                            .using("project", action.getProject())
-                                                            .using("id", idAndRevision.getId())
-                                                            .using("revision", idAndRevision.getRevision())
-                                                            .load();
+                Symbol symbolToExecute;
+                if (idAndRevision.equals(symbol.getIdRevisionPair())) {
+                    symbolToExecute = symbol;
+                } else {
+                    symbolToExecute = (Symbol) session.createCriteria(Symbol.class)
+                                                        .add(Restrictions.eq("project", action.getProject()))
+                                                        .add(Restrictions.eq("idRevisionPair", idAndRevision))
+                                                        .uniqueResult();
+                }
+
                 if (symbolToExecute == null) {
                     throw new IllegalStateException("Could not find the symbol with the id "
                                                         + idAndRevision.getId() + " and the revision "

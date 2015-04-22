@@ -83,8 +83,7 @@ public class WebSymbolTest {
 
         Symbol symbolFromMapper = mapper.readValue(json, Symbol.class);
         assertEquals(symbol.getProject(), symbolFromMapper.getProject());
-        assertEquals(symbol.getId(), symbolFromMapper.getId());
-        assertEquals(symbol.getRevision(), symbolFromMapper.getRevision());
+        assertEquals(symbol.getIdRevisionPair(), symbolFromMapper.getIdRevisionPair());
         assertEquals(symbol.getAbbreviation(), symbolFromMapper.getAbbreviation());
         assertEquals(symbol.getName(), symbolFromMapper.getName());
         assertEquals(symbol.getGroup(), symbolFromMapper.getGroup());

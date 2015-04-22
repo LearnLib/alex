@@ -10,10 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -49,9 +48,9 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
     private Long symbolId;
 
     /** The Project the Symbol belongs to. */
-    @NaturalId
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
+
     @JsonIgnore
     private Project project;
 
@@ -61,15 +60,10 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
     @JsonIgnore
     private SymbolGroup group;
 
-    /** The ID of the symbol, unique per project. */
-    @NaturalId
-    @Column(nullable = false)
-    private Long id;
-
-    /** The current revision of the symbol. */
-    @NaturalId
-    @Column(nullable = false)
-    private Long revision;
+    @Embedded
+    //@Column(nullable = false)
+    @JsonIgnore
+    private IdRevisionPair idRevisionPair;
 
     /**
      * The name of the symbol.
@@ -101,6 +95,7 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
      * Default constructor.
      */
     public Symbol() {
+        this.idRevisionPair = new IdRevisionPair();
         this.actions = new LinkedList<>();
     }
 
@@ -192,14 +187,23 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
         this.group.setId(groupId);
     }
 
+    public IdRevisionPair getIdRevisionPair() {
+        return idRevisionPair;
+    }
+
+    public void setIdRevisionPair(IdRevisionPair idRevisionPair) {
+        this.idRevisionPair = idRevisionPair;
+    }
+
     /**
      * Get the ID of the symbol.
      *
      * @return The ID.
      * @requiredField
      */
+    @JsonProperty("id")
     public Long getId() {
-        return this.id;
+        return this.idRevisionPair.getId();
     }
 
     /**
@@ -208,8 +212,9 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
      * @param id
      *            The new ID.
      */
+    @JsonProperty("id")
     public void setId(Long id) {
-        this.id = id;
+        this.idRevisionPair.setId(id);
     }
 
     /**
@@ -218,8 +223,9 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
      * @return The revision.
      * @requiredField
      */
+    @JsonProperty("revision")
     public Long getRevision() {
-        return this.revision;
+        return this.idRevisionPair.getRevision();
     }
 
     /**
@@ -228,8 +234,9 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
      * @param revision
      *            The new revision.
      */
+    @JsonProperty("revision")
     public void setRevision(Long revision) {
-        this.revision = revision;
+        this.idRevisionPair.setRevision(revision);
     }
 
     /**
@@ -352,18 +359,14 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
 
         Symbol symbol = (Symbol) o;
 
-        if (id != null ? !id.equals(symbol.id) : symbol.id != null) return false;
         if (project != null ? !project.equals(symbol.project) : symbol.project != null) return false;
-        if (revision != null ? !revision.equals(symbol.revision) : symbol.revision != null) return false;
-
-        return true;
+        return !(idRevisionPair != null ? !idRevisionPair.equals(symbol.idRevisionPair) : symbol.idRevisionPair != null);
     }
 
     @Override
     public int hashCode() {
         int result = project != null ? project.hashCode() : 0;
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (revision != null ? revision.hashCode() : 0);
+        result = 31 * result + (idRevisionPair != null ? idRevisionPair.hashCode() : 0);
         return result;
     }
     // CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber|NeedBraces
@@ -375,8 +378,8 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
      */
     @Override
     public String toString() {
-        return "Symbol[" + symbolId + "] " + this.project + "/" + this.id + "/" + this.revision + ": " + name + "("
-                + abbreviation + ")";
+        return "Symbol[" + symbolId + "] " + this.project + "/" + this.getId() + "/" + this.getRevision() + ": "
+                + name + "(" + abbreviation + ")";
     }
 
 }
