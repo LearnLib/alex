@@ -81,7 +81,8 @@
         // the directive
         return {
             scope: {
-                counterexamples: '='
+                counterexamples: '=',
+                learnResult: '='
             },
             templateUrl: paths.views.DIRECTIVES + '/counterexamples-widget.html',
             link: link
@@ -175,9 +176,30 @@
              * Tests if the entered counterexample really is one by sending it to the server for testing purposes.
              */
             scope.testCounterExample = function () {
-                Learner.isCounterexample(scope.counterExample)
-                    .then(function (isCounterexample) {
-                        if (isCounterexample) {
+                var resetSymbol = scope.learnResult.configuration.resetSymbol;
+                var symbols = [];
+
+                // find id/revision pairs of symbols from abbreviation in learnResult
+                // works under the premise that sigma[i] corresponds to symbols[i] in learn result
+                // can't this be done nicer??
+                for (var i = 0; i < scope.counterExample.length; i++) {
+                    for (var j = 0; j < scope.learnResult.sigma.length; j++) {
+                        if (scope.counterExample[i].input === scope.learnResult.sigma[j]) {
+                            symbols.push(scope.learnResult.configuration.symbols[j]);
+                        }
+                    }
+                }
+
+                Learner.isCounterexample(scope.learnResult.project, resetSymbol, symbols)
+                    .then(function (ce) {
+                        var ceFound = false;
+                        for (var i = 0; i < ce.length; i++) {
+                            if (ce[i] !== scope.counterExample[i].output) {
+                                ceFound = true;
+                                break;
+                            }
+                        }
+                        if (ceFound) {
                             Toast.success('The selected word is a counterexample');
                         } else {
                             Toast.danger('The selected word is not a counterexample');

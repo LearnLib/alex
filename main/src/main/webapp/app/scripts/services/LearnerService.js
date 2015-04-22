@@ -85,18 +85,20 @@
         }
 
         /**
-         * Checks if the selected path is a counterexample.
-         * TODO: implement as soon as the api has an interface for that
+         * Verifies a possible counterexample
          *
          * @param {number} projectId
-         * @param {{input: string, output: string}[]} counterexample
+         * @param {{id: number, revision: number}} resetSymbol - The id/revision pair of the reset symbol
+         * @param {{id: number, revision: number}[]} symbols - The list of id/revision pairs of symbols
          * @returns {*}
          */
-        function isCounterexample(projectId, counterexample) {
-            return $http.post(paths.api.URL + '/learner/active', {})
-                .then(function () {
-                    return true;
-                })
+        function isCounterexample(projectId, resetSymbol, symbols) {
+            return $http.post(paths.api.URL + '/learner/outputs/' + projectId, {
+                resetSymbol: resetSymbol,
+                symbols: symbols
+            }).then(function (response) {
+                return response.data;
+            })
         }
     }
 }());

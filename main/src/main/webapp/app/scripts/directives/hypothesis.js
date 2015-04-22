@@ -248,8 +248,10 @@
                 if (angular.isDefined(scope.isSelectable)) {
                     _svg.selectAll('.edgeLabel tspan').on('click', function () {
                         var label = this.innerHTML.split('/');
+                        var input = label[0] + label[1];
+                        var output = label[2];
                         scope.$apply(function () {
-                            CounterExampleService.addIOPairToCurrentCounterexample(label[0], label[1]);
+                            CounterExampleService.addIOPairToCurrentCounterexample(input, output);
                         });
                     });
                 }
