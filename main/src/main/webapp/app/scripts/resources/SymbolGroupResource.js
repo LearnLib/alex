@@ -4,7 +4,7 @@
         .module('ALEX.resources')
         .factory('SymbolGroupResource', Resource);
 
-    Resource.$inject = ['$http', 'paths'];
+    Resource.$inject = ['$http', 'paths', '_'];
 
     /**
      * The resource that handles http requests to the API to do CRUD operations on symbol groups
@@ -14,7 +14,7 @@
      * @returns {SymbolGroupResource}
      * @constructor
      */
-    function Resource($http, paths) {
+    function Resource($http, paths, _) {
 
         /**
          * The recourse object for a symbol group
@@ -67,6 +67,11 @@
 
             return $http.get(paths.api.URL + '/projects/' + projectId + '/groups' + query)
                 .then(function (response) {
+
+                    _.forEach(response.data, function(group){
+                        group.symbols = _.filter(group.symbols, {'hidden': false})
+                    });
+
                     return _this.buildSome(response.data);
                 })
         };

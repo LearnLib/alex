@@ -55,51 +55,28 @@
 </div>
 
 <div class="view-body">
-    <div class="container symbol-group-list">
+    <div class="container">
 
-        <div ng-repeat="group in groups track by $index" class="symbol-group"
-             ng-class="group._collapsed ? 'collapsed' :''">
+        <symbol-group-list>
+            <symbol-group-list-item ng-repeat="group in groups track by $index | orderBy:'-name':true"
+                                    group="group">
 
-            <div class="selectable-list symbol-group-header">
-                <div class="selectable-list-heading">
-                    <div class="selectable-list-control">
-                        <input type="checkbox" selection-checkbox-all items="group.symbols">
-                    </div>
-                    <div class="selectable-list-content">
+                <symbol-group-list-item-header>
+                    <a href symbol-group-edit-modal-handle
+                       group="group" on-updated="updateGroup" on-deleted="deleteGroup">
+                        <i class="fa fa-fw fa-gear"></i>
+                    </a>
+                </symbol-group-list-item-header>
 
-                        <span class="pull-right" ng-click="group._collapsed = !group._collapsed">
-                            <i class="fa fa-fw"
-                               ng-class="group._collapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
-                        </span>
+                <symbol-group-list-item-content>
 
-                        <a href class="pull-right" style="margin-right: 15px" symbol-group-edit-modal-handle
-                           group="group" on-updated="updateGroup" on-deleted="deleteGroup">
-                            <i class="fa fa-fw fa-gear"></i>
-                        </a>
+                    <symbol-list>
+                        <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true"
+                                          selection-model
+                                          selection-model-selected-items="selectedSymbols"
+                                          show-actions-link
+                                          symbol="symbol">
 
-                        <h3 class="symbol-group-title" ng-bind="group.name"
-                            ng-click="group._collapsed = !group._collapsed"></h3>
-
-                        <p class="text-muted">
-                            <span ng-bind="group.symbols.length"></span> Symbols
-                        </p>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="symbol-group-body" collapse="group._collapsed">
-                <div class="selectable-list">
-                    <div ng-repeat="symbol in group.symbols | orderBy:'-name':true"
-                         selection-model
-                         selection-model-type="checkbox"
-                         selection-model-selected-attribute="_selected"
-                         selection-model-mode="multiple"
-                         selection-model-selected-items="selectedSymbols"
-                         selection-model-cleanup-strategy="deselect"
-                         ng-if="!symbol.hidden">
-
-                        <div selectable-list-item>
                             <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
                                 <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
                                     <i class="fa fa-bars"></i>
@@ -136,28 +113,13 @@
                                 </ul>
                             </div>
 
-                            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
+                        </symbol-list-item>
+                    </symbol-list>
 
-                            <a ui-sref="symbols.actions({symbolId:symbol.id})">
-                                <span ng-bind="symbol.actions.length"></span> Actions &nbsp;<i class="fa fa-edit"></i>
-                            </a>
+                </symbol-group-list-item-content>
 
-                            <a href ng-click="symbol._collapsed = !symbol._collapsed" selection-model-ignore>
-                                <i class="fa fa-fw"
-                                   ng-class="symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
-                            </a>
+            </symbol-group-list-item>
+        </symbol-group-list>
 
-                            <ol collapse="!symbol._collapsed">
-                                <li ng-repeat="action in symbol.actions">
-                                    {{action.toString()}}
-                                </li>
-                            </ol>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
     </div>
 </div>

@@ -47,46 +47,48 @@
         </div>
 
         <div ng-if="symbol.actions" as-sortable ng-model="symbol.actions">
-            <div class="selectable-list">
+            <div class="action-list">
                 <div ng-repeat="action in symbol.actions"
                      selection-model
-                     selection-model-type="checkbox"
-                     selection-model-selected-attribute="_selected"
-                     selection-model-mode="multiple"
                      selection-model-selected-items="selectedActions"
-                     selection-model-cleanup-strategy="deselect"
                      as-sortable-item>
 
-                    <div selectable-list-item>
+                    <div class="action-list-item">
 
-                        <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
-                            <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
-                                <i class="fa fa-bars"></i>
-                            </button>
-                            <ul class="dropdown-menu pull-left" role="menu">
-                                <li>
-                                    <a href action-edit-modal-handle action="action" on-updated="updateAction">
-                                        <i class="fa fa-edit fa-fw"></i> Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href ng-click="deleteAction(action)">
-                                        <i class="fa fa-trash fa-fw"></i> Delete
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                        <input type="checkbox" class="pull-left">
 
-                        <span class="text-muted pull-right" as-sortable-item-handle
-                              style="margin-right: 15px; padding: 2px;">
-                            <i class="fa fa-sort fa-fw"></i>
-                        </span>
+                        <div class="action-list-item-content">
 
-                        <span ng-bind="action.toString()"></span>
+                            <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+                                <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                                    <i class="fa fa-bars"></i>
+                                </button>
+                                <ul class="dropdown-menu pull-left" role="menu">
+                                    <li>
+                                        <a href action-edit-modal-handle action="action" on-updated="updateAction">
+                                            <i class="fa fa-edit fa-fw"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href ng-click="deleteAction(action)">
+                                            <i class="fa fa-trash fa-fw"></i> Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
 
-                        <div>
-                            <label class="label label-info" ng-show="action.negated">Negate</label>
-                            <label class="label label-danger" ng-show="action.ignoreFailure">Ignore Failure</label>
+                            <span class="text-muted pull-right" as-sortable-item-handle
+                                  style="margin-right: 15px; padding: 2px;">
+                                <i class="fa fa-sort fa-fw"></i>
+                            </span>
+
+                            <span ng-bind="action.toString()"></span>
+
+                            <div>
+                                <label class="label label-info" ng-show="action.negated">Negate</label>
+                                <label class="label label-danger" ng-show="action.ignoreFailure">Ignore Failure</label>
+                            </div>
+
                         </div>
 
                     </div>

@@ -73,6 +73,7 @@
                         })
                     })
                     .catch(function (response) {
+                        console.log(response)
                         Toast.danger('<p><strong>Deleting counters failed</strong></p>' + response.data.message);
                     })
             }

@@ -24,7 +24,7 @@
 </div>
 
 <div class="view-body">
-    <div class="container symbol-group-list">
+    <div class="container">
 
         <div class="alert alert-info alert-condensed clearfix">
             <button class="btn btn-xs btn-info pull-right" learn-setup-settings-modal-handle
@@ -59,70 +59,31 @@
         </div>
         <hr>
 
-        <div ng-repeat="group in groups" class="symbol-group"
-             ng-class="group._isCollapsed ? 'collapsed' :''">
+        <symbol-group-list>
+            <symbol-group-list-item ng-repeat="group in groups track by $index | orderBy:'-name':true"
+                                    group="group">
 
-            <div class="selectable-list symbol-group-header">
-                <div class="selectable-list-heading">
-                    <div class="selectable-list-control">
-                        <input type="checkbox" selection-checkbox-all items="group.symbols">
-                    </div>
-                    <div class="selectable-list-content">
+                <symbol-group-list-item-header></symbol-group-list-item-header>
 
-                        <span class="pull-right" ng-click="group._isCollapsed = !group._isCollapsed">
-                        <i class="fa fa-fw"
-                           ng-class="group._isCollapsed ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
-                        </span>
+                <symbol-group-list-item-content>
 
-                        <h3 class="symbol-group-title" ng-bind="group.name"
-                            ng-click="group._isCollapsed = !group._isCollapsed"></h3>
+                    <symbol-list>
+                        <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true"
+                                          selection-model
+                                          selection-model-selected-items="selectedSymbols"
+                                          symbol="symbol">
 
-                        <p class="text-muted">
-                            <span ng-bind="group.symbols.length"></span> Symbols
-                        </p>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="symbol-group-body" collapse="group._isCollapsed">
-                <div class="selectable-list">
-                    <div ng-repeat="symbol in group.symbols | orderBy:'-name':true"
-                         selection-model
-                         selection-model-type="checkbox"
-                         selection-model-selected-attribute="_selected"
-                         selection-model-mode="multiple"
-                         selection-model-selected-items="selectedSymbols"
-                         selection-model-cleanup-strategy="deselect"
-                         ng-if="!symbol.hidden">
-
-                        <div selectable-list-item>
-                            <a class="pull-right" ng-click="setResetSymbol(symbol)" selection-model-ignore>
+                            <a class="pull-right cursor-pointer" ng-click="setResetSymbol(symbol)" selection-model-ignore>
                                 <i class="fa" ng-class="resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'"></i>
                             </a>
 
-                            <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]<br>
+                        </symbol-list-item>
+                    </symbol-list>
 
-                            <p class="text-muted">
-                                <a href ng-click="symbol._collapsed = !symbol._collapsed" selection-model-ignore>
-                                    <span ng-bind="symbol.actions.length"></span>
-                                    Actions
-                                    <i class="fa fa-fw"
-                                       ng-class="symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
-                                </a>
+                </symbol-group-list-item-content>
 
-                            <ol collapse="!symbol._collapsed">
-                                <li ng-repeat="action in symbol.actions">
-                                    {{action.toString()}}
-                                </li>
-                            </ol>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+            </symbol-group-list-item>
+        </symbol-group-list>
 
     </div>
 </div>

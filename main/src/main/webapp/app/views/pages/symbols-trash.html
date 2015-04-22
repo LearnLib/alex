@@ -10,7 +10,7 @@
             <input type="checkbox" selection-checkbox-all items="symbols">
         </div>
 
-        <div class="pull-right">
+        <div class="pull-left">
             <button class="btn btn-xs btn-primary" ng-click="recoverSelectedSymbols()">
                 <i class="fa fa-rotate-left fa-fw"></i> Recover
             </button>
@@ -26,29 +26,18 @@
             There aren't any deleted symbols.
         </div>
 
-        <div class="selectable-list" ng-if="symbols.length > 0">
-            <div ng-repeat="symbol in symbols | orderBy:'-name':true"
-                 selection-model
-                 selection-model-type="checkbox"
-                 selection-model-selected-attribute="_selected"
-                 selection-model-mode="multiple"
-                 selection-model-selected-items="selectedSymbols"
-                 selection-model-cleanup-strategy="deselect">
+        <symbol-list>
+            <symbol-list-item ng-repeat="symbol in symbols | orderBy:'-name':true"
+                              selection-model
+                              selection-model-selected-items="selectedSymbols"
+                              symbol="symbol">
 
-                <div selectable-list-item>
-                    <a class="btn btn-default btn-icon pull-right" ng-click="recoverSymbol(symbol)">
-                        <i class="fa fa-rotate-left fa-fw"></i>
-                    </a>
+                <a class="btn btn-default btn-icon" ng-click="recoverSymbol(symbol)">
+                    <i class="fa fa-rotate-left fa-fw"></i>
+                </a>
 
-                    <strong ng-bind="symbol.name"></strong> [<span ng-bind="symbol.abbreviation"></span>]
-
-                    <div class="text-muted">
-                        <span ng-bind="symbol.actions.length"></span> Actions
-                    </div>
-                </div>
-
-            </div>
-        </div>
+            </symbol-list-item>
+        </symbol-list>
 
     </div>
 </div>

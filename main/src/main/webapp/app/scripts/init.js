@@ -38,26 +38,37 @@
     angular.module('ALEX.models', []);
 
     angular.module('ALEX')
+        .config(['ngToastProvider', 'selectionModelOptionsProvider',
+            function (ngToastProvider, selectionModelOptionsProvider) {
 
-        // configure toast position
-        .config(['ngToastProvider', function (ngToastProvider) {
-            ngToastProvider.configure({
-                verticalPosition: 'top',
-                horizontalPosition: 'center',
-                maxNumber: 1
-            });
-        }])
+                // configure toast position
+                ngToastProvider.configure({
+                    verticalPosition: 'top',
+                    horizontalPosition: 'center',
+                    maxNumber: 1
+                });
 
-        .run(['$rootScope', '$state', '_', 'paths', function ($rootScope, $state, _, paths) {
+                // default options for selection model
+                selectionModelOptionsProvider.set({
+                    selectedAttribute: '_selected',
+                    selectedClass: 'selected',
+                    type: 'checkbox',
+                    mode: 'multiple',
+                    cleanupStrategy: 'deselect'
+                });
+            }])
 
-            // make some stuff available for use in templates
-            $rootScope._ = _;
-            $rootScope.paths = paths;
+        .run(['$rootScope', '$state', '_', 'paths',
+            function ($rootScope, $state, _, paths) {
 
-            // workaround for go back in history button since ui.router does not support it
-            // save previous state in ui.router $state service
-            $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
-                $state.previous = fromState;
-            });
-        }])
+                // make some stuff available for use in templates
+                $rootScope._ = _;
+                $rootScope.paths = paths;
+
+                // workaround for go back in history button since ui.router does not support it
+                // save previous state in ui.router $state service
+                $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
+                    $state.previous = fromState;
+                });
+            }])
 }());

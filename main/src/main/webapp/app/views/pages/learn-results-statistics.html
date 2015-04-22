@@ -76,27 +76,15 @@
     <div class="container" ng-style="fullWidth ? {'width':'100%'} : {}">
 
         <div class="selectable-list" ng-show="selectedChartMode === null">
-            <div ng-repeat="result in results"
-                 selection-model
-                 selection-model-type="checkbox"
-                 selection-model-selected-attribute="_selected"
-                 selection-model-mode="multiple"
-                 selection-model-selected-items="selectedResults"
-                 selection-model-cleanup-strategy="deselect">
 
-                <div selectable-list-item>
+            <learn-result-list>
+                <learn-result-list-item ng-repeat="result in results"
+                                        result="result"
+                                        selection-model
+                                        selection-model-selected-items="selectedResults">
 
-                    <strong>Test No
-                        <span ng-bind="result.testNo"></span>
-                    </strong>,
-                    [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
-
-                    <div class="text-muted">
-                        Started: <span ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
-                    </div>
-
-                </div>
-            </div>
+                </learn-result-list-item>
+            </learn-result-list>
         </div>
 
         <div ng-if="selectedChartMode !== null && chartData.data !== null && chartData.options !== null"

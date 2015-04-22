@@ -1,0 +1,17 @@
+<div class="learn-result-list-item">
+
+    <input type="checkbox" class="pull-left">
+
+    <div class="learn-result-list-item-content">
+        <div class="pull-right" ng-transclude></div>
+
+        <strong>Test No
+            <span ng-bind="result.testNo"></span>
+        </strong>,
+        [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
+
+        <div class="text-muted">
+            Started: <span ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+        </div>
+    </div>
+</div>

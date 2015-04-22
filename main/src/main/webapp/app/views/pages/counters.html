@@ -20,28 +20,27 @@
 </div>
 
 <div class="view-body">
-    <div class="container" selectable items="results">
+    <div class="container">
 
         <div class="alert alert-info alert-condensed" ng-show="counters.length > 0">
             <i class="fa fa-info fa-fw"></i>
             Deleted counters will be created as soon as they are used in a learning process, starting with value 0.
         </div>
 
-        <div class="selectable-list"
+        <div class="counter-list"
              ng-if="counters.length > 0">
 
-            <div ng-repeat="counter in counters"
+            <div class="counter-list-item"
+                 ng-repeat="counter in counters"
                  selection-model
-                 selection-model-type="checkbox"
-                 selection-model-selected-attribute="_selected"
-                 selection-model-mode="multiple"
-                 selection-model-selected-items="selectedCounters"
-                 selection-model-cleanup-strategy="deselect">
+                 selection-model-selected-items="selectedCounters">
 
-                <div selectable-list-item>
+                <input type="checkbox" class="pull-left">
+
+                <div class="counter-list-item-content">
                     <button class="btn btn-xs btn-default btn-icon pull-right"
                             ng-click="deleteCounter(counter)">
-                        <i class="fa fa-trash fa-fw"></i>
+                        <i class="fa fa-trash fa-fw"></i> Delete
                     </button>
 
                     <strong ng-bind="counter.name"></strong><br>

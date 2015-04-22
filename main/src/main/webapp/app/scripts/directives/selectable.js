@@ -3,8 +3,7 @@
 
     angular
         .module('ALEX.directives')
-        .directive('selectionCheckboxAll', selectionCheckboxAll)
-        .directive('selectableListItem', selectableListItem);
+        .directive('selectionCheckboxAll', selectionCheckboxAll);
 
     /**
      * Directive to select multiple items at once. Can only be used as an attribute to a input[type=checkbox] element.
@@ -42,25 +41,5 @@
                 });
             })
         }
-    }
-
-    /**
-     * The directive serves only as a template to reduce HTML code. Use it to display a selectable item and fill it with
-     * stuff you want.
-     *
-     * Use: '<div selectable-list-item> ... </div>';
-     *
-     * @returns {{transclude: boolean, template: string}}
-     */
-    function selectableListItem() {
-        return {
-            transclude: true,
-            template: ' <div class="selectable-list-item">' +
-            '               <div class="selectable-list-control">' +
-            '                   <input type="checkbox">' +
-            '               </div>' +
-            '               <div class="selectable-list-content" ng-transclude></div>' +
-            '           </div>'
-        };
     }
 }());

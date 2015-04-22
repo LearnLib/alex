@@ -1,0 +1,39 @@
+<div class="symbol-list-item"
+     ng-class="isSelectable ? 'selectable' : ''">
+
+    <input type="checkbox"
+           class="pull-left"
+           ng-show="isSelectable">
+
+    <div class="symbol-list-item-content">
+        <div class="pull-right"
+             ng-transclude></div>
+
+        <h4 class="symbol-title"
+            ng-bind="symbol.name"></h4>
+
+        [<span ng-bind="symbol.abbreviation"></span>]<br>
+
+        <a ui-sref="symbols.actions({symbolId:symbol.id})"
+           ng-show="showActionsLink">
+            <span ng-bind="symbol.actions.length"></span> Actions &nbsp;<i class="fa fa-edit"></i>
+        </a>
+
+        <span class="text-muted"
+              ng-show="!showActionsLink">
+            <span ng-bind="symbol.actions.length"></span> Actions
+        </span>
+
+        <a class="cursor-pointer"
+           ng-click="symbol._collapsed = !symbol._collapsed"
+           selection-model-ignore>
+            <i class="fa fa-fw"
+               ng-class="symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
+        </a>
+
+        <ol collapse="!symbol._collapsed">
+            <li ng-repeat="action in symbol.actions"
+                ng-bind="action.toString()"></li>
+        </ol>
+    </div>
+</div>
