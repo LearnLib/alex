@@ -14,22 +14,25 @@
     <artifactId>standalone</artifactId>
 
     <name>ALEX - Standalone</name>
+    <description>
+        A standalone Jetty to run ALEX.
+    </description>
 
     <dependencies>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.2.10.v20150310</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-            <version>9.2.10.v20150310</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
-            <version>9.2.10.v20150310</version>
+            <version>${jetty.version}</version>
         </dependency>
     </dependencies>
 

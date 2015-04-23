@@ -14,6 +14,9 @@
     <artifactId>api</artifactId>
 
     <name>ALEX - Annotations</name>
+    <description>
+        Collection of Interfaces, Annotations, ... for ALEX.
+    </description>
 
     <dependencies>
         <dependency>

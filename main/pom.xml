@@ -16,7 +16,7 @@
 
     <name>ALEX - Main</name>
     <description>
-        A RESTful application with a fancy web frontend to configure and run automata learning algorithms on websites and webservices.
+        The actual ALEX.
     </description>
 
     <!--===== dependencies ======-->
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.3.8.Final</version>
+            <version>4.3.9.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -85,7 +85,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.8.1</version>
+            <version>1.8.2</version>
         </dependency>
 
         <!-- LearnLib -->
@@ -188,53 +188,37 @@
             </resource>
         </resources>
 
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${compiler-plugin.version}</version>
-                    <configuration>
-                        <compilerArguments>
-                            <XprintProcessorInfo />
-                            <XprintRounds />
-                        </compilerArguments>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>${dependency-plugin.version}</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${surefire-plugin.version}</version>
-                </plugin>
-                
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>${war-plugin.version}</version>
-                    <configuration>
-                        <warSourceExcludes>
-                            **/node_modules/**,
-                            **/testsite/**
-                        </warSourceExcludes>
-                        <packagingIncludes>
-                            app/**,
-                            index.html,
-                            restdocs/**,
-                            WEB-INF/**,
-                        </packagingIncludes>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+                <configuration>
+                    <compilerArguments>
+                        <XprintProcessorInfo />
+                        <XprintRounds />
+                    </compilerArguments>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${war-plugin.version}</version>
+                <configuration>
+                    <warSourceExcludes>
+                        **/node_modules/**,
+                        **/testsite/**
+                    </warSourceExcludes>
+                    <packagingIncludes>
+                        app/**,
+                        index.html,
+                        restdocs/**,
+                        WEB-INF/**,
+                    </packagingIncludes>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -284,12 +268,12 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.2.10.v20150310</version>
+                <version>${jetty.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-servlets</artifactId>
-                        <version>9.2.10.v20150310</version>
+                        <version>${jetty.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
