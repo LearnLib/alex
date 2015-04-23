@@ -1,2 +1,10 @@
-How to use ALEX
+Usage of ALEX
 ===============
+
+
+Frontend
+--------
+
+Try the REST API
+----------------
+

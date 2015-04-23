@@ -114,14 +114,14 @@
             <item name="Home" href="index.html" />
         </breadcrumbs>
 
-        <menu name="Overview">
-            <item name="Introduction" href="index.html" />
-            <item name="Project Structure" href="project-structure.html" />
-        </menu>
-
         <menu name="Usage">
             <item name="Usage" href="usage.html" />
             <item name="Automata Learning" href="automate-learning.html" />
+        </menu>
+
+        <menu name="Developer resources">
+            <item name="Build ALEX" href="build.html" />
+            <item name="Modules" href="modules.html" />
         </menu>
 
         <menu ref="parent" inherit="top" />

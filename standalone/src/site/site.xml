@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${project.name}">
+<body>
+
+    <menu name="Usage">
+        <item name="Usage" href="usage.html" />
+    </menu>
+
+</body>
+</project>
