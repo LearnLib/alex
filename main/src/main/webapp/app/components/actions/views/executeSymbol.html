@@ -1,0 +1,25 @@
+<h4><strong>Execute Symbol</strong></h4>
+
+<p class="text-muted">
+    Execute the actions of another symbol
+</p>
+<hr>
+<div class="row">
+    <div class="col-xs-8">
+        <label>Symbol</label>
+
+        <div class="form-group">
+            <input class="form-control" list="symbols" type="text"
+                   ng-model="action.getSymbol().name" placeholder="The name of the symbol"
+                   ng-change="action.setSymbol(_.find(symbols, {name: action.getSymbol().name}))">
+            <datalist id="symbols">
+                <option ng-repeat="symbol in symbols" value="{{symbol.name}}"></option>
+            </datalist>
+        </div>
+    </div>
+    <div class="col-xs-4" ng-show="action.getSymbol().revision">
+        <label>Revision</label>
+        <input class="form-control" list="revisions" type="number" min="1"
+               max="{{action.getSymbol().revision}}" ng-model="action.symbolToExecute.revision">
+    </div>
+</div>

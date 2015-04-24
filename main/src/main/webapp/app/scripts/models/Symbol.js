@@ -5,7 +5,7 @@
         .module('ALEX.models')
         .factory('Symbol', SymbolModel);
 
-    SymbolModel.$inject = ['SymbolResource', 'Action'];
+    SymbolModel.$inject = ['SymbolResource', 'ActionBuilder'];
 
     /**
      * The factory for the symbol model.
@@ -14,7 +14,7 @@
      * @returns {Symbol} - The symbol model
      * @constructor
      */
-    function SymbolModel(SymbolResource, Action) {
+    function SymbolModel(SymbolResource, ActionBuilder) {
 
         /**
          * The symbol model.
@@ -51,7 +51,7 @@
          */
         Symbol.build = function (data) {
             var symbol = new Symbol(data.name, data.abbreviation);
-            symbol.actions = data.actions ? Action.buildSome(data.actions) : [];
+            symbol.actions = data.actions ? ActionBuilder.createFromObjects(data.actions) : [];
             symbol.id = data.id;
             symbol.revision = data.revision;
             symbol.project = data.project;

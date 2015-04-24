@@ -11,9 +11,7 @@
 <form ng-submit="updateAction()" id="action-create-form">
 
     <div class="modal-body">
-
-        <ng-include src="paths.views.INCLUDES + '/action-forms.html'"></ng-include>
-
+        <action-form-fields action="action" ng-if="action !== null"></action-form-fields>
     </div>
 
     <div class="modal-footer">

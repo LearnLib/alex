@@ -1,0 +1,21 @@
+<h4><strong>Call Url</strong></h4>
+
+<p class="text-muted">Make a HTTP request to an URL (relative to your projects base url)</p>
+<hr>
+
+<div class="form-group">
+    <input class="form-control" type="text" placeholder="url" ng-model="action.url">
+</div>
+<div class="form-group">
+    <select class="form-control" ng-options="m for m in ['DELETE', 'GET', 'POST', 'PUT']"
+            ng-model="action.method">
+        <option value="" disabled>Select a Method</option>
+    </select>
+</div>
+<div class="form-group">
+    <label>Data</label>
+
+    <div ng-model="action.data"
+         style="border-radius: 4px; width: 100%; height: 150px; border: 1px solid #ccc"
+         ui-ace="{useWrapMode : true, showGutter: true, theme:'eclipse', mode: 'json'}"></div>
+</div>

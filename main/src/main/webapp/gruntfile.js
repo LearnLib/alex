@@ -5,7 +5,8 @@ module.exports = function (grunt) {
         'app/scripts/directives/*.js',
         'app/scripts/models/*.js',
         'app/scripts/resources/*.js',
-        'app/scripts/services/*.js', 'app/scripts/filters/*.js'];
+        'app/scripts/services/*.js', 'app/scripts/filters/*.js',
+        'app/components/actions/init.js', 'app/components/actions/constants.js', 'app/components/actions/directives/**/*.js', 'app/components/actions/services/**/*.js'];
 
     grunt
         .initConfig({
@@ -59,14 +60,14 @@ module.exports = function (grunt) {
                     base: '../webapp'
                 },
                 all: {
-                    src: ['app/views/**/*.html'],
+                    src: ['app/views/**/*.html', 'app/components/actions/views/**/*.html'],
                     dest: 'app/templates.js'
                 }
             },
 
             watch: {
                 scripts: {
-                    files: ['app/scripts/**/*.js'],
+                    files: ['app/scripts/**/*.js', 'app/components/**/*.js'],
                     tasks: ['build-js'],
                     options: {
                         spawn: false
@@ -80,7 +81,7 @@ module.exports = function (grunt) {
                     }
                 },
                 html: {
-                    files: ['app/views/**/*.html'],
+                    files: ['app/views/**/*.html', 'app/components/**/*.html'],
                     tasks: ['build-js'],
                     options: {
                         spawn: false

@@ -5,7 +5,7 @@
         .module('ALEX.controller')
         .controller('ActionEditModalController', ActionEditModalController);
 
-    ActionEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action', 'Symbol', 'SessionService'];
+    ActionEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'ActionBuilder', 'Symbol', 'SessionService'];
 
     /**
      * The controller for the modal dialog that handles the editing of an action.
@@ -16,12 +16,12 @@
      * @param $modalInstance - The model instance
      * @param modalData - The data that is passed to this controller
      * @param actionTypes - The constant for action type names
-     * @param Action - The Action model
+     * @param ActionBuilder - The Service for creating actions
      * @param Symbol - The factory for symbols
      * @param Session - The SessionService
      * @constructor
      */
-    function ActionEditModalController($scope, $modalInstance, modalData, actionTypes, Action, Symbol, Session) {
+    function ActionEditModalController($scope, $modalInstance, modalData, actionTypes, ActionBuilder, Symbol, Session) {
 
         // the project in the session
         var project = Session.project.get();
@@ -59,7 +59,7 @@
             // because actions are identified by temporary id
             // a new action has to be build and given the old id manually
             var id = $scope.action._id;
-            $scope.action = Action.build($scope.action);
+            $scope.action = ActionBuilder.createFromObject($scope.action);
             $scope.action._id = id;
             $modalInstance.close($scope.action);
         };

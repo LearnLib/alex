@@ -25,7 +25,8 @@
             'ALEX.filters',
             'ALEX.routes',
             'ALEX.constants',
-            'ALEX.models'
+            'ALEX.models',
+            'ALEX.actions'
         ]);
 
     angular.module('ALEX.controller', []);

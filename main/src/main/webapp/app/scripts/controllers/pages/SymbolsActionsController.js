@@ -136,11 +136,6 @@
             var copy = $scope.symbol.copy();
             SelectionService.removeSelection(copy.actions);
 
-            // remove the temporarily create unique id attribute
-            _.forEach(copy.actions, function (action) {
-                delete action._id;
-            });
-
             // update the symbol
             Symbol.Resource.update($scope.project.id, copy)
                 .then(function (updatedSymbol) {
@@ -149,7 +144,7 @@
                     $scope.hasUnsavedChanges = false;
                 })
                 .catch(function (response) {
-                    Toast.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
+                    Toast.danger('<p><strong>Error updating symbol</strong></p>' + response.data);
                 })
         };
 

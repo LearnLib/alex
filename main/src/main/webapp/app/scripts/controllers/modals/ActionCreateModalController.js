@@ -6,7 +6,7 @@
         .controller('ActionCreateModalController', ActionCreateModalController);
 
     ActionCreateModalController.$inject = [
-        '$scope', '$modalInstance', 'modalData', 'actionTypes', 'Action', 'Symbol', 'SessionService'
+        '$scope', '$modalInstance', 'modalData', 'actionTypes', 'actionGroupTypes', 'ActionBuilder', 'Symbol', 'SessionService'
     ];
 
     /**
@@ -18,14 +18,21 @@
      * @param $modalInstance
      * @param modalData
      * @param actionTypes
-     * @param Action
+     * @param actionGroupTypes
+     * @param ActionBuilder
      * @param Symbol
      * @param Session
      * @constructor
      */
-    function ActionCreateModalController($scope, $modalInstance, modalData, actionTypes, Action, Symbol, Session) {
+    function ActionCreateModalController($scope, $modalInstance, modalData, actionTypes, actionGroupTypes, ActionBuilder, Symbol, Session) {
 
         var project = Session.project.get();
+
+        /**
+         * The constant for action group types
+         * @type {Object}
+         */
+        $scope.actionGroupTypes = actionGroupTypes;
 
         /**
          * The constant for action type names
@@ -58,7 +65,7 @@
          * @param {string} type - The type of the action that should be created
          */
         $scope.selectNewActionType = function (type) {
-            $scope.action = Action.createByType(type);
+            $scope.action = ActionBuilder.createFromType(type);
         };
 
         /**

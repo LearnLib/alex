@@ -15,26 +15,14 @@
             <div class="col-xs-5">
 
                 <accordion close-others="true" class="action-types-accordion">
-                    <accordion-group is-open="true">
+                    <accordion-group ng-repeat="(k1,v1) in actionGroupTypes">
                         <accordion-heading>
-                            <div><strong>Web</strong></div>
+                            <div><strong ng-bind="::(k1|formatEnumKey)"></strong></div>
                         </accordion-heading>
-                        <a href ng-repeat="(k,v) in actionTypes.web" ng-click="selectNewActionType(v)"
-                           ng-bind="::(k|formatEnumKey)"></a>
-                    </accordion-group>
-                    <accordion-group>
-                        <accordion-heading>
-                            <div><strong>Rest</strong></div>
-                        </accordion-heading>
-                        <a href ng-repeat="(k,v) in actionTypes.rest" ng-click="selectNewActionType(v)"
-                           ng-bind="::(k|formatEnumKey)"></a>
-                    </accordion-group>
-                    <accordion-group>
-                        <accordion-heading>
-                            <div><strong>Other</strong></div>
-                        </accordion-heading>
-                        <a href ng-repeat="(k,v) in actionTypes.other" ng-click="selectNewActionType(v)"
-                           ng-bind="::(k|formatEnumKey)"></a>
+
+                        <a href ng-repeat="(k2,v2) in actionTypes[actionGroupTypes[k1]]" ng-click="selectNewActionType(v2)"
+                           ng-bind="::(k2|formatEnumKey)"></a>
+
                     </accordion-group>
                 </accordion>
 
@@ -45,7 +33,7 @@
                     Please select an action type
                 </div>
 
-                <ng-include src="paths.views.INCLUDES + '/action-forms.html'"></ng-include>
+                <action-form-fields action="action" ng-if="action !== null"></action-form-fields>
 
             </div>
         </div>
