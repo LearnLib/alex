@@ -1,0 +1,5 @@
+/* A bit of workaround for links being not clickable due to :before element in headings */
+.project-alex-parent.page-index h2[id]:before {
+  height: 30px;
+  margin-top: -30px;
+}

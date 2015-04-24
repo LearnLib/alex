@@ -7,25 +7,45 @@
         <version>1.1.1</version>
     </skin>
 
+    <bannerLeft>
+        <name><![CDATA[
+            <span style="color: #09d;">A</span>utomata <span style="color: #09d;">L</span>earning <span style="color: #09d;">EX</span>perience
+        ]]></name>
+        <href>index.html</href>
+    </bannerLeft>
+
+    <version position="bottom" />
+    <publishDate format="dd. MMM yyyy" position="bottom" />
+
+    <poweredBy>
+        <logo name="TU Dortmund - Fakultät für Informatik" href="http://www.cs.tu-dortmund.de/"
+              img="http://www.cs.tu-dortmund.de/nps/Medienpool/Bereichsbilder/tu_fk04.png" />
+        <logo
+                name="TU Dortmund - Fakultät für Informatik - Lehrstuhl 5 für Programmiersysteme"
+                href="http://ls5-www.cs.tu-dortmund.de/"
+                img="http://ls5-www.cs.tu-dortmund.de/cms/Medienpool/Bereichsbilder/tu_ls_5_PS.png" />
+    </poweredBy>
+
     <custom>
         <reflowSkin>
             <theme>bootswatch-spacelab</theme>
             <highlightJs>true</highlightJs>
             <highlightJsTheme>github</highlightJsTheme>
             <brand>
-                <name>${project.name}</name>
+                <name>ALEX</name>
                 <href>index.html</href>
             </brand>
+            <slogan>Experience Active Automata Learning in a new way.</slogan>
+
             <toc>sidebar</toc>
             <breadcrumbs>true</breadcrumbs>
-            <topNav>Overview|Usage|Developer resources|modules|reports</topNav>
+            <topNav>Usage|Developer resources|reports</topNav>
             <bottomNav>
-                <column>Overview|parent|modules</column>
+                <column>Main|parent|modules</column>
                 <column>Usage|Developer resources</column>
                 <column>reports</column>
             </bottomNav>
-            <bottomDescription quote="false">
-            <![CDATA[
+            <bottomDescription quote="false"><![CDATA[
                 <ul class="nav nav-list">
                     <li class="nav-header">
                         Powered by:
@@ -56,67 +76,68 @@
                         </a>
                     </li>
                 </ul>
-            ]]>
-            </bottomDescription>
+            ]]></bottomDescription>
+
             <pages>
                 <index project="alex-parent">
                     <breadcrumbs>false</breadcrumbs>
                     <toc>false</toc>
+                    <markPageHeader>false</markPageHeader>
                     <sections>
                         <carousel />
                         <body />
+                        <columns>2</columns>
                     </sections>
                 </index>
+
                 <dependency-updates-report>
                     <toc>false</toc>
                 </dependency-updates-report>
+
                 <plugin-updates-report>
                     <toc>false</toc>
                 </plugin-updates-report>
+
                 <property-updates-report>
                     <toc>false</toc>
                 </property-updates-report>
+
                 <checkstyle>
                     <toc>false</toc>
                 </checkstyle>
+
                 <cpd>
                     <toc>false</toc>
                 </cpd>
+
                 <pmd>
                     <toc>false</toc>
                 </pmd>
+
                 <findbugs>
                     <toc>false</toc>
                 </findbugs>
+
                 <surefire-report>
                     <toc>false</toc>
                 </surefire-report>
-
             </pages>
         </reflowSkin>
     </custom>
 
-    <version position="right" />
-    <publishDate format="dd. MMM yyyy" position="right" />
-
-    <poweredBy>
-        <logo name="TU Dortmund - Fakultät für Informatik" href="http://www.cs.tu-dortmund.de/"
-              img="http://www.cs.tu-dortmund.de/nps/Medienpool/Bereichsbilder/tu_fk04.png" />
-        <logo
-                name="TU Dortmund - Fakultät für Informatik - Lehrstuhl 5 für Programmiersysteme"
-                href="http://ls5-www.cs.tu-dortmund.de/"
-                img="http://ls5-www.cs.tu-dortmund.de/cms/Medienpool/Bereichsbilder/tu_ls_5_PS.png" />
-    </poweredBy>
-
     <body>
-
         <breadcrumbs>
-            <item name="Home" href="index.html" />
+            <item name="Home" href="./index.html" />
         </breadcrumbs>
 
+        <menu name="Main" inherit="top">
+            <item name="Home" href="./index.html" />
+        </menu>
+
         <menu name="Usage">
+            <item name="Features" href="features.html" />
             <item name="Usage" href="usage.html" />
-            <item name="Automata Learning" href="automate-learning.html" />
+            <item name="Automata Learning" href="automata-learning.html" />
         </menu>
 
         <menu name="Developer resources">
@@ -127,7 +148,6 @@
         <menu ref="parent" inherit="top" />
         <menu ref="modules" inherit="top" />
 
-        <menu ref="reports" inherit="bottom" />
-
+        <menu name="Maven documentation" ref="reports" inherit="bottom" />
     </body>
 </project>

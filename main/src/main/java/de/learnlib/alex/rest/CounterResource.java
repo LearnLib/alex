@@ -15,6 +15,8 @@ import java.util.List;
 
 /**
  * Resource to read and delete Counters.
+ * @resourcePath counters
+ * @resourceDescription Operations around counters
  */
 @Path("/projects/{project_id}/counters")
 public class CounterResource {
@@ -29,6 +31,8 @@ public class CounterResource {
      * @param projectId
      *         The Project ID.
      * @return A List of the counters within the project.
+     * @responseType java.util.List<de.learnlib.alex.core.entities.Counter>
+     * @successResponse 200 OK
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -45,6 +49,7 @@ public class CounterResource {
      * @param name
      *         The name of the counter to remove.
      * @return Nothing if everything went OK.
+     * @successResponse 204 OK & no content
      */
     @DELETE
     @Path("/{counter_name}")
