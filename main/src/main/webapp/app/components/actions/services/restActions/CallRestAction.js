@@ -3,22 +3,48 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CallRestAction', ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes',
-            function (ActionService, AbstractAction, actionGroupTypes, actionTypes) {
+        .factory('CallRestAction', CallRestActionFactory);
 
-                function CallRestAction(method, url, data) {
-                    AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CALL_URL);
-                    this.method = method || null;
-                    this.url = url || null;
-                    this.data = data || null;
-                }
+    CallRestActionFactory.$inject = ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes'];
 
-                CallRestAction.prototype.toString = function () {
-                    return 'Make a "' + this.method + '" request to "' + this.url + '"';
-                };
+    /**
+     * The factory for CallRestAction
+     *
+     * @param ActionService
+     * @param AbstractAction
+     * @param actionGroupTypes
+     * @param actionTypes
+     * @returns {CallRestAction}
+     * @constructor
+     */
+    function CallRestActionFactory(ActionService, AbstractAction, actionGroupTypes, actionTypes) {
 
-                ActionService.register(actionGroupTypes.REST, actionTypes[actionGroupTypes.REST].CALL_URL, CallRestAction);
+        /**
+         * Makes an HTTP request
+         *
+         * @param {string} method - The HTTP method in {GET,POST,PUT,DELETE}
+         * @param {string} url - The URL the request is send to
+         * @param {string} data - The body data for POST and PUT requests
+         * @constructor
+         */
+        function CallRestAction(method, url, data) {
+            AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CALL_URL);
+            this.method = method || null;
+            this.url = url || null;
+            this.data = data || null;
+        }
 
-                return CallRestAction;
-            }])
+        CallRestAction.prototype = Object.create(AbstractAction.prototype);
+
+        /**
+         * @returns {string}
+         */
+        CallRestAction.prototype.toString = function () {
+            return 'Make a "' + this.method + '" request to "' + this.url + '"';
+        };
+
+        ActionService.register(actionGroupTypes.REST, actionTypes[actionGroupTypes.REST].CALL_URL, CallRestAction);
+
+        return CallRestAction;
+    }
 }());

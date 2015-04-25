@@ -3,22 +3,52 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CheckHeaderFieldRestAction', ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes',
-            function (ActionService, AbstractAction, actionGroupTypes, actionTypes) {
+        .factory('CheckHeaderFieldRestAction', CheckHeaderFieldRestActionFactory);
 
-                function CheckHeaderFieldRestAction(key, value, isRegexp) {
-                    AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CHECK_HEADER_FIELD);
-                    this.key = key || null;
-                    this.value = value || null;
-                    this.regexp = isRegexp || false;
-                }
+    CheckHeaderFieldRestActionFactory.$inject = ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes'];
 
-                CheckHeaderFieldRestAction.prototype.toString = function () {
-                    return 'Check HTTP response header field "' + this.key + '" to be' + (this.regexp ? ' like ' : ' ') + '"' + this.value + '"';
-                };
+    /**
+     * The factory for CheckHeaderFieldRestAction
+     *
+     * @param ActionService
+     * @param AbstractAction
+     * @param actionGroupTypes
+     * @param actionTypes
+     * @returns {CheckHeaderFieldRestAction}
+     * @constructor
+     */
+    function CheckHeaderFieldRestActionFactory(ActionService, AbstractAction, actionGroupTypes, actionTypes) {
 
-                ActionService.register(actionGroupTypes.REST, actionTypes[actionGroupTypes.REST].CHECK_HEADER_FIELD, CheckHeaderFieldRestAction);
+        /**
+         * Checks a value in the header fields of an HTTP response
+         *
+         * @param {string} key - The key of the header field
+         * @param {string} value - The expected value of the header field
+         * @param {boolean} isRegexp - Whether the value is interpreted as regular epxression
+         * @constructor
+         */
+        function CheckHeaderFieldRestAction(key, value, isRegexp) {
+            AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CHECK_HEADER_FIELD);
+            this.key = key || null;
+            this.value = value || null;
+            this.regexp = isRegexp || false;
+        }
 
-                return CheckHeaderFieldRestAction;
-            }])
+        CheckHeaderFieldRestAction.prototype = Object.create(AbstractAction.prototype);
+
+        /**
+         * @returns {string}
+         */
+        CheckHeaderFieldRestAction.prototype.toString = function () {
+            return 'Check HTTP response header field "' + this.key + '" to be' + (this.regexp ? ' like ' : ' ') + '"' + this.value + '"';
+        };
+
+        ActionService.register(
+            actionGroupTypes.REST,
+            actionTypes[actionGroupTypes.REST].CHECK_HEADER_FIELD,
+            CheckHeaderFieldRestAction
+        );
+
+        return CheckHeaderFieldRestAction;
+    }
 }());

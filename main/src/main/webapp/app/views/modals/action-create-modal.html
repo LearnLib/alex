@@ -33,7 +33,10 @@
                     Please select an action type
                 </div>
 
-                <action-form-fields action="action" ng-if="action !== null"></action-form-fields>
+                <action-form-fields action="action"
+                                    symbols="symbols"
+                                    ng-if="action !== null">
+                </action-form-fields>
 
             </div>
         </div>

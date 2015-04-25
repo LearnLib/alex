@@ -3,21 +3,50 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CheckAttributeTypeRestAction', ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes',
-            function (ActionService, AbstractAction, actionGroupTypes, actionTypes) {
+        .factory('CheckAttributeTypeRestAction', CheckAttributeTypeRestActionFactory);
 
-                function CheckAttributeTypeRestAction(attribute, jsonType) {
-                    AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CHECK_ATTRIBUTE_TYPE);
-                    this.attribute = attribute || null;
-                    this.jsonType = jsonType || null;
-                }
+    CheckAttributeTypeRestActionFactory.$inject = ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes'];
 
-                CheckAttributeTypeRestAction.prototype.toString = function () {
-                    return 'Check the JSON of a HTTP response to have attribute "' + this.attribute + '" to be' + (this.regexp ? ' like ' : ' ') + '"' + this.value + '"';
-                };
+    /**
+     * The factory for CheckAttributeTypeRestAction
+     *
+     * @param ActionService
+     * @param AbstractAction
+     * @param actionGroupTypes
+     * @param actionTypes
+     * @returns {CheckAttributeTypeRestAction}
+     * @constructor
+     */
+    function CheckAttributeTypeRestActionFactory(ActionService, AbstractAction, actionGroupTypes, actionTypes) {
 
-                ActionService.register(actionGroupTypes.REST, actionTypes[actionGroupTypes.REST].CHECK_ATTRIBUTE_TYPE, CheckAttributeTypeRestAction);
+        /**
+         * Checks if a property of the JSON of a HTTP response has a specific type
+         *
+         * @param {string} attribute - The JSON property
+         * @param {string} jsonType - The Type in {INTEGER,STRING,BOOLEAN,OBJECT}
+         * @constructor
+         */
+        function CheckAttributeTypeRestAction(attribute, jsonType) {
+            AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CHECK_ATTRIBUTE_TYPE);
+            this.attribute = attribute || null;
+            this.jsonType = jsonType || null;
+        }
 
-                return CheckAttributeTypeRestAction;
-            }])
+        CheckAttributeTypeRestAction.prototype = Object.create(AbstractAction.prototype);
+
+        /**
+         * @returns {string}
+         */
+        CheckAttributeTypeRestAction.prototype.toString = function () {
+            return 'Check the JSON of a HTTP response to have attribute "' + this.attribute + '" to be' + (this.regexp ? ' like ' : ' ') + '"' + this.value + '"';
+        };
+
+        ActionService.register(
+            actionGroupTypes.REST,
+            actionTypes[actionGroupTypes.REST].CHECK_ATTRIBUTE_TYPE,
+            CheckAttributeTypeRestAction
+        );
+
+        return CheckAttributeTypeRestAction;
+    }
 }());

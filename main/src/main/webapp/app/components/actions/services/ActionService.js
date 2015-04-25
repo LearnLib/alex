@@ -3,24 +3,48 @@
 
     angular
         .module('ALEX.actions')
-        .factory('ActionService', function () {
-            var Action = {};
+        .factory('ActionService', ActionService);
 
-            return {
-                register: register,
-                get: get
-            };
+    /**
+     * Contains functions to instantiate new actions according to their group and action type
+     *
+     * @returns {{register: register, get: get}}
+     * @constructor
+     */
+    function ActionService() {
 
-            function register(actionGroupType, actionType, action) {
-                if (Action[actionGroupType] === undefined) {
-                    Action[actionGroupType] = function () {
-                    };
-                }
-                Action[actionGroupType][actionType] = action;
+        // = [actionGroupType][actionType]
+        var map = {};
+
+        return {
+            register: register,
+            get: get
+        };
+
+        /**
+         * Registers a new action so that it is available for others
+         *
+         * @param {number} actionGroupType
+         * @param {string} actionType
+         * @param {function} action
+         */
+        function register(actionGroupType, actionType, action) {
+            if (map[actionGroupType] === undefined) {
+                map[actionGroupType] = function () {
+                };
             }
+            map[actionGroupType][actionType] = action;
+        }
 
-            function get(actionGroupType, actionType) {
-                return Action[actionGroupType][actionType];
-            }
-        })
+        /**
+         * Gets the function to instantiate a specific action
+         *
+         * @param {number} actionGroupType
+         * @param {string} actionType
+         * @returns {function}
+         */
+        function get(actionGroupType, actionType) {
+            return map[actionGroupType][actionType];
+        }
+    }
 }());

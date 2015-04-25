@@ -136,6 +136,12 @@
             var copy = $scope.symbol.copy();
             SelectionService.removeSelection(copy.actions);
 
+            for (var i = 0; i < copy.actions.length; i++) {
+                delete copy.actions[i]._id;
+            }
+
+            console.log(copy.actions)
+
             // update the symbol
             Symbol.Resource.update($scope.project.id, copy)
                 .then(function (updatedSymbol) {
@@ -144,7 +150,7 @@
                     $scope.hasUnsavedChanges = false;
                 })
                 .catch(function (response) {
-                    Toast.danger('<p><strong>Error updating symbol</strong></p>' + response.data);
+                    Toast.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
                 })
         };
 

@@ -3,21 +3,46 @@
 
     angular
         .module('ALEX.actions')
-        .factory('SelectWebAction', ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes',
-            function (ActionService, AbstractAction, actionGroupTypes, actionTypes) {
+        .factory('SelectWebAction', SelectWebActionFactory);
 
-                function SelectWebAction(node, value) {
-                    AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].SELECT);
-                    this.node = node || null;
-                    this.value = value || null;
-                }
+    SelectWebActionFactory.$inject = ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes'];
 
-                SelectWebAction.prototype.toString = function () {
-                    return 'Select value "' + this.value + '" from select input "' + this.node + '"';
-                };
+    /**
+     * The factory for SelectWebAction
+     *
+     * @param ActionService
+     * @param AbstractAction
+     * @param actionGroupTypes
+     * @param actionTypes
+     * @returns {SelectWebAction}
+     * @constructor
+     */
+    function SelectWebActionFactory(ActionService, AbstractAction, actionGroupTypes, actionTypes) {
 
-                ActionService.register(actionGroupTypes.WEB, actionTypes[actionGroupTypes.WEB].SELECT, SelectWebAction);
+        /**
+         * Selects an entry from a select box
+         *
+         * @param {string} node - The CSS selector of an select element
+         * @param {string} value - The value of the select input that should be selected
+         * @constructor
+         */
+        function SelectWebAction(node, value) {
+            AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].SELECT);
+            this.node = node || null;
+            this.value = value || null;
+        }
 
-                return SelectWebAction;
-            }])
+        SelectWebAction.prototype = Object.create(AbstractAction.prototype);
+
+        /**
+         * @returns {string}
+         */
+        SelectWebAction.prototype.toString = function () {
+            return 'Select value "' + this.value + '" from select input "' + this.node + '"';
+        };
+
+        ActionService.register(actionGroupTypes.WEB, actionTypes[actionGroupTypes.WEB].SELECT, SelectWebAction);
+
+        return SelectWebAction;
+    }
 }());

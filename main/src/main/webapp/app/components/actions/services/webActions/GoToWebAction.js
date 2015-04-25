@@ -3,20 +3,44 @@
 
     angular
         .module('ALEX.actions')
-        .factory('GoToWebAction', ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes',
-            function (ActionService, AbstractAction, actionGroupTypes, actionTypes) {
+        .factory('GoToWebAction', GoToWebActionFactory);
 
-                function GoToWebAction(url) {
-                    AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].GO_TO);
-                    this.url = url || null;
-                }
+    GoToWebActionFactory.$inject = ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes'];
 
-                GoToWebAction.prototype.toString = function () {
-                    return 'Go to URL "' + this.url + '"';
-                };
+    /**
+     * The factory for GoToWebAction
+     *
+     * @param ActionService
+     * @param AbstractAction
+     * @param actionGroupTypes
+     * @param actionTypes
+     * @returns {GoToWebAction}
+     * @constructor
+     */
+    function GoToWebActionFactory(ActionService, AbstractAction, actionGroupTypes, actionTypes) {
 
-                ActionService.register(actionGroupTypes.WEB, actionTypes[actionGroupTypes.WEB].GO_TO, GoToWebAction);
+        /**
+         * Goes to a URL
+         *
+         * @param {string} url - The url that is called
+         * @constructor
+         */
+        function GoToWebAction(url) {
+            AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].GO_TO);
+            this.url = url || null;
+        }
 
-                return GoToWebAction;
-            }])
+        GoToWebAction.prototype = Object.create(AbstractAction.prototype);
+
+        /**
+         * @returns {string}
+         */
+        GoToWebAction.prototype.toString = function () {
+            return 'Go to URL "' + this.url + '"';
+        };
+
+        ActionService.register(actionGroupTypes.WEB, actionTypes[actionGroupTypes.WEB].GO_TO, GoToWebAction);
+
+        return GoToWebAction;
+    }
 }());

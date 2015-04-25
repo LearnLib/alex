@@ -11,7 +11,7 @@
         <div class="form-group">
             <input class="form-control" list="symbols" type="text"
                    ng-model="action.getSymbol().name" placeholder="The name of the symbol"
-                   ng-change="action.setSymbol(_.find(symbols, {name: action.getSymbol().name}))">
+                   ng-change="action.setSymbol(symbols)">
             <datalist id="symbols">
                 <option ng-repeat="symbol in symbols" value="{{symbol.name}}"></option>
             </datalist>
@@ -19,7 +19,7 @@
     </div>
     <div class="col-xs-4" ng-show="action.getSymbol().revision">
         <label>Revision</label>
-        <input class="form-control" list="revisions" type="number" min="1"
+        <input class="form-control" type="number" min="1"
                max="{{action.getSymbol().revision}}" ng-model="action.symbolToExecute.revision">
     </div>
 </div>

@@ -3,20 +3,48 @@
 
     angular
         .module('ALEX.actions')
-        .factory('WaitGeneralAction', ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes',
-            function (ActionService, AbstractAction, actionGroupTypes, actionTypes) {
+        .factory('WaitGeneralAction', WaitGeneralActionFactory);
 
-                function WaitGeneralAction(duration) {
-                    AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].WAIT);
-                    this.duration = duration || 0;
-                }
+    WaitGeneralActionFactory.$inject = ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes'];
 
-                WaitGeneralAction.prototype.toString = function () {
-                    return 'Wait for ' + this.duration + 'ms'
-                };
+    /**
+     * The factory for WaitGeneralAction
+     *
+     * @param ActionService
+     * @param AbstractAction
+     * @param actionGroupTypes
+     * @param actionTypes
+     * @returns {WaitGeneralAction}
+     * @constructor
+     */
+    function WaitGeneralActionFactory(ActionService, AbstractAction, actionGroupTypes, actionTypes) {
 
-                ActionService.register(actionGroupTypes.GENERAL, actionTypes[actionGroupTypes.GENERAL].WAIT, WaitGeneralAction);
+        /**
+         * Wait for a certain amount of time before executing the next action+
+         *
+         * @param {number} duration - The time to wait in milliseconds
+         * @constructor
+         */
+        function WaitGeneralAction(duration) {
+            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].WAIT);
+            this.duration = duration || 0;
+        }
 
-                return WaitGeneralAction;
-            }])
+        WaitGeneralAction.prototype = Object.create(AbstractAction.prototype);
+
+        /**
+         * @returns {string}
+         */
+        WaitGeneralAction.prototype.toString = function () {
+            return 'Wait for ' + this.duration + 'ms'
+        };
+
+        ActionService.register(
+            actionGroupTypes.GENERAL,
+            actionTypes[actionGroupTypes.GENERAL].WAIT,
+            WaitGeneralAction
+        );
+
+        return WaitGeneralAction;
+    }
 }());

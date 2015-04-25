@@ -3,41 +3,87 @@
 
     angular
         .module('ALEX.actions')
-        .factory('ExecuteSymbolGeneralAction', ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes',
-            function (ActionService, AbstractAction, actionGroupTypes, actionTypes) {
+        .factory('ExecuteSymbolGeneralAction', ExecuteSymbolGeneralActionFactory);
 
-                function ExecuteSymbolGeneralAction(symbolName, idRevisionPair) {
-                    AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL);
+    ExecuteSymbolGeneralActionFactory.$inject = ['ActionService', 'AbstractAction', 'actionGroupTypes', 'actionTypes'];
 
-                    var _symbol = {
-                        name: symbolName || null,
-                        revision: null
-                    };
+    /**
+     * The factory for ExecuteSymbolGeneralAction
+     *
+     * @param ActionService
+     * @param AbstractAction
+     * @param actionGroupTypes
+     * @param actionTypes
+     * @returns {ExecuteSymbolGeneralAction}
+     * @constructor
+     */
+    function ExecuteSymbolGeneralActionFactory(ActionService, AbstractAction, actionGroupTypes, actionTypes) {
 
-                    this.symbolToExecute = idRevisionPair || {id: null, revision: null};
+        /**
+         * Executes another symbol before continuing with other actions
+         *
+         * @param {string} symbolName - The name of the symbol
+         * @param {{id:number,revision:number}} idRevisionPair - The id/revision pair
+         * @constructor
+         */
+        function ExecuteSymbolGeneralAction(symbolName, idRevisionPair) {
+            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL);
 
-                    this.setSymbol = function (symbol) {
-                        if (angular.isDefined(symbol)) {
-                            this.symbolToExecute = {
-                                id: symbol.id,
-                                revision: symbol.revision
-                            };
-                            _symbol.name = symbol.name;
-                            _symbol.revision = symbol.revision;
-                        }
-                    };
+            var _symbol = {
+                name: symbolName || null,
+                revision: null
+            };
 
-                    this.getSymbol = function () {
-                        return _symbol;
+            this.symbolToExecute = idRevisionPair || {id: null, revision: null};
+
+            // some magic that works
+            this.setSymbol = function (symbols) {
+                var symbol;
+
+                for (var i = 0; i < symbols.length; i++) {
+                    if (symbols[i].name === _symbol.name) {
+                        symbol = symbols[i];
                     }
                 }
 
-                ExecuteSymbolGeneralAction.prototype.toString = function () {
-                    return 'Execute symbol "' + this.getSymbol().name + '", rev. ' + this.symbolToExecute.revision;
-                };
+                if (angular.isDefined(symbol)) {
+                    this.symbolToExecute = {
+                        id: symbol.id,
+                        revision: symbol.revision
+                    };
+                    _symbol.name = symbol.name;
+                    _symbol.revision = symbol.revision;
+                }
+            };
 
-                ActionService.register(actionGroupTypes.GENERAL, actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL, ExecuteSymbolGeneralAction);
+            this.getSymbol = function () {
+                return _symbol;
+            }
+        }
 
-                return ExecuteSymbolGeneralAction;
-            }])
+        ExecuteSymbolGeneralAction.prototype = Object.create(AbstractAction.prototype);
+
+        /**
+         * @returns {string}
+         */
+        ExecuteSymbolGeneralAction.prototype.toString = function () {
+            return 'Execute symbol "' + this.getSymbol().name + '", rev. ' + this.symbolToExecute.revision;
+        };
+
+        ExecuteSymbolGeneralAction.prototype.set = function (key, value) {
+            if (key === 'symbolToExecuteName') {
+                this.getSymbol().name = value;
+            } else {
+                this[key] = value;
+            }
+        };
+
+        ActionService.register(
+            actionGroupTypes.GENERAL,
+            actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL,
+            ExecuteSymbolGeneralAction
+        );
+
+        return ExecuteSymbolGeneralAction;
+    }
 }());

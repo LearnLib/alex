@@ -11,7 +11,10 @@
 <form ng-submit="updateAction()" id="action-create-form">
 
     <div class="modal-body">
-        <action-form-fields action="action" ng-if="action !== null"></action-form-fields>
+        <action-form-fields action="action"
+                            symbols="symbols"
+                            ng-if="action !== null">
+        </action-form-fields>
     </div>
 
     <div class="modal-footer">

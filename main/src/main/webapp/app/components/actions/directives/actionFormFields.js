@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    angular
+        .module('ALEX.actions')
+        .directive('actionFormFields', actionFormFields);
+
     var template = '    <div ng-include="getActionTemplate()"></div>' +
         '               <div ng-if="action !== null"><hr>' +
         '                   <p>' +
@@ -12,19 +16,29 @@
         '                   </div>' +
         '               </div>';
 
-    angular
-        .module('ALEX.actions')
-        .directive('actionFormFields', function () {
-            return {
-                scope: {
-                    action: '='
-                },
-                template: template,
-                link: function (scope) {
-                    scope.getActionTemplate = function () {
-                        return 'app/components/actions/views/' + scope.action.type + '.html';
-                    }
-                }
+    /**
+     * The directive that loads an action template by its type. E.g. type: 'web_click' -> load 'web_click.html'
+     *
+     * Attribute 'action' should contain the action object
+     * Attribute 'symbols' should contain the list of symbols so that they are available by the action
+     *
+     * Use: <action-form-fields action="..."></action-form-fields>
+     * @returns {{scope: {action: string}, template: string, link: link}}
+     */
+    function actionFormFields() {
+        return {
+            scope: {
+                action: '=',
+                symbols: '='
+            },
+            template: template,
+            link: link
+        };
+
+        function link(scope) {
+            scope.getActionTemplate = function () {
+                return 'app/components/actions/views/' + scope.action.type + '.html';
             }
-        })
+        }
+    }
 }());
