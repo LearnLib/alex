@@ -12,8 +12,10 @@
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-html2js": "^0.3.0",
+    "grunt-protractor-runner": "^2.0.0",
     "grunt-sass": "^0.18.0",
     "grunt-template-jasmine-istanbul": "^0.3.3",
-    "jasmine-core": "^2.2.0"
+    "jasmine-core": "^2.2.0",
+    "protractor": "^2.0.0"
   }
 }

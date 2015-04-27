@@ -11,6 +11,7 @@ module.exports = function (grunt) {
     grunt
         .initConfig({
             pkg: grunt.file.readJSON('bower.json'),
+
             uglify: {
                 options: {
                     banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -21,6 +22,7 @@ module.exports = function (grunt) {
                     }
                 }
             },
+
             concat: {
                 options: {
                     separator: ';'
@@ -132,6 +134,16 @@ module.exports = function (grunt) {
                         ]
                     }
                 }
+            },
+
+            protractor: {
+                options: {
+                    configFile: "tests/e2e/conf.js",
+                    keepAlive: true,
+                    noColor: false,
+                    args: {}
+                },
+                all: {}
             }
         });
 
@@ -142,12 +154,14 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
+    grunt.loadNpmTasks('grunt-protractor-runner');
 
     grunt.registerTask('build-js', ['html2js', 'concat', 'uglify']);
     grunt.registerTask('build-css', ['sass', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-js']);
-    grunt.registerTask('test', ['jasmine']);
+    grunt.registerTask('test-unit', ['jasmine']);
+    grunt.registerTask('test-e2e', ['protractor']);
     grunt.registerTask('minify-css', ['cssmin']);
 
 };
