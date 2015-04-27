@@ -144,6 +144,14 @@ module.exports = function (grunt) {
                     args: {}
                 },
                 all: {}
+            },
+
+            protractor_webdriver: {
+                options: {
+                    command: 'node_modules/protractor/bin/webdriver-manager start',
+                    path: './'
+                },
+                all: {}
             }
         });
 
@@ -155,13 +163,14 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-protractor-runner');
+    grunt.loadNpmTasks('grunt-protractor-webdriver');
 
     grunt.registerTask('build-js', ['html2js', 'concat', 'uglify']);
     grunt.registerTask('build-css', ['sass', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-js']);
     grunt.registerTask('test-unit', ['jasmine']);
-    grunt.registerTask('test-e2e', ['protractor']);
+    grunt.registerTask('test-e2e', ['protractor_webdriver', 'protractor']);
     grunt.registerTask('minify-css', ['cssmin']);
 
 };
