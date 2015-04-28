@@ -7,7 +7,11 @@ To build ALEX [Java][], [Maven][], [Node.JS][nodejs] and the [Grunt CLI][grunt] 
 If all this tools are available, the fastest and easiest way to get started is to run the following commands:
 
 ```bash
-./build.sh --no-tests # must only be done once!
+# the next 2 lines must only be done once!
+chmod +x build.sh
+./build.sh --no-tests
+
+# start the server
 cd main
 mvn jetty:run
 ```
