@@ -3,7 +3,7 @@
 [![Web Picker Example](images/webpicker.jpg)][webpicker]
 
 Define user interaction with your web application in a clean and easy to use editor.
-ALEX offers over 20 different actions to simulate the user interaction.
+ALEX offers over 20 different actions to simulate user interactions.
 
 [webpicker]: features.html#webpicker
 
@@ -12,7 +12,7 @@ ALEX offers over 20 different actions to simulate the user interaction.
 
 [![Hypotheses View](images/models.jpg)][hypotheses]
 
-Take a look at the learned hypothesis of the test run, even side by side for easier comparison.
+Take a look at hypothesis of learning experiments, even side by side for easier comparison.
 Those models can be exported as JSON or vector graphics.
 
 [hypotheses]: usage.html#results
@@ -22,7 +22,7 @@ Those models can be exported as JSON or vector graphics.
 
 [![Statistics View](images/statistics.jpg)][statistics]
 
-Compare the different statistics of differnt learning processes or within on test run.
+Compare the different statistics of different learning processes or within on test run.
 It is also possible to export those statistics for further research.
 
 [statistics]: usage.html#statistics
@@ -76,6 +76,7 @@ Read all about the [building process][build-doc] of ALEX.
 The short version is simple run the command:
 
 ```bash
+chmod +x build.sh
 ./build.sh
 ```
 
