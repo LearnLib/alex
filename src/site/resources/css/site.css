@@ -3,3 +3,9 @@
   height: 30px;
   margin-top: -30px;
 }
+
+/* visually separate sections from other sections and their paragraphs */
+h2, h3, h4, h5, h6 {
+  margin-top: 32px;
+  font-weight: 700
+}
