@@ -19,18 +19,50 @@
 
   .navbar {
     border-radius: 0;
-  }
+    display: flex;
+    flex-flow: row wrap;
 
-  .container-fluid {
-    padding-left: 0;
-    padding-right: 30px;
+    .url-bar, .selection-bar, .button-bar {
+      flex: 1 100%;
+    }
+
+    .url-bar {
+      flex: 0 0 auto;
+      order: 1;
+    }
+    .selection-bar {
+      flex: 1 0 0px;
+      order: 2;
+      padding-right: 15px;
+
+      .btn-group {
+        display: flex;
+        flex-flow: row wrap;
+
+        .selection-bar-toggle-btn {
+          flex: 0 0 auto;
+          order: 1
+        }
+        .selection-bar-selector {
+          flex: 1 0 0px;
+          order: 2;
+          text-align: left;
+        }
+      }
+
+    }
+    .button-bar {
+      flex: 0 0 auto;
+      order: 3;
+      padding-right: 15px
+    }
   }
 
   .iframe-wrapper {
     position: absolute;
     overflow: hidden;
     background: #fff;
-    top: 54px;
+    top: 52px;
     bottom: 0;
     width: 100%;
     iframe {

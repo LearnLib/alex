@@ -149,14 +149,14 @@
             // prevent multiple calls of getCssPath for the same element
             var lastTarget = null;
 
-            // the project that is stored in the session
-            var project = null;
-
             // the url of the proxy
             var proxyUrl = null;
 
-            // flag for selection mode
-            var isSelectable = false;
+            /**
+             * flag for selection mode
+             * @type {boolean}
+             */
+            scope.isSelectable = false;
 
             /**
              * The XPath of the selected element
@@ -175,6 +175,12 @@
              * @type {string}
              */
             scope.url = null;
+
+            /**
+             * The project in the session
+             * @type {null|Project}
+             */
+            scope.project = null;
 
             /**
              * Get the unique CSS XPath from selected Element
@@ -244,9 +250,10 @@
                     e.stopPropagation();
                 }
 
-                lastTarget.style.outline = '0px';
+                if (lastTarget !== null) {
+                    lastTarget.style.outline = '0px';
+                }
                 lastTarget = null;
-                isSelectable = false;
 
                 angular.element(iframe.contents()[0].body).off('mousemove', handleMouseMove);
                 angular.element(iframe.contents()[0].body).off('click', handleClick);
@@ -262,12 +269,13 @@
             function handleKeyUp(e) {
                 if (e.keyCode == 17) { // strg
                     handleClick();
+                    scope.isSelectable = false;
                 }
             }
 
             // load project, create proxy address and load the last url in the iframe
             function init() {
-                project = Session.project.get();
+                scope.project = Session.project.get();
                 proxyUrl = $window.location.origin + paths.api.PROXY_URL;
 
                 scope.url = htmlElementPickerInstance.getUrl();
@@ -278,16 +286,16 @@
              * Loads an entered url into the iframe and handles the click on every a element
              */
             scope.loadUrl = function () {
-                iframe[0].setAttribute('src', proxyUrl + project.baseUrl + '/' + (scope.url === null ? '' : scope.url));
+                iframe[0].setAttribute('src', proxyUrl + scope.project.baseUrl + '/' + (scope.url === null ? '' : scope.url));
                 iframe[0].onload = function () {
                     angular.element(iframe.contents()[0].body.getElementsByTagName('a'))
                         .on('click', function () {
-                            if (!isSelectable) {
+                            if (!scope.isSelectable) {
                                 var _this = this;
                                 if (_this.getAttribute('href') !== '' && _this.getAttribute('href') !== '#') {
                                     scope.$apply(function () {
                                         scope.url = decodeURIComponent(_this.getAttribute('href'))
-                                            .replace(proxyUrl + project.baseUrl + '/', '')
+                                            .replace(proxyUrl + scope.project.baseUrl + '/', '')
                                     })
                                 }
                             }
@@ -299,12 +307,22 @@
             /**
              * Enables the selection mode and therefore adds events to the iframe
              */
-            scope.enableSelection = function () {
-                var iframeBody = angular.element(iframe.contents()[0].body);
-                iframeBody.on('mousemove', handleMouseMove);
-                iframeBody.one('click', handleClick);
-                angular.element(document.body).on('keyup', handleKeyUp);
-                isSelectable = true;
+            scope.toggleSelection = function () {
+                if (!scope.isSelectable) {
+                    var iframeBody = angular.element(iframe.contents()[0].body);
+                    iframeBody.on('mousemove', handleMouseMove);
+                    iframeBody.one('click', function(e){
+                        handleClick(e);
+                        scope.$apply(function(){
+                            scope.isSelectable = false;
+                        });
+                    });
+                    angular.element(document.body).on('keyup', handleKeyUp);
+                } else {
+                    handleClick();
+                    scope.selector = null;
+                }
+                scope.isSelectable = !scope.isSelectable;
             };
 
 

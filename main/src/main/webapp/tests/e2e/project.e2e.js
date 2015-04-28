@@ -40,8 +40,6 @@
             element(by.css('#project-url')).sendKeys('http://localhost:9090');
             element(by.css('#project-edit-form')).submit();
 
-
-
             deleteProject();
         });
 
