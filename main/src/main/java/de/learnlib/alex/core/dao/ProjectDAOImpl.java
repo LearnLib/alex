@@ -43,10 +43,9 @@ public class ProjectDAOImpl implements ProjectDAO {
                 symbol.setId(nextSymbolId);
                 symbol.setRevision(0L);
                 symbol.setProject(project);
-                //todo(alex.s): allow getGroupId to return null.
-//                if (symbol.getGroupId() == null) {
+                if (symbol.getGroup() == null) {
                     symbol.setGroup(defaultGroup);
-//                }
+                }
                 project.setNextSymbolId(nextSymbolId + 1);
             }
 

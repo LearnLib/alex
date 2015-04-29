@@ -5,6 +5,7 @@ import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
+import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
@@ -66,7 +67,7 @@ public class LearnerResourceTest extends JerseyTest {
     public void setUp() throws Exception {
         super.setUp();
         resetSymbol = mock(Symbol.class);
-        given(symbolDAO.get(PROJECT_TEST_ID, RESET_SYMBOL_TEST_ID, 1L)).willReturn(resetSymbol);
+        given(symbolDAO.get(PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L))).willReturn(resetSymbol);
     }
 
     @Test

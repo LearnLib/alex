@@ -100,7 +100,6 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response batchCreateSymbols(@PathParam("project_id") Long projectId, List<Symbol> symbols) {
         try {
-            //TODO (Alex S.): can this loop be moved down to prevent multiple iteration over the symbol list?
             for (Symbol symbol : symbols) {
                 checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
             }

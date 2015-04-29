@@ -234,10 +234,18 @@ public class Project implements Serializable {
 
     /**
      * Set a new default group for the project..
-     * @param defaultGroup The new default group.
+     *
+     * @param defaultGroup
+     *         The new default group.
      */
     public void setDefaultGroup(SymbolGroup defaultGroup) {
-        //todo(alex.s): check if the default group is part of the groups?
+        if (defaultGroup == null) {
+            return;
+        }
+
+        if (groups != null && !groups.contains(defaultGroup)) {
+            groups.add(defaultGroup);
+        }
         this.defaultGroup = defaultGroup;
     }
 
