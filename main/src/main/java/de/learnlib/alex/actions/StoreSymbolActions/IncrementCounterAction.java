@@ -22,10 +22,21 @@ public class IncrementCounterAction extends SymbolAction {
     @NotBlank
     private String name;
 
+    /**
+     * Get the name of the counter.
+     *
+     * @return The counter name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set a new counter by its name.
+     *
+     * @param name
+     *         The new name of the counter to use.
+     */
     public void setName(String name) {
         this.name = name;
     }

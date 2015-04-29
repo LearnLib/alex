@@ -89,6 +89,7 @@ public class Project implements Serializable {
     @JsonIgnore
     private Set<LearnerResult> testResults;
 
+    /** The counters of the project. */
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
     @JsonIgnore
@@ -191,32 +192,71 @@ public class Project implements Serializable {
         this.description = description;
     }
 
+    /**
+     * Get the groups of the project.
+     *
+     * @return The related groups.
+     */
     @JsonIgnore
     public Set<SymbolGroup> getGroups() {
         return groups;
     }
 
+    /**
+     * Set a new set of groups that are used in the project.
+     *
+     * @param groups
+     *         The new set of groups.
+     */
     public void setGroups(Set<SymbolGroup> groups) {
         this.groups = groups;
     }
 
+    /**
+     * Add one groupe to the project.
+     *
+     * @param group
+     *         The group to add.
+     */
     public void addGroup(SymbolGroup group) {
         this.groups.add(group);
         group.setProject(this);
     }
 
+    /**
+     * Get the default group of the project.
+     *
+     * @return The default group.
+     */
     public SymbolGroup getDefaultGroup() {
         return defaultGroup;
     }
 
+    /**
+     * Set a new default group for the project..
+     * @param defaultGroup The new default group.
+     */
     public void setDefaultGroup(SymbolGroup defaultGroup) {
+        //todo(alex.s): check if the default group is part of the groups?
         this.defaultGroup = defaultGroup;
     }
 
+    /**
+     * Get the next ID that a new group in this project should have.
+     * This will not increment the next ID!
+     *
+     * @return The next group ID.
+     */
     public Long getNextGroupId() {
         return nextGroupId;
     }
 
+    /**
+     * Set a new ID that a group in the project should have.
+     *
+     * @param nextGroupId
+     *         The new next group id.
+     */
     public void setNextGroupId(Long nextGroupId) {
         this.nextGroupId = nextGroupId;
     }

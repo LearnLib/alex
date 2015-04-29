@@ -42,24 +42,26 @@ public class Counter implements Serializable {
     @NotNull
     private Integer value;
 
-    public Long getCounterId() {
-        return counterId;
-    }
-
-    public void setCounterId(Long counterId) {
-        this.counterId = counterId;
-    }
-
+    /**
+     * Get the project in which the counter is used in..
+     * @return The related project.
+     */
     public Project getProject() {
         return project;
     }
 
+    /**
+     * Set a new project for the counter.
+     *
+     * @param project
+     *         The new related project.
+     */
     public void setProject(Project project) {
         this.project = project;
     }
 
     /**
-     * Get the {@link Project} the Symbol belongs to.
+     * Get the ID of {@link Project} the Symbol belongs to.
      *
      * @return The parent Project.
      * @requiredField
@@ -74,7 +76,7 @@ public class Counter implements Serializable {
     }
 
     /**
-     * Set the {@link Project} the Symbol belongs to.
+     * Set the ID of the {@link Project} the Symbol belongs to.
      *
      * @param projectId
      *            The new parent Project.
@@ -84,18 +86,40 @@ public class Counter implements Serializable {
         this.project = new Project(projectId);
     }
 
+    /**
+     * Get the name of the counter.
+     *
+     * @return The counter name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set a new name for the counter.
+     *
+     * @param name
+     *         The new name.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Get the value of the counter.
+     *
+     * @return The current value.
+     */
     public Integer getValue() {
         return value;
     }
 
+    /**
+     * Set a new value for the counter.
+     *
+     * @param value
+     *         The new value.
+     */
     public void setValue(Integer value) {
         this.value = value;
     }

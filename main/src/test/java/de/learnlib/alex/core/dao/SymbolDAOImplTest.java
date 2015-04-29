@@ -359,7 +359,7 @@ public class SymbolDAOImplTest {
         pairs.add(new IdRevisionPair(symbols.get(3).getId(), 2));
 
         List<Symbol> symbolsFromDB = symbolDAO.getAll(project.getId(), pairs);
-        assertEquals(3, symbolsFromDB.size());
+        assertEquals(pairs.size(), symbolsFromDB.size());
         for (Symbol x : symbolsFromDB) {
             int index = symbolsFromDB.indexOf(x);
             assertTrue(x + " was not in the returned Symbols from the DB", index > -1);

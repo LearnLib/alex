@@ -59,6 +59,19 @@ public final class SearchHelper {
         return matcher.matches();
     }
 
+    /**
+     * Replace all counters and variables within an input string by their actual values.
+     *
+     * @param connector
+     *         The connectors to connect to the counter and variabel stores.
+     * @param projectId
+     *         The project as context.
+     * @param text
+     *         The input string to pares and to replace the counters and variables in.
+     * @return The input string with all counter adn variables replaced by their values.
+     * @throws IllegalStateException
+     *         If a variable value should be inserted, but the variable does not exists or was never set.
+     */
     public static String insertVariableValues(ConnectorManager connector, Long projectId, String text)
                          throws IllegalStateException {
         StringBuilder result = new StringBuilder();

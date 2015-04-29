@@ -15,7 +15,8 @@ import static org.junit.Assert.fail;
 
 public class CounterDAOImplTest {
 
-    private static final int COUNTER_VALUE = 42;
+    private static final Integer COUNTER_VALUE = 42;
+    private static final int AMOUNT_OF_COUNTERS = 10;
 
     private static ProjectDAO projectDAO;
     private static CounterDAO counterDAO;
@@ -55,17 +56,17 @@ public class CounterDAOImplTest {
 
     @Test
     public void getAllCountersOfOneProject() {
-        for (int i = 0; i < 10; i++) {
-            Counter counter = new Counter();
-            counter.setProject(project);
-            counter.setName("Counter No. " + i);
-            counter.setValue(i);
-            counterDAO.create(counter);
+        for (int i = 0; i < AMOUNT_OF_COUNTERS; i++) {
+            Counter tmpCounter = new Counter();
+            tmpCounter.setProject(project);
+            tmpCounter.setName("Counter No. " + i);
+            tmpCounter.setValue(i);
+            counterDAO.create(tmpCounter);
         }
 
         List<Counter> counters = counterDAO.getAll(project.getId());
 
-        assertEquals(10, counters.size());
+        assertEquals(AMOUNT_OF_COUNTERS, counters.size());
     }
 
     @Test
@@ -82,11 +83,13 @@ public class CounterDAOImplTest {
 
         counterDAO.delete(project.getId(), counter.getName());
 
+        Counter resultCounter = null;
         try {
-            counterDAO.get(project.getId(), counter.getName());
+            resultCounter = counterDAO.get(project.getId(), counter.getName());
             fail("Counter was not completely removed.");
         } catch (NoSuchElementException e) {
             // success
+            assertEquals(null, resultCounter);
         }
     }
 

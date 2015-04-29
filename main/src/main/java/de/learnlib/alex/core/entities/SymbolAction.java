@@ -143,18 +143,40 @@ public abstract class SymbolAction implements Serializable {
         this.id = id;
     }
 
+    /**
+     * Get the project of the action.
+     *
+     * @return The related project.
+     */
     public Project getProject() {
         return project;
     }
 
+    /**
+     * Set a new project as 'parent' of the action.
+     *
+     * @param project
+     *         The new related project.
+     */
     public void setProject(Project project) {
         this.project = project;
     }
 
+    /**
+     * Get the symbol the action is part of.
+     *
+     * @return The 'parent' symbol.
+     */
     public Symbol getSymbol() {
         return symbol;
     }
 
+    /**
+     * Set a new symbol as 'parent' of the action.
+     *
+     * @param symbol
+     *         The new related symbol.
+     */
     public void setSymbol(Symbol symbol) {
         this.symbol = symbol;
     }
@@ -177,22 +199,51 @@ public abstract class SymbolAction implements Serializable {
         this.number = no;
     }
 
+    /**
+     * Should the result of the execute method be inverted?
+     * @return true, if the outcome should be negated; false otherwise.
+     */
     public boolean isNegated() {
         return negated;
     }
 
+    /**
+     * Set the negated flag, i.e. if the outcome of the execute method will be inververted.
+     *
+     * @param negated
+     *         true, if the outcome should be inverted.
+     */
     public void setNegated(boolean negated) {
         this.negated = negated;
     }
 
+    /**
+     * Usually the sequential execution of action will be interrupted if an action returns FAILED.
+     * With this property this behaviour can be overwritten.
+     *
+     * @return true if the following action should be executed, even if the action FAILED; false otherwise.
+     */
     public boolean isIgnoreFailure() {
         return ignoreFailure;
     }
 
+    /**
+     * Set the ignore failure flag, i.e. even if the action FAILED following actions will be executed.
+     *
+     * @param ignoreFailure
+     *         true, if the following action should be executed; false otherwise.
+     */
     public void setIgnoreFailure(boolean ignoreFailure) {
         this.ignoreFailure = ignoreFailure;
     }
 
+    /**
+     * Execute the action.
+     *
+     * @param connectors
+     *         The connectors that can be used.
+     * @return OK or FAILED.
+     */
     public ExecuteResult executeAction(ConnectorManager connectors) {
         this.connectorManager = connectors;
         return execute(connectors);
@@ -206,7 +257,7 @@ public abstract class SymbolAction implements Serializable {
      * @return An {@link ExecuteResult} to indicate if the action
      *          run successfully or not.
      */
-    public abstract ExecuteResult execute(ConnectorManager connector);
+    protected abstract ExecuteResult execute(ConnectorManager connector);
 
     protected final String insertVariableValues(String text) {
         return SearchHelper.insertVariableValues(connectorManager, project.getId(), text);

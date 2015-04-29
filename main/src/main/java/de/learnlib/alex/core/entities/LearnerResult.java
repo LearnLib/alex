@@ -77,6 +77,9 @@ public class LearnerResult implements Serializable {
         /** The amount of actual symbols called during the learning process. */
         private long symbolsUsed;
 
+        /**
+         * Default constructor.
+         */
         public Statistics() {
             this.startTime = new Date(0);
         }
@@ -120,36 +123,58 @@ public class LearnerResult implements Serializable {
         }
 
         /**
-         * Get the amount of resets done while learning.
+         * Get the amount of equivalence oracles used during the learning.
          *
-         * @return The amount of resets during the learn step.
+         * @return The amount of eq oracles.
          */
         public long getEqsUsed() {
             return eqsUsed;
         }
 
         /**
-         * Set the amount of resets done while learning.
+         * Set the amount of equivalence oracles used during the learning.
          *
          * @param eqsUsed
-         *         The amount of resets during the learn step.
+         *         The new amount of eq oracles.
          */
         public void setEqsUsed(long eqsUsed) {
             this.eqsUsed = eqsUsed;
         }
 
+        /**
+         * Get the amount of resets done while learning.
+         *
+         * @return The amount of resets during the learn step.
+         */
         public long getMqsUsed() {
             return mqsUsed;
         }
 
+        /**
+         * Set the amount of resets done while learning.
+         *
+         * @param mqsUsed
+         *         The amount of resets during the learn step.
+         */
         public void setMqsUsed(long mqsUsed) {
             this.mqsUsed = mqsUsed;
         }
 
+        /**
+         * Get the total amount of symbols executed during the learning.
+         *
+         * @return The total amount of symbols used.
+         */
         public long getSymbolsUsed() {
             return symbolsUsed;
         }
 
+        /**
+         * Set the total amount of symbols executed during the learning.
+         *
+         * @param symbolsUsed
+         *         The new amount of symbols used during the learning.
+         */
         public void setSymbolsUsed(long symbolsUsed) {
             this.symbolsUsed = symbolsUsed;
         }
@@ -342,11 +367,22 @@ public class LearnerResult implements Serializable {
         this.jsonChanged = true;
     }
 
+    /**
+     * Get the statistic of this learn step.
+     *
+     * @return The learning statistics.
+     */
     @Embedded
     public Statistics getStatistics() {
         return statistics;
     }
 
+    /**
+     * Set a new statistics object for the learning result.
+     *
+     * @param statistics
+     *         The new statistics.
+     */
     public void setStatistics(Statistics statistics) {
         this.statistics = statistics;
         this.jsonChanged = true;
@@ -426,12 +462,22 @@ public class LearnerResult implements Serializable {
         this.jsonChanged = true;
     }
 
+    /**
+     * Get the latest counterexample that was found..
+     *
+     * @return The latest counterexample or null.
+     */
     @JsonIgnore
     @Transient
     public DefaultQuery<String, Word<String>> getCounterExample() {
         return counterExample;
     }
 
+    /**
+     * Get the latest counterexample as string.
+     *
+     * @return The last counterexample or an empty string.
+     */
     @JsonProperty("counterExample")
     @Transient
     public String getCounterExampleAsString() {
@@ -442,16 +488,33 @@ public class LearnerResult implements Serializable {
         }
     }
 
+    /**
+     * Set the latest counterexample new.
+     *
+     * @param counterExample
+     *         The new counterexample.
+     */
     public void setCounterExample(DefaultQuery<String, Word<String>> counterExample) {
         this.counterExample = counterExample;
         this.jsonChanged = true;
     }
 
+    /**
+     * Get more (internal) information about the algorithm used during the learning.
+     *
+     * @return More (internal) information of the algorithm as string.
+     */
     @Column(length = Integer.MAX_VALUE)
     public String getAlgorithmInformation() {
         return algorithmInformation;
     }
 
+    /**
+     * Set the internal or other information about the algorithm.
+     *
+     * @param algorithmInformation
+     *         The new information about the algorithm.
+     */
     public void setAlgorithmInformation(String algorithmInformation) {
         this.algorithmInformation = algorithmInformation;
         this.jsonChanged = true;
@@ -494,14 +557,14 @@ public class LearnerResult implements Serializable {
      * Set the result via JSON. This method will not only remember the JSON as String but will also parse the JSON and
      * set all other field according to the JSON data!
      *
-     * @param json
+     * @param newJSON
      *         The new result encoded in JSON data.
      */
     @JsonIgnore
-    public void setJSON(String json) {
+    public void setJSON(String newJSON) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            LearnerResult newResult = objectMapper.readValue(json, LearnerResult.class);
+            LearnerResult newResult = objectMapper.readValue(newJSON, LearnerResult.class);
             setProject(newResult.getProject());
             setTestNo(newResult.getTestNo());
             setStepNo(newResult.getStepNo());
@@ -512,10 +575,10 @@ public class LearnerResult implements Serializable {
             setCounterExample(newResult.getCounterExample());
             setAlgorithmInformation(newResult.getAlgorithmInformation());
 
-            this.json = json;
+            this.json = newJSON;
             this.jsonChanged = false;
         } catch (IOException e) {
-            LOGGER.info("could not read the JSON '" + json + "' for a LearnerResult.", e);
+            LOGGER.info("could not read the JSON '" + newJSON + "' for a LearnerResult.", e);
         }
     }
 

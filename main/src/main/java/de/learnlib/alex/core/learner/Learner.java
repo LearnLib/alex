@@ -47,6 +47,8 @@ public class Learner {
      *
      * @param learnThreadFactory
      *         The thread factory to use.
+     * @param contextHandlerFactory
+     *         The factory that will be used to create new context handler.
      */
     public Learner(LearnerThreadFactory learnThreadFactory, ConnectorContextHandlerFactory contextHandlerFactory) {
         this.learnThreadFactory = learnThreadFactory;
@@ -129,6 +131,17 @@ public class Learner {
         }
     }
 
+    /**
+     * Determine the output of the SUL by testing a sequence of input symbols.
+     *
+     * @param project
+     *         The project in which context the test should happen.
+     * @param resetSymbol
+     *         The reset symbol to use.
+     * @param symbols
+     *         The symbol sequence to execute in order to generate the output sequence.
+     * @return The following output sequence.
+     */
     public List<String> readOutputs(Project project, Symbol resetSymbol, List<Symbol> symbols) {
         if (contextHandler == null) {
             contextHandler = contextHandlerFactory.createContext(project);

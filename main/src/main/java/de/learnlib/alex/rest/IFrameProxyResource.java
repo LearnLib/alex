@@ -43,10 +43,12 @@ public class IFrameProxyResource {
     private UriInfo uriInfo;
 
     /**
-     * Method used to pretend the requested site has our domain.
+     * Method used to pretend the requested site (over GET) has our domain .
      *
      * @param url
      *            The URL of the requested page.
+     * @param cookies
+     *         The cookies to send through.
      * @return The requested page, modified to fit our needs.
      */
     @GET
@@ -69,6 +71,17 @@ public class IFrameProxyResource {
         }
     }
 
+    /**
+     * Method used to pretend the requested site (over GET) has our domain .
+     *
+     * @param url
+     *         The URL of the requested page.
+     * @param cookies
+     *         The cookies to send through.
+     * @param body
+     *         The body to send through.
+     * @return The requested page, modified to fit our needs.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)

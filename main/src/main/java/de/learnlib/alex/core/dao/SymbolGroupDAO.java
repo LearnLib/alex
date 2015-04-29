@@ -26,6 +26,8 @@ public interface SymbolGroupDAO {
      *
      * @param projectId
      *         The project the groups should belong to.
+     * @param embedFields
+     *         A list of field to directly embed/ load into the returned groups.
      * @return A List of groups. Can be empty.
      * @throws NoSuchElementException
      *         If no project with the given id was found.
@@ -39,6 +41,8 @@ public interface SymbolGroupDAO {
      *         The project the group belongs to.
      * @param groupId
      *         The ID of the group within the project.
+     * @param embedFields
+     *         A list of field to directly embed/ load into the returned groups.
      * @return The group you are looking for.
      * @throws NoSuchElementException
      *         If the Project or the Group could not be found.

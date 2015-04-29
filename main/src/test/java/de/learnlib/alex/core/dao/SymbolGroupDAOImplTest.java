@@ -19,6 +19,7 @@ import static org.junit.Assert.fail;
 
 public class SymbolGroupDAOImplTest {
 
+    private static final int AMOUNT_OF_GROUPS = 10;
     private static ProjectDAO projectDAO;
     private static SymbolGroupDAO symbolGroupDAO;
     private static SymbolDAO symbolDAO;
@@ -99,7 +100,7 @@ public class SymbolGroupDAOImplTest {
     @Test
     public void shouldGetAllGroupsOfOneProject() {
         List<SymbolGroup> groups = new LinkedList<>();
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= AMOUNT_OF_GROUPS; i++) {
             SymbolGroup newGroup = new SymbolGroup();
             newGroup.setName("Group " + i);
             newGroup.setProject(project);
@@ -124,7 +125,7 @@ public class SymbolGroupDAOImplTest {
     @Test
     public void shouldGetTheRightGroup() {
         List<SymbolGroup> groups = new LinkedList<>();
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= AMOUNT_OF_GROUPS; i++) {
             SymbolGroup newGroup = new SymbolGroup();
             newGroup.setName("Group " + i);
             newGroup.setProject(project);
@@ -180,10 +181,10 @@ public class SymbolGroupDAOImplTest {
             fail("After deleting a group, it was still in the DB.");
         } catch (NoSuchElementException e) {
             // Symbol was not found -> It was deleted -> success
+            Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol.getId());
+            assertEquals(project.getDefaultGroup(), symbolInDB.getGroup());
+            assertTrue(symbolInDB.isHidden());
         }
-        Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol.getId());
-        assertEquals(project.getDefaultGroup(), symbolInDB.getGroup());
-        assertTrue(symbolInDB.isHidden());
     }
 
     @Test(expected = IllegalArgumentException.class)

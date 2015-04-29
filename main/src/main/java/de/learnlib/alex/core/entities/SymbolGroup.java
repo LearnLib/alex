@@ -70,22 +70,30 @@ public class SymbolGroup implements Serializable {
         this.symbols = new HashSet<>();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    /**
+     * Get the related/ 'parent' project of the group.
+     *
+     * @return The project the group is a part of.
+     */
     public Project getProject() {
         return project;
     }
 
+    /**
+     * Set a new project for the group.
+     *
+     * @param project
+     *         The new project.
+     */
     public void setProject(Project project) {
         this.project = project;
     }
 
+    /**
+     * Get the ID of the related project.
+     *
+     * @return The ID of the project the group belongs to or 0.
+     */
     @JsonProperty("project")
     public long getProjectId() {
         if (project == null) {
@@ -94,27 +102,69 @@ public class SymbolGroup implements Serializable {
         return project.getId();
     }
 
+    /**
+     * Create and set a new project by a new project ID.
+     *
+     * @param projectId
+     *         The new project ID.
+     */
     @JsonProperty("project")
     public void setProjectId(long projectId) {
         this.project = new Project(projectId);
     }
 
+    /**
+     * Get the ID of the group within the project.
+     *
+     * @return THe group id.
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Set a new ID for the group within the project.
+     *
+     * @param id
+     *         The new group ID.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * Get the name of the group.
+     *
+     * @return The group name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set a new group name.
+     *
+     * @param name
+     *         The new name.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Get all symbols that are organized in the group.
+     *
+     * @return The related symbols.
+     */
     public Set<Symbol> getSymbols() {
         return symbols;
     }
 
-    public void setSymbols(Set<Symbol> symbols) {
-        this.symbols = symbols;
-    }
-
+    /**
+     * Get the amount of symbols that are organized in the group.
+     *
+     * @return The amount of related symbols.
+     */
     @JsonProperty("symbolAmount")
     public int getSymbolSize() {
         if (symbols == null) {
@@ -123,6 +173,22 @@ public class SymbolGroup implements Serializable {
         return this.symbols.size();
     }
 
+    /**
+     * Set a new set of related symbols.
+     *
+     * @param symbols
+     *         The new set of related symbols.
+     */
+    public void setSymbols(Set<Symbol> symbols) {
+        this.symbols = symbols;
+    }
+
+    /**
+     * Add one symbol to the group.
+     *
+     * @param symbol
+     *         The symbol to add.
+     */
     public void addSymbol(Symbol symbol) {
         this.symbols.add(symbol);
         symbol.setGroup(this);

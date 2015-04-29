@@ -8,7 +8,6 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
