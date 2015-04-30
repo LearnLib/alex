@@ -5,7 +5,7 @@
         .controller('LearnStartController', LearnStartController);
 
     LearnStartController.$inject = [
-        '$scope', '$interval', 'SessionService', 'LearnerService', 'LearnResult', 'ToastService', '_'
+        '$scope', '$interval', 'SessionService', 'LearnerService', 'LearnResult', 'ToastService', '_', 'ErrorService'
     ];
 
     /**
@@ -21,9 +21,10 @@
      * @param LearnResult
      * @param Toast
      * @param _
+     * @param Error
      * @constructor
      */
-    function LearnStartController($scope, $interval, Session, Learner, LearnResult, Toast, _) {
+    function LearnStartController($scope, $interval, Session, Learner, LearnResult, Toast, _, Error) {
 
         // The project that is stored in the session
         var project = Session.project.get();
@@ -73,7 +74,14 @@
                 Learner.isActive()
                     .then(function (data) {
                         if (!data.active) {
-                            Learner.getStatus().then(loadComplete);
+                            Learner.getStatus().then(function(result){
+                                if (result.error) {
+                                    Error.setErrorMessage(result.errorText);
+                                    Error.goToErrorPage();
+                                } else {
+                                    loadComplete(result);
+                                }
+                            });
                             $interval.cancel(interval);
                             $scope.active = false;
                         }

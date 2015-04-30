@@ -72,10 +72,8 @@
                 }
             })
 
-
             // =========================================================
             // counter related routes
-
 
             .state('counters', {
                 url: '/counters',
@@ -90,10 +88,8 @@
                 }
             })
 
-
             // =========================================================
             // symbol related routes
-
 
             .state('symbols', {
                 url: '/symbols',
@@ -211,7 +207,6 @@
                 }
             })
 
-
             // =========================================================
             // static pages related routes
 
@@ -228,6 +223,12 @@
                 data: {
                     requiresProject: false
                 }
+            })
+
+            .state('error', {
+                url: '/error',
+                controller: 'ErrorController',
+                templateUrl: paths.views.PAGES + '/error.html'
             })
     }
 

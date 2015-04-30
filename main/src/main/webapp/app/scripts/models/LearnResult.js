@@ -36,14 +36,16 @@
                 eqsUsed: null,
                 mqsUsed: null,
                 symbolsUsed: null
-            }
+            };
+            this.error;
+            this.errorText;
         }
 
         /**
          * Creates a new instance of a LearnResult from an object
          *
          * @param {Object} data - The object the learn result should be build from
-         * @returns {LearnResultModel.LearnResult} - The instance of LearnResult from the data
+         * @returns {LearnResult} - The instance of LearnResult from the data
          */
         LearnResult.build = function (data) {
             var result = new LearnResult();
@@ -55,6 +57,8 @@
             result.testNo = data.testNo;
             result.algorithmInformation = data.algorithmInformation;
             result.statistics = data.statistics;
+            result.error = data.error;
+            result.errorText = data.errorText;
             return result;
         };
 
@@ -62,7 +66,7 @@
          * Creates a list of new instances of LearnResult from a list of objects
          *
          * @param {Object[]} data - The list of objects the list of learn results should be build from
-         * @returns {LearnResultModel.LearnResult[]} - The list of learn results
+         * @returns {LearnResult[]} - The list of learn results
          */
         LearnResult.buildSome = function (data) {
             var results = [];
