@@ -1,12 +1,29 @@
 <div view-heading
      title="Dashboard"
-     sub-title="sub-title">
+     sub-title="Have an overview over some aspects of your project">
 </div>
 
 <div class="view-body">
     <div class="container">
 
-        Dashboard will soon appear at this place
+        <div class="row">
+
+            <div class="col-xs-4">
+                <dashboard-widget>
+                    <learner-status-widget></learner-status-widget>
+                </dashboard-widget>
+            </div>
+
+            <div class="col-xs-4">
+                <dashboard-widget>
+                    <latest-learn-result-widget></latest-learn-result-widget>
+                </dashboard-widget>
+            </div>
+
+            <div class="col-xs-4">
+            </div>
+
+        </div>
 
     </div>
 </div>
