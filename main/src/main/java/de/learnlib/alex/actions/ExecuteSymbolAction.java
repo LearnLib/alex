@@ -111,7 +111,7 @@ public class ExecuteSymbolAction extends SymbolAction {
             return getFailedOutput();
         }
 
-        ExecuteResult symbolResult = ExecuteResult.valueOf(symbolToExecute.execute(connector));
+        ExecuteResult symbolResult = symbolToExecute.execute(connector);
 
         if (symbolResult == ExecuteResult.OK) {
             return getSuccessOutput();

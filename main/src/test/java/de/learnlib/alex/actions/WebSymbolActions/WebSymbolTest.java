@@ -167,7 +167,7 @@ public class WebSymbolTest {
         symbol.addAction(action1);
         symbol.addAction(action2);
 
-        assertEquals(ExecuteResult.OK.toString(), symbol.execute(connector));
+        assertEquals(ExecuteResult.OK, symbol.execute(connector));
     }
 
     @Test
@@ -182,7 +182,7 @@ public class WebSymbolTest {
         symbol.addAction(action1);
         symbol.addAction(action2);
 
-        assertEquals(ExecuteResult.FAILED.toString(), symbol.execute(connector));
+        assertEquals(ExecuteResult.FAILED, symbol.execute(connector));
         verify(action2, never()).execute(connector);
     }
 

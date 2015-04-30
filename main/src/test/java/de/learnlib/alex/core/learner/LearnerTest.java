@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
+import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
@@ -71,11 +72,11 @@ public class LearnerTest {
     @Test
     public void shouldReadTheCorrectOutputOfSomeSymbols() {
         Symbol resetSymbol = mock(Symbol.class);
-        given(resetSymbol.execute(any(ConnectorManager.class))).willReturn("OK");
+        given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
         List<Symbol> symbols = new LinkedList<>();
         for (int i = 0; i < SYMBOL_AMOUNT; i++) {
             Symbol symbol = mock(Symbol.class);
-            given(symbol.execute(any(ConnectorManager.class))).willReturn("OK");
+            given(symbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
             symbols.add(symbol);
         }
 

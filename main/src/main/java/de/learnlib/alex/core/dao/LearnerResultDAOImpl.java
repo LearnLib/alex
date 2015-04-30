@@ -236,6 +236,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     private void updateSummary(Session session, LearnerResult result) {
         LearnerResult summaryResult = get(session, result.getProjectId(), result.getTestNo());
+        summaryResult.setErrorText(result.getErrorText());
+
+
         LearnerResult.Statistics summaryStatistics = summaryResult.getStatistics();
         LearnerResult.Statistics newStatistics = result.getStatistics();
 

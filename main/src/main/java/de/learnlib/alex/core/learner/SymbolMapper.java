@@ -1,5 +1,6 @@
 package de.learnlib.alex.core.learner;
 
+import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.api.SULException;
@@ -18,7 +19,7 @@ import java.util.Map;
 /**
  * Class to map the Symbols and their result to the values used in the learning process.
  */
-public class SymbolMapper implements Mapper<String, String, ContextExecutableInput<String, ConnectorManager>, String> {
+public class SymbolMapper implements Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> {
 
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("learner");
@@ -35,13 +36,13 @@ public class SymbolMapper implements Mapper<String, String, ContextExecutableInp
     }
 
     @Override
-    public ContextExecutableInput<String, ConnectorManager> mapInput(String abstractInput) {
+    public ContextExecutableInput<ExecuteResult, ConnectorManager> mapInput(String abstractInput) {
         return symbols.get(abstractInput);
     }
 
     @Override
-    public String mapOutput(String concreteOutput) {
-        return concreteOutput;
+    public String mapOutput(ExecuteResult concreteOutput) {
+        return concreteOutput.toString();
     }
 
     @Override

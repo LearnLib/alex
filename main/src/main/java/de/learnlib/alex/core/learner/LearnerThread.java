@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
+import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.LearnAlgorithms;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Symbol;
@@ -20,6 +21,8 @@ import de.learnlib.oracles.SULOracle;
 import de.learnlib.oracles.SymbolCounterSUL;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Date;
 import java.util.List;
@@ -29,6 +32,9 @@ import java.util.List;
  * This class contains the actual learning loop.
  */
 public class LearnerThread extends Thread {
+
+    /** Use the logger for the server part. */
+    private static final Logger LOGGER = LogManager.getLogger("server");
 
     /** Is the thread still running? */
     private boolean active;
@@ -86,7 +92,7 @@ public class LearnerThread extends Thread {
         this.sigma = symbolMapper.getAlphabet();
         this.result.setSigma(sigma);
 
-        ContextExecutableInputSUL<ContextExecutableInput<String, ConnectorManager>, String, ConnectorManager> ceiSUL;
+        ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult, ConnectorManager> ceiSUL;
         ceiSUL = new ContextExecutableInputSUL<>(context);
         SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
         this.cachedSUL = SULCaches.createCache(this.sigma, mappedSUL);
@@ -188,7 +194,13 @@ public class LearnerThread extends Thread {
     @Override
     public void run() {
         active = true;
-        learn();
+        try {
+            learn();
+        } catch (Exception e) {
+            LOGGER.warn("Something in the LearnerThread went wrong:", e);
+            result.setErrorText(e.getMessage());
+            learnerResultDAO.update(result);
+        }
         active = false;
     }
 

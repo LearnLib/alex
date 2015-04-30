@@ -150,7 +150,7 @@ public class Learner {
 
         ConnectorManager connectors = contextHandler.createContext();
 
-        String[] objects = symbols.stream().map(s -> s.execute(connectors)).toArray(String[]::new);
+        String[] objects = symbols.stream().map(s -> s.execute(connectors).toString()).toArray(String[]::new);
         return Arrays.asList(objects);
     }
 

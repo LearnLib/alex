@@ -33,7 +33,7 @@ import java.util.List;
  */
 @Entity
 @JsonPropertyOrder(alphabetic = true)
-public class Symbol implements ContextExecutableInput<String, ConnectorManager>, Serializable {
+public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorManager>, Serializable {
 
     /** to be serializable. */
     private static final long serialVersionUID = 7987585761829495962L;
@@ -363,16 +363,16 @@ public class Symbol implements ContextExecutableInput<String, ConnectorManager>,
     }
 
     @Override
-    public String execute(ConnectorManager connector) throws SULException {
+    public ExecuteResult execute(ConnectorManager connector) throws SULException {
         for (SymbolAction action : actions) {
             ExecuteResult result = executeAction(action, connector);
 
             if (!action.isIgnoreFailure() && result != ExecuteResult.OK) {
-                return result.toString();
+                return result;
             }
         }
 
-        return ExecuteResult.OK.toString();
+        return ExecuteResult.OK;
     }
 
     private ExecuteResult executeAction(SymbolAction action, ConnectorManager connector) {

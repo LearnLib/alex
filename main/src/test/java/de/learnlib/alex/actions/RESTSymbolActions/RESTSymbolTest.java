@@ -34,9 +34,9 @@ public class RESTSymbolTest {
         given(action1.executeAction(connector)).willReturn(ExecuteResult.OK);
         given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
 
-        String result = symbol.execute(connector);
+        ExecuteResult result = symbol.execute(connector);
 
-        assertEquals(ExecuteResult.OK.name(), result);
+        assertEquals(ExecuteResult.OK, result);
     }
 
     @Test
@@ -45,9 +45,9 @@ public class RESTSymbolTest {
         given(action1.executeAction(connector)).willReturn(ExecuteResult.FAILED);
         given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
 
-        String result = symbol.execute(connector);
+        ExecuteResult result = symbol.execute(connector);
 
-        assertEquals(ExecuteResult.FAILED.name(), result);
+        assertEquals(ExecuteResult.FAILED, result);
         verify(action2, never()).executeAction(connector);
     }
 
@@ -57,9 +57,9 @@ public class RESTSymbolTest {
         given(action1.executeAction(connector)).willThrow(IllegalStateException.class);
         given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
 
-        String result = symbol.execute(connector);
+        ExecuteResult result = symbol.execute(connector);
 
-        assertEquals(ExecuteResult.FAILED.name(), result);
+        assertEquals(ExecuteResult.FAILED, result);
         verify(action2, never()).executeAction(connector);
     }
 

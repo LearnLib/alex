@@ -218,6 +218,13 @@ public class LearnerResult implements Serializable {
     private String algorithmInformation;
 
     /**
+     * If this field is set some sort of error occurred during the learning.
+     * In this case this field stores more information about the error.
+     * All other field can still have data, that are valid to some extend and should only be used carefully.
+     */
+    private String errorText;
+
+    /**
      * Default constructor.
      */
     public LearnerResult() {
@@ -517,6 +524,44 @@ public class LearnerResult implements Serializable {
      */
     public void setAlgorithmInformation(String algorithmInformation) {
         this.algorithmInformation = algorithmInformation;
+        this.jsonChanged = true;
+    }
+
+    /**
+     * Get the current error text of the learning process.
+     *
+     * @return The current error text (can be null).
+     */
+    @JsonProperty("errorText")
+    public String getErrorText() {
+        return errorText;
+    }
+
+    /**
+     * Did some kind of error occurred during the learning, i.e. the error text property is set.
+     *
+     * @return true if the result represents a failed learning process; null otherwise.
+     */
+    @JsonProperty("error")
+    @Transient
+    public Boolean isError() {
+        if (errorText == null) {
+            return null; // null instead of false, so that it will not appear in the JSON
+        } else {
+            return Boolean.TRUE;
+        }
+    }
+
+    /**
+     * Set an error text as part of the learning result.
+     * If a error text is set, it also implies that something during the learning went wrong and
+     * {@link #isError()} will return True.
+     *
+     * @param errorText
+     *         The new error text.
+     */
+    public void setErrorText(String errorText) {
+        this.errorText = errorText;
         this.jsonChanged = true;
     }
 
