@@ -195,6 +195,16 @@
         };
 
         /**
+         * Removes a symbol group from the scope and also removes its symbols
+         *
+         * @param {SymbolGroup} group
+         */
+        $scope.deleteGroup = function(group){
+            $scope.removeSymbols(group.symbols);
+            _.remove($scope.groups, {id: group.id});
+        };
+
+        /**
          * Collapses all groups or expands them
          */
         $scope.toggleCollapseAllGroups = function () {
