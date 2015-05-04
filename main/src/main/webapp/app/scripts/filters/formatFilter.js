@@ -64,7 +64,7 @@
      * @returns {filter}
      */
     function formatAlgorithm(learnAlgorithms) {
-        return filter
+        return filter;
 
         /**
          * @param {string} name - the name of a learn algorithm

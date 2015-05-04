@@ -32,7 +32,7 @@
         // The interval object
         var interval = null;
 
-        // The time for the polling interval
+        // The time for the polling interval in ms
         var intervalTime = 10000;
 
         /**
@@ -66,7 +66,7 @@
         }());
 
         /**
-         * Checks every x seconds if the server has finished learning and set the test if he did finish
+         * Checks every x seconds if the server has finished learning and sets the test if he did
          */
         function poll() {
             $scope.active = true;

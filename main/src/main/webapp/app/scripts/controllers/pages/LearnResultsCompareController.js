@@ -5,7 +5,9 @@
         .module('ALEX.controller')
         .controller('LearnResultsCompareController', LearnResultsCompareController);
 
-    LearnResultsCompareController.$inject = ['$scope', '$stateParams', 'SessionService', 'LearnResult', '_'];
+    LearnResultsCompareController.$inject = [
+        '$scope', '$stateParams', 'SessionService', 'LearnResult', 'ErrorService'
+    ];
 
     /**
      * The controller that handles the page for displaying multiple complete learn results in a slide show.
@@ -16,10 +18,10 @@
      * @param $stateParams - The state parameters
      * @param Session - The session service
      * @param LearnResult - The LearnResult model
-     * @param _ - Lodash
+     * @param Error - The ErrorService
      * @constructor
      */
-    function LearnResultsCompareController($scope, $stateParams, Session, LearnResult, _) {
+    function LearnResultsCompareController($scope, $stateParams, Session, LearnResult, _, Error) {
 
         // the project that is saved in the session
         var project = Session.project.get();
@@ -34,7 +36,6 @@
          * The list of active panels where each panel contains a complete learn result set
          * @type {LearnResult[][]}
          */
-
         $scope.panels = [];
 
         /**
@@ -61,17 +62,20 @@
          * @param {number} index - The index of the panel the complete learn result should be displayed in
          */
         function loadComplete(testNos, index) {
-            var numbers = testNos.split(',');
-            _.forEach(numbers, function (testNo) {
-                LearnResult.Resource.getComplete(project.id, testNo)
-                    .then(function (completeTestResult) {
-                        if (angular.isUndefined(index)) {
-                            $scope.panels.push(completeTestResult);
-                        } else {
-                            $scope.panels[index] = completeTestResult;
+            LearnResult.Resource.getSomeComplete(project.id, testNos.split(','))
+                .then(function(completeResults){
+                    for (var i = 0; i < completeResults.length; i++) {
+                        if (angular.isUndefined(index)){
+                            $scope.panels.push(completeResults[i]);
+                        }else{
+                            $scope.panels[index] = completeResults[i];
                         }
-                    })
-            })
+                    }
+                })
+                .catch(function(response){
+                    Error.setErrorMessage(response.data.message);
+                    Error.goToErrorPage();
+                })
         }
 
         /**

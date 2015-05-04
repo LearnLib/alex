@@ -6,7 +6,7 @@
         .controller('SymbolsActionsController', SymbolsActionsController);
 
     SymbolsActionsController.$inject = [
-        '$scope', '$stateParams', 'Symbol', 'SessionService', 'SelectionService', 'ToastService'
+        '$scope', '$stateParams', 'Symbol', 'SessionService', 'SelectionService', 'ToastService', 'ErrorService', '_'
     ];
 
     /**
@@ -22,9 +22,11 @@
      * @param Session - The session service
      * @param SelectionService - The selection service
      * @param Toast - The ToastService
+     * @param Error - The ErrorService
+     * @param _ - Lodash
      * @constructor
      */
-    function SymbolsActionsController($scope, $stateParams, Symbol, Session, SelectionService, Toast) {
+    function SymbolsActionsController($scope, $stateParams, Symbol, Session, SelectionService, Toast, Error, _) {
 
         /**
          * The project that is stored in the session
@@ -61,8 +63,9 @@
         (function init() {
             Symbol.Resource.get($scope.project.id, $stateParams.symbolId)
                 .then(prepareSymbol)
-                .catch(function (response) {
-                    // TODO: redirect to an error page with a message
+                .catch(function () {
+                    Error.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + "' could not be found");
+                    Error.goToErrorPage();
                 });
         }());
 
@@ -139,8 +142,6 @@
             for (var i = 0; i < copy.actions.length; i++) {
                 delete copy.actions[i]._id;
             }
-
-            console.log(copy.actions)
 
             // update the symbol
             Symbol.Resource.update($scope.project.id, copy)

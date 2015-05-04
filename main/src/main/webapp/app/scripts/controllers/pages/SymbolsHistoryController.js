@@ -5,7 +5,9 @@
         .module('ALEX.controller')
         .controller('SymbolsHistoryController', SymbolsHistoryController);
 
-    SymbolsHistoryController.$inject = ['$scope', '$stateParams', 'Symbol', 'SessionService', 'ToastService'];
+    SymbolsHistoryController.$inject = [
+        '$scope', '$stateParams', 'Symbol', 'SessionService', 'ToastService', 'ErrorService'
+    ];
 
     /**
      * @param $scope - The controllers scope
@@ -13,9 +15,10 @@
      * @param Symbol - The factory for the Symbol model
      * @param Session - The SessionService
      * @param Toast - The ToastService
+     * @param Error - The ErrorService
      * @constructor
      */
-    function SymbolsHistoryController($scope, $stateParams, Symbol, Session, Toast) {
+    function SymbolsHistoryController($scope, $stateParams, Symbol, Session, Toast, Error) {
 
         // The project in the session
         var project = Session.project.get();
@@ -36,18 +39,16 @@
         (function init() {
 
             // load all revisions of the symbol whose id is passed in the URL
-            if (angular.isDefined($stateParams.symbolId)) {
-                Symbol.Resource.getRevisions(project.id, $stateParams.symbolId)
-                    .then(function (revisions) {
-                        $scope.latestRevision = revisions[revisions.length - 1];
-                        $scope.revisions = revisions;
-                    })
-                    .catch(function () {
-                        // TODO: go to error page
-                    })
-            } else {
-                // TODO: go to error page
-            }
+            Symbol.Resource.getRevisions(project.id, $stateParams.symbolId)
+                .then(function (revisions) {
+                    console.log('asdasd');
+                    $scope.latestRevision = revisions[revisions.length - 1];
+                    $scope.revisions = revisions;
+                })
+                .catch(function () {
+                    Error.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + '" could not be found');
+                    Error.goToErrorPage();
+                })
         }());
 
         /**
