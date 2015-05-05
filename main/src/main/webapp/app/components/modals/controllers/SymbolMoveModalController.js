@@ -6,7 +6,7 @@
         .controller('SymbolMoveModalController', SymbolMoveModalController);
 
     SymbolMoveModalController.$inject = [
-        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SelectionService', 'ToastService'
+        '$scope', '$modalInstance', 'modalData', 'Symbol', 'ToastService', '_'
     ];
 
     /**
@@ -18,11 +18,11 @@
      * @param $modalInstance
      * @param modalData
      * @param Symbol
-     * @param SelectionService
      * @param Toast
+     * @param _
      * @constructor
      */
-    function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol, SelectionService, Toast) {
+    function SymbolMoveModalController($scope, $modalInstance, modalData, Symbol, Toast, _) {
 
         /**
          * The list of symbols that should be moved
@@ -59,9 +59,10 @@
         $scope.moveSymbols = function () {
             if ($scope.selectedGroup !== null) {
                 _.forEach($scope.symbols, function (symbol) {
-                    SelectionService.removeSelection(symbol);
+                    delete symbol._selected;
                     symbol.group = $scope.selectedGroup.id;
                 });
+
                 Symbol.Resource.moveSome($scope.selectedGroup.project, $scope.symbols, $scope.selectedGroup.id)
                     .then(function () {
                         Toast.success('Symbols move to group <strong>' + $scope.selectedGroup.name + '</strong>');

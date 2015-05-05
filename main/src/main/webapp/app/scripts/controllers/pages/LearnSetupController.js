@@ -6,8 +6,7 @@
         .controller('LearnSetupController', LearnSetupController);
 
     LearnSetupController.$inject = [
-        '$scope', '$state', 'SymbolGroup', 'SessionService', 'SelectionService', 'LearnConfiguration',
-        'LearnerService', 'ToastService'
+        '$scope', '$state', 'SymbolGroup', 'SessionService', 'LearnConfiguration', 'LearnerService', 'ToastService', '_'
     ];
 
     /**
@@ -19,14 +18,13 @@
      * @param $state
      * @param SymbolGroup
      * @param Session
-     * @param SelectionService
      * @param LearnConfiguration
      * @param Learner
      * @param Toast
+     * @param _
      * @constructor
      */
-    function LearnSetupController($scope, $state, SymbolGroup, Session, SelectionService, LearnConfiguration,
-                                  Learner, Toast) {
+    function LearnSetupController($scope, $state, SymbolGroup, Session, LearnConfiguration, Learner, Toast, _) {
 
         // the project that is stored in the session
         var project = Session.project.get();
@@ -102,7 +100,7 @@
                 return;
             }
 
-            selectedSymbols = SelectionService.getSelected($scope.allSymbols);
+            selectedSymbols = _.filter($scope.allSymbols, '_selected');
 
             if (selectedSymbols.length > 0) {
                 _.forEach(selectedSymbols, function (symbol) {

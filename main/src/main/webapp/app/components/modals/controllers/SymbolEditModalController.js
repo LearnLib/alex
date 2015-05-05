@@ -6,7 +6,7 @@
         .controller('SymbolEditModalController', SymbolEditModalController);
 
     SymbolEditModalController.$inject = [
-        '$scope', '$modalInstance', 'modalData', 'Symbol', 'SelectionService', 'ToastService'
+        '$scope', '$modalInstance', 'modalData', 'Symbol', 'ToastService'
     ];
 
     /**
@@ -17,11 +17,10 @@
      * @param $modalInstance
      * @param modalData
      * @param Symbol
-     * @param SelectionService
-     * @oaram Toast
+     * @param Toast
      * @constructor
      */
-    function SymbolEditModalController($scope, $modalInstance, modalData, Symbol, SelectionService, Toast) {
+    function SymbolEditModalController($scope, $modalInstance, modalData, Symbol, Toast) {
 
         /** The symbol that is passed to the modal. @type {Symbol} */
         $scope.symbol = modalData.symbol;
@@ -42,7 +41,9 @@
             $scope.errorMsg = null;
 
             // remove the selection from the symbol in case there is any
-            SelectionService.removeSelection($scope.symbol);
+            for (var i = 0; i < $scope.symbols.length; i++) {
+                delete $scope.symbols[i]._selected;
+            }
 
             // do not update on server
             if (angular.isDefined(modalData.updateOnServer) && !modalData.updateOnServer) {

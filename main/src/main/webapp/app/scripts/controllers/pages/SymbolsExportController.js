@@ -5,7 +5,7 @@
         .module('ALEX.controller')
         .controller('SymbolsExportController', SymbolsExportController);
 
-    SymbolsExportController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'SelectionService', 'actionTypes'];
+    SymbolsExportController.$inject = ['$scope', 'SessionService', 'SymbolGroup', 'actionTypes', '_'];
 
     /**
      * The controller that handles the export of symbols. The corresponding template is at
@@ -14,11 +14,11 @@
      * @param $scope
      * @param Session
      * @param SymbolGroup
-     * @param SelectionService
      * @param actionTypes
+     * @param _
      * @constructor
      */
-    function SymbolsExportController($scope, Session, SymbolGroup, SelectionService, actionTypes) {
+    function SymbolsExportController($scope, Session, SymbolGroup, actionTypes, _) {
 
         // the project that is saved in session storage
         var _project = Session.project.get();
@@ -50,12 +50,17 @@
          * @returns {*} - The list of downloadable symbols without unneeded properties
          */
         $scope.getDownloadableSymbols = function () {
-            var selectedSymbols = angular.copy(SelectionService.getSelected($scope.allSymbols));
-            SelectionService.removeSelection(selectedSymbols);
-            selectedSymbols = _.sortBy(selectedSymbols, function (n) {
-                return n.id
-            });
-            _.forEach(selectedSymbols, function (symbol) {
+            var symbols = _(angular.copy($scope.allSymbols))
+                .filter('_selected')
+                .sortBy(function (n) {
+                    return n.id;
+                })
+                .map(function (n) {
+                    delete n._selected;
+                    return n
+                }).value();
+
+            _.forEach(symbols, function (symbol) {
                 delete symbol.revision;
                 delete symbol.project;
                 delete symbol.group;
@@ -67,7 +72,7 @@
                     }
                 })
             });
-            return selectedSymbols;
+            return symbols;
         };
     }
 }());

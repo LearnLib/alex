@@ -6,7 +6,7 @@
         .controller('SymbolsActionsController', SymbolsActionsController);
 
     SymbolsActionsController.$inject = [
-        '$scope', '$stateParams', 'Symbol', 'SessionService', 'SelectionService', 'ToastService', 'ErrorService', '_'
+        '$scope', '$stateParams', 'Symbol', 'SessionService', 'ToastService', 'ErrorService', '_'
     ];
 
     /**
@@ -20,13 +20,12 @@
      * @param $stateParams - The parameters of the state
      * @param Symbol - The Symbol model
      * @param Session - The session service
-     * @param SelectionService - The selection service
      * @param Toast - The ToastService
      * @param Error - The ErrorService
      * @param _ - Lodash
      * @constructor
      */
-    function SymbolsActionsController($scope, $stateParams, Symbol, Session, SelectionService, Toast, Error, _) {
+    function SymbolsActionsController($scope, $stateParams, Symbol, Session, Toast, Error, _) {
 
         /**
          * The project that is stored in the session
@@ -137,11 +136,12 @@
 
             // update the copy for later reverting
             var copy = $scope.symbol.copy();
-            SelectionService.removeSelection(copy.actions);
 
-            for (var i = 0; i < copy.actions.length; i++) {
-                delete copy.actions[i]._id;
-            }
+            _.map(copy.actions, function (a) {
+                delete a._id;
+                delete a._selected;
+                return a;
+            });
 
             // update the symbol
             Symbol.Resource.update($scope.project.id, copy)
