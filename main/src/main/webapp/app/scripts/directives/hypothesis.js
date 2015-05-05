@@ -137,7 +137,7 @@
                         label: node.toString(),
                         width: 25,
                         labelStyle: styles.nodeLabel,
-                        style: node === scope.result.hypothesis.initNode ? styles.node : styles.initNode
+                        style: node === scope.result.hypothesis.initNode ? styles.initNode : styles.node
                     })
                 }
 
