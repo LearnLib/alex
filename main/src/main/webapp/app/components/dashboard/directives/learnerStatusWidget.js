@@ -5,7 +5,7 @@
         .module('ALEX.dashboard')
         .directive('learnerStatusWidget', learnerStatusWidget);
 
-    learnerStatusWidget.$inject = ['LearnerService', 'ToastService'];
+    learnerStatusWidget.$inject = ['LearnerService', 'ToastService', 'paths'];
 
     /**
      * The directive of the dashboard widget that displays the current status of the learner
@@ -18,10 +18,10 @@
      * @param Toast - The ToastService
      * @returns {{require: string, templateUrl: string, link: link}}
      */
-    function learnerStatusWidget(Learner, Toast) {
+    function learnerStatusWidget(Learner, Toast, paths) {
         return {
             require: '^dashboardWidget',
-            templateUrl: 'app/components/dashboard/views/learner-status-widget.html',
+            templateUrl: paths.COMPONENTS + '/dashboard/views/learner-status-widget.html',
             link: link
         };
 

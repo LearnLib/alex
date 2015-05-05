@@ -1,7 +1,7 @@
 (function () {
 
     angular
-        .module('ALEX.directives')
+        .module('ALEX.modals')
         .directive('learnResultDetailsModalHandle', learnResultDetailsModalHandle);
 
     learnResultDetailsModalHandle.$inject = ['$modal', 'paths'];
@@ -35,7 +35,7 @@
             function handleModal() {
                 if (angular.isDefined(scope.result)) {
                     $modal.open({
-                        templateUrl: paths.views.MODALS + '/learn-result-details-modal.html',
+                        templateUrl: paths.COMPONENTS + '/modals/views/learn-result-details-modal.html',
                         controller: 'LearnResultDetailsModalController',
                         resolve: {
                             modalData: function () {

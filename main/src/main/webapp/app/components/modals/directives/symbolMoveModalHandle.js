@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.directives')
+        .module('ALEX.modals')
         .directive('symbolMoveModalHandle', symbolMoveModalHandle);
 
     symbolMoveModalHandle.$inject = ['$modal', 'paths'];
@@ -30,7 +30,7 @@
         function link(scope, el, attrs) {
             el.on('click', function () {
                 var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/symbol-move-modal.html',
+                    templateUrl: paths.COMPONENTS + '/modals/views/symbol-move-modal.html',
                     controller: 'SymbolMoveModalController',
                     resolve: {
                         modalData: function () {

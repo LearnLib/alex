@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.directives')
+        .module('ALEX.modals')
         .directive('symbolCreateModalHandle', symbolCreateModalHandle);
 
     symbolCreateModalHandle.$inject = ['$modal', 'paths'];
@@ -28,14 +28,12 @@
             },
             link: link
         };
-
-        function link(scope, el, attrs) {
-
+        function link(scope, el) {
             el.on('click', handleModal);
 
             function handleModal() {
                 var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/symbol-create-modal.html',
+                    templateUrl: paths.COMPONENTS + '/modals/views/symbol-create-modal.html',
                     controller: 'SymbolCreateModalController',
                     resolve: {
                         modalData: function () {

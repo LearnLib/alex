@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.directives')
+        .module('ALEX.modals')
         .directive('symbolEditModalHandle', symbolEditModalHandle);
 
     symbolEditModalHandle.$inject = ['$modal', 'paths'];
@@ -41,7 +41,7 @@
 
             function handleModal() {
                 var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/symbol-edit-modal.html',
+                    templateUrl: paths.COMPONENTS + '/modals/views/symbol-edit-modal.html',
                     controller: 'SymbolEditModalController',
                     resolve: {
                         modalData: function () {

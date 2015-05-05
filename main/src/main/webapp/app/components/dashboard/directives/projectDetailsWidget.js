@@ -5,7 +5,7 @@
         .module('ALEX.dashboard')
         .directive('projectDetailsWidget', projectDetailsWidget);
 
-    projectDetailsWidget.$inject = ['SessionService', 'SymbolGroup', 'LearnResult'];
+    projectDetailsWidget.$inject = ['SessionService', 'SymbolGroup', 'LearnResult', 'paths'];
 
     /**
      * The directive for the dashboard widget that displays information about the current project.
@@ -19,10 +19,10 @@
      * @param LearnResult - The LearnResult factory
      * @returns {{require: string, templateUrl: string, link: link}}
      */
-    function projectDetailsWidget(Session, SymbolGroup, LearnResult) {
+    function projectDetailsWidget(Session, SymbolGroup, LearnResult, paths) {
         return {
             require: '^dashboardWidget',
-            templateUrl: 'app/components/dashboard/views/project-details-widget.html',
+            templateUrl: paths.COMPONENTS + '/dashboard/views/project-details-widget.html',
             link: link
         };
 

@@ -7,7 +7,8 @@ module.exports = function (grunt) {
         'app/scripts/resources/*.js',
         'app/scripts/services/*.js', 'app/scripts/filters/*.js',
         'app/components/actions/init.js', 'app/components/actions/constants.js', 'app/components/actions/directives/**/*.js', 'app/components/actions/services/**/*.js',
-        'app/components/dashboard/init.js', 'app/components/dashboard/directives/*.js'];
+        'app/components/dashboard/init.js', 'app/components/dashboard/directives/*.js',
+        'app/components/modals/init.js', 'app/components/modals/controllers/*.js', 'app/components/modals/directives/*.js', 'app/components/modals/services/*.js'];
 
     grunt
         .initConfig({
@@ -40,10 +41,11 @@ module.exports = function (grunt) {
                         'bower_components/lodash/lodash.min.js',
                         'bower_components/ng-sortable/dist/ng-sortable.min.js',
                         'bower_components/angular-selection-model/dist/selection-model.min.js',
-                        //'bower_components/ace-builds/src-min/theme-eclipse.js',
-                        //'bower_components/ace-builds/src-min/mode-json.js',
                         'bower_components/angular-ui-ace/ui-ace.min.js',
                         'bower_components/ace-builds/src-min/ace.js',
+                        'bower_components/ace-builds/src-min/theme-eclipse.js',
+                        'bower_components/ace-builds/src-min/mode-json.js',
+                        //'bower_components/ace-builds/src-min/worker-json.js',
                         'bower_components/ngtoast/dist/ngToast.min.js',
                         'bower_components/angular-sanitize/angular-sanitize.min.js',
                         'bower_components/angular-bootstrap/ui-bootstrap.min.js',
@@ -63,7 +65,11 @@ module.exports = function (grunt) {
                     base: '../webapp'
                 },
                 all: {
-                    src: ['app/views/**/*.html', 'app/components/actions/views/**/*.html', 'app/components/dashboard/views/*.html'],
+                    src: [
+                        'app/views/**/*.html',
+                        'app/components/actions/views/*.html',
+                        'app/components/dashboard/views/*.html',
+                        'app/components/modals/views/*.html'],
                     dest: 'app/templates.js'
                 }
             },
@@ -131,6 +137,7 @@ module.exports = function (grunt) {
                         'app/style.min.css': [
                             'bower_components/ngtoast/dist/ngToast.min.css',
                             'bower_components/ng-sortable/dist/ng-sortable.min.css',
+                            'bower_components/codemirror/lib/codemirror.css',
                             'app/stylesheets/style.css'
                         ]
                     }

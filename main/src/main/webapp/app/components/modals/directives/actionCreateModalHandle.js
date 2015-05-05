@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.directives')
+        .module('ALEX.modals')
         .directive('actionCreateModalHandle', actionCreateModalHandle);
 
     actionCreateModalHandle.$inject = ['$modal', 'paths'];
@@ -40,7 +40,7 @@
 
                 // create the modal
                 var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/action-create-modal.html',
+                    templateUrl: paths.COMPONENTS + '/modals/views/action-create-modal.html',
                     controller: 'ActionCreateModalController',
                     resolve: {
                         modalData: function () {

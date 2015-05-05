@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.directives')
+        .module('ALEX.modals')
         .directive('hypothesisLayoutSettingsModalHandle', hypothesisLayoutSettingsModalHandle);
 
     hypothesisLayoutSettingsModalHandle.$inject = ['$modal', 'paths'];
@@ -37,7 +37,7 @@
         function link(scope, el, attrs) {
             el.on('click', function () {
                 var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/hypothesis-layout-settings-modal.html',
+                    templateUrl: paths.COMPONENTS + '/modals/views/hypothesis-layout-settings-modal.html',
                     controller: 'HypothesisLayoutSettingsController',
                     resolve: {
                         modalData: function () {

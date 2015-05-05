@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.directives')
+        .module('ALEX.modals')
         .directive('actionEditModalHandle', actionEditModalHandle);
 
     actionEditModalHandle.$inject = ['$modal', 'paths'];
@@ -41,7 +41,7 @@
 
                 // create and open the modal dialog
                 var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/action-edit-modal.html',
+                    templateUrl: paths.COMPONENTS + '/modals/views/action-edit-modal.html',
                     controller: 'ActionEditModalController',
                     resolve: {
                         modalData: function () {

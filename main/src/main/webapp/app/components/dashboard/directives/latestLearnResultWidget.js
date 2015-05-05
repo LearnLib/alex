@@ -5,7 +5,7 @@
         .module('ALEX.dashboard')
         .directive('latestLearnResultWidget', latestLearnResultWidget);
 
-    latestLearnResultWidget.$inject = ['SessionService', 'LearnResult'];
+    latestLearnResultWidget.$inject = ['SessionService', 'LearnResult', 'paths'];
 
     /**
      * The directive for the dashboard widget that displays information about the latest learning result, if there
@@ -19,10 +19,10 @@
      * @param LearnResult - The LearnResult factory
      * @returns {{require: string, templateUrl: string, link: link}}
      */
-    function latestLearnResultWidget(Session, LearnResult) {
+    function latestLearnResultWidget(Session, LearnResult, paths) {
         return {
             require: '^dashboardWidget',
-            templateUrl: 'app/components/dashboard/views/latest-learn-result-widget.html',
+            templateUrl: paths.COMPONENTS + '/dashboard/views/latest-learn-result-widget.html',
             link: link
         };
 

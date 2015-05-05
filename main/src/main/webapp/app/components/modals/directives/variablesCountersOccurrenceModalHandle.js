@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.directives')
+        .module('ALEX.modals')
         .directive('variablesCountersOccurrenceModalHandle', variablesCountersOccurrenceModalHandle);
 
     variablesCountersOccurrenceModalHandle.$inject = ['$modal', 'paths'];
@@ -25,7 +25,7 @@
         function link(scope, el, attrs) {
             el.on('click', function () {
                 var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/variables-counters-occurrence-modal.html',
+                    templateUrl: paths.COMPONENTS + '/modals/views/variables-counters-occurrence-modal.html',
                     controller: 'VariablesCountersOccurrenceModalController'
                 });
             });

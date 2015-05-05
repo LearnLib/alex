@@ -16,13 +16,13 @@
                 BASE: 'app/views',
                 DIRECTIVES: 'app/views/directives',
                 MODALS: 'app/views/modals',
-                PAGES: 'app/views/pages',
-                COMPONENTS: 'app/components'
+                PAGES: 'app/views/pages'
             },
             api: {
                 URL: '/rest',
                 PROXY_URL: '/rest/proxy?url='
-            }
+            },
+            COMPONENTS: 'app/components'
         })
 
         //output alphabet

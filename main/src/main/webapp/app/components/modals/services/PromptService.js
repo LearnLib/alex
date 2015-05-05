@@ -2,19 +2,17 @@
     'use strict';
 
     angular
-        .module('ALEX.services')
+        .module('ALEX.modals')
         .service('PromptService', PromptService);
 
-    PromptService.$inject = ['$modal', 'paths'];
+    PromptService.$inject = ['$modal'];
 
     /**
-     *
      * @param $modal
-     * @param paths
      * @returns {{prompt: prompt, confirm: confirm}}
      * @constructor
      */
-    function PromptService($modal, paths) {
+    function PromptService($modal) {
 
         // the available service methods
         return {
@@ -31,7 +29,7 @@
          */
         function prompt(text, options) {
             var modal = $modal.open({
-                templateUrl: paths.views.MODALS + '/prompt-dialog.html',
+                templateUrl: 'app/components/modals/views/prompt-dialog.html',
                 controller: 'PromptDialogController',
                 resolve: {
                     modalData: function () {
@@ -54,7 +52,7 @@
          */
         function confirm(text) {
             var modal = $modal.open({
-                templateUrl: paths.views.MODALS + '/confirm-dialog.html',
+                templateUrl: 'app/components/modals/views/confirm-dialog.html',
                 controller: 'ConfirmDialogController',
                 resolve: {
                     modalData: function () {

@@ -5,6 +5,8 @@
         .module('ALEX.dashboard')
         .directive('dashboardWidget', dashboardWidget);
 
+    dashboardWidget.$inject = ['paths'];
+
     /**
      * The directive that is used as a container for a widget that is displayed on the dashboard. Child directives
      * should require it with require: '^dashboardWidget'
@@ -13,11 +15,11 @@
      *
      * @returns {{scope: {}, transclude: boolean, templateUrl: string, controller: *[]}}
      */
-    function dashboardWidget() {
+    function dashboardWidget(paths) {
         return {
             scope: {},
             transclude: true,
-            templateUrl: 'app/components/dashboard/views/dashboard-widget.html',
+            templateUrl: paths.COMPONENTS + '/dashboard/views/dashboard-widget.html',
             controller: ['$scope', controller]
         };
 

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.controller')
+        .module('ALEX.modals')
         .controller('ActionEditModalController', ActionEditModalController);
 
     ActionEditModalController.$inject = ['$scope', '$modalInstance', 'modalData', 'actionTypes', 'ActionBuilder', 'Symbol', 'SessionService'];

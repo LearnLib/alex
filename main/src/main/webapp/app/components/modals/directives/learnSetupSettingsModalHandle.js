@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.directives')
+        .module('ALEX.modals')
         .directive('learnSetupSettingsModalHandle', learnSetupSettingsModalHandle);
 
     learnSetupSettingsModalHandle.$inject = ['$modal', 'paths'];
@@ -34,7 +34,7 @@
         function link(scope, el, attr) {
             el.on('click', function () {
                 var modal = $modal.open({
-                    templateUrl: paths.views.MODALS + '/learn-setup-settings-modal.html',
+                    templateUrl: paths.COMPONENTS + '/modals/views/learn-setup-settings-modal.html',
                     controller: 'LearnSetupSettingsModalController',
                     resolve: {
                         modalData: function () {

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.controller')
+        .module('ALEX.modals')
         .controller('SymbolGroupCreateModalController', SymbolGroupCreateModalController);
 
     SymbolGroupCreateModalController.$inject = [
