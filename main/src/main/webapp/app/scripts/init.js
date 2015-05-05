@@ -26,7 +26,8 @@
             'ALEX.routes',
             'ALEX.constants',
             'ALEX.models',
-            'ALEX.actions'
+            'ALEX.actions',
+            'ALEX.dashboard'
         ]);
 
     angular.module('ALEX.controller', []);

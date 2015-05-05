@@ -1,0 +1,6 @@
+<div class="panel" ng-class="panelClass ? panelClass : 'panel-default'">
+    <div class="panel-heading" ng-show="title !== undefined">
+        <strong ng-bind="::title"></strong>
+    </div>
+    <div class="panel-body" ng-transclude></div>
+</div>

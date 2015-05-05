@@ -17,7 +17,7 @@
                 DIRECTIVES: 'app/views/directives',
                 MODALS: 'app/views/modals',
                 PAGES: 'app/views/pages',
-                INCLUDES: 'app/views/includes'
+                COMPONENTS: 'app/components'
             },
             api: {
                 URL: '/rest',

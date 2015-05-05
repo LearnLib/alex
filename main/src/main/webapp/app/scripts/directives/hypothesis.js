@@ -5,64 +5,58 @@
 
     hypothesis.$inject = ['$window', 'paths', 'CounterExampleService', '_', 'dagreD3', 'd3', 'graphlib'];
 
-    function intersectNode(node, point) {
-        return node.intersect(point);
-    }
-
-    function calcPoints(g, e) {
-        var edge = g.edge(e), tail = g.node(e.v), head = g.node(e.w), points = edge.points
-            .slice(1, edge.points.length - 1);
-
-        points.unshift(intersectNode(tail, points[0]));
-        points.push(intersectNode(head, points[points.length - 1]));
-
-        return createLine(edge, points);
-    }
-
-    function createLine(edge, points) {
-        var line = d3.svg.line().x(function (d) {
-            return d.x;
-        }).y(function (d) {
-            return d.y;
-        });
-
-        if (_.has(edge, "lineInterpolate")) {
-            line.interpolate(edge.lineInterpolate);
-        }
-
-        if (_.has(edge, "lineTension")) {
-            line.tension(Number(edge.lineTension));
-        }
-
-        return line(points);
-    }
-
+    /**
+     * The directive that is used to display hypotheses.
+     *
+     * Attribute 'isSelectable' should only be true if it should be possible to select counterexamples from the
+     * hypothesis that are stored in the CounterExampleService. It is automatically 'false' if not defined
+     *
+     * Attribute 'layoutSettings' is optional.
+     *
+     * Use: <hypothesis test="..." is-selectable="true|false" layout-settings="..."></hypothesis>
+     *
+     * @param $window
+     * @param paths
+     * @param CounterExampleService
+     * @param _
+     * @param dagreD3
+     * @param d3
+     * @param graphlib
+     * @returns {{scope: {result: string, layoutSettings: string, isSelectable: string}, templateUrl: string, link: link}}
+     */
     function hypothesis($window, paths, CounterExampleService, _, dagreD3, d3, graphlib) {
-
         return {
             scope: {
-                test: '=',
+                result: '=test',
                 layoutSettings: '=',
                 isSelectable: '@'
             },
             templateUrl: paths.views.DIRECTIVES + '/hypothesis.html',
             link: link
         };
-
         function link(scope, el, attrs) {
 
-            var _svg;
-            var _svgGroup;
-            var _svgContainer;
-            var _graph;
-            var _renderer;
+            var _svg;               // the svg element
+            var _svgGroup;          // the first g element in the svg the hypothesis is rendered into
+            var _svgContainer;      // the parent of the svg element
+            var _graph;             // the graphlib graph object that represents the hypothesis
+            var _renderer;          // the dagreD3 renderer that renders _graph in _svgGroup
 
-            var labelStyle = 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline;';
-            var labelStyleEdge = labelStyle + 'font-size: 10px';
-            var labelStyleNode = labelStyle + 'font-size: 12px';
+            var styles = {
+                edge: 'stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none',
+                edgeLabel: 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 10px',
+                nodeLabel: 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 12px',
+                node: 'fill: #fff; stroke: #000; stroke-width: 1',
+                initNode: 'fill: #B3E6B3; stroke: #5cb85c; stroke-width: 3'
+            };
 
-            scope.$watch('test', function (test) {
-                if (angular.isDefined(test) && test != null) {
+            var graphModes = {
+                GRAPH: 0,
+                MULTIGRAPH: 1
+            };
+
+            scope.$watch('result', function (result) {
+                if (angular.isDefined(result) && result !== null) {
                     createHypothesis();
                 }
             });
@@ -73,11 +67,17 @@
                 }
             });
 
+            // create the hypothesis. Call this on re-render
             function createHypothesis() {
                 clearSvg();
-                initGraph();
-                layout();
-                renderGraph();
+                init();
+                if (angular.isUndefined(scope.layoutSettings)
+                    || (angular.isDefined(scope.layoutSettings) && !scope.layoutSettings.multigraph)) {
+                    layout(graphModes.GRAPH);
+                } else {
+                    layout(graphModes.MULTIGRAPH);
+                }
+                render();
                 handleEvents();
             }
 
@@ -85,16 +85,18 @@
                 el.find('svg')[0].innerHTML = '';
             }
 
-            function initGraph() {
+            function init() {
 
                 _svg = d3.select(el.find('svg')[0]);
                 _svgGroup = _svg.append("g");
                 _svgContainer = _svg.node().parentNode;
 
-                _svg.style('font-family', '"Helvetica Neue",Helvetica,Arial,sans-serif');
-                _svg.style('font-size', '12px');
-                _svg.style('line-height', '1.42857');
-                _svg.style('color', '#333');
+                _svg.style({
+                    'font-family': '"Helvetica Neue",Helvetica,Arial,sans-serif',
+                    'font-size': '12px',
+                    'line-height': '1.42857',
+                    'color': '#333'
+                });
 
                 _graph = new graphlib.Graph({
                     directed: true,
@@ -114,114 +116,77 @@
                 }
             }
 
-            function layout() {
-                if (angular.isDefined(scope.layoutSettings)) {
-                    if (scope.layoutSettings.multigraph) {
-                        layoutAsMultiGraph();
-                    } else {
-                        layoutAsGraph();
-                    }
-                } else {
-                    layoutAsGraph();
-                }
-            }
+            function layout(graphMode) {
+                var node;
 
-            function layoutAsMultiGraph() {
-
-                // add nodes to the graph
-                _.forEach(scope.test.hypothesis.nodes, function (node, i) {
-                    var n = {
-                        shape: 'circle',
-                        label: node.toString(),
-                        width: 25,
-                        labelStyle: labelStyleNode
-                    };
-
-                    if (node === scope.test.hypothesis.initNode) {
-                        n.style = 'fill: #B3E6B3; stroke: #5cb85c; stroke-width: 3';
-                    } else {
-                        n.style = 'fill: #fff; stroke: #000; stroke-width: 1';
-                    }
-
-                    _graph.setNode(node.toString(), n);
-                });
-
-                // add edges to the graph
-                _.forEach(scope.test.hypothesis.edges, function (edge, i) {
-                    var edgeName = edge.from + "-" + edge.to + "|" + i;
-                    _graph.setEdge(edge.from, edge.to, {
-                        label: edge.input + "/" + edge.output,
+                function createEdgeObject(label) {
+                    return {
+                        label: label,
                         labeloffset: 5,
                         lineInterpolate: 'basis',
-                        style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
-                        labelStyle: labelStyleEdge
-                    }, edgeName);
-                });
+                        style: styles.edge,
+                        labelStyle: styles.edgeLabel
+                    }
+                }
 
-                // layout it
-                dagreD3.dagre.layout(_graph, {});
-            }
-
-            function layoutAsGraph() {
-
-                // another format of a graph for merged multi edges
-                // graph = {<from>: {<to>: <label[]>, ...}, ...}
-                var graph = {};
-
-                // add nodes to the rendered graph
-                _.forEach(scope.test.hypothesis.nodes, function (node, i) {
-                    var n = {
+                // add nodes to the graph
+                for (var i = 0; i < scope.result.hypothesis.nodes.length; i++) {
+                    node = scope.result.hypothesis.nodes[i];
+                    _graph.setNode(node.toString(), {
                         shape: 'circle',
                         label: node.toString(),
                         width: 25,
-                        labelStyle: labelStyleNode
-                    };
+                        labelStyle: styles.nodeLabel,
+                        style: node === scope.result.hypothesis.initNode ? styles.node : styles.initNode
+                    })
+                }
 
-                    if (node === scope.test.hypothesis.initNode) {
-                        n.style = 'fill: #B3E6B3; stroke: #5cb85c; stroke-width: 3';
-                    } else {
-                        n.style = 'fill: #fff; stroke: #000; stroke-width: 1';
-                    }
+                if (graphMode === graphModes.GRAPH) {
 
-                    _graph.setNode(node.toString(), n);
-                });
+                    // another format of a graph for merged multi edges
+                    // graph = {<from>: {<to>: <label[]>, ...}, ...}
+                    var graph = {};
 
-                // build data structure for the alternative representation by
-                // pushing some data
-                _.forEach(scope.test.hypothesis.edges, function (edge) {
-                    if (!graph[edge.from]) {
-                        graph[edge.from] = {};
-                        graph[edge.from][edge.to] = [edge.input + "/"
-                        + edge.output];
-                    } else {
-                        if (!graph[edge.from][edge.to]) {
+                    // build data structure for the alternative representation by
+                    // pushing some data
+                    _.forEach(scope.result.hypothesis.edges, function (edge) {
+                        if (!graph[edge.from]) {
+                            graph[edge.from] = {};
                             graph[edge.from][edge.to] = [edge.input + "/"
                             + edge.output];
                         } else {
-                            graph[edge.from][edge.to].push(edge.input + "/"
-                            + edge.output);
+                            if (!graph[edge.from][edge.to]) {
+                                graph[edge.from][edge.to] = [edge.input + "/"
+                                + edge.output];
+                            } else {
+                                graph[edge.from][edge.to].push(edge.input + "/"
+                                + edge.output);
+                            }
                         }
-                    }
-                });
-
-                // add edges to the rendered graph and combine <label[]>
-                _.forEach(graph, function (k, from) {
-                    _.forEach(k, function (labels, to) {
-                        _graph.setEdge(from, to, {
-                            label: labels.join('\n'),
-                            labeloffset: 5,
-                            lineInterpolate: 'basis',
-                            style: "stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none",
-                            labelStyle: labelStyleEdge
-                        }, (from + '' + to));
                     });
-                });
 
-                // render the graph on the svg
+                    // add edges to the rendered graph and combine <label[]>
+                    _.forEach(graph, function (k, from) {
+                        _.forEach(k, function (labels, to) {
+                            _graph.setEdge(from, to, createEdgeObject(labels.join('\n')), (from + '' + to));
+                        });
+                    });
+
+                } else {
+                    var edge;
+
+                    // add edges to the graph
+                    for (i = 0; i < scope.result.hypothesis.edges.length; i++) {
+                        edge = scope.result.hypothesis.edges[i];
+                        _graph.setEdge(edge.from, edge.to, createEdgeObject(edge.input + "/" + edge.output), (edge.from + "-" + edge.to + "|" + i))
+                    }
+                }
+
+                // layout with dagre
                 dagreD3.dagre.layout(_graph, {});
             }
 
-            function renderGraph() {
+            function render() {
 
                 // render the graph in the svg
                 _renderer = new dagreD3.render();
@@ -233,15 +198,13 @@
 
                 // swap defs and paths children of .edgepaths because arrows are not shown
                 // on export otherwise <.<
-                _.forEach(el.find('svg')[0].querySelectorAll('.edgePath'), function(edgePath){
-                    edgePath.insertBefore(edgePath.childNodes[1],edgePath.firstChild);
+                _.forEach(el.find('svg')[0].querySelectorAll('.edgePath'), function (edgePath) {
+                    edgePath.insertBefore(edgePath.childNodes[1], edgePath.firstChild);
                 })
             }
 
             function handleEvents() {
-
                 var zoom;
-                var drag;
 
                 // attach click events for the selection of counter examples to the edge labels
                 // only if counterExamples is defined
@@ -268,44 +231,7 @@
                     + ')' + ' scale(' + zoom.scale() + ')');
                 }
 
-                // Add drag behavior for nodes
-                drag = d3.behavior.drag()
-                    .origin(function (d) {
-                        return d;
-                    })
-                    .on('dragstart', dragstart)
-                    .on("drag", drag);
-
-                _svg.selectAll('.node')
-                    .attr('cx', function (d) {
-                        return d.x;
-                    })
-                    .attr('cy', function (d) {
-                        return d.y;
-                    })
-                    .call(drag);
-
-                // prevent pan effect while dragging nodes
-                function dragstart() {
-                    d3.event.sourceEvent.stopPropagation();
-                }
-
-                function drag(d) {
-                    var node = d3.select(this);
-                    var attrs = _graph.node(d);
-                    attrs.x += d3.event.dx;
-                    attrs.y += d3.event.dy;
-                    node.attr('transform', 'translate(' + attrs.x + ','
-                    + attrs.y + ')');
-
-                    // redraw edges
-                    var paths = d3.selectAll('.path');
-                    _.forEach(_graph.edges(), function (edge, i) {
-                        var line = calcPoints(_graph, edge);
-                        paths[0][i].setAttribute('d', line);
-                    });
-                }
-
+                // do this whole stuff so that the size of the svg adjusts to the window
                 angular.element($window).on('resize', fitSize);
 
                 function fitSize() {
@@ -313,6 +239,7 @@
                     _svg.attr("height", _svgContainer.clientHeight);
                 }
 
+                // prevent hypothesis not to be rendered instantly
                 window.setTimeout(function () {
                     window.dispatchEvent(new Event('resize'));
                 }, 100);

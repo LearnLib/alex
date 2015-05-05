@@ -1,0 +1,19 @@
+<div class="alert alert-info no-margin-bottom"
+     ng-show="!isActive && !hasFinished">The Learner is not active.
+    <a ui-sref="learn.setup">Start learning</a> your application!
+</div>
+
+<div class="alert alert-info no-margin-bottom"
+     ng-show="!isActive && hasFinished">The Learner is not active and created a model.
+
+    <a ui-sref="learn.start">Refine it</a>,
+    <a ui-sref="learn.results.compare({testNos: [result.testNo]})">have a look at it</a> or
+    <a ui-sref="learn.setup">Start a new test!</a>
+</div>
+
+<div class="alert alert-warning no-margin-bottom clearfix"
+     ng-show="isActive">
+    The Learner is currently learning an application.
+    <hr>
+    <button class="btn btn-xs btn-warning pull-right" ng-click="abort()">Abort</button>
+</div>

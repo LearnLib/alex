@@ -346,7 +346,6 @@
                 });
             };
 
-            // init directive
             init();
         }
     }

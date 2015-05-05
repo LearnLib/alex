@@ -6,7 +6,8 @@ module.exports = function (grunt) {
         'app/scripts/models/*.js',
         'app/scripts/resources/*.js',
         'app/scripts/services/*.js', 'app/scripts/filters/*.js',
-        'app/components/actions/init.js', 'app/components/actions/constants.js', 'app/components/actions/directives/**/*.js', 'app/components/actions/services/**/*.js'];
+        'app/components/actions/init.js', 'app/components/actions/constants.js', 'app/components/actions/directives/**/*.js', 'app/components/actions/services/**/*.js',
+        'app/components/dashboard/init.js', 'app/components/dashboard/directives/*.js'];
 
     grunt
         .initConfig({
@@ -62,7 +63,7 @@ module.exports = function (grunt) {
                     base: '../webapp'
                 },
                 all: {
-                    src: ['app/views/**/*.html', 'app/components/actions/views/**/*.html'],
+                    src: ['app/views/**/*.html', 'app/components/actions/views/**/*.html', 'app/components/dashboard/views/*.html'],
                     dest: 'app/templates.js'
                 }
             },
