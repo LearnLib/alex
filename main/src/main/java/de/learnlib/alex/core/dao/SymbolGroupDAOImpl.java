@@ -11,6 +11,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import javax.validation.ValidationException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -61,7 +63,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public List<SymbolGroup> getAll(long projectId, String... embedFields) throws NoSuchElementException {
+    public List<SymbolGroup> getAll(long projectId, EmbeddableFields... embedFields) throws NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -86,7 +88,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public SymbolGroup get(long projectId, Long groupId, String... embedFields) throws NoSuchElementException {
+    public SymbolGroup get(long projectId, Long groupId, EmbeddableFields... embedFields)
+            throws NoSuchElementException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -135,7 +138,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     @Override
     public void delete(long projectId, Long groupId) throws IllegalArgumentException {
-        SymbolGroup group = get(projectId, groupId, "all");
+        SymbolGroup group = get(projectId, groupId, EmbeddableFields.ALL);
 
         // start session
         Session session = HibernateUtil.getSession();
@@ -170,24 +173,13 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         }
     }
 
-    private void initLazyRelations(Session session, SymbolGroup group, String... embedFields) {
-        Set<String> fieldsToLoad = new HashSet<>();
-        if (embedFields != null) {
-            if (embedFields.length == 1 && "all".equals(embedFields[0])) {
-                fieldsToLoad.add("completeSymbols");
-            } else {
-                for (String field : embedFields) {
-                    fieldsToLoad.add(field);
-                }
-            }
-        }
+    private void initLazyRelations(Session session, SymbolGroup group, EmbeddableFields... embedFields) {
+        Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
-        if (fieldsToLoad.contains("completeSymbols")) {
-            Hibernate.initialize(group.getSymbols());
-            for (Symbol symbol : group.getSymbols()) {
-                SymbolDAOImpl.loadLazyRelations(symbol);
-            }
-        } else if (fieldsToLoad.contains("symbols")) {
+        if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
+            group.getSymbols();
+            group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
+        } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
             List<IdRevisionPair> idRevisionPairs = symbolDAO.getIdRevisionPairs(session,
                                                                                 group.getProjectId(),
                                                                                 group.getId(),
@@ -197,5 +189,15 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         } else {
             group.setSymbols(null);
         }
+    }
+
+    private Set<EmbeddableFields> fieldsArrayToHashSet(EmbeddableFields[] embedFields) {
+        Set<EmbeddableFields> fieldsToLoad = new HashSet<>();
+        if (Arrays.asList(embedFields).contains(EmbeddableFields.ALL)) {
+            fieldsToLoad.add(EmbeddableFields.COMPLETE_SYMBOLS);
+        } else {
+            Collections.addAll(fieldsToLoad, embedFields);
+        }
+        return fieldsToLoad;
     }
 }

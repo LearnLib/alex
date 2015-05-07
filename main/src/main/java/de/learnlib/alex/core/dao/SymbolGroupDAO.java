@@ -11,6 +11,33 @@ import java.util.NoSuchElementException;
  */
 public interface SymbolGroupDAO {
 
+    enum EmbeddableFields {
+        ALL,
+
+        COMPLETE_SYMBOLS,
+
+        SYMBOLS;
+
+        /**
+         * Parse a string into an entry of this enum.
+         * It is forbidden to override toValue(), so we use this method to allow the lowercase variants, too.
+         *
+         * @param name
+         *         THe name to parse into an entry.
+         * @return The fitting entry of this enum.
+         * @throws IllegalArgumentException
+         *         If the name could not be parsed.
+         */
+        public static EmbeddableFields fromString(String name) throws IllegalArgumentException {
+            return EmbeddableFields.valueOf(name.toUpperCase());
+        }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+    }
+
     /**
      * Save a group.
      *
@@ -32,7 +59,7 @@ public interface SymbolGroupDAO {
      * @throws NoSuchElementException
      *         If no project with the given id was found.
      */
-    List<SymbolGroup> getAll(long projectId, String... embedFields) throws NoSuchElementException;
+    List<SymbolGroup> getAll(long projectId, EmbeddableFields... embedFields) throws NoSuchElementException;
 
     /**
      * Get one group.
@@ -47,7 +74,7 @@ public interface SymbolGroupDAO {
      * @throws NoSuchElementException
      *         If the Project or the Group could not be found.
      */
-    SymbolGroup get(long projectId, Long groupId, String... embedFields) throws NoSuchElementException;
+    SymbolGroup get(long projectId, Long groupId, EmbeddableFields... embedFields) throws NoSuchElementException;
 
     /**
      * Update a group.

@@ -15,9 +15,6 @@ public interface ProjectDAO {
      */
     enum EmbeddableFields {
 
-        /** Flag to embed nothing. */
-        NONE,
-
         /** Flag to embed the groups of the project. */
         GROUPS,
 

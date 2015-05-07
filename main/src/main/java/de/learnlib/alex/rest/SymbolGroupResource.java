@@ -1,5 +1,6 @@
 package de.learnlib.alex.rest;
 
+import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
 import de.learnlib.alex.core.entities.Symbol;
@@ -83,18 +84,19 @@ public class SymbolGroupResource {
      * @return All groups in a list. If the project contains no groups the list will be empty.
      * @responseType java.util.List<de.learnlib.alex.core.entities.SymbolGroup>
      * @successResponse 200 OK
-     * @errorResponse 404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         try {
-            String[] fields = null;
-            if (embed != null) {
-                fields = embed.split(",");
-            }
-            List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId, fields);
+            SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
+            List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId, embeddableFields);
             return Response.ok(groups).build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
+                                                               Response.Status.BAD_REQUEST, e);
         } catch (NoSuchElementException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
                                                                Response.Status.NOT_FOUND, e);
@@ -113,7 +115,8 @@ public class SymbolGroupResource {
      * @return The project or an error message.
      * @responseType de.learnlib.alex.core.entities.SymbolGroup
      * @successResponse 200 OK
-     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{id}")
@@ -122,12 +125,12 @@ public class SymbolGroupResource {
                         @PathParam("id") Long id,
                         @QueryParam("embed") String embed) {
         try {
-            String[] fields = null;
-            if (embed != null) {
-                fields = embed.split(",");
-            }
-            SymbolGroup group = symbolGroupDAO.get(projectId, id, fields);
+            SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
+            SymbolGroup group = symbolGroupDAO.get(projectId, id, embeddableFields);
             return Response.ok(group).build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get",
+                                                               Response.Status.BAD_REQUEST, e);
         } catch (NoSuchElementException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get", Response.Status.NOT_FOUND, e);
         }
@@ -206,5 +209,20 @@ public class SymbolGroupResource {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
                                                                Response.Status.BAD_REQUEST, e);
         }
+    }
+
+    private SymbolGroupDAO.EmbeddableFields[] parseEmbeddableFields(String embed) throws IllegalArgumentException {
+        if (embed == null) {
+            return new SymbolGroupDAO.EmbeddableFields[0];
+        }
+
+        String[] fields = embed.split(",");
+
+        SymbolGroupDAO.EmbeddableFields[] embedFields = new SymbolGroupDAO.EmbeddableFields[fields.length];
+        for (int i = 0; i < fields.length; i++) {
+            embedFields[i] = SymbolGroupDAO.EmbeddableFields.fromString(fields[i]);
+        }
+
+        return embedFields;
     }
 }

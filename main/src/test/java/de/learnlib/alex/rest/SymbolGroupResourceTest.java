@@ -145,7 +145,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfYouWantToGetAllGroupsOfANonExistingProject() {
-        willThrow(NoSuchElementException.class).given(symbolGroupDAO).getAll(PROJECT_TEST_ID, null);
+        willThrow(NoSuchElementException.class).given(symbolGroupDAO).getAll(PROJECT_TEST_ID);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups").request().get();
 
@@ -154,7 +154,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
     @Test
     public void shouldGetTheRightGroup() throws IOException {
-        given(symbolGroupDAO.get(PROJECT_TEST_ID, 1L, null)).willReturn(group1);
+        given(symbolGroupDAO.get(PROJECT_TEST_ID, 1L)).willReturn(group1);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups/1").request().get();
 
@@ -162,12 +162,12 @@ public class SymbolGroupResourceTest extends JerseyTest {
         String responseBody = response.readEntity(String.class);
         SymbolGroup groupInResponse = readGroup(responseBody);
         assertEquals(group1, groupInResponse);
-        verify(symbolGroupDAO).get(PROJECT_TEST_ID, 1L, null);
+        verify(symbolGroupDAO).get(PROJECT_TEST_ID, 1L);
     }
 
     @Test
     public void shouldReturn404IfYouWantToGetANonExistingGroup() {
-        willThrow(NoSuchElementException.class).given(symbolGroupDAO).get(PROJECT_TEST_ID, 1L, null);
+        willThrow(NoSuchElementException.class).given(symbolGroupDAO).get(PROJECT_TEST_ID, 1L);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups/1").request().get();
 

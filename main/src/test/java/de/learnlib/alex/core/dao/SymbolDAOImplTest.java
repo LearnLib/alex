@@ -489,8 +489,9 @@ public class SymbolDAOImplTest {
         symbolDAO.update(symbol2);
 
         Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol2.getId());
-        SymbolGroup defaultGroupInDB = symbolGroupDAO.get(project.getId(), project.getDefaultGroup().getId(), "all");
-        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId(), "all");
+        SymbolGroup defaultGroupInDB = symbolGroupDAO.get(project.getId(), project.getDefaultGroup().getId(),
+                                                          SymbolGroupDAO.EmbeddableFields.ALL);
+        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId(), SymbolGroupDAO.EmbeddableFields.ALL);
         assertEquals(groupInDB, symbolInDB.getGroup());
         assertEquals(0, defaultGroupInDB.getSymbolSize());
         assertEquals(2, groupInDB.getSymbolSize());
@@ -504,8 +505,9 @@ public class SymbolDAOImplTest {
         symbolDAO.update(symbol);
 
         Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol.getId());
-        SymbolGroup defaultGroupInDB = symbolGroupDAO.get(project.getId(), project.getDefaultGroup().getId(), "all");
-        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId(), "all");
+        SymbolGroup defaultGroupInDB = symbolGroupDAO.get(project.getId(), project.getDefaultGroup().getId(),
+                                                          SymbolGroupDAO.EmbeddableFields.ALL);
+        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId(), SymbolGroupDAO.EmbeddableFields.ALL);
         assertEquals(defaultGroupInDB, symbolInDB.getGroup());
         assertEquals(2, defaultGroupInDB.getSymbolSize());
         assertEquals(0, groupInDB.getSymbolSize());
