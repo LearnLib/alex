@@ -72,7 +72,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldStartALearningProcess() {
-        given(projectDAO.getByID(PROJECT_TEST_ID, "all")).willReturn(project);
+        given(projectDAO.getByID(PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
         given(learner.isActive()).willReturn(true);
         LearnerResult result = mock(LearnerResult.class);
         given(result.getProjectId()).willReturn(PROJECT_TEST_ID);

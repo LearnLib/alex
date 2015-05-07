@@ -24,6 +24,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -58,7 +60,7 @@ public class ProjectResourceTest extends JerseyTest {
         project.setId(PROJECT_TEST_ID);
         project.setName("Test Project");
         project.addSymbol(symbol);
-        given(projectDAO.getByID(PROJECT_TEST_ID, null)).willReturn(project);
+        given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(project);
 
         Learner learner = mock(Learner.class);
 
@@ -92,26 +94,26 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldReturnAllProjectsWithoutEmbedded() {
         List<Project> projects = new ArrayList<>();
         projects.add(project);
-        given(projectDAO.getAll(null)).willReturn(projects);
+        given(projectDAO.getAll()).willReturn(projects);
 
         Response response = target("/projects").request().get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(projectDAO).getAll(null);
+        verify(projectDAO).getAll();
     }
 
     @Test
     public void shouldReturnAllProjectsWithEmbedded() {
         List<Project> projects = new ArrayList<>();
         projects.add(project);
-        given(projectDAO.getAll("symbols", "testResults")).willReturn(projects);
+        given(projectDAO.getAll(ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS)).willReturn(projects);
 
-        Response response = target("/projects").queryParam("embed", "symbols,testResults").request().get();
+        Response response = target("/projects").queryParam("embed", "symbols,test_results").request().get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(projectDAO).getAll("symbols", "testResults");
+        verify(projectDAO).getAll(ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS);
     }
 
     @Test
@@ -119,27 +121,27 @@ public class ProjectResourceTest extends JerseyTest {
         Response response = target("/projects/" + PROJECT_TEST_ID).request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
-        verify(projectDAO).getByID(PROJECT_TEST_ID, null);
+        verify(projectDAO).getByID(PROJECT_TEST_ID);
     }
 
     @Test
     public void shouldGetTheRightProjectWithEmbedded() {
-        given(projectDAO.getByID(PROJECT_TEST_ID, "symbols", "testResults")).willReturn(project);
-        Response response = target("/projects/" + PROJECT_TEST_ID).queryParam("embed", "symbols,testResults")
+        given(projectDAO.getByID(PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS)).willReturn(project);
+        Response response = target("/projects/" + PROJECT_TEST_ID).queryParam("embed", "symbols,test_results")
                                 .request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
-        verify(projectDAO).getByID(PROJECT_TEST_ID, "symbols", "testResults");
+        verify(projectDAO).getByID(PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS);
     }
 
     @Test
     public void shouldReturn404WhenProjectNotFound() {
-        given(projectDAO.getByID(PROJECT_TEST_ID, null)).willReturn(null);
+        given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(null);
 
         Response response = target("/projects/" + PROJECT_TEST_ID).request().get();
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(projectDAO).getByID(PROJECT_TEST_ID, null);
+        verify(projectDAO).getByID(PROJECT_TEST_ID);
     }
 
     @Test

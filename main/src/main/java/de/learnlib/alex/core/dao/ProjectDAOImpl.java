@@ -13,6 +13,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import javax.validation.ValidationException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,7 +64,7 @@ public class ProjectDAOImpl implements ProjectDAO {
     }
 
     @Override
-    public List<Project> getAll(String... embedFields) {
+    public List<Project> getAll(EmbeddableFields... embedFields) {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -82,7 +84,7 @@ public class ProjectDAOImpl implements ProjectDAO {
     }
 
     @Override
-    public Project getByID(long id, String... embedFields) {
+    public Project getByID(long id, EmbeddableFields... embedFields) {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -133,7 +135,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     @Override
     public void delete(long id) throws IllegalArgumentException {
-        Project project = getByID(id, "all");
+        Project project = getByID(id, EmbeddableFields.ALL);
 
         if (project != null) {
             // start session
@@ -141,9 +143,7 @@ public class ProjectDAOImpl implements ProjectDAO {
             HibernateUtil.beginTransaction();
 
             for (SymbolGroup group : project.getGroups()) {
-                for (Symbol symbol : group.getSymbols()) {
-                    session.delete(symbol);
-                }
+                group.getSymbols().forEach(session::delete);
             }
 
             session.delete(project);
@@ -159,63 +159,55 @@ public class ProjectDAOImpl implements ProjectDAO {
      * @param project
      *         The project which needs the 'lazy' objects.
      */
-    private void initLazyRelations(Project project, String... embedFields) {
-        if (embedFields != null) {
-            Set<String> fieldsToLoad = new HashSet<>();
-            if (embedFields.length == 1 && "all".equals(embedFields[0])) {
-                fieldsToLoad.add("groups");
-                fieldsToLoad.add("defaultGroup");
-                fieldsToLoad.add("symbols");
-                fieldsToLoad.add("testResults");
-            } else {
-                for (String field : embedFields) {
-                    fieldsToLoad.add(field);
-                }
-            }
+    private void initLazyRelations(Project project, EmbeddableFields... embedFields) {
+        if (embedFields != null && embedFields.length > 0) {
+            Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
-            if (fieldsToLoad.contains("groups")) {
-                Hibernate.initialize(project.getGroups());
-                for (SymbolGroup group : project.getGroups()) {
-                    Hibernate.initialize(group);
-                    for (Symbol symbol : group.getSymbols()) {
-                        SymbolDAOImpl.loadLazyRelations(symbol);
-                    }
-                }
+            if (fieldsToLoad.contains(EmbeddableFields.GROUPS)) {
+                project.getGroups().forEach(group -> group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations));
             } else {
                 project.setGroups(null);
             }
 
-            if (fieldsToLoad.contains("defaultGroup")) {
-                Hibernate.initialize(project.getDefaultGroup());
+            if (fieldsToLoad.contains(EmbeddableFields.DEFAULT_GROUP)) {
+                project.getDefaultGroup();
                 if (project.getDefaultGroup() != null) {
-                    Hibernate.initialize(project.getDefaultGroup().getSymbols());
-                    for (Symbol symbol : project.getDefaultGroup().getSymbols()) {
-                        SymbolDAOImpl.loadLazyRelations(symbol);
-                    }
+                    project.getDefaultGroup().getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
                 }
             } else {
                 project.setDefaultGroup(null);
             }
 
-            if (fieldsToLoad.contains("symbols")) {
-                Hibernate.initialize(project.getSymbols());
-                for (Symbol symbol : project.getSymbols()) {
-                    SymbolDAOImpl.loadLazyRelations(symbol);
-                }
+            if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
+                project.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
             } else {
                 project.setSymbols(null);
             }
 
-            if (fieldsToLoad.contains("testResults")) {
-                Hibernate.initialize(project.getTestResults());
+            if (fieldsToLoad.contains(EmbeddableFields.TEST_RESULTS)) {
+                project.getTestResults();
             } else {
                 project.setTestResults(null);
             }
         } else {
             project.setGroups(null);
+            project.setDefaultGroup(null);
             project.setSymbols(null);
             project.setTestResults(null);
         }
+    }
+
+    private Set<EmbeddableFields> fieldsArrayToHashSet(EmbeddableFields[] embedFields) {
+        Set<EmbeddableFields> fieldsToLoad = new HashSet<>();
+        if (Arrays.asList(embedFields).contains(EmbeddableFields.ALL)) {
+            fieldsToLoad.add(EmbeddableFields.GROUPS);
+            fieldsToLoad.add(EmbeddableFields.DEFAULT_GROUP);
+            fieldsToLoad.add(EmbeddableFields.SYMBOLS);
+            fieldsToLoad.add(EmbeddableFields.TEST_RESULTS);
+        } else {
+            Collections.addAll(fieldsToLoad, embedFields);
+        }
+        return fieldsToLoad;
     }
 
     /**
@@ -229,9 +221,9 @@ public class ProjectDAOImpl implements ProjectDAO {
         Session session = HibernateUtil.getSession();
 
         Long projectCount = (Long) session.createCriteria(Project.class)
-                .add(Restrictions.eq("id", projectId))
-                .setProjection(Projections.rowCount())
-                .uniqueResult();
+                                            .add(Restrictions.eq("id", projectId))
+                                            .setProjection(Projections.rowCount())
+                                            .uniqueResult();
 
         return projectCount == 1;
     }

@@ -69,7 +69,7 @@ public class LearnerResource {
     public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration) {
         LearnerStatus status = new LearnerStatus(learner);
         try {
-            Project project = projectDAO.getByID(projectId, "all");
+            Project project = projectDAO.getByID(projectId, ProjectDAO.EmbeddableFields.ALL);
 
             if (configuration.getResetSymbolAsIdRevisionPair() == null) {
                 throw new IllegalArgumentException("No reset symbol specified!");

@@ -65,7 +65,7 @@ public class ProjectResource {
      *
      * @param embed
      *         By default no related objects are included in the projects. However you can ask to include them with
-     *         this parameter. Valid values are: 'symbols', 'resetSymbols' & 'testResults'.
+     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group' & 'test_results'.
      *         You can request multiple by just put a ',' between them.
      * @return All projects in a list.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Project>
@@ -74,12 +74,14 @@ public class ProjectResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("embed") String embed) {
-        String[] fields = null;
-        if (embed != null) {
-            fields = embed.split(",");
+        ProjectDAO.EmbeddableFields[] embeddableFields;
+        try {
+            embeddableFields = parseEmbeddableFields(embed);
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
         }
-        List<Project> projects = projectDAO.getAll(fields);
 
+        List<Project> projects = projectDAO.getAll(embeddableFields);
         return Response.status(Status.OK).header("X-Total-Count", projects.size()).entity(projects).build();
     }
 
@@ -90,7 +92,7 @@ public class ProjectResource {
      *            The ID of the project.
      * @param embed
      *         By default no related objects are included in the project. However you can ask to include them with
-     *         this parameter. Valid values are: 'symbols', 'resetSymbols' & 'testResults'.
+     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group' & 'test_results'.
      *         You can request multiple by just put a ',' between them.
      * @return The project or an error message.
      * @responseType de.learnlib.alex.core.entities.Project
@@ -101,11 +103,13 @@ public class ProjectResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") long id, @QueryParam("embed") String embed) {
-        String[] fields = null;
-        if (embed != null) {
-            fields = embed.split(",");
+        ProjectDAO.EmbeddableFields[] embeddableFields;
+        try {
+            embeddableFields = parseEmbeddableFields(embed);
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
         }
-        Project project = projectDAO.getByID(id, fields);
+        Project project = projectDAO.getByID(id, embeddableFields);
 
         if (project == null) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.NOT_FOUND, null);
@@ -165,6 +169,21 @@ public class ProjectResource {
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.NOT_FOUND, e);
         }
+    }
+
+    private ProjectDAO.EmbeddableFields[] parseEmbeddableFields(String embed) throws IllegalArgumentException {
+        if (embed == null) {
+            return new ProjectDAO.EmbeddableFields[0];
+        }
+
+        String[] fields = embed.split(",");
+
+        ProjectDAO.EmbeddableFields[] embedFields = new ProjectDAO.EmbeddableFields[fields.length];
+        for (int i = 0; i < fields.length; i++) {
+            embedFields[i] = ProjectDAO.EmbeddableFields.fromString(fields[i]);
+        }
+
+        return embedFields;
     }
 
 }

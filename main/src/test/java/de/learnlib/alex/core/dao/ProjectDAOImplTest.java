@@ -59,7 +59,7 @@ public class ProjectDAOImplTest {
 
     @Test
     public void shouldCreateValidProject() {
-        Project p2 = dao.getByID(project.getId(), "all");
+        Project p2 = dao.getByID(project.getId(), ProjectDAO.EmbeddableFields.ALL);
 
         assertNotNull(p2);
         assertEquals(project.getName(), p2.getName());
@@ -107,7 +107,7 @@ public class ProjectDAOImplTest {
             projects.add(tmpProject);
         }
 
-        List<Project> projectsFromDB = dao.getAll("all");
+        List<Project> projectsFromDB = dao.getAll(ProjectDAO.EmbeddableFields.ALL);
 
         for (Project x : projects) {
             assertTrue(projectsFromDB.contains(x));
@@ -127,7 +127,7 @@ public class ProjectDAOImplTest {
         project.setName("An other Test Project");
         dao.update(project);
 
-        Project project2 = dao.getByID(project.getId(), "all");
+        Project project2 = dao.getByID(project.getId(), ProjectDAO.EmbeddableFields.ALL);
         assertEquals("An other Test Project", project2.getName());
         assertEquals(project.getSymbolsSize(), project2.getSymbolsSize());
         assertEquals(project.getNextSymbolId(), project2.getNextSymbolId());
