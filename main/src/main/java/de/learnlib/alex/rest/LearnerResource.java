@@ -1,5 +1,6 @@
 package de.learnlib.alex.rest;
 
+import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.entities.IdRevisionPair;
@@ -27,6 +28,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * REST API to manage the learning.
@@ -46,6 +48,9 @@ public class LearnerResource {
     /** The {@link SymbolDAO} to use. */
     @Inject
     private SymbolDAO symbolDAO;
+
+    @Inject
+    private LearnerResultDAO learnerResultDAO;
 
     /** The {@link Learner learner} to use. */
     @Inject
@@ -175,13 +180,27 @@ public class LearnerResource {
      *
      * @return The information of the learning
      * @successResponse 200 OK
-     * @responseType de.learnlib.alex.core.entities.LearnerResult
+     * @responseType    de.learnlib.alex.core.entities.LearnerResult
+     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/status")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getResult() {
-        return Response.ok(learner.getResult()).build();
+        LearnerResult resultInThread = learner.getResult();
+        if (resultInThread == null) {
+            IllegalStateException e = new IllegalStateException("No result was learned in this instance of ALEX.");
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.status", Status.NOT_FOUND, e);
+        }
+
+        try {
+            learnerResultDAO.get(resultInThread.getProjectId(), resultInThread.getTestNo());
+        } catch (NoSuchElementException nsee) {
+            IllegalArgumentException e = new IllegalArgumentException("The last learned result was deleted.");
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.status", Status.NOT_FOUND, e);
+        }
+
+        return Response.ok(resultInThread).build();
     }
 
     /**

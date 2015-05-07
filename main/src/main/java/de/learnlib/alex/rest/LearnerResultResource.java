@@ -108,7 +108,7 @@ public class LearnerResultResource {
             return Response.ok(json).build();
         } catch (NoSuchElementException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getOneFinalResult",
-                                                                Response.Status.NOT_FOUND,  e);
+                                                               Response.Status.NOT_FOUND,  e);
         }
     }
 
@@ -126,15 +126,15 @@ public class LearnerResultResource {
     @DELETE
     @Path("{test_numbers}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteAResultSet(@PathParam("project_id") Long projectId,
-                                     @PathParam("test_numbers") IdsList testNumbers) {
+    public Response deleteResultSet(@PathParam("project_id") Long projectId,
+                                    @PathParam("test_numbers") IdsList testNumbers) {
         try {
             Long[] numbersLongArray = testNumbers.toArray(new Long[testNumbers.size()]);
             learnerResultDAO.delete(projectId, numbersLongArray);
             return Response.status(Response.Status.NO_CONTENT).build();
 
         }  catch (NoSuchElementException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteAResultSet",
+            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteResultSet",
                                                                 Response.Status.NOT_FOUND,  e);
         }
     }
