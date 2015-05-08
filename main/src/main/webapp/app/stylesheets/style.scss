@@ -82,7 +82,7 @@
 ============================================================================= */
 
 /* fade out and zoom back*/
-@keyframes fadeOut {
+@keyframes scaleOut {
   from {
     opacity: 1.0
   }
@@ -99,6 +99,18 @@
     transform: scale(0.8);
   }
 }
+
+@keyframes fadeIn {
+  from {opacity: 0.0}
+  to {opacity: 1.0}
+}
+
+@keyframes fadeOut {
+  from {opacity: 1.0}
+  to {opacity: 0.0}
+}
+
+
 
 .animate-view.ng-enter {
   overflow: hidden;
@@ -118,7 +130,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  animation: fadeOut 0.2s both ease-in;
+  animation: scaleOut 0.2s both ease-in;
   z-index: 9999;
 }
 
@@ -192,8 +204,15 @@ form {
 @mixin selection-list-item() {
   padding: 10px 8px;
   border-bottom: 1px solid #ddd;
+  transition: background 200ms;
   &:hover, &.selected {
     background: #f2f2f2
+  }
+  &.ng-enter {
+    animation: fadeIn 0.2s both ease-in;
+  }
+  &.ng-leave {
+    animation: fadeOut 0.2s both ease-in;
   }
 }
 

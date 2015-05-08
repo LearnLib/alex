@@ -200,6 +200,7 @@
          * @param {SymbolGroup} group
          */
         $scope.deleteGroup = function(group){
+            console.log(group.id);
             $scope.removeSymbols(group.symbols);
             _.remove($scope.groups, {id: group.id});
         };

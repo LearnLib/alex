@@ -58,10 +58,11 @@
     <div class="container">
 
         <symbol-group-list>
-            <symbol-group-list-item ng-repeat="group in groups track by $index | orderBy:'-name':true"
+            <symbol-group-list-item ng-repeat="group in groups track by group.id | orderBy:'-name':true"
                                     group="group">
 
                 <symbol-group-list-item-header>
+                    {{group.id}}
                     <a href symbol-group-edit-modal-handle
                        group="group" on-updated="updateGroup" on-deleted="deleteGroup">
                         <i class="fa fa-fw fa-gear"></i>

@@ -140,7 +140,7 @@
             link: link
         };
 
-        function link(scope, el, attrs) {
+        function link(scope, el) {
 
             // the iframe where the projects site gets loaded into
             var iframe = el.find('iframe');
