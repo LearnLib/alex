@@ -1,8 +1,10 @@
 package de.learnlib.alex.core.dao;
 
+import com.thoughtworks.selenium.condition.Not;
 import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -42,11 +44,12 @@ public interface SymbolDAO {
      *            A list of pairs of an ID and revisions to specify the expected symbols.
      * @return A list of symbols matching the project and list of IDs and revisions.
      */
-    List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs);
+    List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException;
 
-    List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId);
+    List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId) throws NotFoundException;
 
-    List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel);
+    List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel)
+            throws NotFoundException;
 
     /**
      * Get a list of symbols by their ids. Fetch only the latest revision of each.
@@ -57,7 +60,7 @@ public interface SymbolDAO {
      *         The ids of the symbols you want to get.
      * @return A list of symbols. Can be empty.
      */
-    List<Symbol> getByIdsWithLatestRevision(Long projectId, Long... ids);
+    List<Symbol> getByIdsWithLatestRevision(Long projectId, Long... ids) throws NotFoundException;
 
     /**
      * Get a list of symbols by their ids. Fetch only the latest revision of each.
@@ -70,7 +73,8 @@ public interface SymbolDAO {
      *         The ids of the symbols you want to get.
      * @return A list of symbols. Can be empty.
      */
-    List<Symbol> getByIdsWithLatestRevision(Long projectId, SymbolVisibilityLevel visibilityLevel, Long... ids);
+    List<Symbol> getByIdsWithLatestRevision(Long projectId, SymbolVisibilityLevel visibilityLevel, Long... ids)
+            throws NotFoundException;
 
     /**
      * Get all symbols of a project.
@@ -81,9 +85,10 @@ public interface SymbolDAO {
      *         Include symbols that are currently marked as hidden?
      * @return A list of symbols belonging to the project.
      */
-    List<Symbol> getAllWithLatestRevision(Long projectID, SymbolVisibilityLevel visibilityLevel);
+    List<Symbol> getAllWithLatestRevision(Long projectID, SymbolVisibilityLevel visibilityLevel)
+            throws NotFoundException;
 
-    Symbol get(Long projectId, IdRevisionPair idRevisionPair);
+    Symbol get(Long projectId, IdRevisionPair idRevisionPair) throws NotFoundException;
 
     /**
      * Get a specific symbol by its identifying parameters.
@@ -96,7 +101,7 @@ public interface SymbolDAO {
      *            The wanted revision of the symbol.
      * @return The Symbol or null.
      */
-    Symbol get(Long projectId, Long id, Long revision);
+    Symbol get(Long projectId, Long id, Long revision) throws NotFoundException;
 
     /**
      * Get a specific symbol by its identifying parameters and the last
@@ -108,37 +113,41 @@ public interface SymbolDAO {
      *            The ID of the symbol itself in the project.
      * @return The Symbol or null.
      */
-    Symbol getWithLatestRevision(Long projectId, Long id);
+    Symbol getWithLatestRevision(Long projectId, Long id) throws NotFoundException;
 
-    List<Symbol> getWithAllRevisions(Long projectId, Long id);
+    List<Symbol> getWithAllRevisions(Long projectId, Long id) throws NotFoundException;
 
     /**
      * Update a symbol.
-     * 
+     *
      * @param symbol
-     *            The symbol to update.
+     *         The symbol to update.
      * @throws IllegalArgumentException
-     *             When the Symbol was not found.
+     *         If an old revision is used.
+     * @throws NotFoundException
+     *         When the Symbol was not found.
      * @throws ValidationException
-     *             When the Symbol was not valid.
+     *         When the Symbol was not valid.
      */
-    void update(Symbol symbol) throws IllegalArgumentException, ValidationException;
+    void update(Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException;
 
     /**
      * Update a list of Symbols.
      *
      * @param symbols
-     *            The symbol sto update.
+     *         The symbol sto update.
      * @throws IllegalArgumentException
-     *             When one of the Symbol was not found.
+     *         If an old revision is used.
+     * @throws NotFoundException
+     *         When one of the Symbol was not found.
      * @throws ValidationException
-     *             When one of the Symbol was not valid.
+     *         When one of the Symbol was not valid.
      */
-    void update(List<Symbol> symbols) throws IllegalArgumentException, ValidationException;
+    void update(List<Symbol> symbols) throws IllegalArgumentException, NotFoundException, ValidationException;
 
-    void move(Symbol symbol, Long newGroupId);
+    void move(Symbol symbol, Long newGroupId) throws NotFoundException;
 
-    void move(List<Symbol> symbols, Long newGroupId);
+    void move(List<Symbol> symbols, Long newGroupId) throws NotFoundException;
 
     /**
      * Mark a symbol as hidden.
@@ -147,10 +156,10 @@ public interface SymbolDAO {
      *            The ID of the project the symbol belongs to.
      * @param ids
      *            The IDs of the symbols to hide.
-     * @throws IllegalArgumentException
+     * @throws NotFoundException
      *             When the Symbol was not found.
      */
-    void hide(Long projectId, Long... ids) throws IllegalArgumentException;
+    void hide(Long projectId, Long... ids) throws NotFoundException;
 
     /**
      * Revive a symbol from the hidden state.
@@ -159,9 +168,9 @@ public interface SymbolDAO {
      *            The ID of the project the symbol belongs to.
      * @param ids
      *            The ID of the symbols to show.
-     * @throws IllegalArgumentException
+     * @throws NotFoundException
      *             When the Symbol was not found.
      */
-    void show(Long projectId, Long... ids) throws IllegalArgumentException;
+    void show(Long projectId, Long... ids) throws NotFoundException;
 
 }

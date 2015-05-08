@@ -5,6 +5,7 @@ import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 
 import javax.inject.Inject;
@@ -145,12 +146,21 @@ public class SymbolGroupResource {
      * @param id
      *         The ID of the group within the project.
      * @return The list of symbols within one group.
+     * @successResponse 200 OK
+     * @responseType java.util.List<de.learnlib.alex.core.entities.Symbol>
+     * @errorResponse 404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{id}/symbols")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
-        List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(projectId, id);
+        List<Symbol> symbols;
+        try {
+            symbols = symbolDAO.getAllWithLatestRevision(projectId, id);
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getSymbols",
+                                                               Response.Status.NOT_FOUND, e);
+        }
 
         return Response.ok(symbols).build();
     }

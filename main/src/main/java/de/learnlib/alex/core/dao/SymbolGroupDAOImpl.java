@@ -5,6 +5,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -180,12 +181,16 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             group.getSymbols();
             group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
         } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
-            List<IdRevisionPair> idRevisionPairs = symbolDAO.getIdRevisionPairs(session,
-                                                                                group.getProjectId(),
-                                                                                group.getId(),
-                                                                                SymbolVisibilityLevel.ALL);
-            List<Symbol> symbols = symbolDAO.getAll(session, group.getProjectId(), idRevisionPairs);
-            group.setSymbols(new HashSet<>(symbols));
+            try {
+                List<IdRevisionPair> idRevisionPairs = symbolDAO.getIdRevisionPairs(session,
+                                                                                    group.getProjectId(),
+                                                                                    group.getId(),
+                                                                                    SymbolVisibilityLevel.ALL);
+                List<Symbol> symbols = symbolDAO.getAll(session, group.getProjectId(), idRevisionPairs);
+                group.setSymbols(new HashSet<>(symbols));
+            } catch (NotFoundException e) {
+                group.setSymbols(null);
+            }
         } else {
             group.setSymbols(null);
         }

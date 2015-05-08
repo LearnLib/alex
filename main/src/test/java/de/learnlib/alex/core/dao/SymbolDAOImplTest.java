@@ -14,6 +14,7 @@ import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -25,6 +26,7 @@ import org.junit.Test;
 import javax.validation.ValidationException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -118,7 +120,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldCreateValidWebSymbol() {
+    public void shouldCreateValidWebSymbol() throws NotFoundException {
         // given
         long idBefore = project.getNextSymbolId();
 
@@ -150,7 +152,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldCreateAValidSymbolWithoutAGroup() {
+    public void shouldCreateAValidSymbolWithoutAGroup() throws NotFoundException {
         // when
         symbolDAO.create(symbol2);
 
@@ -208,7 +210,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldCreateValidWebSymbols() {
+    public void shouldCreateValidWebSymbols() throws NotFoundException {
         // given
         long idBefore = project.getNextSymbolId();
 
@@ -334,7 +336,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldBeAllowedToHaveTheSameNameAndAbbreviationInDifferentProjects() {
+    public void shouldBeAllowedToHaveTheSameNameAndAbbreviationInDifferentProjects() throws NotFoundException {
         Symbol symb2 = new Symbol();
         symb2.setProject(project);
         symb2.setName(symbol.getName());
@@ -350,7 +352,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldGetAllRequestedSymbolsByIdRevPairs() {
+    public void shouldGetAllRequestedSymbolsByIdRevPairs() throws NotFoundException {
         symbols = createWebSymbolTestList();
 
         List<IdRevisionPair> pairs = new LinkedList<>();
@@ -369,7 +371,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldGetNoSymbolIfIdRevParisIsEmpty() {
+    public void shouldGetNoSymbolIfIdRevParisIsEmpty() throws NotFoundException {
         symbols = createWebSymbolTestList();
         List<IdRevisionPair> pairs = new LinkedList<>();
 
@@ -379,7 +381,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldGetAllVisibleSymbols() {
+    public void shouldGetAllVisibleSymbols() throws NotFoundException {
         symbols = createTestSymbolLists();
 
         List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.VISIBLE);
@@ -396,7 +398,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldGetAllSymbolsIncludingHiddenOnes() {
+    public void shouldGetAllSymbolsIncludingHiddenOnes() throws NotFoundException {
         symbols = createTestSymbolLists();
 
         List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(project.getId(), SymbolVisibilityLevel.ALL);
@@ -411,7 +413,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldGetAllSymbolsOfAGroup() {
+    public void shouldGetAllSymbolsOfAGroup() throws NotFoundException {
         symbols = createTestSymbolLists();
 
         List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(project.getId(), group.getId(),
@@ -421,22 +423,20 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldGetTheRightSymbol() {
+    public void shouldGetTheRightSymbol() throws NotFoundException {
         symbolDAO.create(symbol);
         Symbol symb2 = symbolDAO.getWithLatestRevision(symbol.getProjectId(), symbol.getId());
 
         assertEquals(symbol, symb2);
     }
 
-    @Test
-    public void shouldReturnNullIfSymbolNotFound() {
-        Symbol symb2 = symbolDAO.getWithLatestRevision(symbol.getProjectId(), -1L);
-
-        assertNull(symb2);
+    @Test(expected = NotFoundException.class)
+    public void shouldThrowAnExceptionIfSymbolNotFound() throws NotFoundException {
+        symbolDAO.getWithLatestRevision(symbol.getProjectId(), -1L);
     }
 
     @Test
-    public void shouldGetAllRevisionOfASymbol() {
+    public void shouldGetAllRevisionOfASymbol() throws NotFoundException {
         symbols = createWebSymbolTestList();
         symbol = symbols.get(symbols.size() - 1);
 
@@ -444,15 +444,13 @@ public class SymbolDAOImplTest {
         assertEquals(2, symbolRevisionInDB.size());
     }
 
-    @Test
-    public void shouldReturnAnEmptyListIfYouTryToGetAllRevisionOfANotExistingSymbol() {
-        List<Symbol> symbolRevisionInDB = symbolDAO.getWithAllRevisions(symbol.getProjectId(), -1L);
-
-        assertTrue(symbolRevisionInDB.isEmpty());
+    @Test(expected = NotFoundException.class)
+    public void shouldThrowAnExceptionIfYouTryToGetAllRevisionOfANotExistingSymbol() throws NotFoundException {
+        symbolDAO.getWithAllRevisions(symbol.getProjectId(), -1L);
     }
 
     @Test
-    public void shouldUpdateValidWebSymbol() {
+    public void shouldUpdateValidWebSymbol() throws NotFoundException {
         symbolDAO.create(symbol);
         long oldRevision = symbol.getRevision();
 
@@ -482,7 +480,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldUpdateTheSymbolGroup() {
+    public void shouldUpdateTheSymbolGroup() throws NotFoundException {
         symbolDAO.create(symbol2);
 
         symbol2.setGroup(group);
@@ -498,7 +496,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldUpdateTheSymbolGroup2() {
+    public void shouldUpdateTheSymbolGroup2() throws NotFoundException {
         symbolDAO.create(symbol);
 
         symbol.setGroup(project.getDefaultGroup());
@@ -514,24 +512,24 @@ public class SymbolDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotUpdateInvalidWebSymbol() {
+    public void shouldNotUpdateInvalidWebSymbol() throws NotFoundException {
         symbolDAO.create(symbol);
         symbol.setName("");
 
         symbolDAO.update(symbol); // should fail
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldFailOnUpdateByInvalidID() {
+    @Test(expected = NotFoundException.class)
+    public void shouldFailOnUpdateByInvalidID() throws NotFoundException {
         symbolDAO.create(symbol);
         symbol.setId(-1L);
 
         symbolDAO.update(symbol); // should fail
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NotFoundException.class)
     // The Symbol ID contains the Project -> No Project == Invalid ID
-    public void shouldFailOnUpdateWithoutProject() {
+    public void shouldFailOnUpdateWithoutProject() throws NotFoundException {
         symbolDAO.create(symbol);
         symbol.setProject(null);
 
@@ -539,7 +537,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotUpdateWebSymbolWithoutUniqueName() {
+    public void shouldNotUpdateWebSymbolWithoutUniqueName() throws NotFoundException {
         symbolDAO.create(symbol);
         Symbol symb2 = new Symbol();
         symb2.setProject(project);
@@ -553,7 +551,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldNotAllowUpdateFromOldRevision() {
+    public void shouldNotAllowUpdateFromOldRevision() throws NotFoundException {
         symbolDAO.create(symbol);
         Symbol symb2 = symbolDAO.get(project.getId(), symbol.getId(), symbol.getRevision());
         Symbol symb3 = symbolDAO.get(project.getId(), symbol.getId(), symbol.getRevision());
@@ -566,7 +564,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldDoBatchUpdate() {
+    public void shouldDoBatchUpdate() throws NotFoundException {
         symbolDAO.create(symbols);
         symbol.setName(symbol.getName() + " - updated");
         symbol2.setName(symbol2.getName() + " - updated");
@@ -579,7 +577,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldMoveASymbol() {
+    public void shouldMoveASymbol() throws NotFoundException {
         symbolDAO.create(symbol2);
 
         symbolDAO.move(symbol2, group.getId());
@@ -589,15 +587,15 @@ public class SymbolDAOImplTest {
         assertEquals(group.getId(), symbolInDB.getGroupId());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThatAnExceptionIsThrownWhileMovingASymbolIfTheGroupDoesNotExist() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatAnExceptionIsThrownWhileMovingASymbolIfTheGroupDoesNotExist() throws NotFoundException {
         symbolDAO.create(symbol2);
 
         symbolDAO.move(symbol2, -1L); // should fail
     }
 
     @Test
-    public void shouldMoveSymbols() {
+    public void shouldMoveSymbols() throws NotFoundException {
         symbolDAO.create(symbols);
         List<Long> symbolsIds = new LinkedList<>();
         symbols.forEach(s -> symbolsIds.add(s.getId()));
@@ -612,8 +610,8 @@ public class SymbolDAOImplTest {
         });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThatAnExceptionIsThrownWhileMovingSymbolsIfTheGroupDoesNotExist() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatAnExceptionIsThrownWhileMovingSymbolsIfTheGroupDoesNotExist() throws NotFoundException {
         symbolDAO.create(symbols);
         List<Long> symbolsIds = new LinkedList<>();
         symbols.forEach(s -> symbolsIds.add(s.getId()));
@@ -622,7 +620,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldHideAValidSymbols() {
+    public void shouldHideAValidSymbols() throws NotFoundException {
         symbolDAO.create(symbol);
         symbol.setName(symbol.getName() + " - updated");
         symbolDAO.update(symbol);
@@ -639,13 +637,13 @@ public class SymbolDAOImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldNotHideAnythingByInvalidID() {
+    public void shouldNotHideAnythingByInvalidID() throws NotFoundException {
         symbolDAO.create(symbol);
         symbolDAO.hide(project.getId(), -1L);
     }
 
     @Test
-    public void shouldShowAValidSymbols() {
+    public void shouldShowAValidSymbols() throws NotFoundException {
         symbolDAO.create(symbol);
         symbol.setName(symbol.getName() + " - updated");
         symbolDAO.update(symbol);
@@ -663,19 +661,19 @@ public class SymbolDAOImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldNotShowAnythingByInvalidID() {
+    public void shouldNotShowAnythingByInvalidID() throws NotFoundException {
         symbolDAO.create(symbol);
         symbolDAO.show(project.getId(), -1L);
     }
 
-    private List<Symbol> createTestSymbolLists() {
+    private List<Symbol> createTestSymbolLists() throws NotFoundException {
         symbols = new LinkedList<>();
         symbols.addAll(createWebSymbolTestList());
         symbols.addAll(createRESTSymbolTestList());
         return symbols;
     }
 
-    private List<Symbol> createWebSymbolTestList() {
+    private List<Symbol> createWebSymbolTestList() throws NotFoundException {
         List<Symbol> returnList = new LinkedList<>();
         for (int i = 0; i < SYMBOL_COUNT; i++) {
             Symbol s = new Symbol();
@@ -708,7 +706,7 @@ public class SymbolDAOImplTest {
         return returnList;
     }
 
-    private List<Symbol> createRESTSymbolTestList() {
+    private List<Symbol> createRESTSymbolTestList() throws NotFoundException {
         List<Symbol> returnList = new LinkedList<>();
         for (int i = 0; i < SYMBOL_COUNT; i++) {
             Symbol s = new Symbol();

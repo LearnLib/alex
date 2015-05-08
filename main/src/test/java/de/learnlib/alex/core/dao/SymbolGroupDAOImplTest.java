@@ -3,6 +3,7 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,7 +24,6 @@ public class SymbolGroupDAOImplTest {
     private static ProjectDAO projectDAO;
     private static SymbolGroupDAO symbolGroupDAO;
     private static SymbolDAO symbolDAO;
-
 
     private Project project;
     private SymbolGroup group;
@@ -169,7 +169,7 @@ public class SymbolGroupDAOImplTest {
     }
 
     @Test
-    public void shouldDeleteAGroup() {
+    public void shouldDeleteAGroup() throws NotFoundException {
         symbolGroupDAO.create(group);
         symbol.setGroup(group);
         symbolDAO.update(symbol);

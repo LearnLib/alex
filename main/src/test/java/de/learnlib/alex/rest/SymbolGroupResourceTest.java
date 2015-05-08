@@ -14,6 +14,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.PropertyFilterMixIn;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.exceptions.NotFoundException;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -135,7 +136,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldGetAllSymbolsOfAGroup() {
+    public void shouldGetAllSymbolsOfAGroup() throws NotFoundException {
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId() + "/symbols";
         Response response = target(path).request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());

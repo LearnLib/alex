@@ -3,9 +3,11 @@ package de.learnlib.alex.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.selenium.condition.Not;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +30,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 
@@ -147,7 +151,12 @@ public class SymbolResource {
     public Response getAll(@PathParam("project_id") Long projectId,
                            @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         try {
-            List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(projectId, visibilityLevel);
+            List<Symbol> symbols = null;
+            try {
+                symbols = symbolDAO.getAllWithLatestRevision(projectId, visibilityLevel);
+            } catch (NotFoundException e) {
+                symbols = new LinkedList<>();
+            }
 
             String json = createSymbolsJSON(symbols);
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
@@ -175,10 +184,10 @@ public class SymbolResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
-        Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);
-        if (symbol != null) {
+        try {
+            Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);
             return Response.ok(symbol).build();
-        } else {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.get", Status.NOT_FOUND, null);
         }
     }
@@ -194,15 +203,18 @@ public class SymbolResource {
      * @return A Symbol matching the projectID & ID or a not found response.
      * @responseType    java.util.List<de.learnlib.alex.core.entities.Symbol>
      * @successResponse 200 OK
+     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{id}/complete")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getComplete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
-        List<Symbol> symbols = symbolDAO.getWithAllRevisions(projectId, id);
         try {
+            List<Symbol> symbols = symbolDAO.getWithAllRevisions(projectId, id);
             String json = createSymbolsJSON(symbols);
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getComplete", Status.NOT_FOUND, null);
         } catch (JsonProcessingException e) {
             LOGGER.error("Could not write the symbols from the DB into proper JSON!", e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getComplete",
@@ -230,10 +242,10 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWithRevision(@PathParam("project_id") Long projectId, @PathParam("id") Long id,
             @PathParam("revision") long revision) {
-        Symbol symbol = symbolDAO.get(projectId, id, revision);
-        if (symbol != null) {
+        try {
+            Symbol symbol = symbolDAO.get(projectId, id, revision);
             return Response.ok(symbol).build();
-        } else {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getWithRevision",
                                                                Status.NOT_FOUND,
                                                                null);
@@ -267,7 +279,7 @@ public class SymbolResource {
         try {
             symbolDAO.update(symbol);
             return Response.ok(symbol).build();
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.NOT_FOUND, e);
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.BAD_REQUEST, e);
@@ -305,7 +317,7 @@ public class SymbolResource {
         try {
             symbolDAO.update(symbols);
             return Response.ok(symbols).header("X-Total-Count", symbols.size()).build();
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchUpdate", Status.NOT_FOUND, e);
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchUpdate", Status.BAD_REQUEST, e);
@@ -331,13 +343,9 @@ public class SymbolResource {
                                              @PathParam("group_id") Long groupId) {
         try {
             Symbol symbol = symbolDAO.getWithLatestRevision(projectId, symbolId);
-            if (symbol == null) {
-                throw new IllegalArgumentException("Symbol with the id '" + symbolId + "' not found!");
-            }
             symbolDAO.move(symbol, groupId);
-
             return Response.ok(symbol).build();
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.moveSymbolToAnotherGroup",
                                                                Status.NOT_FOUND, e);
         }
@@ -363,13 +371,10 @@ public class SymbolResource {
         try {
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(projectId,
                                                                         symbolIds.toArray(new Long[symbolIds.size()]));
-            if (symbols.isEmpty()) {
-                throw new IllegalArgumentException("Symbols with the ids '" + symbolIds + "' not found!");
-            }
             symbolDAO.move(symbols, groupId);
 
             return Response.ok(symbols).build();
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.moveSymbolToAnotherGroup",
                                                                Status.NOT_FOUND, e);
         }
@@ -395,7 +400,7 @@ public class SymbolResource {
             Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);
             return Response.status(Status.OK).entity(symbol).build();
 
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
         }
     }
@@ -422,7 +427,7 @@ public class SymbolResource {
 
             String json = createSymbolsJSON(symbols);
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
         } catch (JsonProcessingException e) {
             LOGGER.error("Could write the symbols from the DB into proper JSON!", e);
@@ -450,7 +455,7 @@ public class SymbolResource {
             symbolDAO.show(projectId, id);
             Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);
             return Response.status(Status.OK).entity(symbol).build();
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
         }
     }
@@ -477,7 +482,7 @@ public class SymbolResource {
 
             String json = createSymbolsJSON(symbols);
             return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
         } catch (JsonProcessingException e) {
             LOGGER.error("Could write the symbols from the DB into proper JSON!", e);

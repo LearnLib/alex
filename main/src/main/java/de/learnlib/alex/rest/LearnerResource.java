@@ -12,6 +12,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolSet;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,15 +80,20 @@ public class LearnerResource {
             if (configuration.getResetSymbolAsIdRevisionPair() == null) {
                 throw new IllegalArgumentException("No reset symbol specified!");
             }
-            Symbol resetSymbol = symbolDAO.get(projectId, configuration.getResetSymbolAsIdRevisionPair());
 
-            if (resetSymbol == null) {
+            try {
+                Symbol resetSymbol = symbolDAO.get(projectId, configuration.getResetSymbolAsIdRevisionPair());
+                configuration.setResetSymbol(resetSymbol);
+            } catch (NotFoundException e) {
                 throw new IllegalArgumentException("No reset symbol found!");
             }
-            configuration.setResetSymbol(resetSymbol);
 
-            List<Symbol> symbols = symbolDAO.getAll(projectId, configuration.getSymbolsAsIdRevisionPairs());
-            configuration.setSymbols(symbols);
+            try {
+                List<Symbol> symbols = symbolDAO.getAll(projectId, configuration.getSymbolsAsIdRevisionPairs());
+                configuration.setSymbols(symbols);
+            } catch (NotFoundException e) {
+                throw new IllegalArgumentException("No symbols found!");
+            }
 
             learner.start(project, configuration);
             return Response.ok(status).build();
@@ -218,27 +224,40 @@ public class LearnerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet) {
-        Project project = projectDAO.getByID(projectId);
+        try {
+            Project project = projectDAO.getByID(projectId);
 
-        Symbol resetSymbol = symbolDAO.get(projectId, symbolSet.getResetSymbolAsIdRevisionPair());
-        symbolSet.setResetSymbol(resetSymbol);
+            Symbol resetSymbol;
+            try {
+                resetSymbol = symbolDAO.get(projectId, symbolSet.getResetSymbolAsIdRevisionPair());
+            } catch (NotFoundException e) {
+                throw new IllegalArgumentException("No reset symbol found!");
+            }
+            symbolSet.setResetSymbol(resetSymbol);
 
-        List<Symbol> symbols = loadSymbols(projectId, symbolSet.getSymbolsAsIdRevisionPairs());
-        symbolSet.setSymbols(symbols);
+            List<Symbol> symbols = loadSymbols(projectId, symbolSet.getSymbolsAsIdRevisionPairs());
+            symbolSet.setSymbols(symbols);
 
-        List<String> results = learner.readOutputs(project, resetSymbol, symbols);
+            List<String> results = learner.readOutputs(project, resetSymbol, symbols);
 
-        return Response.ok(results).build();
+            return Response.ok(results).build();
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.NOT_FOUND, e);
+        }
     }
 
     // load all from SymbolDAO always orders the Symbols by ID
     private List<Symbol> loadSymbols(Long projectId, List<IdRevisionPair> idRevisionPairs) {
         List<Symbol> symbols = new LinkedList<>();
 
-        idRevisionPairs.forEach(pair -> {
-            Symbol symbol = symbolDAO.get(projectId, pair);
-            symbols.add(symbol);
-        });
+        try {
+            for (IdRevisionPair pair : idRevisionPairs) {
+                Symbol symbol = symbolDAO.get(projectId, pair);
+                symbols.add(symbol);
+            }
+        } catch (NotFoundException e) {
+            symbols.clear();
+        }
 
         return symbols;
     }
