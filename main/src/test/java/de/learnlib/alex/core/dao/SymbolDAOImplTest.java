@@ -26,12 +26,10 @@ import org.junit.Test;
 import javax.validation.ValidationException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -130,8 +128,6 @@ public class SymbolDAOImplTest {
         // then
         Symbol symbolInDB = symbolDAO.get(project.getId(), symbol.getId(), symbol.getRevision());
         assertNotNull(symbolInDB);
-        assertTrue(symbolInDB instanceof Symbol);
-        Symbol webSymbolInDB = symbolInDB;
         Project project2 = projectDAO.getByID(symbolInDB.getProjectId());
 
         assertEquals(symbol.getName(), symbolInDB.getName());
@@ -140,13 +136,13 @@ public class SymbolDAOImplTest {
         assertEquals(group, symbol.getGroup());
         assertEquals(symbol.getProject(), symbolInDB.getProject());
         assertEquals(project, project2);
-        assertEquals(new Long(idBefore + 1), project2.getNextSymbolId());
+        assertEquals(Long.valueOf(idBefore + 1), project2.getNextSymbolId());
 
-        assertNotNull(webSymbolInDB.getActions());
-        assertEquals(symbol.getActions().size(), webSymbolInDB.getActions().size());
+        assertNotNull(symbolInDB.getActions());
+        assertEquals(symbol.getActions().size(), symbolInDB.getActions().size());
         for (int i = 0; i < symbol.getActions().size(); i++) {
             SymbolAction expectedAction = symbol.getActions().get(i);
-            SymbolAction actualAction = webSymbolInDB.getActions().get(i);
+            SymbolAction actualAction = symbolInDB.getActions().get(i);
             assertEquals(expectedAction, actualAction);
         }
     }
@@ -193,8 +189,8 @@ public class SymbolDAOImplTest {
             symbolDAO.create(symbol); // should fail
             fail("creation didn't fail.");
         } catch (ValidationException e) {
-            assertEquals(new Long(0), symbol.getId());
-            assertEquals(new Long(0), symbol.getRevision());
+            assertEquals(Long.valueOf(0), symbol.getId());
+            assertEquals(Long.valueOf(0), symbol.getRevision());
         }
 
     }

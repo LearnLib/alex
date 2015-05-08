@@ -6,10 +6,7 @@ import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
-import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
-
-import java.io.IOException;
 
 /**
  * Class that provides the LearnLib implementation of the Discrimination Tree algorithm for ALEX.
@@ -31,17 +28,7 @@ public class DiscriminationTree implements LearnAlgorithmFactory {
         }
         de.learnlib.discriminationtree.DiscriminationTree discriminationTree;
         discriminationTree = ((DTLearnerMealy) learner).getDiscriminationTree();
-        de.learnlib.discriminationtree.DiscriminationTree.GraphView graphView = discriminationTree.graphView();
         String treeAsJSON = DiscriminationTreeSerializer.toJSON(discriminationTree);
-        System.out.println("========================");
-        try {
-            GraphDOT.write(graphView, System.out, graphView.getGraphDOTHelper());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(treeAsJSON);
-        System.out.println("========================");
-
         return treeAsJSON;
     }
 

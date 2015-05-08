@@ -41,7 +41,7 @@ public final class TTTSerializer {
         } else {
             result.append("\"discriminator\": \"");
             result.append(node.getDiscriminator());
-            result.append("\",");
+            result.append("\", ");
 
             result.append("\"children\": [");
             node.getChildEntries().forEach(entry -> {
@@ -50,7 +50,11 @@ public final class TTTSerializer {
                 result.append(",");
             });
 
-            result.setLength(result.length() - 1); // remove last ','
+            // remove last ','
+            if (result.charAt(result.length() - 1) == ',') {
+                result.setLength(result.length() - 1);
+            }
+
             result.append(']');
         }
 

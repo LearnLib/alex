@@ -20,6 +20,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 
 import javax.validation.ValidationException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -116,7 +117,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException{
+    public List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -222,7 +223,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     public List<Symbol> getByIdsWithLatestRevision(Long projectId, SymbolVisibilityLevel visibilityLevel,
-                                                   Long... ids) throws NotFoundException{
+                                                   Long... ids) throws NotFoundException {
         try {
             // start session
             Session session = HibernateUtil.getSession();
@@ -253,7 +254,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         if (idRevPairs.isEmpty()) {
             throw new NotFoundException("Could not find symbols in the project " + projectId
-                                                     + " with the ids " + ids + ".");
+                                                     + " with the ids " + Arrays.toString(ids) + ".");
         }
         return getAll(session, projectId, idRevPairs);
     }
@@ -584,7 +585,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         HibernateUtil.commitTransaction();
     }
 
-    private void showSymbols(Session session, List<Symbol> symbols) throws NotFoundException{
+    private void showSymbols(Session session, List<Symbol> symbols) throws NotFoundException {
         for (Symbol symbol : symbols) {
             symbol.setHidden(false);
             session.update(symbol);

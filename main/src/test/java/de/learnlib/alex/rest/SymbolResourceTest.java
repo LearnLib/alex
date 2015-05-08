@@ -3,7 +3,6 @@ package de.learnlib.alex.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.selenium.condition.Not;
 import de.learnlib.alex.WeblearnerTestApplication;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;

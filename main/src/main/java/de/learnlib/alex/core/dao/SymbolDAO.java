@@ -1,6 +1,5 @@
 package de.learnlib.alex.core.dao;
 
-import com.thoughtworks.selenium.condition.Not;
 import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;

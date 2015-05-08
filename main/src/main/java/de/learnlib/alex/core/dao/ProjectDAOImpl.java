@@ -6,7 +6,6 @@ import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;

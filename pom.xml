@@ -77,7 +77,7 @@
         <war-plugin.version>2.6</war-plugin.version>
 
         <checkstyle.version>2.15</checkstyle.version>
-        <cobertura.version>2.6</cobertura.version>
+        <cobertura.version>2.7</cobertura.version>
         <findbugs.version>3.0.0</findbugs.version>
         <pmd.version>3.4</pmd.version>
         <versions-plugin.version>2.1</versions-plugin.version>

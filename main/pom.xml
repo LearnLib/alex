@@ -341,6 +341,22 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>${cobertura.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>cobertura</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                    </formats>
+                    <check>
+                        <brancheRate>60</brancheRate>
+                        <lineRate>60</lineRate>
+                    </check>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>

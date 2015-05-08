@@ -1,6 +1,5 @@
 package de.learnlib.alex.rest;
 
-import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
 import de.learnlib.alex.core.entities.Symbol;

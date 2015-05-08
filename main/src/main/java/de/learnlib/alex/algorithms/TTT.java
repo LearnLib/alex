@@ -2,15 +2,11 @@ package de.learnlib.alex.algorithms;
 
 import de.learnlib.alex.annotations.LearnAlgorithm;
 import de.learnlib.alex.utils.TTTSerializer;
-import de.learnlib.algorithms.ttt.base.DiscriminationTree;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
-import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
-
-import java.io.IOException;
 
 /**
  * Class that provides the LearnLib implementation of the TTT algorithm for ALEX.
@@ -33,16 +29,6 @@ public class TTT implements LearnAlgorithmFactory {
 
         TTTLearnerMealy tttLearner = (TTTLearnerMealy) learner;
         String treeAsJSON = TTTSerializer.toJSON(tttLearner.getDiscriminationTree());
-        DiscriminationTree.GraphView graphView = tttLearner.getDiscriminationTree().graphView();
-        System.out.println("========================");
-        try {
-            GraphDOT.write(graphView, System.out, graphView.getGraphDOTHelper());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println(treeAsJSON);
-        System.out.println("========================");
-
         return treeAsJSON;
     }
 

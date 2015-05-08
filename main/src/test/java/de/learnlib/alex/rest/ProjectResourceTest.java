@@ -24,8 +24,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -107,7 +105,8 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldReturnAllProjectsWithEmbedded() {
         List<Project> projects = new ArrayList<>();
         projects.add(project);
-        given(projectDAO.getAll(ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS)).willReturn(projects);
+        given(projectDAO.getAll(ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS))
+                .willReturn(projects);
 
         Response response = target("/projects").queryParam("embed", "symbols,test_results").request().get();
 

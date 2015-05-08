@@ -3,7 +3,6 @@ package de.learnlib.alex.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.selenium.condition.Not;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
@@ -32,7 +31,6 @@ import javax.ws.rs.core.UriInfo;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 
