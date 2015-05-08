@@ -10,6 +10,8 @@
     ];
 
     /**
+     * The controller for the page where the revision history if a symbol is listed and old revisions can be restored
+     *
      * @param $scope - The controllers scope
      * @param $stateParams - The ui.router $stateParams service
      * @param Symbol - The factory for the Symbol model
@@ -41,8 +43,7 @@
             // load all revisions of the symbol whose id is passed in the URL
             Symbol.Resource.getRevisions(project.id, $stateParams.symbolId)
                 .then(function (revisions) {
-                    console.log('asdasd');
-                    $scope.latestRevision = revisions[revisions.length - 1];
+                    $scope.latestRevision = revisions.pop();
                     $scope.revisions = revisions;
                 })
                 .catch(function () {
@@ -68,7 +69,7 @@
             Symbol.Resource.update(project.id, symbol)
                 .then(function (updatedSymbol) {
                     Toast.success('Updated symbol to revision <strong>' + revision.revision + '</strong>');
-                    $scope.revisions.push(updatedSymbol);
+                    $scope.revisions.unshift($scope.latestRevision);
                     $scope.latestRevision = updatedSymbol;
                 })
                 .catch(function (response) {

@@ -59,11 +59,11 @@
              */
             scope.numberOfTests = null;
 
-            SymbolGroup.Resource.getAll(scope.project.id)
+            SymbolGroup.Resource.getAll(scope.project.id, {embedSymbols: true})
                 .then(function (groups) {
                     scope.numberOfGroups = groups.length;
                     var counter = 0;
-                    for (var i = 0; i < groups.lenght; i++) {
+                    for (var i = 0; i < groups.length; i++) {
                         counter += groups[i].symbols.length;
                     }
                     scope.numberOfSymbols = counter;

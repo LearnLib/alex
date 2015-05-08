@@ -41,9 +41,7 @@
             $scope.errorMsg = null;
 
             // remove the selection from the symbol in case there is any
-            for (var i = 0; i < $scope.symbols.length; i++) {
-                delete $scope.symbols[i]._selected;
-            }
+            delete $scope.symbol._selected;
 
             // do not update on server
             if (angular.isDefined(modalData.updateOnServer) && !modalData.updateOnServer) {

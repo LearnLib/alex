@@ -10,12 +10,13 @@
     <div class="container">
 
         <symbol-list>
-            <symbol-list-item ng-repeat="revision in revisions | orderBy:'-name':true"
+            <symbol-list-item symbol="latestRevision">
+                <span class="label label-primary">Latest</span>
+            </symbol-list-item>
+            <symbol-list-item ng-repeat="revision in revisions | orderBy:'-revision':false"
                               symbol="revision">
 
-                <span class="label label-primary" ng-show="$index === 0">Latest</span>
-
-                <a href class="btn btn-default btn-icon btn-xs" ng-click="restoreRevision(revision)" ng-show="$index > 0">
+                <a href class="btn btn-default btn-icon btn-xs" ng-click="restoreRevision(revision)">
                     <i class="fa fa-history fa-fw"></i> Restore
                 </a>
 
