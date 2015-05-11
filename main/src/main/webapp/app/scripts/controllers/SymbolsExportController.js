@@ -57,7 +57,8 @@
                 })
                 .map(function (n) {
                     delete n._selected;
-                    return n
+                    n.revision = 1;
+                    return n;
                 }).value();
 
             _.forEach(symbols, function (symbol) {

@@ -122,6 +122,10 @@
                     <toc>false</toc>
                 </surefire-report>
             </pages>
+
+            <endContent>
+                <script src="$resourcePath/scripts/loadVideos.js"></script>
+            </endContent>
         </reflowSkin>
     </custom>
 

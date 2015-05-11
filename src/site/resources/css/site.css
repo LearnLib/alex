@@ -1,11 +1,17 @@
 /* A bit of workaround for links being not clickable due to :before element in headings */
 .project-alex-parent.page-index h2[id]:before {
-  height: 30px;
-  margin-top: -30px;
+    height: 30px;
+    margin-top: -30px;
 }
 
 /* visually separate sections from other sections and their paragraphs */
 h2, h3, h4, h5, h6 {
-  margin-top: 32px;
-  font-weight: 700
+    margin-top: 32px;
+    font-weight: 700
+}
+
+video {
+    width: 100%    !important;
+    height: auto   !important;
+    margin-bottom: 10px;
 }

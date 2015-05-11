@@ -21,13 +21,12 @@ Projects are the entities that are used to manage multiple applications separate
 a project for your application in version x and another one for version x+1 while having a different set of symbols and
 saved learning results.
 
+<div class="video" data-src="videos/projects.mp4"></div>
+
 #### <a name="project-management-create"></a> Creating Projects
 
-From the front page either go to */project/create* or use the menu entry in the main navigation.
-
-![Create Project](images/project-create.jpg)
-
-On the following page a new project can be created. Therefore, a form with the following entries is displayed.
+From the front page either go to */project/create* or use the menu entry in the main navigation. On the following page a
+new project can be created. Therefore, a form with the following entries is displayed.
 
 | Field       | Description                                                                            | Required |
 |-------------|----------------------------------------------------------------------------------------|----------|
@@ -38,8 +37,6 @@ On the following page a new project can be created. Therefore, a form with the f
 If the creation has been successful you should be redirected to the front page where the newly created project is listed.
 A click on it opens the project and leads to a work in progress dashboard which is the entry point for every other
 interaction with your project.
-
-![Project Dashboard](images/project-dashboard.jpg)
 
 In order to switch to another project you have to close the current one at first. The button for this action can be
 found in the menu that is shown in the picture above. It redirects to the front-page. For working on multiple projects
@@ -85,6 +82,8 @@ renamed. Furthermore, deleting a symbol group induces all symbol to get deleted 
 For a better overview over a large set of symbols, symbol groups can be collapsed by clicking on the arrow button on 
 the left of each entry.
 
+<div class="video" data-src="videos/symbol-groups.mp4"></div>
+
 #### <a name="symbols"></a> Symbols
 
 Symbols are the heart of Active Automata Learning.
@@ -93,6 +92,8 @@ Note that once you *delete* a symbol it is not permanently removed from the serv
 can be made visible by going to */symbols/trash* or by clicking the corresponding menu entry in the main menu. There, a
 list of all hidden symbols is given. Recovering a symbol makes it appear again in the group it previously was in. In 
 case the group has been deleted, the symbol is moved to the default group.
+
+<div class="video" data-src="videos/symbols-recover.mp4"></div>
 
 #### <a name="actions"></a> Actions
 
@@ -147,6 +148,8 @@ sidebar should open and reveal the element in the DOM tree. There, make another 
 *Copy CSS Path* which copies the unique CSS selector in the clipboard of your operating system. A similar approach can
 be applied with Firefox.
 
+<div class="video" data-src="videos/actions.element-picker.mp4"></div>
+
 ##### <a name="actions-rest"></a> REST Actions
 
 REST actions are the counterpart to web actions. They are used to communicate with RESTful interfaces. The table below
@@ -189,10 +192,30 @@ actions to work with the response.
 Changing a symbol in any way results in the creation of a new revision of it. A previous state of a symbol can be 
 recovered.
 
+<div class="video" data-src="videos/symbols-revisions.mp4"></div>
+
 #### <a name="symbols-import-export"></a> Export & Import
 
 If you want to save a set of symbols for another project or use already existing ones, the export and import function
-might be of interest for you.
+might be of interest for you. The screencast below shows how to import and export symbols into new and existing projects.
+
+<div class="video" data-src="videos/symbols-import-export.mp4"></div>
+
+Note that when exporting symbols, their revision, id and group are deleted in order to be compatible with other 
+projects.
+
+As you can see in the video, ALEX supports the import of symbols with actions from a JSON file. Instead of using the 
+graphical user interface for the creation, you can also build them with a text editor by hand and upload them later. 
+Therefore, file has to be formatted as follows:
+
+    [{
+        "name" : "symbol1",
+        "abbreviation" : "s1",
+        "actions" : [ ... ]
+    }, ... ]
+    
+For the manual creation of actions, have a look at [here].
+
 
 ### <a name="learning-experiment-modeling"></a> Learning Experiment Modeling
 
