@@ -21,6 +21,12 @@ Projects are the entities that are used to manage multiple applications separate
 a project for your application in version x and another one for version x+1 while having a different set of symbols and
 saved learning results.
 
+| URL                           | Description                                |
+|-------------------------------|--------------------------------------------|
+| /project                      | Shows the dashboard of an opened project   |
+| /project/create               | Create a new project                       |
+| /project/settings             | Edit and delete an opened project          |
+
 <div class="video" data-src="videos/projects.mp4"></div>
 
 #### <a name="project-management-create"></a> Creating Projects
@@ -194,6 +200,10 @@ recovered.
 
 <div class="video" data-src="videos/symbols-revisions.mp4"></div>
 
+__Info:__ If you revert a symbol with revision *x* to a previous revision *x-i*, a new symbol with the revision *x+1* is
+created. If you have any actions that execute other symbols, you have to manually adjust those, so that they call the 
+most current symbol (In case this is wanted).
+
 #### <a name="symbols-import-export"></a> Export & Import
 
 If you want to save a set of symbols for another project or use already existing ones, the export and import function
@@ -219,7 +229,15 @@ For the manual creation of actions, have a look at [here].
 
 ### <a name="learning-experiment-modeling"></a> Learning Experiment Modeling
 
-#### <a name="learning-experiment-modeling-hypothesis-interaction"></a> Hypothesis Interaction
+| URL                                 | Description                                               |
+|-------------------------------------|-----------------------------------------------------------|
+| /learn/setup                        | Setup and start a learning experiment                     |
+| /learn/start                        | Shows the loadscreen and intermediate learning results    |
+| /learn/results                      | Lists all finished final learning results of a project    |
+| /learn/results/statistics           | Generate statistics from learning results                 |
+| /learn/results/compare/\<testNos\>  | Side-by-side comparison of multiple learning results      |
+
+### <a name="learning-experiment-modeling-hypothesis-interaction"></a> Hypothesis Interaction
 
 #### <a name="learning-experiment-modeling-internal-data-structures"></a> Internal Data Structures
  
