@@ -94,7 +94,7 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
     }
 
     /**
-     * Get the amount of how many words will be generated before the EQoraclee ends with the assumption that no counter
+     * Get the amount of how many words will be generated before the EQ oracle ends with the assumption that no counter
      * example exists.
      *
      * @return The highest amount of random generated words.

@@ -632,10 +632,11 @@ public class SymbolDAOImplTest {
         assertTrue(symbolRev2.isHidden());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NotFoundException.class)
     public void shouldNotHideAnythingByInvalidID() throws NotFoundException {
         symbolDAO.create(symbol);
-        symbolDAO.hide(project.getId(), -1L);
+
+        symbolDAO.hide(project.getId(), -1L); // should fail
     }
 
     @Test
@@ -656,10 +657,11 @@ public class SymbolDAOImplTest {
         assertFalse(symbolRev2.isHidden());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NotFoundException.class)
     public void shouldNotShowAnythingByInvalidID() throws NotFoundException {
         symbolDAO.create(symbol);
-        symbolDAO.show(project.getId(), -1L);
+
+        symbolDAO.show(project.getId(), -1L); // should fail
     }
 
     private List<Symbol> createTestSymbolLists() throws NotFoundException {

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class WebSiteConnector implements Connector {
 
     /** How long we should wait before doing the next step. Introduced by Selenium. */
-    private static final int IMPLICITLY_WATI_TIME = 1;
+    private static final int IMPLICITLY_WAIT_TIME = 1;
 
     /** Max. time to wait for a request before timing out. Introduced by Selenium. */
     private static final int PAGE_LOAD_TIMEOUT_TIME = 30;
@@ -44,7 +44,7 @@ public class WebSiteConnector implements Connector {
         this.baseUrl = new BaseUrlManager(baseUrl);
 
         this.driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
-        this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WATI_TIME, TimeUnit.SECONDS);
+        this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
         this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
     }
 

@@ -27,7 +27,7 @@ public enum SymbolVisibilityLevel {
      * @param criterion
      *         The criterion/ expression the entry represents.
      */
-    private SymbolVisibilityLevel(Criterion criterion) {
+    SymbolVisibilityLevel(Criterion criterion) {
         this.criterion = criterion;
     }
 

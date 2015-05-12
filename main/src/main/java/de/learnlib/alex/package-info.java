@@ -1,4 +1,4 @@
 /**
- * Top package for the Weblearner.
+ * Top package for the ALEX.
  */
 package de.learnlib.alex;

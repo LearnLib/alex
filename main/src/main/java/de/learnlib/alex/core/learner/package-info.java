@@ -1,5 +1,5 @@
 /**
- * This package contains the bridge between the Weblearner and the LearnLib.
+ * This package contains the bridge between the ALEX and the LearnLib.
  */
 package de.learnlib.alex.core.learner;
 

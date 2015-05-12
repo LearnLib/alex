@@ -28,8 +28,7 @@ public class TTT implements LearnAlgorithmFactory {
         }
 
         TTTLearnerMealy tttLearner = (TTTLearnerMealy) learner;
-        String treeAsJSON = TTTSerializer.toJSON(tttLearner.getDiscriminationTree());
-        return treeAsJSON;
+        return TTTSerializer.toJSON(tttLearner.getDiscriminationTree());
     }
 
 }

@@ -57,7 +57,7 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
          * @param relatedType
          *         The type use by Jackson which is equal to our system.
          */
-        private JsonType(JsonNodeType relatedType) {
+        JsonType(JsonNodeType relatedType) {
             this.relatedType = relatedType;
         }
 

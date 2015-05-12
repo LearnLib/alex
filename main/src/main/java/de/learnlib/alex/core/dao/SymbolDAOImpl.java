@@ -555,7 +555,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         HibernateUtil.commitTransaction();
     }
 
-    private void hideSymbols(Session session, List<Symbol> symbols) throws NotFoundException {
+    private void hideSymbols(Session session, List<Symbol> symbols) {
         for (Symbol symbol : symbols) {
             loadLazyRelations(symbol);
 
@@ -585,7 +585,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         HibernateUtil.commitTransaction();
     }
 
-    private void showSymbols(Session session, List<Symbol> symbols) throws NotFoundException {
+    private void showSymbols(Session session, List<Symbol> symbols) {
         for (Symbol symbol : symbols) {
             symbol.setHidden(false);
             session.update(symbol);
@@ -604,7 +604,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         return idRevPairs;
     }
 
-    private List<Symbol> getSymbols(Session session, Long projectId, Long symbolId) {
+    private List<Symbol> getSymbols(Session session, Long projectId, Long symbolId) throws NotFoundException {
         @SuppressWarnings("should return a list of Symbols")
         List<Symbol> symbols = session.createCriteria(Symbol.class)
                                         .add(Restrictions.eq("project.id", projectId))
@@ -612,7 +612,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                                         .list();
 
         if (symbols.size() == 0) {
-            throw new IllegalArgumentException("Could not mark the symbol as hidden because it was not found.");
+            throw new NotFoundException("Could not mark the symbol as hidden because it was not found.");
         }
 
         return symbols;

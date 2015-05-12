@@ -28,8 +28,7 @@ public class DiscriminationTree implements LearnAlgorithmFactory {
         }
         de.learnlib.discriminationtree.DiscriminationTree discriminationTree;
         discriminationTree = ((DTLearnerMealy) learner).getDiscriminationTree();
-        String treeAsJSON = DiscriminationTreeSerializer.toJSON(discriminationTree);
-        return treeAsJSON;
+        return DiscriminationTreeSerializer.toJSON(discriminationTree);
     }
 
 }

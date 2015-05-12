@@ -213,7 +213,7 @@ public class Project implements Serializable {
     }
 
     /**
-     * Add one groupe to the project.
+     * Add one group to the project.
      *
      * @param group
      *         The group to add.

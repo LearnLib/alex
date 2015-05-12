@@ -83,7 +83,7 @@ public class CompactMealyTransitionProxy implements Serializable {
      * Set a new input that will trigger the transition.
      *
      * @param input
-     *         The new input to trigger the tranistion.
+     *         The new input to trigger the transition.
      */
     public void setInput(String input) {
         this.input = input;

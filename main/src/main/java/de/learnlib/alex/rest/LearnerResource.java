@@ -197,7 +197,7 @@ public class LearnerResource {
 
         try {
             learnerResultDAO.get(resultInThread.getProjectId(), resultInThread.getTestNo());
-        } catch (NotFoundException nsee) {
+        } catch (NotFoundException nfe) {
             IllegalArgumentException e = new IllegalArgumentException("The last learned result was deleted.");
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.status", Status.NOT_FOUND, e);
         }

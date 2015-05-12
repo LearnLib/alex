@@ -60,7 +60,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
+        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
@@ -119,7 +119,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     private List<String> getAllAsJSON(Session session, Long projectId, Long testNo) throws NotFoundException {
-        if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
+        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
@@ -154,7 +154,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     private LearnerResult get(Session session, Long projectId, Long testNo) throws NotFoundException {
-        if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
+        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
@@ -178,7 +178,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
+        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
@@ -201,7 +201,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
+        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
@@ -268,7 +268,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                                                 .list();
         results.forEach(session::delete);
 
-        // donee
+        // done
         HibernateUtil.commitTransaction();
     }
 

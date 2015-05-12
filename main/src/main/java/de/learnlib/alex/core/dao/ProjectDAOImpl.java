@@ -217,7 +217,7 @@ public class ProjectDAOImpl implements ProjectDAO {
      *         The project id to test.
      * @return true if the a project exits, false otherwise.
      */
-    public static boolean isProjectIdValid(long projectId) {
+    public static boolean isProjectIdInvalid(long projectId) {
         Session session = HibernateUtil.getSession();
 
         Long projectCount = (Long) session.createCriteria(Project.class)
@@ -225,7 +225,7 @@ public class ProjectDAOImpl implements ProjectDAO {
                                             .setProjection(Projections.rowCount())
                                             .uniqueResult();
 
-        return projectCount == 1;
+        return projectCount == 0;
     }
 
 }

@@ -70,9 +70,7 @@ public class SymbolMapper implements Mapper<String, String, ContextExecutableInp
     public Alphabet<String> getAlphabet() {
         Alphabet<String> sigma = new SimpleAlphabet<>();
 
-        for (String s : symbols.keySet()) {
-            sigma.add(s);
-        }
+        sigma.addAll(symbols.keySet());
 
         return sigma;
     }

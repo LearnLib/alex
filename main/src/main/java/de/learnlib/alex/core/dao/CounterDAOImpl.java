@@ -40,7 +40,7 @@ public class CounterDAOImpl implements CounterDAO {
         HibernateUtil.beginTransaction();
         Session session = HibernateUtil.getSession();
 
-        if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
+        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
@@ -69,7 +69,7 @@ public class CounterDAOImpl implements CounterDAO {
     }
 
     private Counter get(Session session, Long projectId, String name) throws NotFoundException {
-        if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
+        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
@@ -93,7 +93,7 @@ public class CounterDAOImpl implements CounterDAO {
         Session session = HibernateUtil.getSession();
 
         try {
-            Counter result = get(session, counter.getProjectId(), counter.getName());
+            get(session, counter.getProjectId(), counter.getName()); // check if the counter exists
             session.merge(counter);
 
             HibernateUtil.commitTransaction();

@@ -6,7 +6,7 @@ package de.learnlib.alex.core.learner;
 public class BaseUrlManager {
 
     /** The base url of the connection. All other urls just extends this. */
-    protected String baseUrl;
+    private String baseUrl;
 
     /**
      * Advanced constructor which sets the base url field.

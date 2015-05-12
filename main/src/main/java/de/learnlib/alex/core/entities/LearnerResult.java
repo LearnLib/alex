@@ -428,9 +428,7 @@ public class LearnerResult implements Serializable {
     public void createSigmaFrom(List<String> sigmaAsList) {
         this.sigma = new SimpleAlphabet<>();
 
-        for (String s : sigmaAsList) {
-            this.sigma.add(s);
-        }
+        this.sigma.addAll(sigmaAsList);
 
         this.jsonChanged = true;
     }

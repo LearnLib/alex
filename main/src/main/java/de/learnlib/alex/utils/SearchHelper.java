@@ -63,7 +63,7 @@ public final class SearchHelper {
      * Replace all counters and variables within an input string by their actual values.
      *
      * @param connector
-     *         The connectors to connect to the counter and variabel stores.
+     *         The connectors to connect to the counter and variable stores.
      * @param projectId
      *         The project as context.
      * @param text

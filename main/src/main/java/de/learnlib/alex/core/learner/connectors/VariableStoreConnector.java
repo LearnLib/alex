@@ -51,7 +51,7 @@ public class VariableStoreConnector implements Connector {
      *
      * @param name
      *         The variable to get the value from.
-     * @return The value of the variabl.
+     * @return The value of the variable.
      * @throws IllegalStateException
      *         If the variable was not set before.
      */

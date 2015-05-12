@@ -205,7 +205,7 @@ public class LearnerThread extends Thread {
                 learnerResultDAO.update(result);
             } catch (NotFoundException e1) {
                 LOGGER.log(Level.FATAL,
-                           "Something in the LearnerThread went wrong and the reuslt coud not be saved!",
+                           "Something in the LearnerThread went wrong and the result could not be saved!",
                            e);
             }
         }
@@ -256,8 +256,7 @@ public class LearnerThread extends Thread {
             rememberMetaData();
         }
 
-        boolean shouldDoAnotherStep = counterExample != null;
-        return shouldDoAnotherStep;
+        return counterExample != null;
     }
 
     private boolean continueLearning(boolean shouldDoAnotherStep, long maxStepCount) {

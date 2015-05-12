@@ -208,7 +208,7 @@ public abstract class SymbolAction implements Serializable {
     }
 
     /**
-     * Set the negated flag, i.e. if the outcome of the execute method will be inververted.
+     * Set the negated flag, i.e. if the outcome of the execute method will be inverted.
      *
      * @param negated
      *         true, if the outcome should be inverted.

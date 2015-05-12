@@ -70,10 +70,7 @@ public class LearnerThreadFactory {
         LearningAlgorithm.MealyLearner<String, String> learner = thread.getLearner();
         Symbol[] symbols = symbolsList.toArray(new Symbol[symbolsList.size()]);
 
-        LearnerThread leanerThread = new LearnerThread(learnerResultDAO, learnerResult, thread.getCachedSUL(),
-                                                       learner, symbols);
-
-        return leanerThread;
+        return new LearnerThread(learnerResultDAO, learnerResult, thread.getCachedSUL(), learner, symbols);
     }
 
     private LearnerResult createLearnerResult(Project project, LearnerConfiguration configuration) {

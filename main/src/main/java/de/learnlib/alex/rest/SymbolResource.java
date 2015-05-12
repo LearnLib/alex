@@ -149,7 +149,7 @@ public class SymbolResource {
     public Response getAll(@PathParam("project_id") Long projectId,
                            @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         try {
-            List<Symbol> symbols = null;
+            List<Symbol> symbols;
             try {
                 symbols = symbolDAO.getAllWithLatestRevision(projectId, visibilityLevel);
             } catch (NotFoundException e) {
