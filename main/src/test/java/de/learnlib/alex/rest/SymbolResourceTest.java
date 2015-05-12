@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.WeblearnerTestApplication;
+import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
@@ -35,7 +36,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -49,6 +49,9 @@ public class SymbolResourceTest extends JerseyTest {
     private ProjectDAO projectDAO;
 
     @Mock
+    private CounterDAO counterDAO;
+
+    @Mock
     private SymbolGroupDAO symbolGroupDAO;
 
     @Mock
@@ -56,6 +59,9 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Mock
     private LearnerResultDAO learnerResultDAO;
+
+    @Mock
+    private Learner learner;
 
     private Project project;
     private SymbolGroup group;
@@ -68,9 +74,7 @@ public class SymbolResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        Learner learner = mock(Learner.class);
-
-        return new WeblearnerTestApplication(projectDAO, symbolGroupDAO, symbolDAO,
+        return new WeblearnerTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
                                              learnerResultDAO, learner, SymbolResource.class);
     }
 

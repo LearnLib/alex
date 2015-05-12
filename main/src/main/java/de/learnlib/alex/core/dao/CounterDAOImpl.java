@@ -2,12 +2,14 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
+import javax.validation.ValidationException;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Implementation of a CounterDAO using Hibernate.
@@ -15,23 +17,32 @@ import java.util.NoSuchElementException;
 public class CounterDAOImpl implements CounterDAO {
 
     @Override
-    public void create(Counter counter) {
+    public void create(Counter counter) throws ValidationException {
         HibernateUtil.beginTransaction();
         Session session = HibernateUtil.getSession();
+        try {
+            Project project = (Project) session.load(Project.class, counter.getProjectId());
+            project.getId();
+            counter.setProject(project);
 
-        Project project = (Project) session.load(Project.class, counter.getProjectId());
-        project.getId();
-        counter.setProject(project);
+            session.save(counter);
 
-        session.save(counter);
-
-        HibernateUtil.commitTransaction();
+            HibernateUtil.commitTransaction();
+        } catch (javax.validation.ConstraintViolationException
+                | org.hibernate.exception.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            throw new ValidationException("The counter could not be created because it is invalid.", e);
+        }
     }
 
     @Override
-    public List<Counter> getAll(Long projectId) {
+    public List<Counter> getAll(Long projectId) throws NotFoundException {
         HibernateUtil.beginTransaction();
         Session session = HibernateUtil.getSession();
+
+        if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
+            throw new NotFoundException("The project with the id " + projectId + " was not found.");
+        }
 
         @SuppressWarnings("Should always return a list of Counters.")
         List<Counter> result = session.createCriteria(Counter.class)
@@ -43,7 +54,7 @@ public class CounterDAOImpl implements CounterDAO {
     }
 
     @Override
-    public Counter get(Long projectId, String name) throws NoSuchElementException {
+    public Counter get(Long projectId, String name) throws NotFoundException {
         HibernateUtil.beginTransaction();
         Session session = HibernateUtil.getSession();
         try {
@@ -51,13 +62,17 @@ public class CounterDAOImpl implements CounterDAO {
 
             HibernateUtil.commitTransaction();
             return result;
-        } catch (NoSuchElementException e) {
+        } catch (NotFoundException e) {
             HibernateUtil.rollbackTransaction();
             throw e;
         }
     }
 
-    private Counter get(Session session, Long projectId, String name) throws NoSuchElementException {
+    private Counter get(Session session, Long projectId, String name) throws NotFoundException {
+        if (!ProjectDAOImpl.isProjectIdValid(projectId)) {
+            throw new NotFoundException("The project with the id " + projectId + " was not found.");
+        }
+
         @SuppressWarnings("Should always return a list of Counters.")
         Counter result = (Counter) session.createCriteria(Counter.class)
                                           .add(Restrictions.eq("project.id", projectId))
@@ -65,7 +80,7 @@ public class CounterDAOImpl implements CounterDAO {
                                           .uniqueResult();
 
         if (result == null) {
-            throw new NoSuchElementException("Could not find the counter with the name '" + name
+            throw new NotFoundException("Could not find the counter with the name '" + name
                                            + "' in the project " + projectId + "!");
         }
 
@@ -73,7 +88,7 @@ public class CounterDAOImpl implements CounterDAO {
     }
 
     @Override
-    public void update(Counter counter) throws NoSuchElementException {
+    public void update(Counter counter) throws NotFoundException, ValidationException {
         HibernateUtil.beginTransaction();
         Session session = HibernateUtil.getSession();
 
@@ -82,14 +97,17 @@ public class CounterDAOImpl implements CounterDAO {
             session.merge(counter);
 
             HibernateUtil.commitTransaction();
-        } catch (NoSuchElementException e) {
+        } catch (HibernateException e) {
+            HibernateUtil.rollbackTransaction();
+            throw new ValidationException("You cannot change the project or name of the counter.", e);
+        } catch (NotFoundException e) {
             HibernateUtil.rollbackTransaction();
             throw e;
         }
     }
 
     @Override
-    public void delete(Long projectId, String name) throws NoSuchElementException {
+    public void delete(Long projectId, String name) throws NotFoundException {
         HibernateUtil.beginTransaction();
         Session session = HibernateUtil.getSession();
 
@@ -98,7 +116,7 @@ public class CounterDAOImpl implements CounterDAO {
             session.delete(result);
 
             HibernateUtil.commitTransaction();
-        } catch (NoSuchElementException e) {
+        } catch (NotFoundException e) {
             HibernateUtil.rollbackTransaction();
             throw e;
         }

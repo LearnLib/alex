@@ -2,6 +2,8 @@ package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.entities.Counter;
+import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.utils.ResourceErrorHandler;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -37,8 +39,14 @@ public class CounterResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCounters(@PathParam("project_id") Long projectId) {
-        List<Counter> counters = counterDAO.getAll(projectId);
-        return Response.ok(counters).build();
+        try {
+            List<Counter> counters = counterDAO.getAll(projectId);
+            return Response.ok(counters).header("X-Total-Count", counters.size()).build();
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.getAll",
+                                                               Response.Status.NOT_FOUND,
+                                                               e);
+        }
     }
 
     /**
@@ -54,8 +62,15 @@ public class CounterResource {
     @DELETE
     @Path("/{counter_name}")
     public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name) {
-        counterDAO.delete(projectId, name);
-        return Response.status(Response.Status.NO_CONTENT).build();
+        try {
+            counterDAO.delete(projectId, name);
+            return Response.status(Response.Status.NO_CONTENT).build();
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.deleteCounter",
+                                                               Response.Status.NOT_FOUND,
+                                                               e);
+        }
+
     }
 
 }

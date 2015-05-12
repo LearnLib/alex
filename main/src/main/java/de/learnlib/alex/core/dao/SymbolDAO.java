@@ -38,10 +38,12 @@ public interface SymbolDAO {
      * Get a list of specific symbols of a project.
      *
      * @param projectId
-     *            The project the symbols should belong to.
+     *         The project the symbols should belong to.
      * @param idRevPairs
-     *            A list of pairs of an ID and revisions to specify the expected symbols.
+     *         A list of pairs of an ID and revisions to specify the expected symbols.
      * @return A list of symbols matching the project and list of IDs and revisions.
+     * @throws NotFoundException
+     *         If the project or one of the symbols could not be found.
      */
     List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException;
 

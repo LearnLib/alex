@@ -2,13 +2,12 @@ package de.learnlib.alex.core.learner.connectors;
 
 import de.learnlib.alex.core.dao.CounterDAOImpl;
 import de.learnlib.alex.core.entities.Counter;
+import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.NoSuchElementException;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -35,8 +34,8 @@ public class CounterStoreConnectorTest {
     }
 
     @Test
-    public void shouldCorrectlyCreateACounter() {
-        given(counterDAO.get(PROJECT_ID, COUNTER_NAME)).willThrow(NoSuchElementException.class);
+    public void shouldCorrectlyCreateACounter() throws NotFoundException {
+        given(counterDAO.get(PROJECT_ID, COUNTER_NAME)).willThrow(NotFoundException.class);
 
         connector.set(PROJECT_ID, COUNTER_NAME, COUNTER_VALUE);
 
@@ -44,7 +43,7 @@ public class CounterStoreConnectorTest {
     }
 
     @Test
-    public void shouldCorrectlyUpdateACounter() {
+    public void shouldCorrectlyUpdateACounter() throws NotFoundException {
         given(counterDAO.get(PROJECT_ID, COUNTER_NAME)).willReturn(counter);
 
         connector.set(PROJECT_ID, COUNTER_NAME, COUNTER_VALUE);
@@ -54,7 +53,7 @@ public class CounterStoreConnectorTest {
     }
 
     @Test
-    public void shouldIncrementACounter() {
+    public void shouldIncrementACounter() throws NotFoundException {
         given(counter.getValue()).willReturn(COUNTER_VALUE);
         given(counterDAO.get(PROJECT_ID, COUNTER_NAME)).willReturn(counter);
 

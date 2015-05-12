@@ -1,6 +1,7 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.WeblearnerTestApplication;
+import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
@@ -38,6 +39,9 @@ public class LearnerResourceTest extends JerseyTest {
     private ProjectDAO projectDAO;
 
     @Mock
+    private CounterDAO counterDAO;
+
+    @Mock
     private SymbolGroupDAO symbolGroupDAO;
 
     @Mock
@@ -58,7 +62,7 @@ public class LearnerResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        return new WeblearnerTestApplication(projectDAO, symbolGroupDAO, symbolDAO,
+        return new WeblearnerTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
                                              learnerResultDAO, learner, LearnerResource.class);
     }
 

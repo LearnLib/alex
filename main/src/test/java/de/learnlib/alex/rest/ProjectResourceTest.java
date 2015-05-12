@@ -1,6 +1,7 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.WeblearnerTestApplication;
+import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
@@ -24,7 +25,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -36,6 +36,9 @@ public class ProjectResourceTest extends JerseyTest {
     private ProjectDAO projectDAO;
 
     @Mock
+    private CounterDAO counterDAO;
+
+    @Mock
     private SymbolGroupDAO symbolGroupDAO;
 
     @Mock
@@ -43,6 +46,9 @@ public class ProjectResourceTest extends JerseyTest {
 
     @Mock
     private LearnerResultDAO learnerResultDAO;
+
+    @Mock
+    private Learner learner;
 
     private Project project;
 
@@ -60,9 +66,7 @@ public class ProjectResourceTest extends JerseyTest {
         project.addSymbol(symbol);
         given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(project);
 
-        Learner learner = mock(Learner.class);
-
-        return new WeblearnerTestApplication(projectDAO, symbolGroupDAO, symbolDAO,
+        return new WeblearnerTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
                                              learnerResultDAO, learner, ProjectResource.class);
     }
 
