@@ -47,7 +47,7 @@ public class CounterDAOImplTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws NotFoundException {
         projectDAO.delete(project.getId());
     }
 

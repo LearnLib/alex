@@ -1,6 +1,7 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 
@@ -13,7 +14,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * REST API to fetch the test results.
@@ -46,7 +46,7 @@ public class LearnerResultResource {
                             .header("X-Total-Count", resultsAsJSON.size())
                             .entity(resultsAsJSON.toString())
                     .build();
-        } catch (NoSuchElementException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getAllFinalResults",
                                                                 Response.Status.NOT_FOUND, e);
         }
@@ -81,7 +81,7 @@ public class LearnerResultResource {
                             .header("X-Total-Count", result.size())
                             .entity(result.toString())
                         .build();
-        } catch (NoSuchElementException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getAllStep",
                                                                 Response.Status.NOT_FOUND,  e);
         }
@@ -106,7 +106,7 @@ public class LearnerResultResource {
         try {
             String json = learnerResultDAO.getAsJSON(projectId, testNo);
             return Response.ok(json).build();
-        } catch (NoSuchElementException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getOneFinalResult",
                                                                Response.Status.NOT_FOUND,  e);
         }
@@ -133,7 +133,7 @@ public class LearnerResultResource {
             learnerResultDAO.delete(projectId, numbersLongArray);
             return Response.status(Response.Status.NO_CONTENT).build();
 
-        }  catch (NoSuchElementException e) {
+        }  catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteResultSet",
                                                                 Response.Status.NOT_FOUND,  e);
         }

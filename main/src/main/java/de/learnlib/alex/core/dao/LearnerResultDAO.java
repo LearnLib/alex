@@ -1,10 +1,10 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Interface to describe how to deal with LearnerResult.
@@ -28,10 +28,10 @@ public interface LearnerResultDAO {
      * @param projectId
      *         The project id of the test run.
      * @return A list of LearnerResults as JSON data.
-     * @throws NoSuchElementException
+     * @throws NotFoundException
      *         If the project id was invalid.
      */
-    List<String> getAllAsJSON(Long projectId) throws NoSuchElementException;
+    List<String> getAllAsJSON(Long projectId) throws NotFoundException;
 
     /**
      * Get a list of JSON data containing all the steps of a given TestRun for a given Project.
@@ -41,10 +41,10 @@ public interface LearnerResultDAO {
      * @param testNo
      *         The test no. of the test run.
      * @return A list of LearnerResults as JSON data.
-     * @throws NoSuchElementException
+     * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    List<String> getAllAsJSON(Long projectId, Long testNo) throws NoSuchElementException;
+    List<String> getAllAsJSON(Long projectId, Long testNo) throws NotFoundException;
 
     /**
      * Get a list of lists of JSON data containing all the steps of a given TestRun for a given Project.
@@ -54,10 +54,10 @@ public interface LearnerResultDAO {
      * @param testNos
      *         The list of test nos. of the test runs.
      * @return A list of list containing LearnerResults as JSON data.
-     * @throws NoSuchElementException
+     * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    List<List<String>> getAllAsJson(Long projectId, List<Long> testNos) throws NoSuchElementException;
+    List<List<String>> getAllAsJson(Long projectId, List<Long> testNos) throws NotFoundException;
 
     /**
      * Get a the last / final LearnerResult of one test run.
@@ -67,10 +67,10 @@ public interface LearnerResultDAO {
      * @param testRunNo
      *         The test no. of the test run.
      * @return The LearnerResult you are looking for, if it exists.
-     * @throws NoSuchElementException
+     * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    LearnerResult get(Long projectId, Long testRunNo) throws NoSuchElementException;
+    LearnerResult get(Long projectId, Long testRunNo) throws NotFoundException;
 
     /**
      * Get the latest LearnerResult of a given test run as JSON data, e.g. the final result.
@@ -80,10 +80,10 @@ public interface LearnerResultDAO {
      * @param testNo
      *         The test no. of the test run.
      * @return The latest LearnerResult, i.e. the one with the highest step no., for the given test run.
-     * @throws NoSuchElementException
+     * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    String getAsJSON(Long projectId, Long testNo) throws NoSuchElementException;
+    String getAsJSON(Long projectId, Long testNo) throws NotFoundException;
 
     /**
      * Get a specific LearnerResult as JSON data.
@@ -95,10 +95,10 @@ public interface LearnerResultDAO {
      * @param stepNo
      *         The step no. of the test run / LearnerResult.
      * @return The LearnerResult as JSON data.
-     * @throws java.util.NoSuchElementException
+     * @throws NotFoundException
      *         If the project id, test no. or step no. was invalid.
      */
-    String getAsJSON(Long projectId, Long testNo, Long stepNo) throws NoSuchElementException;
+    String getAsJSON(Long projectId, Long testNo, Long stepNo) throws NotFoundException;
 
     /**
      * Update a given LearnResult. Update means here, to save a new LearnerResult with an increased step no.
@@ -109,8 +109,10 @@ public interface LearnerResultDAO {
      *         The LearnerResult to update.
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
+     * @throws NotFoundException
+     *         If the project id or test no. was invalid.
      */
-    void update(LearnerResult learnerResult) throws ValidationException;
+    void update(LearnerResult learnerResult) throws NotFoundException, ValidationException;
 
     /**
      * Remove a complete test run of a project.
@@ -119,8 +121,8 @@ public interface LearnerResultDAO {
      *         The project id.
      * @param testNo
      *         The test numbers to delete.
-     * @throws NoSuchElementException
+     * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    void delete(Long projectId, Long... testNo) throws  NoSuchElementException;
+    void delete(Long projectId, Long... testNo) throws  NotFoundException;
 }

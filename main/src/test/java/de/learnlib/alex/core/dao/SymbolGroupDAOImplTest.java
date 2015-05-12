@@ -61,7 +61,7 @@ public class SymbolGroupDAOImplTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws NotFoundException {
         projectDAO.delete(project.getId());
     }
 
@@ -98,7 +98,7 @@ public class SymbolGroupDAOImplTest {
     }
 
     @Test
-    public void shouldGetAllGroupsOfOneProject() {
+    public void shouldGetAllGroupsOfOneProject() throws NotFoundException {
         List<SymbolGroup> groups = new LinkedList<>();
         for (int i = 1; i <= AMOUNT_OF_GROUPS; i++) {
             SymbolGroup newGroup = new SymbolGroup();
@@ -118,12 +118,12 @@ public class SymbolGroupDAOImplTest {
     }
 
     @Test
-    public void shouldThrowAnExceptionIfYouWantToGetAllGroupsOfANonExistingProject() {
+    public void shouldThrowAnExceptionIfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
         symbolGroupDAO.getAll(-1L);
     }
 
     @Test
-    public void shouldGetTheRightGroup() {
+    public void shouldGetTheRightGroup() throws NotFoundException {
         List<SymbolGroup> groups = new LinkedList<>();
         for (int i = 1; i <= AMOUNT_OF_GROUPS; i++) {
             SymbolGroup newGroup = new SymbolGroup();
@@ -143,13 +143,13 @@ public class SymbolGroupDAOImplTest {
         assertEquals("Group 1", groupInDB.getName());
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void shouldThrowAnExceptionIfTheGroupWasNotFound() {
+    @Test(expected = NotFoundException.class)
+    public void shouldThrowAnExceptionIfTheGroupWasNotFound() throws NotFoundException {
         symbolGroupDAO.get(-1L, -1L); // should fail
     }
 
     @Test
-    public void shouldUpdateAGroup() {
+    public void shouldUpdateAGroup() throws NotFoundException {
         symbolGroupDAO.create(group);
 
         group.setName("New Name");
@@ -160,7 +160,7 @@ public class SymbolGroupDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotUpdateIfNameConflictsOccur() {
+    public void shouldNotUpdateIfNameConflictsOccur() throws NotFoundException {
         symbolGroupDAO.create(group);
         symbolGroupDAO.create(group2);
 
@@ -177,9 +177,9 @@ public class SymbolGroupDAOImplTest {
         symbolGroupDAO.delete(project.getId(), group.getId());
 
         try {
-            SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId()); // should fail
+            symbolGroupDAO.get(project.getId(), group.getId()); // should fail
             fail("After deleting a group, it was still in the DB.");
-        } catch (NoSuchElementException e) {
+        } catch (NotFoundException e) {
             // Symbol was not found -> It was deleted -> success
             Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol.getId());
             assertEquals(project.getDefaultGroup(), symbolInDB.getGroup());
@@ -188,7 +188,7 @@ public class SymbolGroupDAOImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldNotDeleteTheDefaultGroupOfAProject() {
+    public void shouldNotDeleteTheDefaultGroupOfAProject() throws NotFoundException {
         symbolGroupDAO.delete(project.getId(), project.getDefaultGroup().getId());
     }
 }

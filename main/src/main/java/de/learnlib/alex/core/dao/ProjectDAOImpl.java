@@ -3,6 +3,7 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -83,7 +84,7 @@ public class ProjectDAOImpl implements ProjectDAO {
     }
 
     @Override
-    public Project getByID(long id, EmbeddableFields... embedFields) {
+    public Project getByID(long id, EmbeddableFields... embedFields) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -98,11 +99,15 @@ public class ProjectDAOImpl implements ProjectDAO {
 
         // done
         HibernateUtil.commitTransaction();
+
+        if (result == null) {
+            throw new NotFoundException("Could not find the project with the id " + id + ".");
+        }
         return result;
     }
 
     @Override
-    public void update(Project project) throws IllegalArgumentException, ValidationException {
+    public void update(Project project) throws NotFoundException, ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -122,7 +127,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         } catch (ObjectNotFoundException e) {
             LOGGER.info("Project Update Failed:", e);
             HibernateUtil.rollbackTransaction();
-            throw new IllegalArgumentException("could not find the project, thus it is not updated.", e);
+            throw new NotFoundException("Could not find the project with the id " + project.getId() + ".", e);
         } catch (javax.validation.ConstraintViolationException
                  | org.hibernate.exception.ConstraintViolationException e) {
             LOGGER.info("Project Update Failed:", e);
@@ -133,23 +138,19 @@ public class ProjectDAOImpl implements ProjectDAO {
     }
 
     @Override
-    public void delete(long id) throws IllegalArgumentException {
+    public void delete(long id) throws NotFoundException {
         Project project = getByID(id, EmbeddableFields.ALL);
 
-        if (project != null) {
-            // start session
-            Session session = HibernateUtil.getSession();
-            HibernateUtil.beginTransaction();
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
 
-            for (SymbolGroup group : project.getGroups()) {
-                group.getSymbols().forEach(session::delete);
-            }
-
-            session.delete(project);
-            HibernateUtil.commitTransaction();
-        } else {
-            throw new IllegalArgumentException("could not find the project, thus it is not deleted.");
+        for (SymbolGroup group : project.getGroups()) {
+            group.getSymbols().forEach(session::delete);
         }
+
+        session.delete(project);
+        HibernateUtil.commitTransaction();
     }
 
     /**

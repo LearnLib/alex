@@ -18,12 +18,12 @@ import org.glassfish.jersey.server.ResourceConfig;
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
  */
-public class WeblearnerApplication extends ResourceConfig {
+public class ALEXApplication extends ResourceConfig {
 
     /**
      * Constructor where the magic happens.
      */
-    public WeblearnerApplication() {
+    public ALEXApplication() {
         // packages with REST resources classes
         packages(true, "de.learnlib.alex");
 

@@ -2,6 +2,7 @@ package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 
 import javax.inject.Inject;
@@ -106,15 +107,12 @@ public class ProjectResource {
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
             embeddableFields = parseEmbeddableFields(embed);
+            Project project = projectDAO.getByID(id, embeddableFields);
+            return Response.ok(project).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
-        }
-        Project project = projectDAO.getByID(id, embeddableFields);
-
-        if (project == null) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.NOT_FOUND, null);
-        } else {
-            return Response.ok(project).build();
         }
     }
 
@@ -142,7 +140,7 @@ public class ProjectResource {
             try {
                 projectDAO.update(project);
                 return Response.ok(project).build();
-            } catch (IllegalArgumentException e) {
+            } catch (NotFoundException e) {
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.NOT_FOUND, e);
             } catch (ValidationException e) {
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.BAD_REQUEST, e);
@@ -166,7 +164,7 @@ public class ProjectResource {
         try {
             projectDAO.delete(id);
             return Response.status(Status.NO_CONTENT).build();
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.NOT_FOUND, e);
         }
     }

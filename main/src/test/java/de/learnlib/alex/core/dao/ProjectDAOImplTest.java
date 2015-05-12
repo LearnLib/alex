@@ -6,6 +6,7 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -21,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ProjectDAOImplTest {
 
@@ -51,14 +53,14 @@ public class ProjectDAOImplTest {
         // at the end make sure that the project is removed from the DB
         try {
             dao.delete(project.getId());
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             // nothing to worry about
             System.out.println("ProjectDAOImplTest.tearDown(): project deletion failed.");
         }
     }
 
     @Test
-    public void shouldCreateValidProject() {
+    public void shouldCreateValidProject() throws NotFoundException {
         Project p2 = dao.getByID(project.getId(), ProjectDAO.EmbeddableFields.ALL);
 
         assertNotNull(p2);
@@ -123,7 +125,7 @@ public class ProjectDAOImplTest {
     }
 
     @Test
-    public void shouldUpdateValidProject() {
+    public void shouldUpdateValidProject() throws NotFoundException {
         project.setName("An other Test Project");
         dao.update(project);
 
@@ -133,8 +135,8 @@ public class ProjectDAOImplTest {
         assertEquals(project.getNextSymbolId(), project2.getNextSymbolId());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldFailOnUpdateByInvalidID() {
+    @Test(expected = NotFoundException.class)
+    public void shouldFailOnUpdateByInvalidID() throws NotFoundException {
         project.setId(-1L);
         project.setName("An other Test Project");
 
@@ -142,7 +144,7 @@ public class ProjectDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldFailOnUpdateWhenTheNameIsMissing() {
+    public void shouldFailOnUpdateWhenTheNameIsMissing() throws NotFoundException {
         Project p2 = new Project();
         p2.setName("Test Project - Update Without Name");
         p2.setBaseUrl(BASE_URL);
@@ -154,7 +156,7 @@ public class ProjectDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldFailOnUpdateWhenTheBaseUrlIsMissing() {
+    public void shouldFailOnUpdateWhenTheBaseUrlIsMissing() throws NotFoundException {
         Project p2 = new Project();
         p2.setName("Test Project - Update Without Base URL");
         p2.setBaseUrl(BASE_URL);
@@ -166,7 +168,7 @@ public class ProjectDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldFailOnUpdateWithNotUniqueName() {
+    public void shouldFailOnUpdateWithNotUniqueName() throws NotFoundException {
         Project p2 = new Project();
         p2.setName("Test Project - Update Without Unique Name");
         p2.setBaseUrl(BASE_URL);
@@ -178,7 +180,7 @@ public class ProjectDAOImplTest {
     }
 
     @Test
-    public void shouldDeleteValidProject() {
+    public void shouldDeleteValidProject() throws NotFoundException {
         // test if the project has Symbols
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -194,34 +196,37 @@ public class ProjectDAOImplTest {
         dao.delete(project.getId());
 
         // test if the project was removed
-        Project projectFromDB = dao.getByID(project.getId());
-        assertNull(projectFromDB);
+        try {
+            dao.getByID(project.getId());
+            fail("Project was not relay deleted!");
+        } catch (NotFoundException ignored) {
+            // success
+            session = HibernateUtil.getSession();
+            HibernateUtil.beginTransaction();
 
-        session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+            // make sure all symbols are deleted
+            symbols = session.createCriteria(Symbol.class)
+                             .add(Restrictions.eq("project.id", project.getId()))
+                             .list();
+            WebSymbolAction actionInDB = (WebSymbolAction) session.get(WebSymbolAction.class, action.getId());
+            assertTrue(symbols.size() == 0);
+            assertNull(actionInDB);
 
-        // make sure all symbols are deleted
-        symbols = session.createCriteria(Symbol.class)
-                            .add(Restrictions.eq("project.id", project.getId()))
-                            .list();
-        WebSymbolAction actionInDB = (WebSymbolAction) session.get(WebSymbolAction.class, action.getId());
-        assertTrue(symbols.size() == 0);
-        assertNull(actionInDB);
+            // make sure all test results are deleted
+            session = HibernateUtil.getSession();
+            HibernateUtil.beginTransaction();
+            @SuppressWarnings("unchecked") // should return a List of LearnerResults
+            List<LearnerResult> resultsInDB = session.createCriteria(LearnerResult.class)
+                                                     .add(Restrictions.eq("project.id", project.getId()))
+                                                     .list();
+            assertTrue(resultsInDB.size() == 0);
 
-        // make sure all test results are deleted
-        session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-        @SuppressWarnings("unchecked") // should return a List of LearnerResults
-        List<LearnerResult> resultsInDB = session.createCriteria(LearnerResult.class)
-                                                    .add(Restrictions.eq("project.id", project.getId()))
-                                                    .list();
-        assertTrue(resultsInDB.size() == 0);
-
-        HibernateUtil.commitTransaction();
+            HibernateUtil.commitTransaction();
+        }
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotDeleteInvalidID() {
+    @Test(expected = NotFoundException.class)
+    public void shouldNotDeleteInvalidID() throws NotFoundException {
         dao.delete(-1);
     }
 

@@ -1,7 +1,11 @@
 package de.learnlib.alex.actions.StoreSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
+import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,6 +16,12 @@ import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class SetVariableByJSONAttributeActionTest {
 
@@ -21,6 +31,7 @@ public class SetVariableByJSONAttributeActionTest {
     public void setUp() {
         setAction = new SetVariableByJSONAttributeAction();
         setAction.setName("variable");
+        setAction.setValue("foo");
     }
 
     @Test
@@ -45,6 +56,36 @@ public class SetVariableByJSONAttributeActionTest {
         SetVariableByJSONAttributeAction objAsAction = (SetVariableByJSONAttributeAction) obj;
         assertEquals("variable", objAsAction.getName());
         assertEquals("foobar", objAsAction.getValue());
+    }
+
+    @Test
+    public void shouldSetTheRightValue() {
+        VariableStoreConnector storeConnector = mock(VariableStoreConnector.class);
+        WebServiceConnector webServiceConnector = mock(WebServiceConnector.class);
+        given(webServiceConnector.getBody()).willReturn("{\"foo\": \"bar\"}");
+        ConnectorManager connectors = mock(ConnectorManager.class);
+        given(connectors.getConnector(VariableStoreConnector.class)).willReturn(storeConnector);
+        given((connectors.getConnector(WebServiceConnector.class))).willReturn(webServiceConnector);
+
+        ExecuteResult result = setAction.execute(connectors);
+
+        assertEquals(ExecuteResult.OK, result);
+        verify(storeConnector).set("variable", "bar");
+    }
+
+    @Test
+    public void shouldSetNotihingIfThePropertyDoesNotExists() {
+        VariableStoreConnector storeConnector = mock(VariableStoreConnector.class);
+        WebServiceConnector webServiceConnector = mock(WebServiceConnector.class);
+        given(webServiceConnector.getBody()).willReturn("{\"nope\": \"bar\"}");
+        ConnectorManager connectors = mock(ConnectorManager.class);
+        given(connectors.getConnector(VariableStoreConnector.class)).willReturn(storeConnector);
+        given((connectors.getConnector(WebServiceConnector.class))).willReturn(webServiceConnector);
+
+        ExecuteResult result = setAction.execute(connectors);
+
+        assertEquals(ExecuteResult.FAILED, result);
+        verify(storeConnector, never()).set(eq("variable"), anyString());
     }
 
 }

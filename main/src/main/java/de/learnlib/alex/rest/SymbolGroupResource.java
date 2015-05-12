@@ -23,7 +23,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * REST API to manage groups.
@@ -97,7 +96,7 @@ public class SymbolGroupResource {
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
                                                                Response.Status.BAD_REQUEST, e);
-        } catch (NoSuchElementException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
                                                                Response.Status.NOT_FOUND, e);
         }
@@ -131,7 +130,7 @@ public class SymbolGroupResource {
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get",
                                                                Response.Status.BAD_REQUEST, e);
-        } catch (NoSuchElementException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get", Response.Status.NOT_FOUND, e);
         }
     }
@@ -187,7 +186,7 @@ public class SymbolGroupResource {
         try {
             symbolGroupDAO.update(group);
             return Response.ok(group).build();
-        } catch (NoSuchElementException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
                                                                Response.Status.NOT_FOUND, e);
         } catch (ValidationException e) {
@@ -217,6 +216,9 @@ public class SymbolGroupResource {
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
                                                                Response.Status.BAD_REQUEST, e);
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
+                                                               Response.Status.NOT_FOUND, e);
         }
     }
 

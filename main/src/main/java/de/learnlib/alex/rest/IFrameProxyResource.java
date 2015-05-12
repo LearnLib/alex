@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Proxy class needed to workaround some 'iframe' restrictions when working with multiple domains.
@@ -120,9 +121,9 @@ public class IFrameProxyResource {
     }
 
     private Connection parseAndProcessFormData(Connection connection, MultivaluedMap<String, String> body) {
-        for (String key : body.keySet()) {
-            List<String> values = body.get(key);
-            for (String value : values) {
+        for (Map.Entry<String, List<String>> entry : body.entrySet()) {
+            String key = entry.getKey();
+            for (String value : entry.getValue()) {
                 connection = connection.data(key, value);
             }
         }

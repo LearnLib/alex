@@ -1,10 +1,10 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Interface to describe how Groups are handled.
@@ -56,10 +56,10 @@ public interface SymbolGroupDAO {
      * @param embedFields
      *         A list of field to directly embed/ load into the returned groups.
      * @return A List of groups. Can be empty.
-     * @throws NoSuchElementException
+     * @throws NotFoundException
      *         If no project with the given id was found.
      */
-    List<SymbolGroup> getAll(long projectId, EmbeddableFields... embedFields) throws NoSuchElementException;
+    List<SymbolGroup> getAll(long projectId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Get one group.
@@ -71,30 +71,35 @@ public interface SymbolGroupDAO {
      * @param embedFields
      *         A list of field to directly embed/ load into the returned groups.
      * @return The group you are looking for.
-     * @throws NoSuchElementException
+     * @throws NotFoundException
      *         If the Project or the Group could not be found.
      */
-    SymbolGroup get(long projectId, Long groupId, EmbeddableFields... embedFields) throws NoSuchElementException;
+    SymbolGroup get(long projectId, Long groupId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Update a group.
      *
      * @param group
      *         The group to update.
-     * @throws IllegalStateException
+     * @throws NotFoundException
      *         If the group was not found, because you can only update existing groups.
      * @throws ValidationException
      *         If the group was invalid.
      */
-    void update(SymbolGroup group) throws IllegalStateException, ValidationException;
+    void update(SymbolGroup group) throws NotFoundException, ValidationException;
 
     /**
+     * Delete a group.
+     *
      * @param projectId
      *         The project the group belongs to.
      * @param groupId
      *         The ID of the group within the project.
-     * @throws IllegalArgumentException If you want to delete a default group.
+     * @throws IllegalArgumentException
+     *         If you want to delete a default group.
+     * @throws NotFoundException
+     *         If The project or group could not be found.
      */
-    void delete(long projectId, Long groupId) throws IllegalArgumentException;
+    void delete(long projectId, Long groupId) throws IllegalArgumentException, NotFoundException;
 
 }

@@ -81,7 +81,7 @@ public class WebSymbolIT {
         assertTrue(project.getId() > 0);
         symbol = symbols.get(0);
         assertNotNull(symbol);
-        assertEquals(new Long(1), symbol.getRevision());
+        assertEquals(Long.valueOf(1), symbol.getRevision());
         assertEquals(symbolName, symbol.getName());
         assertEquals(symbolAbbr, symbol.getAbbreviation());
 
@@ -91,7 +91,7 @@ public class WebSymbolIT {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         symbol = response.readEntity(Symbol.class);
         assertTrue(project.getId() > 0);
-        assertEquals(new Long(1), symbol.getRevision());
+        assertEquals(Long.valueOf(1), symbol.getRevision());
         assertEquals(symbolName, symbol.getName());
         assertEquals(symbolAbbr, symbol.getAbbreviation());
         assertNotNull(symbol.getActions());

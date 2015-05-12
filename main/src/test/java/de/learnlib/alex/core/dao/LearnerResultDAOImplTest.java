@@ -2,6 +2,7 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
@@ -17,7 +18,6 @@ import org.junit.Test;
 import javax.validation.ValidationException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -51,12 +51,12 @@ public class LearnerResultDAOImplTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws NotFoundException {
         projectDAO.delete(project.getId());
     }
 
     @Test
-    public void shouldSaveValidLearnResults() {
+    public void shouldSaveValidLearnResults() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
 
         assertTrue(learnerResult.getTestNo() > 0);
@@ -70,7 +70,7 @@ public class LearnerResultDAOImplTest {
     }
 
     @Test
-    public void shouldSaveTwoValidLearnResults() {
+    public void shouldSaveTwoValidLearnResults() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         LearnerResult result2 = new LearnerResult();
         initLearnerResult(result2);
@@ -117,7 +117,7 @@ public class LearnerResultDAOImplTest {
     }
 
     @Test
-    public void shouldGetAllFinalResults() {
+    public void shouldGetAllFinalResults() throws NotFoundException {
         List<LearnerResult> results = createLearnerResultsList();
         List<String> resultsInDBAsJSON = learnerResultDAO.getAllAsJSON(project.getId());
 
@@ -132,13 +132,13 @@ public class LearnerResultDAOImplTest {
         }
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void ensureThatGettingAllFinalResultsThrowsAnExceptionIfTheProjectIdIsInvalid() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingAllFinalResultsThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
         learnerResultDAO.getAllAsJSON(-1L); // should fail
     }
 
     @Test
-    public void shouldGetAllResultsOfOneRun() {
+    public void shouldGetAllResultsOfOneRun() throws NotFoundException {
         LearnerResult result = createLearnerResultsList().get(RESULTS_AMOUNT - 1);
         List<String> resultsInDBAsJSON = learnerResultDAO.getAllAsJSON(project.getId(), result.getTestNo());
 
@@ -167,19 +167,19 @@ public class LearnerResultDAOImplTest {
         }
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void ensureThatGettingAllResultsThrowsAnExceptionIfTheProjectIdIsInvalid() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingAllResultsThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         learnerResultDAO.getAllAsJSON(-1L, learnerResult.getTestNo()); // should fail
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void ensureThatGettingAllResultsThrowsAnExceptionIfTheResultIdIsInvalid() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingAllResultsThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
         learnerResultDAO.getAllAsJSON(project.getId(), -1L); // should fail
     }
 
     @Test
-    public void shouldGetOneFinalResult() {
+    public void shouldGetOneFinalResult() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             learnerResultDAO.update(learnerResult);
@@ -190,19 +190,19 @@ public class LearnerResultDAOImplTest {
         assertEquals(learnerResult, resultInDB);
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void ensureThatGettingOneFinalResultThrowsAnExceptionIfTheProjectIdIsInvalid() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingOneFinalResultThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         learnerResultDAO.get(-1L, learnerResult.getTestNo()); // should fail
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void ensureThatGettingOneFinalResultThrowsAnExceptionIfTheResultIdIsInvalid() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingOneFinalResultThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
         learnerResultDAO.get(project.getId(), -1L); // should fail
     }
 
     @Test
-    public void shouldGetOneFinalResultAsJSON() {
+    public void shouldGetOneFinalResultAsJSON() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             learnerResultDAO.update(learnerResult);
@@ -213,19 +213,21 @@ public class LearnerResultDAOImplTest {
         assertEquals(learnerResult.getJSON(), jsonInDB);
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void ensureThatGettingOneFinalResultAsJSONThrowsAnExceptionIfTheProjectIdIsInvalid() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingOneFinalResultAsJSONThrowsAnExceptionIfTheProjectIdIsInvalid()
+            throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         learnerResultDAO.getAsJSON(-1L, learnerResult.getTestNo()); // should fail
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void ensureThatGettingOneFinalResultAsJSONThrowsAnExceptionIfTheResultIdIsInvalid() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingOneFinalResultAsJSONThrowsAnExceptionIfTheResultIdIsInvalid()
+            throws NotFoundException {
         learnerResultDAO.getAsJSON(project.getId(), -1L); // should fail
     }
 
     @Test
-    public void shouldGetOneResultAsJSON() {
+    public void shouldGetOneResultAsJSON() throws NotFoundException {
         String middleResult = "";
         learnerResultDAO.create(learnerResult);
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
@@ -242,25 +244,25 @@ public class LearnerResultDAOImplTest {
         assertEquals(middleResult, jsonInDB);
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheProjectIdIsInvalid() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         learnerResultDAO.getAsJSON(-1L, learnerResult.getTestNo(), 0L); // should fail
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheResultIdIsInvalid() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
         learnerResultDAO.getAsJSON(project.getId(), -1L, 0L); // should fail
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheStepNoIsInvalid() {
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheStepNoIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         learnerResultDAO.getAsJSON(project.getId(), learnerResult.getTestNo(), -1L); // should fail
     }
 
     @Test
-    public void shouldUpdateValidLearnResults() {
+    public void shouldUpdateValidLearnResults() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         Long oldId = learnerResult.getTestNo();
         Long oldStepNo = learnerResult.getStepNo();
@@ -272,7 +274,7 @@ public class LearnerResultDAOImplTest {
     }
 
     @Test
-    public void shouldDeleteAllStepsOfATestRun() {
+    public void shouldDeleteAllStepsOfATestRun() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             learnerResultDAO.update(learnerResult);
@@ -295,7 +297,7 @@ public class LearnerResultDAOImplTest {
     }
 
     @Test
-    public void shouldDeleteAllStepsOfMultipleTestRun() {
+    public void shouldDeleteAllStepsOfMultipleTestRun() throws NotFoundException {
         List<LearnerResult> learnerResults = createLearnerResultsList();
 
         Long[] ids = new Long[learnerResults.size()];
@@ -319,8 +321,8 @@ public class LearnerResultDAOImplTest {
         assertEquals(0L, resultCounter.longValue());
     }
 
-    @Test(expected = NoSuchElementException.class)
-    public void shouldThrowAnExceptionIfTheTestResultToDeleteWasNotFound() {
+    @Test(expected = NotFoundException.class)
+    public void shouldThrowAnExceptionIfTheTestResultToDeleteWasNotFound() throws NotFoundException {
         List<LearnerResult> learnerResults = createLearnerResultsList();
 
         Long[] ids = new Long[learnerResults.size()];
@@ -370,7 +372,7 @@ public class LearnerResultDAOImplTest {
                 + "\"stepNo\":" + result.getStepNo() + ",\"testNo\":" + result.getTestNo() + "}";
     }
 
-    private List<LearnerResult> createLearnerResultsList() {
+    private List<LearnerResult> createLearnerResultsList() throws NotFoundException {
         List<LearnerResult> results = new LinkedList<>();
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             LearnerResult r = new LearnerResult();

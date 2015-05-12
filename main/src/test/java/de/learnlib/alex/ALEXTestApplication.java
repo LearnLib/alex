@@ -9,9 +9,9 @@ import de.learnlib.alex.core.learner.Learner;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 
-public class WeblearnerTestApplication extends ResourceConfig {
+public class ALEXTestApplication extends ResourceConfig {
 
-    public WeblearnerTestApplication(final ProjectDAO projectDAO, CounterDAO counterDAO,
+    public ALEXTestApplication(final ProjectDAO projectDAO, CounterDAO counterDAO,
                                      final SymbolGroupDAO symbolGroupDAO,
                                      final SymbolDAO symbolDAO,
                                      final LearnerResultDAO learnerResultDAO,

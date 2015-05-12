@@ -43,7 +43,7 @@
          * @return {*}
          */
         function stop() {
-            return $http.get(paths.api.URL + '/learner/stop/');
+            return $http.post(paths.api.URL + '/learner/stop/');
         }
 
         /**

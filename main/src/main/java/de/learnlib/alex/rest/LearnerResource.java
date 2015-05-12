@@ -29,7 +29,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * REST API to manage the learning.
@@ -67,6 +66,8 @@ public class LearnerResource {
      * @return The status of the current learn process.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.core.entities.LearnerStatus
+     * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/start/{project_id}")
@@ -77,23 +78,15 @@ public class LearnerResource {
         try {
             Project project = projectDAO.getByID(projectId, ProjectDAO.EmbeddableFields.ALL);
 
-            if (configuration.getResetSymbolAsIdRevisionPair() == null) {
-                throw new IllegalArgumentException("No reset symbol specified!");
-            }
-
             try {
                 Symbol resetSymbol = symbolDAO.get(projectId, configuration.getResetSymbolAsIdRevisionPair());
                 configuration.setResetSymbol(resetSymbol);
-            } catch (NotFoundException e) {
-                throw new IllegalArgumentException("No reset symbol found!");
+            } catch (NotFoundException e) { // Extra exception to emphasize that this is the reset symbol.
+                throw new NotFoundException("Could not find the reset symbol!", e);
             }
 
-            try {
-                List<Symbol> symbols = symbolDAO.getAll(projectId, configuration.getSymbolsAsIdRevisionPairs());
-                configuration.setSymbols(symbols);
-            } catch (NotFoundException e) {
-                throw new IllegalArgumentException("No symbols found!");
-            }
+            List<Symbol> symbols = symbolDAO.getAll(projectId, configuration.getSymbolsAsIdRevisionPairs());
+            configuration.setSymbols(symbols);
 
             learner.start(project, configuration);
             return Response.ok(status).build();
@@ -102,6 +95,8 @@ public class LearnerResource {
             return Response.status(Status.NOT_MODIFIED).entity(status).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.BAD_REQUEST, e);
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.NOT_FOUND, e);
         }
     }
 
@@ -147,23 +142,24 @@ public class LearnerResource {
     /**
      * Stop the learning after the current step.
      * This does not stop the learning immediately!
+     * This will always return OK, even if there is nothing to stop.
+     * To see if there is currently a learning process, the status like '/active' will be returned.
      *
      * @return The status of the current learn process.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.core.entities.LearnerStatus
      */
-    @GET
+    @POST
     @Path("/stop")
     @Produces(MediaType.APPLICATION_JSON)
     public Response stop() {
         LearnerStatus status = new LearnerStatus(learner);
         if (learner.isActive()) {
             learner.stop(); // Hammer Time
-            return Response.ok(status).build();
         } else {
             LOGGER.info("tried to stop the learning again.");
-            return Response.status(Status.NOT_MODIFIED).entity(status).build();
         }
+        return Response.ok(status).build();
     }
 
     /**
@@ -201,7 +197,7 @@ public class LearnerResource {
 
         try {
             learnerResultDAO.get(resultInThread.getProjectId(), resultInThread.getTestNo());
-        } catch (NoSuchElementException nsee) {
+        } catch (NotFoundException nsee) {
             IllegalArgumentException e = new IllegalArgumentException("The last learned result was deleted.");
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.status", Status.NOT_FOUND, e);
         }
@@ -226,37 +222,35 @@ public class LearnerResource {
     public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet) {
         try {
             Project project = projectDAO.getByID(projectId);
+            System.out.println("$$$ project: " + project);
 
-            Symbol resetSymbol;
-            try {
-                resetSymbol = symbolDAO.get(projectId, symbolSet.getResetSymbolAsIdRevisionPair());
-            } catch (NotFoundException e) {
-                throw new IllegalArgumentException("No reset symbol found!");
+            IdRevisionPair resetSymbolAsIdRevisionPair = symbolSet.getResetSymbolAsIdRevisionPair();
+            if (resetSymbolAsIdRevisionPair == null) {
+                throw new NotFoundException("No reset symbol specified!");
             }
+            Symbol resetSymbol = symbolDAO.get(projectId, resetSymbolAsIdRevisionPair);
             symbolSet.setResetSymbol(resetSymbol);
+            System.out.println("$$$ reset symbol: " + resetSymbol);
 
             List<Symbol> symbols = loadSymbols(projectId, symbolSet.getSymbolsAsIdRevisionPairs());
             symbolSet.setSymbols(symbols);
+            System.out.println("$$$ symbols: " + symbols);
 
             List<String> results = learner.readOutputs(project, resetSymbol, symbols);
 
             return Response.ok(results).build();
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.NOT_FOUND, e);
         }
     }
 
     // load all from SymbolDAO always orders the Symbols by ID
-    private List<Symbol> loadSymbols(Long projectId, List<IdRevisionPair> idRevisionPairs) {
+    private List<Symbol> loadSymbols(Long projectId, List<IdRevisionPair> idRevisionPairs) throws NotFoundException {
         List<Symbol> symbols = new LinkedList<>();
 
-        try {
-            for (IdRevisionPair pair : idRevisionPairs) {
-                Symbol symbol = symbolDAO.get(projectId, pair);
-                symbols.add(symbol);
-            }
-        } catch (NotFoundException e) {
-            symbols.clear();
+        for (IdRevisionPair pair : idRevisionPairs) {
+            Symbol symbol = symbolDAO.get(projectId, pair);
+            symbols.add(symbol);
         }
 
         return symbols;

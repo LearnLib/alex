@@ -29,11 +29,7 @@ public class SetVariableByJSONAttributeAction extends SetVariableAction {
             return getFailedOutput();
         }
 
-        try {
-            storeConnector.set(name, valueInTheBody);
-            return getSuccessOutput();
-        } catch (IllegalStateException e) {
-            return getFailedOutput();
-        }
+        storeConnector.set(name, valueInTheBody);
+        return getSuccessOutput();
     }
 }

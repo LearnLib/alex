@@ -1,6 +1,6 @@
 package de.learnlib.alex.rest;
 
-import de.learnlib.alex.WeblearnerTestApplication;
+import de.learnlib.alex.ALEXTestApplication;
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
@@ -9,6 +9,7 @@ import de.learnlib.alex.core.dao.SymbolGroupDAO;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.exceptions.NotFoundException;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
@@ -64,9 +66,14 @@ public class ProjectResourceTest extends JerseyTest {
         project.setId(PROJECT_TEST_ID);
         project.setName("Test Project");
         project.addSymbol(symbol);
-        given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(project);
+        try {
+            given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(project);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            fail();
+        }
 
-        return new WeblearnerTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
+        return new ALEXTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
                                              learnerResultDAO, learner, ProjectResource.class);
     }
 
@@ -120,7 +127,7 @@ public class ProjectResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldGetTheRightProjectWithoutEmbeddedFields() {
+    public void shouldGetTheRightProjectWithoutEmbeddedFields() throws NotFoundException {
         Response response = target("/projects/" + PROJECT_TEST_ID).request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
@@ -128,18 +135,23 @@ public class ProjectResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldGetTheRightProjectWithEmbedded() {
-        given(projectDAO.getByID(PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS)).willReturn(project);
+    public void shouldGetTheRightProjectWithEmbedded() throws NotFoundException {
+        given(projectDAO.getByID(PROJECT_TEST_ID,
+                                 ProjectDAO.EmbeddableFields.SYMBOLS,
+                                 ProjectDAO.EmbeddableFields.TEST_RESULTS))
+                .willReturn(project);
         Response response = target("/projects/" + PROJECT_TEST_ID).queryParam("embed", "symbols,test_results")
                                 .request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
-        verify(projectDAO).getByID(PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS);
+        verify(projectDAO).getByID(PROJECT_TEST_ID,
+                                   ProjectDAO.EmbeddableFields.SYMBOLS,
+                                   ProjectDAO.EmbeddableFields.TEST_RESULTS);
     }
 
     @Test
-    public void shouldReturn404WhenProjectNotFound() {
-        given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(null);
+    public void shouldReturn404WhenProjectNotFound() throws NotFoundException {
+        given(projectDAO.getByID(PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
         Response response = target("/projects/" + PROJECT_TEST_ID).request().get();
 
@@ -148,7 +160,7 @@ public class ProjectResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldUpdateTheRightProject() {
+    public void shouldUpdateTheRightProject() throws NotFoundException {
         String json = "{\"id\": " + project.getId() + ","
                         + "\"name\": \"" + project.getName() + "\","
                         + "\"baseUrl\": \"" + project.getBaseUrl() + "\","
@@ -175,7 +187,7 @@ public class ProjectResourceTest extends JerseyTest {
     */
 
     @Test
-    public void shouldFailIfIdInUrlAndObjectAreDifferent() {
+    public void shouldFailIfIdInUrlAndObjectAreDifferent() throws NotFoundException {
         project.setName("Test Project - Update Diff");
         target("/project").request().post(Entity.json(project));
         Response response = target("/projects/" + (project.getId() + 1)).request().put(Entity.json(project));
@@ -185,7 +197,7 @@ public class ProjectResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturn400OnUpdateWhenProjectIsInvalid() {
+    public void shouldReturn400OnUpdateWhenProjectIsInvalid() throws NotFoundException {
         project.setName("Test Project - Invalid Test");
 
         willThrow(new ValidationException()).given(projectDAO).update(project);
@@ -195,7 +207,7 @@ public class ProjectResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldDeleteTheRightProject() {
+    public void shouldDeleteTheRightProject() throws NotFoundException {
         target("/project").request().post(Entity.json(project));
 
         Response response = target("/projects/" + project.getId()).request().delete();
@@ -205,8 +217,8 @@ public class ProjectResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturn404OnDeleteWhenProjectNotFound() {
-        willThrow(new IllegalArgumentException()).given(projectDAO).delete(PROJECT_TEST_ID);
+    public void shouldReturn404OnDeleteWhenProjectNotFound() throws NotFoundException {
+        willThrow(NotFoundException.class).given(projectDAO).delete(PROJECT_TEST_ID);
         Response response = target("/projects/" + PROJECT_TEST_ID).request().delete();
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());

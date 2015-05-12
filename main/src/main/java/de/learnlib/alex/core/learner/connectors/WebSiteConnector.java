@@ -63,7 +63,7 @@ public class WebSiteConnector implements Connector {
             // JavaScript is not enabled in the Driver
             // -> assume that localStorage and sessionStorage are not available and therefor must not be cleared.
             LOGGER.info("Could not reset the local storage and the session storage, because JavaScript is not enabled"
-                                + "in the Driver.");
+                                + " in the Driver.");
         }
     }
 

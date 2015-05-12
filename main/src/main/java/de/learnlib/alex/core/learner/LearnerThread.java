@@ -7,6 +7,7 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
 import de.learnlib.api.SUL;
@@ -21,6 +22,7 @@ import de.learnlib.oracles.SULOracle;
 import de.learnlib.oracles.SymbolCounterSUL;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -199,12 +201,18 @@ public class LearnerThread extends Thread {
         } catch (Exception e) {
             LOGGER.warn("Something in the LearnerThread went wrong:", e);
             result.setErrorText(e.getMessage());
-            learnerResultDAO.update(result);
+            try {
+                learnerResultDAO.update(result);
+            } catch (NotFoundException e1) {
+                LOGGER.log(Level.FATAL,
+                           "Something in the LearnerThread went wrong and the reuslt coud not be saved!",
+                           e);
+            }
         }
         active = false;
     }
 
-    private void learn() {
+    private void learn() throws NotFoundException {
         int maxAmountOfStepsToLearn = result.getConfiguration().getMaxAmountOfStepsToLearn();
         long currentStepNo = calculateCurrentStepNo();
         long maxStepCount =  currentStepNo + maxAmountOfStepsToLearn;
@@ -225,7 +233,7 @@ public class LearnerThread extends Thread {
         }
     }
 
-    private boolean learnOneStep() {
+    private boolean learnOneStep() throws NotFoundException {
         result.getStatistics().setStartTime(new Date());
 
         if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
@@ -275,7 +283,7 @@ public class LearnerThread extends Thread {
         result.createHypothesisFrom(learner.getHypothesisModel());
     }
 
-    private void rememberMetaData() {
+    private void rememberMetaData() throws NotFoundException {
         LearnerResult.Statistics statistics = result.getStatistics();
 
         long startTime = statistics.getStartTime().getTime();

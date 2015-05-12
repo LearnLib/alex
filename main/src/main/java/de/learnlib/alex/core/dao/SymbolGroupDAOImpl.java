@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -63,7 +62,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public List<SymbolGroup> getAll(long projectId, EmbeddableFields... embedFields) throws NoSuchElementException {
+    public List<SymbolGroup> getAll(long projectId, EmbeddableFields... embedFields) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -72,7 +71,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         if (project == null) {
             HibernateUtil.rollbackTransaction();
-            throw new NoSuchElementException("The project with the id " + projectId + " was not found.");
+            throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
         List<SymbolGroup> resultList = session.createCriteria(SymbolGroup.class)
@@ -89,7 +88,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     @Override
     public SymbolGroup get(long projectId, Long groupId, EmbeddableFields... embedFields)
-            throws NoSuchElementException {
+            throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -102,7 +101,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         if (result == null) {
             HibernateUtil.rollbackTransaction();
-            throw new NoSuchElementException("Could not find a group with the id " + groupId
+            throw new NotFoundException("Could not find a group with the id " + groupId
                                              + " in the project " + projectId + ".");
         }
 
@@ -113,7 +112,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public void update(SymbolGroup group) throws ValidationException {
+    public void update(SymbolGroup group) throws NotFoundException, ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -126,7 +125,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                                         .load();
         if (groupInDB == null) {
             HibernateUtil.rollbackTransaction();
-            throw new IllegalStateException("You can only update existing groups!");
+            throw new NotFoundException("You can only update existing groups!");
         }
 
         // apply changes
@@ -137,7 +136,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public void delete(long projectId, Long groupId) throws IllegalArgumentException {
+    public void delete(long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
         SymbolGroup group = get(projectId, groupId, EmbeddableFields.ALL);
 
         // start session
@@ -148,7 +147,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         if (group.equals(project.getDefaultGroup())) {
             HibernateUtil.rollbackTransaction();
-            throw new IllegalArgumentException("you can not delete the default group of a project.");
+            throw new IllegalArgumentException("You can not delete the default group of a project.");
         }
 
         for (Symbol symbol : group.getSymbols()) {

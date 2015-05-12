@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -71,35 +72,37 @@ public interface ProjectDAO {
 
     /**
      * Get a specific project by its ID.
-     * 
+     *
      * @param id
-     *            The ID of the project to find.
+     *         The ID of the project to find.
      * @param embedFields
      *         The fields to include in returned project. By default no additional data will be fetched from the DB.
-     * @return The project with the ID or null.
+     * @return The project with the ID.
+     * @throws NotFoundException
+     *         If the project could not be found.
      */
-    Project getByID(long id, EmbeddableFields... embedFields);
+    Project getByID(long id, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Update a project.
      * 
      * @param project
      *            The project to update.
-     * @throws IllegalArgumentException
+     * @throws NotFoundException
      *             When the Project was not found.
      * @throws ValidationException
      *             When the Project was not valid.
      */
-    void update(Project project) throws IllegalArgumentException, ValidationException;
+    void update(Project project) throws NotFoundException, ValidationException;
 
     /**
      * Delete a project.
      * 
      * @param id
      *            The id of the project to delete.
-     * @throws IllegalArgumentException
+     * @throws NotFoundException
      *            When the Project id was not found.
      */
-    void delete(long id) throws IllegalArgumentException;
+    void delete(long id) throws NotFoundException;
 
 }

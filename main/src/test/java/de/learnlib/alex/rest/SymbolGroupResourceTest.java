@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import de.learnlib.alex.WeblearnerTestApplication;
+import de.learnlib.alex.ALEXTestApplication;
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
@@ -29,7 +29,6 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -81,7 +80,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        return new WeblearnerTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
+        return new ALEXTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
                                              learnerResultDAO, learner, SymbolGroupResource.class);
     }
 
@@ -125,7 +124,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldGetAllGroupsOfAProject() {
+    public void shouldGetAllGroupsOfAProject() throws NotFoundException {
         List<SymbolGroup> groups = new LinkedList<>();
         groups.add(group1);
         groups.add(group2);
@@ -151,8 +150,8 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturn404IfYouWantToGetAllGroupsOfANonExistingProject() {
-        willThrow(NoSuchElementException.class).given(symbolGroupDAO).getAll(PROJECT_TEST_ID);
+    public void shouldReturn404IfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
+        willThrow(NotFoundException.class).given(symbolGroupDAO).getAll(PROJECT_TEST_ID);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups").request().get();
 
@@ -160,7 +159,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldGetTheRightGroup() throws IOException {
+    public void shouldGetTheRightGroup() throws IOException, NotFoundException {
         given(symbolGroupDAO.get(PROJECT_TEST_ID, 1L)).willReturn(group1);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups/1").request().get();
@@ -173,8 +172,8 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturn404IfYouWantToGetANonExistingGroup() {
-        willThrow(NoSuchElementException.class).given(symbolGroupDAO).get(PROJECT_TEST_ID, 1L);
+    public void shouldReturn404IfYouWantToGetANonExistingGroup() throws NotFoundException {
+        willThrow(NotFoundException.class).given(symbolGroupDAO).get(PROJECT_TEST_ID, 1L);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups/1").request().get();
 
@@ -182,7 +181,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldUpdateAGroup() throws JsonProcessingException {
+    public void shouldUpdateAGroup() throws JsonProcessingException, NotFoundException {
         String json = writeGroup(group1);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
@@ -193,7 +192,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturn400IfUpdatingAGroupWasNotPossible() {
+    public void shouldReturn400IfUpdatingAGroupWasNotPossible() throws NotFoundException {
         willThrow(ValidationException.class).given(symbolGroupDAO).update(group1);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
@@ -203,8 +202,8 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturn404IfGroupToUpdateWasNotFound() throws JsonProcessingException {
-        willThrow(NoSuchElementException.class).given(symbolGroupDAO).update(group1);
+    public void shouldReturn404IfGroupToUpdateWasNotFound() throws JsonProcessingException, NotFoundException {
+        willThrow(NotFoundException.class).given(symbolGroupDAO).update(group1);
         String json = writeGroup(group1);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
@@ -214,7 +213,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldDeleteAGroup() {
+    public void shouldDeleteAGroup() throws NotFoundException {
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
         Response response = target(path).request().delete();
 
@@ -223,7 +222,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturn400IfYouWantToDeleteADefaultGroup() {
+    public void shouldReturn400IfYouWantToDeleteADefaultGroup() throws NotFoundException {
         willThrow(IllegalArgumentException.class).given(symbolGroupDAO).delete(PROJECT_TEST_ID, group1.getId());
 
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
