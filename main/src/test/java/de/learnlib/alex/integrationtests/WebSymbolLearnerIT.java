@@ -209,9 +209,9 @@ public class WebSymbolLearnerIT {
         path = "/learner/resume/" + project.getId() + "/1";
         json = "{\"maxAmountOfStepsToLearn\": 0, \"eqOracle\":"
                 + "{\"type\": \"sample\", \"counterExamples\": [["
-                    + "{\"input\": \"learnweb2 (3/1)\", \"output\": \"OK\"},"
-                    + "{\"input\": \"learnweb2 (3/1)\", \"output\": \"OK\"},"
-                    + "{\"input\": \"learnweb3 (4/1)\", \"output\": \"OK\"}"
+                    + "{\"input\": \"learnweb2\", \"output\": \"OK\"},"
+                    + "{\"input\": \"learnweb2\", \"output\": \"OK\"},"
+                    + "{\"input\": \"learnweb3\", \"output\": \"OK\"}"
                 + "]]}}";
         response = client.target(BASE_LEARNER_URL + path).request().post(Entity.json(json));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());

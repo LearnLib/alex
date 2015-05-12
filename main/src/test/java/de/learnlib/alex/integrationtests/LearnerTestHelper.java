@@ -63,7 +63,7 @@ public class LearnerTestHelper {
     public Alphabet createTestAlphabet(Symbol... symbols) {
         Alphabet sigma = new SimpleAlphabet<>();
         for (Symbol symbol : symbols) {
-            sigma.add(symbol.getAbbreviation() + " " + symbol.getIdRevisionPair());
+            sigma.add(symbol.getAbbreviation());
         }
         return sigma;
     }
@@ -80,16 +80,6 @@ public class LearnerTestHelper {
             Response response = client.target(learnerUrl + path).request().get();
             responseAsJSON = response.readEntity(String.class);
         } while (responseAsJSON.startsWith("{\"active\":true"));
-    }
-
-    @Deprecated
-    public boolean hypothesisIsEqualToTheExpectedOne(CompactMealyMachineProxy hypothesis,
-                                                     Alphabet<String> testAlphabet, String type) {
-        Word<String> separatingWord = getSeparatingWord(hypothesis, testAlphabet, type);
-
-        System.out.println("separatingWord: " + separatingWord);
-
-        return separatingWord == null;
     }
 
     public Word<String> getSeparatingWord(CompactMealyMachineProxy hypothesis, Alphabet<String> testAlphabet,
