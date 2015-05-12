@@ -27,7 +27,7 @@ saved learning results.
 | /project/create               | Create a new project                       |
 | /project/settings             | Edit and delete an opened project          |
 
-<div class="video" data-src="videos/projects.mp4"></div>
+<div class="video" data-name="projects"></div>
 
 #### <a name="project-management-create"></a> Creating Projects
 
@@ -59,7 +59,7 @@ hypotheses and/or statistics because with the deleting of a project, all these v
 Symbols are a core element of Active Automata Learning. A List of URLs that can be accessed with ALEX and their
 functionality is listed in the following table. For each aspect the following subsections provide a more detailed look.
 
-![Symbols Menu](images/symbols-menu.jpg)
+<div class="video" data-name="symbols"></div>
 
 | URL                           | Description                                       |
 |-------------------------------|---------------------------------------------------|
@@ -88,7 +88,7 @@ renamed. Furthermore, deleting a symbol group induces all symbol to get deleted 
 For a better overview over a large set of symbols, symbol groups can be collapsed by clicking on the arrow button on 
 the left of each entry.
 
-<div class="video" data-src="videos/symbol-groups.mp4"></div>
+<div class="video" data-name="symbol-groups"></div>
 
 #### <a name="symbols"></a> Symbols
 
@@ -99,7 +99,7 @@ can be made visible by going to */symbols/trash* or by clicking the correspondin
 list of all hidden symbols is given. Recovering a symbol makes it appear again in the group it previously was in. In 
 case the group has been deleted, the symbol is moved to the default group.
 
-<div class="video" data-src="videos/symbols-recover.mp4"></div>
+<div class="video" data-name="symbols-recover"></div>
 
 #### <a name="actions"></a> Actions
 
@@ -112,7 +112,7 @@ of execution on the application as soon as the symbol is called by the learner. 
 made in the current session, since CRUD operations and re-ordering of actions is not saved automatically. This is simply 
 possible by clicking the *save* button on the right in the sub-menu.
 
-*image-action-editor*
+<div class="video" data-name="symbols-actions"></div>
 
 The creation of actions is realized in a modal window that shows the action editor as shown in the picture above. As one
 can see, the left column contains dropdown boxes with a logical grouping of actions. The right column reveals a form
@@ -154,7 +154,7 @@ sidebar should open and reveal the element in the DOM tree. There, make another 
 *Copy CSS Path* which copies the unique CSS selector in the clipboard of your operating system. A similar approach can
 be applied with Firefox.
 
-<div class="video" data-src="videos/actions.element-picker.mp4"></div>
+<div class="video" data-name="actions.element-picker"></div>
 
 ##### <a name="actions-rest"></a> REST Actions
 
@@ -198,7 +198,7 @@ actions to work with the response.
 Changing a symbol in any way results in the creation of a new revision of it. A previous state of a symbol can be 
 recovered.
 
-<div class="video" data-src="videos/symbols-revisions.mp4"></div>
+<div class="video" data-name="symbols-revisions"></div>
 
 __Info:__ If you revert a symbol with revision *x* to a previous revision *x-i*, a new symbol with the revision *x+1* is
 created. If you have any actions that execute other symbols, you have to manually adjust those, so that they call the 
@@ -209,7 +209,7 @@ most current symbol (In case this is wanted).
 If you want to save a set of symbols for another project or use already existing ones, the export and import function
 might be of interest for you. The screencast below shows how to import and export symbols into new and existing projects.
 
-<div class="video" data-src="videos/symbols-import-export.mp4"></div>
+<div class="video" data-name="symbols-import-export"></div>
 
 Note that when exporting symbols, their revision, id and group are deleted in order to be compatible with other 
 projects.

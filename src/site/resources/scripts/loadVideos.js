@@ -7,19 +7,20 @@
     $(d).ready(createVideos);
 
     function createVideos(){
-        var src, video, source;
+        var name, video, source;
+        var path = '/videos/';
         var elements = $('.video');
 
         elements.each(function(i, el){
             el = $(el);
-            src = el.data('src');
+            name = el.data('name');
 
             video = $('<video></video>')
                 .attr('width', '100%')
                 .attr('controls', '');
 
             source = $('<source>')
-                .attr('src', src)
+                .attr('src', path + name + '.mp4')
                 .attr('type', 'video/mp4');
 
             video.append(source);

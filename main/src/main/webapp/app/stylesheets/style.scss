@@ -237,10 +237,16 @@ form {
 }
 
 .action-list {
+  user-select: none;
+  -webkit-user-select: none;
   .action-list-item {
     @include selection-list-item();
+    user-select: none;
+    -webkit-user-select: none;
     .action-list-item-content {
       margin-left: 30px;
+      user-select: none;
+      -webkit-user-select: none;
     }
   }
 }
