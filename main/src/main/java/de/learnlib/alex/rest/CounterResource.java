@@ -4,6 +4,7 @@ import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ResourceErrorHandler;
+import de.learnlib.alex.utils.ResponseHelper;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -41,11 +42,9 @@ public class CounterResource {
     public Response getAllCounters(@PathParam("project_id") Long projectId) {
         try {
             List<Counter> counters = counterDAO.getAll(projectId);
-            return Response.ok(counters).header("X-Total-Count", counters.size()).build();
+            return ResponseHelper.renderList(counters, Response.Status.OK);
         } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.getAll",
-                                                               Response.Status.NOT_FOUND,
-                                                               e);
+            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.getAll", Response.Status.NOT_FOUND, e);
         }
     }
 

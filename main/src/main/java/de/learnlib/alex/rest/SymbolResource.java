@@ -1,14 +1,12 @@
 package de.learnlib.alex.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ResourceErrorHandler;
+import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -107,18 +105,14 @@ public class SymbolResource {
             }
             symbolDAO.create(symbols);
 
-            String json = createSymbolsJSON(symbols);
-            return Response.status(Status.CREATED).entity(json).build();
+            return ResponseHelper.renderList(symbols, Status.CREATED);
 
         } catch (IllegalArgumentException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
+                                                               Status.BAD_REQUEST, e);
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
-                    Status.BAD_REQUEST, e);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Could write the symbols from the DB into proper JSON!", e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
-                    Status.INTERNAL_SERVER_ERROR, null);
+                                                               Status.BAD_REQUEST, e);
         }
     }
 
@@ -127,7 +121,7 @@ public class SymbolResource {
             symbol.setProjectId(projectId);
         } else if (!Objects.equals(symbol.getProjectId(), projectId)) {
             throw new IllegalArgumentException("The symbol should not have a project"
-                    + " or at least the project id should be the one provided via the get parameter");
+                        + " or at least the project id should be the one provided via the get parameter");
         }
     }
 
@@ -148,21 +142,14 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") Long projectId,
                            @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
+        List<Symbol> symbols;
         try {
-            List<Symbol> symbols;
-            try {
-                symbols = symbolDAO.getAllWithLatestRevision(projectId, visibilityLevel);
-            } catch (NotFoundException e) {
-                symbols = new LinkedList<>();
-            }
-
-            String json = createSymbolsJSON(symbols);
-            return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Could not write the symbols from the DB into proper JSON!", e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getAll", Status.INTERNAL_SERVER_ERROR,
-                    null);
+            symbols = symbolDAO.getAllWithLatestRevision(projectId, visibilityLevel);
+        } catch (NotFoundException e) {
+            symbols = new LinkedList<>();
         }
+
+        return ResponseHelper.renderList(symbols, Status.OK);
     }
 
     /**
@@ -209,15 +196,9 @@ public class SymbolResource {
     public Response getComplete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         try {
             List<Symbol> symbols = symbolDAO.getWithAllRevisions(projectId, id);
-            String json = createSymbolsJSON(symbols);
-            return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
+            return ResponseHelper.renderList(symbols, Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getComplete", Status.NOT_FOUND, null);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Could not write the symbols from the DB into proper JSON!", e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getComplete",
-                                                               Status.INTERNAL_SERVER_ERROR,
-                                                               null);
         }
     }
 
@@ -314,7 +295,7 @@ public class SymbolResource {
         }
         try {
             symbolDAO.update(symbols);
-            return Response.ok(symbols).header("X-Total-Count", symbols.size()).build();
+            return ResponseHelper.renderList(symbols, Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchUpdate", Status.NOT_FOUND, e);
         } catch (ValidationException e) {
@@ -396,7 +377,7 @@ public class SymbolResource {
         try {
             symbolDAO.hide(projectId, id);
             Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);
-            return Response.status(Status.OK).entity(symbol).build();
+            return Response.ok(symbol).build();
 
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
@@ -423,14 +404,9 @@ public class SymbolResource {
             symbolDAO.hide(projectId, idsArray);
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(projectId, idsArray);
 
-            String json = createSymbolsJSON(symbols);
-            return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
+            return ResponseHelper.renderList(symbols, Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Could write the symbols from the DB into proper JSON!", e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.INTERNAL_SERVER_ERROR,
-                                                               null);
         }
     }
 
@@ -452,7 +428,7 @@ public class SymbolResource {
         try {
             symbolDAO.show(projectId, id);
             Symbol symbol = symbolDAO.getWithLatestRevision(projectId, id);
-            return Response.status(Status.OK).entity(symbol).build();
+            return Response.ok(symbol).build();
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
         }
@@ -478,30 +454,10 @@ public class SymbolResource {
             symbolDAO.show(projectId, idsArray);
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(projectId, idsArray);
 
-            String json = createSymbolsJSON(symbols);
-            return Response.status(Status.OK).header("X-Total-Count", symbols.size()).entity(json).build();
+            return ResponseHelper.renderList(symbols, Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Could write the symbols from the DB into proper JSON!", e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.INTERNAL_SERVER_ERROR,
-                                                               null);
         }
-    }
-
-    /**
-     * Create the JSON for a list of Symbols with the 'type' property. Workaround of a Jackson thing.
-     * 
-     * @param symbols
-     *            The List of Symbols to convert into JSON.
-     * @return The Symbols in JSON.
-     * @throws JsonProcessingException
-     *             If something went wrong while converting to JSON.
-     */
-    private String createSymbolsJSON(List<Symbol> symbols) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writerWithType(new TypeReference<List<Symbol>>() { })
-                .writeValueAsString(symbols);
     }
 
 }

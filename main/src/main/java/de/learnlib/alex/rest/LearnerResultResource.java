@@ -4,6 +4,7 @@ import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ResourceErrorHandler;
+import de.learnlib.alex.utils.ResponseHelper;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -42,10 +43,7 @@ public class LearnerResultResource {
     public Response getAllFinalResults(@PathParam("project_id") long projectId) {
         try {
             List<String> resultsAsJSON = learnerResultDAO.getAllAsJSON(projectId);
-            return Response.status(Response.Status.OK)
-                            .header("X-Total-Count", resultsAsJSON.size())
-                            .entity(resultsAsJSON.toString())
-                    .build();
+            return ResponseHelper.renderStringList(resultsAsJSON, Response.Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getAllFinalResults",
                                                                 Response.Status.NOT_FOUND, e);
@@ -67,23 +65,18 @@ public class LearnerResultResource {
     @GET
     @Path("{test_nos}/complete")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllStep(@PathParam("project_id") Long projectId,
-                                             @PathParam("test_nos") IdsList testNos) {
+    public Response getAllStep(@PathParam("project_id") Long projectId, @PathParam("test_nos") IdsList testNos) {
         try {
-            List<?> result;
             if (testNos.size() == 1) {
-                result = learnerResultDAO.getAllAsJSON(projectId, testNos.get(0));
+                List<String> result = learnerResultDAO.getAllAsJSON(projectId, testNos.get(0));
+                return ResponseHelper.renderStringList(result, Response.Status.OK);
             } else {
-                result = learnerResultDAO.getAllAsJson(projectId, testNos);
+                List<List<String>> result = learnerResultDAO.getAllAsJson(projectId, testNos);
+                return ResponseHelper.renderStringList(result, Response.Status.OK);
             }
-
-            return Response.status(Response.Status.OK)
-                            .header("X-Total-Count", result.size())
-                            .entity(result.toString())
-                        .build();
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getAllStep",
-                                                                Response.Status.NOT_FOUND,  e);
+                                                               Response.Status.NOT_FOUND,  e);
         }
     }
 

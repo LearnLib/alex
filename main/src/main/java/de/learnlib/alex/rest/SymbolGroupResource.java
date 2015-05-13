@@ -6,6 +6,7 @@ import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ResourceErrorHandler;
+import de.learnlib.alex.utils.ResponseHelper;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
@@ -92,7 +93,7 @@ public class SymbolGroupResource {
         try {
             SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
             List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId, embeddableFields);
-            return Response.ok(groups).build();
+            return ResponseHelper.renderList(groups, Response.Status.OK);
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
                                                                Response.Status.BAD_REQUEST, e);
@@ -152,15 +153,13 @@ public class SymbolGroupResource {
     @Path("/{id}/symbols")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
-        List<Symbol> symbols;
         try {
-            symbols = symbolDAO.getAllWithLatestRevision(projectId, id);
+            List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(projectId, id);
+            return ResponseHelper.renderList(symbols, Response.Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getSymbols",
                                                                Response.Status.NOT_FOUND, e);
         }
-
-        return Response.ok(symbols).build();
     }
 
     /**

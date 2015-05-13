@@ -4,6 +4,7 @@ import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ResourceErrorHandler;
+import de.learnlib.alex.utils.ResponseHelper;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
@@ -83,7 +84,7 @@ public class ProjectResource {
         }
 
         List<Project> projects = projectDAO.getAll(embeddableFields);
-        return Response.status(Status.OK).header("X-Total-Count", projects.size()).entity(projects).build();
+        return ResponseHelper.renderList(projects, Status.OK);
     }
 
     /**

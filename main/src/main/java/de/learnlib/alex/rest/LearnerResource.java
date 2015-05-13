@@ -14,6 +14,7 @@ import de.learnlib.alex.core.entities.SymbolSet;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ResourceErrorHandler;
+import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -238,7 +239,7 @@ public class LearnerResource {
 
             List<String> results = learner.readOutputs(project, resetSymbol, symbols);
 
-            return Response.ok(results).build();
+            return ResponseHelper.renderList(results, Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.NOT_FOUND, e);
         }
