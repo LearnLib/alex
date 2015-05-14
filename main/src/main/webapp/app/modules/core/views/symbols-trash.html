@@ -1,0 +1,44 @@
+<div view-heading
+     title="Symbol Trash"
+     sub-title="Restore deleted symbols">
+</div>
+
+<div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
+    <div class="container">
+
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" selection-checkbox-all items="symbols">
+        </div>
+
+        <div class="pull-left">
+            <button class="btn btn-xs btn-primary" ng-click="recoverSelectedSymbols()">
+                <i class="fa fa-rotate-left fa-fw"></i> Recover
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="view-body">
+    <div class="container">
+
+        <div class="alert alert-info" ng-show="symbols.length === 0">
+            There aren't any deleted symbols.
+        </div>
+
+        <symbol-list>
+            <symbol-list-item ng-repeat="symbol in symbols | orderBy:'-name':true"
+                              selection-model
+                              selection-model-selected-items="selectedSymbols"
+                              symbol="symbol">
+
+                <a class="btn btn-default btn-icon" ng-click="recoverSymbol(symbol)">
+                    <i class="fa fa-rotate-left fa-fw"></i>
+                    Recover
+                </a>
+
+            </symbol-list-item>
+        </symbol-list>
+
+    </div>
+</div>

@@ -1,0 +1,32 @@
+<div view-heading
+     title="Dashboard"
+     sub-title="Have an overview over some aspects of your project {{project.name}}">
+</div>
+
+<div class="view-body">
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <dashboard-widget>
+                    <project-details-widget></project-details-widget>
+                </dashboard-widget>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <dashboard-widget>
+                    <learner-status-widget></learner-status-widget>
+                </dashboard-widget>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <dashboard-widget>
+                    <latest-learn-result-widget></latest-learn-result-widget>
+                </dashboard-widget>
+            </div>
+
+        </div>
+
+    </div>
+</div>

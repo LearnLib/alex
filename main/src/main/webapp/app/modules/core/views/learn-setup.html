@@ -1,0 +1,89 @@
+<div view-heading
+     title="Learn Setup"
+     sub-title="Include or exclude symbols & groups you want to use for the following test">
+</div>
+
+<div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
+    <div class="container">
+
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" selection-checkbox-all items="allSymbols">
+        </div>
+
+        <div class="pull-right">
+            <button class="btn btn-xs btn-default" learn-setup-settings-modal-handle
+                    learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
+                <i class="fa fa-gear"></i>
+            </button>
+            <button class="btn btn-xs btn-primary" ng-click="startLearning()">
+                Start Learning
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="view-body">
+    <div class="container">
+
+        <div class="alert alert-info alert-condensed clearfix">
+            <button class="btn btn-xs btn-info pull-right" learn-setup-settings-modal-handle
+                    learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
+                <i class="fa fa-gear"></i>
+            </button>
+
+            <p>
+                Using algorithm <strong ng-bind="(learnConfiguration.algorithm | formatAlgorithm)"></strong>
+                with EQ-Oracle <strong ng-bind="(learnConfiguration.eqOracle.type | formatEqOracle)"></strong>
+                <span ng-if="learnConfiguration.eqOracle.type === 'complete'">
+                    (min-depth: <span ng-bind="learnConfiguration.eqOracle.minDepth"></span>, max-depth: <span
+                        ng-bind="learnConfiguration.eqOracle.maxDepth"></span>)
+                </span>
+                <span ng-if="learnConfiguration.eqOracle.type === 'random_word'">
+                    (
+                    min-length: <span ng-bind="learnConfiguration.eqOracle.minLength"></span>,
+                    max-length: <span ng-bind="learnConfiguration.eqOracle.maxLength"></span>,
+                    #words: <span ng-bind="learnConfiguration.eqOracle.maxNoOfTests"></span>
+                    )
+                </span>
+            </p>
+
+            <p ng-show="resetSymbol === null">
+                <em>Please select a reset symbol by clicking on the blue circle</em>
+            </p>
+
+            <p ng-show="resetSymbol !== null">
+                Reset symbol is <strong ng-bind="resetSymbol.name"></strong>
+            </p>
+
+        </div>
+        <hr>
+
+        <symbol-group-list>
+            <symbol-group-list-item ng-repeat="group in groups track by $index | orderBy:'-name':true"
+                                    group="group">
+
+                <symbol-group-list-item-header></symbol-group-list-item-header>
+
+                <symbol-group-list-item-content>
+
+                    <symbol-list>
+                        <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true"
+                                          selection-model
+                                          selection-model-selected-items="selectedSymbols"
+                                          symbol="symbol">
+
+                            <a class="pull-right cursor-pointer" ng-click="setResetSymbol(symbol)" selection-model-ignore>
+                                <i class="fa" ng-class="resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'"></i>
+                            </a>
+
+                        </symbol-list-item>
+                    </symbol-list>
+
+                </symbol-group-list-item-content>
+
+            </symbol-group-list-item>
+        </symbol-group-list>
+
+    </div>
+</div>

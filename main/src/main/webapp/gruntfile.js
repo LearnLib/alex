@@ -1,14 +1,35 @@
 module.exports = function (grunt) {
 
-    var scripts = ['app/scripts/init.js', 'app/templates.js', 'app/scripts/routes.js', 'app/scripts/constants.js',
-        'app/scripts/controllers/**/*.js',
-        'app/scripts/directives/*.js',
-        'app/scripts/models/*.js',
-        'app/scripts/resources/*.js',
-        'app/scripts/services/*.js', 'app/scripts/filters/*.js',
-        'app/components/actions/init.js', 'app/components/actions/constants.js', 'app/components/actions/directives/**/*.js', 'app/components/actions/services/**/*.js',
-        'app/components/dashboard/init.js', 'app/components/dashboard/directives/*.js',
-        'app/components/modals/init.js', 'app/components/modals/controllers/*.js', 'app/components/modals/directives/*.js', 'app/components/modals/services/*.js'];
+    var scripts = [
+        'app/modules/init.js',
+
+        // core module
+        'app/modules/core/init.js',
+        'app/modules/core/constants.js',
+        'app/modules/core/routes.js',
+        'app/modules/core/controllers/*.js',
+        'app/modules/core/directives/*.js',
+        'app/modules/core/filters/*.js',
+        'app/modules/core/models/*.js',
+        'app/modules/core/resources/*.js',
+        'app/modules/core/services/*.js',
+
+        // actions module
+        'app/modules/actions/init.js',
+        'app/modules/actions/constants.js',
+        'app/modules/actions/directives/**/*.js',
+        'app/modules/actions/services/**/*.js',
+
+        // dashboard module
+        'app/modules/dashboard/init.js',
+        'app/modules/dashboard/directives/*.js',
+
+        // modals module
+        'app/modules/modals/init.js',
+        'app/modules/modals/controllers/*.js',
+        'app/modules/modals/directives/*.js',
+        'app/modules/modals/services/*.js'
+    ];
 
     grunt
         .initConfig({
@@ -30,7 +51,7 @@ module.exports = function (grunt) {
                     separator: ';'
                 },
                 app: {
-                    src: scripts,
+                    src: ['app/templates.js', scripts],
                     dest: './app/app.js'
                 },
                 libs: {
@@ -45,7 +66,6 @@ module.exports = function (grunt) {
                         'bower_components/ace-builds/src-min/ace.js',
                         'bower_components/ace-builds/src-min/theme-eclipse.js',
                         'bower_components/ace-builds/src-min/mode-json.js',
-                        //'bower_components/ace-builds/src-min/worker-json.js',
                         'bower_components/ngtoast/dist/ngToast.min.js',
                         'bower_components/angular-sanitize/angular-sanitize.min.js',
                         'bower_components/angular-bootstrap/ui-bootstrap.min.js',
@@ -66,17 +86,17 @@ module.exports = function (grunt) {
                 },
                 all: {
                     src: [
-                        'app/views/**/*.html',
-                        'app/components/actions/views/*.html',
-                        'app/components/dashboard/views/*.html',
-                        'app/components/modals/views/*.html'],
+                        'app/modules/core/views/**/*.html',
+                        'app/modules/actions/views/*.html',
+                        'app/modules/dashboard/views/*.html',
+                        'app/modules/modals/views/*.html'],
                     dest: 'app/templates.js'
                 }
             },
 
             watch: {
                 scripts: {
-                    files: ['app/scripts/**/*.js', 'app/components/**/*.js'],
+                    files: ['app/modules/**/*.js'],
                     tasks: ['build-js'],
                     options: {
                         spawn: false
@@ -90,7 +110,7 @@ module.exports = function (grunt) {
                     }
                 },
                 html: {
-                    files: ['app/views/**/*.html', 'app/components/**/*.html'],
+                    files: ['app/modules/**/*.html'],
                     tasks: ['build-js'],
                     options: {
                         spawn: false
@@ -111,10 +131,12 @@ module.exports = function (grunt) {
             },
 
             jasmine: {
-                src: scripts,
+                src: 'app/app.js',
                 options: {
-                    specs: 'tests/unit/**/*.js',
-                    vendor: ['app/libs.min.js'],
+                    specs: [
+                        'tests/unit/modules/core/controllers/**/*.js'
+                    ],
+                    vendor: ['app/libs.min.js', 'tests/unit/angular-mocks.js'],
                     display: 'full',
                     summary: true,
                     template: require('grunt-template-jasmine-istanbul'),
@@ -156,8 +178,8 @@ module.exports = function (grunt) {
 
             protractor_webdriver: {
                 options: {
-                    command: 'node_modules/protractor/bin/webdriver-manager start',
-                    path: './'
+                    command: 'webdriver-manager start',
+                    path: './node_modules/protractor/bin/'
                 },
                 all: {}
             }
@@ -178,7 +200,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-js']);
     grunt.registerTask('test-unit', ['jasmine']);
-    grunt.registerTask('test-e2e', ['protractor_webdriver', 'protractor']);
+    grunt.registerTask('test-e2e', ['protractor']);
     grunt.registerTask('minify-css', ['cssmin']);
 
 };
