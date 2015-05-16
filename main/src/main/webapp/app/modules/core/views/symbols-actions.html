@@ -47,7 +47,7 @@
             <i class="fa fa-fw fa-info"></i> There are unsaved changes made to the symbol
         </div>
 
-        <div ng-if="symbol.actions" as-sortable ng-model="symbol.actions">
+        <div ng-if="symbol.actions" as-sortable="dragControlListeners" ng-model="symbol.actions">
             <div class="action-list">
                 <div ng-repeat="action in symbol.actions"
                      selection-model

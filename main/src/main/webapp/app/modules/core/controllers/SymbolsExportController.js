@@ -56,25 +56,33 @@
          * @returns {*} - The list of downloadable symbols without unneeded properties
          */
         $scope.getDownloadableSymbols = function () {
-            return _(angular.copy($scope.allSymbols))
+            var symbols = _(angular.copy($scope.allSymbols))
                 .filter('_selected')
                 .sortBy(function (symbol) {
                     return symbol.id;
-                })
-                .forEach(function (symbol) {
-                    delete symbol._selected;
-                    delete symbol._collapsed;
-                    delete symbol.revision;
-                    delete symbol.project;
-                    delete symbol.group;
-                    delete symbol.hidden;
-                    delete symbol.id;
-                    _.forEach(symbol.actions, function (action) {
-                        if (action.type === actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL) {
-                            action.symbolToExecute.revision = 1;
-                        }
-                    });
                 }).value();
+
+            _.forEach(symbols, function(symbol){
+                _.forEach(symbol.actions, function(action){
+                    if (action.type === actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL) {
+                        action.symbolToExecute.revision = 1;
+                        _.forEach(symbols, function(s, j){
+                            if (s.id === action.symbolToExecute.id) {
+                                action.symbolToExecute.id = j + 1;
+                            }
+                        })
+                    }
+                });
+                delete symbol._selected;
+                delete symbol._collapsed;
+                delete symbol.revision;
+                delete symbol.project;
+                delete symbol.group;
+                delete symbol.hidden;
+                delete symbol.id;
+            });
+
+            return symbols;
         };
     }
 }());

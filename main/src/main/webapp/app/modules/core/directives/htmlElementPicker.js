@@ -292,7 +292,7 @@
                         .on('click', function () {
                             if (!scope.isSelectable) {
                                 var _this = this;
-                                if (_this.getAttribute('href') !== '' && _this.getAttribute('href') !== '#') {
+                                if (_this.getAttribute('href') !== '' && _this.getAttribute('href')[0] !== '#') {
                                     scope.$apply(function () {
                                         scope.url = decodeURIComponent(_this.getAttribute('href'))
                                             .replace(proxyUrl + scope.project.baseUrl + '/', '')

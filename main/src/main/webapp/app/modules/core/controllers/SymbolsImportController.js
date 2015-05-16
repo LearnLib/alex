@@ -5,7 +5,9 @@
         .module('ALEX.core')
         .controller('SymbolsImportController', SymbolsImportController);
 
-    SymbolsImportController.$inject = ['$scope', 'SessionService', 'Symbol', 'SymbolResource', '_', 'ToastService'];
+    SymbolsImportController.$inject = [
+        '$scope', 'SessionService', 'Symbol', 'SymbolResource', '_', 'ToastService', 'actionTypes', 'actionGroupTypes'
+    ];
 
     /**
      * The controller that handles the import of symbols from a *.json file.
@@ -20,7 +22,7 @@
      * @param Toast - The ToastService
      * @constructor
      */
-    function SymbolsImportController($scope, Session, Symbol, SymbolResource, _, Toast) {
+    function SymbolsImportController($scope, Session, Symbol, SymbolResource, _, Toast, actionTypes, actionGroupTypes) {
 
         // The project that is saved in the sessionStorage
         var project = Session.project.get();
@@ -58,23 +60,37 @@
          */
         $scope.uploadSelectedSymbols = function () {
             if ($scope.selectedSymbols.length > 0) {
-                var symbols = _($scope.selectedSymbols)
-                    .map(Symbol.build)
-                    .forEach(function (symbol) {
-                        delete symbol._collapsed;
-                        delete symbol._selected;
-                    })
-                    .value();
-                SymbolResource.create(project.id, symbols)
-                    .then(function (createdSymbols) {
-                        Toast.success('Symbols uploaded');
-                        _.forEach(createdSymbols, function (symbol) {
-                            _.remove($scope.symbols, {name: symbol.name})
-                        })
-                    })
-                    .catch(function (response) {
-                        Toast.danger('<p><strong>Symbol upload failed</strong></p>' + response.data.message)
-                    })
+                SymbolResource.getAll(project.id)
+                    .then(function(existingSymbols){
+                        var maxId = _.max(existingSymbols, 'id').id;
+                        var symbols = _($scope.selectedSymbols)
+                            .map(Symbol.build)
+                            .forEach(function (symbol) {
+                                delete symbol._collapsed;
+                                delete symbol._selected;
+
+                                // search in all actions of all symbols for an action with the type EXECUTE_SYMBOL and
+                                // adjust referenced ids according to the max. existing id
+                                if (existingSymbols.length > 0) {
+                                    _.forEach(symbol.actions, function(action){
+                                        if (action.type === actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL) {
+                                            action.symbolToExecute.id += maxId;
+                                        }
+                                    })
+                                }
+                            })
+                            .value();
+                        SymbolResource.create(project.id, symbols)
+                            .then(function (createdSymbols) {
+                                Toast.success('Symbols uploaded');
+                                _.forEach(createdSymbols, function (symbol) {
+                                    _.remove($scope.symbols, {name: symbol.name})
+                                })
+                            })
+                            .catch(function (response) {
+                                Toast.danger('<p><strong>Symbol upload failed</strong></p>' + response.data.message)
+                            })
+                    });
             }
         };
 

@@ -58,6 +58,15 @@
          */
         $scope.hasUnsavedChanges = false;
 
+        /**
+         * Listener functions for draggable action items
+         * @type {{itemMoved: Function, orderChanged: Function}}
+         */
+        $scope.dragControlListeners = {
+            itemMoved: function () {$scope.hasUnsavedChanges = true;},
+            orderChanged: function() {$scope.hasUnsavedChanges = true;}
+        };
+
         // load all actions from the symbol
         // redirect to an error page when the symbol from the url id cannot be found
         (function init() {

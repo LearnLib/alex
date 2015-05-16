@@ -10,13 +10,13 @@
             <input type="checkbox" selection-checkbox-all items="allSymbols">
         </div>
 
-        <div class="pull-right">
-            <button class="btn btn-xs btn-default" learn-setup-settings-modal-handle
+        <div class="btn-group btn-group-xs pull-right">
+            <button class="btn btn-primary" ng-click="startLearning()">
+                Start Learning
+            </button>
+            <button class="btn btn-primary" learn-setup-settings-modal-handle
                     learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
                 <i class="fa fa-gear"></i>
-            </button>
-            <button class="btn btn-xs btn-primary" ng-click="startLearning()">
-                Start Learning
             </button>
         </div>
 
