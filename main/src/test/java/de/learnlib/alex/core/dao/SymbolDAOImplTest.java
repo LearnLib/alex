@@ -189,8 +189,8 @@ public class SymbolDAOImplTest {
             symbolDAO.create(symbol); // should fail
             fail("creation didn't fail.");
         } catch (ValidationException e) {
-            assertEquals(Long.valueOf(0), symbol.getId());
-            assertEquals(Long.valueOf(0), symbol.getRevision());
+            assertEquals(null, symbol.getId());
+            assertEquals(null, symbol.getRevision());
         }
 
     }
@@ -216,7 +216,7 @@ public class SymbolDAOImplTest {
         // then
         Symbol symbolInDB = symbolDAO.get(project.getId(), symbol.getId(), symbol.getRevision());
         assertNotNull(symbolInDB);
-        Symbol websymbolInDB = (Symbol) symbolInDB;
+        Symbol websymbolInDB = symbolInDB;
         Project project2 = projectDAO.getByID(symbolInDB.getProjectId());
 
         assertEquals(symbol.getName(), symbolInDB.getName());

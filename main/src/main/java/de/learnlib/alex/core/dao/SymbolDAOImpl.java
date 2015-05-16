@@ -21,8 +21,10 @@ import org.hibernate.criterion.Subqueries;
 
 import javax.validation.ValidationException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -46,9 +48,15 @@ public class SymbolDAOImpl implements SymbolDAO {
                  | org.hibernate.exception.ConstraintViolationException
                  | IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
-            symbol.setId(0L);
-            symbol.setRevision(0L);
+            symbol.setId(null);
+            symbol.setRevision(null);
             throw new ValidationException("Could not create symbol because it was invalid.", e);
+        } catch (NotFoundException e) {
+            HibernateUtil.rollbackTransaction();
+            symbol.setId(null);
+            symbol.setRevision(null);
+            throw new ValidationException("Could not create a symbol because it has a reference to another"
+                                                  + " unknown symbol.", e);
         }
     }
 
@@ -59,23 +67,33 @@ public class SymbolDAOImpl implements SymbolDAO {
         HibernateUtil.beginTransaction();
         try {
             // create the symbol
-            for (Symbol symbol : symbols) {
-                create(session, symbol);
-            }
-            for (Symbol symbol : symbols) {
-                setExecuteToSymbols(session, symbol);
-            }
-            HibernateUtil.commitTransaction();
+            symbols.forEach(s -> create(session, s));
 
-            // error handling
+            // set execute symbols
+            Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
+            symbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
+            for (Symbol symbol : symbols) {
+                setExecuteToSymbols(session, symbol, symbolMap);
+            }
+
+            HibernateUtil.commitTransaction();
+        // error handling
+        } catch (NotFoundException e) {
+            HibernateUtil.rollbackTransaction();
+            symbols.forEach(s -> {
+                s.setId(null);
+                s.setRevision(null);
+            });
+            throw new ValidationException("Could not create a symbol because it has a reference to another"
+                                                  + " unknown symbol.", e);
         } catch (javax.validation.ConstraintViolationException
                 | org.hibernate.exception.ConstraintViolationException
                 | IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
-            for (Symbol symbol : symbols) {
-                symbol.setId(null);
-                symbol.setRevision(null);
-            }
+            symbols.forEach(s -> {
+                s.setId(null);
+                s.setRevision(null);
+            });
             throw new ValidationException("Could not create symbol because it was invalid.", e);
         }
     }
@@ -391,8 +409,11 @@ public class SymbolDAOImpl implements SymbolDAO {
             for (Symbol symbol : symbols) {
                 update(session, symbol);
             }
+
+            Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
+            symbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
             for (Symbol symbol : symbols) {
-                setExecuteToSymbols(session, symbol);
+                setExecuteToSymbols(session, symbol, symbolMap);
             }
 
             HibernateUtil.commitTransaction();
@@ -402,24 +423,24 @@ public class SymbolDAOImpl implements SymbolDAO {
                 | org.hibernate.exception.ConstraintViolationException
                 | IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
-            for (Symbol symbol : symbols) {
-                symbol.setId(null);
-                symbol.setRevision(null);
-            }
+            symbols.forEach(s -> {
+                s.setId(null);
+                s.setRevision(null);
+            });
             throw new ValidationException("Could not update the Symbols because one is not valid.", e);
         } catch (IllegalArgumentException e) {
             HibernateUtil.rollbackTransaction();
-            for (Symbol symbol : symbols) {
-                symbol.setId(null);
-                symbol.setRevision(null);
-            }
+            symbols.forEach(s -> {
+                s.setId(null);
+                s.setRevision(null);
+            });
             throw e;
         } catch (NotFoundException e) {
             HibernateUtil.rollbackTransaction();
-            for (Symbol symbol : symbols) {
-                symbol.setId(null);
-                symbol.setRevision(null);
-            }
+            symbols.forEach(s -> {
+                s.setId(null);
+                s.setRevision(null);
+            });
             throw new NotFoundException("Could not update the Symbol because it was nowhere to be found.", e);
         }
     }
@@ -649,7 +670,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         if (testList.size() > 0) {
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("The name '" + symbol.getName() + "' or the abbreviation '"
-                                         + symbol.getAbbreviation() + "'of the symbol is already used in the project.");
+                                            + symbol.getAbbreviation() + "' of the symbol is already used"
+                                              + " in the project.");
         }
     }
 
@@ -663,18 +685,22 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private void setExecuteToSymbols(Session session, Symbol symbol) {
-        for (int i = 0; i < symbol.getActions().size(); i++) {
-            SymbolAction action = symbol.getActions().get(i);
+    private void setExecuteToSymbols(Session session, Symbol symbol) throws NotFoundException {
+        Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
+        symbolMap.put(symbol.getIdRevisionPair(), symbol);
+        setExecuteToSymbols(session, symbol, symbolMap);
+    }
 
+    private void setExecuteToSymbols(Session session, Symbol symbol, Map<IdRevisionPair, Symbol> allSymbols)
+            throws NotFoundException {
+        for (SymbolAction action : symbol.getActions()) {
             if (action instanceof ExecuteSymbolAction) {
                 ExecuteSymbolAction executeSymbolAction = (ExecuteSymbolAction) action;
                 IdRevisionPair idAndRevision = executeSymbolAction.getSymbolToExecuteAsIdRevisionPair();
 
-                Symbol symbolToExecute;
-                if (idAndRevision.equals(symbol.getIdRevisionPair())) {
-                    symbolToExecute = symbol;
-                } else {
+                Symbol symbolToExecute = allSymbols.get(idAndRevision);
+
+                if (symbolToExecute == null) { // it was not in the set of all symbols
                     symbolToExecute = (Symbol) session.createCriteria(Symbol.class)
                                                         .add(Restrictions.eq("project", action.getProject()))
                                                         .add(Restrictions.eq("idRevisionPair", idAndRevision))
@@ -682,9 +708,9 @@ public class SymbolDAOImpl implements SymbolDAO {
                 }
 
                 if (symbolToExecute == null) {
-                    throw new IllegalStateException("Could not find the symbol with the id "
-                                                        + idAndRevision.getId() + " and the revision "
-                                                        + idAndRevision.getRevision() + ", but it was referenced");
+                    throw new NotFoundException("Could not find the symbol with the id "
+                                                    + idAndRevision.getId() + " and the revision "
+                                                    + idAndRevision.getRevision() + ", but it was referenced");
                 }
                 executeSymbolAction.setSymbolToExecute(symbolToExecute);
             }
