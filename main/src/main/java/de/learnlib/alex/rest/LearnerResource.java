@@ -12,6 +12,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolSet;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
@@ -215,6 +216,10 @@ public class LearnerResource {
      * @param symbolSet
      *         The symbol/ input set which will be executed.
      * @return The observed output of the given input set.
+     * @successResponse 200 OK
+     * @responseType    java.util.List<String>
+     * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/outputs/{project_id}")
@@ -242,6 +247,8 @@ public class LearnerResource {
             return ResponseHelper.renderList(results, Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.NOT_FOUND, e);
+        } catch (LearnerException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST , e);
         }
     }
 

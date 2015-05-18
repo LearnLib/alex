@@ -8,6 +8,7 @@ import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.exceptions.LearnerException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -142,7 +143,7 @@ public class Learner {
      *         The symbol sequence to execute in order to generate the output sequence.
      * @return The following output sequence.
      */
-    public List<String> readOutputs(Project project, Symbol resetSymbol, List<Symbol> symbols) {
+    public List<String> readOutputs(Project project, Symbol resetSymbol, List<Symbol> symbols) throws LearnerException {
         if (contextHandler == null) {
             contextHandler = contextHandlerFactory.createContext(project);
         }
@@ -150,8 +151,12 @@ public class Learner {
 
         ConnectorManager connectors = contextHandler.createContext();
 
-        String[] objects = symbols.stream().map(s -> s.execute(connectors).toString()).toArray(String[]::new);
-        return Arrays.asList(objects);
+        try {
+            String[] objects = symbols.stream().map(s -> s.execute(connectors).toString()).toArray(String[]::new);
+            return Arrays.asList(objects);
+        } catch (Exception e) {
+            throw new LearnerException("Could not read the outputs", e);
+        }
     }
 
 }
