@@ -20,6 +20,7 @@ import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.oracles.ResetCounterSUL;
 import de.learnlib.oracles.SULOracle;
 import de.learnlib.oracles.SymbolCounterSUL;
+import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.logging.log4j.Level;
@@ -70,9 +71,6 @@ public class LearnerThread extends Thread {
 
     /** The membership oracle. */
     private final SULOracle<String, String> mqOracle;
-
-    /** The last found counterexample. */
-    private DefaultQuery<String, Word<String>> counterExample;
 
     /**
      * Constructor to set the LearnerThread up.
@@ -203,9 +201,8 @@ public class LearnerThread extends Thread {
             result.setErrorText(e.getMessage());
             try {
                 learnerResultDAO.update(result);
-            } catch (NotFoundException e1) {
-                LOGGER.log(Level.FATAL,
-                           "Something in the LearnerThread went wrong and the result could not be saved!",
+            } catch (NotFoundException nfe) {
+                LOGGER.log(Level.FATAL, "Something in the LearnerThread went wrong and the result could not be saved!",
                            e);
             }
         }
@@ -213,16 +210,11 @@ public class LearnerThread extends Thread {
     }
 
     private void learn() throws NotFoundException {
-        int maxAmountOfStepsToLearn = result.getConfiguration().getMaxAmountOfStepsToLearn();
-        long currentStepNo = calculateCurrentStepNo();
-        long maxStepCount =  currentStepNo + maxAmountOfStepsToLearn;
-        boolean shouldDoAnotherStep;
+        long maxStepNo = calculateCurrentStepNo() + result.getConfiguration().getMaxAmountOfStepsToLearn();
 
         do {
-            shouldDoAnotherStep = learnOneStep();
-        } while (continueLearning(shouldDoAnotherStep, maxStepCount));
-
-        counterExample = null;
+            learnOneStep();
+        } while (continueLearning(maxStepNo));
     }
 
     private long calculateCurrentStepNo() {
@@ -233,65 +225,77 @@ public class LearnerThread extends Thread {
         }
     }
 
-    private boolean learnOneStep() throws NotFoundException {
-        result.getStatistics().setStartTime(new Date());
-
-        if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
-            learnerResultDAO.create(result);
-            learnFirstHypothesis();
-            counterExample = findCounterExample();
-            result.setCounterExample(counterExample);
-            rememberMetaData();
-        } else {
-            if (counterExample == null) {
-                counterExample = findCounterExample();
-                result.setCounterExample(counterExample);
-            }
-
-            if (counterExample != null) {
-                refineHypothesis(); // use counter example to refine the hypothesis
-                counterExample = findCounterExample();
-                result.setCounterExample(counterExample);
-            }
-            rememberMetaData();
-        }
-
-        return counterExample != null;
-    }
-
-    private boolean continueLearning(boolean shouldDoAnotherStep, long maxStepCount) {
+    private boolean continueLearning(long maxStepNo) {
         int maxAmountOfStepsToLearn = result.getConfiguration().getMaxAmountOfStepsToLearn();
-        return shouldDoAnotherStep
-                && (maxAmountOfStepsToLearn == 0 || result.getStepNo() < maxStepCount)
+        return result.getCounterExample() != null
+                && (maxAmountOfStepsToLearn == 0 || result.getStepNo() < maxStepNo)
                 && !Thread.interrupted();
     }
 
-    private void learnFirstHypothesis() {
-        learner.startLearning();
-        result.createHypothesisFrom(learner.getHypothesisModel());
+    private void learnOneStep() throws NotFoundException {
+        LearnerResult.Statistics statistics = result.getStatistics();
+        statistics.setStartTime(new Date());
+        statistics.setEqsUsed(0L);
+
+        if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
+            learnFirstStep();
+        } else {
+            learnSuccessiveStep();
+        }
+
+        rememberMetaData();
     }
 
-    private DefaultQuery<String, Word<String>> findCounterExample() {
-        EquivalenceOracle eqOracle = result.getConfiguration().getEqOracle().createEqOracle(mqOracle);
+    private void learnFirstStep() {
+        learnerResultDAO.create(result);
+        learner.startLearning();
+        result.createHypothesisFrom(learner.getHypothesisModel());
+        findAndRememberCounterExample();
+    }
+
+    private void learnSuccessiveStep() {
+        // if the previous step didn't yield any counter example, try again
+        // (maybe more luck this time or configuration has changed)
+        if (result.getCounterExample() == null) {
+            findAndRememberCounterExample();
+        }
+
+        // if a there is a counter example refine the hypothesis
+        if (result.getCounterExample() != null) {
+            refineHypothesis();
+            findAndRememberCounterExample();
+        }
+    }
+
+    private void findAndRememberCounterExample() {
+        // find
+        EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
+        eqOracle = result.getConfiguration().getEqOracle().createEqOracle(mqOracle);
+        DefaultQuery<String, Word<String>> newCounterExample;
+        newCounterExample = eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
+
+        // remember
         result.getStatistics().setEqsUsed(result.getStatistics().getEqsUsed() + 1);
-        return eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
+        result.setCounterExample(newCounterExample);
     }
 
     private void refineHypothesis() {
-        learner.refineHypothesis(counterExample);
+        learner.refineHypothesis(result.getCounterExample());
         result.createHypothesisFrom(learner.getHypothesisModel());
     }
 
     private void rememberMetaData() throws NotFoundException {
+        // statistics
         LearnerResult.Statistics statistics = result.getStatistics();
 
         long startTime = statistics.getStartTime().getTime();
         long currentTime = new Date().getTime();
 
         statistics.setDuration(currentTime - startTime);
-        statistics.setMqsUsed(resetCounterSUL.getStatisticalData().getCount());
-        statistics.setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount());
+        statistics.setMqsUsed(resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed());
+        statistics.setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount() - statistics.getSymbolsUsed());
 
+        // algorithm information
         LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
         String algorithmInformation;
         try {
@@ -301,6 +305,7 @@ public class LearnerThread extends Thread {
         }
         result.setAlgorithmInformation(algorithmInformation);
 
+        // done
         learnerResultDAO.update(result);
     }
 
