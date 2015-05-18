@@ -3,16 +3,27 @@
     <meta charset="utf-8">
     <title>Welcome to ALEX!</title>
     <link rel="icon" type="image/png" href="img/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type="text/css">
-        #wrapper {
-            margin: 0 auto;
-            width: 720px;
+        /* General styles */
+        img { /* Make images responsive */
+            max-width: 100%;
+            height: auto;
         }
+        #wrapper { /* Bootstrap would call this a container */
+            margin: 0 auto;
+            max-width: 720px;
+        }
+        /* Styles for the header */
         header {
             text-align: center;
         }
+        /* Styles for the main part */
         main h2 {
             text-align: center;
+        }
+        main p {
+            test-align: justify;
         }
     </style>
 </head>
