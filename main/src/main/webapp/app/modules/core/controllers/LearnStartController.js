@@ -6,7 +6,7 @@
 
     LearnStartController.$inject = [
         '$scope', '$interval', 'SessionService', 'LearnerService', 'LearnResultResource', 'ToastService', '_',
-        'ErrorService', 'LearnConfiguration'
+        'ErrorService', 'LearnConfiguration', 'CounterExampleService'
     ];
 
     /**
@@ -24,9 +24,11 @@
      * @param _ - Lodash
      * @param Error - The ErrorService
      * @param LearnConfiguration
+     * @param CounterExampleService - The service that contains the current counterexample
      * @constructor
      */
-    function LearnStartController($scope, $interval, Session, Learner, LearnResultResource, Toast, _, Error, LearnConfiguration) {
+    function LearnStartController($scope, $interval, Session, Learner, LearnResultResource, Toast, _, Error,
+                                  LearnConfiguration, CounterExampleService) {
 
         // The project that is stored in the session
         var project = Session.project.get();
@@ -57,6 +59,7 @@
 
         // initialize the controller
         (function init() {
+            CounterExampleService.resetCurrentCounterexample();
             poll();
 
             // stop polling when you leave the page
@@ -114,7 +117,10 @@
             var config = LearnConfiguration.build(_.last($scope.results).configuration).toLearnResumeConfiguration();
 
             Learner.resume(project.id, _.last($scope.results).testNo, config)
-                .then(poll)
+                .then(function(){
+                    CounterExampleService.resetCurrentCounterexample();
+                    poll();
+                })
                 .catch(function (response) {
                     Toast.danger('<p><strong>Resume learning failed!</strong></p>' + response.data.message);
                 })

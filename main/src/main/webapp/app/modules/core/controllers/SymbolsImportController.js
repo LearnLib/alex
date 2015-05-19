@@ -6,7 +6,7 @@
         .controller('SymbolsImportController', SymbolsImportController);
 
     SymbolsImportController.$inject = [
-        '$scope', 'SessionService', 'Symbol', 'SymbolResource', '_', 'ToastService', 'actionTypes', 'actionGroupTypes'
+        '$scope', 'SessionService', 'Symbol', 'SymbolResource', '_', 'ToastService', 'actionTypes', 'actionGroupTypes',
     ];
 
     /**
@@ -20,6 +20,8 @@
      * @param SymbolResource - The Symbol API Resource handler
      * @param _ - Lodash
      * @param Toast - The ToastService
+     * @param actionTypes - The dictionary with action types
+     * @param actionGroupTypes - The enum with action group types
      * @constructor
      */
     function SymbolsImportController($scope, Session, Symbol, SymbolResource, _, Toast, actionTypes, actionGroupTypes) {
