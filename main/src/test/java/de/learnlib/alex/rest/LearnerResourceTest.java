@@ -12,6 +12,7 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
@@ -248,6 +249,33 @@ public class LearnerResourceTest extends JerseyTest {
     }
 
     @Test
+    public void shouldCreateEmptyOutputForNoSymbols() throws NotFoundException {
+        String json = "{\"resetSymbol\":"
+                + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
+                + "\"symbols\": []}";
+        Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().post(Entity.json(json));
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals("[]", response.readEntity(String.class));
+    }
+
+    @Test
+    public void shouldReturn400IfCreatingAnOutputFailed() throws NotFoundException {
+        given(learner.readOutputs(any(Project.class), any(Symbol.class), any(List.class)))
+                .willThrow(LearnerException.class);
+
+        String json = "{\"resetSymbol\":"
+                + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
+                + "\"symbols\": ["
+                + "{\"id\": 1, \"revision\": 1},"
+                + "{\"id\": 2, \"revision\": 4}"
+                + "]}";
+        Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().post(Entity.json(json));
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
     public void shouldReturn404IfOutputShouldBeCreatedForANotExistingProject() throws NotFoundException {
         given(projectDAO.getByID(PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
@@ -308,16 +336,6 @@ public class LearnerResourceTest extends JerseyTest {
         verify(learner, never()).readOutputs(any(Project.class), any(Symbol.class), any(List.class));
     }
 
-    @Test
-    public void shouldCreateEmptyOutputForNoSymbols() throws NotFoundException {
-        String json = "{\"resetSymbol\":"
-                        + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
-                    + "\"symbols\": []}";
-        Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().post(Entity.json(json));
-
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("[]", response.readEntity(String.class));
-    }
 
 
 }

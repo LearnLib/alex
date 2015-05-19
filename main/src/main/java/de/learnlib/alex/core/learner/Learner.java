@@ -10,9 +10,9 @@ import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.exceptions.LearnerException;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * Basic class to control and monitor a learn process.
@@ -152,8 +152,7 @@ public class Learner {
         ConnectorManager connectors = contextHandler.createContext();
 
         try {
-            String[] objects = symbols.stream().map(s -> s.execute(connectors).toString()).toArray(String[]::new);
-            return Arrays.asList(objects);
+            return symbols.stream().map(s -> s.execute(connectors).toString()).collect(Collectors.toList());
         } catch (Exception e) {
             throw new LearnerException("Could not read the outputs", e);
         }

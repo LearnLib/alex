@@ -228,7 +228,6 @@ public class LearnerResource {
     public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet) {
         try {
             Project project = projectDAO.getByID(projectId);
-            System.out.println("$$$ project: " + project);
 
             IdRevisionPair resetSymbolAsIdRevisionPair = symbolSet.getResetSymbolAsIdRevisionPair();
             if (resetSymbolAsIdRevisionPair == null) {
@@ -236,11 +235,9 @@ public class LearnerResource {
             }
             Symbol resetSymbol = symbolDAO.get(projectId, resetSymbolAsIdRevisionPair);
             symbolSet.setResetSymbol(resetSymbol);
-            System.out.println("$$$ reset symbol: " + resetSymbol);
 
             List<Symbol> symbols = loadSymbols(projectId, symbolSet.getSymbolsAsIdRevisionPairs());
             symbolSet.setSymbols(symbols);
-            System.out.println("$$$ symbols: " + symbols);
 
             List<String> results = learner.readOutputs(project, resetSymbol, symbols);
 
