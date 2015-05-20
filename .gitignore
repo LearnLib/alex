@@ -1,0 +1,7 @@
+# IntelliJ
+.idea
+*.iml
+
+# Java
+*.class
+hs_err_pid*

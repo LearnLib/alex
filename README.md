@@ -10,7 +10,6 @@ If all this tools are available, the fastest and easiest way to get started is t
 # the next 2 lines must only be done once!
 chmod +x build.sh
 ./build.sh --no-tests
-
 # start the server
 cd main
 mvn jetty:run
