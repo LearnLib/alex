@@ -7,29 +7,28 @@
                 <learn-results-slideshow-panel index="{{$index}}" results="result"></learn-results-slideshow-panel>
             </div>
 
-            <div ng-if="!result" style="padding: 30px">
+            <div ng-if="!result">
+                <learn-results-list-panel index="{{$index}}">
+                    <ul class="list-group">
+                        <li class="list-group-item" ng-repeat="result in results"
+                            ng-click="fillPanel(result, $parent.$index)">
 
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="result in results"
-                        ng-click="fillPanel(result, $parent.$index)">
+                            <strong>Test No
+                                <span ng-bind="result.testNo"></span>
+                            </strong>,
+                            [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
 
-                        <strong>Test No
-                            <span ng-bind="result.testNo"></span>
-                        </strong>,
-                        [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
+                            <br>
 
-                        <br>
+                            <p class="text-muted">
+                                Started: <span
+                                    ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+                            </p>
 
-                        <p class="text-muted">
-                            Started: <span
-                                ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
-                        </p>
-
-                    </li>
-                </ul>
-
+                        </li>
+                    </ul>
+                </learn-results-list-panel>
             </div>
-
         </div>
 
         <div ng-if="panels.length == 0" style="padding-top: 30px">

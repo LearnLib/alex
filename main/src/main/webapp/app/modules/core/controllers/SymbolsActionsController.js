@@ -29,22 +29,22 @@
     function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, Session, Toast, Error, _) {
 
         /**
+         * A copy of $scope.symbol to revert unsaved changes
+         * @type {Symbol|null}
+         */
+        var symbolCopy = null;
+
+        /**
          * The project that is stored in the session
          * @type {Project}
          */
-        $scope.project = Session.project.get();
+        var project = Session.project.get();
 
         /**
          * The symbol whose actions are managed
          * @type {Symbol|null}
          */
         $scope.symbol = null;
-
-        /**
-         * A copy of $scope.symbol to revert unsaved changes
-         * @type {Symbol|null}
-         */
-        $scope.symbolCopy = null;
 
         /**
          * The list of selected actions
@@ -63,33 +63,34 @@
          * @type {{itemMoved: Function, orderChanged: Function}}
          */
         $scope.dragControlListeners = {
-            itemMoved: function () {$scope.hasUnsavedChanges = true;},
-            orderChanged: function() {$scope.hasUnsavedChanges = true;}
+            itemMoved: function () {
+                $scope.hasUnsavedChanges = true;
+            },
+            orderChanged: function () {
+                $scope.hasUnsavedChanges = true;
+            }
         };
 
         // load all actions from the symbol
         // redirect to an error page when the symbol from the url id cannot be found
         (function init() {
-            SymbolResource.get($scope.project.id, $stateParams.symbolId)
-                .then(prepareSymbol)
+            SymbolResource.get(project.id, $stateParams.symbolId)
+                .then(function (symbol) {
+
+                    // create unique ids for actions so that they can be found
+                    _.forEach(symbol.actions, function (action) {
+                        action._id = _.uniqueId();
+                    });
+
+                    // add symbol to scope and create a copy in order to revert changes
+                    $scope.symbol = symbol;
+                    symbolCopy = Symbol.build(symbol);
+                })
                 .catch(function () {
                     Error.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + "' could not be found");
                     Error.goToErrorPage();
                 });
         }());
-
-        // initialize the controller for a given symbol
-        function prepareSymbol(symbol) {
-
-            // create unique ids for actions so that they can be found
-            _.forEach(symbol.actions, function (action) {
-                action._id = _.uniqueId();
-            });
-
-            // add symbol to scope and create a copy in order to revert changes
-            $scope.symbol = symbol;
-            $scope.symbolCopy = Symbol.build(symbol);
-        }
 
         /**
          * Deletes the actions that the user selected from the scope
@@ -155,7 +156,8 @@
             // update the symbol
             SymbolResource.update(copy)
                 .then(function (updatedSymbol) {
-                    prepareSymbol(updatedSymbol);
+                    $scope.symbol.revision = updatedSymbol.revision;
+                    symbolCopy = Symbol.build($scope.symbol);
                     Toast.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
                     $scope.hasUnsavedChanges = false;
                 })
@@ -168,7 +170,8 @@
          * Reverts the changes that were made to the symbol before the last update
          */
         $scope.revertChanges = function () {
-            prepareSymbol($scope.symbolCopy);
+            $scope.symbol = symbolCopy;
+            symbolCopy = Symbol.build($scope.symbol);
             Toast.info('Changes reverted to the last update');
             $scope.hasUnsavedChanges = false;
         };

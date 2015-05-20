@@ -41,7 +41,6 @@
             result.testNo = data.testNo;
             result.algorithmInformation = data.algorithmInformation;
             result.statistics = data.statistics;
-            result.error = data.error;
             result.errorText = data.errorText;
             return result;
         };

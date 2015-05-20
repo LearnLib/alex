@@ -6,15 +6,16 @@
         .controller('LearnResultsController', LearnResultsController);
 
     LearnResultsController.$inject = [
-        '$scope', 'SessionService', 'LearnResultResource', 'PromptService', 'ToastService', '_'
+        '$scope', '$state', 'SessionService', 'LearnResultResource', 'PromptService', 'ToastService', '_'
     ];
 
     /**
      * The controller for listing all final test results.
      *
-     * The template can be found at 'views/learn-results.html'
+     * Template: 'views/learn-results.html'
      *
      * @param $scope - The controllers scope
+     * @param $state - The ui.router $state service
      * @param Session - The SessionService
      * @param LearnResultResource - The API resource for learn results
      * @param PromptService - The service for prompts
@@ -22,7 +23,7 @@
      * @param _ - Lodash
      * @constructor
      */
-    function LearnResultsController($scope, Session, LearnResultResource, PromptService, Toast, _) {
+    function LearnResultsController($scope, $state, Session, LearnResultResource, PromptService, Toast, _) {
 
         // The project that is saved in the session
         var project = Session.project.get();
@@ -85,6 +86,16 @@
                                 Toast.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
                             });
                     })
+            }
+        };
+
+        /**
+         * Opens the learning result compare view with the selected results opened
+         */
+        $scope.openSelectedResults = function(){
+            if ($scope.selectedResults.length > 0) {
+                var testNos = _.pluck($scope.selectedResults, 'testNo');
+                $state.go('learn.results.compare', {testNos: testNos.join(',')})
             }
         }
     }

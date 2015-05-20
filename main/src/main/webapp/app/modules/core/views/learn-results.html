@@ -10,8 +10,13 @@
             <input type="checkbox" selection-checkbox-all items="results">
         </div>
 
-        <div class="pull-left">
-            <button class="btn btn-xs btn-primary"
+        <div class="btn-group btn-group-xs">
+            <button class="btn btn-primary"
+                    ng-click="openSelectedResults()"
+                    ng-class="selectedResults.length === 0 ? 'disabled' : ''">
+                Compare
+            </button>
+            <button class="btn btn-default"
                     ng-click="deleteResults()"
                     ng-class="selectedResults.length === 0 ? 'disabled' : ''">
                 Delete

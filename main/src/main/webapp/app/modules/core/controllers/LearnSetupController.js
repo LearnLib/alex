@@ -7,7 +7,7 @@
 
     LearnSetupController.$inject = [
         '$scope', '$state', 'SymbolGroupResource', 'SessionService', 'LearnConfiguration', 'LearnerService',
-        'ToastService', '_'
+        'ToastService', '_', 'FaviconService'
     ];
 
     /**
@@ -23,9 +23,11 @@
      * @param Learner - The API service for the learner
      * @param Toast - The ToastService
      * @param _ - Lodash
+     * @param Favicon - The FaviconService
      * @constructor
      */
-    function LearnSetupController($scope, $state, SymbolGroupResource, Session, LearnConfiguration, Learner, Toast, _) {
+    function LearnSetupController($scope, $state, SymbolGroupResource, Session, LearnConfiguration, Learner, Toast, _,
+                                  Favicon) {
 
         // the project that is stored in the session
         var project = Session.project.get();
@@ -113,7 +115,8 @@
                 Learner.start(project.id, $scope.learnConfiguration)
                     .success(function () {
                         Toast.success('Learn process started successfully.');
-                        $state.go('learn.start')
+                        //Favicon.changeTo(Favicon.LEARNING);
+                        $state.go('learn.start');
                     })
                     .catch(function (response) {
                         Toast.danger('<p><strong>Start learning failed</strong></p>' + response.data.message);

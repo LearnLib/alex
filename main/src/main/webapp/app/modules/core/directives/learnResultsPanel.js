@@ -4,10 +4,12 @@
     angular
         .module('ALEX.core')
         .directive('learnResultsPanel', learnResultsPanel)
-        .directive('learnResultsSlideshowPanel', learnResultsSlideshowPanel);
+        .directive('learnResultsSlideshowPanel', learnResultsSlideshowPanel)
+        .directive('learnResultsListPanel', learnResultsListPanel);
 
     learnResultsPanel.$inject = ['paths', 'learnAlgorithms'];
     learnResultsSlideshowPanel.$inject = ['paths'];
+    learnResultsListPanel.$inject = ['paths'];
 
     /**
      * The directive that displays a browsable list of learn results. For each result, it can display the observation
@@ -107,11 +109,10 @@
      * The directive to display a closeable learn result panel for the panel manager. Requires to be a child of a
      * panelManager directive. For everything else see {@link learnResultsPanel}
      *
+     * @param paths
      * @returns {{require: string, scope: {results: string, index: string}, templateUrl: string, link: link}}
      */
     function learnResultsSlideshowPanel(paths) {
-
-        // the directive
         return {
             require: '^panelManager',
             scope: {
@@ -122,7 +123,34 @@
             link: link
         };
 
-        // the directives behaviour
+        function link(scope, el, attrs, ctrl) {
+
+            /**
+             * Tells the panel manager to close this panel
+             */
+            scope.close = function () {
+                ctrl.closePanelAt(scope.index);
+            }
+        }
+    }
+
+    /**
+     * The directive to display a closeable panel that lists all learning results
+     *
+     * @param paths
+     * @returns {{require: string, scope: {index: string}, templateUrl: string, link: link}}
+     */
+    function learnResultsListPanel(paths) {
+        return {
+            require: '^panelManager',
+            scope: {
+                index: '@'
+            },
+            transclude: true,
+            templateUrl: paths.COMPONENTS + '/core/views/directives/learn-results-list-panel.html',
+            link: link
+        };
+
         function link(scope, el, attrs, ctrl) {
 
             /**
