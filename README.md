@@ -6,14 +6,13 @@ Getting Started
 To build ALEX [Java][], [Maven][], [Node.JS][nodejs] and the [Grunt CLI][grunt] must be installed.
 If all this tools are available, the fastest and easiest way to get started is to run the following commands:
 
-```bash
-# the next 2 lines must only be done once!
-chmod +x build.sh
-./build.sh --no-tests
-# start the server
-cd main
-mvn jetty:run
-```
+    # the next 2 lines must only be done once!
+    chmod +x build.sh
+    ./build.sh --no-tests
+
+    # start the server
+    cd main
+    mvn jetty:run
 
 These commands will download all required dependencies and then build ALEX.
 If the build process was successful and the server has started, ALEX is available
@@ -25,9 +24,7 @@ More Documentation
 Further documentation is provided through the *site* feature of maven.
 To Create the documentation simply run:
 
-```bash
-mvn site
-```
+    mvn site
 
 Afterwards the documentation is in the `target/site` folders of every module.
 
