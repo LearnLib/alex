@@ -60,7 +60,6 @@ module.exports = function (grunt) {
                         'bower_components/angular-ui-router/release/angular-ui-router.min.js',
                         'bower_components/angular-animate/angular-animate.min.js',
                         'bower_components/lodash/lodash.min.js',
-                        'bower_components/ng-sortable/dist/ng-sortable.min.js',
                         'bower_components/angular-selection-model/dist/selection-model.min.js',
                         'bower_components/angular-ui-ace/ui-ace.min.js',
                         'bower_components/ace-builds/src-min/ace.js',
@@ -74,7 +73,10 @@ module.exports = function (grunt) {
                         'bower_components/graphlib/dist/graphlib.core.min.js',
                         'bower_components/dagre/dist/dagre.core.min.js',
                         'bower_components/dagre-d3/dist/dagre-d3.core.min.js',
-                        'bower_components/n3-line-chart/build/line-chart.min.js'],
+                        'bower_components/n3-line-chart/build/line-chart.min.js',
+                        'bower_components/Sortable/Sortable.min.js',
+                        'bower_components/Sortable/ng-sortable.js'
+                    ],
                     dest: 'app/libs.min.js'
                 }
             },

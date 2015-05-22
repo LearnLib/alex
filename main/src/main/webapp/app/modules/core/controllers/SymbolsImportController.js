@@ -42,6 +42,12 @@
         $scope.selectedSymbols = [];
 
         /**
+         * If references to symbol ids from executeSymbol actions should be adjusted or not
+         * @type {boolean}
+         */
+        $scope.adjustReferences = true;
+
+        /**
          * Creates instances of Symbols from the json string from the *.json file and puts them in the scope.
          *
          * @param {string} data - The json string of loaded symbols
@@ -73,7 +79,7 @@
 
                                 // search in all actions of all symbols for an action with the type EXECUTE_SYMBOL and
                                 // adjust referenced ids according to the max. existing id
-                                if (existingSymbols.length > 0) {
+                                if (existingSymbols.length > 0 && $scope.adjustReferences) {
                                     _.forEach(symbol.actions, function(action){
                                         if (action.type === actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL) {
                                             action.symbolToExecute.id += maxId;

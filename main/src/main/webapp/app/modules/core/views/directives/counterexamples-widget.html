@@ -3,11 +3,10 @@
         <em>Click on the labels of the hypothesis to create a counterexample. Click on an output to toggle it.</em>
     </p>
 
-    <div class="list-group list-group-condensed" as-sortable ng-model="counterExample">
-        <div class="list-group-item" ng-repeat="io in counterExample" as-sortable-item>
+    <div class="list-group list-group-condensed" ng-sortable="{animation:150}">
+        <div class="list-group-item" ng-repeat="io in counterExample">
 
             <i class="fa fa-fw fa-close pull-right" ng-click="removeInputOutputAt($index)"></i>
-            <i class="fa fa-fw fa-sort pull-right" as-sortable-item-handle></i>
 
             <span class="label label-primary">{{io.input}}</span>
             <span class="label" ng-class="io.output === outputAlphabet.OK ? 'label-success' : 'label-danger'"

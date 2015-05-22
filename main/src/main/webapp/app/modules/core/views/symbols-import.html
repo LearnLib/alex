@@ -10,10 +10,23 @@
             <input type="checkbox" selection-checkbox-all items="symbols">
         </div>
 
-        <div class="pull-left">
-            <button class="btn btn-xs btn-primary" ng-click="uploadSelectedSymbols()">
+        <div class="btn-group btn-group-xs">
+            <button class="btn btn-primary" ng-click="uploadSelectedSymbols()">
                 <i class="fa fa-upload fa-fw"></i> Upload
             </button>
+            <div class="btn-group btn-group-xs" dropdown>
+                <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                    <i class="fa fa-gear"></i>
+                </button>
+                <ul class="dropdown-menu pull-left" role="menu">
+                    <li>
+                        <a href ng-click="adjustReferences = !adjustReferences">
+                            <i class="fa fa-fw" ng-class="adjustReferences ? 'fa-check' : 'fa-close'"></i>
+                            Adjust References
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
     </div>

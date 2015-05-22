@@ -59,15 +59,13 @@
         $scope.hasUnsavedChanges = false;
 
         /**
-         * Listener functions for draggable action items
-         * @type {{itemMoved: Function, orderChanged: Function}}
+         * Options for ng-sortable directive from Sortable lib
+         * @type {{animation: number, onUpdate: Function}}
          */
-        $scope.dragControlListeners = {
-            itemMoved: function () {
-                $scope.hasUnsavedChanges = true;
-            },
-            orderChanged: function () {
-                $scope.hasUnsavedChanges = true;
+        $scope.sortableOptions = {
+            animation: 150,
+            onUpdate: function(){
+                $scope.hasUnsavedChanges = true
             }
         };
 
