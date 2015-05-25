@@ -12,11 +12,9 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -63,7 +61,7 @@ public class CallAction extends RESTSymbolAction {
      * Every header name has a list of values, to be standard conform (e.g. Accept: text/html,application/xml).
      */
     @Lob
-    private HashMap<String, ArrayList<String>> headers;
+    private HashMap<String, String> headers;
 
     /**
      * Map to store cookies, that will be send with the request.
@@ -134,7 +132,7 @@ public class CallAction extends RESTSymbolAction {
      *
      * @return The map of request headers.
      */
-    public HashMap<String, ArrayList<String>> getHeaders() {
+    public HashMap<String, String> getHeaders() {
         return headers;
     }
 
@@ -143,9 +141,9 @@ public class CallAction extends RESTSymbolAction {
      *
      * @return The map of request headers, with the actual values of counters and variables in their values.
      */
-    private MultivaluedMap<String, Object> getHeadersWithVariableValues() {
-        MultivaluedMap<String, Object> result = new MultivaluedHashMap<>();
-        headers.forEach((k, v) -> v.forEach(x -> result.add(k, insertVariableValues(x))));
+    private Map<String, String> getHeadersWithVariableValues() {
+        Map<String, String> result = new HashMap<>();
+        headers.forEach((k, v) -> result.put(k, insertVariableValues(v)));
         return result;
     }
 
@@ -156,12 +154,12 @@ public class CallAction extends RESTSymbolAction {
      * @param headers
      *         The new request headers.
      */
-    public void setHeaders(HashMap<String, ArrayList<String>> headers) {
+    public void setHeaders(HashMap<String, String> headers) {
         this.headers = headers;
     }
 
     /**
-     * Get the map of cookies that will be used for the reqeusts.
+     * Get the map of cookies that will be used for the requests.
      *
      * @return The map of cookies.
      */
@@ -177,7 +175,6 @@ public class CallAction extends RESTSymbolAction {
      */
     private Set<Cookie> getCookiesWithVariableValues() {
         Set<Cookie> result = new HashSet<>();
-        System.out.println(cookies);
         cookies.forEach((n, v) -> result.add(new Cookie(n, insertVariableValues(v))));
         return result;
     }

@@ -7,10 +7,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -72,10 +71,10 @@ public class WebServiceConnector implements Connector {
 
     /**
      * Get the response status of the last request.
-     * You have to do at least on request ({@link #get(String, MultivaluedMap, Set)}|
-     * {@link #post(String, MultivaluedMap, Set, String)}|
-     * {@link #put(String, MultivaluedMap, Set, String)}|
-     * {@link #delete(String, MultivaluedMap, Set)}).
+     * You have to do at least on request ({@link #get(String, Map, Set)}|
+     * {@link #post(String, Map, Set, String)}|
+     * {@link #put(String, Map, Set, String)}|
+     * {@link #delete(String, Map, Set)}).
      *
      * @return The last status received by the connections.
      * @throws java.lang.IllegalStateException
@@ -90,10 +89,10 @@ public class WebServiceConnector implements Connector {
 
     /**
      * Get the response HTTP header of the last request.
-     * You have to do at least on request ({@link #get(String, MultivaluedMap, Set)}|
-     * {@link #post(String, MultivaluedMap, Set, String)}|
-     * {@link #put(String, MultivaluedMap, Set, String)}|
-     * {@link #delete(String, MultivaluedMap, Set)}).
+     * You have to do at least on request ({@link #get(String, Map, Set)}|
+     * {@link #post(String, Map, Set, String)}|
+     * {@link #put(String, Map, Set, String)}|
+     * {@link #delete(String, Map, Set)}).
      *
      * @return The last HTTP header received by the connections.
      * @throws java.lang.IllegalStateException
@@ -108,10 +107,10 @@ public class WebServiceConnector implements Connector {
 
     /**
      * Get the response body of the last request.
-     * You have to do at least on request ({@link #get(String, MultivaluedMap, Set)}|
-     * {@link #post(String, MultivaluedMap, Set, String)}|
-     * {@link #put(String, MultivaluedMap, Set, String)}|
-     * {@link #delete(String, MultivaluedMap, Set)}).
+     * You have to do at least on request ({@link #get(String, Map, Set)}|
+     * {@link #post(String, Map, Set, String)}|
+     * {@link #put(String, Map, Set, String)}|
+     * {@link #delete(String, Map, Set)}).
      *
      * @return The last body received by the connections.
      * @throws java.lang.IllegalStateException
@@ -134,7 +133,7 @@ public class WebServiceConnector implements Connector {
      * @param cookies
      *         The cookies to send with the request.
      */
-    public void get(String path, MultivaluedMap<String, Object> requestHeaders, Set<Cookie> cookies) {
+    public void get(String path, Map<String, String> requestHeaders, Set<Cookie> cookies) {
         Response response = getRequestObject(path, requestHeaders, cookies).get();
         rememberResponseComponents(response);
     }
@@ -151,7 +150,7 @@ public class WebServiceConnector implements Connector {
      * @param jsonData
      *         The data to send with the request.
      */
-    public void post(String path, MultivaluedMap<String, Object> requestHeaders, Set<Cookie> cookies, String jsonData) {
+    public void post(String path, Map<String, String> requestHeaders, Set<Cookie> cookies, String jsonData) {
         Response response = getRequestObject(path, requestHeaders, cookies).post(Entity.json(jsonData));
         rememberResponseComponents(response);
     }
@@ -168,7 +167,7 @@ public class WebServiceConnector implements Connector {
      * @param jsonData
      *         The data to send with the request.
      */
-    public void put(String path, MultivaluedMap<String, Object> requestHeaders, Set<Cookie> cookies, String jsonData) {
+    public void put(String path, Map<String, String> requestHeaders, Set<Cookie> cookies, String jsonData) {
         Response response = getRequestObject(path, requestHeaders, cookies).put(Entity.json(jsonData));
         rememberResponseComponents(response);
     }
@@ -183,7 +182,7 @@ public class WebServiceConnector implements Connector {
      * @param cookies
      *         The cookies to send with the request.
      */
-    public void delete(String path, MultivaluedMap<String, Object> requestHeaders, Set<Cookie> cookies) {
+    public void delete(String path, Map<String, String> requestHeaders, Set<Cookie> cookies) {
         Response response = getRequestObject(path, requestHeaders, cookies).delete();
         rememberResponseComponents(response);
     }
@@ -195,7 +194,7 @@ public class WebServiceConnector implements Connector {
      *         The url (based on the base url) to reset the SUL.
      */
     public void reset(String resetUrl) {
-        get(resetUrl, new MultivaluedHashMap<>(), new HashSet<>());
+        target.path(resetUrl).request().get();
         this.init = false;
     }
 
@@ -222,10 +221,12 @@ public class WebServiceConnector implements Connector {
         return baseUrl.getBaseUrl();
     }
 
-    private Invocation.Builder getRequestObject(String path,
-                                                MultivaluedMap<String, Object> requestHeaders,
-                                                Set<Cookie> cookies) {
-        Invocation.Builder builder = target.path(path).request().headers(requestHeaders);
+    private Invocation.Builder getRequestObject(String path, Map<String, String> requestHeaders, Set<Cookie> cookies) {
+        Invocation.Builder builder = target.path(path).request();
+
+        for (Map.Entry<String, String> h : requestHeaders.entrySet()) {
+            builder = builder.header(h.getKey(), h.getValue());
+        }
 
         for (Cookie c : cookies) {
             builder = builder.cookie(c);

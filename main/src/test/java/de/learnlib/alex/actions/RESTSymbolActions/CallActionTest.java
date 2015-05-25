@@ -73,8 +73,7 @@ public class CallActionTest {
         assertEquals(CallAction.Method.GET, objAsAction.getMethod());
         assertEquals(TEST_BASE_URL, objAsAction.getUrl());
         assertEquals(1, objAsAction.getHeaders().size()); // assert header
-        assertEquals(2, objAsAction.getHeaders().get("X-MyHeader").size());
-        assertEquals("Foobar", objAsAction.getHeaders().get("X-MyHeader").get(0));
+        assertEquals("Foobar, Bar", objAsAction.getHeaders().get("X-MyHeader"));
         assertEquals(c.getCookies().size(), objAsAction.getCookies().size()); // assert cookies
         assertEquals(c.getCookies().get("cookie"), objAsAction.getCookies().get("cookie"));
         assertEquals("{}", objAsAction.getData());

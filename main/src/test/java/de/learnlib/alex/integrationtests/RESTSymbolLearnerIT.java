@@ -80,7 +80,7 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                     + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/\", \"headers\": {"
-                                + "\"X-CustomHeader\": [\"Foo\"]"
+                                + "\"X-CustomHeader\": \"Foo\""
                         + "}, \"cookies\": {"
                                 + "\"MyCookie\": \"Bar\""
                         + "}},"

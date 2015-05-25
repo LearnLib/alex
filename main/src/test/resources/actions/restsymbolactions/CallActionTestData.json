@@ -3,7 +3,7 @@
   "method" : "GET",
   "url" : "http://example.com/api",
   "headers": {
-    "X-MyHeader": ["Foobar", "Bar"]
+    "X-MyHeader": "Foobar, Bar"
   },
   "cookies": {
     "cookie": "Lorem Ipsum"
