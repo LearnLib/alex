@@ -1,7 +1,7 @@
 package de.learnlib.alex.algorithms;
 
 import de.learnlib.alex.annotations.LearnAlgorithm;
-import de.learnlib.algorithms.ttt.base.*;
+import de.learnlib.algorithms.ttt.base.DTNode;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;

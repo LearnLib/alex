@@ -11,13 +11,18 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -39,6 +44,9 @@ public class CallActionTest {
         c.setProject(new Project(PROJECT_ID));
         c.setMethod(CallAction.Method.GET);
         c.setUrl(TEST_API_PATH);
+        HashMap<String, String> cookies = new HashMap<>();
+        cookies.put("cookie", "Lorem Ipsum");
+        c.setCookies(cookies);
         c.setData("{}");
     }
 
@@ -64,6 +72,11 @@ public class CallActionTest {
         CallAction objAsAction = (CallAction) obj;
         assertEquals(CallAction.Method.GET, objAsAction.getMethod());
         assertEquals(TEST_BASE_URL, objAsAction.getUrl());
+        assertEquals(1, objAsAction.getHeaders().size()); // assert header
+        assertEquals(2, objAsAction.getHeaders().get("X-MyHeader").size());
+        assertEquals("Foobar", objAsAction.getHeaders().get("X-MyHeader").get(0));
+        assertEquals(c.getCookies().size(), objAsAction.getCookies().size()); // assert cookies
+        assertEquals(c.getCookies().get("cookie"), objAsAction.getCookies().get("cookie"));
         assertEquals("{}", objAsAction.getData());
     }
 
@@ -74,7 +87,7 @@ public class CallActionTest {
         ExecuteResult result = c.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(connector).get(TEST_API_PATH);
+        verify(connector).get(eq(TEST_API_PATH), any(MultivaluedMap.class), any(Set.class));
     }
 
     @Test
@@ -85,7 +98,7 @@ public class CallActionTest {
         ExecuteResult result = c.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(connector).post(TEST_API_PATH, "{}");
+        verify(connector).post(eq(TEST_API_PATH), any(MultivaluedMap.class), any(Set.class), eq("{}"));
     }
 
     @Test
@@ -96,7 +109,7 @@ public class CallActionTest {
         ExecuteResult result = c.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(connector).put(TEST_API_PATH, "{}");
+        verify(connector).put(eq(TEST_API_PATH), any(MultivaluedMap.class), any(Set.class), eq("{}"));
     }
 
     @Test
@@ -107,7 +120,7 @@ public class CallActionTest {
         ExecuteResult result = c.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(connector).delete(TEST_API_PATH);
+        verify(connector).delete(eq(TEST_API_PATH), any(MultivaluedMap.class), any(Set.class));
     }
 
 }

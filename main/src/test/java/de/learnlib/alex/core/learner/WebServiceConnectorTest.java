@@ -6,10 +6,16 @@ import org.junit.Test;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -26,8 +32,10 @@ public class WebServiceConnectorTest {
         Invocation.Builder builder = mock(Invocation.Builder.class);
         WebTarget target = createWebTarget(builder);
         WebServiceConnector connector = new WebServiceConnector(target, FAKE_URL, RESET_URL);
+        MultivaluedMap<String, Object> requestHeaders = mock(MultivaluedHashMap.class);
+        Set<Cookie> cookies = new HashSet<>();
 
-        connector.get("/");
+        connector.get("/", requestHeaders, cookies);
 
         verify(builder, atLeast(1)).get();
         assertEquals(OK_STATUS, connector.getStatus());
@@ -40,10 +48,45 @@ public class WebServiceConnectorTest {
         Invocation.Builder builder = mock(Invocation.Builder.class);
         WebTarget target = createWebTarget(builder);
         WebServiceConnector connector = new WebServiceConnector(target, FAKE_URL, RESET_URL);
+        MultivaluedMap<String, Object> requestHeaders = mock(MultivaluedHashMap.class);
+        Set<Cookie> cookies = new HashSet<>();
 
-        connector.post("/", FAKE_MESSAGE);
+        connector.post("/", requestHeaders, cookies, FAKE_MESSAGE);
 
         verify(builder).post(Entity.json(FAKE_MESSAGE));
+        assertEquals(OK_STATUS, connector.getStatus());
+        assertEquals(null, connector.getHeaders());
+        assertEquals(FAKE_MESSAGE, connector.getBody());
+    }
+
+    @Test
+    public void shouldPutToASiteAndRememberTheResponse() {
+        Invocation.Builder builder = mock(Invocation.Builder.class);
+        WebTarget target = createWebTarget(builder);
+        WebServiceConnector connector = new WebServiceConnector(target, FAKE_URL, RESET_URL);
+        MultivaluedMap<String, Object> requestHeaders = mock(MultivaluedHashMap.class);
+        Set<Cookie> cookies = new HashSet<>();
+
+        connector.put("/", requestHeaders, cookies, FAKE_MESSAGE);
+
+        verify(builder).put(Entity.json(FAKE_MESSAGE));
+        assertEquals(OK_STATUS, connector.getStatus());
+        assertEquals(null, connector.getHeaders());
+        assertEquals(FAKE_MESSAGE, connector.getBody());
+    }
+
+
+    @Test
+    public void shouldDeleteToASiteAndRememberTheResponse() {
+        Invocation.Builder builder = mock(Invocation.Builder.class);
+        WebTarget target = createWebTarget(builder);
+        WebServiceConnector connector = new WebServiceConnector(target, FAKE_URL, RESET_URL);
+        MultivaluedMap<String, Object> requestHeaders = mock(MultivaluedHashMap.class);
+        Set<Cookie> cookies = new HashSet<>();
+
+        connector.delete("/", requestHeaders, cookies);
+
+        verify(builder).delete();
         assertEquals(OK_STATUS, connector.getStatus());
         assertEquals(null, connector.getHeaders());
         assertEquals(FAKE_MESSAGE, connector.getBody());
@@ -72,12 +115,18 @@ public class WebServiceConnectorTest {
 
     private WebTarget createWebTarget(Invocation.Builder builder) {
         Response response = createResponse();
+        Invocation.Builder headerBuilder = mock(Invocation.Builder.class);
         WebTarget subTarget = mock(WebTarget.class);
         WebTarget target = mock(WebTarget.class);
 
+
         given(builder.get()).willReturn(response);
         given(builder.post(Entity.json(FAKE_MESSAGE))).willReturn(response);
-        given(subTarget.request()).willReturn(builder);
+        given(builder.put(Entity.json(FAKE_MESSAGE))).willReturn(response);
+        given(builder.delete()).willReturn(response);
+
+        given(headerBuilder.headers(any(MultivaluedMap.class))).willReturn(builder);
+        given(subTarget.request()).willReturn(headerBuilder);
         given(target.path(FAKE_URL)).willReturn(subTarget);
         given(target.path("/")).willReturn(subTarget);
 
