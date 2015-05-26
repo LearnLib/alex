@@ -67,8 +67,7 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         // create the reset symbol
         json = "{\"project\": " + project.getId() + ", \"name\": \"Reset\", \"abbreviation\": \"reset\","
              + "\"actions\": ["
-                + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/reset\"}"
-             + "]}";
+                + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/reset\"}]}";
         Symbol resetSymbol = testHelper.addSymbol(client, project, json);
         resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevisionPairListAsJSON(resetSymbol);
 
@@ -80,8 +79,13 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         String symbolAbbr = "learnrest1";
         json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                    + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/\"},"
-                    + "{\"type\": \"rest_checkStatus\", \"status\" : 200}"
+                    + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/\", \"headers\": {"
+                                + "\"X-CustomHeader\": \"Foo\""
+                        + "}, \"cookies\": {"
+                                + "\"MyCookie\": \"Bar\""
+                        + "}},"
+                    + "{\"type\": \"rest_checkStatus\", \"status\" : 200},"
+                    + "{\"type\": \"rest_checkForText\", \"value\": \"Foo:Bar\"}"
                 + "]}";
         symbols[0] = testHelper.addSymbol(client, project, json);
 

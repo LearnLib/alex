@@ -6,8 +6,11 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A Wrapper/ Facade around a @{link WebTarget}.
@@ -68,8 +71,10 @@ public class WebServiceConnector implements Connector {
 
     /**
      * Get the response status of the last request.
-     * You have to do at least on request ({@link #get(String)}|{@link #post(String, String)}|
-     * {@link #put(String, String)}|{@link #delete(String)}).
+     * You have to do at least on request ({@link #get(String, Map, Set)}|
+     * {@link #post(String, Map, Set, String)}|
+     * {@link #put(String, Map, Set, String)}|
+     * {@link #delete(String, Map, Set)}).
      *
      * @return The last status received by the connections.
      * @throws java.lang.IllegalStateException
@@ -84,8 +89,10 @@ public class WebServiceConnector implements Connector {
 
     /**
      * Get the response HTTP header of the last request.
-     * You have to do at least on request ({@link #get(String)}|{@link #post(String, String)}|
-     * {@link #put(String, String)}|{@link #delete(String)}).
+     * You have to do at least on request ({@link #get(String, Map, Set)}|
+     * {@link #post(String, Map, Set, String)}|
+     * {@link #put(String, Map, Set, String)}|
+     * {@link #delete(String, Map, Set)}).
      *
      * @return The last HTTP header received by the connections.
      * @throws java.lang.IllegalStateException
@@ -99,13 +106,15 @@ public class WebServiceConnector implements Connector {
     }
 
     /**
-      * Get the response body of the last request.
-      * You have to do at least on request ({@link #get(String)}|{@link #post(String, String)}|
-      * {@link #put(String,String)}|{@link #delete(String)}).
-      *
-      * @return The last body received by the connections.
-      * @throws java.lang.IllegalStateException
-      *         If no request was done before the method call.
+     * Get the response body of the last request.
+     * You have to do at least on request ({@link #get(String, Map, Set)}|
+     * {@link #post(String, Map, Set, String)}|
+     * {@link #put(String, Map, Set, String)}|
+     * {@link #delete(String, Map, Set)}).
+     *
+     * @return The last body received by the connections.
+     * @throws java.lang.IllegalStateException
+     *         If no request was done before the method call.
      */
     public String getBody() throws IllegalStateException {
         if (!init) {
@@ -119,9 +128,13 @@ public class WebServiceConnector implements Connector {
      *
      * @param path
      *         The path to send the request to.
+     * @param requestHeaders
+     *         The headers to send with the request.
+     * @param cookies
+     *         The cookies to send with the request.
      */
-    public void get(String path) {
-        Response response = getRequestObject(path).get();
+    public void get(String path, Map<String, String> requestHeaders, Set<Cookie> cookies) {
+        Response response = getRequestObject(path, requestHeaders, cookies).get();
         rememberResponseComponents(response);
     }
 
@@ -130,11 +143,15 @@ public class WebServiceConnector implements Connector {
      *
      * @param path
      *         The path to send the request to.
+     * @param requestHeaders
+     *         The headers to send with the request.
+     * @param cookies
+     *         The cookies to send with the request.
      * @param jsonData
      *         The data to send with the request.
      */
-    public void post(String path, String jsonData) {
-        Response response = getRequestObject(path).post(Entity.json(jsonData));
+    public void post(String path, Map<String, String> requestHeaders, Set<Cookie> cookies, String jsonData) {
+        Response response = getRequestObject(path, requestHeaders, cookies).post(Entity.json(jsonData));
         rememberResponseComponents(response);
     }
 
@@ -143,11 +160,15 @@ public class WebServiceConnector implements Connector {
      *
      * @param path
      *         The path to send the request to.
+     * @param requestHeaders
+     *         The headers to send with the request.
+     * @param cookies
+     *         The cookies to send with the request.
      * @param jsonData
      *         The data to send with the request.
      */
-    public void put(String path, String jsonData) {
-        Response response = getRequestObject(path).put(Entity.json(jsonData));
+    public void put(String path, Map<String, String> requestHeaders, Set<Cookie> cookies, String jsonData) {
+        Response response = getRequestObject(path, requestHeaders, cookies).put(Entity.json(jsonData));
         rememberResponseComponents(response);
     }
 
@@ -156,9 +177,13 @@ public class WebServiceConnector implements Connector {
      *
      * @param path
      *         The path to send the request to.
+     * @param requestHeaders
+     *         The headers to send with the request.
+     * @param cookies
+     *         The cookies to send with the request.
      */
-    public void delete(String path) {
-        Response response = getRequestObject(path).delete();
+    public void delete(String path, Map<String, String> requestHeaders, Set<Cookie> cookies) {
+        Response response = getRequestObject(path, requestHeaders, cookies).delete();
         rememberResponseComponents(response);
     }
 
@@ -169,7 +194,7 @@ public class WebServiceConnector implements Connector {
      *         The url (based on the base url) to reset the SUL.
      */
     public void reset(String resetUrl) {
-        get(resetUrl);
+        target.path(resetUrl).request().get();
         this.init = false;
     }
 
@@ -196,7 +221,17 @@ public class WebServiceConnector implements Connector {
         return baseUrl.getBaseUrl();
     }
 
-    private Invocation.Builder getRequestObject(String path) {
-        return target.path(path).request();
+    private Invocation.Builder getRequestObject(String path, Map<String, String> requestHeaders, Set<Cookie> cookies) {
+        Invocation.Builder builder = target.path(path).request();
+
+        for (Map.Entry<String, String> h : requestHeaders.entrySet()) {
+            builder = builder.header(h.getKey(), h.getValue());
+        }
+
+        for (Cookie c : cookies) {
+            builder = builder.cookie(c);
+        }
+
+        return builder;
     }
 }

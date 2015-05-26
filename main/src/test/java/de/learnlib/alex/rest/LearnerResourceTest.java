@@ -23,7 +23,6 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
-
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;

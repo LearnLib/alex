@@ -1,6 +1,8 @@
 package de.learnlib.alex.integrationtests;
 
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -42,8 +44,8 @@ public class RESTTestResource {
     @Path("")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String getHello() {
-        return "Hello";
+    public String getHello(@HeaderParam("X-CustomHeader") String customHeader, @CookieParam("MyCookie") String cookie) {
+        return customHeader + ":" + cookie;
     }
 
     @Path("/entity")
