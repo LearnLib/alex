@@ -32,9 +32,53 @@
             this.method = method || null;
             this.url = url || null;
             this.data = data || null;
+            this.cookies = {};
+            this.headers = {};
         }
 
         CallRestAction.prototype = Object.create(AbstractAction.prototype);
+
+        /**
+         * Adds a cookie to the action
+         *
+         * @param {string} key - The cookie key
+         * @param {string} value - The cookie value
+         */
+        CallRestAction.prototype.addCookie = function (key, value) {
+            this.cookies[key] = value;
+        };
+
+        /**
+         * Removes a cookie from the action
+         *
+         * @param {string} key - The key of the cookie
+         */
+        CallRestAction.prototype.removeCookie = function (key) {
+            if (angular.isDefined(this.cookies[key])) {
+                delete this.cookies[key];
+            }
+        };
+
+        /**
+         * Adds a header field entry to the action
+         *
+         * @param {string} key - The Http header field name
+         * @param {string} value - The Http header field value
+         */
+        CallRestAction.prototype.addHeader = function (key, value) {
+            this.headers[key] = value;
+        };
+
+        /**
+         * Removes a header field entry
+         *
+         * @param {string} key - The key of the Http header entry
+         */
+        CallRestAction.prototype.removeHeader = function (key) {
+            if (angular.isDefined(this.headers[key])) {
+                delete this.headers[key];
+            }
+        };
 
         /**
          * @returns {string}

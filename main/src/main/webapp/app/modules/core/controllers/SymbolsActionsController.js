@@ -47,6 +47,12 @@
         $scope.symbol = null;
 
         /**
+         * A map where actions can save temporary key value pairs
+         * @type {{}}
+         */
+        $scope.map = {};
+
+        /**
          * The list of selected actions
          * @type {Object[]}
          */
@@ -122,6 +128,7 @@
             $scope.symbol.actions.push(action);
             Toast.success('Action created');
             $scope.hasUnsavedChanges = true;
+            $scope.map = {};
         };
 
         /**
@@ -136,6 +143,7 @@
                 Toast.success('Action updated');
             }
             $scope.hasUnsavedChanges = true;
+            $scope.map = {}
         };
 
         /**

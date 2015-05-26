@@ -29,7 +29,8 @@
         return {
             scope: {
                 action: '=',
-                symbols: '='
+                symbols: '=',
+                map: '='
             },
             template: template,
             link: link
