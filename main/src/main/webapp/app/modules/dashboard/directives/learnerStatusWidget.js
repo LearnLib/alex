@@ -58,11 +58,13 @@
                     if (!data.active) {
                         Learner.getStatus()
                             .then(function (data) {
-                                scope.hasFinished = data !== '';
-                                scope.result = data;
+                                if (data !== null) {
+                                    scope.hasFinished = true;
+                                    scope.result = data;
+                                }
                             });
                     }
-                })
+                });
 
             /**
              * Induces the Learner to stop learning after the current hypothesis model

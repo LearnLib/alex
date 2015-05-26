@@ -5,17 +5,18 @@
         .module('ALEX.core')
         .factory('LearnerService', LearnerService);
 
-    LearnerService.$inject = ['$http', 'paths'];
+    LearnerService.$inject = ['$http', 'paths', 'LearnResult'];
 
     /**
      * The service for interacting with the learner
      *
-     * @param $http - angular $http service
+     * @param $http - The angular $http service
      * @param paths - The applications paths constant
+     * @param LearnResult - The LearnResult factory
      * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive, isCounterexample: isCounterexample}}
      * @constructor
      */
-    function LearnerService($http, paths) {
+    function LearnerService($http, paths, LearnResult) {
         return {
             start: start,
             stop: stop,
@@ -28,8 +29,8 @@
         /**
          * Start the server side learning process of a project
          *
-         * @param projectId
-         * @param learnConfiguration
+         * @param {number} projectId
+         * @param {LearnConfiguration} learnConfiguration
          * @return {*}
          */
         function start(projectId, learnConfiguration) {
@@ -43,16 +44,16 @@
          * @return {*}
          */
         function stop() {
-            return $http.get(paths.api.URL + '/learner/stop/');
+            return $http.get(paths.api.URL + '/learner/stop');
         }
 
         /**
          * Resume a paused learning process where the eqOracle was 'sample' and the learn process was interrupted
          * so that the ongoing process parameters could be defined
          *
-         * @param projectId
-         * @param testNo
-         * @param learnConfiguration
+         * @param {number} projectId
+         * @param {number} testNo
+         * @param {LearnConfiguration} learnConfiguration
          * @return {*}
          */
         function resume(projectId, testNo, learnConfiguration) {
@@ -66,9 +67,12 @@
          * @return {*}
          */
         function getStatus() {
-            return $http.get(paths.api.URL + '/learner/status/')
+            return $http.get(paths.api.URL + '/learner/status')
                 .then(function (response) {
-                    return response.data;
+                    return LearnResult.transformApiResponse(response);
+                })
+                .catch(function(){
+                    return null;
                 })
         }
 

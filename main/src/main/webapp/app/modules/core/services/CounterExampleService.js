@@ -15,8 +15,6 @@
      * @constructor
      */
     function CounterExampleService() {
-
-        // the counterexample
         var counterexample = [];
 
         return {

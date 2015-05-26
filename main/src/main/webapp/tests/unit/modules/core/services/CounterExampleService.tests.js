@@ -1,46 +1,43 @@
-(function () {
-    'use strict';
+describe('CounterExampleService', function(){
 
-    describe('CounterExampleService', function () {
-        var service;
+    var CounterExampleService;
 
-        var counterexample = [
-            {input: 'a', output: 'b'},
-            {input: 'c', output: 'd'}
+    var counterexample;
+
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.module('ALEX.core'));
+    beforeEach(angular.mock.inject(function(_CounterExampleService_){
+        CounterExampleService = _CounterExampleService_;
+
+        counterexample = [
+            {input: 's1', output: 'OK'},
+            {input: 's2', output: 'FAILED'}
         ];
+    }));
 
-        beforeEach(angular.mock.module('ALEX'));
-        beforeEach(angular.mock.module('ALEX.services'));
-
-        beforeEach(angular.mock.inject(function (_CounterExampleService_) {
-            service = _CounterExampleService_;
-        }));
-
-        it('should start with an empty counterexample', function(){
-            expect(service.getCurrentCounterexample()).toEqual([]);
+    it ('should be initialized with an empty counterexample',
+        function(){
+            expect(CounterExampleService.getCurrentCounterexample()).toEqual([]);
         });
 
-        it('should set a counterexample', function(){
-            service.setCurrentCounterexample(counterexample);
-            expect(service.getCurrentCounterexample().length).toBe(2);
+    it ('should correctly set a counterexample',
+        function(){
+            CounterExampleService.setCurrentCounterexample(counterexample);
+            expect(CounterExampleService.getCurrentCounterexample()).toEqual(counterexample);
         });
 
-        it('should remove all pairs from the counterexample', function(){
-            service.setCurrentCounterexample(counterexample);
-            service.resetCurrentCounterexample();
-            expect(service.getCurrentCounterexample().length).toBe(0)
+    it ('should empty the current counterexample',
+        function(){
+            CounterExampleService.setCurrentCounterexample(counterexample);
+            CounterExampleService.resetCurrentCounterexample();
+            expect(CounterExampleService.getCurrentCounterexample()).toEqual([]);
         });
 
-        it('should add input output pairs to the counter example', function(){
-            var length = service.getCurrentCounterexample().length;
-            var ce;
-
-            service.addIOPairToCurrentCounterexample('e', 'f');
-            ce = service.getCurrentCounterexample();
-
-            expect(ce.length).toBe(length + 1);
-            expect(ce[length].input).toBe('e');
-            expect(ce[length].output).toBe('f');
-        })
-    })
-}());
+    it ('should add a symbol to the counterexample',
+        function(){
+            var length = CounterExampleService.getCurrentCounterexample().length;
+            CounterExampleService.addIOPairToCurrentCounterexample('s3', 'OK');
+            expect(CounterExampleService.getCurrentCounterexample().length).toBe(length + 1);
+            expect(CounterExampleService.getCurrentCounterexample()[length]).toEqual({input: 's3', output: 'OK'});
+        });
+});

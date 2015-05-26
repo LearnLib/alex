@@ -16,15 +16,11 @@
      * @constructor
      */
     function FileDownloadService(PromptService) {
-
-        // the service
         return {
             downloadJson: downloadJson,
             downloadCSV: downloadCSV,
             downloadSVG: downloadSVG
         };
-
-        // private functions
 
         /**
          * Downloads a file.
@@ -62,8 +58,6 @@
                 errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
             })
         }
-
-        // available service functions
 
         /**
          * Downloads an object as a json file. Prompts for a file name.

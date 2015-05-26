@@ -45,6 +45,12 @@
             return result;
         };
 
+        /**
+         * Creates LearnResult[s] from an API response
+         *
+         * @param response
+         * @returns {*}
+         */
         LearnResult.transformApiResponse = function(response){
             if (angular.isArray(response.data)) {
                 if (angular.isArray(response.data[0])){

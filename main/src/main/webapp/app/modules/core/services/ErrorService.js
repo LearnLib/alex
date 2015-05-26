@@ -10,7 +10,7 @@
     /**
      * Used to store an error message and can redirect to the error page.
      *
-     * @param $state
+     * @param $state - The ui.router $state service
      * @returns {{getErrorMessage: getErrorMessage, setErrorMessage: setErrorMessage, goToErrorPage: goToErrorPage}}
      * @constructor
      */

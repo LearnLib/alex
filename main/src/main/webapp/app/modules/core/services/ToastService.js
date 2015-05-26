@@ -10,7 +10,7 @@
     /**
      * A service that is used as a wrapper around the ngToast module.
      *
-     * @param ngToast - The ngToast
+     * @param ngToast - The ngToast service
      * @returns {{success: success, danger: danger, info: info}}
      * @constructor
      */

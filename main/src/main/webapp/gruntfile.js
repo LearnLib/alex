@@ -155,6 +155,12 @@ module.exports = function (grunt) {
                 }
             },
 
+            karma: {
+                unit: {
+                    configFile: 'tests/unit/karma.conf.js'
+                }
+            },
+
             cssmin: {
                 target: {
                     files: {
@@ -196,12 +202,13 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-protractor-runner');
     grunt.loadNpmTasks('grunt-protractor-webdriver');
+    grunt.loadNpmTasks('grunt-karma');
 
     grunt.registerTask('build-js', ['html2js', 'concat', 'uglify']);
     grunt.registerTask('build-css', ['sass', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-js']);
-    grunt.registerTask('test-unit', ['jasmine']);
+    grunt.registerTask('test-unit', ['karma']);
     grunt.registerTask('test-e2e', ['protractor']);
     grunt.registerTask('minify-css', ['cssmin']);
 

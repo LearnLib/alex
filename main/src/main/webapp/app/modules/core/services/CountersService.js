@@ -16,15 +16,13 @@
      *
      * @param $http - angular $http service
      * @param paths - application paths constants
-     * @returns {{getAll: getAll, delete: deleteOne, deleteSome: deleteSome}}
+     * @returns {{getAll: getAll, delete: remove, deleteSome: deleteSome}}
      * @constructor
      */
     function CountersService($http, paths) {
-
-        // the services functions
         return {
             getAll: getAll,
-            delete: deleteOne,
+            delete: remove,
             deleteSome: deleteSome
         };
 
@@ -50,7 +48,7 @@
          * @param {string} name - The name of a counter
          * @returns angular promise object of the request
          */
-        function deleteOne(projectId, name) {
+        function remove(projectId, name) {
             return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/' + name)
                 .then(function (response) {
                     return response.data;
