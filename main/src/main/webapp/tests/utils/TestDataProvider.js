@@ -1,6 +1,12 @@
 var TestDataProvider = {
 
-    projects: [],
+    projects: [
+        {
+            name: 'Test',
+            baseUrl: 'http://localhost:8080',
+            id: 1
+        }
+    ],
 
     symbols: [],
 

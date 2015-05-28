@@ -6,7 +6,8 @@
         .controller('SymbolsActionsController', SymbolsActionsController);
 
     SymbolsActionsController.$inject = [
-        '$scope', '$stateParams', 'Symbol', 'SymbolResource', 'SessionService', 'ToastService', 'ErrorService', '_'
+        '$scope', '$stateParams', 'Symbol', 'SymbolResource', 'SessionService', 'ToastService', 'ErrorService', '_',
+        'ActionBuilder'
     ];
 
     /**
@@ -24,9 +25,11 @@
      * @param Toast - The ToastService
      * @param Error - The ErrorService
      * @param _ - Lodash
+     * @param ActionBuilder - The ActionBuilder
      * @constructor
      */
-    function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, Session, Toast, Error, _) {
+    function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, Session, Toast, Error, _,
+                                      ActionBuilder) {
 
         /**
          * A copy of $scope.symbol to revert unsaved changes
@@ -108,6 +111,20 @@
         };
 
         /**
+         * Creates duplicates of selected actions and adds them at the end of the actions list
+         */
+        $scope.duplicateSelectedActions = function () {
+            if ($scope.selectedActions.length > 0) {
+                var actions = ActionBuilder.createFromObjects(angular.copy($scope.selectedActions));
+                _.forEach(actions, function(action){
+                    action._id = _.uniqueId();
+                    $scope.symbol.actions.push(action)
+                });
+                $scope.hasUnsavedChanges = true;
+            }
+        };
+
+        /**
          * Removes an action from a symbol
          *
          * @param {Object} action
@@ -137,11 +154,11 @@
          * @param {Object} updatedAction
          */
         $scope.updateAction = function (updatedAction) {
-            var index = _.findIndex($scope.symbol.actions, {_id: updatedAction._id});
-            if (index > -1) {
-                $scope.symbol.actions[index] = updatedAction;
-                Toast.success('Action updated');
-            }
+            var action = _.find($scope.symbol.actions, {_id: updatedAction._id});
+            _.forIn(action, function(v, k){
+                action[k] = updatedAction[k];
+            });
+            Toast.success('Action updated');
             $scope.hasUnsavedChanges = true;
             $scope.map = {}
         };

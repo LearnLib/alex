@@ -26,6 +26,18 @@
                     ng-class="selectedActions.length === 0 ? 'disabled': ''">
                 Delete
             </button>
+            <div class="btn-group btn-group-xs" dropdown dropdown-hover>
+                <button class="btn btn-default" dropdown-toggle>
+                    <i class="fa fa-ellipsis-v fa-fw"></i>
+                </button>
+                <ul class="dropdown-menu pull-left" role="menu">
+                    <li>
+                        <a href ng-click="duplicateSelectedActions()">
+                            <i class="fa fa-copy fa-fw"></i> Duplicate
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div class="pull-right">
