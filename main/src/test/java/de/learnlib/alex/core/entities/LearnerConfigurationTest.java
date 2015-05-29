@@ -18,7 +18,7 @@ public class LearnerConfigurationTest {
 
     @Test
     public void shouldCreateTheCorrectDefaultJSON() throws JsonProcessingException {
-        String expectedJSON = "{\"algorithm\":\"TTT\",\"eqOracle\":"
+        String expectedJSON = "{\"algorithm\":\"TTT\",\"comment\":\"\",\"eqOracle\":"
                                     + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"maxNoOfTests\":1},"
                                 + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]}";
@@ -33,7 +33,7 @@ public class LearnerConfigurationTest {
 
     @Test
     public void shouldCreateTheCorrectJSON() throws JsonProcessingException {
-        String expectedJSON = "{\"algorithm\":\"DHC\",\"eqOracle\":"
+        String expectedJSON = "{\"algorithm\":\"DHC\",\"comment\":\"test\",\"eqOracle\":"
                                 + "{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ","
                                     + "\"maxDepth\":" + EQ_MAX_VALUE + "},"
                                 + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]}";
@@ -41,6 +41,7 @@ public class LearnerConfigurationTest {
         LearnerConfiguration configuration = new LearnerConfiguration();
         configuration.setAlgorithm(LearnAlgorithms.DHC);
         configuration.setEqOracle(new CompleteExplorationEQOracleProxy(EQ_MIN_VALUE, EQ_MAX_VALUE));
+        configuration.setComment("test");
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(configuration);

@@ -145,7 +145,8 @@ public class LearnerResultDAOImplTest {
         assertEquals(RESULTS_AMOUNT, resultsInDBAsJSON.size());
         for (int i = 0; i < resultsInDBAsJSON.size(); i++) {
             String expectedJSON = "{\"configuration\":{"
-                                        + "\"algorithm\":\"TTT\",\"eqOracle\":{\"type\":\"random_word\","
+                                        + "\"algorithm\":\"TTT\",\"comment\":\"\","
+                                        + "\"eqOracle\":{\"type\":\"random_word\","
                                             + "\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1}"
                                         + ",\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]},"
                                     + "\"counterExample\":\"\",\"hypothesis\":{"
@@ -354,7 +355,7 @@ public class LearnerResultDAOImplTest {
     }
 
     private String generateExpectedJSON(LearnerResult result) {
-        return "{\"configuration\":{\"algorithm\":\"TTT\",\"eqOracle\":"
+        return "{\"configuration\":{\"algorithm\":\"TTT\",\"comment\":\"\",\"eqOracle\":"
                     + "{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1},"
                     + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]},"
                 + "\"counterExample\":\"\",\"hypothesis\":{"

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,6 +57,10 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     private LearnAlgorithms algorithm;
 
+    /** A shot comment to describe the learn set up. */
+    @Size(max = 255)
+    private String comment;
+
     /**
      * Default constructor.
      */
@@ -63,6 +68,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         super();
         this.symbolsAsIdRevisionPairs = new LinkedList<>();
         this.algorithm = LearnAlgorithms.TTT;
+        this.comment = "";
     }
 
     /**
@@ -157,6 +163,26 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     public void setAlgorithm(LearnAlgorithms algorithm) {
         this.algorithm = algorithm;
+    }
+
+    /**
+     * Get the current comment for the learn setup.
+     *
+     * @return The current comment.
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * Set a new short comment.
+     * Must be between max. 25 characters long.
+     *
+     * @param comment
+     *         The new comment.
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     /**
