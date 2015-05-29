@@ -65,7 +65,7 @@
          */
         $scope.deleteSelectedCounters = function () {
             if ($scope.selectedCounters.length > 0) {
-                Counters.deleteSome(project.id, _.pluck($scope.counters, 'name'))
+                Counters.deleteSome(project.id, _.pluck($scope.selectedCounters, 'name'))
                     .then(function () {
                         Toast.success('Counters deleted');
                         _.forEach($scope.selectedCounters, function (counter) {
@@ -73,7 +73,6 @@
                         })
                     })
                     .catch(function (response) {
-                        console.log(response)
                         Toast.danger('<p><strong>Deleting counters failed</strong></p>' + response.data.message);
                     })
             }

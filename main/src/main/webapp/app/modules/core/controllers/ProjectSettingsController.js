@@ -48,13 +48,10 @@
          * Updates a project and saves the updated project in the sessionStorage
          */
         $scope.updateProject = function () {
-
-            // update the project on the server
             ProjectResource.update($scope.project)
                 .then(function (updatedProject) {
                     Toast.success('Project updated');
                     Session.project.save(updatedProject);
-                    $scope.project = updatedProject;
                 })
                 .catch(function () {
                     Toast.danger('<p><strong>Project update failed!</strong></p> The project seems to exists already.');

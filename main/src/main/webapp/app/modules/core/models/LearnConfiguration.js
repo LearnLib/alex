@@ -27,6 +27,7 @@
             this.eqOracle = new EqOracle.Random(1, 10, 20);
             this.algorithm = learnAlgorithms.LSTAR;
             this.resetSymbol = null;
+            this.comment = null;
         }
 
         /**
@@ -38,6 +39,7 @@
             delete this.symbols;
             delete this.algorithm;
             delete this.resetSymbol;
+            delete this.comment;
             return this;
         };
 
@@ -73,6 +75,7 @@
          */
         LearnConfiguration.build = function (data) {
             var learnConfiguration = new LearnConfiguration();
+            learnConfiguration.comment = data.comment;
             learnConfiguration.symbols = data.symbols;
             learnConfiguration.maxAmountOfStepsToLearn = data.maxAmountOfStepsToLearn;
             learnConfiguration.algorithm = data.algorithm;
