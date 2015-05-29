@@ -65,7 +65,8 @@ public class LearnerResultResource {
     @GET
     @Path("{test_nos}/complete")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllStep(@PathParam("project_id") Long projectId, @PathParam("test_nos") IdsList testNos) {
+    public Response getAllStep(@PathParam("project_id") Long projectId,
+                               @PathParam("test_nos") IdsList testNos) {
         try {
             if (testNos.size() == 1) {
                 List<String> result = learnerResultDAO.getAllAsJSON(projectId, testNos.get(0));

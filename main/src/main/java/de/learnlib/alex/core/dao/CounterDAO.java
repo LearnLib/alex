@@ -61,15 +61,15 @@ public interface CounterDAO {
     void update(Counter counter) throws NotFoundException, ValidationException;
 
     /**
-     * Delete a counter.
+     * Deletes counters.
      *
      * @param projectId
      *         The project of the counter.
-     * @param name
-     *         The name of the counter.
+     * @param names
+     *         The names of the counters.
      * @throws NotFoundException
      *         If the project or counter was not found.
      */
-    void delete(Long projectId, String name) throws NotFoundException;
+    void delete(Long projectId, String... names) throws NotFoundException;
 
 }

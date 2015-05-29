@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import javax.validation.ValidationException;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -107,14 +108,17 @@ public class CounterDAOImpl implements CounterDAO {
     }
 
     @Override
-    public void delete(Long projectId, String name) throws NotFoundException {
+    public void delete(Long projectId, String... names) throws NotFoundException {
         HibernateUtil.beginTransaction();
         Session session = HibernateUtil.getSession();
 
         try {
-            Counter result = get(session, projectId, name);
-            session.delete(result);
+            List<Counter> counters = new LinkedList<>();
+            for (String name : names) {
+                counters.add(get(session, projectId, name));
+            }
 
+            counters.forEach(session::delete);
             HibernateUtil.commitTransaction();
         } catch (NotFoundException e) {
             HibernateUtil.rollbackTransaction();

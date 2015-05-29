@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 /**
@@ -36,6 +37,7 @@ public class Counter implements Serializable {
     /** The name of the counter. */
     @NaturalId
     @NotBlank
+    @Pattern(regexp = "[a-zA-Z0-9]*")
     private String name;
 
     /** The value of the counter. */

@@ -24,4 +24,6 @@ public class IdsList extends LinkedList<Long> {
             add(Long.valueOf(number));
         }
     }
+
+
 }

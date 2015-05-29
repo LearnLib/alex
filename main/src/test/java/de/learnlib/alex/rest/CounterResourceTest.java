@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
 
 public class CounterResourceTest extends JerseyTest {
@@ -112,6 +113,36 @@ public class CounterResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         verify(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME);
+    }
+
+    @Test
+    public void shouldReturn404WhenDeleteAnInvalidCounter() throws NotFoundException {
+        willThrow(NotFoundException.class).given(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME);
+
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/counters/" + COUNTER_NAME).request().delete();
+
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        verify(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME);
+    }
+
+    @Test
+    public void shouldDeleteValidCounters() throws NotFoundException {
+        String path = "/projects/" + PROJECT_TEST_ID + "/counters/batch/" + COUNTER_NAME + "," + COUNTER_NAME + "2";
+        Response response = target(path).request().delete();
+
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        verify(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
+    }
+
+    @Test
+    public void shouldReturn404WhenDeleteInvalidCounters() throws NotFoundException {
+        String path = "/projects/" + PROJECT_TEST_ID + "/counters/batch/" + COUNTER_NAME + "," + COUNTER_NAME + "2";
+        willThrow(NotFoundException.class).given(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
+
+        Response response = target(path).request().delete();
+
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        verify(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
     }
 
 }

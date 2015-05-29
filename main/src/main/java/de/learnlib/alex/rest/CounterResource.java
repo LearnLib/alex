@@ -5,6 +5,7 @@ import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
+import de.learnlib.alex.utils.StringList;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -60,9 +61,36 @@ public class CounterResource {
      */
     @DELETE
     @Path("/{counter_name}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name) {
         try {
             counterDAO.delete(projectId, name);
+            return Response.status(Response.Status.NO_CONTENT).build();
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.deleteCounter",
+                                                               Response.Status.NOT_FOUND,
+                                                               e);
+        }
+
+    }
+
+    /**
+     * Delete multiple counters.
+     *
+     * @param projectId
+     *         The Project ID.
+     * @param names
+     *         The names of the counters to remove.
+     * @return Nothing if everything went OK.
+     * @successResponse 204 OK & no content
+     */
+    @DELETE
+    @Path("/batch/{counter_names}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteCounter(@PathParam("project_id") Long projectId,
+                                  @PathParam("counter_names") StringList names) {
+        try {
+            counterDAO.delete(projectId, names.toArray(new String[names.size()]));
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("CounterResource.deleteCounter",

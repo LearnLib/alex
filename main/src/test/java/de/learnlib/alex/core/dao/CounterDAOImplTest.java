@@ -16,7 +16,7 @@ import static org.junit.Assert.fail;
 
 public class CounterDAOImplTest {
 
-    public static final String   COUNTER_NAME  = "Counter No. 1";
+    public static final String   COUNTER_NAME  = "CounterNo1";
     private static final Integer COUNTER_VALUE = 42;
     private static final int AMOUNT_OF_COUNTERS = 10;
 
@@ -79,7 +79,7 @@ public class CounterDAOImplTest {
         for (int i = 0; i < AMOUNT_OF_COUNTERS; i++) {
             Counter tmpCounter = new Counter();
             tmpCounter.setProject(project);
-            tmpCounter.setName("Counter No. " + i);
+            tmpCounter.setName("CounterNo" + i);
             tmpCounter.setValue(i);
             counterDAO.create(tmpCounter);
         }
@@ -134,7 +134,7 @@ public class CounterDAOImplTest {
         counterDAO.create(counter);
         Counter invalidCounter = new Counter();
         invalidCounter.setProject(counter.getProject());
-        invalidCounter.setName(counter.getName() + " 2");
+        invalidCounter.setName(counter.getName() + "2");
         invalidCounter.setValue(1);
         counterDAO.create(invalidCounter); // up to here everything is fine
 
