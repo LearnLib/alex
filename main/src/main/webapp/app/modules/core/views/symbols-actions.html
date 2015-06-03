@@ -22,7 +22,7 @@
                     ng-class="selectedActions.length !== 1 ? 'disabled': ''">
                 Edit
             </button>
-            <button class="btn btn-default" ng-click="deleteSelectedActions()"
+            <button class="btn btn-default" ng-click="deleteActions(selectedActions)"
                     ng-class="selectedActions.length === 0 ? 'disabled': ''">
                 Delete
             </button>
@@ -32,8 +32,18 @@
                 </button>
                 <ul class="dropdown-menu pull-left" role="menu">
                     <li>
-                        <a href ng-click="duplicateSelectedActions()">
-                            <i class="fa fa-copy fa-fw"></i> Duplicate
+                        <a href ng-click="cutActions(selectedActions)">
+                            <i class="fa fa-cut fa-fw"></i> Cut
+                        </a>
+                    </li>
+                    <li>
+                        <a href ng-click="copyActions(selectedActions)">
+                            <i class="fa fa-copy fa-fw"></i> Copy
+                        </a>
+                    </li>
+                    <li>
+                        <a href ng-click="pasteActions()">
+                            <i class="fa fa-paste fa-fw"></i> Paste
                         </a>
                     </li>
                 </ul>
@@ -61,10 +71,10 @@
 
         <div ng-if="symbol.actions">
             <div class="action-list" ng-sortable="sortableOptions">
-                <div ng-repeat="action in symbol.actions"
+                <div class="action-list-item"
+                     ng-repeat="action in symbol.actions"
                      selection-model
-                     selection-model-selected-items="selectedActions"
-                     class="action-list-item">
+                     selection-model-selected-items="selectedActions">
 
                         <input type="checkbox" class="pull-left">
 
@@ -81,8 +91,19 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href ng-click="deleteAction(action)">
+                                        <a href ng-click="deleteActions([action])">
                                             <i class="fa fa-trash fa-fw"></i> Delete
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href ng-click="cutActions([action])">
+                                            <i class="fa fa-cut fa-fw"></i> Cut
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href ng-click="copyActions([action])">
+                                            <i class="fa fa-copy fa-fw"></i> Copy
                                         </a>
                                     </li>
                                 </ul>

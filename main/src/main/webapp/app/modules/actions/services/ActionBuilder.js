@@ -58,7 +58,9 @@
             if (obj.type !== undefined) {
                 action = this.createFromType(obj.type);
                 for (var key in obj) {
-                    action.set(key, obj[key]);
+                    if (key[0] !== '_') {
+                        action.set(key, obj[key]);
+                    }
                 }
                 return action;
             } else {

@@ -7,7 +7,7 @@
 
     SymbolsActionsController.$inject = [
         '$scope', '$stateParams', 'Symbol', 'SymbolResource', 'SessionService', 'ToastService', 'ErrorService', '_',
-        'ActionBuilder'
+        'ActionBuilder', 'ClipboardService'
     ];
 
     /**
@@ -26,10 +26,11 @@
      * @param Error - The ErrorService
      * @param _ - Lodash
      * @param ActionBuilder - The ActionBuilder
+     * @param Clipboard - The ClipboardService
      * @constructor
      */
     function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, Session, Toast, Error, _,
-                                      ActionBuilder) {
+                                      ActionBuilder, Clipboard) {
 
         /**
          * A copy of $scope.symbol to revert unsaved changes
@@ -73,7 +74,7 @@
          */
         $scope.sortableOptions = {
             animation: 150,
-            onUpdate: function(){
+            onUpdate: function () {
                 $scope.hasUnsavedChanges = true
             }
         };
@@ -91,7 +92,7 @@
 
                     // add symbol to scope and create a copy in order to revert changes
                     $scope.symbol = symbol;
-                    symbolCopy = Symbol.build(symbol);
+                    $scope.symbolCopy = Symbol.build(symbol);
                 })
                 .catch(function () {
                     Error.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + "' could not be found");
@@ -100,39 +101,19 @@
         }());
 
         /**
-         * Deletes the actions that the user selected from the scope
+         * Deletes a list of actions
+         *
+         * @param {Object[]} actions - The actions to be deleted
          */
-        $scope.deleteSelectedActions = function () {
-            if ($scope.selectedActions.length > 0) {
-                _.forEach($scope.selectedActions, $scope.deleteAction);
-                Toast.success('Actions deleted');
-            }
-            $scope.hasUnsavedChanges = true;
-        };
-
-        /**
-         * Creates duplicates of selected actions and adds them at the end of the actions list
-         */
-        $scope.duplicateSelectedActions = function () {
-            if ($scope.selectedActions.length > 0) {
-                var actions = ActionBuilder.createFromObjects(angular.copy($scope.selectedActions));
-                _.forEach(actions, function(action){
-                    action._id = _.uniqueId();
-                    $scope.symbol.actions.push(action)
+        $scope.deleteActions = function (actions) {
+            if (actions.length > 0) {
+                _.forEach(actions, function (a) {
+                    _.remove($scope.symbol.actions, {_id: a._id});
+                    _.remove($scope.selectedActions, {id: a._id});
                 });
+                Toast.success('Action' + (actions.length > 1 ? 's' : '') + ' deleted');
                 $scope.hasUnsavedChanges = true;
             }
-        };
-
-        /**
-         * Removes an action from a symbol
-         *
-         * @param {Object} action
-         */
-        $scope.deleteAction = function (action) {
-            _.remove($scope.symbol.actions, {_id: action._id});
-            Toast.success('Action deleted');
-            $scope.hasUnsavedChanges = true;
         };
 
         /**
@@ -155,7 +136,7 @@
          */
         $scope.updateAction = function (updatedAction) {
             var action = _.find($scope.symbol.actions, {_id: updatedAction._id});
-            _.forIn(action, function(v, k){
+            _.forIn(action, function (v, k) {
                 action[k] = updatedAction[k];
             });
             Toast.success('Action updated');
@@ -170,7 +151,6 @@
 
             // update the copy for later reverting
             var copy = Symbol.build($scope.symbol);
-
             _.forEach(copy.actions, function (a) {
                 delete a._id;
                 delete a._selected;
@@ -198,5 +178,39 @@
             Toast.info('Changes reverted to the last update');
             $scope.hasUnsavedChanges = false;
         };
+
+        /**
+         * Copies actions to the clipboard
+         *
+         * @param {Object[]} actions
+         */
+        $scope.copyActions = function (actions) {
+            Clipboard.copy('actions', angular.copy(actions));
+            Toast.info(actions.length + ' action[s] copied to clipboard');
+        };
+
+        /**
+         * Copies actions to the clipboard and removes them from the scope
+         *
+         * @param {Object[]} actions
+         */
+        $scope.cutActions = function (actions) {
+            Clipboard.cut('actions', angular.copy(actions));
+            $scope.deleteActions(actions);
+            Toast.info(actions.length + ' action[s] cut to clipboard');
+            $scope.hasUnsavedChanges = true;
+        };
+
+        /**
+         * Pastes the actions from the clipboard to the end of of the action list
+         */
+        $scope.pasteActions = function () {
+            var actions = Clipboard.paste('actions');
+            if (actions !== null) {
+                _.forEach(ActionBuilder.createFromObjects(actions), $scope.addAction);
+                Toast.info(actions.length + 'action[s] pasted from clipboard');
+                $scope.hasUnsavedChanges = true;
+            }
+        }
     }
 }());
