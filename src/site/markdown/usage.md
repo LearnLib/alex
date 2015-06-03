@@ -237,6 +237,36 @@ For the manual creation of actions, have a look at [here].
 | /learn/results/statistics           | Generate statistics from learning results                 |
 | /learn/results/compare/\<testNos\>  | Side-by-side comparison of multiple learning results      |
 
+<div class="video" data-name="learning-experiment-modeling"></div>
+
+For a learning process, it is required to select a set of symbols that should be learned and to choose a single symbol
+that should be used to reset the application. The alphabet can be modeled by selecting single symbols or complete 
+symbol groups. The reset symbol can be marked by clicking the blue circle on each entry. Note that you *can* include
+the reset symbol in the alphabet, but be sure that is what you want.
+
+From there on, a learning process can be started and ALEX learns your application. Optionally configure the learning
+process by the following points:
+
+**Algorithm** <br/>
+There are currently four algorithms supported: L\*, Discrimination Tree, DHC and TTT. As default, the L\* algorithm
+is set, but other ones might be faster.
+
+**Equivalence oracle** <br/>
+ALEX supports three kinds of oracles. The first one is *Random Word*, the second one is *Complete* and the last one is 
+*Sample*. The first two oracles approximate equivalence queries automatically to find counterexamples while when using 
+*Sample*, you are asked to search and enter them by yourself in between iterations. The default setting is *Random Word*.
+
+**Steps to learn** <br/>
+You can also define how many hypotheses should be generated at maximum. When the learner stops, you can still continue
+learning from this point.
+
+Furthermore a comment can be added that makes it easier to identify a specific learning result between others. 
+
+While ALEX is learning there are some restrictions concerning the functionality which are:
+
+* You can not delete the current project
+* You can not start another learning process
+
 ### <a name="learning-experiment-modeling-hypothesis-interaction"></a> Hypothesis Interaction
 
 #### <a name="learning-experiment-modeling-internal-data-structures"></a> Internal Data Structures
