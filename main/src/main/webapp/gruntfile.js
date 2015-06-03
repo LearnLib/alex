@@ -190,6 +190,10 @@ module.exports = function (grunt) {
                     path: './node_modules/protractor/bin/'
                 },
                 all: {}
+            },
+
+            clean: {
+                js: ["app/templates.js"]
             }
         });
 
@@ -203,8 +207,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-protractor-runner');
     grunt.loadNpmTasks('grunt-protractor-webdriver');
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-contrib-clean');
 
-    grunt.registerTask('build-js', ['html2js', 'concat', 'uglify']);
+    grunt.registerTask('build-js', ['html2js', 'concat', 'uglify', 'clean']);
     grunt.registerTask('build-css', ['sass', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-js']);
