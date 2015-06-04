@@ -18,7 +18,7 @@
     function SymbolModel(_, ActionBuilder) {
 
         /**
-         * The symbol model.
+         * The symbol model
          *
          * @param {string} name - The name of the symbol
          * @param {string} abbreviation - The abbreviation of the symbol
@@ -37,14 +37,17 @@
          * @returns {Symbol} - The symbol instance
          */
         Symbol.build = function (data) {
-            var symbol = new Symbol(data.name, data.abbreviation);
-            symbol.actions = data.actions ? ActionBuilder.createFromObjects(data.actions) : [];
-            symbol.id = data.id;
-            symbol.revision = data.revision;
-            symbol.project = data.project;
-            symbol.hidden = data.hidden;
-            symbol.group = data.group;
-            return symbol;
+            return angular.extend(new Symbol(
+                data.name,
+                data.abbreviation
+            ), {
+                actions: data.actions ? ActionBuilder.createFromObjects(data.actions) : [],
+                id: data.id,
+                revision: data.revision,
+                project: data.project,
+                hidden: data.hidden,
+                group: data.group
+            });
         };
 
         /**

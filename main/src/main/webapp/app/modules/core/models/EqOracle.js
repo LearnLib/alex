@@ -4,22 +4,25 @@
         .module('ALEX.core')
         .factory('EqOracle', EqOracleModel);
 
-    EqOracleModel.$inject = ['eqOracles'];
-
     /**
-     * The factory that holds the models for an eq oracle
+     * Contains models for eq oracles
      *
-     * @param eqOracles - The constants for eq oracle types
-     * @returns {{Random: Random, Complete: Complete, Sample: Sample, build: build, createFromType: createFromType}}
+     * @returns {{}}
      * @constructor
      */
-    function EqOracleModel(eqOracles) {
-        return {
-            Random: Random,
-            Complete: Complete,
-            Sample: Sample,
-            build: build,
-            createFromType: createFromType
+    function EqOracleModel() {
+
+        var EqOracle = {};
+
+        /**
+         * The dictionary of eq oracle types
+         *
+         * @type {{RANDOM: string, COMPLETE: string, SAMPLE: string}}
+         */
+        EqOracle.types = {
+            RANDOM: 'random_word',
+            COMPLETE: 'complete',
+            SAMPLE: 'sample'
         };
 
         /**
@@ -30,67 +33,66 @@
          * @param {number} maxNoOfTests - The maximum number of words that are generated
          * @constructor
          */
-        function Random(minLength, maxLength, maxNoOfTests) {
-            this.type = eqOracles.RANDOM;
-            this.minLength = minLength || 1;
-            this.maxLength = maxLength || 1;
-            this.maxNoOfTests = maxNoOfTests || 1;
-        }
+        EqOracle.Random = function (minLength, maxLength, maxNoOfTests) {
+            this.type = EqOracle.types.RANDOM;
+            this.minLength = angular.isDefined(minLength) && minLength > 0 ? minLength : 1;
+            this.maxLength = angular.isDefined(maxLength) && maxLength > 0 ? maxLength : 1;
+            this.maxNoOfTests = angular.isDefined(maxNoOfTests) && maxNoOfTests > 0 ? maxNoOfTests : 1;
+        };
 
         /**
-         * The model for an eq oracle that searches in the hypothesis for counter examples starting from the start
-         * state
+         * The model to the complete eq oracle
          *
          * @param {number} minDepth - The minimum depth
          * @param {number} maxDepth - The maximum depth
          * @constructor
          */
-        function Complete(minDepth, maxDepth) {
-            this.type = eqOracles.COMPLETE;
-            this.minDepth = minDepth || 1;
-            this.maxDepth = maxDepth || 1;
-        }
+        EqOracle.Complete = function (minDepth, maxDepth) {
+            this.type = EqOracle.types.COMPLETE;
+            this.minDepth = angular.isDefined(minDepth) && minDepth > 0 ? minDepth : 1;
+            this.maxDepth = angular.isDefined(maxDepth) && maxDepth > 0 ? maxDepth : 1;
+        };
 
         /**
-         * The model for an eq oracle where counter examples are chosen manually
+         * The model of a sample eq oracle
          *
-         * @param {Object[]} counterExamples
+         * @param {{input: string, output: string}[]} counterExamples
          * @constructor
          */
-        function Sample(counterExamples) {
-            this.type = eqOracles.SAMPLE;
+        EqOracle.Sample = function (counterExamples) {
+            this.type = EqOracle.types.SAMPLE;
             this.counterExamples = counterExamples || [];
-        }
+        };
 
         /**
-         * Creates an instance of an eqOracle from data
+         * Creates an instances of an eq oracle from an object or an eq oracle type
          *
-         * @param {Object} data
-         * @returns {*}
+         * @param {Object|string} data - The object presenting an eq oracle or the string of an eq oracle type
+         * @returns {*|null} - An instance of an eq oracle or null
          */
-        function build(data) {
-            switch (data.type) {
-                case eqOracles.RANDOM:
-                    return new Random(data.minLength, data.maxLength, data.maxNoOfTests);
-                case eqOracles.COMPLETE:
-                    return new Complete(data.minDepth, data.maxDepth);
-                case eqOracles.SAMPLE:
-                    return new Sample(data.counterExamples);
-                default :
-                    return null;
+        EqOracle.build = function (data) {
+            function create(data) {
+                switch (data.type) {
+                    case EqOracle.types.RANDOM:
+                        return new EqOracle.Random(data.minLength, data.maxLength, data.maxNoOfTests);
+                    case EqOracle.types.COMPLETE:
+                        return new EqOracle.Complete(data.minDepth, data.maxDepth);
+                    case EqOracle.types.SAMPLE:
+                        return new EqOracle.Sample(data.counterExamples);
+                    default :
+                        return null;
+                }
             }
-        }
 
-        /**
-         * Creates a new instance of an EqOracle given a specific type
-         *
-         * @param {string} type
-         * @returns {*}
-         */
-        function createFromType(type) {
-            return build({
-                type: type
-            })
-        }
+            if (angular.isObject(data)) {
+                return create(data);
+            } else if (angular.isString(data)) {
+                return create({type: data})
+            } else {
+                return null;
+            }
+        };
+
+        return EqOracle;
     }
 }());

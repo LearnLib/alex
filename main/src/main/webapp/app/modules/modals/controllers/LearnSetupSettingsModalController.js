@@ -6,7 +6,7 @@
         .controller('LearnSetupSettingsModalController', LearnSetupSettingsModalController);
 
     LearnSetupSettingsModalController.$inject = [
-        '$scope', '$modalInstance', 'modalData', 'eqOracles', 'learnAlgorithms', 'EqOracle', 'LearnConfiguration'
+        '$scope', '$modalInstance', 'modalData', 'learnAlgorithms', 'EqOracle', 'LearnConfiguration'
     ];
 
     /**
@@ -17,18 +17,17 @@
      * @param $scope
      * @param $modalInstance
      * @param modalData - The data that is passed to the controller. Must be an object with the property 'learnConfiguration'
-     * @param eqOracles - The constants for eqOracles types
      * @param learnAlgorithms - The constants for learnAlgorithm names
      * @param EqOracle - The model for an EqOracle
      * @param LearnConfiguration
      * @constructor
      */
-    function LearnSetupSettingsModalController($scope, $modalInstance, modalData, eqOracles, learnAlgorithms, EqOracle, LearnConfiguration) {
+    function LearnSetupSettingsModalController($scope, $modalInstance, modalData, learnAlgorithms, EqOracle, LearnConfiguration) {
 
         /**
          * The constants for eqOracles types
          */
-        $scope.eqOracles = eqOracles;
+        $scope.eqOracles = EqOracle.types;
 
         /**
          * The model for the select input that holds a type for an eqOracle
@@ -51,7 +50,7 @@
          * Sets the Eq Oracle of the learn configuration depending on the selected value
          */
         $scope.setEqOracle = function () {
-            $scope.learnConfiguration.eqOracle = EqOracle.createFromType($scope.selectedEqOracle)
+            $scope.learnConfiguration.eqOracle = EqOracle.build($scope.selectedEqOracle)
         };
 
         /**

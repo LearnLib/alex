@@ -32,12 +32,12 @@
          * @param {Object} data
          * @returns {SymbolGroup}
          */
-        SymbolGroup.build = function(data) {
-            var g = new SymbolGroup(data.name);
-            g.id = data.id;
-            g.project = data.project;
-            g.symbols = _.map(data.symbols, Symbol.build);
-            return g;
+        SymbolGroup.build = function (data) {
+            return angular.extend(new SymbolGroup(data.name), {
+                id: data.id,
+                project: data.project,
+                symbols: _.map(data.symbols, Symbol.build)
+            });
         };
 
         /**
@@ -46,11 +46,11 @@
          * @param {Object} response - The HTTP response
          * @returns {SymbolGroup|SymbolGroup[]}
          */
-        SymbolGroup.transformApiResponse = function(response){
+        SymbolGroup.transformApiResponse = function (response) {
             if (angular.isArray(response.data)) {
                 return _(response.data)
                     // remove hidden symbols because they are never needed
-                    .forEach(function(group){
+                    .forEach(function (group) {
                         group.symbols = _.filter(group.symbols, {hidden: false})
                     })
                     .map(SymbolGroup.build)

@@ -32,17 +32,17 @@
          * @returns {LearnResult} - The instance of LearnResult from the data
          */
         LearnResult.build = function (data) {
-            var result = new LearnResult();
-            result.configuration = LearnConfiguration.build(data.configuration);
-            result.hypothesis = data.hypothesis;
-            result.project = data.project;
-            result.sigma = data.sigma;
-            result.stepNo = data.stepNo;
-            result.testNo = data.testNo;
-            result.algorithmInformation = data.algorithmInformation;
-            result.statistics = data.statistics;
-            result.errorText = data.errorText;
-            return result;
+            return angular.extend(new LearnResult(), {
+                configuration: LearnConfiguration.build(data.configuration),
+                hypothesis: data.hypothesis,
+                project: data.project,
+                sigma: data.sigma,
+                stepNo: data.stepNo,
+                testNo: data.testNo,
+                algorithmInformation: data.algorithmInformation,
+                statistics: data.statistics,
+                errorText: data.errorText
+            });
         };
 
         /**
@@ -51,13 +51,13 @@
          * @param response
          * @returns {*}
          */
-        LearnResult.transformApiResponse = function(response){
+        LearnResult.transformApiResponse = function (response) {
             if (angular.isArray(response.data)) {
-                if (angular.isArray(response.data[0])){
-                    return _.forEach(response.data, function(completeResult){
+                if (angular.isArray(response.data[0])) {
+                    return _.forEach(response.data, function (completeResult) {
                         _.map(completeResult, LearnResult.build);
                     })
-                }else {
+                } else {
                     return _.map(response.data, LearnResult.build);
                 }
             } else {

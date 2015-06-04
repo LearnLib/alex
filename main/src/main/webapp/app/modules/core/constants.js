@@ -31,13 +31,6 @@
             FAILED: 'FAILED'
         })
 
-        // eq oracles
-        .constant('eqOracles', {
-            RANDOM:     'random_word',
-            COMPLETE:   'complete',
-            SAMPLE:     'sample'
-        })
-
         // learn algorithms
         .constant('learnAlgorithms', {
             LSTAR:                  'LSTAR',

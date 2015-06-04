@@ -7,7 +7,7 @@
         .filter('formatEqOracle', formatEqOracle)
         .filter('formatAlgorithm', formatAlgorithm);
 
-    formatEqOracle.$inject = ['eqOracles'];
+    formatEqOracle.$inject = ['EqOracle'];
     formatAlgorithm.$inject = ['learnAlgorithms'];
 
     /**
@@ -33,10 +33,10 @@
     /**
      * The filter to format a EQ type constant to something more readable
      *
-     * @param {Object} eqOracles - The EQ oracle constant
+     * @param {Object} EqOracle - The eq oracle model
      * @returns {filter}
      */
-    function formatEqOracle(eqOracles) {
+    function formatEqOracle(EqOracle) {
         return filter;
 
         /**
@@ -45,11 +45,11 @@
          */
         function filter(type) {
             switch (type) {
-                case eqOracles.RANDOM:
+                case EqOracle.types.RANDOM:
                     return 'Random Word';
-                case eqOracles.COMPLETE:
+                case  EqOracle.types.COMPLETE:
                     return 'Complete';
-                case eqOracles.SAMPLE:
+                case  EqOracle.types.SAMPLE:
                     return 'Sample';
                 default:
                     return type;

@@ -74,14 +74,14 @@
          * @returns {LearnConfiguration}
          */
         LearnConfiguration.build = function (data) {
-            var learnConfiguration = new LearnConfiguration();
-            learnConfiguration.comment = data.comment;
-            learnConfiguration.symbols = data.symbols;
-            learnConfiguration.maxAmountOfStepsToLearn = data.maxAmountOfStepsToLearn;
-            learnConfiguration.algorithm = data.algorithm;
-            learnConfiguration.eqOracle = EqOracle.build(data.eqOracle);
-            learnConfiguration.resetSymbol = data.resetSymbol;
-            return learnConfiguration;
+            return angular.extend(new LearnConfiguration(), {
+                comment: data.comment,
+                symbols: data.symbols,
+                maxAmountOfStepsToLearn: data.maxAmountOfStepsToLearn,
+                algorithm: data.algorithm,
+                eqOracle: EqOracle.build(data.eqOracle),
+                resetSymbol: data.resetSymbol
+            });
         };
 
         return LearnConfiguration;

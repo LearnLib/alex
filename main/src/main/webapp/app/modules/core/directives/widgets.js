@@ -9,7 +9,7 @@
 
     widget.$inject = ['paths'];
     counterexamplesWidget.$inject = ['paths', 'CounterExampleService', 'LearnerService', 'ToastService', 'outputAlphabet'];
-    learnResumeSettingsWidget.$inject = ['paths', 'eqOracles', 'EqOracle'];
+    learnResumeSettingsWidget.$inject = ['paths', 'EqOracle'];
 
 
     /**
@@ -225,11 +225,10 @@
      * Use: <div learn-resume-settings-widget learn-configuration="..."></div>
      *
      * @param paths - The constant for applications paths
-     * @param eqOracles
      * @param EqOracle
      * @returns {{scope: {learnConfiguration: string}, templateUrl: string, link: link}}
      */
-    function learnResumeSettingsWidget(paths, eqOracles, EqOracle) {
+    function learnResumeSettingsWidget(paths, EqOracle) {
 
         // the directive
         return {
@@ -247,7 +246,7 @@
              * The dictionary for eq oracle types
              * @type {Object}
              */
-            scope.eqOracles = eqOracles;
+            scope.eqOracles = EqOracle.types;
 
             /**
              * The selected eq oracle type from the select box
@@ -259,7 +258,7 @@
              * Creates a new eq oracle object from the selected type and assigns it to the configuration
              */
             scope.setEqOracle = function () {
-                scope.learnConfiguration.eqOracle = EqOracle.createFromType(scope.selectedEqOracle);
+                scope.learnConfiguration.eqOracle = EqOracle.build(scope.selectedEqOracle);
             };
         }
     }

@@ -37,13 +37,13 @@
          * @returns {Project}
          */
         Project.build = function(data){
-            var p = new Project(
+            return angular.extend(new Project(
                 data.name,
                 data.baseUrl,
                 data.description
-            );
-            p.id = data.id;
-            return p;
+            ), {
+                id: data.id
+            });
         };
 
         /**
