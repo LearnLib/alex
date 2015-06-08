@@ -252,6 +252,17 @@ form {
       user-select: none;
       -webkit-user-select: none;
     }
+    &.disabled {
+      .action-description {
+        text-decoration: line-through;
+        opacity: 0.5;
+      }
+      //&:hover {
+      //  .action-description {
+      //    text-decoration: none;
+      //  }
+      //}
+    }
   }
 }
 

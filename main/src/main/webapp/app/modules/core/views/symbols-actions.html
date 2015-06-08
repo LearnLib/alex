@@ -72,6 +72,7 @@
         <div ng-if="symbol.actions">
             <div class="action-list" ng-sortable="sortableOptions">
                 <div class="action-list-item"
+                     ng-class="action.disabled ? 'disabled' : ''"
                      ng-repeat="action in symbol.actions"
                      selection-model
                      selection-model-selected-items="selectedActions">
@@ -109,7 +110,16 @@
                                 </ul>
                             </div>
 
-                            <span ng-bind="action.toString()"></span>
+                            <span class="btn btn-xs pull-right" href ng-click="action.disabled = !action.disabled" selection-model-ignore>
+                                <span ng-show="!action.disabled" tooltip-placement="bottom" tooltip="Disable" >
+                                    <i class="fa fa-toggle-on fa-fw text-success"></i>
+                                </span>
+                                <span ng-show="action.disabled" tooltip-placement="bottom" tooltip="Enable">
+                                    <i class="fa fa-toggle-off fa-fw text-danger"></i>
+                                </span>
+                            </span>
+
+                            <span class="action-description" ng-bind="action.toString()"></span>
 
                             <div>
                                 <label class="label label-info" ng-show="action.negated">Negate</label>

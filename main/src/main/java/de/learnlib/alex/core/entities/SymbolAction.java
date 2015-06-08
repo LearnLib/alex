@@ -113,6 +113,9 @@ public abstract class SymbolAction implements Serializable {
     @JsonIgnore
     protected int number;
 
+    /** Should the action be executed or skipped? */
+    protected boolean disabled;
+
     /** Negate the outcome of the action? */
     protected boolean negated;
 
@@ -236,6 +239,22 @@ public abstract class SymbolAction implements Serializable {
     public void setIgnoreFailure(boolean ignoreFailure) {
         this.ignoreFailure = ignoreFailure;
     }
+
+    /**
+     * As a default, an action is executed when the learner calls a symbols. If this method returns false, the learner
+     * skips the execution of the action and executes the following
+     *
+     * @return true if the action should be executed, false if should be skipped
+     */
+    public boolean isDisabled() {return disabled; }
+
+    /**
+     * Set the enable flag, i.e. if the execution of the action should be skipped
+     *
+     * @param disabled
+     *          true if the action should be executed, false if should be skipped
+     */
+    public void setDisabled(boolean disabled) { this.disabled = disabled; }
 
     /**
      * Execute the action.

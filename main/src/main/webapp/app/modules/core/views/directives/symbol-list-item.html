@@ -16,12 +16,12 @@
 
         <a ui-sref="symbols.actions({symbolId:symbol.id})"
            ng-show="showActionsLink">
-            <span ng-bind="symbol.actions.length"></span> Actions &nbsp;<i class="fa fa-edit"></i>
+            <span ng-bind="symbol.countEnabledActions()"></span> Actions &nbsp;<i class="fa fa-edit"></i>
         </a>
 
         <span class="text-muted"
               ng-show="!showActionsLink">
-            <span ng-bind="symbol.actions.length"></span> Actions
+            <span ng-bind="symbol.countEnabledActions()"></span> Actions
         </span>
 
         <a class="cursor-pointer"
@@ -32,7 +32,7 @@
         </a>
 
         <ol collapse="!symbol._collapsed">
-            <li ng-repeat="action in symbol.actions"
+            <li ng-repeat="action in symbol.actions" ng-show="!action.disabled"
                 ng-bind="action.toString()"></li>
         </ol>
     </div>
