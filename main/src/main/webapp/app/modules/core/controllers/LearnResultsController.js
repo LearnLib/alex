@@ -92,7 +92,7 @@
         /**
          * Opens the learning result compare view with the selected results opened
          */
-        $scope.openSelectedResults = function(){
+        $scope.openSelectedResults = function () {
             if ($scope.selectedResults.length > 0) {
                 var testNos = _.pluck($scope.selectedResults, 'testNo');
                 $state.go('learn.results.compare', {testNos: testNos.join(',')})

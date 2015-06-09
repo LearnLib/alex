@@ -79,7 +79,7 @@
         };
 
         // initialize the controller
-        (function init () {
+        (function init() {
 
             // get all final learn results of the project
             LearnResultResource.getAllFinal(project.id)

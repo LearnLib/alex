@@ -30,7 +30,7 @@
         /**
          * Make a call to the API to create a new project
          */
-        $scope.createProject = function() {
+        $scope.createProject = function () {
             ProjectResource.create($scope.project)
                 .then(function (createdProject) {
                     Toast.success('Project "' + createdProject.name + '" created');

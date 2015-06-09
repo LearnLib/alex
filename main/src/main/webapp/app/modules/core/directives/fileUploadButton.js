@@ -22,7 +22,7 @@
             },
             link: link
         };
-        function link(scope, el, attrs) {
+        function link(scope, el) {
             var reader = new FileReader();
 
             // call the callback with the loaded text string

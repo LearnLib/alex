@@ -77,7 +77,7 @@
                 Learner.isActive()
                     .then(function (data) {
                         if (!data.active) {
-                            Learner.getStatus().then(function(result){
+                            Learner.getStatus().then(function (result) {
                                 if (result.error) {
                                     Error.setErrorMessage(result.errorText);
                                     Error.goToErrorPage();
@@ -117,7 +117,7 @@
             var config = LearnConfiguration.build(_.last($scope.results).configuration).toLearnResumeConfiguration();
 
             Learner.resume(project.id, _.last($scope.results).testNo, config)
-                .then(function(){
+                .then(function () {
                     CounterExampleService.resetCurrentCounterexample();
                     poll();
                 })

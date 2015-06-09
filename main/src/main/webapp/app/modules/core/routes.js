@@ -224,7 +224,6 @@
                     requiresProject: false
                 }
             })
-
             .state('error', {
                 url: '/error',
                 controller: 'ErrorController',

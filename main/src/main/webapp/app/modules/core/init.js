@@ -7,7 +7,7 @@
         .config(['ngToastProvider', 'selectionModelOptionsProvider',
             function (ngToastProvider, selectionModelOptionsProvider) {
 
-                // configure toast position
+                // configure ngToast toast position
                 ngToastProvider.configure({
                     verticalPosition: 'top',
                     horizontalPosition: 'center',
@@ -24,16 +24,10 @@
                 });
             }])
 
-        .run(['$rootScope', '$state', '_',
-            function ($rootScope, $state, _) {
+        .run(['$rootScope', '_',
+            function ($rootScope, _) {
 
-                // make some stuff available for use in templates
+                // make lodash available for use in templates
                 $rootScope._ = _;
-
-                // workaround for go back in history button since ui.router does not support it
-                // save previous state in ui.router $state service
-                $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
-                    $state.previous = fromState;
-                });
             }])
 }());

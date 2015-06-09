@@ -55,8 +55,9 @@
                     variables-counters-occurrence-modal-handle>
                 Occurrences
             </button>
-            <button class="btn btn-default btn-xs" ng-click="revertChanges()">Reset</button>
-            <button class="btn btn-success btn-xs" ng-click="saveChanges()">Save</button>
+            <button class="btn btn-success btn-xs"
+                    ng-class="!hasChanged ? 'disabled' : ''"
+                    ng-click="saveChanges()">Save</button>
         </div>
 
     </div>
@@ -65,7 +66,7 @@
 <div class="view-body">
     <div class="container">
 
-        <div class="alert alert-info alert-condensed" ng-show="hasUnsavedChanges">
+        <div class="alert alert-info alert-condensed" ng-show="hasChanged">
             <i class="fa fa-fw fa-info"></i> There are unsaved changes made to the symbol
         </div>
 
@@ -110,7 +111,7 @@
                                 </ul>
                             </div>
 
-                            <span class="btn btn-xs pull-right" href ng-click="action.disabled = !action.disabled" selection-model-ignore>
+                            <span class="btn btn-xs pull-right" href ng-click="toggleDisableAction(action)" selection-model-ignore>
                                 <span ng-show="!action.disabled" tooltip-placement="bottom" tooltip="Disable" >
                                     <i class="fa fa-toggle-on fa-fw text-success"></i>
                                 </span>

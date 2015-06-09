@@ -41,7 +41,7 @@
 
         // fetch symbol groups from API
         // extract all symbols
-        (function init(){
+        (function init() {
             SymbolGroupResource.getAll(project.id, {embedSymbols: true})
                 .then(function (groups) {
                     $scope.groups = groups;
@@ -62,11 +62,11 @@
                     return symbol.id;
                 }).value();
 
-            _.forEach(symbols, function(symbol){
-                _.forEach(symbol.actions, function(action){
+            _.forEach(symbols, function (symbol) {
+                _.forEach(symbol.actions, function (action) {
                     if (action.type === actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL) {
                         action.symbolToExecute.revision = 1;
-                        _.forEach(symbols, function(s, j){
+                        _.forEach(symbols, function (s, j) {
                             if (s.id === action.symbolToExecute.id) {
                                 action.symbolToExecute.id = j + 1;
                             }

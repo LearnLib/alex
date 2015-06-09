@@ -17,14 +17,11 @@
      * @returns {{link: link}}
      */
     function dispatchResize() {
-
-        // the directive
         return {
             restrict: 'A',
             link: link
         };
 
-        // the directives behavior
         function link(scope, el, attrs) {
             el.on('click', function () {
                 var delay = 0;

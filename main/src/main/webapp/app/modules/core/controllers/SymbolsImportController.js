@@ -69,7 +69,7 @@
         $scope.uploadSelectedSymbols = function () {
             if ($scope.selectedSymbols.length > 0) {
                 SymbolResource.getAll(project.id)
-                    .then(function(existingSymbols){
+                    .then(function (existingSymbols) {
                         var maxId = _.max(existingSymbols, 'id').id;
                         var symbols = _($scope.selectedSymbols)
                             .map(Symbol.build)
@@ -80,7 +80,7 @@
                                 // search in all actions of all symbols for an action with the type EXECUTE_SYMBOL and
                                 // adjust referenced ids according to the max. existing id
                                 if (existingSymbols.length > 0 && $scope.adjustReferences) {
-                                    _.forEach(symbol.actions, function(action){
+                                    _.forEach(symbol.actions, function (action) {
                                         if (action.type === actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL) {
                                             action.symbolToExecute.id += maxId;
                                         }

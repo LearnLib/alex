@@ -48,7 +48,7 @@
         // load all final learn results of all test an then load the complete test results from the test numbers
         // that are passed from the url in the panels
         (function init() {
-            if (angular.isUndefined($stateParams.testNos)){
+            if (angular.isUndefined($stateParams.testNos)) {
                 Error.setErrorMessage("There are no test numbers defined in the URL");
                 Error.goToErrorPage();
             }
@@ -68,16 +68,16 @@
          */
         function loadComplete(testNos, index) {
             LearnResultResource.getComplete(project.id, testNos.split(','))
-                .then(function(completeResults){
-                    _.forEach(completeResults, function(result){
-                        if (angular.isUndefined(index)){
+                .then(function (completeResults) {
+                    _.forEach(completeResults, function (result) {
+                        if (angular.isUndefined(index)) {
                             $scope.panels.push(result);
-                        }else{
+                        } else {
                             $scope.panels[index] = result;
                         }
                     });
                 })
-                .catch(function(response){
+                .catch(function (response) {
                     Error.setErrorMessage(response.data.message);
                     Error.goToErrorPage();
                 })

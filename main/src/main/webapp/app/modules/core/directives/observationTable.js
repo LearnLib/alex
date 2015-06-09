@@ -28,7 +28,7 @@
             templateUrl: paths.COMPONENTS + '/core/views/directives/observation-table.html'
         };
 
-        function link(scope, el, attrs) {
+        function link(scope) {
 
             // the object of the table for the template
             scope.table = null;

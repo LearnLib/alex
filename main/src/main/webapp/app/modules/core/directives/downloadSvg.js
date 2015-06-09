@@ -8,10 +8,10 @@
     downloadSvg.$inject = ['FileDownloadService'];
 
     /**
-     * The directive that lets you directly download a svg element from the html page into a file. It attaches a click
-     * event to the element it was used on, that download the svg. It can only be used as an attribute.
+     * The directive that lets you directly download an SVG element from the html page into a file. It attaches a click
+     * event to the element it was used on, that downloads the SVG. It can only be used as an attribute.
      *
-     * Expects an attribute 'ancestorOrElement' whose value should be the selector of the svg or of an ancestor of an
+     * Expects an attribute 'ancestorOrElement' whose value should be the selector of the SVG or of an ancestor of an
      * svg.
      *
      * Use: '<button download-svg ancestor-or-element="#...">Click Me!</button>'.
@@ -20,8 +20,6 @@
      * @returns {{restrict: string, link: link}}
      */
     function downloadSvg(FileDownloadService) {
-
-        // the directive
         return {
             restrict: 'A',
             scope: {
@@ -30,8 +28,7 @@
             link: link
         };
 
-        // the directives behaviour
-        function link(scope, el, attrs) {
+        function link(scope, el) {
             el.on('click', function () {
                 var svg;
 

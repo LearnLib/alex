@@ -66,7 +66,7 @@
          * Whether there are unsaved changes to the symbol
          * @type {boolean}
          */
-        $scope.hasUnsavedChanges = false;
+        $scope.hasChanged = false;
 
         /**
          * Options for ng-sortable directive from Sortable lib
@@ -75,9 +75,18 @@
         $scope.sortableOptions = {
             animation: 150,
             onUpdate: function () {
-                $scope.hasUnsavedChanges = true
+                setChanged(true);
             }
         };
+
+        /**
+         * Sets the flag that indicates if the symbol or its actions have changed
+         *
+         * @param {boolean} b - If the symbol has changed by any means
+         */
+        function setChanged(b) {
+            $scope.hasChanged = b;
+        }
 
         // load all actions from the symbol
         // redirect to an error page when the symbol from the url id cannot be found
@@ -112,7 +121,7 @@
                     _.remove($scope.selectedActions, {id: a._id});
                 });
                 Toast.success('Action' + (actions.length > 1 ? 's' : '') + ' deleted');
-                $scope.hasUnsavedChanges = true;
+                setChanged(true);
             }
         };
 
@@ -125,7 +134,7 @@
             action._id = _.uniqueId();
             $scope.symbol.actions.push(action);
             Toast.success('Action created');
-            $scope.hasUnsavedChanges = true;
+            setChanged(true);
             $scope.map = {};
         };
 
@@ -140,8 +149,8 @@
                 action[k] = updatedAction[k];
             });
             Toast.success('Action updated');
-            $scope.hasUnsavedChanges = true;
-            $scope.map = {}
+            setChanged(true);
+            $scope.map = {};
         };
 
         /**
@@ -162,21 +171,12 @@
                     $scope.symbol.revision = updatedSymbol.revision;
                     symbolCopy = Symbol.build($scope.symbol);
                     Toast.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
+                    setChanged(false);
                     $scope.hasUnsavedChanges = false;
                 })
                 .catch(function (response) {
                     Toast.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
                 })
-        };
-
-        /**
-         * Reverts the changes that were made to the symbol before the last update
-         */
-        $scope.revertChanges = function () {
-            $scope.symbol = symbolCopy;
-            symbolCopy = Symbol.build($scope.symbol);
-            Toast.info('Changes reverted to the last update');
-            $scope.hasUnsavedChanges = false;
         };
 
         /**
@@ -198,7 +198,7 @@
             Clipboard.cut('actions', angular.copy(actions));
             $scope.deleteActions(actions);
             Toast.info(actions.length + ' action[s] cut to clipboard');
-            $scope.hasUnsavedChanges = true;
+            setChanged(true);
         };
 
         /**
@@ -209,8 +209,18 @@
             if (actions !== null) {
                 _.forEach(ActionBuilder.createFromObjects(actions), $scope.addAction);
                 Toast.info(actions.length + 'action[s] pasted from clipboard');
-                $scope.hasUnsavedChanges = true;
+                setChanged(true);
             }
+        };
+
+        /**
+         * Toggles the disabled flag on an action
+         *
+         * @param {Object} action
+         */
+        $scope.toggleDisableAction = function (action) {
+            action.disabled = !action.disabled;
+            setChanged(true);
         }
     }
 }());

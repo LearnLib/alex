@@ -24,8 +24,6 @@
      * @returns {{scope: {collapsed: string, widgetTitle: string}, templateUrl: string, transclude: boolean, link: link}}
      */
     function widget(paths) {
-
-        // the directive
         return {
             scope: {
                 collapsed: '=',
@@ -36,7 +34,6 @@
             link: link
         };
 
-        // the directives behavior
         function link(scope) {
 
             /**
@@ -201,7 +198,7 @@
                         }
                         if (ceFound) {
                             Toast.success('The selected word is a counterexample');
-                            for (i = 0; i < ce.length; i++){
+                            for (i = 0; i < ce.length; i++) {
                                 scope.counterExample[i].output = ce[i];
                             }
                         } else {
