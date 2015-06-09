@@ -83,11 +83,22 @@ public final class SearchHelper {
             result.append(text.substring(variableEndPos + 2, variableStartPos)); // add everything before the variable.
 
             variableEndPos = text.indexOf("}}", variableStartPos);
-            boolean variableIsCounter = text.charAt(variableStartPos + 2) == '#';
             String variableName = text.substring(variableStartPos + 3, variableEndPos);
 
-            String variableValue = getValue(connector, projectId, variableName, variableIsCounter);
-            result.append(variableValue);
+            String variableValue;
+            switch (text.charAt(variableStartPos + 2)) {
+                case '#': // counter
+                    variableValue = String.valueOf(connector.getConnector(CounterStoreConnector.class).get(projectId, variableName));
+                    result.append(variableValue);
+                    break;
+                case '$': // variable:
+                    variableValue = connector.getConnector(VariableStoreConnector.class).get(variableName);
+                    result.append(variableValue);
+                    break;
+                default: // bullshit
+                    result.append(text.substring(variableStartPos, variableEndPos + 2));
+                    break;
+            }
 
             variableStartPos = text.indexOf("{{", variableEndPos); // prepare next step
         }
@@ -95,15 +106,6 @@ public final class SearchHelper {
         result.append(text.substring(variableEndPos + 2));
 
         return result.toString();
-    }
-
-    private static String getValue(ConnectorManager connector, Long projectId, String variableName, boolean counter)
-                          throws IllegalStateException {
-        if (counter) {
-            return String.valueOf(connector.getConnector(CounterStoreConnector.class).get(projectId, variableName));
-        } else {
-            return connector.getConnector(VariableStoreConnector.class).get(variableName);
-        }
     }
 
 }

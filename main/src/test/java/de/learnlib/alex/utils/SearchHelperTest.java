@@ -28,9 +28,9 @@ public class SearchHelperTest {
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counter);
 
         String result = SearchHelper.insertVariableValues(connector, PROJECT_ID,
-                                                          "Hello {{$name}}, you are user no. {{#counter}}!");
+                                                          "Hello {{$name}}, you are {{user}} no. {{#counter}}!");
 
-        assertEquals("Hello Jon Doe, you are user no. " + COUNTER_VALUE + "!", result);
+        assertEquals("Hello Jon Doe, you are {{user}} no. " + COUNTER_VALUE + "!", result);
     }
 
     @Test
