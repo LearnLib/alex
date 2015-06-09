@@ -24,12 +24,14 @@
          *
          * @param {string} node - The CSS selector of an select element
          * @param {string} value - The value of the select input that should be selected
+         * @param {string} selectBy - The type the option is selected by {'TEXT', 'VALUE', 'INDEX'}
          * @constructor
          */
-        function SelectWebAction(node, value) {
+        function SelectWebAction(node, value, selectBy) {
             AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].SELECT);
             this.node = node || null;
             this.value = value || null;
+            this.selectBy = selectBy || 'TEXT';
         }
 
         SelectWebAction.prototype = Object.create(AbstractAction.prototype);
