@@ -56,7 +56,7 @@
          * @param {Object} response - The response object from the API
          * @returns {Symbol|Symbol[]} - The Symbol[s]
          */
-        Symbol.transformApiResponse = function(response){
+        Symbol.transformApiResponse = function (response) {
             if (angular.isArray(response.data)) {
                 if (response.data.length > 0) {
                     return _.map(response.data, Symbol.build);
@@ -73,11 +73,23 @@
          *
          * @returns {number} - The amount of enabled actions
          */
-        Symbol.prototype.countEnabledActions = function() {
+        Symbol.prototype.countEnabledActions = function () {
             for (var i = 0, c = 0; i < this.actions.length; i++) {
                 c += this.actions[i].disabled ? 0 : 1;
             }
             return c;
+        };
+
+        /**
+         * Get the id and revision of the symbol as a pair
+         *
+         * @returns {{id: number, revision: number}}
+         */
+        Symbol.prototype.getIdRevisionPair = function () {
+            return {
+                id: this.id,
+                revision: this.revision
+            }
         };
 
         return Symbol;

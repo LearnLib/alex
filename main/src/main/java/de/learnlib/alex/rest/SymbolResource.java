@@ -5,6 +5,7 @@ import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.IdsList;
+import de.learnlib.alex.utils.IdRevisionPairList;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
@@ -151,6 +152,35 @@ public class SymbolResource {
 
         return ResponseHelper.renderList(symbols, Status.OK);
     }
+
+    /**
+     * Get Symbols by a list of id/revision pairs
+     *
+     * @param projectId
+     *          The ID of the project
+     * @param idRevisionPairs
+     *          The non empty list of id revision pairs.
+     *          Pattern: id_1:rev_1,...,id_n,rev_n
+     * @return A list of the symbols whose id:revision pairs were given
+     * @responseType java.util.List<de.learnlib.alex.core.entities.Symbol>
+     * @successResponse 200 OK
+     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     */
+    @GET
+    @Path("/batch/{idRevisionPairs}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getByIdRevisionPairs(@PathParam("project_id") Long projectId,
+                                         @PathParam("idRevisionPairs") IdRevisionPairList idRevisionPairs) {
+        try {
+            List<Symbol> symbols = symbolDAO.getAll(projectId, idRevisionPairs);
+            return ResponseHelper.renderList(symbols, Status.OK);
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getByIdRevisionPairs",
+                    Status.NOT_FOUND,
+                    null);
+        }
+    }
+
 
     /**
      * Get a Symbol by its ID.

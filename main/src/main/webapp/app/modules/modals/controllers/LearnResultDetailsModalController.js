@@ -28,7 +28,7 @@
 
         if (modalData.result.stepNo > 0) {
             LearnResultResource.getFinal(modalData.result.project, modalData.result.testNo)
-                .then(function(res){
+                .then(function (res) {
                     $scope.tabs.push({
                         heading: 'Cumulated',
                         result: res

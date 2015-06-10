@@ -8,7 +8,8 @@
         .directive('learnResumeSettingsWidget', learnResumeSettingsWidget);
 
     widget.$inject = ['paths'];
-    counterexamplesWidget.$inject = ['paths', 'CounterExampleService', 'LearnerService', 'ToastService', 'outputAlphabet'];
+    counterexamplesWidget.$inject = ['paths', 'CounterExampleService', 'LearnerService', 'ToastService',
+        'outputAlphabet', 'SymbolResource'];
     learnResumeSettingsWidget.$inject = ['paths', 'EqOracle'];
 
 
@@ -71,11 +72,10 @@
      * @param Learner - The LearnerService for communication with the Learner
      * @param Toast - The ToastService
      * @param outputAlphabet - The dictionary for the output alphabet
+     * @param SymbolResource
      * @returns {{scope: {counterexamples: string}, templateUrl: string, link: link}}
      */
-    function counterexamplesWidget(paths, CounterExampleService, Learner, Toast, outputAlphabet) {
-
-        // the directive
+    function counterexamplesWidget(paths, CounterExampleService, Learner, Toast, outputAlphabet, SymbolResource) {
         return {
             scope: {
                 counterexamples: '=',
@@ -85,8 +85,9 @@
             link: link
         };
 
-        // the directives behavior
         function link(scope) {
+
+            var symbols = [];
 
             /**
              * The array of input output pairs of the shared counterexample
@@ -174,37 +175,49 @@
              */
             scope.testCounterExample = function () {
                 var resetSymbol = scope.learnResult.configuration.resetSymbol;
-                var symbols = [];
 
-                // find id/revision pairs of symbols from abbreviation in learnResult
-                // works under the premise that sigma[i] corresponds to symbols[i] in learn result
-                // can't this be done nicer??
-                for (var i = 0; i < scope.counterExample.length; i++) {
-                    for (var j = 0; j < scope.learnResult.sigma.length; j++) {
-                        if (scope.counterExample[i].input === scope.learnResult.sigma[j]) {
-                            symbols.push(scope.learnResult.configuration.symbols[j]);
-                        }
-                    }
+                if (symbols.length === 0) {
+                    SymbolResource.getByIdRevisionPairs(scope.learnResult.project,
+                                                        scope.learnResult.configuration.symbols)
+                        .then(function (s) {
+                            symbols = s;
+                            test();
+                        });
+                } else {
+                    test();
                 }
 
-                Learner.isCounterexample(scope.learnResult.project, resetSymbol, symbols)
-                    .then(function (ce) {
-                        var ceFound = false;
-                        for (var i = 0; i < ce.length; i++) {
-                            if (ce[i] !== scope.counterExample[i].output) {
-                                ceFound = true;
-                                break;
+                function test () {
+                    var testSymbols = [];
+
+                    // find id/revision pairs of symbols from abbreviation in learnResult
+                    for (var i = 0; i < scope.counterExample.length; i++) {
+                        for (var j = 0; j < symbols.length; j++) {
+                            if (scope.counterExample[i].input === symbols[j].abbreviation) {
+                                testSymbols.push(symbols[j].getIdRevisionPair());
                             }
                         }
-                        if (ceFound) {
-                            Toast.success('The selected word is a counterexample');
-                            for (i = 0; i < ce.length; i++) {
-                                scope.counterExample[i].output = ce[i];
+                    }
+
+                    Learner.isCounterexample(scope.learnResult.project, resetSymbol, testSymbols)
+                        .then(function (ce) {
+                            var ceFound = false;
+                            for (var i = 0; i < ce.length; i++) {
+                                if (ce[i] !== scope.counterExample[i].output) {
+                                    ceFound = true;
+                                    break;
+                                }
                             }
-                        } else {
-                            Toast.danger('The selected word is not a counterexample');
-                        }
-                    })
+                            if (ceFound) {
+                                Toast.success('The selected word is a counterexample');
+                                for (i = 0; i < ce.length; i++) {
+                                    scope.counterExample[i].output = ce[i];
+                                }
+                            } else {
+                                Toast.danger('The selected word is not a counterexample');
+                            }
+                        })
+                }
             };
 
             init();

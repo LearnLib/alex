@@ -21,6 +21,7 @@
         return {
             get: get,
             getAll: getAll,
+            getByIdRevisionPairs: getByIdRevisionPairs,
             getRevisions: getRevisions,
             create: create,
             update: update,
@@ -36,7 +37,7 @@
          * @param {number} projectId - The id of the project the symbol belongs to
          * @param {number} symbolId - The id of the symbol that should be fetched
          */
-        function get (projectId, symbolId) {
+        function get(projectId, symbolId) {
             return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
                 .then(Symbol.transformApiResponse);
         }
@@ -51,13 +52,30 @@
          * @param {{deleted:boolean}} options - The query options as described in the functions description
          * @returns {*}
          */
-        function getAll (projectId, options) {
+        function getAll(projectId, options) {
             var query;
             if (options && options.deleted && options.deleted === true) {
                 query = '?visibility=hidden';
             }
             return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols' + (query ? query : ''))
                 .then(Symbol.transformApiResponse);
+        }
+
+        /**
+         * Gets a list of symbols by a list of id/revision pairs
+         * {id_1}:{rev_1},...,{id_n}:{rev_n}
+         *
+         * @param {number} projectId - The id of the project
+         * @param {{id:number,revision:number}[]} idRevisionPairs - The list of id/revision pairs
+         * @returns {*}
+         */
+        function getByIdRevisionPairs(projectId, idRevisionPairs) {
+            var pairs = _.map(idRevisionPairs, function (pair) {
+                return pair.id + ':' + pair.revision
+            }).join(',');
+
+            return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + pairs)
+                .then(Symbol.transformApiResponse)
         }
 
         /**
@@ -68,7 +86,7 @@
          * @param {number} symbolId - The id of the symbol whose revisions should be fetched
          * @returns {*}
          */
-        function getRevisions (projectId, symbolId) {
+        function getRevisions(projectId, symbolId) {
             return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
                 .then(Symbol.transformApiResponse);
         }
@@ -79,8 +97,8 @@
          * @param {number} projectId - The id of the project the symbol should belong to
          * @param {Symbol|Symbol[]} symbols - The symbol[s] that should be created
          */
-        function create (projectId, symbols) {
-            if (angular.isArray(symbols)){
+        function create(projectId, symbols) {
+            if (angular.isArray(symbols)) {
                 return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/batch', symbols)
                     .then(Symbol.transformApiResponse);
             } else {
@@ -97,8 +115,8 @@
          * @param {SymbolGroup} group - The id of the symbol group
          * @returns {HttpPromise}
          */
-        function move (symbols, group) {
-            if (angular.isArray(symbols)){
+        function move(symbols, group) {
+            if (angular.isArray(symbols)) {
                 var symbolIds = _.pluck(symbols, 'id').join(',');
                 return $http.put(paths.api.URL + '/projects/' + group.project + '/symbols/batch/' + symbolIds + '/moveTo/' + group.id, {})
             } else {
@@ -114,7 +132,7 @@
          * @returns {*}
          */
         function update(symbols) {
-            if (angular.isArray(symbols)){
+            if (angular.isArray(symbols)) {
                 var symbolIds = _.pluck(symbols, 'id').join(',');
                 return $http.put(paths.api.URL + '/projects/' + symbols[0].project + '/symbols/batch/' + symbolIds, symbols)
                     .then(Symbol.transformApiResponse);
@@ -132,8 +150,8 @@
          * @param {Symbol|Symbol[]} symbols - The the symbol[s] that should be deleted
          * @returns {*}
          */
-        function remove (symbols) {
-            if (angular.isArray(symbols)){
+        function remove(symbols) {
+            if (angular.isArray(symbols)) {
                 var symbolIds = _.pluck(symbols, 'id').join(',');
                 return $http.post(paths.api.URL + '/projects/' + symbols[0].project + '/symbols/batch/' + symbolIds + '/hide', {})
             } else {
@@ -149,7 +167,7 @@
          * @param {Symbol|Symbol[]} symbols - The symbol that should be made visible again
          * @returns {*}
          */
-        function recover (symbols) {
+        function recover(symbols) {
             if (angular.isArray(symbols)) {
                 var symbolIds = _.pluck(symbols, 'id').join(',');
                 return $http.post(paths.api.URL + '/projects/' + symbols[0].project + '/symbols/batch/' + symbolIds + '/show', {})
