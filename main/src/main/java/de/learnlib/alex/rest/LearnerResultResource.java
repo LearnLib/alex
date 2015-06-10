@@ -14,6 +14,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.validation.ValidationException;
 import java.util.List;
 
 /**
@@ -116,6 +117,7 @@ public class LearnerResultResource {
      * @return On success no content will be returned; an error message on failure.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     *                  403 forbidden `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("{test_numbers}")
@@ -130,6 +132,9 @@ public class LearnerResultResource {
         }  catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteResultSet",
                                                                 Response.Status.NOT_FOUND,  e);
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteResultSet",
+                                                                Response.Status.FORBIDDEN, e);
         }
     }
 

@@ -1,8 +1,10 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
+import de.learnlib.alex.core.learner.Learner;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -16,11 +18,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.inject.Inject;
 
 /**
  * Implementation of a LearnerResultDAO using Hibernate.
  */
 public class LearnerResultDAOImpl implements LearnerResultDAO {
+
+    /** The {@link Learner learner} to use. */
+    @Inject
+    private Learner learner;
 
     @Override
     public void create(LearnerResult learnerResult) throws ValidationException {
@@ -249,10 +256,29 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public void delete(Long projectId, Long... testNo) throws NotFoundException {
+    public void delete(Long projectId, Long... testNo) throws NotFoundException, ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
+
+        // don't delete the learnResult of the active learning process
+        LearnerStatus status = new LearnerStatus(learner);
+        Long activeTestNo = status.getTestNo();
+        Long activeProjectId = status.getProjectId();
+
+        if (projectId.equals(activeProjectId)) {
+            if (testNo.length == 1 && activeTestNo.equals(testNo[0])) {
+                throw new ValidationException("Can't delete LearnResult with testNo " + activeTestNo + " because the "
+                        + "learner is active on this one");
+            } else if (testNo.length > 1) {
+                for (Long t:testNo) {
+                    if (activeTestNo.equals(t)) {
+                        throw new ValidationException("Can't delete all LearnResults because the learner is active "
+                                + "with testNo " + activeTestNo);
+                    }
+                }
+            }
+        }
 
         List<Long> validTestNumbers = getTestNumbersInDB(session, projectId, testNo);
         Set<Long> diffSet = setDifference(Arrays.asList(testNo), validTestNumbers);
