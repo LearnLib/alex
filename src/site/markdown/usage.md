@@ -269,11 +269,15 @@ While ALEX is learning there are some restrictions concerning the functionality 
 
 ### <a name="learning-experiment-modeling-hypothesis-interaction"></a> Hypothesis Interaction
 
+<div class="video" data-name="hypotheses-interaction"></div>
+
 #### <a name="learning-experiment-modeling-internal-data-structures"></a> Internal Data Structures
  
 #### <a name="learning-experiment-modeling-counterexamples"></a> Counter Example Testing
 
 ### <a name="learning-experiment-analysis"></a> Learning Experiment Analysis
+
+<div class="video" data-name="learning-result-analysis"></div>
 
 #### <a name="learning-experiment-analysis-hypothesis-comparison"></a> Hypotheses Comparison
 
