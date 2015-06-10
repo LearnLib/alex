@@ -29,6 +29,16 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Inject
     private Learner learner;
 
+    /**
+     * Set the learner instance to use.
+     * Only package visible, because normlly this instance will be injected, but for testing a manual setter is needed.
+     *
+     * @param learner The learner to use.
+     */
+    void setLearner(Learner learner) {
+        this.learner = learner;
+    }
+
     @Override
     public void create(LearnerResult learnerResult) throws ValidationException {
         // new LearnerResults should have a project, not a test number not a step number
@@ -257,28 +267,11 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     public void delete(Long projectId, Long... testNo) throws NotFoundException, ValidationException {
+        checkIfResultsCanBeDeleted(projectId, testNo); // check before the session is opened
+
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
-
-        // don't delete the learnResult of the active learning process
-        LearnerStatus status = new LearnerStatus(learner);
-        Long activeTestNo = status.getTestNo();
-        Long activeProjectId = status.getProjectId();
-
-        if (projectId.equals(activeProjectId)) {
-            if (testNo.length == 1 && activeTestNo.equals(testNo[0])) {
-                throw new ValidationException("Can't delete LearnResult with testNo " + activeTestNo + " because the "
-                        + "learner is active on this one");
-            } else if (testNo.length > 1) {
-                for (Long t:testNo) {
-                    if (activeTestNo.equals(t)) {
-                        throw new ValidationException("Can't delete all LearnResults because the learner is active "
-                                + "with testNo " + activeTestNo);
-                    }
-                }
-            }
-        }
 
         List<Long> validTestNumbers = getTestNumbersInDB(session, projectId, testNo);
         Set<Long> diffSet = setDifference(Arrays.asList(testNo), validTestNumbers);
@@ -296,6 +289,27 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         // done
         HibernateUtil.commitTransaction();
+    }
+
+    private void checkIfResultsCanBeDeleted(Long projectId, Long... testNo) throws ValidationException {
+        // don't delete the learnResult of the active learning process
+        LearnerStatus status = new LearnerStatus(learner);
+        Long activeTestNo = status.getTestNo();
+        Long activeProjectId = status.getProjectId();
+
+        if (projectId.equals(activeProjectId)) {
+            if (testNo.length == 1 && activeTestNo.equals(testNo[0])) {
+                throw new ValidationException("Can't delete LearnResult with testNo " + activeTestNo + " because the "
+                                                      + "learner is active on this one");
+            } else if (testNo.length > 1) {
+                for (Long t:testNo) {
+                    if (activeTestNo.equals(t)) {
+                        throw new ValidationException("Can't delete all LearnResults because the learner is active "
+                                                              + "with testNo " + activeTestNo);
+                    }
+                }
+            }
+        }
     }
 
     private String getAsJSON(Session session, long projectId, long testNo, long stepNo) {

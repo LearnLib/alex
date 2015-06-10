@@ -2,6 +2,7 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
@@ -14,6 +15,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.validation.ValidationException;
 import java.util.LinkedList;
@@ -22,7 +26,9 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
 
+@RunWith(MockitoJUnitRunner.class)
 public class LearnerResultDAOImplTest {
 
     private static final int RESULTS_AMOUNT = 5;
@@ -33,6 +39,9 @@ public class LearnerResultDAOImplTest {
     private Project project;
     private LearnerResult learnerResult;
 
+    @Mock
+    private Learner learner;
+
     @BeforeClass
     public static void beforeClass() {
         projectDAO = new ProjectDAOImpl();
@@ -41,6 +50,8 @@ public class LearnerResultDAOImplTest {
 
     @Before
     public void setUp() {
+        ((LearnerResultDAOImpl) learnerResultDAO).setLearner(learner);
+
         project = new Project();
         project.setName("LearnerResultDAO - Test Project");
         project.setBaseUrl("http://example.com/");
@@ -333,6 +344,15 @@ public class LearnerResultDAOImplTest {
         ids[ids.length - 1] = -1L;
 
         learnerResultDAO.delete(project.getId(), ids); // should fail
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldThrowAnExceptionIfTheTestResultToDeleteIsActive() throws NotFoundException {
+        learnerResultDAO.create(learnerResult);
+        given(learner.isActive()).willReturn(true);
+        given(learner.getResult()).willReturn(learnerResult);
+
+        learnerResultDAO.delete(project.getId(), learnerResult.getTestNo()); // should fail
     }
 
     private void initLearnerResult(LearnerResult result) {

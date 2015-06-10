@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.validation.ValidationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.util.LinkedList;
@@ -232,6 +233,16 @@ public class LearnerResultResourceTest extends JerseyTest {
                             .request().delete();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldReturnAnErrorIfYouTryToDeleteAnActiveTestNo() throws NotFoundException {
+        willThrow(ValidationException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+
+        Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
+                            .request().delete();
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
     @Test

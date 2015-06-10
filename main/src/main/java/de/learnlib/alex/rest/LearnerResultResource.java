@@ -134,7 +134,7 @@ public class LearnerResultResource {
                                                                 Response.Status.NOT_FOUND,  e);
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteResultSet",
-                                                                Response.Status.FORBIDDEN, e);
+                                                                Response.Status.BAD_REQUEST, e);
         }
     }
 
