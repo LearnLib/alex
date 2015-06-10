@@ -29,7 +29,6 @@ public class SelectAction extends FillAction {
      *
      * @requiredField
      */
-    @NotBlank
     private SelectByType selectBy;
 
     @Override
