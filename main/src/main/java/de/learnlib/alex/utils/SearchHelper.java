@@ -2,6 +2,7 @@ package de.learnlib.alex.utils;
 
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
+import de.learnlib.alex.core.learner.connectors.FileStoreConnector;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 
 import java.util.regex.Matcher;
@@ -11,7 +12,6 @@ import java.util.regex.Pattern;
  * Helper class to make searching in a text easier.
  */
 public final class SearchHelper {
-
 
     /**
      * Disabled default constructor, this is only a utility class with static methods.
@@ -93,6 +93,11 @@ public final class SearchHelper {
                     break;
                 case '$': // variable:
                     variableValue = connector.getConnector(VariableStoreConnector.class).get(variableName);
+                    result.append(variableValue);
+                    break;
+                case '/': // file name
+                    variableValue = connector.getConnector(FileStoreConnector.class)
+                                             .getAbsoluteFileLocation(projectId,variableName);
                     result.append(variableValue);
                     break;
                 default: // bullshit

@@ -22,6 +22,7 @@ public class ConnectorContextHandlerFactory {
         context.addConnector(new WebServiceConnector(baseUrl));
         context.addConnector(new CounterStoreConnector());
         context.addConnector(new VariableStoreConnector());
+        context.addConnector(new FileStoreConnector());
 
         return context;
     }

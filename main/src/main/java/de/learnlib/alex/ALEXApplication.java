@@ -2,6 +2,8 @@ package de.learnlib.alex;
 
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.CounterDAOImpl;
+import de.learnlib.alex.core.dao.FileDAO;
+import de.learnlib.alex.core.dao.FileDAOImpl;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAOImpl;
 import de.learnlib.alex.core.dao.ProjectDAO;
@@ -13,6 +15,7 @@ import de.learnlib.alex.core.dao.SymbolGroupDAOImpl;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.core.learner.LearnerThreadFactory;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -27,6 +30,8 @@ public class ALEXApplication extends ResourceConfig {
         // packages with REST resources classes
         packages(true, "de.learnlib.alex");
 
+        register(MultiPartFeature.class);
+
         // register some classes/ objects for IoC.
         register(new AbstractBinder() {
             @Override
@@ -40,6 +45,7 @@ public class ALEXApplication extends ResourceConfig {
                 bind(SymbolDAOImpl.class).to(SymbolDAO.class);
                 bind(LearnerResultDAOImpl.class).to(LearnerResultDAO.class);
                 bind(new Learner(threadFactory)).to(Learner.class);
+                bind(FileDAOImpl.class).to(FileDAO.class);
             }
         });
     }

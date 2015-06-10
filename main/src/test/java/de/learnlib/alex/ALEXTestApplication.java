@@ -7,6 +7,7 @@ import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
 import de.learnlib.alex.core.learner.Learner;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 public class ALEXTestApplication extends ResourceConfig {
@@ -18,6 +19,8 @@ public class ALEXTestApplication extends ResourceConfig {
                                      final Learner learner,
                                      Class<?>... classes) {
         super(classes);
+
+        register(MultiPartFeature.class);
 
         // register some classes/ objects for IoC.
         register(new AbstractBinder() {

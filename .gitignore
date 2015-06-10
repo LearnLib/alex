@@ -15,3 +15,5 @@ main/src/main/webapp/app/templates.js
 
 # Auto Generated Swagger Doc
 main/src/main/webapp/restdocs/docs
+
+main/uploads
