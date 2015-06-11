@@ -12,6 +12,7 @@
         'n3-line-chart',
         'selectionModel',
         'ng-sortable',
+        'ngFileUpload',
 
         //all templates
         'templates-all',

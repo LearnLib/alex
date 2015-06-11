@@ -79,7 +79,7 @@
                 url: '/counters',
                 views: {
                     '@': {
-                        templateUrl:paths.COMPONENTS + '/core/views/counters.html',
+                        templateUrl: paths.COMPONENTS + '/core/views/counters.html',
                         controller: 'CountersController'
                     }
                 },
@@ -228,6 +228,14 @@
                 url: '/error',
                 controller: 'ErrorController',
                 templateUrl: paths.COMPONENTS + '/core/views/error.html'
+            })
+            .state('files', {
+                url: '/files',
+                controller: 'FilesController',
+                templateUrl: paths.COMPONENTS + '/core/views/files.html',
+                data: {
+                    requiresProject: true
+                }
             })
     }
 

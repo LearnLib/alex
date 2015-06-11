@@ -16,7 +16,8 @@
     "lodash": "~3.1.0",
     "n3-line-chart": "~1.1.6",
     "angular-selection-model": "~0.8.4",
-    "Sortable": "RubaXa/Sortable#~1.2.0"
+    "Sortable": "RubaXa/Sortable#~1.2.0",
+    "ng-file-upload": "~5.0.4"
   },
   "devDependencies": {}
 }

@@ -1,0 +1,66 @@
+<div view-heading
+     title="Files"
+     sub-title="Upload and manage project related files">
+</div>
+
+<div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
+    <div class="container">
+
+        <div class="pull-left" style="margin-right: 16px">
+            <input type="checkbox" selection-checkbox-all items="files">
+        </div>
+        <button class="btn btn-default btn-xs"
+                ng-click="deleteSelectedFiles()">Delete
+        </button>
+
+    </div>
+</div>
+
+<div class="view-body">
+    <div class="container">
+
+        <div ngf-drop ngf-select class="alert alert-info" ng-model="filesToUpload" ng-show="!filesToUpload.length"
+             ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="false">
+            Drag & Drop files here or click to upload
+        </div>
+
+        <div ng-show="filesToUpload.length">
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-primary"
+                        ng-click="upload()">
+                    <span class="label label-info" ng-bind="filesToUpload.length"></span>&nbsp; Upload Files
+                </button>
+                <button class="btn btn-primary">
+                    <span ng-bind="progress"></span>%
+                </button>
+            </div>
+
+            <button class="btn btn-default btn-sm pull-right"
+                    ng-click="filesToUpload = null">
+                <i class="fa fa-fw fa-close"></i> Cancel
+            </button>
+        </div>
+
+        <hr>
+
+        <div class="file-list">
+            <div class="file-list-item"
+                 ng-repeat="file in files"
+                 selection-model
+                 selection-model-selected-items="selectedFiles">
+
+                <input type="checkbox" class="pull-left">
+
+                <div class="file-list-item-content">
+                    <span ng-bind="file.name"></span>
+                    <button class="btn btn-icon btn-xs pull-right"
+                            ng-click="deleteFile(file)">
+                        <i class="fa fa-fw fa-trash"></i> Delete
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
