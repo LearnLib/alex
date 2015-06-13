@@ -9,7 +9,6 @@ hs_err_pid*
 
 # JavaScript
 node_modules
-*.min.js
 main/src/main/webapp/app/app.js
 main/src/main/webapp/app/templates.js
 
