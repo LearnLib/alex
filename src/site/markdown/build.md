@@ -47,7 +47,7 @@ When all dependencies are installed, the task manager `grunt` will work without 
 This command also generates some compact files for the app.
 
 ```bash
-cd main/scr/main/webapp
+cd main/src/main/webapp
 npm install
 grunt
 ```

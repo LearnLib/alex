@@ -1,19 +1,31 @@
 Usage of ALEX
 ===============
 
+Here you can find a detailed explanation of the concepts and ways to use ALEX, regarding the RESTful API that powers
+the application as well as the graphical client for it. This documents covers the necessary parts to understand and
+use both parts.
+
+For a deeper insight in the concepts and theory behind the application, consider reading the bachelor theses 
+<a href="/documents/ba-thesis-bainczyk.pdf" target="_blank">A Simplicity-Oriented Web-Based Approach to Active Automata
+ Learning</a> that covers the front-end parts and <br/><a href="/documents/ba-thesis-schieweck.pdf" target="_blank">A 
+ Service-Oriented Interface for Testing Web Applications via Automata Learning</a> that deals with the REST API and the
+ connection to the <a href="http://learnlib.de/" target="_blank">LearnLib</a>.
+
 
 Frontend
 --------
 
-In order to make sure that the front-end functions as intended, it is recommended you use a modern web browser that
+In order to make sure that the front-end works as intended, it is recommended that you use a modern web browser that
 implements most of the HTML5 and CSS3 specifications. The application should run just fine for the following browsers:
 
  - Chrome >= 42.0.*
  - Firefox >= 36.0
  
-It is not guarantied that it also works with lower versions. If you keep your browser up to date you should not encounter
-any major issues. If you find bugs of any kind relating to the specified versions or find that certain parts of the
-following manual lack of useful information, let us know.
+It is not guaranteed that it also works with lower versions or alternative browsers such as Opera, Safari or Internet
+Explorer. If you keep your browser up to date you should not encounter any major issues. If you find bugs of any kind 
+relating to the specified versions or find that certain parts of the following manual lack of useful information, 
+<a href="mailto:alexander.bainczyk@tu-dortmund.de,alexander.schieweck@tu-dortmund.de">let us</a> know.
+
 
 ### <a name="project-management"></a> Project Management
 
@@ -28,6 +40,7 @@ saved learning results.
 | /project/settings             | Edit and delete an opened project          |
 
 <div class="video" data-name="projects"></div>
+
 
 #### <a name="project-management-create"></a> Creating Projects
 
@@ -48,11 +61,13 @@ In order to switch to another project you have to close the current one at first
 found in the menu that is shown in the picture above. It redirects to the front-page. For working on multiple projects
 simultaneously, you can open another tab and call ALEX from that one again.
 
+
 #### <a name="project-management-editing-deleting"></a> Editing & Deleting Projects
 
 Deleting and updating projects can be done under */project/settings* which can also be accessed by navigating through
 the menu entries as shown in the previous section. Before deleting a project, make sure you have exported your symbols,
 hypotheses and/or statistics because with the deleting of a project, all these values are deleted from the server, too.
+
 
 ### <a name="symbol-management"></a> Symbol Management
 
@@ -69,6 +84,7 @@ functionality is listed in the following table. For each aspect the following su
 | /symbols/trash                | Restore deleted symbols                           |
 | /symbols/import               | Import symbols from a \*.json file                |
 | /symbols/export               | Export symbols into a \*.json file                |
+
 
 #### <a name="symbol-groups"></a> Symbol Groups
 
@@ -90,6 +106,7 @@ the left of each entry.
 
 <div class="video" data-name="symbol-groups"></div>
 
+
 #### <a name="symbols"></a> Symbols
 
 Symbols are the heart of Active Automata Learning.
@@ -100,6 +117,7 @@ list of all hidden symbols is given. Recovering a symbol makes it appear again i
 case the group has been deleted, the symbol is moved to the default group.
 
 <div class="video" data-name="symbols-recover"></div>
+
 
 #### <a name="actions"></a> Actions
 
@@ -117,6 +135,7 @@ possible by clicking the *save* button on the right in the sub-menu.
 The creation of actions is realized in a modal window that shows the action editor as shown in the picture above. As one
 can see, the left column contains dropdown boxes with a logical grouping of actions. The right column reveals a form
 with required input fields for a selected action. The action groups are presented in to following.
+
 
 ##### <a name="actions-web"></a> Web Actions
 
@@ -143,8 +162,9 @@ to an affected element. This may be not that easy to find out in case you are no
 a button that is labeled with *"Element Picker"*. This is a special feature of ALEX for selecting HTML elements from your 
 website directly without having to know HTML.
 
+
 ###### <a name="actions-web-html-element-picker"></a> HTML Element Picker
-or import
+
 The HTML element picker has been tested but it can not be ensured that picking the right element works in all possible
 use cases. If the HTML picker should fail you can still get the CSS path of an element with the developer tools of your
 browser.
@@ -155,6 +175,7 @@ sidebar should open and reveal the element in the DOM tree. There, make another 
 be applied with Firefox.
 
 <div class="video" data-name="actions.element-picker"></div>
+
 
 ##### <a name="actions-rest"></a> REST Actions
 
@@ -175,6 +196,7 @@ Keep in mind that working with HTTP requests and responses follows a certain pat
 analyze the results. The order of your REST actions should also look like that. Start with a *Call* action and use other
 actions to work with the response.
 
+
 ##### <a name="general-actions"></a> General Actions
 
 | Name                       | Description                                                         |
@@ -185,12 +207,56 @@ actions to work with the response.
 | SetVariable                | Set a variable to a new value.                                      |
 | SetVariableByHTMLElement   | Set a variable to a value form a website element.                   |
 | SetVariableByJSONAttribute | Set a variable to a value form a JSON response.                     |
-| Wait                       | Wait for a specific amount of time. This can be useful for background tasks or AJAX calls, but should be used with care because it can slow the learning process down. |
+| Wait                       | Wait for a specific amount of time.                                 |
+
+*The wait action can be useful for background tasks or AJAX calls, but should be used with care because it can slow 
+down the learning process.*
+
+
+##### Working with Counters, Variables and Files
+
+Many web applications handle dynamic data and allow file uploads. In order to model and learn such behaviours and to 
+allow interaction between different symbols, actions and learning processes, *counters*, *variables* and *files* are 
+introduced.
+
+**Counters:** As the name indicates counters are integer values that are persisted in the database per project. They
+can be incremented and set at will. Commonly they are used to create multiple objects of the same kind. Counters can
+help to model a system reset and thereby allow a consecutive execution of multiple learning processes without having
+to manually reset the application in between every test.
+
+**Variables:** Variables can only contain String values and are kept alive during a membership query. 
+
+**Files:** Files are string values that contain the absolute path of an *already* uploaded file. It can be used to model
+file uploads.
+
+In order to make use of those in actions, there is a notation that has to be used in action fields, as presented in the
+following table.
 
 | Notation          | Description                                                           |
 |-------------------|-----------------------------------------------------------------------|
 | {{#counterName}}  | The value of the counter with the name *counterName* is inserted      |
 | {{$variableName}} | The value of the variable with the name *variableName* is inserted    |
+| {{/fileName.ext}} | The absolute path of *fileName.ext* is inserted                       |
+
+As an example for the use of counters and variables, let there be a variable *userName* with the value \'*Admin*\' and
+a counter *countLogins* with the value \'*5*\'. The following symbol makes use of both.
+
+    [{
+        "name" : "symbol1",
+        "abbreviation" : "s1",
+        "actions" : [{
+            "type" : "web_checkForText",
+            "value" : "Hello {{$userName}}! You logged in for the {{#countLogins}}th time today.",
+            "regexp" : false
+        }]
+    }, ... ]
+    
+As soon as the action is executed the value of the property \'value\' is parsed, the values for the variable *userName*
+and the counter *countLogins* are inserted into the String. The resulting text that is searched for would be \"*Hello
+Admin! You logged in for the 5th time today.*\".
+
+*For modeling file uploads use the \'fill\' action, select the proper input element and insert \{\{\filename.ext\}\} in 
+the value field. In order for this to work, the file has had to be uploaded first.*
 
 
 #### <a name="symbols-import-revision"></a> Revision Management
@@ -203,6 +269,7 @@ recovered.
 __Info:__ If you revert a symbol with revision *x* to a previous revision *x-i*, a new symbol with the revision *x+1* is
 created. If you have any actions that execute other symbols, you have to manually adjust those, so that they call the 
 most current symbol (In case this is wanted).
+
 
 #### <a name="symbols-import-export"></a> Export & Import
 
@@ -247,39 +314,55 @@ the reset symbol in the alphabet, but be sure that is what you want.
 From there on, a learning process can be started and ALEX learns your application. Optionally configure the learning
 process by the following points:
 
-**Algorithm** <br/>
-There are currently four algorithms supported: L\*, Discrimination Tree, DHC and TTT. As default, the L\* algorithm
-is set, but other ones might be faster.
-
-**Equivalence oracle** <br/>
-ALEX supports three kinds of oracles. The first one is *Random Word*, the second one is *Complete* and the last one is 
-*Sample*. The first two oracles approximate equivalence queries automatically to find counterexamples while when using 
-*Sample*, you are asked to search and enter them by yourself in between iterations. The default setting is *Random Word*.
-
-**Steps to learn** <br/>
-You can also define how many hypotheses should be generated at maximum. When the learner stops, you can still continue
-learning from this point.
-
-Furthermore a comment can be added that makes it easier to identify a specific learning result between others. 
+<dl>
+  <dt><strong>Algorithm</strong></dt>
+  <dd>
+    There are currently four algorithms supported: L\*, Discrimination Tree, DHC and TTT. As default, the L\* algorithm
+    is set, but other ones might be faster.
+  </dd>
+  <dt><strong>Equivalence oracle</strong></dt>
+  <dd>
+    ALEX supports three kinds of oracles. The first one is *Random Word*, the second one is *Complete* and the last one is 
+    *Sample*. The first two oracles approximate equivalence queries automatically to find counterexamples while when using 
+    *Sample*, you are asked to search and enter them by yourself in between iterations. The default setting is *Random Word*.    
+  </dd>
+  <dt><strong>Steps to learn</strong></dt>
+  <dd>
+    You can also define how many hypotheses should be generated at maximum. When the learner stops, you can still continue
+    learning from this point.
+    
+  </dd>
+  <dt><strong>Comment</strong></dt>
+  <dd>
+    Furthermore a comment can be added that makes it easier to identify a specific learning result between others. The
+    comment is a string value with a maximum amount of 120 characters.
+  </dd>
+</dl>
 
 While ALEX is learning there are some restrictions concerning the functionality which are:
 
 * You can not delete the current project
 * You can not start another learning process
 
+
 ### <a name="learning-experiment-modeling-hypothesis-interaction"></a> Hypothesis Interaction
 
 <div class="video" data-name="hypotheses-interaction"></div>
 
+
 #### <a name="learning-experiment-modeling-internal-data-structures"></a> Internal Data Structures
  
+ 
 #### <a name="learning-experiment-modeling-counterexamples"></a> Counter Example Testing
+
 
 ### <a name="learning-experiment-analysis"></a> Learning Experiment Analysis
 
 <div class="video" data-name="learning-result-analysis"></div>
 
+
 #### <a name="learning-experiment-analysis-hypothesis-comparison"></a> Hypotheses Comparison
+
 
 #### <a name="learning-experiment-analysis-statistics"></a> Statistics
 

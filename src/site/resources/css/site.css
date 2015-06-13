@@ -15,3 +15,7 @@ video {
     height: auto   !important;
     margin-bottom: 10px;
 }
+
+dl dd {
+    margin-bottom: 10px;
+}
