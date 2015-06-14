@@ -5,6 +5,7 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
@@ -74,7 +75,16 @@ public class Learner {
             throw new IllegalStateException("You can only start the learning if no other learning is active");
         }
 
-        configuration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
+        // TODO: make it nicer than this instanceof stuff, because you have to somehow tell the eq oracle that the
+        //       learner started and not resumed
+        if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
+            SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
+            if (!oracle.getCounterExamples().isEmpty()) {
+                throw new IllegalStateException("You cannot start with predefined counterexamples");
+            }
+        } else {
+            configuration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
+        }
 
         contextHandler = contextHandlerFactory.createContext(project);
         learnThread = learnThreadFactory.createThread(contextHandler, project, configuration);
