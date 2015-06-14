@@ -292,8 +292,8 @@ public class LearnerThread extends Thread {
         long currentTime = new Date().getTime();
 
         statistics.setDuration(currentTime - startTime);
-        statistics.setMqsUsed(resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed());
-        statistics.setSymbolsUsed(symbolCounterSUL.getStatisticalData().getCount() - statistics.getSymbolsUsed());
+        statistics.setMqsUsed(Math.abs(resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed()));
+        statistics.setSymbolsUsed(Math.abs(symbolCounterSUL.getStatisticalData().getCount() - statistics.getSymbolsUsed()));
 
         // algorithm information
         LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
