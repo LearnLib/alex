@@ -80,7 +80,7 @@ public class Learner {
         if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
             SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
             if (!oracle.getCounterExamples().isEmpty()) {
-                throw new IllegalStateException("You cannot start with predefined counterexamples");
+                throw new IllegalArgumentException("You cannot start with predefined counterexamples");
             }
         } else {
             configuration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
