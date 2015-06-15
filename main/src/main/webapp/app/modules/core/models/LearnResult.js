@@ -41,6 +41,7 @@
                 testNo: data.testNo,
                 algorithmInformation: data.algorithmInformation,
                 statistics: data.statistics,
+                error: data.error,
                 errorText: data.errorText
             });
         };
