@@ -26,6 +26,15 @@
         }
 
         /**
+         * Indicates if an error has been recorded during the step
+         *
+         * @returns {boolean}
+         */
+        LearnResult.prototype.hasError = function () {
+            return angular.isDefined(this.error);
+        };
+
+        /**
          * Creates a new instance of a LearnResult from an object
          *
          * @param {Object} data - The object the learn result should be build from

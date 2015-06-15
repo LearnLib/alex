@@ -36,8 +36,8 @@
         /**
          * Creates bar chart data from a list of final learner results which includes the data itself and options.
          *
-         * @param results - The learner results from that the chart data should be created
-         * @param property - The learner results property from that the data should be used
+         * @param {LearnResult[]} results - The learner results from that the chart data should be created
+         * @param {string} property - The learner results property from that the data should be used
          * @returns {{data: Array, options: {series: {y: string, color: string, type: string, axis: string, id: string}[], stacks: Array, axes: {x: {type: string, key: string}, y: {type: string, min: number}}, lineMode: string, tension: number, tooltip: {mode: string}, drawLegend: boolean, drawDots: boolean, columnsHGap: number}}}
          */
         function createDataFromMultipleFinalResults(results, property) {
@@ -76,7 +76,7 @@
                     break;
                 case properties.SIGMA:
                     dataValues = _.map(_.pluck(results, properties.SIGMA), function (n) {
-                        return n.length
+                        return n ? n.length : 0;
                     });
                     break;
                 case properties.SYMBOL_CALLS:
@@ -121,8 +121,8 @@
         /**
          * Creates area chart data from a list of complete learner results which includes the data itself and options.
          *
-         * @param results - A list of complete learner results
-         * @param property - The learner result property from which the chart data should be created
+         * @param {LearnResult[]} results - A list of complete learner results
+         * @param {String} property - The learner result property from which the chart data should be created
          * @returns {{data: Array, options: {series: Array, stacks: Array, axes: {x: {type: string, key: string}, y: {type: string, min: number}}, lineMode: string, tension: number, tooltip: {mode: string}, drawLegend: boolean, drawDots: boolean, columnsHGap: number}}}
          */
         function createDataFromMultipleCompleteResults(results, property) {
@@ -150,7 +150,6 @@
                     _.forEach(results, function (result) {
                         dataValues.push(_(result).pluck('statistics').pluck(properties.MQS).value());
                     });
-
                     break;
                 case properties.EQS:
                     _.forEach(results, function (result) {
@@ -160,7 +159,7 @@
                 case properties.SIGMA:
                     _.forEach(results, function (result) {
                         dataValues.push(_.map(_.pluck(result, properties.SIGMA), function (n) {
-                            return n.length;
+                            return n ? n.length : 0;
                         }));
                     });
                     break;

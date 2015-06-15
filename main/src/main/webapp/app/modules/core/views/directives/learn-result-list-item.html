@@ -3,7 +3,9 @@
     <input type="checkbox" class="pull-left">
 
     <div class="learn-result-list-item-content">
+
         <div class="pull-right" ng-transclude></div>
+        <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
 
         <strong>Test No
             <span ng-bind="result.testNo"></span>

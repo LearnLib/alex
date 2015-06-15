@@ -37,7 +37,7 @@
         var interval = null;
 
         // The time for the polling interval in ms
-        var intervalTime = 10000;
+        var intervalTime = 5000;
 
         /**
          * The complete learn result until the most recent learned one
@@ -78,6 +78,7 @@
                     .then(function (data) {
                         if (!data.active) {
                             Learner.getStatus().then(function (result) {
+                                console.log(result);
                                 if (result.error) {
                                     Error.setErrorMessage(result.errorText);
                                     Error.goToErrorPage();

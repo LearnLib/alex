@@ -10,6 +10,76 @@ For a deeper insight in the concepts and theory behind the application, consider
  Learning</a> that covers the front-end parts and <br/><a href="/documents/ba-thesis-schieweck.pdf" target="_blank">A 
  Service-Oriented Interface for Testing Web Applications via Automata Learning</a> that deals with the REST API and the
  connection to the <a href="http://learnlib.de/" target="_blank">LearnLib</a>.
+ 
+ 
+Description and Features
+------------------------
+ 
+ 
+Working Objects
+---------------
+
+<dl>
+  <dt><strong>Project</strong></dt>
+  <dd>
+    A project is the main object that the following objects belong to. It is bound to a unique name and a URL that 
+    starts with <em>"http[s]://"</em>. This property defines the root URL of an application to be learned. In ALEX it is
+    allowed to create and manage multiple projects, thus, for example, allowing to treat a web application and a web
+    service as different projects or managing multiple complete different applications.
+  </dd>
+  <dt><strong>Symbol Group</strong></dt>
+  <dd>
+   Symbol groups represent containers for symbols of a project that allow to group symbols for example according to
+   their logic or task. A default symbol group is created once a project is initialized where all unsorted symbols are
+   put into.
+  </dd>
+  <dt><strong>Symbol</strong></dt>
+  <dd>
+    Symbols are used by the learner to learn an application. They are defined by a unique name and an abbreviation. 
+    The latter is shown as an edge label of the learned model of an application to make it visually clear. Each symbol
+    consists of an ordered list of actions that define the actual logic of the symbol once it is executed.
+  </dd>
+  <dt><strong>Action</strong></dt>
+  <dd>
+    Actions are atomic operations on an application. In ALEX, there are three types. <strong>Web</strong> actions are
+    inspired by Selenium and directly interact with the web interface of an application that for example is clicking a 
+    button, filling out input fields and submitting forms. <strong>REST</strong> actions allow to define actions with
+    a REST API and <strong>General</strong> actions allow interoperability between actions and symbols.
+  </dd>
+  <dt><strong>Learning Configuration</strong></dt>
+  <dd>
+    For each learning process, a learning configuration has to be created. It consists of an alphabet, which is a set
+    of created symbols, a reset symbol (a symbol that is used to reset an application before each MQ), a learning
+    algorithm and an equivalence oracle. Of cause the length the alphabet has to contain at least one symbol and reset
+    symbol is required as well.
+  </dd>
+  <dt><strong>Learning Resume Configuration</strong></dt>
+    <dd>
+      A learning resume configuration is needed when the learner finished learning and the user wants to continue the
+      process. Therefore, it only consists of an equivalence oracle.
+    </dd>
+  <dt><strong>Learning Result</strong></dt>
+  <dd>
+    As soon as a learning process ha finished, a learning result is generated for each step the learner took to generate
+    the final hypothesis. For each step, it contains the actual learning configuration, statistics and the hypothesis as
+    a JSON representation.
+  </dd>
+</dl>
+
+
+Workflow
+---------
+
+A common workflow for learning a web application regarding the working objects can look as follows:
+
+<ol>
+    <li>Create a project with the root URL</li>
+    <li>Optionally create several symbol groups</li>
+    <li>Create a set of symbols, including one that handles the reset logic</li>
+    <li>Create actions for each symbol</li>
+    <li>Create a learning configuration and start learning</li>
+    <li>Display the hypothesis, internal data structures, analyze the statistics</li>
+</ol>
 
 
 Frontend
