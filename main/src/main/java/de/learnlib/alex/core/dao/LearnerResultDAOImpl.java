@@ -253,6 +253,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     private void updateSummary(Session session, LearnerResult result) throws NotFoundException {
         LearnerResult summaryResult = get(session, result.getProjectId(), result.getTestNo());
         summaryResult.setErrorText(result.getErrorText());
+        summaryResult.setHypothesis(result.getHypothesis());
 
         LearnerResult.Statistics summaryStatistics = summaryResult.getStatistics();
         LearnerResult.Statistics newStatistics = result.getStatistics();

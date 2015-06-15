@@ -569,7 +569,7 @@ public class LearnerResult implements Serializable {
      *
      * @return The result encoded as JSON data.
      */
-    @Column(length = Integer.MAX_VALUE)
+    @Column(columnDefinition = "CLOB")
     @JsonIgnore
     public String getJSON() {
         if (jsonChanged) {
