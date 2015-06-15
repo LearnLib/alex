@@ -7,6 +7,7 @@ import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -23,6 +24,7 @@ public class ClearAction extends WebSymbolAction {
 
     /** The node to look for. */
     @NotBlank
+    @Column(columnDefinition = "CLOB")
     private String node;
 
     /**

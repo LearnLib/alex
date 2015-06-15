@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -21,6 +23,8 @@ public class ClickAction extends WebSymbolAction {
     private static final long serialVersionUID = -9158530821188611940L;
 
     /** The information to identify the element. */
+    @NotBlank
+    @Column(columnDefinition = "CLOB")
     private String node;
 
     /**

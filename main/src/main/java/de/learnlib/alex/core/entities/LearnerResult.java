@@ -509,7 +509,7 @@ public class LearnerResult implements Serializable {
      *
      * @return More (internal) information of the algorithm as string.
      */
-    @Column(length = Integer.MAX_VALUE)
+    @Column(columnDefinition = "CLOB")
     public String getAlgorithmInformation() {
         return algorithmInformation;
     }

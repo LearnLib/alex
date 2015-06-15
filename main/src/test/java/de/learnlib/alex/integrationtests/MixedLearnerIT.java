@@ -67,7 +67,7 @@ public class MixedLearnerIT extends JerseyTest {
              + "\"actions\": ["
                 + "{\"type\": \"web_goto\", \"url\": \"/web/reset\"},"
                 + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/rest/reset\"},"
-                + "{\"type\": \"incrementCounter\", \"name\" : \"the_counter\"}"
+                + "{\"type\": \"incrementCounter\", \"name\" : \"theCounter\"}"
              + "]}";
         Symbol resetSymbol = testHelper.addSymbol(client, project, json);
         resetSymbolIdAndRevisionAsJSON = testHelper.createIdRevisionPairListAsJSON(resetSymbol);
@@ -82,7 +82,7 @@ public class MixedLearnerIT extends JerseyTest {
                 + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
                     + "{\"type\": \"rest_call\", \"method\" : \"GET\", \"url\": \"/test\"},"
                     + "{\"type\": \"rest_checkStatus\", \"status\" : 200},"
-                    + "{\"type\": \"incrementCounter\", \"name\" : \"the_counter\"}"
+                    + "{\"type\": \"incrementCounter\", \"name\" : \"theCounter\"}"
                 + "]}";
         symbols[0] = testHelper.addSymbol(client, project, json);
 

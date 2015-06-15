@@ -8,8 +8,10 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 
 /**
  * Action to enter a text into a specific element.
@@ -27,6 +29,7 @@ public class FillAction extends WebSymbolAction {
      * @requiredField
      */
     @NotBlank
+    @Column(columnDefinition = "CLOB")
     private String node;
 
     /**

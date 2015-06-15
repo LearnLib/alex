@@ -82,7 +82,11 @@ public class SymbolDAOImplTest {
         a2.setNode("#node-id");
         symbol.addAction(a2);
         ClickAction a3 = new ClickAction();
-        a3.setNode("#node-id");
+        a3.setNode("#superlong > css trace .with-absolute ~no_meaning .at-all > .1234567890 > .1234567890 > .1234567890"
+                           + " > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890"
+                           + " > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890"
+                           + " > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890"
+                           + " > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890");
         symbol.addAction(a3);
         FillAction a4 = new FillAction();
         a4.setNode("#node-id");

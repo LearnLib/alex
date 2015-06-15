@@ -102,7 +102,7 @@ public class WebSymbolIT {
                 + ", \"revision\": " + symbol.getRevision() + ", \"group\": 0, \"name\": \"" + symbolName
                 + " updated\", \"abbreviation\": \"" + symbolAbbr + "n\","
                 + " \"actions\": ["
-                    + "{\"type\": \"web_click\"},"
+                    + "{\"type\": \"web_click\", \"node\": \"#node\"},"
                     + "{\"type\": \"wait\", \"duration\": 1000}"
                 + "]}";
         path = "/projects/" + project.getId() + "/symbols/" + symbol.getId();
