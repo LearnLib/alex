@@ -152,38 +152,56 @@ Except for the about, help, error, home and the create project page, all other r
 created and is opened.
 
 
+### <a name="navigation"></a> Navigation
+
+All pages of the front-end are accessible through the navigation that is placed on top of the screen. Depending if an
+instance of a project is saved in the session storage, the navigation can be in either one of the following two states.
+The first one (first image) shows the navigation bar if no project is opened by a user. Only the index page, the page
+to create a new project and the about and help page are accessible. In case a project has been opened (second image) all
+pages that deal with working objects that relate to the opened project are accessible.
+
+<img src="images/navigation-1.jpg"/>
+
+<img src="images/navigation-2.jpg"/>
+
+
 ### <a name="project-management"></a> Project Management
 
 Projects are the entities that are used to manage multiple applications separately in ALEX. You can for example create
 a project for your application in version x and another one for version x+1 while having a different set of symbols and
 saved learning results.
 
+Most of the URLs listed in the previous section require a project to be *opened*, which means has been selected from the
+applications start page. It is then saved in the session storage of the web browser. In case a project is persisted no 
+other project can be opened in the same tab. The use of multiple tabs allow to open and work with multiple projects at a 
+time. In order to switch to another project of the same tab, it has to be *closed*. That means it has to be removed from 
+the session storage, either by clicking the menu item from the main navigation or by closing the current tab.
 
-#### <a name="project-management-create"></a> Creating Projects
 
-From the front page either go to */project/create* or use the menu entry in the main navigation. On the following page a
-new project can be created. Therefore, a form with the following entries is displayed.
+#### <a name="project-management-create"></a> Create, Edit and Delete Projects
 
 | Field       | Description                                                                            | Required |
 |-------------|----------------------------------------------------------------------------------------|----------|
 | Name        | A unique name for your project                                                         | yes      |
-| URL         | The root URL your application is accessible under. Has to start with *http* or *https* | yes      |
+| URL         | The root URL your application is accessible under                                      | yes      |
 | Description | A description of your project                                                          | no       |
 
-If the creation has been successful you should be redirected to the front page where the newly created project is listed.
-A click on it opens the project and leads to a work in progress dashboard which is the entry point for every other
-interaction with your project.
+The URL of a new project has to start with *http://* or *https://* followed by at least one further character for the 
+host. Technically, any host can be entered and therefore any web site can be learned. Due to the traffic that is caused 
+by the learning process, it is recommended to only learn web applications you are the owner of, be it a local or a 
+remote host.
+
+If the creation has been successful a user should be redirected to the front page where the newly created project is 
+now listed. A click on it opens the project and leads to a work in progress dashboard which is the entry point for every 
+other interaction with your project.
 
 In order to switch to another project you have to close the current one at first. The button for this action can be
-found in the menu that is shown in the picture above. It redirects to the front-page. For working on multiple projects
-simultaneously, you can open another tab and call ALEX from that one again.
+found in the menu under the navigation point with the name of the opened project. It redirects to the front-page. For 
+working on multiple projects simultaneously, you can open another tab and call ALEX from that one again.
 
-
-#### <a name="project-management-editing-deleting"></a> Editing & Deleting Projects
-
-Deleting and updating projects can be done under */project/settings* which can also be accessed by navigating through
-the menu entries as shown in the previous section. Before deleting a project, make sure you have exported your symbols,
-hypotheses and/or statistics because with the deleting of a project, all these values are deleted from the server, too.
+Deleting and updating projects can be done under the premise that there is no active learning process with the project,
+Before deleting a project, make sure you have exported your symbols, hypotheses and/or statistics because with the 
+deleting of a project, all these values are deleted from the server, too.
 
 
 ### <a name="symbol-management"></a> Symbol Management
@@ -324,7 +342,8 @@ to manually reset the application in between every test.
 **Variables:** Variables can only contain String values and are kept alive during a membership query. 
 
 **Files:** Files are string values that contain the absolute path of an *already* uploaded file. It can be used to model
-file uploads.
+file uploads. In the current version of ALEX, uploading files to the learned application during a learning process does
+not reliably work.
 
 In order to make use of those in actions, there is a notation that has to be used in action fields, as presented in the
 following table.
@@ -384,8 +403,6 @@ Therefore, file has to be formatted as follows:
         "actions" : [ ... ]
     }, ... ]
     
-For the manual creation of actions, have a look at [here].
-
 
 ### <a name="learning-experiment-modeling"></a> Learning Experiment Modeling
 
@@ -431,17 +448,80 @@ a time.
 
 ### <a name="learning-experiment-modeling-hypothesis-interaction"></a> Hypothesis Interaction
 
+The possibility to interact with generated models can be separated into two phases. The first one is while a learning
+process is running and the second one is after having finished learning an applications. The latter is dealt with in the
+section <a href="#Learning_Experiment_Analysis" title="Learning Experiment Analysis">Learning Experiment Analysis 
+<b class="caret"></b></a>.
+
 
 #### <a name="learning-experiment-modeling-internal-data-structures"></a> Internal Data Structures
+
+ALEX provides the visualisation of the *Observation Table* that is used by the *L\** algorithm and the *Discrimination
+Tree* from the equally named algorithm. Both are saved for each iteration the learner executes and can be displayed in
+the same panel corresponding hypothesis is presented in. While observation tables can be exported as a CSV file, 
+discrimination trees can be downloaded in the SVG format.
  
  
-#### <a name="learning-experiment-modeling-counterexamples"></a> Counter Example Testing
+#### <a name="learning-experiment-modeling-counterexamples"></a> Testing Counterexamples
+
+In between two iterations of a learning process it is possible to search and test counterexamples directly on the 
+displayed hypothesis and then start the next iteration with respect to entered counterexamples. This process follows
+this patter:
+
+1. Choose the equivalence oracle *Sample* from the widget in the sidebar
+2. Create a word by clicking on the labels of the hypothesis
+3. In the widget click on the button *\"Test\"*
+4. A notification will tell whether the word is a counterexample or not
+5. Click on the button *\"Add\"* to add the counterexample the list that is considered for refinement
+6. Proceed with step 1 or resume the learning process
+
+Note that while testing a word and it results in being a counterexample, its output labels are automatically switched
+to the actual output sequence. The list of symbols can be arranged with drag and drop for quickly testing different 
+words. Once a counterexample has been added to the list, it can be edited by clicking on it.
+
+The server assumes that all words given by a user for the refinement actually are counterexamples. If this is not the
+case the learning process may fail and the application may have to be restarted by killing the running process.
 
 
 ### <a name="learning-experiment-analysis"></a> Learning Experiment Analysis
 
+After having learned an application, their test results are available for an analysis. This can happen in two ways
+that the next sections deals with.
+
 
 #### <a name="learning-experiment-analysis-hypothesis-comparison"></a> Hypotheses Comparison
 
+The first point is the visual comparison of hypotheses in a single tab. The page for that can be equally separated into
+multiple columns, where each column can present a hypothesis or an internal data structure. That way it is possible to
+have a look at the internal data structure and the hypothesis at the same time. Another possibility is to compare two
+or more hypotheses of several test runs. The only restriction is that results can only be compared to other results from
+the same project.
+
+<img src="images/hypotheses-comparison.jpg" />
+
+The image above presents an example of a comparison of the same test run. By clicking on the grey area on the right of 
+the display a new column is created. By clicking on the red button in a panel, the column is removed and the size of
+the other columns
+
 
 #### <a name="learning-experiment-analysis-statistics"></a> Statistics
+
+On the statistics page a list of learning results is presented. It is either possible to generate a bar chart of a
+selection of final results or an area chart. This one not only includes the cumulated values, but displays all values
+of all iterations of each step of multiple learning processes. Statistics can be generated for the following values:
+
+* The number of conducted membership queries
+* The number of conducted equivalence queries
+* The number of called symbols
+* The size of the input alphabet
+* The time it took to finish the test or a single step
+
+Each generated chart can be exported as a SVG file. Furthermore, an export of these values in a CSV file for further
+research is possible, too. The image below shows an example of a chart of multiple final results (left) and one from
+multiple complete results (right). In the second case the visibility of single tests can be toggled by clicking on the
+legend entry with the corresponding test number.
+
+<img src="images/charts.jpg" />
+
+Another aspect to mention is that statistics are generated on the fly and are bound to a learning result. In case the
+learning result is deleted, the statistics can not be shown any longer.
