@@ -141,6 +141,7 @@
         <menu name="Usage">
             <item name="Features" href="features.html" />
             <item name="Usage" href="usage.html" />
+            <item name="Screencasts" href="screencasts.html" />
             <item name="Automata Learning" href="automata-learning.html" />
         </menu>
 

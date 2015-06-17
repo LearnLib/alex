@@ -2,7 +2,7 @@ Usage of ALEX
 ===============
 
 Here you can find a detailed explanation of the concepts and ways to use ALEX, regarding the RESTful API that powers
-the application as well as the graphical client for it. This documents covers the necessary parts to understand and
+the application as well as the graphical client for it. This document covers the necessary parts to understand and
 use both parts.
 
 For a deeper insight in the concepts and theory behind the application, consider reading the bachelor theses 
@@ -11,10 +11,47 @@ For a deeper insight in the concepts and theory behind the application, consider
  Service-Oriented Interface for Testing Web Applications via Automata Learning</a> that deals with the REST API and the
  connection to the <a href="http://learnlib.de/" target="_blank">LearnLib</a>.
  
+If you find bugs of any kind relating this application or inaccuracies in this manual, 
+<a href="mailto:alexander.bainczyk@tu-dortmund.de,alexander.schieweck@tu-dortmund.de">let us</a> know. The embedded
+screencasts in this document are reserved for this page only and may not be distributed without authorization.
+ 
  
 Description and Features
 ------------------------
- 
+
+ALEX offers a simplicity-oriented way to model and execute tests on web applications and web services that are based 
+on active automata learning. Based on the function set of the <a href="http://learnlib.de/" title="LearnLib">LearnLib</a> 
+and inspired by the <a href="http://ls5-www.cs.tu-dortmund.de/projects/learnlib/download.php">LearnLib Studio</a> the 
+application lays a focus on the ease to use of the tool while offering an extensive feature set:
+
+* Active Automata Learing of web applications and web services
+* Support for managing and learning multiple applications
+* Graphical symbol construction
+* Graphical learning process modelling
+* Automatic generation and visualization of
+    * Hypotheses
+    * Internal da structures (Observation Table and Discrimination Tree)
+    * Statistics regarding learning results
+* Simultaneous learning of web applications and web services
+* Supported algorithms: L\*, TTT, Discrimination Tree, DHC
+* Supported equivalence oracles: Random Word, Complete, Sample
+* Import and Export of symbol sets
+* Export of Hypotheses as JSON and SVG
+* Export of internal data structures
+
+
+Requirements
+------------
+
+In order to run both, the RESTful API and the browser-based client of ALEX, your computer needs to fulfill certain 
+specifications which are
+
+* Windows 8.1 or higher / Linux as operating system
+* Java 8 Runtime Environment
+* Chrome >= 42.0.* / Firefox >= 36.0
+
+It may be that the application also runs on lower versions of Windows and MacOS, as well as on other web browsers like
+Opera and Safari, but ALEX has been and is developed on machines with the mentioned specifications.
  
 Working Objects
 ---------------
@@ -70,31 +107,49 @@ Working Objects
 Workflow
 ---------
 
-A common workflow for learning a web application regarding the working objects can look as follows:
+When working with ALEX, the workflow for learning a web application starting with the creation of a project and resulting
+in the generation of a model of this application follows a common pattern. The next chapters deal with an in-depth view
+on the points listed below:
 
-<ol>
-    <li>Create a project with the root URL</li>
-    <li>Optionally create several symbol groups</li>
-    <li>Create a set of symbols, including one that handles the reset logic</li>
-    <li>Create actions for each symbol</li>
-    <li>Create a learning configuration and start learning</li>
-    <li>Display the hypothesis, internal data structures, analyze the statistics</li>
-</ol>
+1. Create a project with the root URL the learned application is accessible under
+2. Optionally create several symbol groups
+3. Create a set of symbols, including one that handles the reset logic
+4. Create actions for each symbol
+5. Model a learning process and start learning
+6. Display the hypothesis, internal data structures, analyze the statistics
 
 
 Frontend
 --------
 
-In order to make sure that the front-end works as intended, it is recommended that you use a modern web browser that
-implements most of the HTML5 and CSS3 specifications. The application should run just fine for the following browsers:
+Starting from the entry URL of ALEX, the graphical client can be accessed under http:/localhost:\<port\>/app. From there
+on the following URLs lead to different parts of the application.
 
- - Chrome >= 42.0.*
- - Firefox >= 36.0
- 
-It is not guaranteed that it also works with lower versions or alternative browsers such as Opera, Safari or Internet
-Explorer. If you keep your browser up to date you should not encounter any major issues. If you find bugs of any kind 
-relating to the specified versions or find that certain parts of the following manual lack of useful information, 
-<a href="mailto:alexander.bainczyk@tu-dortmund.de,alexander.schieweck@tu-dortmund.de">let us</a> know.
+| URL                                 | Description                                               |
+|-------------------------------------|-----------------------------------------------------------|
+| /home                               | Displays a list of created projects if none is opened     |
+| /project                            | Shows the dashboard of an opened project                  |
+| /project/create                     | Create a new project                                      |
+| /project/settings                   | Edit and delete an opened project                         |
+| /counters                           | Lists and manages the counters of a project               |
+| /files                              | Lists and manages uploaded files to a project             |
+| /symbols                            | Create, update & delete symbol groups and symbols         |
+| /symbols/\<symbolId\>/actions       | Manage actions of a specific symbol                       |
+| /symbols/\<symbolId\>/history       | Restore old revisions of a specific symbol                |
+| /symbols/trash                      | Restore deleted symbols                                   |
+| /symbols/import                     | Import symbols from a \*.json file                        |
+| /symbols/export                     | Export symbols into a \*.json file                        |
+| /learn/setup                        | Setup and start a learning experiment                     |
+| /learn/start                        | Shows the loadscreen and intermediate learning results    |
+| /learn/results                      | Lists all finished final learning results of a project    |
+| /learn/results/statistics           | Generate statistics from learning results                 |
+| /learn/results/compare/\<testNos\>  | Side-by-side comparison of multiple learning results      |
+| /about                              | An information page about the application                 |
+| /help                               | A page offering help to the usage of ALEX                 |
+| /error                              | Shows fatal error messages                                |
+
+Except for the about, help, error, home and the create project page, all other routes require that a project has been
+created and is opened.
 
 
 ### <a name="project-management"></a> Project Management
@@ -102,14 +157,6 @@ relating to the specified versions or find that certain parts of the following m
 Projects are the entities that are used to manage multiple applications separately in ALEX. You can for example create
 a project for your application in version x and another one for version x+1 while having a different set of symbols and
 saved learning results.
-
-| URL                           | Description                                |
-|-------------------------------|--------------------------------------------|
-| /project                      | Shows the dashboard of an opened project   |
-| /project/create               | Create a new project                       |
-| /project/settings             | Edit and delete an opened project          |
-
-<div class="video" data-name="projects"></div>
 
 
 #### <a name="project-management-create"></a> Creating Projects
@@ -144,17 +191,6 @@ hypotheses and/or statistics because with the deleting of a project, all these v
 Symbols are a core element of Active Automata Learning. A List of URLs that can be accessed with ALEX and their
 functionality is listed in the following table. For each aspect the following subsections provide a more detailed look.
 
-<div class="video" data-name="symbols"></div>
-
-| URL                           | Description                                       |
-|-------------------------------|---------------------------------------------------|
-| /symbols                      | Create, update & delete symbol groups and symbols |
-| /symbols/\<symbolId\>/actions | Manage actions of a specific symbol               |
-| /symbols/\<symbolId\>/history | Restore old revisions of a specific symbol        |
-| /symbols/trash                | Restore deleted symbols                           |
-| /symbols/import               | Import symbols from a \*.json file                |
-| /symbols/export               | Export symbols into a \*.json file                |
-
 
 #### <a name="symbol-groups"></a> Symbol Groups
 
@@ -174,8 +210,6 @@ renamed. Furthermore, deleting a symbol group induces all symbol to get deleted 
 For a better overview over a large set of symbols, symbol groups can be collapsed by clicking on the arrow button on 
 the left of each entry.
 
-<div class="video" data-name="symbol-groups"></div>
-
 
 #### <a name="symbols"></a> Symbols
 
@@ -185,9 +219,6 @@ Note that once you *delete* a symbol it is not permanently removed from the serv
 can be made visible by going to */symbols/trash* or by clicking the corresponding menu entry in the main menu. There, a
 list of all hidden symbols is given. Recovering a symbol makes it appear again in the group it previously was in. In 
 case the group has been deleted, the symbol is moved to the default group.
-
-<div class="video" data-name="symbols-recover"></div>
-
 
 #### <a name="actions"></a> Actions
 
@@ -199,8 +230,6 @@ under */symbols*. Here, actions can be created, edited, deleted and ordered. The
 of execution on the application as soon as the symbol is called by the learner. Make sure to save changes that have been 
 made in the current session, since CRUD operations and re-ordering of actions is not saved automatically. This is simply 
 possible by clicking the *save* button on the right in the sub-menu.
-
-<div class="video" data-name="symbols-actions"></div>
 
 The creation of actions is realized in a modal window that shows the action editor as shown in the picture above. As one
 can see, the left column contains dropdown boxes with a logical grouping of actions. The right column reveals a form
@@ -243,8 +272,6 @@ In Google Chrome, make a right click on the desired element and choose the entry
 sidebar should open and reveal the element in the DOM tree. There, make another right click on the element and choose
 *Copy CSS Path* which copies the unique CSS selector in the clipboard of your operating system. A similar approach can
 be applied with Firefox.
-
-<div class="video" data-name="actions.element-picker"></div>
 
 
 ##### <a name="actions-rest"></a> REST Actions
@@ -316,7 +343,7 @@ a counter *countLogins* with the value \'*5*\'. The following symbol makes use o
         "abbreviation" : "s1",
         "actions" : [{
             "type" : "web_checkForText",
-            "value" : "Hello {{$userName}}! You logged in for the {{#countLogins}}th time today.",
+            "value" : "Hello {{$userName}}! You logged in for the {{#countLogins}}th time.",
             "regexp" : false
         }]
     }, ... ]
@@ -334,8 +361,6 @@ the value field. In order for this to work, the file has had to be uploaded firs
 Changing a symbol in any way results in the creation of a new revision of it. A previous state of a symbol can be 
 recovered.
 
-<div class="video" data-name="symbols-revisions"></div>
-
 __Info:__ If you revert a symbol with revision *x* to a previous revision *x-i*, a new symbol with the revision *x+1* is
 created. If you have any actions that execute other symbols, you have to manually adjust those, so that they call the 
 most current symbol (In case this is wanted).
@@ -345,8 +370,6 @@ most current symbol (In case this is wanted).
 
 If you want to save a set of symbols for another project or use already existing ones, the export and import function
 might be of interest for you. The screencast below shows how to import and export symbols into new and existing projects.
-
-<div class="video" data-name="symbols-import-export"></div>
 
 Note that when exporting symbols, their revision, id and group are deleted in order to be compatible with other 
 projects.
@@ -366,29 +389,19 @@ For the manual creation of actions, have a look at [here].
 
 ### <a name="learning-experiment-modeling"></a> Learning Experiment Modeling
 
-| URL                                 | Description                                               |
-|-------------------------------------|-----------------------------------------------------------|
-| /learn/setup                        | Setup and start a learning experiment                     |
-| /learn/start                        | Shows the loadscreen and intermediate learning results    |
-| /learn/results                      | Lists all finished final learning results of a project    |
-| /learn/results/statistics           | Generate statistics from learning results                 |
-| /learn/results/compare/\<testNos\>  | Side-by-side comparison of multiple learning results      |
+In order to start learning an application, a learning process has to be modeled. Such a process always consists of the
+following components:
 
-<div class="video" data-name="learning-experiment-modeling"></div>
-
-For a learning process, it is required to select a set of symbols that should be learned and to choose a single symbol
-that should be used to reset the application. The alphabet can be modeled by selecting single symbols or complete 
-symbol groups. The reset symbol can be marked by clicking the blue circle on each entry. Note that you *can* include
-the reset symbol in the alphabet, but be sure that is what you want.
-
-From there on, a learning process can be started and ALEX learns your application. Optionally configure the learning
-process by the following points:
+* An alphabet (set of symbols)
+* A symbol to reset the application
+* An algorithm
+* A parametrized equivalence oracle
+* A maximum amount of steps to learn
 
 <dl>
   <dt><strong>Algorithm</strong></dt>
   <dd>
-    There are currently four algorithms supported: L\*, Discrimination Tree, DHC and TTT. As default, the L\* algorithm
-    is set, but other ones might be faster.
+    There are currently four algorithms supported: L*, Discrimination Tree, DHC and TTT.
   </dd>
   <dt><strong>Equivalence oracle</strong></dt>
   <dd>
@@ -409,15 +422,14 @@ process by the following points:
   </dd>
 </dl>
 
-While ALEX is learning there are some restrictions concerning the functionality which are:
+In order to simplify the modeling phase, 
 
-* You can not delete the current project
-* You can not start another learning process
+While ALEX is learning there are some restrictions concerning the functionality. You can not delete the current project as
+the instance is required by the learner. Due to the architecture of ALEX, there can always only be one learning process at
+a time.
 
 
 ### <a name="learning-experiment-modeling-hypothesis-interaction"></a> Hypothesis Interaction
-
-<div class="video" data-name="hypotheses-interaction"></div>
 
 
 #### <a name="learning-experiment-modeling-internal-data-structures"></a> Internal Data Structures
@@ -428,14 +440,8 @@ While ALEX is learning there are some restrictions concerning the functionality 
 
 ### <a name="learning-experiment-analysis"></a> Learning Experiment Analysis
 
-<div class="video" data-name="learning-result-analysis"></div>
-
 
 #### <a name="learning-experiment-analysis-hypothesis-comparison"></a> Hypotheses Comparison
 
 
 #### <a name="learning-experiment-analysis-statistics"></a> Statistics
-
-
-Try the REST API
-----------------
