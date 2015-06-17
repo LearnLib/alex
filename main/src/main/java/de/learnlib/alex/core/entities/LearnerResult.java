@@ -531,6 +531,7 @@ public class LearnerResult implements Serializable {
      * @return The current error text (can be null).
      */
     @JsonProperty("errorText")
+    @Column(columnDefinition = "CLOB")
     public String getErrorText() {
         return errorText;
     }

@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
@@ -44,6 +45,7 @@ public class WebSiteConnector implements Connector {
         this.baseUrl = new BaseUrlManager(baseUrl);
 
         this.driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
+        ((HtmlUnitDriver) this.driver).setJavascriptEnabled(true);
         this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
         this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
     }
@@ -63,7 +65,9 @@ public class WebSiteConnector implements Connector {
             // JavaScript is not enabled in the Driver
             // -> assume that localStorage and sessionStorage are not available and therefor must not be cleared.
             LOGGER.info("Could not reset the local storage and the session storage, because JavaScript is not enabled"
-                                + " in the Driver.");
+                                + " in the Driver.", e);
+        } catch (WebDriverException e) {
+            LOGGER.info("Can not execute the reset JavaScript before any site was loaded.", e);
         }
     }
 
