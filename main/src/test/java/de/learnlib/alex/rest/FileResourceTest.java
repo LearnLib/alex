@@ -22,6 +22,8 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileResourceTest extends JerseyTest {
 
@@ -55,7 +57,9 @@ public class FileResourceTest extends JerseyTest {
 
     @Test
     public void shouldUploadAFile() {
-        FileDataBodyPart filePart = new FileDataBodyPart("file", new File("/media/data/Coding/uni/ALEX/alex/main/src/test/resources/rest/IFrameProxyTestData.html"));
+        Path path = Paths.get(System.getProperty("user.dir"),
+                              "src", "test", "resources", "rest", "IFrameProxyTestData.html");
+        FileDataBodyPart filePart = new FileDataBodyPart("file", path.toFile());
         filePart.setContentDisposition(FormDataContentDisposition.name("file")
                                                .fileName("IFrameProxyTestData.html")
                                                .build());
