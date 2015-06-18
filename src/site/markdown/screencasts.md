@@ -1,6 +1,9 @@
 Screencasts
 ===========
 
+The embedded screencasts in this document are reserved for this page only and
+may not be distributed without authorization.
+
 <div class="video" data-name="projects"></div>
 <div class="video" data-name="symbols"></div>
 <div class="video" data-name="symbol-groups"></div>

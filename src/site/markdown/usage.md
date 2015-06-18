@@ -12,10 +12,11 @@ For a deeper insight in the concepts and theory behind the application, consider
  connection to the <a href="http://learnlib.de/" target="_blank">LearnLib</a>.
  
 If you find bugs of any kind relating this application or inaccuracies in this manual, 
-<a href="mailto:alexander.bainczyk@tu-dortmund.de,alexander.schieweck@tu-dortmund.de">let us</a> know. The embedded
-screencasts in this document are reserved for this page only and may not be distributed without authorization.
- 
- 
+[let us][mails] know.
+
+[mails]: mailto:alexander.bainczyk@tu-dortmund.de,alexander.schieweck@tu-dortmund.de
+
+
 Description and Features
 ------------------------
 
@@ -48,7 +49,7 @@ specifications which are
 
 * Windows 8.1 or higher / Linux as operating system
 * Java 8 Runtime Environment
-* Chrome >= 42.0.* / Firefox >= 36.0
+* Chrome >= 42.0.\* / Firefox >= 36.0
 
 It may be that the application also runs on lower versions of Windows and MacOS, as well as on other web browsers like
 Opera and Safari, but ALEX has been and is developed on machines with the mentioned specifications.
@@ -56,53 +57,43 @@ Opera and Safari, but ALEX has been and is developed on machines with the mentio
 Working Objects
 ---------------
 
-<dl>
-  <dt><strong>Project</strong></dt>
-  <dd>
-    A project is the main object that the following objects belong to. It is bound to a unique name and a URL that 
-    starts with <em>"http[s]://"</em>. This property defines the root URL of an application to be learned. In ALEX it is
+Project
+:   A project is the main object that the following objects belong to. It is bound to a unique name and a URL that 
+    starts with *"http\[s\]://"*. This property defines the root URL of an application to be learned. In ALEX it is
     allowed to create and manage multiple projects, thus, for example, allowing to treat a web application and a web
     service as different projects or managing multiple complete different applications.
-  </dd>
-  <dt><strong>Symbol Group</strong></dt>
-  <dd>
-   Symbol groups represent containers for symbols of a project that allow to group symbols for example according to
-   their logic or task. A default symbol group is created once a project is initialized where all unsorted symbols are
-   put into.
-  </dd>
-  <dt><strong>Symbol</strong></dt>
-  <dd>
-    Symbols are used by the learner to learn an application. They are defined by a unique name and an abbreviation. 
+
+Symbol Group
+:   A project is the main object that the following objects belong to. It is bound to a unique name and a URL that 
+    starts with *"http\[s\]://"*. This property defines the root URL of an application to be learned. In ALEX it is
+    allowed to create and manage multiple projects, thus, for example, allowing to treat a web application and a web
+    service as different projects or managing multiple complete different applications.
+    
+Symbol
+:   Symbols are used by the learner to learn an application. They are defined by a unique name and an abbreviation. 
     The latter is shown as an edge label of the learned model of an application to make it visually clear. Each symbol
     consists of an ordered list of actions that define the actual logic of the symbol once it is executed.
-  </dd>
-  <dt><strong>Action</strong></dt>
-  <dd>
-    Actions are atomic operations on an application. In ALEX, there are three types. <strong>Web</strong> actions are
+    
+Action
+:   Actions are atomic operations on an application. In ALEX, there are three types. **Web** actions are
     inspired by Selenium and directly interact with the web interface of an application that for example is clicking a 
-    button, filling out input fields and submitting forms. <strong>REST</strong> actions allow to define actions with
-    a REST API and <strong>General</strong> actions allow interoperability between actions and symbols.
-  </dd>
-  <dt><strong>Learning Configuration</strong></dt>
-  <dd>
-    For each learning process, a learning configuration has to be created. It consists of an alphabet, which is a set
+    button, filling out input fields and submitting forms. **REST** actions allow to define actions with
+    a REST API and **General** actions allow interoperability between actions and symbols.
+    
+Learning Configuration
+:   For each learning process, a learning configuration has to be created. It consists of an alphabet, which is a set
     of created symbols, a reset symbol (a symbol that is used to reset an application before each MQ), a learning
     algorithm and an equivalence oracle. Of cause the length the alphabet has to contain at least one symbol and reset
     symbol is required as well.
-  </dd>
-  <dt><strong>Learning Resume Configuration</strong></dt>
-    <dd>
-      A learning resume configuration is needed when the learner finished learning and the user wants to continue the
+    
+Learning Resume Configuration
+:     A learning resume configuration is needed when the learner finished learning and the user wants to continue the
       process. Therefore, it only consists of an equivalence oracle.
-    </dd>
-  <dt><strong>Learning Result</strong></dt>
-  <dd>
-    As soon as a learning process ha finished, a learning result is generated for each step the learner took to generate
+      
+Learning Result
+:   As soon as a learning process has finished, a learning result is generated for each step the learner took to generate
     the final hypothesis. For each step, it contains the actual learning configuration, statistics and the hypothesis as
     a JSON representation.
-  </dd>
-</dl>
-
 
 Workflow
 ---------
@@ -160,9 +151,9 @@ The first one (first image) shows the navigation bar if no project is opened by 
 to create a new project and the about and help page are accessible. In case a project has been opened (second image) all
 pages that deal with working objects that relate to the opened project are accessible.
 
-<img src="images/navigation-1.jpg"/>
+![Navigation bar](images/navigation-1.jpg)
 
-<img src="images/navigation-2.jpg"/>
+![Navigation bar](images/navigation-2.jpg)
 
 
 ### <a name="project-management"></a> Project Management
@@ -364,19 +355,14 @@ Many web applications handle dynamic data and allow file uploads. In order to mo
 allow interaction between different symbols, actions and learning processes, *counters*, *variables* and *files* are 
 introduced.
 
-<dl>
-    <dt><strong>Counter</strong></dt>
-    <dd>
-        As the name indicates counters are integer values that are persisted in the database per project. They
-        can be incremented and set at will. Commonly they are used to create multiple objects of the same kind. Counters 
-        can help to model a system reset and thereby allow a consecutive execution of multiple learning processes without 
-        having to manually reset the application in between every test.   
-    </dd>
-    <dt><strong>Variables</strong></dt>
-    <dd>
-        Variables can only contain String values and are kept alive during a membership query.
-    </dd>
-</dl>
+Counter
+:   As the name indicates counters are integer values that are persisted in the database per project. They
+    can be incremented and set at will. Commonly they are used to create multiple objects of the same kind. Counters 
+    can help to model a system reset and thereby allow a consecutive execution of multiple learning processes without 
+    having to manually reset the application in between every test.   
+    
+Variables
+:   Variables can only contain String values and are kept alive during a membership query.
 
 In order to make use of those in actions, there is a notation that has to be used in action fields, as presented in the
 following table.
@@ -389,15 +375,17 @@ following table.
 As an example for the use of counters and variables, let there be a variable *userName* with the value \'*Admin*\' and
 a counter *countLogins* with the value \'*5*\'. The following symbol makes use of both.
 
-    [{
-        "name" : "symbol1",
-        "abbreviation" : "s1",
-        "actions" : [{
-            "type" : "web_checkForText",
-            "value" : "Hello {{$userName}}! You logged in for the {{#countLogins}}th time.",
-            "regexp" : false
-        }]
-    }, ... ]
+```json
+[{
+    "name" : "symbol1",
+    "abbreviation" : "s1",
+    "actions" : [{
+        "type" : "web_checkForText",
+        "value" : "Hello {{$userName}}! You logged in for the {{#countLogins}}th time.",
+        "regexp" : false
+    }]
+}, ... ]
+```
     
 As soon as the action is executed the value of the property \'value\' is parsed, the values for the variable *userName*
 and the counter *countLogins* are inserted into the String. The resulting text that is searched for would be \"*Hello
@@ -428,11 +416,13 @@ compatible with other projects.
 ALEX supports the import from and export in a JSON file. Technically, the possibility of creating symbols with a simple 
 text editor by hand and uploading them to the system is given. Therefore, the file has to look as follows:
 
-    [{
-        "name" : "symbol1",
-        "abbreviation" : "s1",
-        "actions" : [ ... ]
-    }, ... ]
+```json
+[{
+    "name" : "symbol1",
+    "abbreviation" : "s1",
+    "actions" : [ ... ]
+}, ... ]
+```
     
 
 ### <a name="learning-experiment-modeling"></a> Learning Experiment Modeling
@@ -446,54 +436,40 @@ following components:
 * A parametrized equivalence oracle
 * A maximum amount of steps to learn
 
-<dl>
-  <dt><strong>Algorithm</strong></dt>
-  <dd>
-    There are currently four algorithms supported: L*, Discrimination Tree, DHC and TTT.
-  </dd>
-  <dt><strong>Equivalence oracle</strong></dt>
-  <dd>
-    ALEX supports three kinds of oracles. The first one is *Random Word*, the second one is *Complete* and the last one is 
+Algorithm
+:   There are currently four algorithms supported: L*, Discrimination Tree, DHC and TTT.
+
+Equivalence oracle
+:    ALEX supports three kinds of oracles. The first one is *Random Word*, the second one is *Complete* and the last one is 
     *Sample*. The first two oracles approximate equivalence queries automatically to find counterexamples while when using 
     *Sample*, you are asked to search and enter them by yourself in between iterations.   
-  </dd>
-  <dt><strong>Steps to learn</strong></dt>
-  <dd>
-    You can also define how many hypotheses should be generated at maximum. When the learner stops, you can still continue
+    
+Steps to learn
+:   You can also define how many hypotheses should be generated at maximum. When the learner stops, you can still continue
     learning from this point.
     
-  </dd>
-  <dt><strong>Comment</strong></dt>
-  <dd>
-    Furthermore a comment can be added that makes it easier to identify a specific learning result between others. The
+Comment
+:   Furthermore a comment can be added that makes it easier to identify a specific learning result between others. The
     comment is a string value with a maximum amount of 120 characters.
-  </dd>
-</dl>
 
 The mentioned equivalence oracles have different strategies on how to find counterexamples. Each one can be configured with
 different parameters that define their behaviour.
 
-<dl>
-    <dt><strong>Random Word</strong></dt>
-    <dd>
-        The Random Word oracle approximates equivalence queries by generating random words from learned symbol set and 
+Random Word
+:       The Random Word oracle approximates equivalence queries by generating random words from learned symbol set and 
         executes them on the learned applications. The oracles expects three parameters: <em>minLength</em> defines the
         minimum length of a generated word, <em>maxLength</em> the maximum length and <em>numberOfWords</em> the amount
         of randomly generated words to test.
-    </dd>
-    <dt><strong>Complete</strong></dt>
-    <dd>
-        This oracle generates all possible word within some limits. <em>minDepth</em> describes the minimum length of 
+        
+Complete
+:       This oracle generates all possible word within some limits. <em>minDepth</em> describes the minimum length of 
         a generated word, <em>maxDepth</em> the maximum length.
-    </dd>
-    <dt><strong>Sample</strong></dt>
-    <dd>
-        If this oracle is chosen, counterexamples are searched by hand by the user.
-    </dd>
-</dl>
+        
+Sample
+:   If this oracle is chosen, counterexamples are searched by hand by the user.
 
 In order to simplify the modeling phase, only the learning alphabet and the reset symbol has to be chosen. As default, the
-L* algorithm is selected in combination with the random word oracle. A click on the button with the label "start" starts
+L\* algorithm is selected in combination with the random word oracle. A click on the button with the label "start" starts
 the learning process with the given configuration. The user gets redirected to a loading screen where the generated
 hypothesis is displayed as soon as the server generated one.
 
@@ -506,8 +482,7 @@ a time.
 
 The possibility to interact with generated models can be separated into two phases. The first one is while a learning
 process is running and the second one is after having finished learning an applications. The latter is dealt with in the
-section <a href="#Learning_Experiment_Analysis" title="Learning Experiment Analysis">Learning Experiment Analysis 
-<b class="caret"></b></a>.
+section [Learning Experiment Analysis <b class="caret"></b>](#Learning_Experiment_Analysis "Learning Experiment Analysis").
 
 
 #### <a name="learning-experiment-modeling-internal-data-structures"></a> Internal Data Structures
@@ -553,7 +528,7 @@ have a look at the internal data structure and the hypothesis at the same time. 
 or more hypotheses of several test runs. The only restriction is that results can only be compared to other results from
 the same project.
 
-<img src="images/hypotheses-comparison.jpg" />
+![Comparison of hypotheses](images/hypotheses-comparison.jpg)
 
 The image above presents an example of a comparison of the same test run. By clicking on the grey area on the right of 
 the display a new column is created. By clicking on the red button in a panel, the column is removed and the size of
@@ -577,7 +552,7 @@ research is possible, too. The image below shows an example of a chart of multip
 multiple complete results (right). In the second case the visibility of single tests can be toggled by clicking on the
 legend entry with the corresponding test number.
 
-<img src="images/charts.jpg" />
+![Charts](images/charts.jpg)
 
 Another aspect to mention is that statistics are generated on the fly and are bound to a learning result. In case the
 learning result is deleted, the statistics can not be shown any longer.
