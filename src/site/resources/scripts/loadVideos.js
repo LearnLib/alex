@@ -8,7 +8,7 @@
 
     function createVideos(){
         var name, video, source;
-        var path = '/videos/';
+        var path = 'videos/';
         var elements = $('.video');
 
         elements.each(function(i, el){

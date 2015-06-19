@@ -6,8 +6,8 @@ the application as well as the graphical client for it. This document covers the
 use both parts.
 
 For a deeper insight in the concepts and theory behind the application, consider reading the bachelor theses 
-<a href="/documents/ba-thesis-bainczyk.pdf" target="_blank">A Simplicity-Oriented Web-Based Approach to Active Automata
- Learning</a> that covers the front-end parts and <br/><a href="/documents/ba-thesis-schieweck.pdf" target="_blank">A 
+<a href="documents/ba-thesis-bainczyk.pdf" target="_blank">A Simplicity-Oriented Web-Based Approach to Active Automata
+ Learning</a> that covers the front-end parts and <br/><a href="documents/ba-thesis-schieweck.pdf" target="_blank">A 
  Service-Oriented Interface for Testing Web Applications via Automata Learning</a> that deals with the REST API and the
  connection to the <a href="http://learnlib.de/" target="_blank">LearnLib</a>.
  
