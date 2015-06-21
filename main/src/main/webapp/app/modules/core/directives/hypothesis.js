@@ -49,11 +49,6 @@
                 initNode: 'fill: #B3E6B3; stroke: #5cb85c; stroke-width: 3'
             };
 
-            var graphModes = {
-                GRAPH: 0,
-                MULTIGRAPH: 1
-            };
-
             scope.$watch('result', function (result) {
                 if (angular.isDefined(result) && result !== null) {
                     createHypothesis();
@@ -70,12 +65,7 @@
             function createHypothesis() {
                 clearSvg();
                 init();
-                if (angular.isUndefined(scope.layoutSettings)
-                    || (angular.isDefined(scope.layoutSettings) && !scope.layoutSettings.multigraph)) {
-                    layout(graphModes.GRAPH);
-                } else {
-                    layout(graphModes.MULTIGRAPH);
-                }
+                layout();
                 render();
                 handleEvents();
             }
@@ -139,46 +129,34 @@
                     })
                 }
 
-                if (graphMode === graphModes.GRAPH) {
+                // another format of a graph for merged multi edges
+                // graph = {<from>: {<to>: <label[]>, ...}, ...}
+                var graph = {};
 
-                    // another format of a graph for merged multi edges
-                    // graph = {<from>: {<to>: <label[]>, ...}, ...}
-                    var graph = {};
-
-                    // build data structure for the alternative representation by
-                    // pushing some data
-                    _.forEach(scope.result.hypothesis.edges, function (edge) {
-                        if (!graph[edge.from]) {
-                            graph[edge.from] = {};
+                // build data structure for the alternative representation by
+                // pushing some data
+                _.forEach(scope.result.hypothesis.edges, function (edge) {
+                    if (!graph[edge.from]) {
+                        graph[edge.from] = {};
+                        graph[edge.from][edge.to] = [edge.input + "/"
+                        + edge.output];
+                    } else {
+                        if (!graph[edge.from][edge.to]) {
                             graph[edge.from][edge.to] = [edge.input + "/"
                             + edge.output];
                         } else {
-                            if (!graph[edge.from][edge.to]) {
-                                graph[edge.from][edge.to] = [edge.input + "/"
-                                + edge.output];
-                            } else {
-                                graph[edge.from][edge.to].push(edge.input + "/"
-                                    + edge.output);
-                            }
+                            graph[edge.from][edge.to].push(edge.input + "/"
+                            + edge.output);
                         }
-                    });
-
-                    // add edges to the rendered graph and combine <label[]>
-                    _.forEach(graph, function (k, from) {
-                        _.forEach(k, function (labels, to) {
-                            _graph.setEdge(from, to, createEdgeObject(labels.join('\n')), (from + '' + to));
-                        });
-                    });
-
-                } else {
-                    var edge;
-
-                    // add edges to the graph
-                    for (i = 0; i < scope.result.hypothesis.edges.length; i++) {
-                        edge = scope.result.hypothesis.edges[i];
-                        _graph.setEdge(edge.from, edge.to, createEdgeObject(edge.input + "/" + edge.output), (edge.from + "-" + edge.to + "|" + i))
                     }
-                }
+                });
+
+                // add edges to the rendered graph and combine <label[]>
+                _.forEach(graph, function (k, from) {
+                    _.forEach(k, function (labels, to) {
+                        _graph.setEdge(from, to, createEdgeObject(labels.join('\n')), (from + '' + to));
+                    });
+                });
 
                 // layout with dagre
                 dagreD3.dagre.layout(_graph, {});
@@ -222,7 +200,7 @@
 
                 function zoomHandler() {
                     _svgGroup.attr('transform', 'translate(' + zoom.translate()
-                        + ')' + ' scale(' + zoom.scale() + ')');
+                    + ')' + ' scale(' + zoom.scale() + ')');
                 }
 
                 // do this whole stuff so that the size of the svg adjusts to the window

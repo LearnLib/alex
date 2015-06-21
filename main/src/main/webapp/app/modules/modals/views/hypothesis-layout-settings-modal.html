@@ -9,6 +9,8 @@
 
 </div>
 
+<form ng-submit="update()">
+
 <div class="modal-body">
 	
 	<div class="form-group">
@@ -28,16 +30,12 @@
 		<input type="number" class="form-control" placeholder="ranksep" ng-model="layoutSettings.ranksep">
 		<p class="help-block">Number of pixels between each rank in the layout.</p>
 	</div>
-	
-	<div class="checkbox">
-    	<label>
-      		<input type="checkbox" ng-model="layoutSettings.multigraph"> Multigraph
-    	</label>
-  	</div>
-		
+
 </div>
 
 <div class="modal-footer">
-	<button class="btn btn-default btn-sm" ng-click="defaultLayoutSettings()">Default</button>
-    <button class="btn btn-primary btn-sm" ng-click="update()">Update</button>
+	<a href class="btn btn-default btn-sm" ng-click="defaultLayoutSettings()">Default</a>
+    <button class="btn btn-primary btn-sm">Update</button>
 </div>
+
+</form>

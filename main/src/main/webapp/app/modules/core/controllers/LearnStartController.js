@@ -78,7 +78,6 @@
                     .then(function (data) {
                         if (!data.active) {
                             Learner.getStatus().then(function (result) {
-                                console.log(result);
                                 if (result.error) {
                                     Error.setErrorMessage(result.errorText);
                                     Error.goToErrorPage();

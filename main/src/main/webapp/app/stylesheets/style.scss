@@ -1,7 +1,6 @@
 @import "lib/_bootstrap";
 @import "hypothesis";
 @import "html-element-picker";
-@import "load-screen";
 @import "navigation";
 
 *, *:after, *:before {
@@ -427,4 +426,39 @@ form {
 
 .index-browser {
   display: inline-block;
+}
+
+
+
+.add-panel-button {
+  position: absolute;
+  z-index: 1000;
+  right: 12px;
+  bottom: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: 21px;
+  color: #fff;
+  background: #5cb85c;
+  padding-top: 11px;
+  cursor: pointer;
+  opacity: 0.75;
+  &:hover {
+    opacity: 1.0;
+  }
+}
+
+#load-screen {
+  position: fixed;
+  top: 50px;
+  bottom: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1100
+}
+
+#load-screen-indicator {
+  position: absolute;
+  top: 50%;
+  width: 100%
 }

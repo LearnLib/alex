@@ -43,7 +43,7 @@
             link: link
         };
 
-        function link(scope, el, attrs) {
+        function link(scope) {
 
             /**
              * Enum for displayable modes.
@@ -101,7 +101,32 @@
              */
             scope.showHypothesis = function () {
                 scope.mode = scope.modes.HYPOTHESIS;
-            }
+            };
+
+
+            scope.firstStep = function () {
+                scope.pointer = 0;
+            };
+
+            scope.previousStep = function () {
+                if (scope.pointer - 1 < 0) {
+                    scope.lastStep();
+                } else {
+                    scope.pointer--;
+                }
+            };
+
+            scope.nextStep = function () {
+                if (scope.pointer + 1 > scope.results.length - 1) {
+                    scope.firstStep();
+                } else {
+                    scope.pointer++;
+                }
+            };
+
+            scope.lastStep = function () {
+                scope.pointer = scope.results.length - 1;
+            };
         }
     }
 
