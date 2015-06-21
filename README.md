@@ -8,7 +8,7 @@ If all this tools are available, the fastest and easiest way to get started is t
 
     # the next 2 lines must only be done once!
     chmod +x build.sh
-    ./build.sh --no-tests
+    ./scripts/build.sh --no-tests
 
     # start the server
     cd main
@@ -17,6 +17,16 @@ If all this tools are available, the fastest and easiest way to get started is t
 These commands will download all required dependencies and then build ALEX.
 If the build process was successful and the server has started, ALEX is available
 at [localhost](http://localhost:8080/).
+
+
+Building a Release
+------------------
+To create a release archive please make sure that all requirements are fulfilled and that you can successfully build
+ALEX. If this is the case just run:
+
+    ./scripts/release.sh
+
+Afterwards the *ALEX-xxx.tar.gz* archive is created in the `target` directory.
 
 
 More Documentation
