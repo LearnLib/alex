@@ -125,6 +125,8 @@ public class LearnerResource {
                            LearnerResumeConfiguration configuration) {
         LearnerStatus status = new LearnerStatus(learner);
         try {
+            projectDAO.getByID(projectId); // check if project exists
+
             LearnerResult lastResult = learner.getResult();
             if (lastResult.getProjectId() != projectId || lastResult.getTestNo() != testRunNo) {
                 LOGGER.info("could not resume the learner of another project or with an wrong test run.");
@@ -138,6 +140,8 @@ public class LearnerResource {
             return Response.status(Status.NOT_MODIFIED).entity(status).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.resume", Status.BAD_REQUEST, e);
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.NOT_FOUND, e);
         }
     }
 
