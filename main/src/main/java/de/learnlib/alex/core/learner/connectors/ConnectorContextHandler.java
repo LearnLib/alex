@@ -67,7 +67,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
     @Override
     public void disposeContext(ConnectorManager connector) {
-        // nothing to do here
+        connectors.forEach(Connector::dispose);
     }
 
 }

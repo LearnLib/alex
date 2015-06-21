@@ -10,7 +10,10 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 
 import java.util.concurrent.TimeUnit;
 
@@ -43,11 +46,6 @@ public class WebSiteConnector implements Connector {
      */
     public WebSiteConnector(String baseUrl) {
         this.baseUrl = new BaseUrlManager(baseUrl);
-
-        this.driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
-        ((HtmlUnitDriver) this.driver).setJavascriptEnabled(true);
-        this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
-        this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
     }
 
     /**
@@ -55,20 +53,28 @@ public class WebSiteConnector implements Connector {
      */
     @Override
     public void reset() {
-        this.driver.manage().deleteAllCookies();
-
-        try {
-            JavascriptExecutor javascriptExecutor = (JavascriptExecutor) this.driver;
-            javascriptExecutor.executeScript("localStorage.clear();");
-            javascriptExecutor.executeScript("sessionStorage.clear();");
-        } catch (UnsupportedOperationException e) {
-            // JavaScript is not enabled in the Driver
-            // -> assume that localStorage and sessionStorage are not available and therefor must not be cleared.
-            LOGGER.info("Could not reset the local storage and the session storage, because JavaScript is not enabled"
-                                + " in the Driver.", e);
-        } catch (WebDriverException e) {
-            LOGGER.info("Can not execute the reset JavaScript before any site was loaded.", e);
+        String driver = System.getProperty("driver");
+        switch (driver.toLowerCase()) {
+            case "firefox":
+                this.driver = new FirefoxDriver();
+                break;
+            case "chrome":
+                this.driver= new ChromeDriver();
+                break;
+            case "ie":
+                this.driver = new InternetExplorerDriver();
+                break;
+            default:
+                this.driver = new HtmlUnitDriver();
         }
+
+        this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
+        this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void dispose() {
+        this.driver.close();
     }
 
     /**

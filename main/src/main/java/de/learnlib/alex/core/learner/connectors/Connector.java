@@ -11,4 +11,5 @@ public interface Connector {
      */
     void reset();
 
+    void dispose();
 }

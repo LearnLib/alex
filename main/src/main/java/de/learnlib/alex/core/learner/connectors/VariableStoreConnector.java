@@ -23,6 +23,11 @@ public class VariableStoreConnector implements Connector {
         store = new HashMap<>();
     }
 
+    @Override
+    public void dispose() {
+        // nothing to do here
+    }
+
     /**
      * Set a variable to a certain value.
      *

@@ -31,6 +31,11 @@ public class CounterStoreConnector implements Connector {
         // nothing to do here
     }
 
+    @Override
+    public void dispose() {
+        // nothing to do here
+    }
+
     public void set(Long projectId, String name, Integer value) {
         Counter counter;
         try {

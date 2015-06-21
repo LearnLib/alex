@@ -69,6 +69,11 @@ public class WebServiceConnector implements Connector {
         // nothing to do here
     }
 
+    @Override
+    public void dispose() {
+        // nothing to do here
+    }
+
     /**
      * Get the response status of the last request.
      * You have to do at least on request ({@link #get(String, Map, Set)}|

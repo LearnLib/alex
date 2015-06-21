@@ -21,6 +21,11 @@ public class FileStoreConnector implements Connector {
         // nothing to do here
     }
 
+    @Override
+    public void dispose() {
+        // nothing to do here
+    }
+
     public String getAbsoluteFileLocation(Long projectId, String fileName) throws IllegalStateException {
         try {
             return fileDAO.getAbsoulteFilePath(projectId, fileName);
