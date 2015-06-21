@@ -32,8 +32,8 @@ The simplest and recommended way on Unix machines is to use the build script.
 Go to the root directory of ALEX and simply run:
 
 ```bash
-chmod +x build.sh
-./build.sh
+chmod +x scripts/build.sh
+./scripts/build.sh
 ```
 
 This will check all dependencies and take care of all steps needed to build ALEX.
