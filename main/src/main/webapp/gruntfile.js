@@ -48,7 +48,7 @@ module.exports = function (grunt) {
 
             concat: {
                 options: {
-                    separator: ';'
+                    separator: ';\n'
                 },
                 app: {
                     src: ['app/templates.js', scripts],
@@ -195,6 +195,16 @@ module.exports = function (grunt) {
 
             clean: {
                 js: ["app/templates.js"]
+            },
+
+            bower: {
+                install: {
+                    options: {
+                        targetDir: './bower_components/',
+                        verbose: true,
+                        copy: false
+                    }
+                }
             }
         });
 
@@ -209,13 +219,12 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-protractor-webdriver');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-bower-task');
 
     grunt.registerTask('build-js', ['html2js', 'concat', 'uglify', 'clean']);
     grunt.registerTask('build-css', ['sass', 'cssmin']);
-    grunt.registerTask('build-html', ['html2js']);
-    grunt.registerTask('default', ['build-js']);
+    grunt.registerTask('default', ['bower:install', 'build-js']);
     grunt.registerTask('test-unit', ['karma']);
     grunt.registerTask('test-e2e', ['protractor']);
     grunt.registerTask('minify-css', ['cssmin']);
-
 };
