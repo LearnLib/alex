@@ -21,7 +21,7 @@ public class Main {
         String decodedPath = URLDecoder.decode(path, "UTF-8");
         File standaloneJar = new File(decodedPath);
         String folder = standaloneJar.getParent();
-        File applicationWar = new File(folder + "/weblearner.war");
+        File applicationWar = new File(folder + "/ALEX.war");
 
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath("/");
