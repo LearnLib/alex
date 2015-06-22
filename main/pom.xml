@@ -218,6 +218,7 @@
                     <packagingIncludes>
                         app/**,
                         index.html,
+                        img/**,
                         restdocs/**,
                         WEB-INF/**,
                     </packagingIncludes>
