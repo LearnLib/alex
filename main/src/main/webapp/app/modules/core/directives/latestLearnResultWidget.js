@@ -22,7 +22,7 @@
     function latestLearnResultWidget(Session, LearnResultResource, paths) {
         return {
             require: '^dashboardWidget',
-            templateUrl: paths.COMPONENTS + '/dashboard/views/latest-learn-result-widget.html',
+            templateUrl: paths.COMPONENTS + '/core/views/directives/latest-learn-result-widget.html',
             link: link
         };
 

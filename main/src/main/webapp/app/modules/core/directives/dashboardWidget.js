@@ -19,7 +19,7 @@
         return {
             scope: {},
             transclude: true,
-            templateUrl: paths.COMPONENTS + '/dashboard/views/dashboard-widget.html',
+            templateUrl: paths.COMPONENTS + '/core/views/directives/dashboard-widget.html',
             controller: ['$scope', controller]
         };
 

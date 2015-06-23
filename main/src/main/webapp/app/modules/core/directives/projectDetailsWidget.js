@@ -23,7 +23,7 @@
     function projectDetailsWidget(Session, SymbolGroupResource, LearnResultResource, paths) {
         return {
             require: '^dashboardWidget',
-            templateUrl: paths.COMPONENTS + '/dashboard/views/project-details-widget.html',
+            templateUrl: paths.COMPONENTS + '/core/views/directives/project-details-widget.html',
             link: link
         };
 

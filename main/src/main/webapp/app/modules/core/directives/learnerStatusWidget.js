@@ -16,12 +16,13 @@
      *
      * @param Learner - The LearnerService
      * @param Toast - The ToastService
+     * @param paths - The applications paths constant
      * @returns {{require: string, templateUrl: string, link: link}}
      */
     function learnerStatusWidget(Learner, Toast, paths) {
         return {
             require: '^dashboardWidget',
-            templateUrl: paths.COMPONENTS + '/dashboard/views/learner-status-widget.html',
+            templateUrl: paths.COMPONENTS + '/core/views/directives/learner-status-widget.html',
             link: link
         };
 
