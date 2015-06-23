@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.dashboard')
+        .module('ALEX.core')
         .directive('learnerStatusWidget', learnerStatusWidget);
 
     learnerStatusWidget.$inject = ['LearnerService', 'ToastService', 'paths'];

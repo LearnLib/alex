@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('ALEX.dashboard')
+        .module('ALEX.core')
         .directive('latestLearnResultWidget', latestLearnResultWidget);
 
     latestLearnResultWidget.$inject = ['SessionService', 'LearnResultResource', 'paths'];

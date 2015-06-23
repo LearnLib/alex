@@ -24,7 +24,7 @@
             },
             link: link
         };
-        function link(scope, el, attrs) {
+        function link(scope, el) {
             var reader = new FileReader();
 
             // call the callback as soon as a file is loaded

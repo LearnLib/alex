@@ -20,7 +20,6 @@
         // application specific modules
         'ALEX.core',
         'ALEX.actions',
-        'ALEX.dashboard',
         'ALEX.modals'
     ])
 }());

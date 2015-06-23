@@ -465,3 +465,13 @@ form {
     overflow: auto;
   }
 }
+
+/* give dropdown menus inside a button group their border back */
+.btn-group-xs {
+  .btn-group-xs {
+    .btn {
+      border-top-right-radius: 3px !important;
+      border-bottom-right-radius: 3px !important;
+    }
+  }
+}
