@@ -3,13 +3,9 @@
 
     angular
         .module('ALEX.core')
-        .directive('learnResultsPanel', learnResultsPanel)
-        .directive('learnResultsSlideshowPanel', learnResultsSlideshowPanel)
-        .directive('learnResultsListPanel', learnResultsListPanel);
+        .directive('learnResultsPanel', learnResultsPanel);
 
     learnResultsPanel.$inject = ['paths', 'learnAlgorithms'];
-    learnResultsSlideshowPanel.$inject = ['paths'];
-    learnResultsListPanel.$inject = ['paths'];
 
     /**
      * The directive that displays a browsable list of learn results. For each result, it can display the observation
@@ -35,9 +31,9 @@
     function learnResultsPanel(paths, learnAlgorithms) {
         return {
             scope: {
-                results: '=',
-                index: '@'
+                results: '='
             },
+            replace: true,
             transclude: true,
             templateUrl: paths.COMPONENTS + '/core/views/directives/learn-results-panel.html',
             link: link
@@ -103,11 +99,16 @@
                 scope.mode = scope.modes.HYPOTHESIS;
             };
 
-
+            /**
+             * Shows the first result of the test process
+             */
             scope.firstStep = function () {
                 scope.pointer = 0;
             };
 
+            /**
+             * Shows the previous result of the test process or the last if the first one is displayed
+             */
             scope.previousStep = function () {
                 if (scope.pointer - 1 < 0) {
                     scope.lastStep();
@@ -116,6 +117,9 @@
                 }
             };
 
+            /**
+             * Shows the next result of the test process or the first if the last one is displayed
+             */
             scope.nextStep = function () {
                 if (scope.pointer + 1 > scope.results.length - 1) {
                     scope.firstStep();
@@ -124,66 +128,12 @@
                 }
             };
 
+            /**
+             * Shows the last result of the test process
+             */
             scope.lastStep = function () {
                 scope.pointer = scope.results.length - 1;
             };
-        }
-    }
-
-    /**
-     * The directive to display a closeable learn result panel for the panel manager. Requires to be a child of a
-     * panelManager directive. For everything else see {@link learnResultsPanel}
-     *
-     * @param paths
-     * @returns {{require: string, scope: {results: string, index: string}, templateUrl: string, link: link}}
-     */
-    function learnResultsSlideshowPanel(paths) {
-        return {
-            require: '^panelManager',
-            scope: {
-                results: '=',
-                index: '@'
-            },
-            templateUrl: paths.COMPONENTS + '/core/views/directives/learn-results-slideshow-panel.html',
-            link: link
-        };
-
-        function link(scope, el, attrs, ctrl) {
-
-            /**
-             * Tells the panel manager to close this panel
-             */
-            scope.close = function () {
-                ctrl.closePanelAt(scope.index);
-            }
-        }
-    }
-
-    /**
-     * The directive to display a closeable panel that lists all learning results
-     *
-     * @param paths
-     * @returns {{require: string, scope: {index: string}, templateUrl: string, link: link}}
-     */
-    function learnResultsListPanel(paths) {
-        return {
-            require: '^panelManager',
-            scope: {
-                index: '@'
-            },
-            transclude: true,
-            templateUrl: paths.COMPONENTS + '/core/views/directives/learn-results-list-panel.html',
-            link: link
-        };
-
-        function link(scope, el, attrs, ctrl) {
-
-            /**
-             * Tells the panel manager to close this panel
-             */
-            scope.close = function () {
-                ctrl.closePanelAt(scope.index);
-            }
         }
     }
 }());

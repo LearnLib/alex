@@ -14,24 +14,21 @@
      * It expects one attribute 'ancestorOrElement' which should contain the selector to the table or the an ancestor
      * of the table.
      *
-     * Use it like "<button download-table-as-csv ancestor-or-element="#table">Click Me!</button>"
+     * Use it like "<button download-table-as-csv="#table">Click Me!</button>"
      *
      * @param FileDownloadService - The service for downloading files
      * @returns {{restrict: string, scope: {ancestorOrElement: string}, link: link}}
      */
     function downloadTableAsCsv(FileDownloadService) {
-
-        // the directive
         return {
             restrict: 'A',
             scope: {
-                ancestorOrElement: '@'
+                downloadTableAsCsv: '@'
             },
             link: link
         };
 
-        // the directives behaviour
-        function link(scope, el, attrs) {
+        function link(scope, el) {
             el.on('click', function () {
 
                 // the table element
@@ -39,8 +36,8 @@
                 var csv;
 
                 // find the downloadable table element
-                if (scope.ancestorOrElement) {
-                    table = document.querySelector(scope.ancestorOrElement);
+                if (scope.downloadTableAsCsv) {
+                    table = document.querySelector(scope.downloadTableAsCsv);
                     if (table !== null && table.nodeName.toLowerCase() === 'table') {
                         csv = createCSV(table);
                     } else {

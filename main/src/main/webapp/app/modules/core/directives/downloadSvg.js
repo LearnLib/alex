@@ -11,10 +11,7 @@
      * The directive that lets you directly download an SVG element from the html page into a file. It attaches a click
      * event to the element it was used on, that downloads the SVG. It can only be used as an attribute.
      *
-     * Expects an attribute 'ancestorOrElement' whose value should be the selector of the SVG or of an ancestor of an
-     * svg.
-     *
-     * Use: '<button download-svg ancestor-or-element="#...">Click Me!</button>'.
+     * Use: '<button download-svg="{{selector}}">Click Me!</button>'.
      *
      * @param FileDownloadService - The service for downloading files
      * @returns {{restrict: string, link: link}}
@@ -23,7 +20,7 @@
         return {
             restrict: 'A',
             scope: {
-                ancestorOrElement: '@'
+                downloadSvg: '@'
             },
             link: link
         };
@@ -33,8 +30,8 @@
                 var svg;
 
                 // find the downloadable svg element
-                if (scope.ancestorOrElement) {
-                    svg = document.querySelector(scope.ancestorOrElement);
+                if (scope.downloadSvg) {
+                    svg = document.querySelector(scope.downloadSvg);
                     if (svg !== null && svg.nodeName.toLowerCase() === 'svg') {
                         FileDownloadService.downloadSVG(svg);
                     } else {

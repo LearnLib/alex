@@ -1,119 +1,113 @@
-<div class="hypothesis-panel-container">
+<div class="absolute-panel" style="border-right: 1px solid #ddd">
+    <div class="absolute-panel-header">
 
-    <!-- BEGIN: Subnavigation -->
-    <div class="sub-nav absolute">
-        <div class="container-fluid">
-            <div class="pull-left" ng-show="!results[pointer].error" style="margin-right: 16px">
+        <div class="pull-left" ng-show="!results[pointer].error" style="margin-right: 16px">
 
-                <div style="display: inline-block;" ng-show="mode === modes.HYPOTHESIS">
-                    <div class="btn-group btn-group-xs" dropdown dropdown-hover>
-                        <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
-                            <i class="fa fa-bars"></i>
-                        </button>
-                        <ul class="dropdown-menu pull-left" role="menu">
-                            <li>
-                                <a href learn-result-details-modal-handle result="results[pointer]">
-                                    <i class="fa fa-info fa-fw"></i> Details
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href download-svg ancestor-or-element="#hypothesis-panel-{{index}}">
-                                    <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
-                                </a>
-                                <a href download-as-json data="results[pointer].hypothesis">
-                                    <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <button class="btn btn-default btn-xs" hypothesis-layout-settings-modal-handle
-                            layout-settings="layoutSettings">
-                        <i class="fa fa-sliders fa-fw"></i> Layout
+            <div style="display: inline-block;" ng-show="mode === modes.HYPOTHESIS">
+                <div class="btn-group btn-group-xs" dropdown dropdown-hover>
+                    <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+                        <i class="fa fa-bars"></i>
                     </button>
+                    <ul class="dropdown-menu pull-left" role="menu">
+                        <li>
+                            <a href learn-result-details-modal-handle result="results[pointer]">
+                                <i class="fa fa-info fa-fw"></i> Details
+                            </a>
+                        </li>
+                        <li>
+                            <a href hypothesis-layout-settings-modal-handle layout-settings="layoutSettings">
+                                <i class="fa fa-sliders fa-fw"></i> Layout
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href download-svg="#hypothesis-{{index}}">
+                                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
+                            </a>
+                            <a href download-as-json data="results[pointer].hypothesis">
+                                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-
-                <div style="display: inline-block;" ng-if="hasInternalDataStructure()">
-                    <button class="btn btn-default btn-xs"
-                            ng-show="mode === modes.INTERNAL"
-                            ng-click="showHypothesis()">
-                        Hypothesis
-                    </button>
-                    <button class="btn btn-default btn-xs"
-                            ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.LSTAR"
-                            download-table-as-csv ancestor-or-element="#hypothesis-panel-{{index}}">
-                        Download CSV
-                    </button>
-                    <button class="btn btn-default btn-xs"
-                            ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE"
-                            download-svg ancestor-or-element="#hypothesis-panel-{{index}}">
-                        Download SVG
-                    </button>
-                    <button class="btn btn-default btn-xs"
-                            ng-show="mode === modes.HYPOTHESIS && (results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE || results[pointer].configuration.algorithm === learnAlgorithms.LSTAR)"
-                            ng-click="showInternalDataStructure()">
-                        Internal
-                    </button>
-                </div>
-
             </div>
 
-            <div class="pull-right" ng-transclude></div>
-
-            <div class="pull-right">
-                <div class="page-browser">
-                    <div class=" btn-group btn-group-xs">
-                        <button class="btn btn-default" ng-click="firstStep()">
-                            <i class="fa fa-angle-double-left fa-fw"></i>
-                        </button>
-                        <button class="btn btn-default" ng-click="previousStep()">
-                            <i class="fa fa-angle-left fa-fw"></i>
-                        </button>
-                        <button class="btn btn-default disabled">
-                            <span ng-bind="pointer + 1"></span>/<span ng-bind="results.length"></span>
-                        </button>
-                        <button class="btn btn-default" ng-click="nextStep()">
-                            <i class="fa fa-angle-right fa-fw"></i>
-                        </button>
-                        <button class="btn btn-default" ng-click="lastStep()">
-                            <i class="fa fa-angle-double-right fa-fw"></i>
-                        </button>
-                    </div>
-                </div>
+            <div style="display: inline-block;" ng-if="hasInternalDataStructure()">
+                <button class="btn btn-default btn-xs"
+                        ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.LSTAR"
+                        download-table-as-csv="#observation-table-{{index}}">
+                    Download CSV
+                </button>
+                <button class="btn btn-default btn-xs"
+                        ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE"
+                        download-svg="#discrimination-tree-{{index}}">
+                    Download SVG
+                </button>
+                <button class="btn btn-default btn-xs"
+                        ng-show="mode === modes.INTERNAL"
+                        ng-click="showHypothesis()">
+                    Hypothesis
+                </button>
+                <button class="btn btn-default btn-xs"
+                        ng-show="mode === modes.HYPOTHESIS && (results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE || results[pointer].configuration.algorithm === learnAlgorithms.LSTAR)"
+                        ng-click="showInternalDataStructure()">
+                    Internal
+                </button>
             </div>
 
         </div>
+
+        <div class="pull-right" ng-transclude></div>
+
+        <div class=" btn-group btn-group-xs pull-right">
+            <button class="btn btn-default" ng-click="firstStep()">
+                <i class="fa fa-angle-double-left fa-fw"></i>
+            </button>
+            <button class="btn btn-default" ng-click="previousStep()">
+                <i class="fa fa-angle-left fa-fw"></i>
+            </button>
+            <button class="btn btn-default disabled">
+                <span ng-bind="pointer + 1"></span>/<span ng-bind="results.length"></span>
+            </button>
+            <button class="btn btn-default" ng-click="nextStep()">
+                <i class="fa fa-angle-right fa-fw"></i>
+            </button>
+            <button class="btn btn-default" ng-click="lastStep()">
+                <i class="fa fa-angle-double-right fa-fw"></i>
+            </button>
+        </div>
+
     </div>
-    <!-- END: Subnavigation -->
+    <div class="absolute-panel-body" ng-if="!results[pointer].error">
 
-    <div class="hypothesis-panel" id="hypothesis-panel-{{index}}" ng-if="!results[pointer].error">
-
-        <hypothesis id="hypothesis" test="results[pointer]" layout-settings="layoutSettings"
-                    ng-if="mode === modes.HYPOTHESIS && pointer === results.length - 1"
+        <hypothesis id="hypothesis-{{index}}"
+                    test="results[pointer]"
+                    layout-settings="layoutSettings"
+                    ng-if="mode === modes.HYPOTHESIS"
                     is-selectable="true"></hypothesis>
 
-        <hypothesis id="hypothesis" test="results[pointer]" layout-settings="layoutSettings"
-                    ng-if="mode === modes.HYPOTHESIS && pointer !== results.length - 1"></hypothesis>
-
-        <observation-table data="results[pointer].algorithmInformation"
+        <observation-table id="observation-table-{{index}}"
+                           data="results[pointer].algorithmInformation"
                            ng-if="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.LSTAR">
         </observation-table>
 
-        <discrimination-tree data="results[pointer].algorithmInformation"
+        <discrimination-tree id="discrimination-tree-{{index}}"
+                             data="results[pointer].algorithmInformation"
                              ng-if="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE">
         </discrimination-tree>
 
     </div>
 
-    <div class="hypothesis-panel" ng-if="results[pointer].error">
-        <div class="text-center">
+    <div class="absolute-panel-body" ng-if="results[pointer].error">
+
+        <div class="text-center" ng-if="results[pointer].error">
             <div class="alert alert-danger" style="margin-top: 25px; display: inline-block">
                 <i class="fa fa-fw fa-warning"></i>
                 <strong>The execution of this step failed</strong>
+
                 <p ng-bind="results[pointer].errorText"></p>
             </div>
         </div>
-    </div>
 
+    </div>
 </div>

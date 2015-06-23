@@ -104,16 +104,22 @@
 }
 
 @keyframes fadeIn {
-  from {opacity: 0.0}
-  to {opacity: 1.0}
+  from {
+    opacity: 0.0
+  }
+  to {
+    opacity: 1.0
+  }
 }
 
 @keyframes fadeOut {
-  from {opacity: 1.0}
-  to {opacity: 0.0}
+  from {
+    opacity: 1.0
+  }
+  to {
+    opacity: 0.0
+  }
 }
-
-
 
 .animate-view.ng-enter {
   overflow: hidden;
@@ -364,7 +370,6 @@ form {
   }
 
   .panel {
-    border: 0;
     border-radius: 0;
     margin-bottom: 10px;
     border: 1px solid #ddd;
@@ -377,26 +382,6 @@ form {
     .panel-body {
       padding: 10px 15px;
     }
-  }
-}
-
-.panel {
-  border-right: 1px solid #e7e7e7
-}
-
-.hypothesis-panel-container {
-  position: absolute;
-  top: 0px;
-  bottom: 0;
-  width: 100%;
-
-  .hypothesis-panel {
-    position: absolute;
-    top: 40px;
-    bottom: 0;
-    width: 100%;
-    background: #fff;
-    overflow: auto;
   }
 }
 
@@ -423,12 +408,6 @@ form {
     }
   }
 }
-
-.index-browser {
-  display: inline-block;
-}
-
-
 
 .add-panel-button {
   position: absolute;
@@ -461,4 +440,28 @@ form {
   position: absolute;
   top: 50%;
   width: 100%
+}
+
+.absolute-panel {
+  $absolute-panel-header-height: 38px;
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  .absolute-panel-header {
+    position: relative;
+    z-index: 50;
+    width: 100%;
+    height: $absolute-panel-header-height;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+  }
+  .absolute-panel-body {
+    position: absolute;
+    top: $absolute-panel-header-height;
+    bottom: 0;
+    width: 100%;
+    overflow: auto;
+  }
 }

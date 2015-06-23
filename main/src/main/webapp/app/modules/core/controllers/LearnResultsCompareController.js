@@ -6,7 +6,7 @@
         .controller('LearnResultsCompareController', LearnResultsCompareController);
 
     LearnResultsCompareController.$inject = [
-        '$scope', '$stateParams', 'SessionService', 'LearnResultResource', '_', 'ErrorService'
+        '$scope', '$timeout', '$stateParams', 'SessionService', 'LearnResultResource', '_', 'ErrorService'
     ];
 
     /**
@@ -15,6 +15,7 @@
      * Template: 'views/learn-result-compare.html'
      *
      * @param $scope - The controllers $scope
+     * @param $timeout - angular $timeout service
      * @param $stateParams - The state parameters
      * @param Session - The session service
      * @param LearnResultResource - The API resource for learn results
@@ -22,7 +23,7 @@
      * @param Error - The ErrorService
      * @constructor
      */
-    function LearnResultsCompareController($scope, $stateParams, Session, LearnResultResource, _, Error) {
+    function LearnResultsCompareController($scope, $timeout, $stateParams, Session, LearnResultResource, _, Error) {
 
         // the project that is saved in the session
         var project = Session.project.get();
@@ -91,6 +92,27 @@
          */
         $scope.fillPanel = function (result, index) {
             loadComplete(result.testNo + '', index);
+        };
+
+        /**
+         * Adds a new empty panel
+         */
+        $scope.addPanel = function () {
+            $scope.panels.push(null)
+        };
+
+        /**
+         * Removes a panel by a given index
+         * @param {number} index - The index of the panel to remove
+         */
+        $scope.closePanel = function (index) {
+            $scope.panels[index] = null;
+            $timeout(function () {
+                $scope.panels.splice(index, 1);
+            }, 0);
+            $timeout(function () {
+                window.dispatchEvent(new Event('resize'));
+            }, 100)
         }
     }
 

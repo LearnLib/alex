@@ -1,43 +1,56 @@
 <div style="position: absolute; width: 100%; top: 42px; bottom: 0; overflow: auto;">
-    <div panel-manager="panels">
 
-        <div panel panel-index="$index" ng-repeat="result in panels track by $index">
+    <div class="absolute-panel" ng-repeat="result in panels" comparable-panel index="{{$index}}"
+         from="{{panels.length}}">
 
-            <div ng-if="result">
-                <learn-results-slideshow-panel index="{{$index}}" results="result"></learn-results-slideshow-panel>
+        <learn-results-panel results="result" ng-if="result">
+            <button class="btn btn-xs btn-danger" ng-click="closePanel($index)" style="margin-left: 5px">
+                <i class="fa fa-close"></i>
+            </button>
+        </learn-results-panel>
+
+        <div class="absolute-panel" ng-if="!result" style="border-right: 1px solid #ddd">
+            <div class="absolute-panel-header">
+                <button class="btn btn-xs btn-danger pull-right" ng-click="closePanel($index)">
+                    <i class="fa fa-close"></i>
+                </button>
             </div>
+            <div class="absolute-panel-body" style="padding: 25px">
+                <ul class="list-group" style="max-width: 1170px; margin: auto">
+                    <li class="list-group-item" ng-repeat="result in results"
+                        ng-click="fillPanel(result, $parent.$index)">
 
-            <div ng-if="!result">
-                <learn-results-list-panel index="{{$index}}">
-                    <ul class="list-group">
-                        <li class="list-group-item" ng-repeat="result in results"
-                            ng-click="fillPanel(result, $parent.$index)">
+                        <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
 
-                            <strong>Test No
-                                <span ng-bind="result.testNo"></span>
-                            </strong>,
-                            [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
+                        <strong>Test No
+                            <span ng-bind="result.testNo"></span>
+                        </strong>,
+                        [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
 
-                            <br>
+                        <br>
 
-                            <p class="text-muted">
-                                Started: <span
-                                    ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
-                            </p>
+                        <p class="text-muted">
+                            Started:
+                            <span ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+                        </p>
 
-                        </li>
-                    </ul>
-                </learn-results-list-panel>
+                    </li>
+                </ul>
             </div>
         </div>
 
-        <div ng-if="panels.length == 0" style="padding-top: 30px">
-            <div class="container">
-                <div class="alert alert-info">
-                    Add a panel by clicking on the grey area on the right and select a test.
-                </div>
+    </div>
+
+    <div ng-if="panels.length == 0" style="padding-top: 30px">
+        <div class="container">
+            <div class="alert alert-info">
+                Add a panel by clicking on button on the bottom right.
             </div>
         </div>
+    </div>
 
+    <div class="add-panel-button text-center" ng-click="addPanel()" tooltip="Add Panel" tooltip-placement="left"
+         ng-show="panels.length === 0 || panels[panels.length - 1] !== null">
+        <i class="fa fa-2x fa-plus"></i>
     </div>
 </div>

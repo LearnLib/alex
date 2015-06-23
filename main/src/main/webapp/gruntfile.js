@@ -226,5 +226,4 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['bower:install', 'build-js']);
     grunt.registerTask('test-unit', ['karma']);
     grunt.registerTask('test-e2e', ['protractor']);
-    grunt.registerTask('minify-css', ['cssmin']);
 };
