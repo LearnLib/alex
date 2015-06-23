@@ -8,11 +8,14 @@
 alex_version=$(grep -oPm1 "(?<=<version>)[^<]+" pom.xml)
 build_dir=target/alex_release
 
+# prepare
+mvn clean
+
 # build alex
 ./scripts/build.sh
 
 # create the documentation
-mvn site
+mvn site -Pdeploy
 mvn site:stage
 
 # create build direcotry if needed
