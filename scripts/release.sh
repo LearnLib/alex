@@ -25,6 +25,7 @@ mkdir -p $build_dir
 cp main/target/alex.war $build_dir/ALEX.war
 cp standalone/target/standalone-1.0-SNAPSHOT-jar-with-dependencies.jar $build_dir/ALEX.jar
 cp -r target/staging $build_dir/documentation
+cp src/readme.txt $build_dir/readme.txt
 
 # build the archive
 tar -czf target/ALEX-$alex_version.tar.gz -C $build_dir .
