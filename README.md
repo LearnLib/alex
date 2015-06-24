@@ -6,9 +6,8 @@ Getting Started
 To build ALEX [Java][], [Maven][], [Node.JS][nodejs] and the [Grunt CLI][grunt] must be installed.
 If all this tools are available, the fastest and easiest way to get started is to run the following commands:
 
-    # the next 2 lines must only be done once!
-    chmod +x build.sh
-    ./scripts/build.sh --no-tests
+    # the next line must only be done once!
+    mvn install
 
     # start the server
     cd main
@@ -24,7 +23,8 @@ Building a Release
 To create a release archive please make sure that all requirements are fulfilled and that you can successfully build
 ALEX. If this is the case just run:
 
-    ./scripts/release.sh
+    mvn clean package
+    mvn site assembly:single -P release
 
 Afterwards the *ALEX-xxx.tar.gz* archive is created in the `target` directory.
 

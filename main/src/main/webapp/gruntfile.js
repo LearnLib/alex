@@ -223,7 +223,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build-js', ['html2js', 'concat', 'uglify', 'clean']);
     grunt.registerTask('build-css', ['sass', 'cssmin']);
-    grunt.registerTask('default', ['bower:install', 'build-js']);
+    grunt.registerTask('default', ['build-js']);
     grunt.registerTask('test-unit', ['karma']);
     grunt.registerTask('test-e2e', ['protractor']);
 };

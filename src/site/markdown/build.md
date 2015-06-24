@@ -25,44 +25,33 @@ If *[Node.JS][nodejs]* is installed *[Grunt CLI][grunt]* can be installed by run
 Build Process
 -------------
 If all those requirements are fulfilled, ALEX can be build.
-There are two possible ways to build ALEX: Either fully automated or by hand.
-
-### Automated
-The simplest and recommended way on Unix machines is to use the build script.
-Go to the root directory of ALEX and simply run:
 
 ```bash
-chmod +x scripts/build.sh
-./scripts/build.sh
-```
-
-This will check all dependencies and take care of all steps needed to build ALEX.
-After this script is finished pleas take a look at [Running ALEX](#running) for further information.
-
-### Manual
-Instead of running the automated script it is of course possible to execute all necessary steps manually.
-
-Go to `main/src/main/webapp` and install all necessary node modules.
-When all dependencies are installed, the task manager `grunt` will work without errors.
-This command also generates some compact files for the app.
-
-```bash
-cd main/src/main/webapp
-npm install
-grunt
-```
-
-Back in the root directory run maven `mvn install` once.
-This can take quite some time.
-
-```bash
-cd ../../../..
 mvn install
 ```
 
-
 <a name="running"></a>Running ALEX
 ----------------------------------
-After this ALEX is created as *alex.war* in the target directory of the *main* module.
+After this ALEX is created as *ALEX.war* in the target directory of the *main* module.
 This file can be deployed to any Jetty sever.
 To make this process easier a *standalone.jar* is build within the target directory of the *standalone* module. 
+
+```bash
+cd main
+mvn jetty:run
+```
+
+You can change the port the server will use by adding `-Djetty.port=PORT` to the last command.
+If you want to change the driver, user the driver option `-Ddriver=DRIVER`, where *DRIVER* is either "firefox",
+"chrome", "ie", "htmlunit". Default is the headless "htmlunit" driver
+
+Building a Release
+------------------
+To build ALEX into an archive two commands are needed:
+
+```bash
+mvn clean package
+mvn site assembly:single -P release
+```
+
+Afterwards the *ALEX-xxx.tar.gz* archive is created in the `target` directory.
