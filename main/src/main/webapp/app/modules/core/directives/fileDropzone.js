@@ -54,6 +54,16 @@
                 readFiles(e.dataTransfer.files);
             });
 
+            // create input field and simulate click
+            el.on('click', function () {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.addEventListener('change', function (e) {
+                    readFiles(e.target.files);
+                }, false);
+                input.click();
+            });
+
             /**
              * Read files as a text file
              *
