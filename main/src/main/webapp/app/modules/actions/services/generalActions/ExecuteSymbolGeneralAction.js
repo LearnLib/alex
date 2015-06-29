@@ -74,6 +74,9 @@
             if (key === 'symbolToExecuteName') {
                 this.getSymbol().name = value;
             } else {
+                if (key === 'symbolToExecute') {
+                    this.getSymbol().revision = value.revision;
+                }
                 this[key] = value;
             }
         };

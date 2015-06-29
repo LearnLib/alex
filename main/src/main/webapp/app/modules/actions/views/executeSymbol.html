@@ -17,9 +17,17 @@
             </datalist>
         </div>
     </div>
-    <div class="col-xs-4" ng-show="action.getSymbol().revision">
+    <div class="col-xs-2 no-padding-right no-padding-left" ng-show="action.getSymbol().revision">
         <label>Revision</label>
-        <input class="form-control" type="number" min="1"
-               max="{{action.getSymbol().revision}}" ng-model="action.symbolToExecute.revision">
+        <input class="form-control" type="number" min="1" max="{{action.getSymbol().revision}}"
+               ng-model="action.symbolToExecute.revision">
+    </div>
+    <div class="col-xs-2" ng-show="action.getSymbol().revision">
+        <label>&nbsp;</label>
+        <a href class="btn btn-default btn-block btn-sm"
+           tooltip="Update to latest revision" tooltip-placement="top"
+                ng-click="action.setSymbol(symbols)">
+            <i class="fa fa-refresh"></i>
+        </a>
     </div>
 </div>
