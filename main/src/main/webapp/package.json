@@ -19,7 +19,7 @@
     "grunt-protractor-runner": "^2.0.0",
     "grunt-protractor-webdriver": "^0.2.0",
     "grunt-remove": "^0.1.0",
-    "grunt-sass": "^0.18.0",
+    "grunt-sass": "~1.0.0",
     "grunt-template-jasmine-istanbul": "^0.3.3",
     "jasmine-core": "^2.2.0",
     "karma": "^0.12.32",
