@@ -28,6 +28,25 @@ ALEX. If this is the case just run:
 
 Afterwards the *ALEX-xxx.tar.gz* archive is created in the `target` directory.
 
+Docker
+------
+Another way to test and / or release ALEX involves the tool [Docker](https://www.docker.com).
+Please make sure that Docker is installed on your machine and that you have the right permissions to use it.
+If this is the case just run:
+
+    # the next line must only be done once!
+    mvn install
+    
+    cd main
+    mvn docker:build
+
+Afterwards a new Docker image is created and you use it like any other Docker image, e.g.
+    
+    # lets take a look at all images
+    docker images
+    
+    # run ALEX at http://localhost:8000
+    docker run -d -p 8000:8080 alex:1.0-SNAPSHOT
 
 More Documentation
 ------------------

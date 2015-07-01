@@ -343,6 +343,22 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.2.11</version>
+                <configuration>
+                    <imageName>alex:${project.version}</imageName>
+                    <dockerDirectory>src/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>.</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.war</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
