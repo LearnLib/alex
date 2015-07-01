@@ -5,7 +5,7 @@
         .module('ALEX.core')
         .controller('CountersController', CountersController);
 
-    CountersController.$inject = ['$scope', 'SessionService', 'CountersService', 'ToastService', '_'];
+    CountersController.$inject = ['$scope', 'SessionService', 'CounterResource', 'ToastService', '_'];
 
     /**
      * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
@@ -14,7 +14,7 @@
      *
      * @param $scope - The projects scope
      * @param Session - The SessionService
-     * @param Counters - The CountersService
+     * @param Counters - The CounterResource
      * @param Toast - The ToastService
      * @param _ - Lodash
      * @constructor

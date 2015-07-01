@@ -124,18 +124,18 @@
 
             <table class="table table-condensed">
                 <thead>
-                    <tr>
-                        <th style="width: 0">Test No</th>
-                        <th>Algorithm</th>
-                        <th>Eq-oracle</th>
-                    </tr>
+                <tr>
+                    <th style="width: 0">Test No</th>
+                    <th>Algorithm</th>
+                    <th>Eq-oracle</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="result in selectedResults | orderBy:'-testNo'">
-                        <td ng-bind="result.testNo"></td>
-                        <td ng-bind="(result.configuration.algorithm|formatAlgorithm)"></td>
-                        <td>{{result.configuration.eqOracle}}</td>
-                    </tr>
+                <tr ng-repeat="result in selectedResults | orderBy:'-testNo'">
+                    <td ng-bind="result.testNo"></td>
+                    <td ng-bind="(result.configuration.algorithm|formatAlgorithm)"></td>
+                    <td>{{result.configuration.eqOracle}}</td>
+                </tr>
                 </tbody>
             </table>
 

@@ -3,9 +3,9 @@
 
     angular
         .module('ALEX.core')
-        .factory('CountersService', CountersService);
+        .factory('CounterResource', CounterResource);
 
-    CountersService.$inject = ['$http', 'paths'];
+    CounterResource.$inject = ['$http', 'paths'];
 
     /**
      * The service that communicates with the API in order to read and delete counters. Counters are objects consisting
@@ -19,7 +19,7 @@
      * @returns {{getAll: getAll, delete: remove, deleteSome: deleteSome}}
      * @constructor
      */
-    function CountersService($http, paths) {
+    function CounterResource($http, paths) {
         return {
             getAll: getAll,
             delete: remove,

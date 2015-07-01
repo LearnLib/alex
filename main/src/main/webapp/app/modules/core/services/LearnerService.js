@@ -71,7 +71,7 @@
                 .then(function (response) {
                     return LearnResult.transformApiResponse(response);
                 })
-                .catch(function(){
+                .catch(function () {
                     return null;
                 })
         }

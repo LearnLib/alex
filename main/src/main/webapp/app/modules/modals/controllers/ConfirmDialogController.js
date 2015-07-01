@@ -26,7 +26,7 @@
          * Close the modal dialog
          */
         $scope.ok = function () {
-        	$modalInstance.close();
+            $modalInstance.close();
         };
 
         /**

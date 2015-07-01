@@ -311,9 +311,9 @@
                 if (!scope.isSelectable) {
                     var iframeBody = angular.element(iframe.contents()[0].body);
                     iframeBody.on('mousemove', handleMouseMove);
-                    iframeBody.one('click', function(e){
+                    iframeBody.one('click', function (e) {
                         handleClick(e);
-                        scope.$apply(function(){
+                        scope.$apply(function () {
                             scope.isSelectable = false;
                         });
                     });

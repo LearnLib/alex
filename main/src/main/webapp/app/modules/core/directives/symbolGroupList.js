@@ -27,8 +27,8 @@
             '               ' +
             '               <div ng-transclude></div>' +
             '           </div>',
-            controller: ['$scope', function(scope){
-                this.getGroup = function(){
+            controller: ['$scope', function (scope) {
+                this.getGroup = function () {
                     return scope.group
                 }
             }]
@@ -51,7 +51,7 @@
             '                   </span>' +
             '               </div>' +
             '           </div>',
-            link: function(scope, el, attrs, ctrl){
+            link: function (scope, el, attrs, ctrl) {
                 scope.group = ctrl.getGroup();
             }
         }

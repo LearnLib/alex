@@ -179,8 +179,8 @@
 
                 // swap defs and paths children of .edgepaths because arrows are not shown
                 // on export otherwise <.<
-                _.forEach(el.find('svg')[0].querySelectorAll('.edgePath'), function(edgePath){
-                    edgePath.insertBefore(edgePath.childNodes[1],edgePath.firstChild);
+                _.forEach(el.find('svg')[0].querySelectorAll('.edgePath'), function (edgePath) {
+                    edgePath.insertBefore(edgePath.childNodes[1], edgePath.firstChild);
                 });
 
                 // Create and handle zoom  & pan event

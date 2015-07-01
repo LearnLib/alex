@@ -11,31 +11,34 @@
 
 <form ng-submit="update()">
 
-<div class="modal-body">
-	
-	<div class="form-group">
-		<label>Node Separation</label>
-		<input type="number" class="form-control" placeholder="nodesep" ng-model="layoutSettings.nodesep">
-		<p class="help-block">Number of pixels that separate nodes horizontally in the layout.</p>
-	</div>
-	
-	<div class="form-group">
-		<label>Edge Separation</label>
-		<input type="number" class="form-control" placeholder="edgesep" ng-model="layoutSettings.edgesep">
-		<p class="help-block">Number of pixels that separate edges horizontally in the layout.</p>
-	</div>
-	
-	<div class="form-group">
-		<label>Rank Separation</label>
-		<input type="number" class="form-control" placeholder="ranksep" ng-model="layoutSettings.ranksep">
-		<p class="help-block">Number of pixels between each rank in the layout.</p>
-	</div>
+    <div class="modal-body">
 
-</div>
+        <div class="form-group">
+            <label>Node Separation</label>
+            <input type="number" class="form-control" placeholder="nodesep" ng-model="layoutSettings.nodesep">
 
-<div class="modal-footer">
-	<a href class="btn btn-default btn-sm" ng-click="defaultLayoutSettings()">Default</a>
-    <button class="btn btn-primary btn-sm">Update</button>
-</div>
+            <p class="help-block">Number of pixels that separate nodes horizontally in the layout.</p>
+        </div>
+
+        <div class="form-group">
+            <label>Edge Separation</label>
+            <input type="number" class="form-control" placeholder="edgesep" ng-model="layoutSettings.edgesep">
+
+            <p class="help-block">Number of pixels that separate edges horizontally in the layout.</p>
+        </div>
+
+        <div class="form-group">
+            <label>Rank Separation</label>
+            <input type="number" class="form-control" placeholder="ranksep" ng-model="layoutSettings.ranksep">
+
+            <p class="help-block">Number of pixels between each rank in the layout.</p>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <a href class="btn btn-default btn-sm" ng-click="defaultLayoutSettings()">Default</a>
+        <button class="btn btn-primary btn-sm">Update</button>
+    </div>
 
 </form>

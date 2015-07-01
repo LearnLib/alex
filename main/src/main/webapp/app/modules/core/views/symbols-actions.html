@@ -57,7 +57,8 @@
             </button>
             <button class="btn btn-success btn-xs"
                     ng-class="!hasChanged ? 'disabled' : ''"
-                    ng-click="saveChanges()">Save</button>
+                    ng-click="saveChanges()">Save
+            </button>
         </div>
 
     </div>
@@ -78,41 +79,42 @@
                      selection-model
                      selection-model-selected-items="selectedActions">
 
-                        <input type="checkbox" class="pull-left">
+                    <input type="checkbox" class="pull-left">
 
-                        <div class="action-list-item-content">
+                    <div class="action-list-item-content">
 
-                            <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
-                                <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
-                                    <i class="fa fa-bars"></i>
-                                </button>
-                                <ul class="dropdown-menu pull-left" role="menu">
-                                    <li>
-                                        <a href action-edit-modal-handle action="action" on-updated="updateAction">
-                                            <i class="fa fa-edit fa-fw"></i> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href ng-click="deleteActions([action])">
-                                            <i class="fa fa-trash fa-fw"></i> Delete
-                                        </a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li>
-                                        <a href ng-click="cutActions([action])">
-                                            <i class="fa fa-cut fa-fw"></i> Cut
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href ng-click="copyActions([action])">
-                                            <i class="fa fa-copy fa-fw"></i> Copy
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                        <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+                            <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <ul class="dropdown-menu pull-left" role="menu">
+                                <li>
+                                    <a href action-edit-modal-handle action="action" on-updated="updateAction">
+                                        <i class="fa fa-edit fa-fw"></i> Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href ng-click="deleteActions([action])">
+                                        <i class="fa fa-trash fa-fw"></i> Delete
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href ng-click="cutActions([action])">
+                                        <i class="fa fa-cut fa-fw"></i> Cut
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href ng-click="copyActions([action])">
+                                        <i class="fa fa-copy fa-fw"></i> Copy
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
 
-                            <span class="btn btn-xs pull-right" href ng-click="toggleDisableAction(action)" selection-model-ignore>
-                                <span ng-show="!action.disabled" tooltip-placement="bottom" tooltip="Disable" >
+                            <span class="btn btn-xs pull-right" href ng-click="toggleDisableAction(action)"
+                                  selection-model-ignore>
+                                <span ng-show="!action.disabled" tooltip-placement="bottom" tooltip="Disable">
                                     <i class="fa fa-toggle-on fa-fw text-success"></i>
                                 </span>
                                 <span ng-show="action.disabled" tooltip-placement="bottom" tooltip="Enable">
@@ -120,14 +122,14 @@
                                 </span>
                             </span>
 
-                            <span class="action-description" ng-bind="action.toString()"></span>
+                        <span class="action-description" ng-bind="action.toString()"></span>
 
-                            <div>
-                                <label class="label label-info" ng-show="action.negated">Negate</label>
-                                <label class="label label-danger" ng-show="action.ignoreFailure">Ignore Failure</label>
-                            </div>
-
+                        <div>
+                            <label class="label label-info" ng-show="action.negated">Negate</label>
+                            <label class="label label-danger" ng-show="action.ignoreFailure">Ignore Failure</label>
                         </div>
+
+                    </div>
                 </div>
             </div>
         </div>

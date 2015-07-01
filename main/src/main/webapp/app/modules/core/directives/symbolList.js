@@ -23,7 +23,7 @@
                 symbol: '='
             },
             templateUrl: paths.COMPONENTS + '/core/views/directives/symbol-list-item.html',
-            link: function(scope, el, attrs){
+            link: function (scope, el, attrs) {
                 scope.isSelectable = angular.isDefined(attrs.selectionModel) ? true : false;
                 scope.showActionsLink = angular.isDefined(attrs.showActionsLink) ? true : false;
             }

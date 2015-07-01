@@ -27,15 +27,15 @@
 
         //output alphabet
         .constant('outputAlphabet', {
-            OK:     'OK',
+            OK: 'OK',
             FAILED: 'FAILED'
         })
 
         // learn algorithms
         .constant('learnAlgorithms', {
-            LSTAR:                  'LSTAR',
-            DHC:                    'DHC',
-            DISCRIMINATION_TREE:    'DISCRIMINATION_TREE',
-            TTT:                    'TTT'
+            LSTAR: 'LSTAR',
+            DHC: 'DHC',
+            DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
+            TTT: 'TTT'
         })
 }());

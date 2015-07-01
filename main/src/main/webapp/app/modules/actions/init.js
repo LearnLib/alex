@@ -1,9 +1,9 @@
-(function(){
+(function () {
     'use strict';
 
     angular
         .module('ALEX.actions', [])
-        .run(['$injector', function($injector){
+        .run(['$injector', function ($injector) {
             // have to inject actions here so that they
             // are instantiated and registered on startup
 
@@ -35,5 +35,5 @@
             $injector.get('SetVariableByNodeGeneralAction');
             $injector.get('SetVariableGeneralAction');
             $injector.get('WaitGeneralAction');
-        }])
+        }]);
 }());

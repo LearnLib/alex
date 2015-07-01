@@ -26,6 +26,7 @@
     <tab heading="HTTP Headers">
 
         <br>
+
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-5 no-padding-right">
@@ -40,7 +41,8 @@
                         <i class="fa fa-plus"></i>
                     </a>
                 </div>
-            </div><br>
+            </div>
+            <br>
             <ul class="list-group list-group-condensed">
                 <li class="list-group-item" ng-repeat="(key, value) in action.headers">
                     <i class="fa fa-trash fa-fw pull-right" ng-click="action.removeHeader(key)"></i>
@@ -53,6 +55,7 @@
     <tab heading="Cookies">
 
         <br>
+
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-5 no-padding-right">
@@ -67,7 +70,8 @@
                         <i class="fa fa-plus"></i>
                     </a>
                 </div>
-            </div><br>
+            </div>
+            <br>
             <ul class="list-group list-group-condensed">
                 <li class="list-group-item" ng-repeat="(key, value) in action.cookies">
                     <i class="fa fa-trash fa-fw pull-right" ng-click="action.removeCookie(key)"></i>

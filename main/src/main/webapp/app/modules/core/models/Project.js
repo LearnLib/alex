@@ -24,7 +24,7 @@
          * @param {string} description - The description of the project
          * @constructor
          */
-        function Project(name, baseUrl, description){
+        function Project(name, baseUrl, description) {
             this.name = name || null;
             this.baseUrl = baseUrl || null;
             this.description = description || null;
@@ -36,7 +36,7 @@
          * @param {Object} data - The object the project is created from
          * @returns {Project}
          */
-        Project.build = function(data){
+        Project.build = function (data) {
             return angular.extend(new Project(
                 data.name,
                 data.baseUrl,
@@ -52,7 +52,7 @@
          * @param {Object} response - The response object from the API
          * @returns {Project|Project[]} - The Project[s]
          */
-        Project.transformApiResponse = function(response){
+        Project.transformApiResponse = function (response) {
             if (angular.isArray(response.data)) {
                 if (response.data.length > 0) {
                     return _.map(response.data, Project.build);

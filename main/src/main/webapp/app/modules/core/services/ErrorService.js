@@ -27,7 +27,7 @@
          * Gets the error message and removes it from the service
          * @returns {string|null}
          */
-        function getErrorMessage(){
+        function getErrorMessage() {
             var msg = errorMessage;
             errorMessage = null;
             return msg;
@@ -37,7 +37,7 @@
          * Sets the error message
          * @param {string} message
          */
-        function setErrorMessage (message){
+        function setErrorMessage(message) {
             errorMessage = message;
         }
 

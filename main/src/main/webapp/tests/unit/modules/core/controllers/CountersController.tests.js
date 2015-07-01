@@ -1,121 +1,90 @@
-//(function () {
-//    'use strict';
-//
-//    describe('CountersController', function () {
-//        var $scope, SessionService, Project, $httpBackend, paths, createController, project, _;
-//
-//        // request handles
-//        var getCountersRequestHandler;
-//        var deleteCounterRequestHandler;
-//        var deleteCountersRequestHandler;
-//
-//        // dummy counters for sending on requests
-//        var counters = [
-//            {name: 'a', value: 0, project: 1},
-//            {name: 'b', value: 0, project: 1}
-//        ];
-//
-//        beforeEach(angular.mock.module('ALEX'));
-//        beforeEach(angular.mock.module('ALEX.controller'));
-//
-//        beforeEach(angular.mock.inject(function (_$rootScope_, _$controller_, _Project_, _SessionService_, _$httpBackend_, _paths_, ___) {
-//            $scope = _$rootScope_.$new();
-//            SessionService = _SessionService_;
-//            Project = _Project_;
-//            $httpBackend = _$httpBackend_;
-//            paths = _paths_;
-//            _ = ___;
-//
-//            // dummy project for session
-//            project = new Project('name', 'host');
-//            project.id = 1;
-//
-//            getCountersRequestHandler = $httpBackend
-//                .when('GET', paths.api.URL + '/projects/' + project.id + '/counters');
-//
-//            deleteCounterRequestHandler = $httpBackend
-//                .when('DELETE', paths.api.URL + '/projects/' + project.id + '/counters/a');
-//
-//            deleteCountersRequestHandler = $httpBackend
-//                .when('DELETE', paths.api.URL + '/projects/' + project.id + '/counters/batch/a,b');
-//
-//            createController = function () {
-//                return _$controller_('CountersController', {
-//                    $scope: $scope
-//                });
-//            }
-//        }));
-//
-//        beforeEach(function () {
-//            SessionService.project.save(project);
-//        });
-//
-//        afterEach(function () {
-//            SessionService.project.remove();
-//        });
-//
-//        function initController() {
-//            getCountersRequestHandler.respond(201, counters);
-//
-//            $httpBackend.expectGET(paths.api.URL + '/projects/' + project.id + '/counters');
-//            createController();
-//            $httpBackend.flush();
-//        }
-//
-//        it('should init the controller and load counters from the server', function () {
-//            initController();
-//            expect($scope.counters.length).toBe(counters.length)
-//        });
-//
-//        it('should remove a single counter on delete success', function () {
-//            initController();
-//
-//            deleteCounterRequestHandler.respond(200, {});
-//
-//            $httpBackend.expectDELETE(paths.api.URL + '/projects/' + project.id + '/counters/a');
-//            $scope.deleteCounter(counters[0]);
-//            $httpBackend.flush();
-//
-//            expect($scope.counters.length).toBe(1);
-//            expect(_.find($scope.counters, {name: counters[0].name})).not.toBeDefined();
-//        });
-//
-//        it('should not remove a single counter on delete fail', function () {
-//            initController();
-//
-//            deleteCounterRequestHandler.respond(404, {});
-//
-//            $httpBackend.expectDELETE(paths.api.URL + '/projects/' + project.id + '/counters/a');
-//            $scope.deleteCounter(counters[0]);
-//            $httpBackend.flush();
-//
-//            expect($scope.counters.length).toBe(2);
-//        });
-//
-//        it('should remove multiple selected counters on delete success', function () {
-//            initController();
-//
-//            deleteCountersRequestHandler.respond(200, {});
-//            $scope.selectedCounters = counters;
-//
-//            $httpBackend.expectDELETE(paths.api.URL + '/projects/' + project.id + '/counters/batch/a,b');
-//            $scope.deleteSelectedCounters(counters[0]);
-//            $httpBackend.flush();
-//
-//            expect($scope.counters.length).toBe(0);
-//        });
-//
-//        it('should not remove multiple selected counters on delete fail', function () {
-//            initController();
-//
-//            deleteCountersRequestHandler.respond(404, {});
-//            $scope.selectedCounters = counters;
-//
-//            $httpBackend.expectDELETE(paths.api.URL + '/projects/' + project.id + '/counters/batch/a,b');
-//            $scope.deleteSelectedCounters(counters[0]);
-//            $httpBackend.flush();
-//
-//            expect($scope.counters.length).toBe(2);
-//        });
-//    })
-//}());
+describe('CountersController', function () {
+    var $rootScope, $scope, $httpBackend, SessionService, ProjectMockData, _;
+    var createController;
+    var project;
+
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.module('ALEX.core'));
+    beforeEach(angular.mock.inject(function ($injector) {
+        $rootScope = $injector.get('$rootScope');
+        $httpBackend = $injector.get('$httpBackend');
+        $scope = $rootScope.$new();
+        SessionService = $injector.get('SessionService');
+        ProjectMockData = $injector.get('ProjectMockData');
+        _ = $injector.get('_');
+
+        project = ProjectMockData.getById(1);
+
+        createController = function () {
+            $injector.get('$controller')('CountersController', {
+                $scope: $scope
+            });
+        }
+    }));
+
+    beforeEach(function () {
+        SessionService.project.save(project);
+        createController();
+        $httpBackend.flush();
+    });
+
+    afterEach(function () {
+        SessionService.project.remove();
+    });
+
+    it('should initialize the controller by fetching all counters from the server', function () {
+        expect($scope.counters.length > 0).toBeTruthy();
+        expect($scope.selectedCounters.length).toBe(0);
+    });
+
+    it('should delete a single counter from the scope', function () {
+        var length = $scope.counters.length;
+        var counter = $scope.counters[1];
+        $scope.deleteCounter(counter);
+        $httpBackend.flush();
+
+        expect($scope.counters.length).toBe(length - 1);
+        expect(_.findWhere($scope.counters, {name: counter.name})).toBeUndefined();
+    });
+
+    it('should fail to delete a single counter from the scope', function () {
+        var counters = $scope.counters;
+        $scope.deleteCounter({name: 'nonExistentCounter'});
+        $httpBackend.flush();
+
+        expect($scope.counters).toEqual(counters);
+    });
+
+    it('should delete multiple selected counters from the scope', function () {
+        $scope.counters[0]._selected = true;
+        $scope.counters[1]._selected = true;
+
+        $scope.selectedCounters.push($scope.counters[0]);
+        $scope.selectedCounters.push($scope.counters[1]);
+
+        var length = $scope.counters.length;
+        var counters = angular.copy($scope.counters);
+        $scope.deleteSelectedCounters();
+        $httpBackend.flush();
+
+        expect($scope.counters.length).toBe(length - 2);
+        expect(_.findWhere($scope.counters, {name: counters[0].name})).toBeUndefined();
+        expect(_.findWhere($scope.counters, {name: counters[1].name})).toBeUndefined();
+    });
+
+    it('should fail to delete multiple selected counters from the scope', function () {
+        $scope.counters[0]._selected = true;
+        $scope.counters[1]._selected = true;
+        $scope.counters[1].name = 'nonExistentCounter';
+
+        $scope.selectedCounters.push($scope.counters[0]);
+        $scope.selectedCounters.push($scope.counters[1]);
+
+        var counters = angular.copy($scope.counters);
+        $scope.deleteSelectedCounters();
+        $httpBackend.flush();
+
+        expect($scope.counters.length).toBe(3);
+        expect($scope.counters).toEqual(counters);
+    });
+});

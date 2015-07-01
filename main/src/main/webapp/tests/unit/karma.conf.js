@@ -16,7 +16,7 @@ module.exports = function (config) {
             '../../app/libs.min.js',
             '../../app/app.js',
 
-            '../utils/TestDataProvider.js',
+            '../utils/*.js',
             '../../node_modules/angular-mocks/angular-mocks.js',
             'modules/**/*.tests.js'
         ],

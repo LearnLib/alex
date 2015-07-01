@@ -1,6 +1,6 @@
-(function(){
+(function () {
     'use strict';
 
     angular
-        .module('ALEX.modals', [])
+        .module('ALEX.modals', []);
 }());

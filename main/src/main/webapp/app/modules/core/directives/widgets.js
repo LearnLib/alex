@@ -178,7 +178,7 @@
 
                 if (symbols.length === 0) {
                     SymbolResource.getByIdRevisionPairs(scope.learnResult.project,
-                                                        scope.learnResult.configuration.symbols)
+                        scope.learnResult.configuration.symbols)
                         .then(function (s) {
                             symbols = s;
                             test();
@@ -187,7 +187,7 @@
                     test();
                 }
 
-                function test () {
+                function test() {
                     var testSymbols = [];
 
                     // find id/revision pairs of symbols from abbreviation in learnResult

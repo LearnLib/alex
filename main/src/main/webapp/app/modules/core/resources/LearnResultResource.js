@@ -32,7 +32,7 @@
          * @param {number} projectId - The id of the project whose final learn results should be fetched
          * @returns {*} - A promise with the learn results
          */
-        function getAllFinal (projectId) {
+        function getAllFinal(projectId) {
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
                 .then(LearnResult.transformApiResponse);
         }
@@ -45,7 +45,7 @@
          * @param {number} testNo - The number of the test run
          * @returns {*} - A promise
          */
-        function getFinal (projectId, testNo) {
+        function getFinal(projectId, testNo) {
             return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo)
                 .then(LearnResult.transformApiResponse);
         }
@@ -58,8 +58,8 @@
          * @param {number, number[]} testNos - The number[s] of the test[s] that should be completely fetched
          * @returns {*} - A promise with a list of learn results
          */
-        function getComplete (projectId, testNos) {
-            if (angular.isArray(testNos)){
+        function getComplete(projectId, testNos) {
+            if (angular.isArray(testNos)) {
                 return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNos.join(',') + '/complete')
                     .then(function (response) {
                         if (response.data.length > 0) {
@@ -67,7 +67,7 @@
                                 response.data.shift();
                                 return [LearnResult.transformApiResponse(response)]
                             } else {
-                                _.forEach(response.data, function(data){
+                                _.forEach(response.data, function (data) {
                                     data.shift(); // remove cumulated results from the beginning
                                 });
                                 return LearnResult.transformApiResponse(response);
@@ -91,7 +91,7 @@
          *
          * @param {LearnResult|LearnResult[]} results
          */
-        function remove (results) {
+        function remove(results) {
             var testNos, projectId;
             if (angular.isArray(results)) {
                 testNos = _.pluck(results, 'testNo').join(',');

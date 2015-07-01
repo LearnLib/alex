@@ -20,7 +20,8 @@
                             <div><strong ng-bind="::(k1|formatEnumKey)"></strong></div>
                         </accordion-heading>
 
-                        <a href ng-repeat="(k2,v2) in actionTypes[actionGroupTypes[k1]]" ng-click="selectNewActionType(v2)"
+                        <a href ng-repeat="(k2,v2) in actionTypes[actionGroupTypes[k1]]"
+                           ng-click="selectNewActionType(v2)"
                            ng-bind="::(k2|formatEnumKey)"></a>
 
                     </accordion-group>

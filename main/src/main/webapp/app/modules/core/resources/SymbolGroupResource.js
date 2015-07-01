@@ -32,7 +32,7 @@
          * @param {Object} [options] - An object that can have a boolean property 'embedSymbols'
          * @returns {*} - An angular promise
          */
-        function getAll (projectId, options) {
+        function getAll(projectId, options) {
             var query = '';
 
             if (options && options.embedSymbols && options.embedSymbols === true) {
@@ -50,7 +50,7 @@
          * @param {number} group - The object of the symbol group that should be created
          * @returns {*} - An angular promise
          */
-        function create (projectId, group) {
+        function create(projectId, group) {
             return $http.post(paths.api.URL + '/projects/' + projectId + '/groups', group)
                 .then(SymbolGroup.transformApiResponse);
         }
@@ -61,7 +61,7 @@
          * @param {SymbolGroup} group - The symbol group that should be updated
          * @returns {*} - An angular promise
          */
-        function update (group) {
+        function update(group) {
             return $http.put(paths.api.URL + '/projects/' + group.project + '/groups/' + group.id, group)
                 .then(SymbolGroup.transformApiResponse);
         }
@@ -74,7 +74,7 @@
          * @param {SymbolGroup} group - The symbol group that should be deleted
          * @returns {*} - An angular promise
          */
-        function remove (group) {
+        function remove(group) {
             return $http.delete(paths.api.URL + '/projects/' + group.project + '/groups/' + group.id)
         }
     }

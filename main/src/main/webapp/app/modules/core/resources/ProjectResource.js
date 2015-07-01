@@ -41,7 +41,7 @@
          * @param {number} id - The id of the project that should be fetched
          * @return {*}
          */
-        function get (id) {
+        function get(id) {
             return $http.get(paths.api.URL + '/projects/' + id)
                 .then(Project.transformApiResponse);
         }
@@ -52,7 +52,7 @@
          * @param {Project} project - The project that should be created
          * @return {*}
          */
-        function create (project) {
+        function create(project) {
             return $http.post(paths.api.URL + '/projects', project)
                 .then(Project.transformApiResponse);
         }
@@ -63,7 +63,7 @@
          * @param {Project} project - The updated instance of a project that should be updated on the server
          * @return {*}
          */
-        function update (project) {
+        function update(project) {
             return $http.put(paths.api.URL + '/projects/' + project.id, project)
                 .then(Project.transformApiResponse);
         }
@@ -74,7 +74,7 @@
          * @param {Project} project - The project that should be deleted
          * @returns {HttpPromise}
          */
-        function remove (project) {
+        function remove(project) {
             return $http.delete(paths.api.URL + '/projects/' + project.id)
         }
     }
