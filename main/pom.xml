@@ -278,7 +278,7 @@
                             </docletArtifact>
                             <reportOutputDirectory>${basedir}/src/main/webapp</reportOutputDirectory>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
-                            <additionalparam>-apiVersion 1 -docBasePath /restdocs/docs -apiBasePath ../rest -disableCopySwaggerUi</additionalparam>
+                            <additionalparam>-apiVersion 1 -docBasePath /restdocs/docs -apiBasePath /rest -disableCopySwaggerUi</additionalparam>
                             <destDir>restdocs/docs</destDir> <!-- not the apidocs folder -->
                         </configuration>
                     </execution>
