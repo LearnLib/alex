@@ -230,6 +230,20 @@
                 <version>1.4.0</version>
                 <executions>
                     <execution>
+                        <id>npm-install</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <workingDirectory>src/main/webapp</workingDirectory>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>grunt</id>
                         <phase>generate-sources</phase>
                         <goals>
