@@ -1,56 +1,25 @@
-<html>
+<!DOCTYPE html>
+<html ng-app="ALEX">
 <head>
-    <meta charset="utf-8">
-    <title>Welcome to ALEX!</title>
-    <link rel="icon" type="image/png" href="img/favicon.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style type="text/css">
-        /* General styles */
-        img { /* Make images responsive */
-            max-width: 100%;
-            height: auto;
-        }
-        #wrapper { /* Bootstrap would call this a container */
-            margin: 0 auto;
-            max-width: 720px;
-        }
-        /* Styles for the header */
-        header {
-            text-align: center;
-        }
-        /* Styles for the main part */
-        main h2 {
-            text-align: center;
-        }
-        main p {
-            test-align: justify;
-        }
-    </style>
+    <link href="app/stylesheets/lib/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="app/style.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="app/images/favicon.png">
+
+    <script src="app/libs.min.js"></script>
+    <script src="app/app.js"></script>
+
+    <title>ALEX - Automata Learning Experience</title>
+    <meta charset="UTF-8">
 </head>
 <body>
-<div id="wrapper">
-    <header>
-        <img src="img/logo.png" alt="Logo of ALEX">
-        <h1>Welcome to ALEX!</h1>
-    </header>
-    <main>
-        <div>
-            <p><b>A</b>utomata <b>L</b>earning <b>EX</b>perience (ALEX) provides a new way to use Active Automata
-                Learning for testing web application</p>
-        </div>
-        <div>
-            <h2>Frontend</h2>
-            <p>If you want a simple way to manage your projects and start learning, take a look at the
-               <a href="app/">Frontend</a>.
-            </p>
-        </div>
-        <div>
-            <h2>REST API</h2>
-            <p>If you like to learn about the REST API to take control of your data without an user interface, take a look
-               at the <a href="restdocs/index.html">REST API documentation</a>.
-            </p>
-        </div>
-    </main>
-</div>
+
+<load-screen></load-screen>
+
+<toast></toast>
+
+<navigation></navigation>
+
+<div ui-view id="view" class="animate-view"></div>
+
 </body>
 </html>
