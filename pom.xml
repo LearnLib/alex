@@ -35,6 +35,14 @@
             <name>Dr. Johannes Neubauer</name>
             <email>johannes.neubauer@tu-dortmund.de</email>
         </contributor>
+        <contributor>
+            <name>Malte Isberner</name>
+            <email>malte.isberner@tu-dortmund.de</email>
+        </contributor>
+        <contributor>
+            <name>Prof. Dr. Bernhard Steffen</name>
+            <email>bernhard.steffen@tu-dortmund.de</email>
+        </contributor>
     </contributors>
     <organization>
         <name>Chair for Programming Systems at TU Dortmund University, Germany</name>
@@ -42,8 +50,7 @@
     </organization>
 
     <scm>
-        <developerConnection>scm:svn:https://projekte.itmc.tu-dortmund.de/svn/learnlibweb</developerConnection>
-        <!--<url></url>-->
+        <developerConnection>ssh://git@projekte.itmc.tu-dortmund.de/informatik-ls5/bachelorarbeiten/alex.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
     <issueManagement>

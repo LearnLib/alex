@@ -213,7 +213,6 @@
                 <configuration>
                     <warSourceExcludes>
                         **/node_modules/**,
-                        **/testsite/**
                     </warSourceExcludes>
                     <packagingIncludes>
                         app/**,
