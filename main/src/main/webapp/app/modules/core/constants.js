@@ -12,12 +12,6 @@
 
         // paths that are used in the application
         .constant('paths', {
-            views: {
-                BASE: 'app/views',
-                DIRECTIVES: 'app/views/directives',
-                MODALS: 'app/views/modals',
-                PAGES: 'app/views/pages'
-            },
             api: {
                 URL: '/rest',
                 PROXY_URL: '/rest/proxy?url='
