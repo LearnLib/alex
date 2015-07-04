@@ -16,8 +16,6 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-html2js": "^0.3.0",
     "grunt-karma": "^0.10.1",
-    "grunt-protractor-runner": "^2.0.0",
-    "grunt-protractor-webdriver": "^0.2.0",
     "grunt-remove": "^0.1.0",
     "grunt-sass": "~1.0.0",
     "grunt-template-jasmine-istanbul": "^0.3.3",
@@ -27,7 +25,7 @@
     "karma-cli": "0.0.4",
     "karma-coverage": "^0.3.1",
     "karma-jasmine": "^0.3.5",
-    "protractor": "^2.0.0",
-    "node-sass": "~3.2.0"
+    "node-sass": "~3.2.0",
+    "grunt-contrib-copy": "~0.8.0"
   }
 }

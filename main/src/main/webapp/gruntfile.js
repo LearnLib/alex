@@ -20,10 +20,6 @@ module.exports = function (grunt) {
         'app/modules/actions/directives/**/*.js',
         'app/modules/actions/services/**/*.js',
 
-        // dashboard module
-        'app/modules/dashboard/init.js',
-        'app/modules/dashboard/directives/*.js',
-
         // modals module
         'app/modules/modals/init.js',
         'app/modules/modals/controllers/*.js',
@@ -91,7 +87,6 @@ module.exports = function (grunt) {
                     src: [
                         'app/modules/core/views/**/*.html',
                         'app/modules/actions/views/*.html',
-                        'app/modules/dashboard/views/*.html',
                         'app/modules/modals/views/*.html'],
                     dest: 'app/templates.js'
                 }
@@ -167,30 +162,11 @@ module.exports = function (grunt) {
                     files: {
                         'app/style.min.css': [
                             'bower_components/ngtoast/dist/ngToast.min.css',
-                            'bower_components/ng-sortable/dist/ng-sortable.min.css',
                             'bower_components/codemirror/lib/codemirror.css',
                             'app/stylesheets/style.css'
                         ]
                     }
                 }
-            },
-
-            protractor: {
-                options: {
-                    configFile: "tests/e2e/conf.js",
-                    keepAlive: true,
-                    noColor: false,
-                    args: {}
-                },
-                all: {}
-            },
-
-            protractor_webdriver: {
-                options: {
-                    command: 'webdriver-manager start',
-                    path: './node_modules/protractor/bin/'
-                },
-                all: {}
             },
 
             clean: {
@@ -205,6 +181,20 @@ module.exports = function (grunt) {
                         copy: false
                     }
                 }
+            },
+
+            copy: {
+                fonts: {
+                    files: [
+                        {
+                            expand: true,
+                            flatten: true,
+                            src: ['bower_components/font-awesome/fonts/**'],
+                            dest: 'app/fonts',
+                            filter: 'isFile'
+                        }
+                    ]
+                }
             }
         });
 
@@ -215,14 +205,13 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
-    grunt.loadNpmTasks('grunt-protractor-runner');
-    grunt.loadNpmTasks('grunt-protractor-webdriver');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-bower-task');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     grunt.registerTask('build-js', ['html2js', 'concat', 'uglify', 'clean']);
-    grunt.registerTask('build-css', ['sass', 'cssmin']);
+    grunt.registerTask('build-css', ['sass', 'cssmin', 'copy:fonts']);
     grunt.registerTask('default', ['build-js']);
     grunt.registerTask('test-unit', ['karma']);
     grunt.registerTask('test-e2e', ['protractor']);

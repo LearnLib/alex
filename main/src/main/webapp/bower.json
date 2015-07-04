@@ -18,7 +18,9 @@
     "Sortable": "RubaXa/Sortable#~1.2.0",
     "d3": "~3.5.5",
     "lodash": "3.1.0",
-    "dagre-d3": "~0.4.8"
+    "dagre-d3": "~0.4.8",
+    "font-awesome": "~4.3.0",
+    "bootstrap-sass": "twbs/bootstrap-sass#~3.3.5"
   },
   "devDependencies": {},
   "resolutions": {

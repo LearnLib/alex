@@ -1,4 +1,5 @@
-@import "lib/_bootstrap";
+@import "bootstrap";
+@import "font-awesome";
 @import "hypothesis";
 @import "html-element-picker";
 @import "navigation";
@@ -483,4 +484,28 @@ form {
       border-bottom-right-radius: 3px !important;
     }
   }
+}
+
+/* ng-sortable css file */
+.as-sortable-item, .as-sortable-placeholder {
+  display: block
+}
+
+.as-sortable-item {
+  -ms-touch-action: none;
+  touch-action: none
+}
+
+.as-sortable-item-handle {
+  cursor: move
+}
+
+.as-sortable-drag {
+  position: absolute;
+  pointer-events: none;
+  z-index: 9999
+}
+
+.as-sortable-hidden {
+  display: none !important
 }
