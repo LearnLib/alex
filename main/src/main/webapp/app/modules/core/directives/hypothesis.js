@@ -104,7 +104,7 @@
                 }
             }
 
-            function layout(graphMode) {
+            function layout() {
                 var node;
 
                 function createEdgeObject(label) {
