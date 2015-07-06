@@ -12,11 +12,7 @@ import de.learnlib.alex.actions.RESTSymbolActions.CheckHeaderFieldAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckStatusAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.alex.actions.RESTSymbolActions.RESTSymbolAction;
-import de.learnlib.alex.actions.StoreSymbolActions.IncrementCounterAction;
-import de.learnlib.alex.actions.StoreSymbolActions.SetCounterAction;
-import de.learnlib.alex.actions.StoreSymbolActions.SetVariableAction;
-import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByHTMLElementAction;
-import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
+import de.learnlib.alex.actions.StoreSymbolActions.*;
 import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckTextWebAction;
@@ -65,6 +61,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "setVariable", value = SetVariableAction.class),
         @JsonSubTypes.Type(name = "setVariableByJSON", value = SetVariableByJSONAttributeAction.class),
         @JsonSubTypes.Type(name = "setVariableByHTML", value = SetVariableByHTMLElementAction.class),
+        @JsonSubTypes.Type(name = "setVariableByCookie", value = SetVariableByCookieAction.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
         @JsonSubTypes.Type(name = "web_checkForNode", value = CheckNodeAction.class),

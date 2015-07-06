@@ -8,6 +8,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,9 @@ public class WebServiceConnector implements Connector {
 
     /** The response body of the last call done by the connection. */
     private String body;
+
+    /** The cookies from th last call done by the connection */
+    private Map<String, NewCookie> cookies;
 
     /**
      * Constructor which sets the WebTarget to use.
@@ -128,6 +132,13 @@ public class WebServiceConnector implements Connector {
         return body;
     }
 
+    public Map<String, NewCookie> getCookies() throws  IllegalStateException {
+        if (!init) {
+            throw new IllegalStateException();
+        }
+        return cookies;
+    }
+
     /**
      * Do a HTTP GET request.
      *
@@ -213,6 +224,7 @@ public class WebServiceConnector implements Connector {
         status = response.getStatus();
         headers = response.getHeaders();
         body = response.readEntity(String.class);
+        cookies = response.getCookies();
         init = true;
     }
 

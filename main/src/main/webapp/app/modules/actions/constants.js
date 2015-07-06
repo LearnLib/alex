@@ -35,6 +35,7 @@
             INCREMENT_COUNTER: 'incrementCounter',
             SET_COUNTER: 'setCounter',
             SET_VARIABLE: 'setVariable',
+            SET_VARIABLE_BY_COOKIE: 'setVariableByCookie',
             SET_VARIABLE_BY_JSON_ATTRIBUTE: 'setVariableByJSON',
             SET_VARIABLE_BY_NODE: 'setVariableByHTML',
             WAIT: 'wait'

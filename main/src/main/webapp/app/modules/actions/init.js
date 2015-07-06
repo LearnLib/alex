@@ -31,6 +31,7 @@
             $injector.get('ExecuteSymbolGeneralAction');
             $injector.get('IncrementCounterGeneralAction');
             $injector.get('SetCounterGeneralAction');
+            $injector.get('SetVariableByCookieAction');
             $injector.get('SetVariableByJsonAttributeGeneralAction');
             $injector.get('SetVariableByNodeGeneralAction');
             $injector.get('SetVariableGeneralAction');
