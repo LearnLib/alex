@@ -4,6 +4,7 @@ import de.learnlib.alex.core.entities.UploadableFile;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
+import java.lang.SecurityException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -96,13 +97,17 @@ public class FileDAOImpl implements FileDAO {
         file.delete();
     }
 
-    private File getUploadDirectory(Long projectId) throws NotFoundException{
+    private File getUploadDirectory(Long projectId) throws NotFoundException {
         java.nio.file.Path uploadedDirectoryLocation = Paths.get(uploadedDirectoryBaseLocation.toString(),
                                                                  String.valueOf(projectId));
         File uploadDirectory = uploadedDirectoryLocation.toFile();
 
         if (!uploadDirectory.exists() || !uploadDirectory.isDirectory()) {
-            throw new NotFoundException("Could not find the project directory you are looking for.");
+            try {
+                uploadDirectory.mkdir();
+            } catch (SecurityException e) {
+                throw new NotFoundException("Could not find the project directory you are looking for.");
+            }
         }
 
         return uploadDirectory;
