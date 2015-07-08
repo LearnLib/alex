@@ -24,12 +24,14 @@
          *
          * @param {string} name - The name of the variable
          * @param {string} value - The value of the variable
+         * @param {string} cookieType - The type of the cookie (REST|WEB)
          * @constructor
          */
-        function SetVariableByCookieAction(name, value) {
+        function SetVariableByCookieAction(name, value, cookieType) {
             AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].SET_VARIABLE_BY_COOKIE);
             this.name = name || null;
             this.value = value || null;
+            this.cookieType = cookieType || 'WEB';
         }
 
         SetVariableByCookieAction.prototype = Object.create(AbstractAction.prototype);

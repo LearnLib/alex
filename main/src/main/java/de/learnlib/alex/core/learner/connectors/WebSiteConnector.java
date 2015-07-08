@@ -143,4 +143,12 @@ public class WebSiteConnector implements Connector {
         return baseUrl.getAbsoluteUrl(path);
     }
 
+    /**
+     * Get the currently used web driver
+     *
+     * @return the current web driver
+     */
+    public WebDriver getDriver() {
+        return driver;
+    }
 }

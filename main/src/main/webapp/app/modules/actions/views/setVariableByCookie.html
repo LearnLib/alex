@@ -15,3 +15,14 @@
 <div class="form-group">
     <input class="form-control" ng-model="action.value" placeholder="The name of the cookie">
 </div>
+
+<div class="checkbox">
+    <label>
+        <input type="radio" name="cookieType" ng-model="action.cookieType" value="WEB"> Browser Cookie
+    </label>
+</div>
+<div class="checkbox">
+    <label>
+        <input type="radio" name="cookieType" ng-model="action.cookieType" value="REST"> Request Cookie
+    </label>
+</div>

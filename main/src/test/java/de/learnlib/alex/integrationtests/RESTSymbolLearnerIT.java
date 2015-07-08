@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 public class RESTSymbolLearnerIT extends JerseyTest {
 
     private static final int MAX_TIME_TO_WAIT_FOR_LEARNER = 180000; // three minutes !!
-    private static final int SYMBOLS_AMOUNT = 4;
+    private static final int SYMBOLS_AMOUNT = 3;
     private static final String BASE_LEARNER_URL = "http://localhost:8080/rest";
     private static final String BASE_TEST_URL = "http://localhost:9998/test";
 
@@ -107,14 +107,6 @@ public class RESTSymbolLearnerIT extends JerseyTest {
                     + "{\"type\": \"rest_checkStatus\", \"status\" : 500, \"negated\": true}"
                 + "]}";
         symbols[2] = testHelper.addSymbol(client, project, json);
-
-        symbolName = "RESTSymbolLearnerIT REST Symbol 4";
-        symbolAbbr = "learnrest4";
-        json = "{\"project\": " + project.getId() + ", \"name\": \"" + symbolName
-                + "\", \"abbreviation\": \"" + symbolAbbr + "\", \"actions\": ["
-                + "{\"type\": \"setVariabelByCookie\", \"name\" : \"TestCookie\", \"value\": \"MyCookie\"}"
-                + "]}";
-        symbols[3] = testHelper.addSymbol(client, project, json);
 
         // remember symbol references
         symbolsIdAndRevisionAsJSON = testHelper.createIdRevisionPairListAsJSON(symbols);
