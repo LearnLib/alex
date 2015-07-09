@@ -6,6 +6,7 @@ import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -31,6 +32,14 @@ public class SetVariableByCookieAction extends SetVariableAction {
      */
     private CookieType cookieType;
 
+    public CookieType getCookieType() {
+        return cookieType;
+    }
+
+    public void setCookieType(CookieType t) {
+        cookieType = t;
+    }
+
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
@@ -41,29 +50,22 @@ public class SetVariableByCookieAction extends SetVariableAction {
             String value = null;
 
             if (cookieType == CookieType.WEB) {
-                Set<Cookie> cookies = webSiteConnector.getDriver().manage().getCookies();
-
-                for (Cookie c : cookies) {
-                    if (c.getName().equals(getName())) {
-                        value = c.getValue();
-                        break;
-                    }
+                Cookie cookie = webSiteConnector.getDriver().manage().getCookieNamed(value);
+                if (cookie != null) {
+                    value = cookie.getValue();
                 }
             } else if (cookieType == CookieType.REST) {
                 Map<String, NewCookie> cookies = webServiceConnector.getCookies();
-
-                for (Map.Entry<String, NewCookie> entry : cookies.entrySet()) {
-                    if (entry.getKey().equals(getName())) {
-                        value = entry.getValue().getValue();
-                        break;
-                    }
+                javax.ws.rs.core.Cookie cookie = cookies.get(value);
+                if (cookie != null) {
+                    value = cookies.get(value).getValue();
                 }
             } else {
                 return getFailedOutput();
             }
 
             if (value != null) {
-                storeConnector.set(getName(), value);
+                storeConnector.set(name, value);
                 return getSuccessOutput();
             } else {
                 return getFailedOutput();
@@ -71,13 +73,5 @@ public class SetVariableByCookieAction extends SetVariableAction {
         } catch (IllegalStateException | NoSuchElementException e) {
             return getFailedOutput();
         }
-    }
-
-    public CookieType getCookieType() {
-        return cookieType;
-    }
-
-    public void setCookieType(CookieType t) {
-        cookieType = t;
     }
 }
