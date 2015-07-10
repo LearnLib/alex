@@ -11,6 +11,7 @@
             $injector.get('ClickWebAction');
             $injector.get('CheckForTextWebAction');
             $injector.get('CheckForNodeWebAction');
+            $injector.get('CheckPageTitleAction');
             $injector.get('ClearWebAction');
             $injector.get('ClickLinkByTextWebAction');
             $injector.get('FillWebAction');

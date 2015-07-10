@@ -14,16 +14,7 @@ import de.learnlib.alex.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.alex.actions.RESTSymbolActions.RESTSymbolAction;
 import de.learnlib.alex.actions.StoreSymbolActions.*;
 import de.learnlib.alex.actions.WaitAction;
-import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
-import de.learnlib.alex.actions.WebSymbolActions.CheckTextWebAction;
-import de.learnlib.alex.actions.WebSymbolActions.ClearAction;
-import de.learnlib.alex.actions.WebSymbolActions.ClickAction;
-import de.learnlib.alex.actions.WebSymbolActions.ClickLinkAction;
-import de.learnlib.alex.actions.WebSymbolActions.FillAction;
-import de.learnlib.alex.actions.WebSymbolActions.GotoAction;
-import de.learnlib.alex.actions.WebSymbolActions.SelectAction;
-import de.learnlib.alex.actions.WebSymbolActions.SubmitAction;
-import de.learnlib.alex.actions.WebSymbolActions.WebSymbolAction;
+import de.learnlib.alex.actions.WebSymbolActions.*;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.utils.SearchHelper;
 import org.hibernate.annotations.NaturalId;
@@ -66,6 +57,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
         @JsonSubTypes.Type(name = "web_checkForNode", value = CheckNodeAction.class),
         @JsonSubTypes.Type(name = "web_checkForText", value = CheckTextWebAction.class),
+        @JsonSubTypes.Type(name = "web_checkPageTitle", value = CheckPageTitleAction.class),
         @JsonSubTypes.Type(name = "web_clear", value = ClearAction.class),
         @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
         @JsonSubTypes.Type(name = "web_clickLinkByText", value = ClickLinkAction.class),

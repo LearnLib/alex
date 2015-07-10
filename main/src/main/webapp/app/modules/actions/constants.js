@@ -17,6 +17,7 @@
             FILL: 'web_fill',
             CHECK_FOR_TEXT: 'web_checkForText',
             CHECK_FOR_NODE: 'web_checkForNode',
+            CHECK_PAGE_TITLE: 'web_checkPageTitle',
             SUBMIT: 'web_submit',
             GO_TO: 'web_goto',
             SELECT: 'web_select'
