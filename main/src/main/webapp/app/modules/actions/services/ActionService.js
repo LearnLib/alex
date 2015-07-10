@@ -34,6 +34,7 @@
                 };
             }
             map[actionGroupType][actionType] = action;
+            return this;
         }
 
         /**

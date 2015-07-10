@@ -26,7 +26,7 @@ describe('Project', function () {
     it('should create a learning configuration', function () {
         var conf = new LearnConfiguration();
         expect(conf.eqOracle instanceof EqOracle.Random);
-        expect(conf.algorithm).toEqual(learnAlgorithms.LSTAR);
+        expect(conf.algorithm).toEqual(learnAlgorithms.TTT);
     });
 
     it('should add a reset symbol', function () {

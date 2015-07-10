@@ -19,6 +19,7 @@ module.exports = function (grunt) {
         'app/modules/actions/constants.js',
         'app/modules/actions/directives/**/*.js',
         'app/modules/actions/services/**/*.js',
+        'app/modules/actions/models/**/*.js',
 
         // modals module
         'app/modules/modals/init.js',
@@ -128,29 +129,6 @@ module.exports = function (grunt) {
                 }
             },
 
-            jasmine: {
-                src: 'app/app.js',
-                options: {
-                    specs: [
-                        'tests/unit/modules/core/controllers/**/*.js'
-                    ],
-                    vendor: ['app/libs.min.js', 'tests/unit/angular-mocks.js'],
-                    display: 'full',
-                    summary: true,
-                    template: require('grunt-template-jasmine-istanbul'),
-                    templateOptions: {
-                        coverage: 'bin/coverage/coverage.json',
-                        report: 'bin/coverage',
-                        thresholds: {
-                            lines: 0,
-                            statements: 0,
-                            branches: 0,
-                            functions: 0
-                        }
-                    }
-                }
-            },
-
             karma: {
                 unit: {
                     configFile: 'tests/unit/karma.conf.js'
@@ -204,7 +182,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-html2js');
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-bower-task');
@@ -214,5 +191,4 @@ module.exports = function (grunt) {
     grunt.registerTask('build-css', ['sass', 'cssmin', 'copy:fonts']);
     grunt.registerTask('default', ['build-js']);
     grunt.registerTask('test-unit', ['karma']);
-    grunt.registerTask('test-e2e', ['protractor']);
 };
