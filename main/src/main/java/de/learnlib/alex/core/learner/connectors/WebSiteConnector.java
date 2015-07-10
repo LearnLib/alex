@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.learner.connectors;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebClient;
 import de.learnlib.alex.core.learner.BaseUrlManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,13 +9,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -65,7 +66,24 @@ public class WebSiteConnector implements Connector {
                 this.driver = new InternetExplorerDriver();
                 break;
             default:
-                this.driver = new HtmlUnitDriver();
+                this.driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_38);
+
+                // Solves issues with "wrong" or non strict JavaScript that is executed on the page (e.g. jQuery).
+                // Uses reflections to get the private 'webClient' property from the UnitDriver and set the flag
+                // to ignore js errors.
+                try {
+                    System.out.println("Try enabling JavaScript");
+                    HtmlUnitDriver d = (HtmlUnitDriver) this.driver;
+                    d.setJavascriptEnabled(true);
+                    Field f = d.getClass().getDeclaredField("webClient");
+                    f.setAccessible(true);
+                    WebClient client = (WebClient) f.get(d);
+                    client.getOptions().setThrowExceptionOnScriptError(false);
+                } catch (NoSuchFieldException e) {
+                    System.out.println("Enabling JavaScript failed. Private Property 'webClient' does not exist");
+                } catch (IllegalAccessException e) {
+                    System.out.println("Enabling JavaScript failed. Problem accessing private 'webClient'");
+                }
         }
 
         this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
@@ -86,6 +104,15 @@ public class WebSiteConnector implements Connector {
     public void get(String path) {
         String url = getAbsoluteUrl(path);
         driver.get(url);
+
+        // wait for page to have loaded everything
+        String pageLoadStatus;
+        do {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            pageLoadStatus = (String)js.executeScript("return document.readyState");
+            System.out.print(".");
+        } while ( !pageLoadStatus.equals("complete") );
+        System.out.println("Page Loaded.");
     }
 
     /**
