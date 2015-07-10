@@ -25,7 +25,7 @@
             this.symbols = [];
             this.maxAmountOfStepsToLearn = 0;
             this.eqOracle = new EqOracle.Random(1, 10, 20);
-            this.algorithm = learnAlgorithms.LSTAR;
+            this.algorithm = learnAlgorithms.TTT;
             this.resetSymbol = null;
             this.comment = null;
         }
