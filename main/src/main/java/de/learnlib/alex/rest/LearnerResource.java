@@ -11,6 +11,8 @@ import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolSet;
+import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
+import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -18,6 +20,7 @@ import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy.InputOutputPair;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -29,8 +32,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * REST API to manage the learning.
@@ -125,12 +130,46 @@ public class LearnerResource {
                            LearnerResumeConfiguration configuration) {
         LearnerStatus status = new LearnerStatus(learner);
         try {
-            projectDAO.getByID(projectId); // check if project exists
+            Project project = projectDAO.getByID(projectId); // check if project exists
 
             LearnerResult lastResult = learner.getResult();
             if (lastResult.getProjectId() != projectId || lastResult.getTestNo() != testRunNo) {
                 LOGGER.info("could not resume the learner of another project or with an wrong test run.");
                 return Response.status(Status.NOT_MODIFIED).entity(status).build();
+            }
+
+            // validate counterexamples
+            AbstractEquivalenceOracleProxy oracle = configuration.getEqOracle();
+            if (oracle instanceof SampleEQOracleProxy) {
+                List<List<InputOutputPair>> counterexamples = ((SampleEQOracleProxy) oracle).getCounterExamples();
+                List<Symbol> symbolsFromCounterexample = new ArrayList<>();
+                List<String> outputs = new ArrayList<>();
+
+                for (List<InputOutputPair> counterexample : counterexamples) {
+
+                    // search symbols in configuration where symbol.abbreviation == counterexample.input
+                    for (InputOutputPair io : counterexample) {
+
+                        Optional<Symbol> symbol = lastResult.getConfiguration().getSymbols().stream()
+                                .filter(s -> s.getAbbreviation().equals(io.getInput()))
+                                .findFirst();
+
+                        // collect all outputs in order to compare it with the result of learner.readOutputs()
+                        if (symbol.isPresent()) {
+                            symbolsFromCounterexample.add(symbol.get());
+                            outputs.add(io.getOutput());
+                        }
+                    }
+
+                    List<String> results = learner.readOutputs(
+                            project,
+                            lastResult.getConfiguration().getResetSymbol(),
+                            symbolsFromCounterexample
+                    );
+
+                    if (results.equals(outputs))
+                        throw new IllegalArgumentException("At least one of the given words is not a counterexample.");
+                }
             }
 
             learner.resume(configuration);
