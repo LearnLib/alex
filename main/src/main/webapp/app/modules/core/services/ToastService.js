@@ -29,8 +29,10 @@
          * @param {string} message - The message to be displayed
          */
         function createToast(type, message) {
+            console.log(type);
+
             ngToast.create({
-                class: type,
+                className: type,
                 content: message,
                 dismissButton: true
             });
