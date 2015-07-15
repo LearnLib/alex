@@ -1,38 +1,36 @@
-<div class="absolute-panel" style="border-right: 1px solid #ddd">
+<div class="absolute-panel learn-results-panel">
     <div class="absolute-panel-header">
 
-        <div class="pull-left" ng-show="!results[pointer].error" style="margin-right: 16px">
+        <div class="pull-left" ng-show="!results[pointer].error">
 
-            <div style="display: inline-block;" ng-show="mode === modes.HYPOTHESIS">
-                <div class="btn-group btn-group-xs" dropdown dropdown-hover>
-                    <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <ul class="dropdown-menu pull-left" role="menu">
-                        <li>
-                            <a href learn-result-details-modal-handle result="results[pointer]">
-                                <i class="fa fa-info fa-fw"></i> Details
-                            </a>
-                        </li>
-                        <li>
-                            <a href hypothesis-layout-settings-modal-handle layout-settings="layoutSettings">
-                                <i class="fa fa-sliders fa-fw"></i> Layout
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href download-svg="#hypothesis-{{index}}">
-                                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
-                            </a>
-                            <a href download-as-json data="results[pointer].hypothesis">
-                                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+            <div class="btn-group btn-group-xs" dropdown dropdown-hover ng-show="mode === modes.HYPOTHESIS">
+                <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+                    <i class="fa fa-bars"></i>
+                </button>
+                <ul class="dropdown-menu pull-left" role="menu">
+                    <li>
+                        <a href learn-result-details-modal-handle result="results[pointer]">
+                            <i class="fa fa-info fa-fw"></i> Details
+                        </a>
+                    </li>
+                    <li>
+                        <a href hypothesis-layout-settings-modal-handle layout-settings="layoutSettings">
+                            <i class="fa fa-sliders fa-fw"></i> Layout
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href download-svg="#hypothesis-{{index}}">
+                            <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
+                        </a>
+                        <a href download-as-json data="results[pointer].hypothesis">
+                            <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
+                        </a>
+                    </li>
+                </ul>
             </div>
 
-            <div style="display: inline-block;" ng-if="hasInternalDataStructure()">
+            <div class="inline-block" ng-if="hasInternalDataStructure()">
                 <button class="btn btn-default btn-xs"
                         ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.LSTAR"
                         download-table-as-csv="#observation-table-{{index}}">
@@ -59,7 +57,7 @@
 
         <div class="pull-right" ng-transclude></div>
 
-        <div class=" btn-group btn-group-xs pull-right">
+        <div class="learn-results-panel-navigation btn-group btn-group-xs pull-right">
             <button class="btn btn-default" ng-click="firstStep()">
                 <i class="fa fa-angle-double-left fa-fw"></i>
             </button>
@@ -100,8 +98,8 @@
 
     <div class="absolute-panel-body" ng-if="results[pointer].error">
 
-        <div class="text-center" ng-if="results[pointer].error">
-            <div class="alert alert-danger" style="margin-top: 25px; display: inline-block">
+        <div class="text-center alert-container" ng-if="results[pointer].error">
+            <div class="alert alert-danger inline-block">
                 <i class="fa fa-fw fa-warning"></i>
                 <strong>The execution of this step failed</strong>
 

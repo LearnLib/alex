@@ -5,8 +5,6 @@
 @import "navigation";
 
 *, *:after, *:before {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -17,6 +15,10 @@
 #logo {
   max-width: 320px;
   margin: 50px 25px;
+}
+
+.inline-block {
+  display: inline-block;
 }
 
 .view-heading {
@@ -153,6 +155,12 @@
   z-index: 9999;
 }
 
+.ace_editor {
+  height: 150px;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
 /* Bootstrap Extensions & Modifications
 ============================================================================== */
 
@@ -181,11 +189,13 @@
   }
 }
 
-form {
-  &.form-condensed {
-    .form-group {
-      margin-bottom: 5px;
-    }
+.separator-small {
+  margin: 12px 0;
+}
+
+.form-condensed {
+  .form-group {
+    margin-bottom: 5px;
   }
 }
 
@@ -216,9 +226,6 @@ form {
 
 /* Model Lists
 ============================================================================== */
-
-@mixin selection-list() {
-}
 
 @mixin selection-list-item() {
   padding: 10px 8px;
@@ -325,6 +332,18 @@ form {
     .symbol-group-list-item-header {
       padding-bottom: 10px;
       border-bottom: 1px solid #ddd;
+
+      .collapse-button {
+        margin-right: 8px;
+      }
+
+      .buttons {
+        margin-right: 15px;
+      }
+
+      .content {
+        margin-left: 30px;
+      }
     }
 
     .symbol-group-list-item-content {
@@ -345,7 +364,7 @@ form {
 .ng-toast {
   margin-top: 75px;
   .alert {
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
     max-width: 450px;
   }
 }
@@ -376,7 +395,6 @@ form {
 
   &.show {
     transform: translate(0, 0);
-    box-shadow: -4px 0px 15px rgba(0, 0, 0, 0.3);
   }
 
   .panel {
@@ -492,7 +510,6 @@ form {
 }
 
 .as-sortable-item {
-  -ms-touch-action: none;
   touch-action: none
 }
 
@@ -508,4 +525,43 @@ form {
 
 .as-sortable-hidden {
   display: none !important
+}
+
+.learn-results-panel {
+  border-right: 1px solid #ddd;
+
+  .close-button {
+    margin-left: 5px
+  }
+
+  .learn-results-panel-navigation {
+    margin-right: 7px;
+  }
+}
+
+.alert-container {
+  margin-top: 25px;
+}
+
+.learn-results-compare-wrapper,
+.learn-start-wrapper {
+  position: absolute;
+  width: 100%;
+  top: 42px;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.learn-results-compare-wrapper {
+  .learn-results .absolute-panel-body {
+    padding: 25px;
+    .list-group {
+      max-width: 1170px;
+      margin: auto;
+    }
+  }
+}
+
+.learn-loading-indicator {
+  margin-top: 54px;
 }

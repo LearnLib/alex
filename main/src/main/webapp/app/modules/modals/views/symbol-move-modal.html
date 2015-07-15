@@ -15,7 +15,7 @@
         <span ng-bind="symbols.length"></span> symbols selected
     </div>
 
-    <ul class="list-group" style="margin-bottom: 0">
+    <ul class="list-group no-margin-bottom">
         <li class="list-group-item" ng-repeat="group in groups"
             ng-class="selectedGroup === group ? 'active': ''"
             ng-click="selectGroup(group)">

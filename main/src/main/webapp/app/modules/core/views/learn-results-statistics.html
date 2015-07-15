@@ -8,7 +8,7 @@
 
         <div ng-show="selectedChartMode === null">
 
-            <div class="pull-left" style="margin-right: 16px">
+            <div class="pull-left selection-checkbox">
                 <input type="checkbox" selection-checkbox-all items="results">
             </div>
 
@@ -59,7 +59,7 @@
             </div>
 
             <div class="pull-right">
-                <button class="btn btn-default btn-xs" download-svg ancestor-or-element="#learn-result-chart">
+                <button class="btn btn-default btn-xs" download-svg="#learn-result-chart">
                     <i class="fa fa-download fa-fw"></i> Download as *.svg
                 </button>
                 <button class="btn btn-default btn-xs" ng-click="fullWidth = !fullWidth" dispatch-resize="20">
@@ -73,7 +73,7 @@
 </div>
 
 <div class="view-body">
-    <div class="container" ng-style="fullWidth ? {'width':'100%'} : {}">
+    <div ng-class="fullWidth ? 'container-fluid' : 'container'">
 
         <div class="selectable-list" ng-show="selectedChartMode === null">
 
@@ -125,7 +125,7 @@
             <table class="table table-condensed">
                 <thead>
                 <tr>
-                    <th style="width: 0">Test No</th>
+                    <th width="0">Test No</th>
                     <th>Algorithm</th>
                     <th>Eq-oracle</th>
                 </tr>

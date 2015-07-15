@@ -14,21 +14,19 @@
 
 
     /**
-     * The directive for displaying a collapsable widget without content. Use is a a wrapper for any content you like.
+     * The directive for displaying a widget without content. Use is a a wrapper for any content you like.
      *
-     * Attribute 'collapsed' {boolean} can be applied to tell whether the widgets content should be displayed or not.
-     * Attribute 'widgetTitle' {string} can be applied for displaying a widget title.
+     * Attribute 'title' {string} can be applied for displaying a widget title.
      *
-     * Use: '<widget widget-title="..." collapsed="..."></widget>'
+     * Use: '<widget title="..."></widget>'
      *
      * @param paths - The applications constant for paths
-     * @returns {{scope: {collapsed: string, widgetTitle: string}, templateUrl: string, transclude: boolean, link: link}}
+     * @returns {{scope: {title: string}, templateUrl: string, transclude: boolean, link: link}}
      */
     function widget(paths) {
         return {
             scope: {
-                collapsed: '=',
-                widgetTitle: '@'
+                title: '@'
             },
             templateUrl: paths.COMPONENTS + '/core/views/directives/widget.html',
             transclude: true,
@@ -41,20 +39,7 @@
              * The title that should be displayed in the widget header
              * @type {string}
              */
-            scope.title = scope.widgetTitle || 'Untitled';
-
-            /**
-             * Flag for the display of the widget content
-             * @type {boolean}
-             */
-            scope.collapsed = scope.collapsed || false;
-
-            /**
-             * Collapses or uncollapses the widget content
-             */
-            scope.toggleCollapse = function () {
-                scope.collapsed = !scope.collapsed;
-            }
+            scope.title = scope.title || 'Untitled';
         }
     }
 

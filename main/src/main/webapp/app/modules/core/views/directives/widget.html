@@ -1,11 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <div class="pull-right">
-           <span class="panel-collapse-handle" ng-click="toggleCollapse()">
-               <i class="fa" ng-class="collapsed ? 'fa-plus-square' : 'fa-minus-square'"></i>
-            </span>
-        </div>
-        <strong class="text-muted" ng-bind="title"></strong>
+        <strong class="text-muted" ng-bind="::title"></strong>
     </div>
-    <div class="panel-body" ng-show="!collapsed" ng-transclude></div>
+    <div class="panel-body" ng-transclude></div>
 </div>
