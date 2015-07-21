@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import de.learnlib.alex.utils.CSSUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -60,7 +61,7 @@ public class SubmitAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.getElement(getNodeWithVariableValues()).submit();
+            connector.getElement(CSSUtils.escapeSelector(getNodeWithVariableValues())).submit();
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             return getFailedOutput();

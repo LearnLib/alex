@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import de.learnlib.alex.utils.CSSUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -58,7 +59,7 @@ public class CheckNodeAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.getElement(getValueWithVariableValues());
+            connector.getElement(CSSUtils.escapeSelector(getValueWithVariableValues()));
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             return getFailedOutput();

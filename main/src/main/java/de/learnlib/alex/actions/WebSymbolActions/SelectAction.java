@@ -3,6 +3,7 @@ package de.learnlib.alex.actions.WebSymbolActions;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import de.learnlib.alex.utils.CSSUtils;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -34,7 +35,7 @@ public class SelectAction extends FillAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            WebElement selectElement = connector.getElement(getNodeWithVariableValues());
+            WebElement selectElement = connector.getElement(CSSUtils.escapeSelector(getNodeWithVariableValues()));
             Select select = new Select(selectElement);
             switch (selectBy) {
                 case VALUE:
