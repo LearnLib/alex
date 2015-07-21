@@ -9,7 +9,7 @@
 
     <bannerLeft>
         <name><![CDATA[
-            <span style="color: #09d;">A</span>utomata <span style="color: #09d;">L</span>earning <span style="color: #09d;">EX</span>perience
+            <span style="color: #89bf04;">A</span>utomata <span style="color: #89bf04;">L</span>earning <span style="color: #89bf04;">EX</span>perience
         ]]></name>
         <href>index.html</href>
     </bannerLeft>
@@ -28,8 +28,10 @@
 
     <custom>
         <reflowSkin>
-            <theme>bootswatch-spacelab</theme>
+            <!--<theme>bootswatch-cosmo</theme>-->
+            <theme>site</theme>
             <highlightJs>true</highlightJs>
+            <navbarInverse>true</navbarInverse>
             <highlightJsTheme>github</highlightJsTheme>
             <brand>
                 <name>ALEX</name>
@@ -84,6 +86,7 @@
                     <toc>false</toc>
                     <markPageHeader>false</markPageHeader>
                     <sections>
+                        <columns>1</columns>
                         <carousel />
                         <body />
                         <columns>2</columns>
@@ -124,7 +127,7 @@
             </pages>
 
             <endContent>
-                <script src="$resourcePath/scripts/loadVideos.js"></script>
+                <script src="$resourcePath/js/loadVideos.js"></script>
             </endContent>
         </reflowSkin>
     </custom>
@@ -133,6 +136,10 @@
         <breadcrumbs>
             <item name="Home" href="./index.html" />
         </breadcrumbs>
+
+        <links>
+            <item name="Demo" href="/demo" />
+        </links>
 
         <menu name="Main" inherit="top">
             <item name="Home" href="./index.html" />

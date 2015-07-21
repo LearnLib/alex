@@ -23,10 +23,11 @@ Building a Release
 To create a release archive please make sure that all requirements are fulfilled and that you can successfully build
 ALEX. If this is the case just run:
 
-    mvn clean package
-    mvn site assembly:single -P release
+    mvn clean package site
+    mvn  -P release assembly:single
 
-Afterwards the *ALEX-xxx.tar.gz* archive is created in the `target` directory.
+Afterwards the *ALEX-xxx.tar.gz* and the *ALEX-xxx.tar.zip archive are created in the `target` directory.
+
 
 Docker
 ------
