@@ -30,6 +30,9 @@ public class WebSiteConnector implements Connector {
     /** Max. time to wait for a request before timing out. Introduced by Selenium. */
     private static final int PAGE_LOAD_TIMEOUT_TIME = 30;
 
+    /** Max. time to wait for JavaScript to load before aborting */
+    private static final int JAVASCRIPT_LOADING_THRESHOLD = 5000; // 5 seconds
+
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("server");
 
@@ -106,12 +109,16 @@ public class WebSiteConnector implements Connector {
         driver.get(url);
 
         // wait for page to have loaded everything
+        // or cancel after a certain time has passed
         String pageLoadStatus;
+        long startTime = System.currentTimeMillis();
+        long timePassed;
         do {
             JavascriptExecutor js = (JavascriptExecutor) driver;
             pageLoadStatus = (String)js.executeScript("return document.readyState");
             System.out.print(".");
-        } while ( !pageLoadStatus.equals("complete") );
+            timePassed = System.currentTimeMillis() - startTime;
+        } while ( !pageLoadStatus.equals("complete") || timePassed <= JAVASCRIPT_LOADING_THRESHOLD);
         System.out.println("Page Loaded.");
     }
 
