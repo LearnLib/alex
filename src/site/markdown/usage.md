@@ -1,5 +1,5 @@
 Usage of ALEX
-===============
+=============
 
 Here you can find a detailed explanation of the concepts and ways to use ALEX, regarding the RESTful API that powers
 the application as well as the graphical client for it. This document covers the necessary parts to understand and
@@ -143,7 +143,7 @@ Except for the about, help, error, home and the create project page, all other r
 created and is opened.
 
 
-### <a name="navigation"></a> Navigation
+### Navigation
 
 All pages of the front-end are accessible through the navigation that is placed on top of the screen. Depending if an
 instance of a project is saved in the session storage, the navigation can be in either one of the following two states.
@@ -156,7 +156,7 @@ pages that deal with working objects that relate to the opened project are acces
 ![Navigation bar](images/navigation-2.jpg)
 
 
-### <a name="project-management"></a> Project Management
+### Project Management
 
 Projects are the entities that are used to manage multiple applications separately in ALEX. You can for example create
 a project for your application in version x and another one for version x+1 while having a different set of symbols and
@@ -169,7 +169,7 @@ time. In order to switch to another project of the same tab, it has to be *close
 the session storage, either by clicking the menu item from the main navigation or by closing the current tab.
 
 
-#### <a name="project-management-create"></a> Create, Edit and Delete Projects
+#### Create, Edit and Delete Projects
 
 | Field       | Description                                                                            | Required |
 |-------------|----------------------------------------------------------------------------------------|----------|
@@ -195,10 +195,10 @@ Before deleting a project, make sure you have exported your symbols, hypotheses 
 deleting of a project, all these values are deleted from the server, too.
 
 
-### <a name="symbol-management"></a> Symbol Management
+### Symbol Management
 
 
-#### <a name="symbol-groups"></a> Symbol Groups
+#### Symbol Groups
 
 With symbol groups symbols of a project can be organized. For example you can create a group that contains symbols that
 are used to reset an application, another one for web related symbols and a further one for symbols relating to your 
@@ -217,7 +217,7 @@ For a better overview over a large set of symbols, symbol groups can be collapse
 the left of each entry.
 
 
-#### <a name="symbols"></a> Symbols
+#### Symbols
 
 Symbols can be created, updated, deleted and moved into into other symbol groups. The creation of a symbol requires
 several properties.
@@ -234,7 +234,7 @@ list of all hidden symbols is given. Recovering a symbol makes it appear again i
 case the group has been deleted, the symbol is moved to the default group.
 
 
-#### <a name="actions"></a> Actions
+#### Actions
 
 The function of a symbol is defined by its actions and their execution order. An action can be understood as a real
 interaction with a system, like clicking on buttons, submitting forms, making requests to an API and so on. 
@@ -258,7 +258,7 @@ Each action can be marked with three different flags which are
 | disabled      | If this flag is set to "true" its execution is skipped during the call of its symbol                  |
 
 
-##### <a name="actions-web"></a> Web Actions
+##### Web Actions
 
 Web actions are used to interact with a browser interface as a real person would do. They are based on Selenium actions
 and ALEX offers a subset of these that are presented in the table below.
@@ -284,7 +284,7 @@ a button that is labeled with *"Element Picker"*. This is a special feature of A
 website directly without having to know HTML.
 
 
-###### <a name="actions-web-html-element-picker"></a> HTML Element Picker
+###### HTML Element Picker
 
 The HTML element picker has been tested but it can not be ensured that picking the right element works in all possible
 use cases. If the HTML picker should fail you can still get the CSS path of an element with the developer tools of your
@@ -310,7 +310,7 @@ with the "Fill" action. Enter a value in the desired input field, select the ele
 extracts both, the value and the CSS path of it.
 
 
-##### <a name="actions-rest"></a> REST Actions
+##### REST Actions
 
 REST actions are the counterpart to web actions. They are used to communicate with RESTful interfaces. The table below
 shows a list of available actions.
@@ -330,7 +330,7 @@ analyze the results. The order of your REST actions should also look like that. 
 actions to work with the response.
 
 
-##### <a name="general-actions"></a> General Actions
+##### General Actions
 
 Actions of this group allow the interaction between different symbols and actions, for example by storing and passing
 String and Integer values to other actions.
@@ -397,7 +397,7 @@ the value field. In order for this to work, the file has had to be uploaded firs
 -->
 
 
-#### <a name="symbols-import-revision"></a> Revision Management
+#### Revision Management
 
 Changing a symbol in any way results in the creation of a new revision of it. A previous state of a symbol can be 
 recovered.
@@ -407,7 +407,7 @@ created. If you have any actions that execute other symbols, you have to manuall
 most current symbol (In case this is wanted).
 
 
-#### <a name="symbols-import-export"></a> Export & Import
+#### Export & Import
 
 If you want to save a set of symbols for another project or use already existing ones, the export and import function
 might be of interest for you. Note that when exporting symbols, their revision, id and group are deleted in order to be 
@@ -425,7 +425,7 @@ text editor by hand and uploading them to the system is given. Therefore, the fi
 ```
     
 
-### <a name="learning-experiment-modeling"></a> Learning Experiment Modeling
+### Learning Experiment Modeling
 
 In order to start learning an application, a learning process has to be modeled. Such a process always consists of the
 following components:
@@ -478,14 +478,14 @@ the instance is required by the learner. Due to the architecture of ALEX, there 
 a time.
 
 
-### <a name="learning-experiment-modeling-hypothesis-interaction"></a> Hypothesis Interaction
+### Hypothesis Interaction
 
 The possibility to interact with generated models can be separated into two phases. The first one is while a learning
 process is running and the second one is after having finished learning an applications. The latter is dealt with in the
 section [Learning Experiment Analysis <b class="caret"></b>](#Learning_Experiment_Analysis "Learning Experiment Analysis").
 
 
-#### <a name="learning-experiment-modeling-internal-data-structures"></a> Internal Data Structures
+#### Internal Data Structures
 
 ALEX provides the visualisation of the *Observation Table* that is used by the *L\** algorithm and the *Discrimination
 Tree* from the equally named algorithm. Both are saved for each iteration the learner executes and can be displayed in
@@ -493,7 +493,7 @@ the same panel corresponding hypothesis is presented in. While observation table
 discrimination trees can be downloaded in the SVG format.
  
  
-#### <a name="learning-experiment-modeling-counterexamples"></a> Testing Counterexamples
+#### Testing Counterexamples
 
 In between two iterations of a learning process it is possible to search and test counterexamples directly on the 
 displayed hypothesis and then start the next iteration with respect to entered counterexamples. This process follows
@@ -514,13 +514,13 @@ The server assumes that all words given by a user for the refinement actually ar
 case the learning process may fail and the application may have to be restarted by killing the running process.
 
 
-### <a name="learning-experiment-analysis"></a> Learning Experiment Analysis
+### Learning Experiment Analysis
 
 After having learned an application, their test results are available for an analysis. This can happen in two ways
 that the next sections deals with.
 
 
-#### <a name="learning-experiment-analysis-hypothesis-comparison"></a> Hypotheses Comparison
+#### Hypotheses Comparison
 
 The first point is the visual comparison of hypotheses in a single tab. The page for that can be equally separated into
 multiple columns, where each column can present a hypothesis or an internal data structure. That way it is possible to
@@ -535,7 +535,7 @@ the display a new column is created. By clicking on the red button in a panel, t
 the other columns.
 
 
-#### <a name="learning-experiment-analysis-statistics"></a> Statistics
+#### Statistics
 
 On the statistics page a list of learning results is presented. It is either possible to generate a bar chart of a
 selection of final results or an area chart. This one not only includes the cumulated values, but displays all values

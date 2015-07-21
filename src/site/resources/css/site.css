@@ -19,3 +19,32 @@ video {
 dl dd {
     margin-bottom: 10px;
 }
+
+/*
+a {
+    color: #89bf04;
+}
+a:hover,
+a:focus,
+navbar .nav>li>a:hover
+.navbar .nav>li>a:focus {
+    color: #537402 !important;
+}
+.dropdown-menu>li>a:hover,
+.dropdown-menu>li>a:focus,
+.dropdown-submenu:hover>a,
+.dropdown-submenu:focus>a {
+    background-color: #89bf04;
+}
+*/
+
+/** Frontpage stuff */
+.page-index .main-body > div:first-child {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-index .main-body > div:first-child p {
+    max-width: 800px;
+    margin: 20px auto;
+}

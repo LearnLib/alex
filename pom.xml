@@ -50,7 +50,7 @@
     </organization>
 
     <scm>
-        <developerConnection>ssh://git@projekte.itmc.tu-dortmund.de/informatik-ls5/bachelorarbeiten/alex.git</developerConnection>
+        <developerConnection>scm:ssh://git@projekte.itmc.tu-dortmund.de/informatik-ls5/bachelorarbeiten/alex.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
     <issueManagement>
@@ -326,6 +326,32 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>deploy</id>
+            <properties>
+                <isDeploy>true</isDeploy>
+            </properties>
+            <!--===== reports ======-->
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${assembly-plugin.version}</version>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/deploy.xml</descriptor>
+                            </descriptors>
+                            <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
+                            <finalName>ALEX-${project.version}-deploy</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
 </project>

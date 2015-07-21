@@ -1,34 +1,68 @@
-#### [Simple User Interface][webpicker] ###
+#*
+  So, we pump this document through Apache Velocity to show the current version number.
+  But Apache Velocity uses the '#' symbol for its syntax, which means it conflicts with markdown.
+  -> Define variables which hold the markdown syntax for headlines, which will be replaced by Velocity before the
+     markdown compiler is reached.
+*#
+#set($h3 = '###') 
+#set($h4 = '####') 
+
+
+![ALEx Logo](images/logo.png)
+
+ALEx provides a user-focused way to learn web applications and web services with Active Automata Learning
+without having to know any programming languages.
+
+#if( $isDeploy )
+<div>
+  <div class="btn-group">
+    <a href="/downloads" class="btn btn-info btn-large">Download Latest (<em>${project.version}</em>)</a>
+    <button class="btn btn-info btn-large dropdown-toggle" data-toggle="dropdown">
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a href="/downloads">Older Downloads</a></li>
+    </ul>
+  </div>
+  <a href="/demo" title="Go to Demo!" class="btn btn-large">Try It!</a>
+</div>
+#end
+
+
+---
+
+
+$h4 [Simple User Interface][webpicker]
 
 [![Web Picker Example](images/webpicker.jpg)][webpicker]
 
 Define user interaction with your web application in a clean and easy to use editor.
 ALEX offers over 20 different actions to simulate user interactions.
 
-[webpicker]: features.html#webpicker
+[webpicker]: usage.html#Description_and_Features
 
 
-#### [Watch Hypotheses][hypotheses] ###
+$h4 [Watch Hypotheses][hypotheses]
 
 [![Hypotheses View](images/models.jpg)][hypotheses]
 
 Take a look at hypothesis of learning experiments, even side by side for easier comparison.
 Those models can be exported as JSON or vector graphics.
 
-[hypotheses]: usage.html#results
+[hypotheses]: usage.html#Learning_Experiment_Analysis
 
 
-#### [Compare Statistics][statistics] ###
+$h4 [Compare Statistics][statistics]
 
 [![Statistics View](images/statistics.jpg)][statistics]
 
 Compare the different statistics of different learning processes or within on test run.
 It is also possible to export those statistics for further research.
 
-[statistics]: usage.html#statistics
+[statistics]: usage.html#Statistics
 
 
-#### [Extensive REST API][rest-api] ###
+$h4 [Extensive REST API][rest-api]
 
 [![REST API documentation in Swagger UI](images/swagger.jpg)][rest-api]
 
@@ -45,7 +79,7 @@ Swagger is used provide extensive documentation if its REST API.
 Instead of testing a web application with only some typical use cases, just define each step and let ALEX create a 
 model of the application.
 This model can be used to validate the behaviour of the web application.
-It is not required to have knowledge of a specifc language, because ALEX defines a new way to describe user interaction.
+It is not required to have knowledge of a specific language, because ALEX defines a new way to describe user interaction.
 It is possible to test the web application over the web interface or the REST API of the applications.
 This allows to see if both interfaces work together as intended.
 ALEX can be easily integrated in existing workflow, because everything can be done over a powerful REST API.
@@ -54,7 +88,9 @@ ALEX can be easily integrated in existing workflow, because everything can be do
 ---
 
 
-## Learn More ##
+Learn More
+----------
+
 Like to learn more about ALEX?
 What [features][features] are included and how you can [use ALEX][usage]?
 Or maybe even about the [theory][learning-doc] behind it.
@@ -71,7 +107,9 @@ Than take a look at the following links:
 [usage]: usage.html
 
 
-## Build ALEX ##
+Build ALEX
+----------
+
 Read all about the [building process][build-doc] of ALEX.
 The short version is simple run the command:
 
