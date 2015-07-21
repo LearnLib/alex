@@ -138,7 +138,7 @@
         </breadcrumbs>
 
         <links>
-            <item name="Demo" href="/demo" />
+            <item name="Demo" href="http://ls5grid06.cs.tu-dortmund.de/demo" />
         </links>
 
         <menu name="Main" inherit="top">

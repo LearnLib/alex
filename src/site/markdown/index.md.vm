@@ -16,12 +16,15 @@ without having to know any programming languages.
 #if( $isDeploy )
 <div>
   <div class="btn-group">
-    <a href="/downloads" class="btn btn-info btn-large">Download Latest (<em>${project.version}</em>)</a>
+    <a href="/download/ALEX-${project.version}.tar.gz" class="btn btn-info btn-large">
+      Download Latest (<em>${project.version}</em>, .tar.gz)
+    </a>
     <button class="btn btn-info btn-large dropdown-toggle" data-toggle="dropdown">
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu">
-      <li><a href="/downloads">Older Downloads</a></li>
+      <li><a href="/download/ALEX-${project.version}.zip">Download Latest (<em>${project.version}</em>, .zip)</a></li>
+      <li><a href="/download">Older Downloads</a></li>
     </ul>
   </div>
   <a href="/demo" title="Go to Demo!" class="btn btn-large">Try It!</a>
