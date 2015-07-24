@@ -3,54 +3,50 @@
      sub-title="Manage all symbols of the project">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
-    <div class="container">
+<div sub-navigation>
+    <div class="pull-left selection-checkbox">
+        <input type="checkbox" selection-checkbox-all items="getAllSymbols">
+    </div>
 
-        <div class="pull-left selection-checkbox">
-            <input type="checkbox" selection-checkbox-all items="getAllSymbols">
+    <div class="btn-group btn-group-xs">
+
+        <div class="btn-group btn-group-xs" dropdown dropdown-hover>
+            <button class="btn btn-primary">
+                Create
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li>
+                    <a href symbol-create-modal-handle project-id="{{project.id}}" on-created="addSymbol">
+                        Symbol
+                    </a>
+                </li>
+                <li>
+                    <a href symbol-group-create-modal-handle project-id="{{project.id}}" on-created="addGroup">
+                        Group
+                    </a>
+                </li>
+            </ul>
         </div>
 
-        <div class="btn-group btn-group-xs">
+        <button class="btn btn-default" ng-class="selectedSymbols.length === 1 ? '' : 'disabled'"
+                symbol-edit-modal-handle symbol="selectedSymbols[0]" on-updated="updateSymbol">
+            Edit
+        </button>
+        <button class="btn btn-default" symbol-move-modal-handle groups="groups" symbols="selectedSymbols"
+                on-moved="moveSymbolsToGroup" ng-class="selectedSymbols.length > 0 ? '' : 'disabled'">
+            Move
+        </button>
+        <button class="btn btn-default" ng-class="selectedSymbols.length > 0 ? '' : 'disabled'"
+                ng-click="deleteSelectedSymbols()">
+            Delete
+        </button>
 
-            <div class="btn-group btn-group-xs" dropdown dropdown-hover>
-                <button class="btn btn-primary">
-                    Create
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li>
-                        <a href symbol-create-modal-handle project-id="{{project.id}}" on-created="addSymbol">
-                            Symbol
-                        </a>
-                    </li>
-                    <li>
-                        <a href symbol-group-create-modal-handle project-id="{{project.id}}" on-created="addGroup">
-                            Group
-                        </a>
-                    </li>
-                </ul>
-            </div>
+    </div>
 
-            <button class="btn btn-default" ng-class="selectedSymbols.length === 1 ? '' : 'disabled'"
-                    symbol-edit-modal-handle symbol="selectedSymbols[0]" on-updated="updateSymbol">
-                Edit
-            </button>
-            <button class="btn btn-default" symbol-move-modal-handle groups="groups" symbols="selectedSymbols"
-                    on-moved="moveSymbolsToGroup" ng-class="selectedSymbols.length > 0 ? '' : 'disabled'">
-                Move
-            </button>
-            <button class="btn btn-default" ng-class="selectedSymbols.length > 0 ? '' : 'disabled'"
-                    ng-click="deleteSelectedSymbols()">
-                Delete
-            </button>
-
-        </div>
-
-        <div class="pull-right">
-            <button class="btn btn-xs btn-default" ng-click="toggleCollapseAllGroups()">
-                <i class="fa fa-fw" ng-class="groupsCollapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
-            </button>
-        </div>
-
+    <div class="pull-right">
+        <button class="btn btn-xs btn-default" ng-click="toggleCollapseAllGroups()">
+            <i class="fa fa-fw" ng-class="groupsCollapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
+        </button>
     </div>
 </div>
 

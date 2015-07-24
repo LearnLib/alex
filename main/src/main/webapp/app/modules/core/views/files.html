@@ -3,17 +3,13 @@
      sub-title="Upload and manage project related files">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
-    <div class="container">
-
-        <div class="pull-left selection-checkbox">
-            <input type="checkbox" selection-checkbox-all items="files">
-        </div>
-        <button class="btn btn-default btn-xs"
-                ng-click="deleteSelectedFiles()">Delete
-        </button>
-
+<div sub-navigation>
+    <div class="pull-left selection-checkbox">
+        <input type="checkbox" selection-checkbox-all items="files">
     </div>
+    <button class="btn btn-default btn-xs"
+            ng-click="deleteSelectedFiles()">Delete
+    </button>
 </div>
 
 <div class="view-body">

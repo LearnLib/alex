@@ -3,19 +3,15 @@
      sub-title="Restore deleted symbols">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
-    <div class="container">
+<div sub-navigation>
+    <div class="pull-left selection-checkbox">
+        <input type="checkbox" selection-checkbox-all items="symbols">
+    </div>
 
-        <div class="pull-left selection-checkbox">
-            <input type="checkbox" selection-checkbox-all items="symbols">
-        </div>
-
-        <div class="pull-left">
-            <button class="btn btn-xs btn-primary" ng-click="recoverSelectedSymbols()">
-                <i class="fa fa-rotate-left fa-fw"></i> Recover
-            </button>
-        </div>
-
+    <div class="pull-left">
+        <button class="btn btn-xs btn-primary" ng-click="recoverSelectedSymbols()">
+            <i class="fa fa-rotate-left fa-fw"></i> Recover
+        </button>
     </div>
 </div>
 

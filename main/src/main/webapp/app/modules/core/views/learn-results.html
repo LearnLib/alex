@@ -3,26 +3,22 @@
      sub-title="Have a look at all the tests you ran for this project">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
-    <div class="container">
+<div sub-navigation>
+    <div class="pull-left selection-checkbox">
+        <input type="checkbox" selection-checkbox-all items="results">
+    </div>
 
-        <div class="pull-left selection-checkbox">
-            <input type="checkbox" selection-checkbox-all items="results">
-        </div>
-
-        <div class="btn-group btn-group-xs">
-            <button class="btn btn-primary"
-                    ng-click="openSelectedResults()"
-                    ng-class="selectedResults.length === 0 ? 'disabled' : ''">
-                Compare
-            </button>
-            <button class="btn btn-default"
-                    ng-click="deleteResults()"
-                    ng-class="selectedResults.length === 0 ? 'disabled' : ''">
-                Delete
-            </button>
-        </div>
-
+    <div class="btn-group btn-group-xs">
+        <button class="btn btn-primary"
+                ng-click="openSelectedResults()"
+                ng-class="selectedResults.length === 0 ? 'disabled' : ''">
+            Compare
+        </button>
+        <button class="btn btn-default"
+                ng-click="deleteResults()"
+                ng-class="selectedResults.length === 0 ? 'disabled' : ''">
+            Delete
+        </button>
     </div>
 </div>
 

@@ -3,70 +3,66 @@
      sub-title="Have a look at some numbers we gathered for your tests">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:124,class:'fixed'}">
-    <div class="container">
+<div sub-navigation>
+    <div ng-show="selectedChartMode === null">
 
-        <div ng-show="selectedChartMode === null">
-
-            <div class="pull-left selection-checkbox">
-                <input type="checkbox" selection-checkbox-all items="results">
-            </div>
-
-            <div class="btn-group btn-group-xs pull-left" dropdown dropdown-hover>
-                <button class="btn btn-primary" ng-class="selectedResults.length > 0 ? '' : 'disabled'">
-                    Create Chart
-                </button>
-                <ul class="dropdown-menu" role="menu" ng-show="selectedResults.length > 0">
-                    <li>
-                        <a href ng-click="createChartFromFinalResults()">
-                            <i class="fa fa-fw fa-bar-chart"></i> Final Results
-                        </a>
-                    </li>
-                    <li>
-                        <a href ng-click="createChartFromCompleteResults()">
-                            <i class="fa fa-fw fa-area-chart"></i> Complete Results
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
-                <button class="btn btn-default" ng-class="selectedResults.length > 0 ? '' : 'disabled'">
-                    <i class="fa fa-fw fa-download"></i> Download as *.csv
-                </button>
-                <ul class="dropdown-menu" role="menu" ng-show="selectedResults.length > 0">
-                    <li>
-                        <a href download-learner-results-as-csv results="selectedResults">
-                            Selected Final Results
-                        </a>
-                    </li>
-                    <li ng-show="selectedResults.length === 1">
-                        <a href download-learner-results-as-csv results="selectedResults" complete>
-                            Selected Complete Result
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
+        <div class="pull-left selection-checkbox">
+            <input type="checkbox" selection-checkbox-all items="results">
         </div>
 
-        <div ng-show="selectedChartMode !== null">
+        <div class="btn-group btn-group-xs pull-left" dropdown dropdown-hover>
+            <button class="btn btn-primary" ng-class="selectedResults.length > 0 ? '' : 'disabled'">
+                Create Chart
+            </button>
+            <ul class="dropdown-menu" role="menu" ng-show="selectedResults.length > 0">
+                <li>
+                    <a href ng-click="createChartFromFinalResults()">
+                        <i class="fa fa-fw fa-bar-chart"></i> Final Results
+                    </a>
+                </li>
+                <li>
+                    <a href ng-click="createChartFromCompleteResults()">
+                        <i class="fa fa-fw fa-area-chart"></i> Complete Results
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-            <div class="pull-left">
-                <button class="btn btn-default btn-xs" ng-click="back()">
-                    <i class="fa fa-reply fa-fw"></i> Back
-                </button>
-            </div>
+        <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+            <button class="btn btn-default" ng-class="selectedResults.length > 0 ? '' : 'disabled'">
+                <i class="fa fa-fw fa-download"></i> Download as *.csv
+            </button>
+            <ul class="dropdown-menu" role="menu" ng-show="selectedResults.length > 0">
+                <li>
+                    <a href download-learner-results-as-csv results="selectedResults">
+                        Selected Final Results
+                    </a>
+                </li>
+                <li ng-show="selectedResults.length === 1">
+                    <a href download-learner-results-as-csv results="selectedResults" complete>
+                        Selected Complete Result
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-            <div class="pull-right">
-                <button class="btn btn-default btn-xs" download-svg="#learn-result-chart">
-                    <i class="fa fa-download fa-fw"></i> Download as *.svg
-                </button>
-                <button class="btn btn-default btn-xs" ng-click="fullWidth = !fullWidth" dispatch-resize="20">
-                    <i class="fa fa-fw" ng-class="fullWidth ? 'fa-compress' : 'fa-expand'"></i>
-                </button>
-            </div>
+    </div>
 
+    <div ng-show="selectedChartMode !== null">
+
+        <div class="pull-left">
+            <button class="btn btn-default btn-xs" ng-click="back()">
+                <i class="fa fa-reply fa-fw"></i> Back
+            </button>
+        </div>
+
+        <div class="pull-right">
+            <button class="btn btn-default btn-xs" download-svg="#learn-result-chart">
+                <i class="fa fa-download fa-fw"></i> Download as *.svg
+            </button>
+            <button class="btn btn-default btn-xs" ng-click="fullWidth = !fullWidth" dispatch-resize="20">
+                <i class="fa fa-fw" ng-class="fullWidth ? 'fa-compress' : 'fa-expand'"></i>
+            </button>
         </div>
 
     </div>

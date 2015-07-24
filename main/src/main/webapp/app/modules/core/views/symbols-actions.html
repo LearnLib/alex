@@ -6,61 +6,57 @@
     </a>
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
-    <div class="container">
+<div sub-navigation>
+    <div class="pull-left selection-checkbox">
+        <input type="checkbox" selection-checkbox-all items="symbol.actions">
+    </div>
 
-        <div class="pull-left selection-checkbox">
-            <input type="checkbox" selection-checkbox-all items="symbol.actions">
+    <div class="btn-group btn-group-xs">
+        <button class="btn btn-primary" action-create-modal-handle on-created="addAction">
+            Create
+        </button>
+        <button class="btn btn-default" action-edit-modal-handle action="selectedActions[0]"
+                on-updated="updateAction"
+                ng-class="selectedActions.length !== 1 ? 'disabled': ''">
+            Edit
+        </button>
+        <button class="btn btn-default" ng-click="deleteActions(selectedActions)"
+                ng-class="selectedActions.length === 0 ? 'disabled': ''">
+            Delete
+        </button>
+        <div class="btn-group btn-group-xs" dropdown dropdown-hover>
+            <button class="btn btn-default" dropdown-toggle>
+                <i class="fa fa-ellipsis-v fa-fw"></i>
+            </button>
+            <ul class="dropdown-menu pull-left" role="menu">
+                <li>
+                    <a href ng-click="cutActions(selectedActions)">
+                        <i class="fa fa-cut fa-fw"></i> Cut
+                    </a>
+                </li>
+                <li>
+                    <a href ng-click="copyActions(selectedActions)">
+                        <i class="fa fa-copy fa-fw"></i> Copy
+                    </a>
+                </li>
+                <li>
+                    <a href ng-click="pasteActions()">
+                        <i class="fa fa-paste fa-fw"></i> Paste
+                    </a>
+                </li>
+            </ul>
         </div>
+    </div>
 
-        <div class="btn-group btn-group-xs">
-            <button class="btn btn-primary" action-create-modal-handle on-created="addAction">
-                Create
-            </button>
-            <button class="btn btn-default" action-edit-modal-handle action="selectedActions[0]"
-                    on-updated="updateAction"
-                    ng-class="selectedActions.length !== 1 ? 'disabled': ''">
-                Edit
-            </button>
-            <button class="btn btn-default" ng-click="deleteActions(selectedActions)"
-                    ng-class="selectedActions.length === 0 ? 'disabled': ''">
-                Delete
-            </button>
-            <div class="btn-group btn-group-xs" dropdown dropdown-hover>
-                <button class="btn btn-default" dropdown-toggle>
-                    <i class="fa fa-ellipsis-v fa-fw"></i>
-                </button>
-                <ul class="dropdown-menu pull-left" role="menu">
-                    <li>
-                        <a href ng-click="cutActions(selectedActions)">
-                            <i class="fa fa-cut fa-fw"></i> Cut
-                        </a>
-                    </li>
-                    <li>
-                        <a href ng-click="copyActions(selectedActions)">
-                            <i class="fa fa-copy fa-fw"></i> Copy
-                        </a>
-                    </li>
-                    <li>
-                        <a href ng-click="pasteActions()">
-                            <i class="fa fa-paste fa-fw"></i> Paste
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="pull-right">
-            <button class="btn btn-default btn-xs"
-                    variables-counters-occurrence-modal-handle>
-                Occurrences
-            </button>
-            <button class="btn btn-success btn-xs"
-                    ng-class="!hasChanged ? 'disabled' : ''"
-                    ng-click="saveChanges()">Save
-            </button>
-        </div>
-
+    <div class="pull-right">
+        <button class="btn btn-default btn-xs"
+                variables-counters-occurrence-modal-handle>
+            Occurrences
+        </button>
+        <button class="btn btn-success btn-xs"
+                ng-class="!hasChanged ? 'disabled' : ''"
+                ng-click="saveChanges()">Save
+        </button>
     </div>
 </div>
 

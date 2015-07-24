@@ -3,23 +3,19 @@
      sub-title="Include or exclude symbols & groups you want to use for the following test">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
-    <div class="container">
+<div sub-navigation>
+    <div class="pull-left selection-checkbox">
+        <input type="checkbox" selection-checkbox-all items="allSymbols">
+    </div>
 
-        <div class="pull-left selection-checkbox">
-            <input type="checkbox" selection-checkbox-all items="allSymbols">
-        </div>
-
-        <div class="btn-group btn-group-xs pull-right">
-            <button class="btn btn-primary" ng-click="startLearning()">
-                Start Learning
-            </button>
-            <button class="btn btn-primary" learn-setup-settings-modal-handle
-                    learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
-                <i class="fa fa-gear"></i>
-            </button>
-        </div>
-
+    <div class="btn-group btn-group-xs pull-right">
+        <button class="btn btn-primary" ng-click="startLearning()">
+            Start Learning
+        </button>
+        <button class="btn btn-primary" learn-setup-settings-modal-handle
+                learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
+            <i class="fa fa-gear"></i>
+        </button>
     </div>
 </div>
 

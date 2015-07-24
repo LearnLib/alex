@@ -3,19 +3,15 @@
      sub-title="Manage counters for learning processes">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:115,class:'fixed'}">
-    <div class="container">
+<div sub-navigation>
+    <div class="pull-left selection-checkbox">
+        <input type="checkbox" selection-checkbox-all items="counters">
+    </div>
 
-        <div class="pull-left selection-checkbox">
-            <input type="checkbox" selection-checkbox-all items="counters">
-        </div>
-
-        <div class="pull-left">
-            <button class="btn btn-xs btn-primary" ng-click="deleteSelectedCounters()">
-                Delete
-            </button>
-        </div>
-
+    <div class="pull-left">
+        <button class="btn btn-xs btn-primary" ng-click="deleteSelectedCounters()">
+            Delete
+        </button>
     </div>
 </div>
 

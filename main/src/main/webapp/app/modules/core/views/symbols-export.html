@@ -3,19 +3,15 @@
      sub-title="Select symbols you want to download as *.json">
 </div>
 
-<div class="sub-nav" fix-on-scroll="{top:120,class:'fixed'}">
-    <div class="container">
+<div sub-navigation>
+    <div class="pull-left selection-checkbox">
+        <input type="checkbox" selection-checkbox-all items="allSymbols">
+    </div>
 
-        <div class="pull-left selection-checkbox">
-            <input type="checkbox" selection-checkbox-all items="allSymbols">
-        </div>
-
-        <div class="pull-left">
-            <button class="btn btn-xs btn-primary" download-as-json data="getDownloadableSymbols">
-                <i class="fa fa-download fa-fw"></i> Download
-            </button>
-        </div>
-
+    <div class="pull-left">
+        <button class="btn btn-xs btn-primary" download-as-json data="getDownloadableSymbols">
+            <i class="fa fa-download fa-fw"></i> Download
+        </button>
     </div>
 </div>
 
