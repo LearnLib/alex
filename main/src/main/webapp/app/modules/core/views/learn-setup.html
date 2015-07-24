@@ -23,10 +23,6 @@
     <div class="container">
 
         <div class="alert alert-info alert-condensed clearfix">
-            <button class="btn btn-xs btn-info pull-right" learn-setup-settings-modal-handle
-                    learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
-                <i class="fa fa-gear"></i>
-            </button>
 
             <p>
                 Using algorithm <strong ng-bind="(learnConfiguration.algorithm | formatAlgorithm)"></strong>
@@ -57,35 +53,62 @@
         </div>
         <hr>
 
-        <symbol-group-list>
-            <symbol-group-list-item ng-repeat="group in groups track by $index | orderBy:'-name':true"
-                                    group="group">
+        <div class="row">
 
-                <symbol-group-list-item-header></symbol-group-list-item-header>
+            <div class="col-sm-8 col-md-9">
 
-                <symbol-group-list-item-content>
+                <symbol-group-list>
+                    <symbol-group-list-item ng-repeat="group in groups track by $index | orderBy:'-name':true"
+                                            group="group">
 
-                    <symbol-list>
-                        <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true"
-                                          selection-model
-                                          selection-model-selected-items="selectedSymbols"
-                                          symbol="symbol">
+                        <symbol-group-list-item-header></symbol-group-list-item-header>
 
-                            <a class="pull-right cursor-pointer" ng-if="resetSymbol !== symbol" ng-click="setResetSymbol(symbol)"
-                               tooltip="Set as reset symbol" tooltip-placement="left"
-                               selection-model-ignore>
-                                <i class="fa fa-circle-thin"></i>
-                            </a>
+                        <symbol-group-list-item-content>
 
-                            <span ng-if="resetSymbol === symbol" class="label label-primary">Reset Symbol</span>
+                            <symbol-list>
+                                <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true"
+                                                  selection-model
+                                                  selection-model-selected-items="selectedSymbols"
+                                                  symbol="symbol">
 
-                        </symbol-list-item>
-                    </symbol-list>
+                                    <a class="pull-right cursor-pointer" ng-if="resetSymbol !== symbol" ng-click="setResetSymbol(symbol)"
+                                       tooltip="Set as reset symbol" tooltip-placement="left"
+                                       selection-model-ignore>
+                                        <i class="fa fa-circle-thin"></i>
+                                    </a>
 
-                </symbol-group-list-item-content>
+                                    <span ng-if="resetSymbol === symbol" class="label label-primary">Reset Symbol</span>
 
-            </symbol-group-list-item>
-        </symbol-group-list>
+                                </symbol-list-item>
+                            </symbol-list>
+
+                        </symbol-group-list-item-content>
+
+                    </symbol-group-list-item>
+                </symbol-group-list>
+
+            </div>
+
+            <div class="col-sm-4 col-md-3">
+
+                <div class="list-group list-group-condensed">
+                    <a href class="list-group-item disabled">
+                        Reuse a previous configuration
+                    </a>
+                    <a href class="list-group-item"
+                       ng-repeat="result in learnResults | orderBy:'-testNo':false | limitTo:5"
+                       ng-click="reuseConfigurationFromResult(result)">
+                        <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
+                        TestNo <span ng-bind="result.testNo"></span>
+                        <div>
+                            <i class="text-muted" ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></i>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 </div>

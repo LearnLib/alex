@@ -7,7 +7,7 @@
 
     LearnSetupController.$inject = [
         '$scope', '$state', 'SymbolGroupResource', 'SessionService', 'LearnConfiguration', 'LearnerService',
-        'ToastService', '_'
+        'ToastService', '_', 'LearnResultResource'
     ];
 
     /**
@@ -23,9 +23,11 @@
      * @param Learner - The API service for the learner
      * @param Toast - The ToastService
      * @param _ - Lodash
+     * @param LearnResultResource - The API resource for learn results
      * @constructor
      */
-    function LearnSetupController($scope, $state, SymbolGroupResource, Session, LearnConfiguration, Learner, Toast, _) {
+    function LearnSetupController($scope, $state, SymbolGroupResource, Session, LearnConfiguration, Learner, Toast, _,
+                                  LearnResultResource) {
 
         // the project that is stored in the session
         var project = Session.project.get();
@@ -35,6 +37,12 @@
          * @type {SymbolGroup[]}
          */
         $scope.groups = [];
+
+        /**
+         * The learn results of previous learn processes
+         * @type {learnResult[]}
+         */
+        $scope.learnResults = [];
 
         /**
          * A list of all symbols of all groups that is used in order to select them
@@ -76,6 +84,12 @@
                                 $scope.groups = groups;
                                 $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
                             });
+
+                        // load learn results so that their configuration can be reused
+                        LearnResultResource.getAllFinal(project.id)
+                            .then(function(learnResults){
+                                $scope.learnResults = learnResults;
+                            })
                     }
                 });
         }());
@@ -121,6 +135,23 @@
             } else {
                 Toast.danger('You <strong>must</strong> at least select one symbol to start learning');
             }
+        };
+
+        $scope.reuseConfigurationFromResult = function (result) {
+            var config = result.configuration;
+            $scope.learnConfiguration.algorithm = config.algorithm;
+            $scope.learnConfiguration.eqOracle = config.eqOracle;
+            $scope.learnConfiguration.maxAmountOfStepsToLearn = config.maxAmountOfStepsToLearn;
+
+            var ids = _.pluck(config.symbols, 'id');
+            _.forEach($scope.groups, function(group){
+                _.forEach(group.symbols, function(symbol){
+                    symbol._selected = _.indexOf(ids, symbol.id) > -1;
+                    if (symbol.id === config.resetSymbol.id) {
+                        $scope.resetSymbol = symbol;
+                    }
+                })
+            })
         };
 
         /**
