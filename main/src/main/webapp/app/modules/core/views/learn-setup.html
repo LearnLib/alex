@@ -32,8 +32,10 @@
                 Using algorithm <strong ng-bind="(learnConfiguration.algorithm | formatAlgorithm)"></strong>
                 with EQ-Oracle <strong ng-bind="(learnConfiguration.eqOracle.type | formatEqOracle)"></strong>
                 <span ng-if="learnConfiguration.eqOracle.type === 'complete'">
-                    (min-depth: <span ng-bind="learnConfiguration.eqOracle.minDepth"></span>, max-depth: <span
-                        ng-bind="learnConfiguration.eqOracle.maxDepth"></span>)
+                    (
+                    min-depth: <span ng-bind="learnConfiguration.eqOracle.minDepth"></span>,
+                    max-depth: <span ng-bind="learnConfiguration.eqOracle.maxDepth"></span>
+                    )
                 </span>
                 <span ng-if="learnConfiguration.eqOracle.type === 'random_word'">
                     (
@@ -69,10 +71,13 @@
                                           selection-model-selected-items="selectedSymbols"
                                           symbol="symbol">
 
-                            <a class="pull-right cursor-pointer" ng-click="setResetSymbol(symbol)"
+                            <a class="pull-right cursor-pointer" ng-if="resetSymbol !== symbol" ng-click="setResetSymbol(symbol)"
+                               tooltip="Set as reset symbol" tooltip-placement="left"
                                selection-model-ignore>
-                                <i class="fa" ng-class="resetSymbol == symbol ? 'fa-circle' : 'fa-circle-thin'"></i>
+                                <i class="fa fa-circle-thin"></i>
                             </a>
+
+                            <span ng-if="resetSymbol === symbol" class="label label-primary">Reset Symbol</span>
 
                         </symbol-list-item>
                     </symbol-list>
