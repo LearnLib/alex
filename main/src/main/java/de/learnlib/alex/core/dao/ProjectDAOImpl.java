@@ -34,21 +34,49 @@ public class ProjectDAOImpl implements ProjectDAO {
         HibernateUtil.beginTransaction();
 
         try {
-            SymbolGroup defaultGroup = new SymbolGroup();
-            defaultGroup.setName("Default Group");
-            defaultGroup.setProject(project);
-            project.addGroup(defaultGroup);
-            project.setDefaultGroup(defaultGroup);
 
-            for (Symbol symbol : project.getSymbols()) {
-                long nextSymbolId = project.getNextSymbolId();
-                symbol.setId(nextSymbolId);
-                symbol.setRevision(0L);
-                symbol.setProject(project);
-                if (symbol.getGroup() == null) {
-                    symbol.setGroup(defaultGroup);
+            if (project.getGroups().size() > 0) { // create new project from json with existing groups
+                Integer i = 0;
+                for (SymbolGroup group: project.getGroups()) {
+                    Long groupId = project.getNextGroupId();
+
+                    if (i.equals(0)) {  // just assume that the first group is the default one
+                        project.setDefaultGroup(group);
+                    } else {
+                        group.setId(groupId);
+                        project.setNextGroupId(groupId + 1);
+                    }
+                    group.setProject(project);
+
+                    if (group.getSymbols().size() > 0) {
+                        for (Symbol symbol: group.getSymbols()) {
+                            Long symbolId = project.getNextSymbolId();
+                            symbol.setProject(project);
+                            symbol.setGroup(group);
+                            symbol.setRevision(0L);
+                            symbol.setId(symbolId);
+                            project.setNextSymbolId(symbolId + 1);
+                        }
+                    }
+                    i++;
                 }
-                project.setNextSymbolId(nextSymbolId + 1);
+            } else {
+                SymbolGroup defaultGroup = new SymbolGroup();
+                defaultGroup.setName("Default Group");
+                defaultGroup.setProject(project);
+                project.addGroup(defaultGroup);
+                project.setDefaultGroup(defaultGroup);
+
+                for (Symbol symbol : project.getSymbols()) {
+                    long nextSymbolId = project.getNextSymbolId();
+                    symbol.setId(nextSymbolId);
+                    symbol.setRevision(0L);
+                    symbol.setProject(project);
+                    if (symbol.getGroup() == null) {
+                        symbol.setGroup(defaultGroup);
+                    }
+                    project.setNextSymbolId(nextSymbolId + 1);
+                }
             }
 
             session.save(project);

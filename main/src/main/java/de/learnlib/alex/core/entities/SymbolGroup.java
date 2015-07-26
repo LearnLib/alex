@@ -202,6 +202,13 @@ public class SymbolGroup implements Serializable {
 
         SymbolGroup that = (SymbolGroup) o;
 
+        if ( // new project created from json with multiple groups
+            project == null && that.getProject() == null &&
+            id.equals(0L) && that.getId().equals(0L) &&
+            !name.equals(that.getName())
+        ) {
+            return false;
+        }
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (project != null ? !project.equals(that.project) : that.project != null) return false;
 
