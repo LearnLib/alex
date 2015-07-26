@@ -6,7 +6,8 @@
         .controller('ProjectSettingsController', ProjectSettingsController);
 
     ProjectSettingsController.$inject = [
-        '$scope', '$state', 'ProjectResource', 'SessionService', 'PromptService', 'ToastService', 'LearnerService'
+        '$scope', '$state', 'ProjectResource', 'SessionService', 'PromptService', 'ToastService', 'LearnerService',
+        'SymbolGroupResource', 'FileDownloadService', '_'
     ];
 
     /**
@@ -22,8 +23,12 @@
      * @param PromptService - The PromptService
      * @param Toast - The ToastService
      * @param Learner - The LearnerService for the API
+     * @param SymbolGroupResource - The SymbolGroupResource
+     * @param FileDownloadService - The FileDownloadService
+     * @param _ - Lodash
      */
-    function ProjectSettingsController($scope, $state, ProjectResource, Session, PromptService, Toast, Learner) {
+    function ProjectSettingsController($scope, $state, ProjectResource, Session, PromptService, Toast, Learner,
+                                       SymbolGroupResource, FileDownloadService, _) {
 
         /**
          * The project that is stored in the session
@@ -77,5 +82,35 @@
                         })
                 })
         };
+
+        /**
+         * Saves the project including symbol groups into a json file
+         */
+        $scope.exportProject = function () {
+            SymbolGroupResource.getAll($scope.project.id, {embedSymbols: true})
+                .then(function(groups){
+
+                    var projectToExport = angular.copy($scope.project);
+                    projectToExport.groups = groups;
+
+                    // prepare project for export
+                    delete projectToExport.id;
+                    _.forEach(projectToExport.groups, function(group){
+                        delete group.id;
+                        delete group.project;
+                        _.forEach(group.symbols, function(symbol){
+                            delete symbol.project;
+                            delete symbol.group;
+                            delete symbol.id;
+                            delete symbol.revision;
+                        })
+                    });
+
+                    FileDownloadService.downloadJson(projectToExport)
+                        .then(function(){
+                            Toast.success('Project exported');
+                        });
+                })
+        }
     }
 }());

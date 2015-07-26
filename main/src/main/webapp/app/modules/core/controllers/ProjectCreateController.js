@@ -39,6 +39,17 @@
                 .catch(function (response) {
                     Toast.danger('<p><strong>Creation of project failed</strong></p>' + response.data.message)
                 })
+        };
+
+        $scope.fileLoaded = function (json) {
+            var project = angular.fromJson(json);
+            if (!project.name || !project.baseUrl) {
+                Toast.danger('The json file does not seem to be a valid project');
+            } else {
+                $scope.project = project;
+                Toast.success('Project loaded from file')
+            }
+            $scope.$apply();
         }
     }
 }());

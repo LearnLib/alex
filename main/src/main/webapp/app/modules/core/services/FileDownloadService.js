@@ -65,7 +65,7 @@
          * @param {Object} jsonObject - The object that should be downloaded
          */
         function downloadJson(jsonObject) {
-            _prompt('JSON')
+            return _prompt('JSON')
                 .then(function (filename) {
                     var href = 'data:text/json;charset=utf-8,' + encodeURIComponent(angular.toJson(jsonObject));
                     _download(filename, 'json', href);

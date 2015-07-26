@@ -42,7 +42,8 @@
                 data.baseUrl,
                 data.description
             ), {
-                id: data.id
+                id: data.id,
+                groups: data.groups
             });
         };
 
