@@ -43,6 +43,19 @@
 
     </div>
 
+    <div class="btn-group btn-group-xs" dropdown dropdown-hover>
+        <button class="btn btn-default btn-xs btn-dropdown"> More
+            <i class="fa fa-fw fa-caret-down"></i>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li>
+                <a href ng-click="exportSelectedSymbols()">
+                    <i class="fa fa-download"></i>&nbsp; Export as JSON
+                </a>
+            </li>
+        </ul>
+    </div>
+
     <div class="pull-right">
         <button class="btn btn-xs btn-default" ng-click="toggleCollapseAllGroups()">
             <i class="fa fa-fw" ng-class="groupsCollapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>

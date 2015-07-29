@@ -5,7 +5,10 @@
         .module('ALEX.core')
         .controller('SymbolsController', SymbolsController);
 
-    SymbolsController.$inject = ['$scope', 'SessionService', 'Symbol', 'SymbolResource', 'SymbolGroupResource', '_', 'ToastService'];
+    SymbolsController.$inject = [
+        '$scope', 'SessionService', 'Symbol', 'SymbolResource', 'SymbolGroupResource', '_', 'ToastService',
+        'FileDownloadService'
+    ];
 
     /**
      * The controller that handles CRUD operations on symbols and symbol groups.
@@ -19,9 +22,11 @@
      * @param SymbolGroupResource - The SymbolGroup factory
      * @param _ - Lodash
      * @param Toast - The ToastService
+     * @param FileDownloadService - The FileDownloadService
      * @constructor
      */
-    function SymbolsController($scope, Session, Symbol, SymbolResource, SymbolGroupResource, _, Toast) {
+    function SymbolsController($scope, Session, Symbol, SymbolResource, SymbolGroupResource, _, Toast,
+                               FileDownloadService) {
 
         /**
          * The project that is saved in the session
@@ -213,6 +218,46 @@
             $scope.groupsCollapsed = !$scope.groupsCollapsed;
             for (var i = 0; i < $scope.groups.length; i++) {
                 $scope.groups[i]._collapsed = $scope.groupsCollapsed;
+            }
+        };
+
+        /**
+         * Deletes all properties that are not needed for downloading symbols which are the id, revision, project, group
+         * and hidden properties. They are removed so that they can later be uploaded and created like new symbols.
+         */
+        $scope.exportSelectedSymbols = function () {
+            if ($scope.selectedSymbols.length > 0) {
+                var symbols = _(angular.copy($scope.selectedSymbols))
+                    .sortBy(function (symbol) {
+                        return symbol.id;
+                    }).value();
+
+                _.forEach(symbols, function (symbol) {
+                    _.forEach(symbol.actions, function (action) {
+                        if (action.type === 'executeSymbol') {
+                            action.symbolToExecute.revision = 1;
+                            _.forEach(symbols, function (s, j) {
+                                if (s.id === action.symbolToExecute.id) {
+                                    action.symbolToExecute.id = j + 1;
+                                }
+                            })
+                        }
+                    });
+                    delete symbol._selected;
+                    delete symbol._collapsed;
+                    delete symbol.revision;
+                    delete symbol.project;
+                    delete symbol.group;
+                    delete symbol.hidden;
+                    delete symbol.id;
+                });
+
+                FileDownloadService.downloadJson(symbols)
+                    .then(function () {
+                        Toast.success('Symbols exported')
+                    })
+            } else {
+                Toast.info('Select symbols you want to export')
             }
         }
     }

@@ -141,15 +141,6 @@
                 }
 
             })
-            .state('symbols.export', {
-                url: '/export',
-                views: {
-                    '@': {
-                        controller: 'SymbolsExportController',
-                        templateUrl: paths.COMPONENTS + '/core/views/symbols-export.html'
-                    }
-                }
-            })
 
             // =========================================================
             // test and learn related routes
