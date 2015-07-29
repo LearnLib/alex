@@ -59,15 +59,14 @@ Working Objects
 
 Project
 :   A project is the main object that the following objects belong to. It is bound to a unique name and a URL that 
-    starts with *"http\[s\]://"*. This property defines the root URL of an application to be learned. In ALEX it is
+    starts with *\"http\[s\]://\"*. This property defines the root URL of an application to be learned. In ALEX it is
     allowed to create and manage multiple projects, thus, for example, allowing to treat a web application and a web
     service as different projects or managing multiple complete different applications.
 
 Symbol Group
-:   A project is the main object that the following objects belong to. It is bound to a unique name and a URL that 
-    starts with *"http\[s\]://"*. This property defines the root URL of an application to be learned. In ALEX it is
-    allowed to create and manage multiple projects, thus, for example, allowing to treat a web application and a web
-    service as different projects or managing multiple complete different applications.
+:   Symbol group are logical container for symbols. They allow to group symbols, for example by their purpose or a 
+    feature. They are defined by a unique name. For every project, there is a default group with the name Default Group 
+    which can not be deleted.
     
 Symbol
 :   Symbols are used by the learner to learn an application. They are defined by a unique name and an abbreviation. 
@@ -129,7 +128,6 @@ on the following URLs lead to different parts of the application.
 | /symbols/\<symbolId\>/history       | Restore old revisions of a specific symbol                |
 | /symbols/trash                      | Restore deleted symbols                                   |
 | /symbols/import                     | Import symbols from a \*.json file                        |
-| /symbols/export                     | Export symbols into a \*.json file                        |
 | /learn/setup                        | Setup and start a learning experiment                     |
 | /learn/start                        | Shows the loadscreen and intermediate learning results    |
 | /learn/results                      | Lists all finished final learning results of a project    |
@@ -267,6 +265,7 @@ and ALEX offers a subset of these that are presented in the table below.
 |--------------------|-------------------------------------------------------|
 | CheckNode          | Check if a certain element is present on the website. |
 | CheckText          | Check if a certain text is part of the website body.  |
+| CheckTitle         | Checks if the page title is a certain string          |
 | Clear              | Clear an input field.                                 |
 | Click              | Click on an element.                                  |
 | Click Link By Text | Click on a link with a specific text value            |
@@ -280,7 +279,7 @@ front-end should be labeled sufficiently.
 
 If you play around a little with the action editor, you may realize that most web actions require you to enter a CSS path
 to an affected element. This may be not that easy to find out in case you are not very familiar with HTML. So, there is
-a button that is labeled with *"Element Picker"*. This is a special feature of ALEX for selecting HTML elements from your 
+a button that is labeled with *\"Element Picker\"*. This is a special feature of ALEX for selecting HTML elements from your 
 website directly without having to know HTML.
 
 
@@ -298,13 +297,13 @@ be applied with Firefox.
 1. Load a URL by entering a path relative to the base URL of the project in the URL bar on the top left.
 2. Click on the button with the wand symbol. All elements should now get a thick red border as soon as you hover over it.
 3. Click on the element you need the CSS path from. The selection mode should be disabled.
-4. Click on the button with the label "ok" on the top right. The CSS path should automatically be entered in the correct
+4. Click on the button with the label \"ok\" on the top right. The CSS path should automatically be entered in the correct
 input element.
 
-In the case that clicking on an element does not work as indented, probably because of some JavaScript, pressing the "Ctrl"
-button on the keyboard has the same effect as a click, but does not fire a click event.
+In the case that clicking on an element does not work as indented, probably because of some JavaScript, pressing the 
+\"Ctrl\" button on the keyboard has the same effect as a click, but does not fire a click event.
 
-For some actions, like "CheckText", the HTML element picker can be used as well. With the same method, it automatically
+For some actions, like \"CheckText\", the HTML element picker can be used as well. With the same method, it automatically
 extracts the textContent value of an element and pastes the content to the corresponding input field. This also works
 with the "Fill" action. Enter a value in the desired input field, select the element with the HTML element picker and it
 extracts both, the value and the CSS path of it.
@@ -345,11 +344,13 @@ String and Integer values to other actions.
 | SetVariableByJSONAttribute | Set a variable to a value form a JSON response.                     |
 | Wait                       | Wait for a specific amount of time.                                 |
 
-*The wait action can be useful for background tasks or AJAX calls, but should be used with care because it can slow 
-down the learning process.*
+<div class="alert alert-info">
+    The wait action can be useful for background tasks or AJAX calls, but should be used with care because it can slow 
+    down the learning process.
+</div>
 
 
-##### Working with Counters, Variables
+##### Working with Counters, Variables and Files
 
 Many web applications handle dynamic data and allow file uploads. In order to model and learn such behaviours and to 
 allow interaction between different symbols, actions and learning processes, *counters*, *variables* and *files* are 
@@ -364,6 +365,10 @@ Counter
 Variables
 :   Variables can only contain String values and are kept alive during a membership query.
 
+Files
+:   In order to learn websites that allow its users to upload files, this feature can be used as well. Make sure the
+    file that should be uploaded for learning purposes has been imported to the project of the website.
+
 In order to make use of those in actions, there is a notation that has to be used in action fields, as presented in the
 following table.
 
@@ -371,6 +376,7 @@ following table.
 |-------------------|-----------------------------------------------------------------------|
 | {{#counterName}}  | The value of the counter with the name *counterName* is inserted      |
 | {{$variableName}} | The value of the variable with the name *variableName* is inserted    |
+| {{\\filename.ext}} | The absolute path of the file *filename.ext* is inserted              |
 
 As an example for the use of counters and variables, let there be a variable *userName* with the value \'*Admin*\' and
 a counter *countLogins* with the value \'*5*\'. The following symbol makes use of both.
@@ -386,16 +392,35 @@ a counter *countLogins* with the value \'*5*\'. The following symbol makes use o
     }]
 }, ... ]
 ```
-    
+
 As soon as the action is executed the value of the property \'value\' is parsed, the values for the variable *userName*
 and the counter *countLogins* are inserted into the String. The resulting text that is searched for would be \"*Hello
 Admin! You logged in for the 5th time today.*\".
 
-<!--
-*For modeling file uploads use the \'fill\' action, select the proper input element and insert \{\{\filename.ext\}\} in 
-the value field. In order for this to work, the file has had to be uploaded first.*
--->
+Normally, files are only applied to input fields with the type *\"file\"*, but do as you please. Given the following
+element on a page
 
+```html
+<input id="fileInput" type="file" />
+```
+
+The action would look like this:
+
+```json
+[{
+    ...
+    "actions" : [{
+        "type" : "web_fill",
+        "node" : "#fileInput",
+        "value" : "{{\filename.ext}}"
+    }]
+}, ... ]
+```
+
+<div class="alert alert-warning">
+    Be aware that currently, due to the limitations of the used Selenium webdriver, the uploading of files only works if 
+    a learn process is executed with enabled javascript, which is enabled by default.
+</div>
 
 #### Revision Management
 
@@ -469,9 +494,15 @@ Sample
 :   If this oracle is chosen, counterexamples are searched by hand by the user.
 
 In order to simplify the modeling phase, only the learning alphabet and the reset symbol has to be chosen. As default, the
-L\* algorithm is selected in combination with the random word oracle. A click on the button with the label "start" starts
+TTT algorithm is selected in combination with the random word oracle. A click on the button with the label "start" starts
 the learning process with the given configuration. The user gets redirected to a loading screen where the generated
 hypothesis is displayed as soon as the server generated one.
+
+<div class="alert alert-info">
+    The usage of the TTT algorithm is generally preferred from a users view as it outperforms the other algorithms in
+    terms of speed. Furthermore, the default eq oracle configuration should be adjusted as it is chosen like it is for
+    very small applications.
+</div>
 
 While ALEX is learning there are some restrictions concerning the functionality. You can not delete the current project as
 the instance is required by the learner. Due to the architecture of ALEX, there can always only be one learning process at
@@ -512,6 +543,10 @@ words. Once a counterexample has been added to the list, it can be edited by cli
 
 The server assumes that all words given by a user for the refinement actually are counterexamples. If this is not the
 case the learning process may fail and the application may have to be restarted by killing the running process.
+
+<div class="alert alert-info">
+    It is recommended to always check for counterexamples manually after a hypothesis has been created.
+</div>
 
 
 ### Learning Experiment Analysis
