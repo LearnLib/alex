@@ -24,7 +24,11 @@
         function link(scope, el) {
             var parent = el.parent()[0];
 
-            angular.element($window).on('resize', fitToParent);
+            $window.addEventListener('resize', fitToParent);
+
+            scope.$on('$destroy', function(){
+                $window.removeEventListener('resize', fitToParent)
+            });
 
             /**
              * Set the element to the dimensions of its parent

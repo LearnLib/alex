@@ -31,34 +31,33 @@
         };
 
         function link(scope, el) {
-
             var scrollTop = 115;    // px
             var cssClass = 'fixed';
 
-            // get element height for the placeholder element
-            var height = el[0].offsetHeight;
-
             // create, configure, hide & append the placeholder element after the element
             var placeholder = document.createElement('div');
-            placeholder.style.height = height + 'px';
+            placeholder.style.height = el[0].offsetHeight + 'px';
             placeholder.style.display = 'none';
             el.after(placeholder);
 
             // listen to window scroll event and add or remove the specified class to or from the element
             // and show or hide the placeholder for a smooth scrolling behaviour
-            angular.element($window).on('scroll', function () {
+            $window.addEventListener('scroll', handleScroll);
+
+            // remove the scroll event if scope is destroyed
+            scope.$on('$destroy', function () {
+                $window.removeEventListener('scroll', handleScroll)
+            });
+
+            function handleScroll() {
                 if ($window.scrollY >= scrollTop) {
-                    if (!el.hasClass(cssClass)) {
-                        placeholder.style.display = 'block';
-                        el.addClass(cssClass);
-                    }
+                    placeholder.style.display = 'block';
+                    el.addClass(cssClass);
                 } else {
-                    if (el.hasClass(cssClass)) {
-                        placeholder.style.display = 'none';
-                        el.removeClass(cssClass);
-                    }
+                    placeholder.style.display = 'none';
+                    el.removeClass(cssClass);
                 }
-            })
+            }
         }
     }
 }());
