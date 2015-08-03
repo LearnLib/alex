@@ -209,6 +209,8 @@ public class WebSymbolLearnerIT {
         path = "/learner/resume/" + project.getId() + "/1";
         json = "{\"maxAmountOfStepsToLearn\": 0, \"eqOracle\":"
                 + "{\"type\": \"sample\", \"counterExamples\": [["
+                    + "{\"input\": \"learnweb2\", \"output\": \"OK\"}"
+                + "], ["
                     + "{\"input\": \"learnweb2\", \"output\": \"OK\"},"
                     + "{\"input\": \"learnweb2\", \"output\": \"OK\"},"
                     + "{\"input\": \"learnweb3\", \"output\": \"OK\"}"

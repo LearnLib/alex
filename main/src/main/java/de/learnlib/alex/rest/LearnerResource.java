@@ -138,40 +138,6 @@ public class LearnerResource {
                 return Response.status(Status.NOT_MODIFIED).entity(status).build();
             }
 
-            // validate counterexamples
-            AbstractEquivalenceOracleProxy oracle = configuration.getEqOracle();
-            if (oracle instanceof SampleEQOracleProxy) {
-                List<List<InputOutputPair>> counterexamples = ((SampleEQOracleProxy) oracle).getCounterExamples();
-                List<Symbol> symbolsFromCounterexample = new ArrayList<>();
-                List<String> outputs = new ArrayList<>();
-
-                for (List<InputOutputPair> counterexample : counterexamples) {
-
-                    // search symbols in configuration where symbol.abbreviation == counterexample.input
-                    for (InputOutputPair io : counterexample) {
-
-                        Optional<Symbol> symbol = lastResult.getConfiguration().getSymbols().stream()
-                                .filter(s -> s.getAbbreviation().equals(io.getInput()))
-                                .findFirst();
-
-                        // collect all outputs in order to compare it with the result of learner.readOutputs()
-                        if (symbol.isPresent()) {
-                            symbolsFromCounterexample.add(symbol.get());
-                            outputs.add(io.getOutput());
-                        }
-                    }
-
-                    List<String> results = learner.readOutputs(
-                            project,
-                            lastResult.getConfiguration().getResetSymbol(),
-                            symbolsFromCounterexample
-                    );
-
-                    if (results.equals(outputs))
-                        throw new IllegalArgumentException("At least one of the given words is not a counterexample.");
-                }
-            }
-
             learner.resume(configuration);
             return Response.ok(status).build();
         } catch (IllegalStateException e) {

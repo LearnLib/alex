@@ -5,13 +5,16 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.exceptions.LearnerException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
@@ -97,19 +100,69 @@ public class Learner {
      *
      * @param newConfiguration
      *         The configuration to use for the next learning steps.
+     * @throws IllegalArgumentException
+     *         If the new configuration has errors.
      * @throws IllegalStateException
      *         If a learning process is already active.
      */
-    public void resume(LearnerResumeConfiguration newConfiguration) throws  IllegalStateException {
+    public void resume(LearnerResumeConfiguration newConfiguration)
+            throws IllegalArgumentException, IllegalStateException {
         if (isActive()) {
             throw new IllegalStateException("You can only restart the learning if no other learning is active");
         }
 
         newConfiguration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
+        validateCounterExample(newConfiguration);
 
         learnThread = learnThreadFactory.updateThread(learnThread, newConfiguration);
         Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
         thread.start();
+    }
+
+    /**
+     * If the new configuration is base on manual counterexamples, these samples must be checked.
+     *
+     * @param newConfiguration
+     *         The new configuration.
+     * @throws IllegalArgumentException
+     *         If the new configuration is based on manual counterexamples and at least one of them is wrong.
+     */
+    private void validateCounterExample(LearnerResumeConfiguration newConfiguration) throws IllegalArgumentException {
+        if (newConfiguration.getEqOracle() instanceof SampleEQOracleProxy) {
+            SampleEQOracleProxy oracle = (SampleEQOracleProxy) newConfiguration.getEqOracle();
+            LearnerResult lastResult = getResult();
+
+            for (List<SampleEQOracleProxy.InputOutputPair> counterexample : oracle.getCounterExamples()) {
+                List<Symbol> symbolsFromCounterexample = new ArrayList<>();
+                List<String> outputs = new ArrayList<>();
+
+                // search symbols in configuration where symbol.abbreviation == counterexample.input
+                for (SampleEQOracleProxy.InputOutputPair io : counterexample) {
+
+                    Optional<Symbol> symbol = lastResult.getConfiguration().getSymbols().stream()
+                                                        .filter(s -> s.getAbbreviation().equals(io.getInput()))
+                                                        .findFirst();
+
+                    // collect all outputs in order to compare it with the result of learner.readOutputs()
+                    if (symbol.isPresent()) {
+                        symbolsFromCounterexample.add(symbol.get());
+                        outputs.add(io.getOutput());
+                    } else {
+                        throw new IllegalArgumentException("The symbol with the abbreviation '" + io.getInput() + "'"
+                                                         + " is not used in this test setup.");
+                    }
+                }
+
+                // finally check if the given sample matches the behavior of the SUL
+                List<String> results = readOutputs(lastResult.getProject(),
+                                                   lastResult.getConfiguration().getResetSymbol(),
+                                                   symbolsFromCounterexample);
+                if (!results.equals(outputs)) {
+                    throw new IllegalArgumentException("At least one of the given samples for counterexamples"
+                                                     + " is not matching the behavior of the SUL.");
+                }
+            }
+        }
     }
 
     /**
