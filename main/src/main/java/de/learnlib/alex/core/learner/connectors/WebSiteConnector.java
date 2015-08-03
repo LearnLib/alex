@@ -70,27 +70,31 @@ public class WebSiteConnector implements Connector {
                 break;
             default:
                 this.driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_38);
-
-                // Solves issues with "wrong" or non strict JavaScript that is executed on the page (e.g. jQuery).
-                // Uses reflections to get the private 'webClient' property from the UnitDriver and set the flag
-                // to ignore js errors.
-                try {
-                    System.out.println("Try enabling JavaScript");
-                    HtmlUnitDriver d = (HtmlUnitDriver) this.driver;
-                    d.setJavascriptEnabled(true);
-                    Field f = d.getClass().getDeclaredField("webClient");
-                    f.setAccessible(true);
-                    WebClient client = (WebClient) f.get(d);
-                    client.getOptions().setThrowExceptionOnScriptError(false);
-                } catch (NoSuchFieldException e) {
-                    System.out.println("Enabling JavaScript failed. Private Property 'webClient' does not exist");
-                } catch (IllegalAccessException e) {
-                    System.out.println("Enabling JavaScript failed. Problem accessing private 'webClient'");
-                }
+                enableJavaScript((HtmlUnitDriver) this.driver);
         }
 
         this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
         this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Solves issues with "wrong" or non strict JavaScript that is executed on the page (e.g. jQuery).
+     * Uses reflections to get the private 'webClient' property from the UnitDriver and set the flag
+     * to ignore js errors.
+     */
+    private void enableJavaScript(HtmlUnitDriver driver) {
+        try {
+            LOGGER.debug("Try enabling JavaScript");
+            driver.setJavascriptEnabled(true);
+            Field f = driver.getClass().getDeclaredField("webClient");
+            f.setAccessible(true);
+            WebClient client = (WebClient) f.get(driver);
+            client.getOptions().setThrowExceptionOnScriptError(false);
+        } catch (NoSuchFieldException e) {
+            LOGGER.warn("Enabling JavaScript failed. Private Property 'webClient' does not exist", e);
+        } catch (IllegalAccessException e) {
+            LOGGER.warn("Enabling JavaScript failed. Problem accessing private 'webClient'", e);
+        }
     }
 
     @Override
@@ -110,16 +114,15 @@ public class WebSiteConnector implements Connector {
 
         // wait for page to have loaded everything
         // or cancel after a certain time has passed
+        JavascriptExecutor js = (JavascriptExecutor) driver;
         String pageLoadStatus;
         long startTime = System.currentTimeMillis();
         long timePassed;
         do {
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            pageLoadStatus = (String)js.executeScript("return document.readyState");
-            System.out.print(".");
+            pageLoadStatus = (String) js.executeScript("return document.readyState");
             timePassed = System.currentTimeMillis() - startTime;
-        } while ( !pageLoadStatus.equals("complete") || timePassed <= JAVASCRIPT_LOADING_THRESHOLD);
-        System.out.println("Page Loaded.");
+        } while ( !pageLoadStatus.equals("complete") && timePassed <= JAVASCRIPT_LOADING_THRESHOLD);
+        LOGGER.debug("Page at {} loaded in {}ms (page load status: {}).", path, timePassed, pageLoadStatus);
     }
 
     /**
