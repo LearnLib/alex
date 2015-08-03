@@ -28,7 +28,6 @@
 
     <custom>
         <reflowSkin>
-            <!--<theme>bootswatch-cosmo</theme>-->
             <theme>site</theme>
             <highlightJs>true</highlightJs>
             <navbarInverse>true</navbarInverse>
