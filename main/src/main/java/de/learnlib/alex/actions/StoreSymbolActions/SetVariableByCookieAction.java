@@ -6,7 +6,6 @@ import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
-import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -14,7 +13,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.ws.rs.core.NewCookie;
 import java.util.Map;
-import java.util.Set;
 
 @Entity
 @DiscriminatorValue("setVariableByCookie")

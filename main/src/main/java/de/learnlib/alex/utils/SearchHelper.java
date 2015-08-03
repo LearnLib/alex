@@ -97,7 +97,7 @@ public final class SearchHelper {
                     break;
                 case '/': // file name
                     variableValue = connector.getConnector(FileStoreConnector.class)
-                                             .getAbsoluteFileLocation(projectId,variableName);
+                                             .getAbsoluteFileLocation(projectId, variableName);
                     result.append(variableValue);
                     break;
                 default: // bullshit

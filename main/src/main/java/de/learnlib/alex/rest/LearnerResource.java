@@ -11,8 +11,6 @@ import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolSet;
-import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
-import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -20,7 +18,6 @@ import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy.InputOutputPair;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -32,10 +29,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST API to manage the learning.

@@ -13,7 +13,7 @@ public class CSSUtils {
      * @param id The id selector of an element starting with #
      * @return The escaped id
      */
-    private static String escapeIdentifier (String id) {
+    private static String escapeIdentifier(String id) {
         String result = "";
         Integer firstUnit = (int) id.charAt(0);
 

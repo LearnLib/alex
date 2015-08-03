@@ -202,10 +202,10 @@ public class SymbolGroup implements Serializable {
 
         SymbolGroup that = (SymbolGroup) o;
 
-        if ( // new project created from json with multiple groups
-            project == null && that.getProject() == null &&
-            id.equals(0L) && that.getId().equals(0L) &&
-            !name.equals(that.getName())
+        // new project created from json with multiple groups
+        if (project == null && that.getProject() == null
+                && id.equals(0L) && that.getId().equals(0L)
+                && !name.equals(that.getName())
         ) {
             return false;
         }

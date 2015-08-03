@@ -12,9 +12,24 @@ import de.learnlib.alex.actions.RESTSymbolActions.CheckHeaderFieldAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckStatusAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.alex.actions.RESTSymbolActions.RESTSymbolAction;
-import de.learnlib.alex.actions.StoreSymbolActions.*;
+import de.learnlib.alex.actions.StoreSymbolActions.IncrementCounterAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetCounterAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByCookieAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByHTMLElementAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
 import de.learnlib.alex.actions.WaitAction;
-import de.learnlib.alex.actions.WebSymbolActions.*;
+import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
+import de.learnlib.alex.actions.WebSymbolActions.CheckPageTitleAction;
+import de.learnlib.alex.actions.WebSymbolActions.CheckTextWebAction;
+import de.learnlib.alex.actions.WebSymbolActions.ClearAction;
+import de.learnlib.alex.actions.WebSymbolActions.ClickAction;
+import de.learnlib.alex.actions.WebSymbolActions.ClickLinkAction;
+import de.learnlib.alex.actions.WebSymbolActions.FillAction;
+import de.learnlib.alex.actions.WebSymbolActions.GotoAction;
+import de.learnlib.alex.actions.WebSymbolActions.SelectAction;
+import de.learnlib.alex.actions.WebSymbolActions.SubmitAction;
+import de.learnlib.alex.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.utils.SearchHelper;
 import org.hibernate.annotations.NaturalId;
@@ -235,7 +250,9 @@ public abstract class SymbolAction implements Serializable {
      *
      * @return true if the action should be executed, false if should be skipped
      */
-    public boolean isDisabled() {return disabled; }
+    public boolean isDisabled() {
+        return disabled;
+    }
 
     /**
      * Set the enable flag, i.e. if the execution of the action should be skipped

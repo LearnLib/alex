@@ -57,13 +57,13 @@ public class WebSiteConnector implements Connector {
      */
     @Override
     public void reset() {
-        String driver = System.getProperty("driver", "HTMLUnitDriver");
-        switch (driver.toLowerCase()) {
+        String driverName = System.getProperty("driver", "HTMLUnitDriver");
+        switch (driverName.toLowerCase()) {
             case "firefox":
                 this.driver = new FirefoxDriver();
                 break;
             case "chrome":
-                this.driver= new ChromeDriver();
+                this.driver = new ChromeDriver();
                 break;
             case "ie":
                 this.driver = new InternetExplorerDriver();
@@ -82,13 +82,13 @@ public class WebSiteConnector implements Connector {
      * Uses reflections to get the private 'webClient' property from the UnitDriver and set the flag
      * to ignore js errors.
      */
-    private void enableJavaScript(HtmlUnitDriver driver) {
+    private void enableJavaScript(HtmlUnitDriver htmlUnitDriver) {
         try {
             LOGGER.debug("Try enabling JavaScript");
-            driver.setJavascriptEnabled(true);
-            Field f = driver.getClass().getDeclaredField("webClient");
+            htmlUnitDriver.setJavascriptEnabled(true);
+            Field f = htmlUnitDriver.getClass().getDeclaredField("webClient");
             f.setAccessible(true);
-            WebClient client = (WebClient) f.get(driver);
+            WebClient client = (WebClient) f.get(htmlUnitDriver);
             client.getOptions().setThrowExceptionOnScriptError(false);
         } catch (NoSuchFieldException e) {
             LOGGER.warn("Enabling JavaScript failed. Private Property 'webClient' does not exist", e);
@@ -121,7 +121,7 @@ public class WebSiteConnector implements Connector {
         do {
             pageLoadStatus = (String) js.executeScript("return document.readyState");
             timePassed = System.currentTimeMillis() - startTime;
-        } while ( !pageLoadStatus.equals("complete") && timePassed <= JAVASCRIPT_LOADING_THRESHOLD);
+        } while (!pageLoadStatus.equals("complete") && timePassed <= JAVASCRIPT_LOADING_THRESHOLD);
         LOGGER.debug("Page at {} loaded in {}ms (page load status: {}).", path, timePassed, pageLoadStatus);
     }
 
@@ -181,7 +181,7 @@ public class WebSiteConnector implements Connector {
     }
 
     /**
-     * Get the currently used web driver
+     * Get the currently used web driver.
      *
      * @return the current web driver
      */

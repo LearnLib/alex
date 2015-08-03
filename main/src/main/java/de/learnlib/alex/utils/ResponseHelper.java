@@ -3,7 +3,7 @@ package de.learnlib.alex.utils;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-public class ResponseHelper {
+public final class ResponseHelper {
 
     private ResponseHelper() {
     }

@@ -5,7 +5,6 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;

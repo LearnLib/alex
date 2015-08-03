@@ -4,7 +4,6 @@ import de.learnlib.alex.core.entities.UploadableFile;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
-import java.lang.SecurityException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
