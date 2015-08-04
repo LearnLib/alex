@@ -71,7 +71,8 @@
                                                   selection-model-selected-items="selectedSymbols"
                                                   symbol="symbol">
 
-                                    <a class="pull-right cursor-pointer" ng-if="resetSymbol !== symbol" ng-click="setResetSymbol(symbol)"
+                                    <a class="pull-right cursor-pointer" ng-if="resetSymbol !== symbol"
+                                       ng-click="setResetSymbol(symbol)"
                                        tooltip="Set as reset symbol" tooltip-placement="left"
                                        selection-model-ignore>
                                         <i class="fa fa-circle-thin"></i>
@@ -91,6 +92,12 @@
 
             <div class="col-sm-4 col-md-3">
 
+                <p ng-if="canContinueLearnProcess">
+                    <a ui-sref="learn.start" class="btn btn-default btn-sm btn-block text-left">
+                        Continue the last process
+                    </a>
+                </p>
+
                 <div class="list-group list-group-condensed">
                     <a href class="list-group-item disabled">
                         Reuse a previous configuration
@@ -100,8 +107,10 @@
                        ng-click="reuseConfigurationFromResult(result)">
                         <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
                         TestNo <span ng-bind="result.testNo"></span>
+
                         <div>
-                            <i class="text-muted" ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></i>
+                            <i class="text-muted"
+                               ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></i>
                         </div>
                     </a>
                 </div>

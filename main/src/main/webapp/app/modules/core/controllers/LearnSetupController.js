@@ -62,6 +62,12 @@
          */
         $scope.resetSymbol = null;
 
+        /**
+         * Indicates whether there is a learning process that can be continued (the last one)
+         * @type {boolean}
+         */
+        $scope.canContinueLearnProcess = false;
+
         (function init() {
 
             // make sure that there isn't any other learn process active
@@ -87,10 +93,16 @@
 
                         // load learn results so that their configuration can be reused
                         LearnResultResource.getAllFinal(project.id)
-                            .then(function(learnResults){
+                            .then(function (learnResults) {
                                 $scope.learnResults = learnResults;
                             })
                     }
+                });
+
+            // get the status to check if there is a learn process that can be continued
+            Learner.getStatus()
+                .then(function (data) {
+                    $scope.canContinueLearnProcess = data !== null;
                 });
         }());
 
@@ -144,8 +156,8 @@
             $scope.learnConfiguration.maxAmountOfStepsToLearn = config.maxAmountOfStepsToLearn;
 
             var ids = _.pluck(config.symbols, 'id');
-            _.forEach($scope.groups, function(group){
-                _.forEach(group.symbols, function(symbol){
+            _.forEach($scope.groups, function (group) {
+                _.forEach(group.symbols, function (symbol) {
                     symbol._selected = _.indexOf(ids, symbol.id) > -1;
                     if (symbol.id === config.resetSymbol.id) {
                         $scope.resetSymbol = symbol;
