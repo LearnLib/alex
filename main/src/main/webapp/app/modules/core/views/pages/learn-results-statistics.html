@@ -1,0 +1,145 @@
+<div view-heading
+     title="Statistics"
+     sub-title="Have a look at some numbers we gathered for your tests">
+</div>
+
+<div sub-navigation>
+    <div ng-show="selectedChartMode === null">
+
+        <div class="pull-left selection-checkbox">
+            <input type="checkbox" selection-checkbox-all items="results">
+        </div>
+
+        <div class="btn-group btn-group-xs pull-left" dropdown dropdown-hover>
+            <button class="btn btn-primary" ng-class="selectedResults.length > 0 ? '' : 'disabled'">
+                Create Chart
+            </button>
+            <ul class="dropdown-menu" role="menu" ng-show="selectedResults.length > 0">
+                <li>
+                    <a href ng-click="createChartFromFinalResults()">
+                        <i class="fa fa-fw fa-bar-chart"></i> Final Results
+                    </a>
+                </li>
+                <li>
+                    <a href ng-click="createChartFromCompleteResults()">
+                        <i class="fa fa-fw fa-area-chart"></i> Complete Results
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+            <button class="btn btn-default" ng-class="selectedResults.length > 0 ? '' : 'disabled'">
+                <i class="fa fa-fw fa-download"></i> Download as *.csv
+            </button>
+            <ul class="dropdown-menu" role="menu" ng-show="selectedResults.length > 0">
+                <li>
+                    <a href download-learner-results-as-csv results="selectedResults">
+                        Selected Final Results
+                    </a>
+                </li>
+                <li ng-show="selectedResults.length === 1">
+                    <a href download-learner-results-as-csv results="selectedResults" complete>
+                        Selected Complete Result
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div ng-show="selectedChartMode !== null">
+
+        <div class="pull-left">
+            <button class="btn btn-default btn-xs" ng-click="back()">
+                <i class="fa fa-reply fa-fw"></i> Back
+            </button>
+        </div>
+
+        <div class="pull-right">
+            <button class="btn btn-default btn-xs" download-svg="#learn-result-chart">
+                <i class="fa fa-download fa-fw"></i> Download as *.svg
+            </button>
+            <button class="btn btn-default btn-xs" ng-click="fullWidth = !fullWidth" dispatch-resize="20">
+                <i class="fa fa-fw" ng-class="fullWidth ? 'fa-compress' : 'fa-expand'"></i>
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="view-body">
+    <div ng-class="fullWidth ? 'container-fluid' : 'container'">
+
+        <div class="selectable-list" ng-show="selectedChartMode === null">
+
+            <learn-result-list>
+                <learn-result-list-item ng-repeat="result in results"
+                                        result="result"
+                                        selection-model
+                                        selection-model-selected-items="selectedResults">
+
+                </learn-result-list-item>
+            </learn-result-list>
+        </div>
+
+        <div ng-if="selectedChartMode !== null && chartData.data !== null && chartData.options !== null"
+             id="learn-result-chart">
+
+            <linechart data="chartData.data" options="chartData.options" mode="" width="" height="500"></linechart>
+            <hr>
+
+            <div class="text-center">
+                <button class="btn btn-xs"
+                        ng-class="selectedChartProperty === chartProperties.MQS ? 'btn-primary':'btn-default'"
+                        ng-click="selectChartProperty(chartProperties.MQS)">
+                    #MQs
+                </button>
+                <button class="btn btn-xs"
+                        ng-class="selectedChartProperty === chartProperties.EQS ? 'btn-primary':'btn-default'"
+                        ng-click="selectChartProperty(chartProperties.EQS)">
+                    #EQs
+                </button>
+                <button class="btn btn-xs"
+                        ng-class="selectedChartProperty === chartProperties.SYMBOL_CALLS ? 'btn-primary':'btn-default'"
+                        ng-click="selectChartProperty(chartProperties.SYMBOL_CALLS)">
+                    #Called Symbols
+                </button>
+                <button class="btn btn-xs"
+                        ng-class="selectedChartProperty === chartProperties.SIGMA ? 'btn-primary':'btn-default'"
+                        ng-click="selectChartProperty(chartProperties.SIGMA)">
+                    |Sigma|
+                </button>
+                <button class="btn btn-xs"
+                        ng-class="selectedChartProperty === chartProperties.DURATION ? 'btn-primary':'btn-default'"
+                        ng-click="selectChartProperty(chartProperties.DURATION)">
+                    Duration
+                </button>
+            </div>
+            <hr>
+
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th width="0">Test No</th>
+                    <th>Algorithm</th>
+                    <th>Eq-oracle</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="result in selectedResults | orderBy:'-testNo'">
+                    <td ng-bind="result.testNo"></td>
+                    <td ng-bind="(result.configuration.algorithm|formatAlgorithm)"></td>
+                    <td>{{result.configuration.eqOracle}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="alert alert-info" ng-show="results.length === 0">
+            You have not run any tests yet.
+        </div>
+
+    </div>
+</div>

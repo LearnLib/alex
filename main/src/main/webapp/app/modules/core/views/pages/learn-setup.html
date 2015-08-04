@@ -1,0 +1,123 @@
+<div view-heading
+     title="Learn Setup"
+     sub-title="Include or exclude symbols & groups you want to use for the following test">
+</div>
+
+<div sub-navigation>
+    <div class="pull-left selection-checkbox">
+        <input type="checkbox" selection-checkbox-all items="allSymbols">
+    </div>
+
+    <div class="btn-group btn-group-xs pull-right">
+        <button class="btn btn-primary" ng-click="startLearning()">
+            Start Learning
+        </button>
+        <button class="btn btn-primary" learn-setup-settings-modal-handle
+                learn-configuration="learnConfiguration" on-ok="updateLearnConfiguration">
+            <i class="fa fa-gear"></i>
+        </button>
+    </div>
+</div>
+
+<div class="view-body">
+    <div class="container">
+
+        <div class="alert alert-info alert-condensed clearfix">
+
+            <p>
+                Using algorithm <strong ng-bind="(learnConfiguration.algorithm | formatAlgorithm)"></strong>
+                with EQ-Oracle <strong ng-bind="(learnConfiguration.eqOracle.type | formatEqOracle)"></strong>
+                <span ng-if="learnConfiguration.eqOracle.type === 'complete'">
+                    (
+                    min-depth: <span ng-bind="learnConfiguration.eqOracle.minDepth"></span>,
+                    max-depth: <span ng-bind="learnConfiguration.eqOracle.maxDepth"></span>
+                    )
+                </span>
+                <span ng-if="learnConfiguration.eqOracle.type === 'random_word'">
+                    (
+                    min-length: <span ng-bind="learnConfiguration.eqOracle.minLength"></span>,
+                    max-length: <span ng-bind="learnConfiguration.eqOracle.maxLength"></span>,
+                    #words: <span ng-bind="learnConfiguration.eqOracle.maxNoOfTests"></span>
+                    )
+                </span>
+            </p>
+
+            <p ng-show="resetSymbol === null">
+                <em>Please select a reset symbol by clicking on the blue circle</em>
+            </p>
+
+            <p ng-show="resetSymbol !== null">
+                Reset symbol is <strong ng-bind="resetSymbol.name"></strong>
+            </p>
+
+        </div>
+        <hr>
+
+        <div class="row">
+
+            <div class="col-sm-8 col-md-9">
+
+                <symbol-group-list>
+                    <symbol-group-list-item ng-repeat="group in groups track by $index | orderBy:'-name':true"
+                                            group="group">
+
+                        <symbol-group-list-item-header></symbol-group-list-item-header>
+
+                        <symbol-group-list-item-content>
+
+                            <symbol-list>
+                                <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true"
+                                                  selection-model
+                                                  selection-model-selected-items="selectedSymbols"
+                                                  symbol="symbol">
+
+                                    <a class="pull-right cursor-pointer" ng-if="resetSymbol !== symbol"
+                                       ng-click="setResetSymbol(symbol)"
+                                       tooltip="Set as reset symbol" tooltip-placement="left"
+                                       selection-model-ignore>
+                                        <i class="fa fa-circle-thin"></i>
+                                    </a>
+
+                                    <span ng-if="resetSymbol === symbol" class="label label-primary">Reset Symbol</span>
+
+                                </symbol-list-item>
+                            </symbol-list>
+
+                        </symbol-group-list-item-content>
+
+                    </symbol-group-list-item>
+                </symbol-group-list>
+
+            </div>
+
+            <div class="col-sm-4 col-md-3">
+
+                <p ng-if="canContinueLearnProcess">
+                    <a ui-sref="learn.start" class="btn btn-default btn-sm btn-block text-left">
+                        Continue the last process
+                    </a>
+                </p>
+
+                <div class="list-group list-group-condensed">
+                    <a href class="list-group-item disabled">
+                        Reuse a previous configuration
+                    </a>
+                    <a href class="list-group-item"
+                       ng-repeat="result in learnResults | orderBy:'-testNo':false | limitTo:5"
+                       ng-click="reuseConfigurationFromResult(result)">
+                        <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
+                        TestNo <span ng-bind="result.testNo"></span>
+
+                        <div>
+                            <i class="text-muted"
+                               ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></i>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="container">
+
+    <div class="text-center">
+        <img id="logo" src="app/images/logo.png">
+    </div>
+
+    <h2>Projects</h2>
+    <hr>
+
+    <div class="list-group project-list-group">
+
+        <div class="list-group-item" ng-if="projects.length > 0" ng-repeat="project in projects"
+             ng-click="openProject(project)">
+            <h3 class="list-group-item-heading" ng-bind="project.name"></h3>
+
+            <p class="list-group-item-text">
+                <span ng-bind="project.baseUrl"></span> <br>
+                    <span class="text-muted"
+                          ng-if="!project.description">There is no description for this project</span>
+                <span class="text-muted" ng-if="project.description" ng-bind="project.description"></span>
+            </p>
+        </div>
+
+        <div class="alert alert-info" ng-if="projects.length == 0">
+            You haven't created a project yet. You can create a new one <a href="#/project/create">here</a> and
+            start
+            testing it.
+        </div>
+
+    </div>
+
+</div>

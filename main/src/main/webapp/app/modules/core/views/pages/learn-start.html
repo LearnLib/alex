@@ -1,0 +1,39 @@
+<div class="learn-start-wrapper">
+
+    <div ng-if="active == true" class="container learn-loading-indicator">
+        <div class="alert alert-info">
+            <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is learning ... <br>
+        </div>
+        <hr>
+        <button class="btn btn-default btn-xs pull-right" ng-click="abort()">
+            <i class="fa fa-close fa-fw"></i> Abort
+        </button>
+    </div>
+
+    <div ng-if="!active && results.length > 0">
+
+        <div class="panel-sidebar" ng-class="showSidebar === true ? 'show' : ''">
+            <div widget title="Configuration">
+                <div learn-resume-settings-widget learn-configuration="_.last(results).configuration"></div>
+            </div>
+
+            <div widget title="Counterexamples"
+                 ng-if="_.last(results).configuration.eqOracle.type === 'sample'">
+                <div counterexamples-widget
+                     counterexamples="_.last(results).configuration.eqOracle.counterExamples"
+                     learn-result="_.last(results)"></div>
+            </div>
+        </div>
+
+        <div learn-results-panel results="results">
+            <div class="btn-group btn-group-xs">
+                <button class="btn btn-success" ng-click="resumeLearning()">Resume</button>
+                <button class="btn btn-success" ng-click="toggleSidebar()">
+                    <i class="fa fa-fw" ng-class="showSidebar ? 'fa-close' : 'fa-gear'"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div>

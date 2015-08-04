@@ -32,7 +32,7 @@
             .state('home', {
                 url: '/home',
                 controller: 'HomeController',
-                templateUrl: paths.COMPONENTS + '/core/views/home.html'
+                templateUrl: paths.COMPONENTS + '/core/views/pages/home.html'
             })
 
             // =========================================================
@@ -43,7 +43,7 @@
                 views: {
                     '@': {
                         controller: 'ProjectController',
-                        templateUrl: paths.COMPONENTS + '/core/views/project.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/project.html'
                     }
                 },
                 data: {
@@ -55,7 +55,7 @@
                 views: {
                     '@': {
                         controller: 'ProjectCreateController',
-                        templateUrl: paths.COMPONENTS + '/core/views/project-create.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/project-create.html'
                     }
                 },
                 data: {
@@ -66,7 +66,7 @@
                 url: '/settings',
                 views: {
                     '@': {
-                        templateUrl: paths.COMPONENTS + '/core/views/project-settings.html',
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/project-settings.html',
                         controller: 'ProjectSettingsController'
                     }
                 }
@@ -79,7 +79,7 @@
                 url: '/counters',
                 views: {
                     '@': {
-                        templateUrl: paths.COMPONENTS + '/core/views/counters.html',
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/counters.html',
                         controller: 'CountersController'
                     }
                 },
@@ -96,7 +96,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsController',
-                        templateUrl: paths.COMPONENTS + '/core/views/symbols.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/symbols.html'
                     }
                 },
                 data: {
@@ -108,7 +108,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsTrashController',
-                        templateUrl: paths.COMPONENTS + '/core/views/symbols-trash.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/symbols-trash.html'
                     }
                 }
             })
@@ -117,7 +117,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsHistoryController',
-                        templateUrl: paths.COMPONENTS + '/core/views/symbols-history.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/symbols-history.html'
                     }
                 }
             })
@@ -126,7 +126,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsActionsController',
-                        templateUrl: paths.COMPONENTS + '/core/views/symbols-actions.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/symbols-actions.html'
                     }
                 }
 
@@ -136,7 +136,7 @@
                 views: {
                     '@': {
                         controller: 'SymbolsImportController',
-                        templateUrl: paths.COMPONENTS + '/core/views/symbols-import.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/symbols-import.html'
                     }
                 }
 
@@ -157,7 +157,7 @@
                 views: {
                     '@': {
                         controller: 'LearnSetupController',
-                        templateUrl: paths.COMPONENTS + '/core/views/learn-setup.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/learn-setup.html'
                     }
                 }
             })
@@ -166,7 +166,7 @@
                 views: {
                     '@': {
                         controller: 'LearnStartController',
-                        templateUrl: paths.COMPONENTS + '/core/views/learn-start.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/learn-start.html'
                     }
                 }
             })
@@ -175,7 +175,7 @@
                 views: {
                     '@': {
                         controller: 'LearnResultsController',
-                        templateUrl: paths.COMPONENTS + '/core/views/learn-results.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/learn-results.html'
                     }
                 }
             })
@@ -184,7 +184,7 @@
                 views: {
                     '@': {
                         controller: 'LearnResultsStatisticsController',
-                        templateUrl: paths.COMPONENTS + '/core/views/learn-results-statistics.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/learn-results-statistics.html'
                     }
                 }
             })
@@ -193,7 +193,7 @@
                 views: {
                     '@': {
                         controller: 'LearnResultsCompareController',
-                        templateUrl: paths.COMPONENTS + '/core/views/learn-results-compare.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/learn-results-compare.html'
                     }
                 }
             })
@@ -203,14 +203,14 @@
 
             .state('about', {
                 url: '/about',
-                templateUrl: paths.COMPONENTS + '/core/views/about.html',
+                templateUrl: paths.COMPONENTS + '/core/views/pages/about.html',
                 data: {
                     requiresProject: false
                 }
             })
             .state('help', {
                 url: '/help',
-                templateUrl: paths.COMPONENTS + '/core/views/help.html',
+                templateUrl: paths.COMPONENTS + '/core/views/pages/help.html',
                 data: {
                     requiresProject: false
                 }
@@ -218,12 +218,13 @@
             .state('error', {
                 url: '/error',
                 controller: 'ErrorController',
-                templateUrl: paths.COMPONENTS + '/core/views/error.html'
+                templateUrl: paths.COMPONENTS + '/core/views/pages/error.html'
             })
+
             .state('files', {
                 url: '/files',
                 controller: 'FilesController',
-                templateUrl: paths.COMPONENTS + '/core/views/files.html',
+                templateUrl: paths.COMPONENTS + '/core/views/pages/files.html',
                 data: {
                     requiresProject: true
                 }
