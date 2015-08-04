@@ -86,7 +86,8 @@
         }
 
         /**
-         * Downloads a SVG element as a svg file. Prompts for a filename.
+         * Downloads a SVG element as a svg file. Prompts for a filename. The hole g element of the svg is downloaded
+         * even if the g element is bigger than the svg element.
          *
          * @param {*|HTMLElement} svg - The svg element that should be downloaded
          */
@@ -94,14 +95,27 @@
             _prompt('SVG')
                 .then(function (filename) {
 
+                    // copy svg to prevent the svg being clipped due to the window size
+                    var svgCopy = svg.cloneNode(true);
+                    var g = svg.childNodes[0];
+
                     // set proper xml attributes for downloadable file
-                    svg.setAttribute('version', '1.1');
-                    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    svgCopy.setAttribute('version', '1.1');
+                    svgCopy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+                    var scale = g.getTransformToElement(svg).a;
+                    var dimension = svg.childNodes[0].getBoundingClientRect();
+                    var width = Math.ceil(dimension.width / scale) + 20;    // use 20px as offset
+                    var height = Math.ceil(dimension.height / scale) + 20;
+
+                    svgCopy.setAttribute('width', width);
+                    svgCopy.setAttribute('height', height);
+                    svgCopy.childNodes[0].setAttribute('transform', 'translate(10,10)');
 
                     // create serialized string from svg element and encode it in
                     // base64 otherwise the file will not be completely downloaded
                     // what results in errors opening the file
-                    var svgString = new XMLSerializer().serializeToString(svg);
+                    var svgString = new XMLSerializer().serializeToString(svgCopy);
                     var href = 'data:image/svg+xml;base64,\n' + window.btoa(svgString);
 
                     _download(filename, 'svg', href);
