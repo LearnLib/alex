@@ -7,7 +7,7 @@
 
     SymbolsActionsController.$inject = [
         '$scope', '$stateParams', 'Symbol', 'SymbolResource', 'SessionService', 'ToastService', 'ErrorService', '_',
-        'ActionBuilder', 'ClipboardService'
+        'ActionBuilder', 'ClipboardService', '$state', 'PromptService'
     ];
 
     /**
@@ -27,10 +27,12 @@
      * @param _ - Lodash
      * @param ActionBuilder - The ActionBuilder
      * @param Clipboard - The ClipboardService
+     * @param $state - ui.router $state
+     * @param Prompt - PromptService
      * @constructor
      */
     function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, Session, Toast, Error, _,
-                                      ActionBuilder, Clipboard) {
+                                      ActionBuilder, Clipboard, $state, Prompt) {
 
         /**
          * A copy of $scope.symbol to revert unsaved changes
@@ -107,6 +109,19 @@
                     Error.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + "' could not be found");
                     Error.goToErrorPage();
                 });
+
+            // show a confirm dialog if the user leaves the page without having saved changes and
+            // redirect to the state that the user was about to go to if he doesn't want to save changes
+            var offHandler = $scope.$on('$stateChangeStart', function (event, toState) {
+                if ($scope.hasChanged) {
+                    event.preventDefault();
+                    Prompt.confirm('There are unsaved changes. Do you still want to continue and discard them?')
+                        .then(function () {
+                            offHandler();
+                            $state.go(toState);
+                        })
+                }
+            });
         }());
 
         /**
