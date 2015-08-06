@@ -1,41 +1,35 @@
-<div view-heading
-     title="Symbols Upload"
-     sub-title="If you already have a *.json file with symbols, you can import them here to this project">
-</div>
+<div sub-navigation>
+    <div ng-show="symbols.length > 0">
+        <div class="pull-left selection-checkbox">
+            <input type="checkbox" selection-checkbox-all items="symbols">
+        </div>
 
-<div sub-navigation ng-if="symbols.length > 0">
-    <div class="pull-left selection-checkbox">
-        <input type="checkbox" selection-checkbox-all items="symbols">
-    </div>
-
-    <div class="btn-group btn-group-xs">
-        <button class="btn btn-primary" ng-click="uploadSelectedSymbols()">
-            <i class="fa fa-upload fa-fw"></i> Upload
-        </button>
-        <div class="btn-group btn-group-xs" dropdown>
-            <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
-                <i class="fa fa-gear"></i>
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-primary" ng-click="uploadSelectedSymbols()">
+                <i class="fa fa-upload fa-fw"></i> Upload
             </button>
-            <ul class="dropdown-menu pull-left" role="menu">
-                <li>
-                    <a href ng-click="adjustReferences = !adjustReferences">
-                        <i class="fa fa-fw" ng-class="adjustReferences ? 'fa-check' : 'fa-close'"></i>
-                        Adjust References
-                    </a>
-                </li>
-            </ul>
+            <div class="btn-group btn-group-sm" dropdown>
+                <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+                    <i class="fa fa-gear"></i>
+                </button>
+                <ul class="dropdown-menu pull-left" role="menu">
+                    <li>
+                        <a href ng-click="adjustReferences = !adjustReferences">
+                            <i class="fa fa-fw" ng-class="adjustReferences ? 'fa-check' : 'fa-close'"></i>
+                            Adjust References
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="view-body">
-    <div class="container">
+<div class="view-body has-sub-nav">
+    <div class="alx-container-fluid">
 
-        <div ng-if="symbols.length === 0">
-            <div file-dropzone on-loaded="fileLoaded" class="alert alert-info">
-                Drag and drop *.json file here or click to upload
-            </div>
-            <hr>
+        <div file-dropzone on-loaded="fileLoaded" class="alert alert-info" ng-if="symbols.length === 0">
+            Drag and drop *.json file here or click to upload
         </div>
 
         <symbol-list>

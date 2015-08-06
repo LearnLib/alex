@@ -208,13 +208,7 @@
                     requiresProject: false
                 }
             })
-            .state('help', {
-                url: '/help',
-                templateUrl: paths.COMPONENTS + '/core/views/pages/help.html',
-                data: {
-                    requiresProject: false
-                }
-            })
+
             .state('error', {
                 url: '/error',
                 controller: 'ErrorController',

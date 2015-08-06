@@ -1,18 +1,13 @@
-<div view-heading
-     title="Symbols"
-     sub-title="Manage all symbols of the project">
-</div>
-
 <div sub-navigation>
     <div class="pull-left selection-checkbox">
         <input type="checkbox" selection-checkbox-all items="getAllSymbols">
     </div>
 
-    <div class="btn-group btn-group-xs">
+    <div class="btn-group btn-group-sm">
 
-        <div class="btn-group btn-group-xs" dropdown dropdown-hover>
+        <div class="btn-group btn-group-sm" dropdown dropdown-hover>
             <button class="btn btn-primary">
-                Create
+                </i> Create <i class="fa fa-fw fa-caret-down"></i>
             </button>
             <ul class="dropdown-menu" role="menu">
                 <li>
@@ -43,9 +38,9 @@
 
     </div>
 
-    <div class="btn-group btn-group-xs" dropdown dropdown-hover>
-        <button class="btn btn-default btn-xs btn-dropdown"> More
-            <i class="fa fa-fw fa-caret-down"></i>
+    <div class="btn-group btn-group-sm" dropdown dropdown-hover>
+        <button class="btn btn-default btn-sm btn-dropdown">
+            <i class="fa fa-fw fa-ellipsis-h"></i>
         </button>
         <ul class="dropdown-menu" role="menu">
             <li>
@@ -57,14 +52,14 @@
     </div>
 
     <div class="pull-right">
-        <button class="btn btn-xs btn-default" ng-click="toggleCollapseAllGroups()">
+        <button class="btn btn-sm btn-default" ng-click="toggleCollapseAllGroups()">
             <i class="fa fa-fw" ng-class="groupsCollapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
         </button>
     </div>
 </div>
 
-<div class="view-body">
-    <div class="container">
+<div class="view-body has-sub-nav">
+    <div class="alx-container-fluid">
 
         <symbol-group-list>
             <symbol-group-list-item ng-repeat="group in groups | orderBy:'-name':true"

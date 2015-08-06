@@ -19,15 +19,12 @@
      * @returns {{scope: {}, templateUrl: string, link: link}}
      */
     function loadScreen($http, paths) {
-
-        // the directive
         return {
             scope: {},
             templateUrl: paths.COMPONENTS + '/core/views/directives/load-screen.html',
             link: link
         };
 
-        // the directives behaviour
         function link(scope, el) {
 
             /**

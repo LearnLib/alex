@@ -1,19 +1,14 @@
-<div view-heading
-     title="Files"
-     sub-title="Upload and manage project related files">
-</div>
-
 <div sub-navigation>
-    <div class="pull-left selection-checkbox">
-        <input type="checkbox" selection-checkbox-all items="files">
+    <div ng-show="files.length > 0">
+        <div class="pull-left selection-checkbox">
+            <input type="checkbox" selection-checkbox-all items="files">
+        </div>
+        <button class="btn btn-default btn-sm" ng-click="deleteSelectedFiles()">Delete</button>
     </div>
-    <button class="btn btn-default btn-xs"
-            ng-click="deleteSelectedFiles()">Delete
-    </button>
 </div>
 
-<div class="view-body">
-    <div class="container">
+<div class="view-body has-sub-nav">
+    <div class="alx-container-fluid">
 
         <div ngf-drop ngf-select class="alert alert-info" ng-model="filesToUpload" ng-show="!filesToUpload.length"
              ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="false">

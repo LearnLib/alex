@@ -1,22 +1,19 @@
-<div view-heading
-     title="Counters"
-     sub-title="Manage counters for learning processes">
-</div>
-
 <div sub-navigation>
-    <div class="pull-left selection-checkbox">
-        <input type="checkbox" selection-checkbox-all items="counters">
-    </div>
+    <div ng-show="counters.length > 0">
+        <div class="pull-left selection-checkbox">
+            <input type="checkbox" selection-checkbox-all items="counters">
+        </div>
 
-    <div class="pull-left">
-        <button class="btn btn-xs btn-primary" ng-click="deleteSelectedCounters()">
-            Delete
-        </button>
+        <div class="pull-left">
+            <button class="btn btn-sm btn-primary" ng-click="deleteSelectedCounters()">
+                Delete
+            </button>
+        </div>
     </div>
 </div>
 
-<div class="view-body">
-    <div class="container">
+<div class="view-body has-sub-nav">
+    <div class="alx-container-fluid">
 
         <div class="alert alert-info alert-condensed" ng-show="counters.length > 0">
             <i class="fa fa-info fa-fw"></i>

@@ -1,22 +1,19 @@
-<div view-heading
-     title="Symbol Trash"
-     sub-title="Restore deleted symbols">
-</div>
-
 <div sub-navigation>
-    <div class="pull-left selection-checkbox">
-        <input type="checkbox" selection-checkbox-all items="symbols">
-    </div>
+    <div ng-show="symbols.length > 0">
+        <div class="pull-left selection-checkbox">
+            <input type="checkbox" selection-checkbox-all items="symbols">
+        </div>
 
-    <div class="pull-left">
-        <button class="btn btn-xs btn-primary" ng-click="recoverSelectedSymbols()">
-            <i class="fa fa-rotate-left fa-fw"></i> Recover
-        </button>
+        <div class="pull-left">
+            <button class="btn btn-sm btn-primary" ng-click="recoverSelectedSymbols()">
+                <i class="fa fa-rotate-left fa-fw"></i> Recover
+            </button>
+        </div>
     </div>
 </div>
 
-<div class="view-body">
-    <div class="container">
+<div class="view-body has-sub-nav">
+    <div class="alx-container-fluid">
 
         <div class="alert alert-info" ng-show="symbols.length === 0">
             There aren't any deleted symbols.

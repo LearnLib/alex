@@ -1,14 +1,9 @@
-<div view-heading
-     title="Learn Setup"
-     sub-title="Include or exclude symbols & groups you want to use for the following test">
-</div>
-
 <div sub-navigation>
     <div class="pull-left selection-checkbox">
         <input type="checkbox" selection-checkbox-all items="allSymbols">
     </div>
 
-    <div class="btn-group btn-group-xs pull-right">
+    <div class="btn-group btn-group-sm pull-right">
         <button class="btn btn-primary" ng-click="startLearning()">
             Start Learning
         </button>
@@ -17,10 +12,16 @@
             <i class="fa fa-gear"></i>
         </button>
     </div>
+
+    <div class="pull-right" style="margin-right: 6px">
+        <a ui-sref="learn.start" class="btn btn-info btn-sm" ng-if="canContinueLearnProcess">
+            Continue
+        </a>
+    </div>
 </div>
 
-<div class="view-body">
-    <div class="container">
+<div class="view-body has-sub-nav">
+    <div class="alx-container-fluid">
 
         <div class="alert alert-info alert-condensed clearfix">
 
@@ -71,7 +72,7 @@
                                                   selection-model-selected-items="selectedSymbols"
                                                   symbol="symbol">
 
-                                    <a class="pull-right cursor-pointer" ng-if="resetSymbol !== symbol"
+                                    <a href class="pull-right" ng-if="resetSymbol !== symbol"
                                        ng-click="setResetSymbol(symbol)"
                                        tooltip="Set as reset symbol" tooltip-placement="left"
                                        selection-model-ignore>
@@ -91,12 +92,6 @@
             </div>
 
             <div class="col-sm-4 col-md-3">
-
-                <p ng-if="canContinueLearnProcess">
-                    <a ui-sref="learn.start" class="btn btn-default btn-sm btn-block text-left">
-                        Continue the last process
-                    </a>
-                </p>
 
                 <div class="list-group list-group-condensed">
                     <a href class="list-group-item disabled">

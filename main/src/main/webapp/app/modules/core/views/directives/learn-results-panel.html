@@ -3,7 +3,7 @@
 
         <div class="pull-left" ng-show="!results[pointer].error">
 
-            <div class="btn-group btn-group-xs" dropdown dropdown-hover ng-show="mode === modes.HYPOTHESIS">
+            <div class="btn-group btn-group-sm" dropdown dropdown-hover ng-show="mode === modes.HYPOTHESIS">
                 <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
                     <i class="fa fa-bars"></i>
                 </button>
@@ -31,22 +31,22 @@
             </div>
 
             <div class="inline-block" ng-if="hasInternalDataStructure()">
-                <button class="btn btn-default btn-xs"
+                <button class="btn btn-default btn-sm"
                         ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.LSTAR"
                         download-table-as-csv="#observation-table-{{index}}">
                     Download CSV
                 </button>
-                <button class="btn btn-default btn-xs"
+                <button class="btn btn-default btn-sm"
                         ng-show="mode === modes.INTERNAL && results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE"
                         download-svg="#discrimination-tree-{{index}}">
                     Download SVG
                 </button>
-                <button class="btn btn-default btn-xs"
+                <button class="btn btn-default btn-sm"
                         ng-show="mode === modes.INTERNAL"
                         ng-click="showHypothesis()">
                     Hypothesis
                 </button>
-                <button class="btn btn-default btn-xs"
+                <button class="btn btn-default btn-sm"
                         ng-show="mode === modes.HYPOTHESIS && (results[pointer].configuration.algorithm === learnAlgorithms.DISCRIMINATION_TREE || results[pointer].configuration.algorithm === learnAlgorithms.LSTAR)"
                         ng-click="showInternalDataStructure()">
                     Internal
@@ -57,7 +57,7 @@
 
         <div class="pull-right" ng-transclude></div>
 
-        <div class="learn-results-panel-navigation btn-group btn-group-xs pull-right">
+        <div class="learn-results-panel-navigation btn-group btn-group-sm pull-right">
             <button class="btn btn-default" ng-click="firstStep()">
                 <i class="fa fa-angle-double-left fa-fw"></i>
             </button>

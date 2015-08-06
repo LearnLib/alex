@@ -24,8 +24,7 @@
             <span ng-bind="symbol.countEnabledActions()"></span> Actions
         </span>
 
-        <a class="cursor-pointer"
-           ng-click="symbol._collapsed = !symbol._collapsed"
+        <a href ng-click="symbol._collapsed = !symbol._collapsed"
            selection-model-ignore>
             <i class="fa fa-fw"
                ng-class="symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>

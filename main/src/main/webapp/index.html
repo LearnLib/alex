@@ -16,9 +16,10 @@
 
 <toast></toast>
 
-<navigation></navigation>
-
-<div ui-view id="view" class="animate-view"></div>
+<div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0" layout>
+    <sidebar layout-sidebar></sidebar>
+    <ui-view id="view" class="animate-view" layout-main></ui-view>
+</div>
 
 </body>
 </html>

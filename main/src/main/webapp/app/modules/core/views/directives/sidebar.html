@@ -1,0 +1,143 @@
+<aside id="sidebar">
+
+    <header id="sidebar-header">
+        <a class="logo-button" ui-sref="about">
+            <img src="app/images/favicon.png" height="18" width="18"> <strong>LEX</strong>
+        </a>
+        <a href class="toggle-button" layout-toggle-button ng-click="toggleCollapse()">
+            <i class="fa" ng-class="collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+        </a>
+    </header>
+
+    <div id="sidebar-body">
+        <div class="sidebar-group" ng-if="!project">
+            <a ui-sref="home" class="sidebar-group-item" ng-class="{'active':isState('home')}"
+               tooltip="Startpage" tooltip-placement="right">
+                <div class="sidebar-group-item-icon">
+                    <i class="fa fa-fw fa-home"></i>
+                </div>
+                <div class="sidebar-group-item-label">Startpage</div>
+            </a>
+            <a ui-sref="project.create" class="sidebar-group-item" ng-class="{'active':isState('project.create')}"
+               tooltip="New Project" tooltip-placement="right">
+                <div class="sidebar-group-item-icon">
+                    <i class="fa fa-fw fa-plus"></i>
+                </div>
+                <div class="sidebar-group-item-label">Create a project</div>
+            </a>
+        </div>
+
+        <div ng-if="project">
+            <div class="sidebar-group">
+                <div class="sidebar-group-title">
+                    <strong ng-bind="project.name"></strong>
+                </div>
+                <a class="sidebar-group-item" ng-click="closeProject()"
+                   tooltip="Close Project" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-sign-out"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Close</div>
+                </a>
+                <a ui-sref="project" class="sidebar-group-item" ng-class="{'active':isState('project')}"
+                   tooltip="Dashboard" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-dashboard"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Dashboard</div>
+                </a>
+                <a ui-sref="project.settings" class="sidebar-group-item"
+                   ng-class="{'active':isState('project.settings')}"
+                   tooltip="Project Settings" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-gear"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Settings</div>
+                </a>
+                <a ui-sref="files" class="sidebar-group-item" ng-class="{'active':isState('files')}"
+                   tooltip="Files" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-file"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Files</div>
+                </a>
+            </div>
+
+            <div class="sidebar-group">
+                <div class="sidebar-group-title">Symbols</div>
+                <a ui-sref="symbols" class="sidebar-group-item"
+                   ng-class="{'active':isState('symbols', 'symbols.actions', 'symbols.history')}"
+                   tooltip="Manage Symbols" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-list-alt"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Manage</div>
+                </a>
+                <a ui-sref="symbols.trash" class="sidebar-group-item" ng-class="{'active':isState('symbols.trash')}"
+                   tooltip="Symbols Trash" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-trash"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Trash</div>
+                </a>
+                <a ui-sref="symbols.import" class="sidebar-group-item" ng-class="{'active':isState('symbols.import')}"
+                   tooltip="Symbols Import" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-upload"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Import</div>
+                </a>
+            </div>
+
+            <div class="sidebar-group">
+                <div class="sidebar-group-title">Learning</div>
+                <a ui-sref="learn.setup" class="sidebar-group-item" ng-class="{'active':isState('learn.setup', 'learn.start')}"
+                   tooltip="Learn Setup" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-play"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Setup</div>
+                </a>
+                <a ui-sref="learn.results" class="sidebar-group-item"
+                   ng-class="{'active':isState('learn.results', 'learn.results.compare')}"
+                   tooltip="Learn Results" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-sitemap"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Results</div>
+                </a>
+                <a ui-sref="learn.results.statistics" class="sidebar-group-item"
+                   ng-class="{'active':isState('learn.results.statistics')}"
+                   tooltip="Statistics" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-bar-chart"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Statistics</div>
+                </a>
+                <a ui-sref="counters" class="sidebar-group-item" ng-class="{'active':isState('counters')}"
+                   tooltip="Manage Counters" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-list-ol"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Counters</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <!--<ul class="nav navbar-nav navbar-right">-->
+    <!--<li class="dropdown" dropdown dropdown-navigation>-->
+    <!--<a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"-->
+    <!--aria-expanded="false">App <span class="caret"></span></a>-->
+    <!--<ul class="dropdown-menu" role="menu">-->
+    <!--<li><a ui-sref="about">About</a></li>-->
+    <!--<li><a ui-sref="help">Help</a></li>-->
+    <!--<li class="divider"></li>-->
+    <!--<li><a href="/restdocs/index.html" target="_blank">REST API</a></li>-->
+    <!--</ul>-->
+    <!--</li>-->
+    <!--</ul>-->
+
+
+</aside>

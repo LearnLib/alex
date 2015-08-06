@@ -1,6 +1,6 @@
 <div class="learn-start-wrapper">
 
-    <div ng-if="active == true" class="container learn-loading-indicator">
+    <div ng-if="active == true" class="alx-container learn-loading-indicator">
         <div class="alert alert-info">
             <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is learning ... <br>
         </div>
@@ -26,7 +26,7 @@
         </div>
 
         <div learn-results-panel results="results">
-            <div class="btn-group btn-group-xs">
+            <div class="btn-group btn-group-sm">
                 <button class="btn btn-success" ng-click="resumeLearning()">Resume</button>
                 <button class="btn btn-success" ng-click="toggleSidebar()">
                     <i class="fa fa-fw" ng-class="showSidebar ? 'fa-close' : 'fa-gear'"></i>
