@@ -1,68 +1,71 @@
-$sidebarWidth: 270px;
-$sidebarWidthCollapsed: 54px;
-$sidebarColor: #244061;
+@import "variables";
+@import "mixins";
 
 #sidebar-header {
   height: 42px;
-  background: darken($sidebarColor, 5);
+  background: $color-blue-darker;
 
-  .logo-button {
+  .sidebar-header-button {
     height: 42px;
-    padding: 12px 18px;
     display: inline-block;
-    color: #b1e4b1;
-    font-size: 12px;
     text-decoration: none;
-
-    strong {
-      vertical-align: middle;
-      line-height: 0
-    }
-  }
-
-  .toggle-button {
-    height: 42px;
-    width: 54px;
-    color: #fff;
     text-align: center;
-    line-height: 42px;
-    display: block;
-    float: right;
-    font-size: 1.35em;
-  }
 
-  .logo-button, .toggle-button {
-    &:hover {
-      background: darken($sidebarColor, 10);
+    &.logo-button {
+      padding: 12px 18px;
+      color: #b1e4b1;
+      font-size: 12px;
+
+      strong {
+        vertical-align: middle;
+        line-height: 0
+      }
+    }
+
+    &.toggle-button, &.about-button {
+      width: 42px;
+      color: #fff;
+      line-height: 42px;
+      float: right;
+      font-size: 1.35em;
+
+      &:hover {
+        background: $color-blue-darkest
+      }
+    }
+
+    &.about-button {
+      color: rgba(255, 255, 255, 0.5);
+      &:hover {
+        color: #fff;
+      }
     }
   }
 }
 
 #sidebar-body {
-  position: absolute;
-  top: 42px;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  @include position(absolute, 42px, 0, 0, 0);
+
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 #sidebar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: $sidebarWidth;
-  background: $sidebarColor;
+  @include position(absolute, 0, null, 0, 0);
+
+  width: $sidebar-width;
+  background: $color-blue-dark;
   transition: width 200ms;
 
   &.collapsed {
-    width: $sidebarWidthCollapsed;
+    width: $sidebar-width-collapsed;
 
     #sidebar-header {
-      .logo-button {
+      .logo-button, .about-button {
         display: none;
+      }
+      .toggle-button {
+        width: $sidebar-width-collapsed;
       }
     }
 
@@ -111,7 +114,7 @@ $sidebarColor: #244061;
       cursor: pointer;
 
       &:hover {
-        background: darken($sidebarColor, 5)
+        background: $color-blue-darker;
       }
 
       &.active {
@@ -120,13 +123,10 @@ $sidebarColor: #244061;
       }
 
       .sidebar-group-item-icon {
-        width: 54px;
+        width: $sidebar-width-collapsed;
         text-align: center;
         float: left;
         transition: font-size 200ms;
-      }
-
-      .sidebar-group-item-label {
       }
     }
   }

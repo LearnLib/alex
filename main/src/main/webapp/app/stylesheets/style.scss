@@ -1,3 +1,5 @@
+@import "variables";
+@import "mixins";
 @import "bootstrap";
 @import "font-awesome";
 @import "hypothesis";
@@ -10,6 +12,24 @@
 
 body {
   overflow: hidden;
+
+  &.collapsed {
+    #load-screen, .ng-toast {
+      left: $sidebar-width-collapsed;
+    }
+  }
+}
+
+#load-screen {
+  @include position(fixed, 0, 0, 0, $sidebar-width);
+
+  transition: left 200ms;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1100;
+}
+
+#app-wrapper {
+  @include position(absolute, 0, 0, 0, 0);
 }
 
 .alx-container {
@@ -24,23 +44,17 @@ body {
 }
 
 #view {
-  position: absolute;
-  left: 270px;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  @include position(absolute, 0, 0, 0, 270px);
+
   overflow: hidden;
   min-width: 320px;
   transition: left 200ms;
 }
 
 .view-body {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 24px 0;
+  @include position(absolute, 0, 0, 0, 0);
+
+  padding: 15px 0;
   overflow: auto;
 
   &.has-sub-nav {
@@ -54,10 +68,8 @@ body {
 }
 
 .sub-nav {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  @include position(absolute, 0, 0, null, 0);
+
   height: 42px;
   background: #fff;
   padding-top: 7px;
@@ -69,24 +81,6 @@ body {
     padding-top: 4px;
     padding-right: 16px;
   }
-
-  &.absolute {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    border-bottom: 1px solid #e7e7e7;
-    z-index: 300;
-  }
-}
-
-#load-screen {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.6);
-  z-index: 1100
 }
 
 /* Helper classes
@@ -172,26 +166,49 @@ body {
   }
 }
 
-.animate-view.ng-enter {
-  overflow: hidden;
-  position: absolute;
-  top: 70px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  animation: scaleUp .15s both ease-in;
-  z-index: 8888;
+@keyframes toastSlideIn {
+  from {
+    margin-bottom: -200px;
+  }
 }
 
-.animate-view.ng-leave {
-  overflow: hidden;
-  position: absolute;
-  top: 70px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  animation: scaleOut .25s both ease-in;
-  z-index: 9999;
+@keyframes toastSlideOut {
+  to {
+    margin-bottom: -200px;
+  }
+}
+
+.animate-view {
+  &.ng-enter {
+    overflow: hidden;
+    position: absolute;
+    top: 70px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    animation: scaleUp .15s both ease-in;
+    z-index: 8888;
+  }
+
+  &.ng-leave {
+    overflow: hidden;
+    position: absolute;
+    top: 70px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    animation: scaleOut .25s both ease-in;
+    z-index: 9999;
+  }
+}
+
+.animate-toast {
+  &.ng-enter {
+    animation: toastSlideIn .35s both ease-in;
+  }
+  &.ng-leave {
+    animation: toastSlideOut .35s both ease-in;
+  }
 }
 
 /* Libraries
@@ -229,10 +246,16 @@ body {
 
 // ng-toast
 .ng-toast {
-  margin-top: 75px;
+  transition: left 200ms;
+  left: $sidebar-width;
+  width: auto;
+  right: 0;
+
   .alert {
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
-    max-width: 450px;
+    margin-bottom: 40px;
+    border-radius: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    width: 450px;
   }
 }
 
@@ -301,21 +324,6 @@ body {
 
 /* Model Lists
 ============================================================================== */
-
-@mixin selection-list-item() {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  transition: background 200ms;
-  &:hover, &.selected {
-    background: #f2f2f2
-  }
-  &.ng-enter {
-    animation: fadeIn 0.2s both ease-in;
-  }
-  &.ng-leave {
-    animation: fadeOut 0.2s both ease-in;
-  }
-}
 
 .symbol-list {
   .symbol-list-item {

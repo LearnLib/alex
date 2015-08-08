@@ -9,9 +9,10 @@
 
                 // configure ngToast toast position
                 ngToastProvider.configure({
-                    verticalPosition: 'top',
+                    verticalPosition: 'bottom',
                     horizontalPosition: 'center',
-                    maxNumber: 1
+                    maxNumber: 1,
+                    additionalClasses: 'animate-toast'
                 });
 
                 // default options for selection model

@@ -1,11 +1,18 @@
 <aside id="sidebar">
 
     <header id="sidebar-header">
-        <a class="logo-button" ui-sref="about">
+        <span class="sidebar-header-button logo-button">
             <img src="app/images/favicon.png" height="18" width="18"> <strong>LEX</strong>
-        </a>
-        <a href class="toggle-button" layout-toggle-button ng-click="toggleCollapse()">
+        </span>
+
+        <a href class="sidebar-header-button toggle-button" layout-toggle-button ng-click="toggleCollapse()"
+           tooltip="{{collapsed ? 'Show Sidebar' : 'Hide Sidebar'}}" tooltip-placement="right">
             <i class="fa" ng-class="collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+        </a>
+
+        <a ui-sref="about" class="sidebar-header-button about-button"
+                tooltip="About ALEX" tooltip-placement="left">
+            <i class="fa fa-question-circle"></i>
         </a>
     </header>
 
@@ -32,13 +39,6 @@
                 <div class="sidebar-group-title">
                     <strong ng-bind="project.name"></strong>
                 </div>
-                <a class="sidebar-group-item" ng-click="closeProject()"
-                   tooltip="Close Project" tooltip-placement="right">
-                    <div class="sidebar-group-item-icon">
-                        <i class="fa fa-fw fa-sign-out"></i>
-                    </div>
-                    <div class="sidebar-group-item-label">Close</div>
-                </a>
                 <a ui-sref="project" class="sidebar-group-item" ng-class="{'active':isState('project')}"
                    tooltip="Dashboard" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
@@ -60,6 +60,13 @@
                         <i class="fa fa-fw fa-file"></i>
                     </div>
                     <div class="sidebar-group-item-label">Files</div>
+                </a>
+                <a class="sidebar-group-item" ng-click="closeProject()"
+                   tooltip="Close Project" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-sign-out"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Close {{project.name}}</div>
                 </a>
             </div>
 

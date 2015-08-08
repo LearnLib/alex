@@ -3,11 +3,17 @@
 
     angular
         .module('ALEX.core')
-        .controller('LayoutController', ['$scope', function ($scope) {
+        .controller('LayoutController', ['$scope', '$element', function ($scope, $element) {
             $scope.collapsed = false;
 
             this.toggleCollapsed = function () {
                 $scope.collapsed = !$scope.collapsed;
+
+                if ($scope.collapsed) {
+                    $element.addClass('collapsed');
+                } else {
+                    $element.removeClass('collapsed');
+                }
             };
 
             this.isCollapsed = function () {
@@ -42,7 +48,7 @@
                 require: '^layout',
                 link: function (scope, el, attrs, ctrl) {
                     scope.$watch(ctrl.isCollapsed, function (collapsed) {
-                        el[0].style.left = collapsed ? '54px' : '270px';
+                        el[0].style.left = collapsed ? '54px' : '240px';
                     });
                 }
             }
@@ -53,7 +59,7 @@
                 require: '^layout',
                 link: function (scope, el, attrs, ctrl) {
                     el.on('click', function () {
-                        scope.$apply(function(){
+                        scope.$apply(function () {
                             ctrl.toggleCollapsed();
                         });
                     })

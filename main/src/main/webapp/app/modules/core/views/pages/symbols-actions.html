@@ -16,28 +16,29 @@
                 ng-class="selectedActions.length === 0 ? 'disabled': ''">
             Delete
         </button>
-        <div class="btn-group btn-group-sm" dropdown dropdown-hover>
-            <button class="btn btn-default" dropdown-toggle>
-                <i class="fa fa-ellipsis-v fa-fw"></i>
-            </button>
-            <ul class="dropdown-menu pull-left" role="menu">
-                <li>
-                    <a href ng-click="cutActions(selectedActions)">
-                        <i class="fa fa-cut fa-fw"></i> Cut
-                    </a>
-                </li>
-                <li>
-                    <a href ng-click="copyActions(selectedActions)">
-                        <i class="fa fa-copy fa-fw"></i> Copy
-                    </a>
-                </li>
-                <li>
-                    <a href ng-click="pasteActions()">
-                        <i class="fa fa-paste fa-fw"></i> Paste
-                    </a>
-                </li>
-            </ul>
-        </div>
+    </div>
+
+    <div class="btn-group btn-group-sm" dropdown dropdown-hover>
+        <button class="btn btn-default btn-dropdown">
+            <i class="fa fa-ellipsis-v fa-fw"></i>
+        </button>
+        <ul class="dropdown-menu pull-left" role="menu">
+            <li>
+                <a href ng-click="cutActions(selectedActions)">
+                    <i class="fa fa-cut fa-fw"></i> Cut
+                </a>
+            </li>
+            <li>
+                <a href ng-click="copyActions(selectedActions)">
+                    <i class="fa fa-copy fa-fw"></i> Copy
+                </a>
+            </li>
+            <li>
+                <a href ng-click="pasteActions()">
+                    <i class="fa fa-paste fa-fw"></i> Paste
+                </a>
+            </li>
+        </ul>
     </div>
 
     <div class="pull-right">

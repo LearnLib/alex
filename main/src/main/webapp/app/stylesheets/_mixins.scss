@@ -1,0 +1,41 @@
+/*
+ * Quickly position an element and set the properties top, right, bottom, left in this order
+ * Use 'null' (without apostrophes) to not set a direction property
+ */
+@mixin position($type, $top, $right, $bottom, $left) {
+  position: $type;
+
+  @if ($top != null) {
+    top: $top;
+  }
+  @if ($right != null) {
+    right: $right;
+  }
+  @if ($bottom != null) {
+    bottom: $bottom;
+  }
+  @if ($left != null) {
+    left: $left;
+  }
+}
+
+/*
+ * Mixin for model lists
+ */
+@mixin selection-list-item() {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  transition: background 200ms;
+
+  &:hover, &.selected {
+    background: #f2f2f2
+  }
+
+  &.ng-enter {
+    animation: fadeIn 0.2s both ease-in;
+  }
+
+  &.ng-leave {
+    animation: fadeOut 0.2s both ease-in;
+  }
+}
