@@ -1,8 +1,6 @@
 <div sub-navigation>
     <div ng-show="results.length > 0">
-        <div class="pull-left selection-checkbox">
-            <input type="checkbox" selection-checkbox-all items="results">
-        </div>
+        <checkbox-multiple model="results" class="pull-left"></checkbox-multiple>
 
         <div class="btn-group btn-group-sm">
             <button class="btn btn-primary"

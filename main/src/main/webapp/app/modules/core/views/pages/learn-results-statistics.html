@@ -2,9 +2,7 @@
     <div ng-show="results.length > 0">
         <div ng-show="selectedChartMode === null">
 
-            <div class="pull-left selection-checkbox">
-                <input type="checkbox" selection-checkbox-all items="results">
-            </div>
+            <checkbox-multiple model="results" class="pull-left"></checkbox-multiple>
 
             <div class="btn-group btn-group-sm pull-left" dropdown dropdown-hover>
                 <button class="btn btn-primary btn-dropdown" ng-class="selectedResults.length > 0 ? '' : 'disabled'">
@@ -55,9 +53,6 @@
             <div class="pull-right">
                 <button class="btn btn-default btn-sm" download-svg="#learn-result-chart">
                     <i class="fa fa-download fa-fw"></i> Download as *.svg
-                </button>
-                <button class="btn btn-default btn-sm" ng-click="fullWidth = !fullWidth" dispatch-resize="20">
-                    <i class="fa fa-fw" ng-class="fullWidth ? 'fa-compress' : 'fa-expand'"></i>
                 </button>
             </div>
 

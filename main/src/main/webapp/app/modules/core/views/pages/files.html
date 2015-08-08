@@ -1,8 +1,6 @@
 <div sub-navigation>
     <div ng-show="files.length > 0">
-        <div class="pull-left selection-checkbox">
-            <input type="checkbox" selection-checkbox-all items="files">
-        </div>
+        <checkbox-multiple model="files" class="pull-left"></checkbox-multiple>
         <button class="btn btn-default btn-sm" ng-click="deleteSelectedFiles()">Delete</button>
     </div>
 </div>
@@ -40,7 +38,7 @@
                  selection-model
                  selection-model-selected-items="selectedFiles">
 
-                <input type="checkbox" class="pull-left">
+                <checkbox selection-model-ignore class="pull-left" model="file"></checkbox>
 
                 <div class="file-list-item-content">
                     <span ng-bind="file.name"></span>

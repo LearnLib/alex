@@ -38,7 +38,7 @@
             require: '^symbolGroupListItem',
             transclude: true,
             template: ' <div class="symbol-group-list-item-header">' +
-            '               <input type="checkbox" class="pull-left" selection-checkbox-all items="group.symbols">' +
+            '               <checkbox-multiple model="group.symbols" class="pull-left"></checkbox-multiple>' +
             '               <span class="cursor-pointer pull-right collapse-button" ng-click="group._collapsed = !group._collapsed">' +
             '                   <i class="fa fa-fw" ng-class="group._collapsed ? \'fa-chevron-down\' : \'fa-chevron-right\'"></i>' +
             '               </span>' +

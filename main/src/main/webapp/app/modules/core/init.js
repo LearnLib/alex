@@ -19,7 +19,6 @@
                 selectionModelOptionsProvider.set({
                     selectedAttribute: '_selected',
                     selectedClass: 'selected',
-                    type: 'checkbox',
                     mode: 'multiple',
                     cleanupStrategy: 'deselect'
                 });

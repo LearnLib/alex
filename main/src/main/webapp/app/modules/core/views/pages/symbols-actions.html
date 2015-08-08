@@ -1,7 +1,5 @@
 <div sub-navigation>
-    <div class="pull-left selection-checkbox">
-        <input type="checkbox" selection-checkbox-all items="symbol.actions">
-    </div>
+    <checkbox-multiple model="symbol.actions" class="pull-left"></checkbox-multiple>
 
     <div class="btn-group btn-group-sm">
         <button class="btn btn-primary" action-create-modal-handle on-created="addAction">
@@ -68,7 +66,7 @@
                      selection-model
                      selection-model-selected-items="selectedActions">
 
-                    <input type="checkbox" class="pull-left">
+                    <checkbox selection-model-ignore class="pull-left" model="action"></checkbox>
 
                     <div class="action-list-item-content">
 

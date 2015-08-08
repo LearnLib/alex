@@ -1,9 +1,7 @@
 <div class="symbol-list-item"
      ng-class="isSelectable ? 'selectable' : ''">
 
-    <input type="checkbox"
-           class="pull-left"
-           ng-show="isSelectable">
+    <checkbox selection-model-ignore model="symbol" class="pull-left"></checkbox>
 
     <div class="symbol-list-item-content">
         <div class="pull-right"
