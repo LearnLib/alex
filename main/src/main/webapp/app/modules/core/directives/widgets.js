@@ -188,7 +188,7 @@
                         .then(function (ce) {
                             var ceFound = false;
                             for (var i = 0; i < ce.length; i++) {
-                                if (ce[i] !== scope.counterExample[i].output) {
+                                if (ce[i].split('(')[0] !== scope.counterExample[i].output) {
                                     ceFound = true;
                                     break;
                                 }
@@ -196,7 +196,7 @@
                             if (ceFound) {
                                 Toast.success('The selected word is a counterexample');
                                 for (i = 0; i < ce.length; i++) {
-                                    scope.counterExample[i].output = ce[i];
+                                    scope.counterExample[i].output = ce[i].split('(')[0]; // ignore the (<number>) from FAILED output
                                 }
                             } else {
                                 Toast.danger('The selected word is not a counterexample');

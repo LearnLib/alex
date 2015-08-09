@@ -186,9 +186,11 @@
                 // only if counterExamples is defined
                 if (angular.isDefined(scope.isSelectable)) {
                     _svg.selectAll('.edgeLabel tspan').on('click', function () {
-                        var label = this.innerHTML.split('/');
+                        var label = this.innerHTML.split('/'); // separate abbreviation from output
+                        var abbreviation = label[0];
+                        var output = label[1].split('(')[0]; // ignore the '(<number>)' of FAILED output
                         scope.$apply(function () {
-                            CounterExampleService.addIOPairToCurrentCounterexample(label[0], label[1]);
+                            CounterExampleService.addIOPairToCurrentCounterexample(abbreviation, output);
                         });
                     });
                 }
