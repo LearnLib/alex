@@ -364,11 +364,13 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) throws SULException {
-        for (SymbolAction action : actions) {
+        for (int i = 0; i < actions.size(); i++) {
+            SymbolAction action = actions.get(i);
             if (!action.isDisabled()) {
                 ExecuteResult result = executeAction(action, connector);
 
                 if (!action.isIgnoreFailure() && result != ExecuteResult.OK) {
+                    result.setFailedActionNumber(i);
                     return result;
                 }
             }

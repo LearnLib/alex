@@ -145,7 +145,9 @@ public class RESTSymbolLearnerIT extends JerseyTest {
         response = client.target(BASE_LEARNER_URL + path).request().get();
         LearnerResult result = new LearnerResult();
         String resultAsJSON = response.readEntity(String.class);
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         System.out.println(resultAsJSON);
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         result.setJSON(resultAsJSON);
 
         Word<String> separatingWord = testHelper.getSeparatingWord(result.getHypothesis(), testAlphabet, "rest");
