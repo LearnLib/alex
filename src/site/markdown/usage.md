@@ -134,7 +134,6 @@ on the following URLs lead to different parts of the application.
 | /learn/results/statistics           | Generate statistics from learning results                 |
 | /learn/results/compare/\<testNos\>  | Side-by-side comparison of multiple learning results      |
 | /about                              | An information page about the application                 |
-| /help                               | A page offering help to the usage of ALEX                 |
 | /error                              | Shows fatal error messages                                |
 
 Except for the about, help, error, home and the create project page, all other routes require that a project has been
@@ -143,15 +142,10 @@ created and is opened.
 
 ### Navigation
 
-All pages of the front-end are accessible through the navigation that is placed on top of the screen. Depending if an
+All pages of the front-end are accessible through the navigation that is placed on the left of the screen. Depending if an
 instance of a project is saved in the session storage, the navigation can be in either one of the following two states.
-The first one (first image) shows the navigation bar if no project is opened by a user. Only the index page, the page
-to create a new project and the about and help page are accessible. In case a project has been opened (second image) all
-pages that deal with working objects that relate to the opened project are accessible.
-
-![Navigation bar](images/navigation-1.jpg)
-
-![Navigation bar](images/navigation-2.jpg)
+If no project is opened, only the index page, the page to create a new project and the about page are accessible. In case
+a project has been opened, all pages that deal with working objects that relate to the opened project are accessible.
 
 
 ### Project Management
@@ -514,6 +508,17 @@ a time.
 The possibility to interact with generated models can be separated into two phases. The first one is while a learning
 process is running and the second one is after having finished learning an applications. The latter is dealt with in the
 section [Learning Experiment Analysis <b class="caret"></b>](#Learning_Experiment_Analysis "Learning Experiment Analysis").
+
+Hypotheses are displayed as Mealy Machines and represent the learned behaviour of the tested application. Nodes are
+labeled from 0 to n. The green node represents the initial state. Depending on the failed or successful execution of a
+symbol, edges are labeled as follows:
+
+- \<abbreviation\>/OK
+- \<abbreviation\>/FAILED(\<number\>)
+
+The first one indicates that the symbol with the displayed abbreviation could be executed successfully. The second one
+shows that the execution of the symbol has failed. The number gives a hint on what action resulted in the failure. The
+expression *FAILED(1)* for example tells that the first action of the symbol has failed to execute correctly.
 
 
 #### Internal Data Structures
