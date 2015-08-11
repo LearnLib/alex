@@ -119,8 +119,7 @@ module.exports = function (grunt) {
 
             sass: {
                 options: {
-                    sourceMap: false,
-                    outputStyle: 'compressed'
+                    sourceMap: false
                 },
                 dist: {
                     files: {
@@ -173,6 +172,21 @@ module.exports = function (grunt) {
                         }
                     ]
                 }
+            },
+
+            postcss: {
+                options:  {
+                    map: false,
+
+                    processors : [
+                        require('autoprefixer-core')({
+                            browsers: 'last 2 versions'
+                        })
+                    ]
+                },
+                dist: {
+                    src: 'app/stylesheets/style.css'
+                }
             }
         });
 
@@ -186,9 +200,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-postcss');
 
     grunt.registerTask('build-js', ['html2js', 'concat', 'uglify', 'clean']);
-    grunt.registerTask('build-css', ['sass', 'cssmin', 'copy:fonts']);
-    grunt.registerTask('default', ['build-js']);
+    grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);
+    grunt.registerTask('default', ['build-js', 'build-css']);
     grunt.registerTask('test-unit', ['karma']);
 };
