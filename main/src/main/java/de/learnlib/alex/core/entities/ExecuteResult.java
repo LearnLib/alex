@@ -40,7 +40,7 @@ public enum ExecuteResult {
     @Override
     public String toString() {
         if (this == FAILED) {
-            return this.name() + "(" + failedActionNumber + ")";
+            return this.name() + "(" + (failedActionNumber + 1) + ")";
         } else {
             return this.name();
         }
