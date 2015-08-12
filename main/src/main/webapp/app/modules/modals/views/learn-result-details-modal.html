@@ -58,7 +58,7 @@
                 </tr>
                 <tr>
                     <td>Duration</td>
-                    <td><span ng-bind="tab.result.statistics.duration"></span> ms</td>
+                    <td ng-bind="(tab.result.statistics.duration | formatMilliseconds)"></td>
                 </tr>
                 <tr>
                     <td>#Membership Queries</td>

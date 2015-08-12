@@ -95,7 +95,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(START_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).start(eq(project), any(LearnerConfiguration.class));
     }
@@ -158,7 +158,7 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).resume(any(LearnerConfiguration.class));
     }
@@ -168,7 +168,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/stop").request().post(Entity.json(""));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).stop();
     }
@@ -191,7 +191,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/active").request().get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
     }
 

@@ -4,12 +4,27 @@
 
     <div ng-if="active == true" class="alx-container learn-loading-indicator">
         <div class="alert alert-info">
-            <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is learning ... <br>
+            <button class="btn btn-info btn-xs pull-right" ng-click="abort()">
+                <i class="fa fa-close fa-fw"></i> Abort
+            </button>
+            <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is learning ...
         </div>
         <hr>
-        <button class="btn btn-default btn-xs pull-right" ng-click="abort()">
-            <i class="fa fa-close fa-fw"></i> Abort
-        </button>
+        <h3>Statistics</h3>
+        <table class="table table-condensed">
+            <col width="120">
+            <tr>
+                <td><strong>Time passed</strong></td>
+                <td ng-bind="(duration | formatMilliseconds)"></td>
+            </tr>
+            <tr>
+                <td><strong>MQs executed</strong></td>
+                <td>
+                    <span ng-show="mqsUsed" ng-bind="mqsUsed"></span>
+                    <span ng-show="!mqsUsed">Not yet available</span>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <div ng-if="!active && results.length > 0">

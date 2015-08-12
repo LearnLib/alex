@@ -10,10 +10,9 @@ import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.exceptions.LearnerException;
+import de.learnlib.oracles.ResetCounterSUL;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
@@ -23,24 +22,38 @@ import java.util.stream.Collectors;
  */
 public class Learner {
 
-    /** Factory to create a new ContextHandler. */
+    /**
+     * Factory to create a new ContextHandler.
+     */
     private ConnectorContextHandlerFactory contextHandlerFactory;
 
-    /** The current ContextHandler. */
+    /**
+     * The current ContextHandler.
+     */
     private ConnectorContextHandler contextHandler;
 
-    /** Factory to create the {@link LearnerThread LearnerThreads}. */
+    /**
+     * Factory to create the {@link LearnerThread LearnerThreads}.
+     */
     private LearnerThreadFactory learnThreadFactory;
 
-    /** The current learning thread. Could be null. */
+    /**
+     * The current learning thread. Could be null.
+     */
     private LearnerThread learnThread;
+
+    /**
+     * The SUL of the current learning thread.
+     */
+    private ResetCounterSUL resetCounterSUL;
+
+    private Long startTime;
 
     /**
      * Constructor which only set the thread factory.
      * This constructor creates a new ConnectorContextHandlerFactory for internal use.
      *
-     * @param threadFactory
-     *         The thread factory to use.
+     * @param threadFactory The thread factory to use.
      */
     public Learner(LearnerThreadFactory threadFactory) {
         this(threadFactory, new ConnectorContextHandlerFactory());
@@ -49,10 +62,8 @@ public class Learner {
     /**
      * Constructor that initialises only the LearnerThreadFactory.
      *
-     * @param learnThreadFactory
-     *         The thread factory to use.
-     * @param contextHandlerFactory
-     *         The factory that will be used to create new context handler.
+     * @param learnThreadFactory    The thread factory to use.
+     * @param contextHandlerFactory The factory that will be used to create new context handler.
      */
     public Learner(LearnerThreadFactory learnThreadFactory, ConnectorContextHandlerFactory contextHandlerFactory) {
         this.learnThreadFactory = learnThreadFactory;
@@ -62,14 +73,10 @@ public class Learner {
     /**
      * Start a learning process by activating a LearningThread.
      *
-     * @param project
-     *         The project the learning process runs in.
-     * @param configuration
-     *         The configuration to use for the learning process.
-     * @throws IllegalArgumentException
-     *         If the configuration was invalid.
-     * @throws IllegalStateException
-     *         If a learning process is already active.
+     * @param project       The project the learning process runs in.
+     * @param configuration The configuration to use for the learning process.
+     * @throws IllegalArgumentException If the configuration was invalid.
+     * @throws IllegalStateException    If a learning process is already active.
      */
     public void start(Project project, LearnerConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException {
@@ -92,17 +99,19 @@ public class Learner {
         learnThread = learnThreadFactory.createThread(contextHandler, project, configuration);
         Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
         thread.start();
+
+        // get the sul here once so that the timer doesn't get '0' for .getStatisticalData.getCount() after continuing
+        // a learning process
+        resetCounterSUL = learnThread.getResetCounterSUL();
+        startTime = new Date().getTime();
     }
 
     /**
      * Resuming a learning process by activating a LearningThread.
      *
-     * @param newConfiguration
-     *         The configuration to use for the next learning steps.
-     * @throws IllegalArgumentException
-     *         If the new configuration has errors.
-     * @throws IllegalStateException
-     *         If a learning process is already active.
+     * @param newConfiguration The configuration to use for the next learning steps.
+     * @throws IllegalArgumentException If the new configuration has errors.
+     * @throws IllegalStateException    If a learning process is already active.
      */
     public void resume(LearnerResumeConfiguration newConfiguration)
             throws IllegalArgumentException, IllegalStateException {
@@ -121,10 +130,8 @@ public class Learner {
     /**
      * If the new configuration is base on manual counterexamples, these samples must be checked.
      *
-     * @param newConfiguration
-     *         The new configuration.
-     * @throws IllegalArgumentException
-     *         If the new configuration is based on manual counterexamples and at least one of them is wrong.
+     * @param newConfiguration The new configuration.
+     * @throws IllegalArgumentException If the new configuration is based on manual counterexamples and at least one of them is wrong.
      */
     private void validateCounterExample(LearnerResumeConfiguration newConfiguration) throws IllegalArgumentException {
         if (newConfiguration.getEqOracle() instanceof SampleEQOracleProxy) {
@@ -139,8 +146,8 @@ public class Learner {
                 for (SampleEQOracleProxy.InputOutputPair io : counterexample) {
 
                     Optional<Symbol> symbol = lastResult.getConfiguration().getSymbols().stream()
-                                                        .filter(s -> s.getAbbreviation().equals(io.getInput()))
-                                                        .findFirst();
+                            .filter(s -> s.getAbbreviation().equals(io.getInput()))
+                            .findFirst();
 
                     // collect all outputs in order to compare it with the result of learner.readOutputs()
                     if (symbol.isPresent()) {
@@ -148,17 +155,17 @@ public class Learner {
                         outputs.add(io.getOutput());
                     } else {
                         throw new IllegalArgumentException("The symbol with the abbreviation '" + io.getInput() + "'"
-                                                         + " is not used in this test setup.");
+                                + " is not used in this test setup.");
                     }
                 }
 
                 // finally check if the given sample matches the behavior of the SUL
                 List<String> results = readOutputs(lastResult.getProject(),
-                                                   lastResult.getConfiguration().getResetSymbol(),
-                                                   symbolsFromCounterexample);
+                        lastResult.getConfiguration().getResetSymbol(),
+                        symbolsFromCounterexample);
                 if (!results.equals(outputs)) {
                     throw new IllegalArgumentException("At least one of the given samples for counterexamples"
-                                                     + " is not matching the behavior of the SUL.");
+                            + " is not matching the behavior of the SUL.");
                 }
             }
         }
@@ -195,14 +202,29 @@ public class Learner {
     }
 
     /**
+     * Get the number of executed MQs in the current learn process
+     *
+     * @return null if the learnThread has not been started or the number of executed MQs in the current learn process
+     */
+    public Long getMQsUsed() {
+        return learnThread == null ? null : resetCounterSUL.getStatisticalData().getCount();
+    }
+
+    /**
+     * Get the time the learner started learning
+     *
+     * @return The time the learner started learning
+     */
+    public Long getStartTime() {
+        return startTime;
+    }
+
+    /**
      * Determine the output of the SUL by testing a sequence of input symbols.
      *
-     * @param project
-     *         The project in which context the test should happen.
-     * @param resetSymbol
-     *         The reset symbol to use.
-     * @param symbols
-     *         The symbol sequence to execute in order to generate the output sequence.
+     * @param project     The project in which context the test should happen.
+     * @param resetSymbol The reset symbol to use.
+     * @param symbols     The symbol sequence to execute in order to generate the output sequence.
      * @return The following output sequence.
      */
     public List<String> readOutputs(Project project, Symbol resetSymbol, List<Symbol> symbols) throws LearnerException {

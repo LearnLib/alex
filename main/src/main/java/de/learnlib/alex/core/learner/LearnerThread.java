@@ -36,50 +36,72 @@ import java.util.List;
  */
 public class LearnerThread extends Thread {
 
-    /** Use the logger for the server part. */
+    /**
+     * Use the logger for the server part.
+     */
     private static final Logger LOGGER = LogManager.getLogger("server");
 
-    /** Is the thread still running? */
+    /**
+     * Is the thread still running?
+     */
     private boolean active;
 
-    /** Mapper to match the Alphabet to the right symbols. */
+    /**
+     * Mapper to match the Alphabet to the right symbols.
+     */
     private final SymbolMapper symbolMapper;
 
-    /** The System Under Learning used to do the learning on. */
+    /**
+     * The System Under Learning used to do the learning on.
+     */
     private final SUL<String, String> sul;
 
-    /** The actual System Under Learning put into a cache. */
+    /**
+     * The actual System Under Learning put into a cache.
+     */
     private SULCache<String, String> cachedSUL;
 
-    /** SUL that counts the resets/ mqs and will call the cachedSUL for the learning. */
-    private final ResetCounterSUL<String, String>  resetCounterSUL;
+    /**
+     * SUL that counts the resets/ mqs and will call the cachedSUL for the learning.
+     */
+    private final ResetCounterSUL<String, String> resetCounterSUL;
 
-    /** SUL that counts the amount of symbols used and will call the resetCounterSUL for the learning. */
+    /**
+     * SUL that counts the amount of symbols used and will call the resetCounterSUL for the learning.
+     */
     private final SymbolCounterSUL<String, String> symbolCounterSUL;
 
-    /** The DAO to remember the learn results. */
+    /**
+     * The DAO to remember the learn results.
+     */
     private final LearnerResultDAO learnerResultDAO;
 
-    /** The result of this learning thread. */
+    /**
+     * The result of this learning thread.
+     */
     private final LearnerResult result;
 
-    /** The learner to use during the learning. */
+    /**
+     * The learner to use during the learning.
+     */
     private final MealyLearner<String, String> learner;
 
-    /** The Alphabet of the Symbols which will be used during the learning. */
+    /**
+     * The Alphabet of the Symbols which will be used during the learning.
+     */
     private final Alphabet<String> sigma;
 
-    /** The membership oracle. */
+    /**
+     * The membership oracle.
+     */
     private final SULOracle<String, String> mqOracle;
 
     /**
      * Constructor to set the LearnerThread up.
-     *  @param learnerResultDAO
-     *         The DAO to persists the results.
-     * @param result
-     *         The result to update, including the proper configuration.
-     * @param context
- *         The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
+     *
+     * @param learnerResultDAO The DAO to persists the results.
+     * @param result           The result to update, including the proper configuration.
+     * @param context          The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
      */
     public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result,
                          ConnectorContextHandler context) {
@@ -110,16 +132,11 @@ public class LearnerThread extends Thread {
      * Advanced constructor to set the LearnerThread up.
      * Most likely to be used when resuming a learn process.
      *
-     * @param learnerResultDAO
-     *         The DAO to persists the results.
-     * @param result
-     *         The result to update, including the proper configuration.
-     * @param existingSUL
-     *         The existing SULCache.
-     * @param learner
-     *         Don't create a new learner, instead use this one.
-     * @param symbols
-     *         The Symbols to use.
+     * @param learnerResultDAO The DAO to persists the results.
+     * @param result           The result to update, including the proper configuration.
+     * @param existingSUL      The existing SULCache.
+     * @param learner          Don't create a new learner, instead use this one.
+     * @param symbols          The Symbols to use.
      */
     public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, SULCache<String, String> existingSUL,
                          MealyLearner<String, String> learner, Symbol... symbols) {
@@ -203,10 +220,19 @@ public class LearnerThread extends Thread {
                 learnerResultDAO.update(result);
             } catch (NotFoundException nfe) {
                 LOGGER.log(Level.FATAL, "Something in the LearnerThread went wrong and the result could not be saved!",
-                           e);
+                        e);
             }
         }
         active = false;
+    }
+
+    /**
+     * Get the ResetCounterSUL
+     *
+     * @return The active ResetCounterSUL
+     */
+    public ResetCounterSUL getResetCounterSUL() {
+        return resetCounterSUL;
     }
 
     private void learn() throws NotFoundException {
@@ -308,7 +334,4 @@ public class LearnerThread extends Thread {
         // done
         learnerResultDAO.update(result);
     }
-
-
-
 }

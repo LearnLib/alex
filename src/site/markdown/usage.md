@@ -502,6 +502,15 @@ While ALEX is learning there are some restrictions concerning the functionality.
 the instance is required by the learner. Due to the architecture of ALEX, there can always only be one learning process at
 a time.
 
+While the learning screen is shown, the number of already executed MQs and the time that has passed since the learn
+process started are displayed. 
+
+<div class="alert alert-warning">
+    If you encounter that the number of executed MQs has not changed in a long time, it might be, depending on the size
+    of your alphabet, that the learner hung up. Please have a look at the terminal output. If it is not active, a 
+    forced restart of ALEX is necessary.
+</div>
+
 
 ### Hypothesis Interaction
 

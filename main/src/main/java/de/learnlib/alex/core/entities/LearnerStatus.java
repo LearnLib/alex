@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.learner.Learner;
 
+import java.util.Date;
+
 /**
  * Class to provide information about the current learn process.
  */
@@ -13,9 +15,35 @@ import de.learnlib.alex.core.learner.Learner;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerStatus {
 
-    /** The learn process to observe. */
+    /**
+     * The learn process to observe.
+     */
     @JsonIgnore
     private final Learner learner;
+
+    /**
+     * Statistics Class for the learner status
+     */
+    @JsonPropertyOrder(alphabetic = true)
+    private class LearnerStatusStatistics {
+
+        private Long startTime;
+
+        private Long mqsUsed;
+
+        public LearnerStatusStatistics(Long startTime, Long mqsUsed) {
+            this.startTime = startTime;
+            this.mqsUsed = mqsUsed;
+        }
+
+        public Long getStartTime() {
+            return startTime;
+        }
+
+        public Long getMqsUsed() {
+            return mqsUsed;
+        }
+    }
 
     /**
      * Constructor.
@@ -84,4 +112,12 @@ public class LearnerStatus {
         }
     }
 
+    @JsonProperty
+    public LearnerStatusStatistics getStatistics() {
+        if (!learner.isActive()) {
+            return null;
+        } else {
+            return new LearnerStatusStatistics(learner.getStartTime(), learner.getMQsUsed());
+        }
+    }
 }

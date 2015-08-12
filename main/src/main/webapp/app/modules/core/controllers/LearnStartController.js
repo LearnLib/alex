@@ -57,6 +57,18 @@
          */
         $scope.showSidebar = false;
 
+        /**
+         * The amount of executed MQs in the active learn process
+         * @type {number}
+         */
+        $scope.mqsUsed;
+
+        /**
+         * The time it took to learn
+         * @type {number}
+         */
+        $scope.duration = 0;
+
         // initialize the controller
         (function init() {
             CounterExampleService.resetCurrentCounterexample();
@@ -76,6 +88,10 @@
             interval = $interval(function () {
                 Learner.isActive()
                     .then(function (data) {
+                        if (angular.isDefined(data.mqsUsed)) {
+                            $scope.mqsUsed = data.mqsUsed;
+                        }
+
                         if (!data.active) {
                             Learner.getStatus().then(function (result) {
                                 if (result.error) {
@@ -88,7 +104,12 @@
                             $interval.cancel(interval);
                             $scope.active = false;
                         }
-                    })
+
+                        if (data.statistics) {
+                            $scope.mqsUsed = data.statistics.mqsUsed;
+                            $scope.duration = Date.now() - data.statistics.startTime;
+                        }
+                    });
             }, intervalTime);
 
             // load the complete set of steps for the learn result
@@ -141,6 +162,6 @@
          */
         $scope.toggleSidebar = function () {
             $scope.showSidebar = !$scope.showSidebar;
-        }
+        };
     }
 }());

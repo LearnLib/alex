@@ -17,7 +17,7 @@ public class LearnerStatusTest {
         Learner learner = mock(Learner.class);
         given(learner.isActive()).willReturn(true);
         given(learner.getResult()).willReturn(null);
-        String expectedJSON = "{\"active\":true,\"project\":0,\"testNo\":0}";
+        String expectedJSON = "{\"active\":true,\"project\":0,\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":0}";
 
         LearnerStatus status = new LearnerStatus(learner);
 

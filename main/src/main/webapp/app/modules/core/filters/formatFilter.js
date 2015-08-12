@@ -5,7 +5,8 @@
         .module('ALEX.core')
         .filter('formatEnumKey', formatEnumKey)
         .filter('formatEqOracle', formatEqOracle)
-        .filter('formatAlgorithm', formatAlgorithm);
+        .filter('formatAlgorithm', formatAlgorithm)
+        .filter('formatMilliseconds', formatMilliseconds);
 
     formatEqOracle.$inject = ['EqOracle'];
     formatAlgorithm.$inject = ['learnAlgorithms'];
@@ -82,6 +83,35 @@
                     return 'Discrimination Tree';
                 default:
                     return name;
+            }
+        }
+    }
+
+    /**
+     * The filter takes a number representing milliseconds and formats it to [h] [min] s
+     * @returns {filter}
+     */
+    function formatMilliseconds() {
+        return filter;
+
+        /**
+         * @param ms - The number in ms to format
+         * @returns {string}
+         */
+        function filter(ms) {
+            var hours, minutes, seconds;
+
+            if (ms >= 3600000) {
+                hours = Math.floor(ms / 3600000);
+                ms = ms % 3600000;
+                minutes = Math.floor(ms / 60000);
+                seconds = Math.floor((ms % 60000) / 1000);
+                return hours + 'h ' + minutes + 'min ' + seconds + 's';
+            } else if (ms >= 60000) {
+                minutes = Math.floor(ms / 60000);
+                return minutes + 'min ' + Math.floor((ms % 60000) / 1000) + 's';
+            } else {
+                return Math.floor(ms / 1000) + 's';
             }
         }
     }
