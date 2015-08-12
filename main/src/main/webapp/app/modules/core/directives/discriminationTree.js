@@ -21,24 +21,24 @@
      * @returns {{scope: {data: string}, template: string, link: link}}
      */
     function discriminationTree(_, d3, dagreD3, graphlib, $window) {
+        var template = '' +
+            '<div class="discrimination-tree-wrapper">' +
+            '   <svg><g></g></svg>' +
+            '</div>';
 
-        // the directive
         return {
             scope: {
                 data: '='
             },
-            template: '<svg><g></g></svg>',
+            template: template,
             link: link
         };
 
-        // handle the directives logic
-        function link(scope, el, attrs) {
-
+        function link(scope, el) {
 
             var labelStyle = 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline;';
             var labelStyleEdge = labelStyle + 'font-size: 10px';
             var labelStyleNode = labelStyle + 'font-size: 12px';
-
 
             // the svg where the discrimination tree is drawn into
             var svg = d3.select(el.find('svg')[0]);
@@ -47,7 +47,7 @@
             var svgGroup = d3.select(el.find('svg').find('g')[0]);
 
             // the parent of the svg to fit its size accordingly
-            var svgContainer = el[0].parentNode;
+            var svgContainer = svg[0].parentNode;
 
             // render the new discrimination tree when property 'data' changes
             scope.$watch('data', function (newValue) {
@@ -195,13 +195,15 @@
 
                 // resize the svg to its parents size on window resize
                 // and call it once so that svg gets the proper dimensions
-                angular.element($window).on('resize', fitSize);
+                $window.addEventListener('resize', fitSize);
+                scope.$on('$destroy', function(){
+                    $window.removeEventListener('resize', fitSize);
+                });
+
                 function fitSize() {
                     svg.attr("width", svgContainer.clientWidth);
                     svg.attr("height", svgContainer.clientHeight);
                 }
-
-                fitSize();
 
                 // in order to prevent only a white screen in some browsers, firing a resize event on the window
                 // displays the svg contents

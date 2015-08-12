@@ -9,7 +9,7 @@
 
     widget.$inject = ['paths'];
     counterexamplesWidget.$inject = ['paths', 'CounterExampleService', 'LearnerService', 'ToastService',
-        'outputAlphabet', 'SymbolResource'];
+        'SymbolResource'];
     learnResumeSettingsWidget.$inject = ['paths', 'EqOracle'];
 
 
@@ -56,11 +56,10 @@
      * @param CounterExampleService - The service for sharing a counterexample with a hypothesis
      * @param Learner - The LearnerService for communication with the Learner
      * @param Toast - The ToastService
-     * @param outputAlphabet - The dictionary for the output alphabet
      * @param SymbolResource
      * @returns {{scope: {counterexamples: string}, templateUrl: string, link: link}}
      */
-    function counterexamplesWidget(paths, CounterExampleService, Learner, Toast, outputAlphabet, SymbolResource) {
+    function counterexamplesWidget(paths, CounterExampleService, Learner, Toast, SymbolResource) {
         return {
             scope: {
                 counterexamples: '=',
@@ -86,12 +85,6 @@
              */
             scope.tmpCounterExamples = [];
 
-            /**
-             * The dictionary for the output alphabet
-             * @type {Object}
-             */
-            scope.outputAlphabet = outputAlphabet;
-
             // get the shared counterexample object
             function init() {
                 scope.counterExample = CounterExampleService.getCurrentCounterexample();
@@ -109,19 +102,6 @@
              */
             scope.removeInputOutputAt = function (i) {
                 scope.counterExample.splice(i, 1);
-            };
-
-            /**
-             * Toggles the output symbol of a input output pair between OK and FAILED
-             *
-             * @param {number} i - The index of the pair
-             */
-            scope.toggleOutputAt = function (i) {
-                if (scope.counterExample[i].output === outputAlphabet.OK) {
-                    scope.counterExample[i].output = outputAlphabet.FAILED
-                } else {
-                    scope.counterExample[i].output = outputAlphabet.OK
-                }
             };
 
             /**
@@ -188,7 +168,7 @@
                         .then(function (ce) {
                             var ceFound = false;
                             for (var i = 0; i < ce.length; i++) {
-                                if (ce[i].split('(')[0] !== scope.counterExample[i].output) {
+                                if (ce[i] !== scope.counterExample[i].output) {
                                     ceFound = true;
                                     break;
                                 }
@@ -196,8 +176,7 @@
                             if (ceFound) {
                                 Toast.success('The selected word is a counterexample');
                                 for (i = 0; i < ce.length; i++) {
-                                    console.log(ce[i].split('(')[0]);
-                                    scope.counterExample[i].output = ce[i].split('(')[0]; // ignore the (<number>) from FAILED output
+                                    scope.counterExample[i].output = ce[i];
                                 }
                             } else {
                                 Toast.danger('The selected word is not a counterexample');

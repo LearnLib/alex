@@ -19,12 +19,6 @@
             COMPONENTS: 'app/modules'
         })
 
-        //output alphabet
-        .constant('outputAlphabet', {
-            OK: 'OK',
-            FAILED: 'FAILED'
-        })
-
         // learn algorithms
         .constant('learnAlgorithms', {
             LSTAR: 'LSTAR',

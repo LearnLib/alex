@@ -56,7 +56,6 @@
             });
 
             scope.$watch('layoutSettings', function (ls) {
-                console.log(ls);
                 if (angular.isDefined(ls)) {
                     createHypothesis();
                 }
@@ -189,7 +188,7 @@
                     _svg.selectAll('.edgeLabel tspan').on('click', function () {
                         var label = this.innerHTML.split('/'); // separate abbreviation from output
                         var abbreviation = label[0];
-                        var output = label[1].split('(')[0]; // ignore the '(<number>)' of FAILED output
+                        var output = label[1];
                         scope.$apply(function () {
                             CounterExampleService.addIOPairToCurrentCounterexample(abbreviation, output);
                         });
@@ -207,7 +206,10 @@
                 }
 
                 // do this whole stuff so that the size of the svg adjusts to the window
-                angular.element($window).on('resize', fitSize);
+                $window.addEventListener('resize', fitSize);
+                scope.$on('$destroy', function(){
+                    $window.removeEventListener('resize', fitSize);
+                });
 
                 function fitSize() {
                     _svg.attr("width", _svgContainer.clientWidth);

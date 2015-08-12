@@ -1,6 +1,6 @@
 <form class="form form-condensed" ng-submit="addCounterExample()">
     <p class="text-muted">
-        <em>Click on the labels of the hypothesis to create a counterexample. Click on an output to toggle it.</em>
+        <em>Click on the labels of the hypothesis to create a counterexample.</em>
     </p>
 
     <div class="list-group list-group-condensed" ng-sortable="{animation:150}">
@@ -9,8 +9,9 @@
             <i class="fa fa-fw fa-close pull-right" ng-click="removeInputOutputAt($index)"></i>
 
             <span class="label label-primary">{{io.input}}</span>
-            <span class="label" ng-class="io.output === outputAlphabet.OK ? 'label-success' : 'label-danger'"
-                  ng-click="toggleOutputAt($index)">{{io.output}}</span>
+            <span class="label" ng-class="io.output === 'OK' ? 'label-success' : 'label-danger'">
+                {{io.output}}
+            </span>
         </div>
     </div>
 
