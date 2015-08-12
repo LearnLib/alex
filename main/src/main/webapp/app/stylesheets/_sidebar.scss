@@ -51,13 +51,15 @@
 }
 
 #sidebar {
-  @include position(absolute, 0, null, 0, 0);
+  @include position(fixed, 0, null, 0, 0);
 
   width: $sidebar-width;
+  float: left;
   background: $color-blue-dark;
   transition: width 200ms;
+  z-index: 100;
 
-  &.collapsed {
+  &.layout-collapsed {
     width: $sidebar-width-collapsed;
 
     #sidebar-header {

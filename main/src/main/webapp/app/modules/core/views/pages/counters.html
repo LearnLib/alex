@@ -1,4 +1,6 @@
-<div sub-navigation>
+<view-header title="Counters"></view-header>
+
+<action-bar>
     <div ng-show="counters.length > 0">
         <checkbox-multiple model="counters" class="pull-left"></checkbox-multiple>
 
@@ -8,9 +10,9 @@
             </button>
         </div>
     </div>
-</div>
+</action-bar>
 
-<div class="view-body has-sub-nav">
+<div class="view-body">
     <div class="alx-container-fluid">
 
         <div class="alert alert-info alert-condensed" ng-show="counters.length > 0">

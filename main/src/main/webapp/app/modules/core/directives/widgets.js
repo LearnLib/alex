@@ -196,6 +196,7 @@
                             if (ceFound) {
                                 Toast.success('The selected word is a counterexample');
                                 for (i = 0; i < ce.length; i++) {
+                                    console.log(ce[i].split('(')[0]);
                                     scope.counterExample[i].output = ce[i].split('(')[0]; // ignore the (<number>) from FAILED output
                                 }
                             } else {
@@ -224,8 +225,6 @@
      * @returns {{scope: {learnConfiguration: string}, templateUrl: string, link: link}}
      */
     function learnResumeSettingsWidget(paths, EqOracle) {
-
-        // the directive
         return {
             scope: {
                 learnConfiguration: '='
@@ -234,7 +233,6 @@
             link: link
         };
 
-        // the directives behavior
         function link(scope) {
 
             /**

@@ -10,15 +10,15 @@
     <title>ALEX - Automata Learning Experience</title>
     <meta charset="UTF-8">
 </head>
-<body layout>
+<body layout layout-toggle-element>
 
 <load-screen></load-screen>
+
 <toast></toast>
 
-<div id="app-wrapper">
-    <sidebar layout-sidebar></sidebar>
-    <ui-view id="view" class="animate-view" layout-main></ui-view>
-</div>
+<sidebar layout-toggle-element></sidebar>
+
+<div ui-view class="view animate-view" layout-toggle-element></div>
 
 </body>
 </html>

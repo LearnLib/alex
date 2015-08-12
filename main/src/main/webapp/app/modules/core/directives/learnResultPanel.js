@@ -3,9 +3,9 @@
 
     angular
         .module('ALEX.core')
-        .directive('learnResultsPanel', learnResultsPanel);
+        .directive('learnResultPanel', learnResultPanel);
 
-    learnResultsPanel.$inject = ['paths', 'learnAlgorithms'];
+    learnResultPanel.$inject = ['paths', 'learnAlgorithms'];
 
     /**
      * The directive that displays a browsable list of learn results. For each result, it can display the observation
@@ -15,27 +15,23 @@
      * can for example be the list of all intermediate results of a complete test or multiple single results from
      * multiple tests.
      *
-     * The second attribute 'index' is optional and should only be used if multiple learnResultPanels are created in
-     * a ng-repeat loop in order to be able to download the internal data structures. Give it the value of scope.$index
-     * in the loop.
-     *
-     * Content that is written inside the tag will be displayed a the top left corner beside the index browser. So
+     * Content that is written inside the tag will be displayed a the top right corner beside the index browser. So
      * just add small texts or additional buttons in there.
      *
-     * Use it like '<learn-results-panel results="..."> ... </learn-results-panel>'
+     * Use it like '<learn-result-panel results="..."> ... </learn-result-panel>'
      *
      * @param {Object} paths - The constant for application paths
      * @param {Object} learnAlgorithms - The constant for available learn algorithms
      * @returns {{scope: {results: string}, transclude: boolean, templateUrl: string, controller: *[]}}
      */
-    function learnResultsPanel(paths, learnAlgorithms) {
+    function learnResultPanel(paths, learnAlgorithms) {
         return {
             scope: {
                 results: '='
             },
             replace: true,
             transclude: true,
-            templateUrl: paths.COMPONENTS + '/core/views/directives/learn-results-panel.html',
+            templateUrl: paths.COMPONENTS + '/core/views/directives/learn-result-panel.html',
             link: link
         };
 
@@ -49,7 +45,8 @@
              */
             scope.modes = {
                 HYPOTHESIS: 0,
-                INTERNAL: 1
+                OBSERVATION_TABLE: 1,
+                DISCRIMINATION_TREE: 2
             };
 
             /**
@@ -82,14 +79,23 @@
              * @returns {boolean|*}
              */
             scope.hasInternalDataStructure = function () {
-                return angular.isDefined(scope.results[scope.pointer].algorithmInformation);
+                return scope.results[scope.pointer].configuration.algorithm !== learnAlgorithms.TTT;
             };
 
             /**
              * Switches the mode to the one to display the internal data structure
              */
             scope.showInternalDataStructure = function () {
-                scope.mode = scope.modes.INTERNAL;
+                switch (scope.results[scope.pointer].configuration.algorithm) {
+                    case learnAlgorithms.LSTAR:
+                        scope.mode = scope.modes.OBSERVATION_TABLE;
+                        break;
+                    case learnAlgorithms.DISCRIMINATION_TREE:
+                        scope.mode = scope.modes.DISCRIMINATION_TREE;
+                        break;
+                    default:
+                        break;
+                }
             };
 
             /**

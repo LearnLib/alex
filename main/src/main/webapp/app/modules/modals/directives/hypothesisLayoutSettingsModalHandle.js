@@ -23,8 +23,6 @@
      * @returns {{restrict: string, scope: {layoutSettings: string}, link: link}}
      */
     function hypothesisLayoutSettingsModalHandle($modal, paths) {
-
-        // the directive
         return {
             restrict: 'A',
             scope: {
@@ -33,8 +31,7 @@
             link: link
         };
 
-        // the directives behaviour
-        function link(scope, el, attrs) {
+        function link(scope, el) {
             el.on('click', function () {
                 var modal = $modal.open({
                     templateUrl: paths.COMPONENTS + '/modals/views/hypothesis-layout-settings-modal.html',
@@ -49,7 +46,7 @@
                 });
 
                 modal.result.then(function (layoutSettings) {
-                    scope.layoutSettings = layoutSettings
+                    scope.layoutSettings = layoutSettings;
                 })
             });
         }

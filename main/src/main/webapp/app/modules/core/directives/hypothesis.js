@@ -27,7 +27,7 @@
     function hypothesis($window, paths, CounterExampleService, _, dagreD3, d3, graphlib) {
         return {
             scope: {
-                result: '=test',
+                result: '=',
                 layoutSettings: '=',
                 isSelectable: '@'
             },
@@ -56,6 +56,7 @@
             });
 
             scope.$watch('layoutSettings', function (ls) {
+                console.log(ls);
                 if (angular.isDefined(ls)) {
                     createHypothesis();
                 }

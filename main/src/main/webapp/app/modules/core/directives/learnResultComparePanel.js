@@ -3,9 +3,9 @@
 
     angular
         .module('ALEX.core')
-        .directive('comparablePanel', comparablePanel);
+        .directive('learnResultComparePanel', learnResultComparePanel);
 
-    function comparablePanel() {
+    function learnResultComparePanel() {
         return {
             scope: {
                 index: '@',

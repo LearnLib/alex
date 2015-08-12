@@ -1,4 +1,6 @@
-<div class="learn-start-wrapper">
+<view-header title="ALEX is learning"></view-header>
+
+<div class="learn-start-wrapper" layout-toggle-element>
 
     <div ng-if="active == true" class="alx-container learn-loading-indicator">
         <div class="alert alert-info">
@@ -25,8 +27,8 @@
             </div>
         </div>
 
-        <div learn-results-panel results="results">
-            <div class="btn-group btn-group-sm">
+        <div learn-result-panel results="results">
+            <div class="btn-group btn-group-sm learn-result-panel-resume-button">
                 <button class="btn btn-success" ng-click="resumeLearning()">Resume</button>
                 <button class="btn btn-success" ng-click="toggleSidebar()">
                     <i class="fa fa-fw" ng-class="showSidebar ? 'fa-close' : 'fa-gear'"></i>

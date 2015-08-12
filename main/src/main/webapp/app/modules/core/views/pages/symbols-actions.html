@@ -1,4 +1,11 @@
-<div sub-navigation>
+<view-header title="Actions of Symbol {{symbol.name}}">
+    <a ui-sref="symbols" class="btn btn-sm btn-default btn-icon"
+       tooltip="Back to symbols" tooltip-placement="right">
+        <i class="fa fa-reply"></i>
+    </a>
+</view-header>
+
+<action-bar>
     <checkbox-multiple model="symbol.actions" class="pull-left"></checkbox-multiple>
 
     <div class="btn-group btn-group-sm">
@@ -18,7 +25,7 @@
 
     <div class="btn-group btn-group-sm" dropdown dropdown-hover>
         <button class="btn btn-default btn-dropdown">
-            <i class="fa fa-ellipsis-v fa-fw"></i>
+            <i class="fa fa-ellipsis-h fa-fw"></i>
         </button>
         <ul class="dropdown-menu pull-left" role="menu">
             <li>
@@ -49,7 +56,7 @@
                 ng-click="saveChanges()">Save
         </button>
     </div>
-</div>
+</action-bar>
 
 <div class="view-body has-sub-nav">
     <div class="alx-container-fluid">

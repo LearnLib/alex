@@ -1,6 +1,5 @@
 @import "variables";
 @import "mixins";
-
 @import "bootstrap";
 @import "font-awesome";
 @import "hypothesis";
@@ -12,12 +11,15 @@
 }
 
 body {
-  overflow: hidden;
-
-  &.collapsed {
+  overflow-x: hidden;
+  &.layout-collapsed {
     #load-screen, .ng-toast {
       left: $sidebar-width-collapsed;
     }
+  }
+
+  &.has-fixed-action-bar {
+    padding-top: 42px;
   }
 }
 
@@ -38,10 +40,6 @@ body {
   z-index: 1100;
 }
 
-#app-wrapper {
-  @include position(absolute, 0, 0, 0, 0);
-}
-
 .alx-container {
   margin: auto;
   padding: 0 15px;
@@ -53,22 +51,41 @@ body {
   max-width: 100%;
 }
 
-#view {
-  @include position(absolute, 0, 0, 0, 270px);
+.view {
+  margin-left: $sidebar-width;
 
-  overflow: hidden;
+  &.layout-collapsed {
+    margin-left: $sidebar-width-collapsed;
+  }
+
   min-width: 320px;
-  transition: left 200ms;
+  transition: margin 200ms;
 }
 
 .view-body {
-  @include position(absolute, 0, 0, 0, 0);
-
+  position: relative;
   padding: 15px 0;
-  overflow: auto;
+}
 
-  &.has-sub-nav {
-    top: 42px;
+.view-header {
+  height: 42px;
+  background: #f2f2f2;
+  border-bottom: 1px solid #ddd;
+  padding-top: 4px;
+  overflow: hidden;
+
+  .view-header-title-pre {
+    display: inline-block;
+    margin-top: 2px;
+  }
+
+  .view-header-title {
+    display: inline-block;
+    margin: 0;
+    padding-top: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.5)
   }
 }
 
@@ -77,15 +94,22 @@ body {
   margin: 50px 25px;
 }
 
-.sub-nav {
-  @include position(absolute, 0, 0, null, 0);
-
+.action-bar {
   height: 42px;
   background: #fff;
   padding-top: 7px;
   border-bottom: 1px solid #ddd;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: left 200ms;
+
+  &.fixed {
+    @include position(fixed, 0, 0, null, 0);
+    margin-left: $sidebar-width;
+    z-index: 1010; // that is 10 higher than the drop down menus in the view
+
+    &.layout-collapsed {
+      margin-left: $sidebar-width-collapsed;
+    }
+  }
 
   .alx-checkbox {
     margin-top: 6px;
@@ -140,27 +164,6 @@ body {
 /* Animations
 ============================================================================= */
 
-/* fade out and zoom back*/
-@keyframes scaleOut {
-  from {
-    opacity: 1.0
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.9)
-  }
-}
-
-/* scale up */
-@keyframes scaleUp {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0.0
@@ -189,25 +192,18 @@ body {
 }
 
 .animate-view {
-  &.ng-enter {
+  &.ng-enter, &.ng-leave {
+    @include position(absolute, 0, 0, 0, 0);
     overflow: hidden;
-    position: absolute;
-    top: 70px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    animation: scaleUp .15s both ease-in;
+  }
+
+  &.ng-enter {
+    animation: fadeIn .3s both ease-in;
     z-index: 8888;
   }
 
   &.ng-leave {
-    overflow: hidden;
-    position: absolute;
-    top: 70px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    animation: scaleOut .25s both ease-in;
+    animation: fadeOut .15s both ease-in;
     z-index: 9999;
   }
 }
@@ -543,75 +539,79 @@ body {
   }
 }
 
-.add-panel-button {
-  position: absolute;
-  z-index: 1000;
-  right: 12px;
-  bottom: 12px;
-  width: 42px;
-  height: 42px;
-  border-radius: 21px;
-  color: #fff;
-  background: #5cb85c;
-  padding-top: 11px;
-  cursor: pointer;
-  opacity: 0.75;
-  &:hover {
-    opacity: 1.0;
-  }
-}
-
 #load-screen-indicator {
   position: absolute;
   top: 50%;
   width: 100%
 }
 
-.absolute-panel {
-  $absolute-panel-header-height: 42px;
-
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  .absolute-panel-header {
-    position: relative;
-    z-index: 50;
-    width: 100%;
-    height: $absolute-panel-header-height;
-    border-bottom: 1px solid #ddd;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 6px 15px;
-  }
-  .absolute-panel-body {
-    position: absolute;
-    top: $absolute-panel-header-height;
-    bottom: 0;
-    width: 100%;
-    overflow: auto;
-  }
-}
-
 .alert-container {
   margin-top: 25px;
 }
 
-.learn-results-compare-wrapper,
-.learn-start-wrapper {
-  position: absolute;
-  width: 100%;
-  top: 0;
-  bottom: 0;
-  overflow: hidden;
+.learn-results-compare-wrapper {
+  @include position(absolute, 0, 0, 0, $sidebar-width);
+  transition: left .2s;
+
+  &.layout-collapsed {
+    left: $sidebar-width-collapsed;
+  }
+
+  .learn-result-compare-panel {
+    @include position(absolute, 0, null, 0, null)
+  }
+
+  .add-panel-button {
+    position: absolute;
+    z-index: 1000;
+    right: 12px;
+    bottom: 12px;
+    width: 42px;
+    height: 42px;
+    border-radius: 21px;
+    color: #fff;
+    background: #5cb85c;
+    padding-top: 11px;
+    cursor: pointer;
+    opacity: 0.75;
+    &:hover {
+      opacity: 1.0;
+    }
+  }
 }
 
-.learn-results-compare-wrapper {
-  .learn-results .absolute-panel-body {
-    padding: 25px;
-    .list-group {
-      max-width: 1170px;
-      margin: auto;
+.learn-result-panel {
+  @include position(absolute, 0, 0, 0, 0);
+  border-right: 1px solid #ddd;
+
+  .learn-result-panel-header {
+    height: 42px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 7px 15px;
+
+    .learn-result-panel-close-button,
+    .learn-result-panel-resume-button {
+      margin-left: 5px;
     }
+  }
+  .learn-result-panel-body {
+    @include position(absolute, 42px, 0, 0, 0);
+    overflow: auto;
+
+    .alx-container {
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+  }
+}
+
+.learn-start-wrapper {
+  @include position(absolute, 0, 0, 0, $sidebar-width);
+  transition: left .2s;
+
+  &.layout-collapsed {
+    left: $sidebar-width-collapsed;
   }
 }
 
