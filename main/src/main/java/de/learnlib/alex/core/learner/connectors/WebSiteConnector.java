@@ -57,7 +57,7 @@ public class WebSiteConnector implements Connector {
      */
     @Override
     public void reset() {
-        String driverName = System.getProperty("driver", "HTMLUnitDriver");
+        String driverName = System.getProperty("alex.driver", "HTMLUnitDriver");
         switch (driverName.toLowerCase()) {
             case "firefox":
                 this.driver = new FirefoxDriver();

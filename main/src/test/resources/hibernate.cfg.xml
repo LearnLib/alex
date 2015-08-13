@@ -9,7 +9,7 @@
 
         <!-- Database connection settings -->
         <property name="connection.driver_class">org.hsqldb.jdbcDriver</property>
-        <property name="connection.url">jdbc:hsqldb:mem:testdb;shutdown=false</property>
+        <property name="connection.url"></property>
         <property name="connection.username">sa</property>
         <property name="connection.password"></property>
 

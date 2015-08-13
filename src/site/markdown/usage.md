@@ -53,7 +53,38 @@ specifications which are
 
 It may be that the application also runs on lower versions of Windows and MacOS, as well as on other web browsers like
 Opera and Safari, but ALEX has been and is developed on machines with the mentioned specifications.
- 
+
+
+Starting ALEX
+-------------
+
+ALEX can be started using different ways:
+
+### Run The Standalone Server
+
+This is the easiest and recommended way of starting ALEX.
+A simple `java -jar ALEX.jar` should do the job, given the the *ALEX.war* is in the same folder.
+
+### Deploy to Jetty
+
+The *ALEX.war* file can be deployed to any Jetty Server (Version 9 or higher).
+Please refer to the official Jetty documentation for more details on that.
+
+### Run from the Code
+
+Start a commandline and navigate to the *main* directory. There simply type `mvn jetty:run`.
+
+### General Parameters
+
+alex.driver
+:   Parameter to select the WebDriver during the learning processes. Valid values are: **HTMLUnitDriver**, firefox, chrome & ie.
+    E.g.: alex.driver=firefox
+
+alex.dbpath
+:   The path where the HSQL DB lives.
+    E.g.: alex.dbpath=mem:testdb
+
+
 Working Objects
 ---------------
 

@@ -14,6 +14,9 @@ import org.hibernate.service.ServiceRegistry;
  */
 public final class HibernateUtil {
 
+    /** Default path to the HSQL DB file. */
+    private static final String DEFAULT_DB_PATH="./target/work/database";
+
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("server");
 
@@ -25,12 +28,15 @@ public final class HibernateUtil {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
             Configuration configuration = new Configuration();
+            configuration.configure("/hibernate.cfg.xml");
+
+            // set the HSQL DB path
+            String dbPath = System.getProperty("alex.dbpath", DEFAULT_DB_PATH);
+            configuration.setProperty("hibernate.connection.url", "jdbc:hsqldb:" + dbPath + ";shutdown=true");
 
 <#list entities as entity>
             configuration.addAnnotatedClass(${entity}.class);
 </#list>
-
-            configuration.configure("/hibernate.cfg.xml");
 
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
