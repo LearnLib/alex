@@ -8,8 +8,9 @@
         .directive('learnResumeSettingsWidget', learnResumeSettingsWidget);
 
     widget.$inject = ['paths'];
-    counterexamplesWidget.$inject = ['paths', 'CounterExampleService', 'LearnerService', 'ToastService',
-        'SymbolResource'];
+    counterexamplesWidget.$inject = [
+        'paths', 'CounterExampleService', 'LearnerService', 'ToastService', 'SymbolResource', '$q'
+    ];
     learnResumeSettingsWidget.$inject = ['paths', 'EqOracle'];
 
 
@@ -57,9 +58,10 @@
      * @param Learner - The LearnerService for communication with the Learner
      * @param Toast - The ToastService
      * @param SymbolResource
+     * @param $q - The angular $q service
      * @returns {{scope: {counterexamples: string}, templateUrl: string, link: link}}
      */
-    function counterexamplesWidget(paths, CounterExampleService, Learner, Toast, SymbolResource) {
+    function counterexamplesWidget(paths, CounterExampleService, Learner, Toast, SymbolResource, $q) {
         return {
             scope: {
                 counterexamples: '=',
@@ -85,15 +87,16 @@
              */
             scope.tmpCounterExamples = [];
 
-            // get the shared counterexample object
-            function init() {
-                scope.counterExample = CounterExampleService.getCurrentCounterexample();
-            }
-
             // update the model
             function renewCounterexamples() {
                 scope.counterexamples = scope.tmpCounterExamples;
             }
+
+            function init() {
+                scope.counterExample = CounterExampleService.getCurrentCounterexample()
+            }
+
+            init();
 
             /**
              * Removes a input output pair from the temporary counterexamples array.
@@ -107,11 +110,22 @@
             /**
              * Adds a new counterexample to the scope and the model
              */
-            scope.addCounterExample = function () {
-                scope.tmpCounterExamples.push(scope.counterExample);
-                CounterExampleService.resetCurrentCounterexample();
-                renewCounterexamples();
-                init();
+            scope.testAndAddCounterExample = function () {
+                testCounterExample()
+                    .then(function (counterexample) {
+                        Toast.success('The selected word is a counterexample');
+
+                        for (var i = 0; i < counterexample.length; i++) {
+                            scope.counterExample[i].output = counterexample[i];
+                        }
+                        scope.tmpCounterExamples.push(scope.counterExample);
+                        CounterExampleService.resetCurrentCounterexample();
+                        renewCounterexamples();
+                        init();
+                    })
+                    .catch(function () {
+                        Toast.danger('The word is not a counterexample');
+                    })
             };
 
             /**
@@ -138,8 +152,9 @@
             /**
              * Tests if the entered counterexample really is one by sending it to the server for testing purposes.
              */
-            scope.testCounterExample = function () {
+            function testCounterExample() {
                 var resetSymbol = scope.learnResult.configuration.resetSymbol;
+                var deferred = $q.defer();
 
                 if (symbols.length === 0) {
                     SymbolResource.getByIdRevisionPairs(scope.learnResult.project,
@@ -174,18 +189,15 @@
                                 }
                             }
                             if (ceFound) {
-                                Toast.success('The selected word is a counterexample');
-                                for (i = 0; i < ce.length; i++) {
-                                    scope.counterExample[i].output = ce[i];
-                                }
+                                deferred.resolve(ce);
                             } else {
-                                Toast.danger('The selected word is not a counterexample');
+                                deferred.reject();
                             }
                         })
                 }
-            };
 
-            init();
+                return deferred.promise;
+            }
         }
     }
 
