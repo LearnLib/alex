@@ -1,4 +1,4 @@
-<form class="form form-condensed" ng-submit="addCounterExample()">
+<form class="form form-condensed" ng-submit="testAndAddCounterExample()">
     <p class="text-muted">
         <em>Click on the labels of the hypothesis to create a counterexample.</em>
     </p>
@@ -15,9 +15,8 @@
         </div>
     </div>
 
-    <div class="form-group" ng-show="counterExample.length > 0">
-        <button class="btn btn-primary btn-xs">Add</button>
-        <a href class="btn btn-default btn-xs" ng-click="testCounterExample()">Test</a>
+    <div ng-show="counterExample.length > 0">
+        <button class="btn btn-default btn-sm btn-block">Add counterexample</button>
         <hr>
     </div>
 </form>
