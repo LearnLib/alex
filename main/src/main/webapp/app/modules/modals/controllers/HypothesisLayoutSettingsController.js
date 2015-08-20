@@ -3,14 +3,20 @@
 
     angular
         .module('ALEX.modals')
-        .controller('HypothesisLayoutSettingsController', [
-            '$scope', '$modalInstance', 'modalData',
-            HypothesisLayoutSettingsController
-        ]);
+        .controller('HypothesisLayoutSettingsController', HypothesisLayoutSettingsController);
 
+    HypothesisLayoutSettingsController.$inject = ['$scope', '$modalInstance', 'modalData'];
+
+    /**
+     * The controller that handles the modal dialog for changing the layout settings of a hyptothesis
+     *
+     * @param $scope - The controllers $scope
+     * @param $modalInstance - The ui.bootstrap $modalInstance service
+     * @param modalData - The data that is passed to the controller. Contains the object 'layoutSettings'
+     * @constructor
+     */
     function HypothesisLayoutSettingsController($scope, $modalInstance, modalData) {
-
-        var _defaultLayoutSetting = {
+        var defaultLayoutProperties = {
             nodesep: 50,
             edgesep: 25,
             ranksep: 50
@@ -18,10 +24,10 @@
 
         $scope.layoutSettings = {};
 
-        if (angular.isDefined(modalData.layoutSettings)) {
-            $scope.layoutSettings = angular.copy(modalData.layoutSettings);
+        if (modalData.layoutSettings !== null) {
+            $scope.layoutSettings = modalData.layoutSettings;
         } else {
-            $scope.layoutSettings = angular.copy(_defaultLayoutSetting);
+            $scope.layoutSettings = defaultLayoutProperties;
         }
 
         $scope.update = function () {
@@ -33,7 +39,7 @@
         };
 
         $scope.defaultLayoutSettings = function () {
-            $scope.layoutSettings = angular.copy(_defaultLayoutSetting);
+            $scope.layoutSettings = defaultLayoutProperties;
         };
     }
 }());

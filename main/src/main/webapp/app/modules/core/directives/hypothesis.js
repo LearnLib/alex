@@ -91,7 +91,7 @@
                     multigraph: true
                 });
 
-                if (angular.isDefined(scope.layoutSettings)) {
+                if (scope.layoutSettings !== null) {
                     _graph.setGraph({
                         edgesep: scope.layoutSettings.edgesep,
                         nodesep: scope.layoutSettings.nodesep,
@@ -207,7 +207,7 @@
 
                 // do this whole stuff so that the size of the svg adjusts to the window
                 $window.addEventListener('resize', fitSize);
-                scope.$on('$destroy', function(){
+                scope.$on('$destroy', function () {
                     $window.removeEventListener('resize', fitSize);
                 });
 

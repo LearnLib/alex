@@ -32,7 +32,7 @@
             replace: true,
             transclude: true,
             templateUrl: paths.COMPONENTS + '/core/views/directives/learn-result-panel.html',
-            link: link
+            controller: ['$scope', link]
         };
 
         function link(scope) {
@@ -57,9 +57,9 @@
 
             /**
              * The layout settings for the displayed hypothesis
-             * @type {undefined|Object}
+             * @type {null|Object}
              */
-            scope.layoutSettings;
+            scope.layoutSettings = null;
 
             /**
              * The mode that is used
@@ -96,6 +96,15 @@
                     default:
                         break;
                 }
+            };
+
+            /**
+             * Updates the layoutSettings
+             *
+             * @param ls {Object} - The layoutSettings object
+             */
+            scope.updateLayoutSettings = function (ls) {
+                scope.layoutSettings = ls;
             };
 
             /**
