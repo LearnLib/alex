@@ -65,6 +65,12 @@ body {
 .view-body {
   position: relative;
   padding: 15px 0;
+
+  &.about {
+    .content-section {
+      margin-bottom: 60px;
+    }
+  }
 }
 
 .view-header {
