@@ -239,7 +239,20 @@ public class WebServiceConnector implements Connector {
     }
 
     private Invocation.Builder getRequestObject(String path, Map<String, String> requestHeaders, Set<Cookie> cookies) {
-        Invocation.Builder builder = target.path(path).request();
+        String[] splitedPath = path.split("\\?");
+
+        WebTarget tmpTarget = target.path(splitedPath[0]);
+
+        if (splitedPath.length > 1) {
+            for (String queryParam : splitedPath[1].split("&")) {
+                String[] queryParamPair = queryParam.split("\\=");
+
+                if (queryParamPair.length == 2) {
+                    tmpTarget = tmpTarget.queryParam(queryParamPair[0], queryParamPair[1]);
+                }
+            }
+        }
+        Invocation.Builder builder = tmpTarget.request();
 
         for (Map.Entry<String, String> h : requestHeaders.entrySet()) {
             builder = builder.header(h.getKey(), h.getValue());
