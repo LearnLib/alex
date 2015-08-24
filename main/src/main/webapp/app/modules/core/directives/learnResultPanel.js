@@ -15,10 +15,12 @@
      * can for example be the list of all intermediate results of a complete test or multiple single results from
      * multiple tests.
      *
+     * An additional attribute 'index' can be passed that markes the index of the panel in case there are multiple.
+     *
      * Content that is written inside the tag will be displayed a the top right corner beside the index browser. So
      * just add small texts or additional buttons in there.
      *
-     * Use it like '<learn-result-panel results="..."> ... </learn-result-panel>'
+     * Use it like '<learn-result-panel results="..." index="..."> ... </learn-result-panel>'
      *
      * @param {Object} paths - The constant for application paths
      * @param {Object} learnAlgorithms - The constant for available learn algorithms
@@ -27,7 +29,8 @@
     function learnResultPanel(paths, learnAlgorithms) {
         return {
             scope: {
-                results: '='
+                results: '=',
+                index: '@'
             },
             replace: true,
             transclude: true,
@@ -72,6 +75,11 @@
              * @type {number}
              */
             scope.pointer = scope.results.length - 1;
+
+            // adjust the pointer to show the latest result when learning with sample eq oracle
+            scope.$watch('results', function(results) {
+                scope.pointer = results.length - 1;
+            });
 
             /**
              * Checks if the property 'algorithmInformation' is define which holds the internal data structure

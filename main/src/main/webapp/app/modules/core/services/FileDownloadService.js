@@ -90,8 +90,9 @@
          * even if the g element is bigger than the svg element.
          *
          * @param {*|HTMLElement} svg - The svg element that should be downloaded
+         * @param {boolean} adjustSize - If the element should be scaled down to its original size or not
          */
-        function downloadSVG(svg) {
+        function downloadSVG(svg, adjustSize) {
             _prompt('SVG')
                 .then(function (filename) {
 
@@ -103,14 +104,16 @@
                     svgCopy.setAttribute('version', '1.1');
                     svgCopy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-                    var scale = g.getTransformToElement(svg).a;
-                    var dimension = svg.childNodes[0].getBoundingClientRect();
-                    var width = Math.ceil(dimension.width / scale) + 20;    // use 20px as offset
-                    var height = Math.ceil(dimension.height / scale) + 20;
+                    if (adjustSize) {
+                        var scale = g.getTransformToElement(svg).a;
+                        var dimension = svg.childNodes[0].getBoundingClientRect();
+                        var width = Math.ceil(dimension.width / scale) + 20;    // use 20px as offset
+                        var height = Math.ceil(dimension.height / scale) + 20;
 
-                    svgCopy.setAttribute('width', width);
-                    svgCopy.setAttribute('height', height);
-                    svgCopy.childNodes[0].setAttribute('transform', 'translate(10,10)');
+                        svgCopy.setAttribute('width', width);
+                        svgCopy.setAttribute('height', height);
+                        svgCopy.childNodes[0].setAttribute('transform', 'translate(10,10)');
+                    }
 
                     // create serialized string from svg element and encode it in
                     // base64 otherwise the file will not be completely downloaded

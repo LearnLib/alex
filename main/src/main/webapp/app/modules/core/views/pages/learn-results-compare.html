@@ -4,7 +4,7 @@
          ng-repeat="result in panels" index="{{$index}}" from="{{panels.length}}">
 
         <!-- display the learn result -->
-        <learn-result-panel results="result" ng-if="result">
+        <learn-result-panel results="result" index="{{$index}}" ng-if="result">
             <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="closePanel($index)">
                 <i class="fa fa-close"></i>
             </button>
