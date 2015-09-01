@@ -14,7 +14,7 @@
      * Use: '<div action-bar></div>'
      *
      * @param $window - angular $window
-     * @returns {{link: link}}
+     * @returns {{replace: boolean, transclude: boolean, template: string, link: link}}
      */
     function actionBar($window) {
 
@@ -36,7 +36,8 @@
             $window.addEventListener('scroll', handleResize);
 
             scope.$on('$destroy', function () {
-                $window.removeEventListener('scroll', handleResize)
+                $window.removeEventListener('scroll', handleResize);
+                body.removeClass('has-fixed-action-bar');
             });
 
             function handleResize() {
