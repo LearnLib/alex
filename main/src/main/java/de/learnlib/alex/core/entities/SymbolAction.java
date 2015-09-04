@@ -3,6 +3,7 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.learnlib.alex.actions.StoreSymbolActions.*;
 import de.learnlib.alex.actions.ExecuteSymbolAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CallAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckAttributeExistsAction;
@@ -12,12 +13,6 @@ import de.learnlib.alex.actions.RESTSymbolActions.CheckHeaderFieldAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckStatusAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.alex.actions.RESTSymbolActions.RESTSymbolAction;
-import de.learnlib.alex.actions.StoreSymbolActions.IncrementCounterAction;
-import de.learnlib.alex.actions.StoreSymbolActions.SetCounterAction;
-import de.learnlib.alex.actions.StoreSymbolActions.SetVariableAction;
-import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByCookieAction;
-import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByHTMLElementAction;
-import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
 import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckPageTitleAction;
@@ -62,6 +57,8 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "executeSymbol", value = ExecuteSymbolAction.class),
         @JsonSubTypes.Type(name = "wait", value = WaitAction.class),
         // Counter & Variables
+        @JsonSubTypes.Type(name = "assertCounter", value = AssertCounterAction.class),
+        @JsonSubTypes.Type(name = "assertVariable", value = AssertVariableAction.class),
         @JsonSubTypes.Type(name = "incrementCounter", value = IncrementCounterAction.class),
         @JsonSubTypes.Type(name = "setCounter", value = SetCounterAction.class),
         @JsonSubTypes.Type(name = "setVariable", value = SetVariableAction.class),

@@ -13,7 +13,7 @@
 
         // get the type of an action by actionTypes[actionGroupTypes.WEB|REST|GENERAL]
         .constant('actionTypes', {
-            'web': {
+            web: {
                 CLICK: 'web_click',
                 CLICK_LINK_BY_TEXT: 'web_clickLinkByText',
                 CLEAR: 'web_clear',
@@ -25,7 +25,7 @@
                 GO_TO: 'web_goto',
                 SELECT: 'web_select'
             },
-            'rest': {
+            rest: {
                 CALL_URL: 'rest_call',
                 CHECK_STATUS: 'rest_checkStatus',
                 CHECK_HEADER_FIELD: 'rest_checkHeaderField',
@@ -34,7 +34,9 @@
                 CHECK_ATTRIBUTE_VALUE: 'rest_checkAttributeValue',
                 CHECK_ATTRIBUTE_TYPE: 'rest_checkAttributeType'
             },
-            'general': {
+            general: {
+                ASSERT_COUNTER: 'assertCounter',
+                ASSERT_VARIABLE: 'assertVariable',
                 EXECUTE_SYMBOL: 'executeSymbol',
                 INCREMENT_COUNTER: 'incrementCounter',
                 SET_COUNTER: 'setCounter',

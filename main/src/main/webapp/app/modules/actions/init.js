@@ -34,6 +34,8 @@
             .register(groups.REST, actions[groups.REST].CHECK_STATUS, $injector.get('CheckStatusRestAction'))
 
             // register general actions in module
+            .register(groups.GENERAL, actions[groups.GENERAL].ASSERT_COUNTER, $injector.get('AssertCounterAction'))
+            .register(groups.GENERAL, actions[groups.GENERAL].ASSERT_VARIABLE, $injector.get('AssertVariableAction'))
             .register(groups.GENERAL, actions[groups.GENERAL].EXECUTE_SYMBOL, $injector.get('ExecuteSymbolGeneralAction'))
             .register(groups.GENERAL, actions[groups.GENERAL].INCREMENT_COUNTER, $injector.get('IncrementCounterGeneralAction'))
             .register(groups.GENERAL, actions[groups.GENERAL].SET_COUNTER, $injector.get('SetCounterGeneralAction'))
