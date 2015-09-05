@@ -139,17 +139,6 @@
             };
 
             /**
-             * Sets a selected counterexamples to the current one and shares it with the service
-             *
-             * @param {number} i - The index of the counterexample
-             */
-            scope.selectCounterExampleAt = function (i) {
-                CounterExampleService.setCurrentCounterexample(scope.tmpCounterExamples[i]);
-                scope.removeCounterExampleAt(i);
-                init();
-            };
-
-            /**
              * Tests if the entered counterexample really is one by sending it to the server for testing purposes.
              */
             function testCounterExample() {

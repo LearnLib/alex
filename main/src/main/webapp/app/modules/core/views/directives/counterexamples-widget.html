@@ -4,7 +4,7 @@
     </p>
 
     <div class="list-group list-group-condensed" ng-sortable="{animation:150}">
-        <div class="list-group-item" ng-repeat="io in counterExample">
+        <div class="list-group-item counterexample-list-item" ng-repeat="io in counterExample">
 
             <i class="fa fa-fw fa-close pull-right" ng-click="removeInputOutputAt($index)"></i>
 
@@ -22,10 +22,16 @@
 </form>
 
 <ul class="list-group">
-    <li class="list-group-item" ng-repeat="ce in tmpCounterExamples" ng-click="selectCounterExampleAt($index)">
-        <span class="btn btn-icon pull-right" ng-click="removeCounterExampleAt($index)">
+    <li class="list-group-item" ng-repeat="ce in tmpCounterExamples">
+        <span class="pull-right" ng-click="removeCounterExampleAt($index)">
             <i class="fa fa-trash"></i>
         </span>
-        {{ce}}
+        <div class="clearfix" style="margin-right: 32px;">
+            <span class="label label-primary pull-left"
+                  style="margin: 0 3px 3px 0"
+                  ng-repeat="c in ce"
+                  ng-bind="c.input">
+            </span>
+        </div>
     </li>
 </ul>
