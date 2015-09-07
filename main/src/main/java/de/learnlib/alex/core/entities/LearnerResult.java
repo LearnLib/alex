@@ -552,6 +552,16 @@ public class LearnerResult implements Serializable {
     }
 
     /**
+     * Does nothing but prevents {@link #setJSON(String)} from throwing an error when the learner has an error that
+     * results in the reset symbol and the symbols not being fetched.
+     *
+     * @param error - dummy
+     */
+    public void setError(Boolean error){
+        // do nothing :)
+    }
+
+    /**
      * Set an error text as part of the learning result.
      * If a error text is set, it also implies that something during the learning went wrong and
      * {@link #isError()} will return True.
