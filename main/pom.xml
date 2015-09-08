@@ -86,6 +86,13 @@
             <version>${jersey.version}</version>
         </dependency>
 
+        <!-- Shiro -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
+
         <!-- jsoup -->
         <dependency>
             <groupId>org.jsoup</groupId>

@@ -1,17 +1,6 @@
 package de.learnlib.alex;
 
-import de.learnlib.alex.core.dao.CounterDAO;
-import de.learnlib.alex.core.dao.CounterDAOImpl;
-import de.learnlib.alex.core.dao.FileDAO;
-import de.learnlib.alex.core.dao.FileDAOImpl;
-import de.learnlib.alex.core.dao.LearnerResultDAO;
-import de.learnlib.alex.core.dao.LearnerResultDAOImpl;
-import de.learnlib.alex.core.dao.ProjectDAO;
-import de.learnlib.alex.core.dao.ProjectDAOImpl;
-import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.dao.SymbolDAOImpl;
-import de.learnlib.alex.core.dao.SymbolGroupDAO;
-import de.learnlib.alex.core.dao.SymbolGroupDAOImpl;
+import de.learnlib.alex.core.dao.*;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.core.learner.LearnerThreadFactory;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -41,6 +30,7 @@ public class ALEXApplication extends ResourceConfig {
 
                 bind(ProjectDAOImpl.class).to(ProjectDAO.class);
                 bind(CounterDAOImpl.class).to(CounterDAO.class);
+                bind(UserDAOImpl.class).to(UserDAO.class);
                 bind(SymbolGroupDAOImpl.class).to(SymbolGroupDAO.class);
                 bind(SymbolDAOImpl.class).to(SymbolDAO.class);
                 bind(LearnerResultDAOImpl.class).to(LearnerResultDAO.class);

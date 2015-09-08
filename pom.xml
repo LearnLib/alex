@@ -98,6 +98,7 @@
         <automatalib.version>0.6.0</automatalib.version>
         <selenium.version>2.47.0</selenium.version>
         <jetty.version>9.3.2.v20150730</jetty.version>
+        <shiro.version>1.2.4</shiro.version>
     </properties>
 
     <build>
