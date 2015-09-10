@@ -88,9 +88,9 @@
 
         <!-- Shiro -->
         <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-web</artifactId>
-            <version>${shiro.version}</version>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+            <version>${jose4j.version}</version>
         </dependency>
 
         <!-- jsoup -->

@@ -13,6 +13,7 @@
         'selectionModel',
         'ng-sortable',
         'ngFileUpload',
+        'angular-jwt',
 
         //all templates
         'templates-all',
