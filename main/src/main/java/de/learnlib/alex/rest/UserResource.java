@@ -36,8 +36,21 @@ public class UserResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll () {
+    public Response getAll() {
         List<User> users = userDAO.getAll();
         return ResponseHelper.renderList(users, Status.OK);
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/login")
+    public Response login(User user) {
+        User realUser = userDAO.getByEmail(user.getEmail());
+        if (realUser != null) {
+            return Response.ok().build();
+        } else {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
     }
 }

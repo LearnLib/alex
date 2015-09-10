@@ -1,5 +1,7 @@
 package de.learnlib.alex.core.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -22,6 +24,9 @@ public class User implements Serializable {
     @NotNull
     @Column(unique = true)
     private String email;
+
+    @NotNull
+    private String password;
 
     private UserRole role;
 
@@ -53,5 +58,13 @@ public class User implements Serializable {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -10,7 +10,9 @@ import java.util.List;
  */
 public interface UserDAO {
 
-    void create (User user) throws ValidationException;
+    void create(User user) throws ValidationException;
 
-    List<User> getAll ();
+    List<User> getAll();
+
+    User getByEmail(String email);
 }
