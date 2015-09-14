@@ -52,6 +52,8 @@
                     return 'Complete';
                 case  EqOracle.types.SAMPLE:
                     return 'Sample';
+                case  EqOracle.types.WMETHOD:
+                    return 'W-Method';
                 default:
                     return type;
             }

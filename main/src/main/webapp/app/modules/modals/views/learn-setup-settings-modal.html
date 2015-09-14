@@ -128,6 +128,27 @@
         </div>
         <!-- END: EQ Oracle: COMPLETE -->
 
+        <!-- BEGIN: EQ Oracle: WMETHOD -->
+        <div class="form-horizontal form-condensed" ng-if="learnConfiguration.eqOracle.type == eqOracles.WMETHOD">
+            <div class="form-group">
+                <div class="col-sm-9">
+                    <input class="form-control" name="eq_oracle_wmethod_max_depth"
+                           ng-model="learnConfiguration.eqOracle.maxDepth" type="number"
+                           required min="0"
+                           placeholder="0">
+                </div>
+                <label class="col-sm-3 control-label">max depth</label>
+            </div>
+
+            <div class="alert alert-danger alert-condensed"
+                 ng-show="learn_config_form.eq_oracle_wmethod_max_depth.$dirty && learn_config_form.eq_oracle_wmethod_max_depth.$invalid">
+                <small ng-show="learn_config_form.eq_oracle_wmethod_max_depth.$error.required">
+                    The field must not be empty.
+                </small>
+            </div>
+        </div>
+        <!-- END: EQ Oracle: WMETHOD -->
+
         <hr>
         <div class="form-group">
             <label class="control-label">Max Amount of Steps to Learn (0:= never stop)</label>

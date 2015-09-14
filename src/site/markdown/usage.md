@@ -35,7 +35,7 @@ application lays a focus on the ease to use of the tool while offering an extens
     * Statistics regarding learning results
 * Simultaneous learning of web applications and web services
 * Supported algorithms: L\*, TTT, Discrimination Tree, DHC
-* Supported equivalence oracles: Random Word, Complete, Sample
+* Supported equivalence oracles: Random Word, Complete, Sample, W-Method
 * Import and Export of symbol sets
 * Export of Hypotheses as JSON and SVG
 * Export of internal data structures
@@ -490,8 +490,8 @@ Algorithm
 :   There are currently four algorithms supported: L*, Discrimination Tree, DHC and TTT.
 
 Equivalence oracle
-:    ALEX supports three kinds of oracles. The first one is *Random Word*, the second one is *Complete* and the last one is 
-    *Sample*. The first two oracles approximate equivalence queries automatically to find counterexamples while when using 
+:    ALEX supports four kinds of oracles. Those are: *Random Word*, *Complete* *W-Method" and the last one is 
+    *Sample*. The first three oracles approximate equivalence queries automatically to find counterexamples while when using 
     *Sample*, you are asked to search and enter them by yourself in between iterations.   
     
 Steps to learn
@@ -517,6 +517,10 @@ Complete
         
 Sample
 :   If this oracle is chosen, counterexamples are searched by hand by the user.
+
+W-Method
+:       Uses the W-Method introduced in "Testing software design modeled by finite state machines" by T.S. Chow.
+        This method can be restricted with a maximum depth.
 
 In order to simplify the modeling phase, only the learning alphabet and the reset symbol has to be chosen. As default, the
 TTT algorithm is selected in combination with the random word oracle. A click on the button with the label "start" starts

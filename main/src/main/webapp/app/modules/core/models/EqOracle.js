@@ -22,7 +22,8 @@
         EqOracle.types = {
             RANDOM: 'random_word',
             COMPLETE: 'complete',
-            SAMPLE: 'sample'
+            SAMPLE: 'sample',
+            WMETHOD: 'wmethod'
         };
 
         /**
@@ -65,6 +66,17 @@
         };
 
         /**
+         * The model of a w method eq oracle
+         *
+         * @param {number} maxDepth - The maximum depth
+         * @constructor
+         */
+        EqOracle.WMethod = function (maxDepth) {
+            this.type = EqOracle.types.WMETHOD;
+            this.maxDepth = angular.isDefined(maxDepth) && maxDepth > 0 ? maxDepth : 1;
+        };
+
+        /**
          * Creates an instances of an eq oracle from an object or an eq oracle type
          *
          * @param {Object|string} data - The object presenting an eq oracle or the string of an eq oracle type
@@ -79,6 +91,8 @@
                         return new EqOracle.Complete(data.minDepth, data.maxDepth);
                     case EqOracle.types.SAMPLE:
                         return new EqOracle.Sample(data.counterExamples);
+                    case EqOracle.types.WMETHOD:
+                        return new EqOracle.WMethod(data.maxDepth);
                     default :
                         return null;
                 }
