@@ -3,9 +3,12 @@ package de.learnlib.alex;
 import de.learnlib.alex.core.dao.*;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.core.learner.LearnerThreadFactory;
+import de.learnlib.alex.security.RsaKeyHolder;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.jose4j.jwk.RsaJwkGenerator;
+import org.jose4j.lang.JoseException;
 
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
@@ -20,6 +23,13 @@ public class ALEXApplication extends ResourceConfig {
         packages(true, "de.learnlib.alex");
 
         register(MultiPartFeature.class);
+
+        try {
+            RsaKeyHolder.setKey(RsaJwkGenerator.generateJwk(2048));
+        } catch (JoseException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
 
         // register some classes/ objects for IoC.
         register(new AbstractBinder() {

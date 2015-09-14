@@ -4,8 +4,8 @@
     angular
         .module('ALEX.core', [])
 
-        .config(['ngToastProvider', 'selectionModelOptionsProvider',
-            function (ngToastProvider, selectionModelOptionsProvider) {
+        .config(['ngToastProvider', 'selectionModelOptionsProvider', 'jwtInterceptorProvider', '$httpProvider',
+            function (ngToastProvider, selectionModelOptionsProvider, jwtInterceptorProvider, $httpProvider) {
 
                 // configure ngToast toast position
                 ngToastProvider.configure({
@@ -22,6 +22,12 @@
                     mode: 'multiple',
                     cleanupStrategy: 'deselect'
                 });
+
+                // pass the jwt with each request to the server
+                jwtInterceptorProvider.tokenGetter = ['$window', function($window) {
+                    return $window.sessionStorage.getItem('jwt');
+                }];
+                $httpProvider.interceptors.push('jwtInterceptor');
             }])
 
         .run(['$rootScope', '_',

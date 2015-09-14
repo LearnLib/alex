@@ -49,4 +49,15 @@ public class UserDAOImpl implements UserDAO {
 
         return user;
     }
+
+    @Override
+    public User getById(Long id) {
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        User user = (User) session.get(User.class, id);
+        HibernateUtil.commitTransaction();
+
+        return user;
+    }
 }
