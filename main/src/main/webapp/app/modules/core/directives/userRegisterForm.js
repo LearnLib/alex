@@ -5,9 +5,9 @@
         .module('ALEX.core')
         .directive('userRegisterForm', userRegisterForm);
 
-    userRegisterForm.$inject = ['paths', 'UserResource'];
+    userRegisterForm.$inject = ['paths', 'UserResource', 'ToastService'];
 
-    function userRegisterForm(paths, UserResource) {
+    function userRegisterForm(paths, UserResource, Toast) {
         return {
             scope: true,
             templateUrl: paths.COMPONENTS + '/core/views/directives/user-register-form.html',
@@ -20,8 +20,8 @@
             scope.register = function () {
                 if (scope.user.email && scope.user.password) {
                     UserResource.create(scope.user)
-                        .then(function (response) {
-                            console.log(response);
+                        .then(function () {
+                            Toast.success('Registration successful');
                             scope.user = {};
                         })
                 }

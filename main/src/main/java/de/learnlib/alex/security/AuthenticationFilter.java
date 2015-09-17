@@ -1,25 +1,26 @@
 package de.learnlib.alex.security;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.User;
-import org.jose4j.jws.JsonWebSignature;
+import de.learnlib.alex.core.entities.UserRole;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.jose4j.lang.JoseException;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
+import java.security.Principal;
 
+/**
+ * Custom Request filter that is executed for each incoming request.
+ */
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
@@ -27,9 +28,18 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Inject
     UserDAO userDAO;
 
+    /**
+     * checks for the availability of a JWT and puts the corresponding user into a SecurityContext that can be injected
+     * into Resources. Uses dummy user without role if no JWT is available.
+     *
+     * @param requestContext The context of the request
+     * @throws IOException
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         try {
+            User user;
+
             // get the jwt from Authorization Header and split at 'Bearer [token]'
             String jwt = requestContext.getHeaderString("Authorization");
             if (jwt != null) {
@@ -47,13 +57,70 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 JwtClaims claims = jwtConsumer.processToClaims(jwt);
                 Long id = (Long) claims.getClaimsMap().get("userId");
 
-                // get him from the db
-                User user = userDAO.getById(id);
+                // get user from the db
+                user = userDAO.getById(id);
+            } else {
 
-                // TODO: create injectable security context with user here
+                // create dummy guest user
+                user = new User();
+                user.setRole(null);
             }
+
+            // create injectable security context with user here
+            requestContext.setSecurityContext(new AuthContext(user));
+
         } catch (InvalidJwtException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Custom Security context that allows to save a user instance in the context
+     */
+    private class AuthContext implements SecurityContext {
+
+        private User user;
+
+        /**
+         * @param user The user that should be available in the context
+         */
+        public AuthContext(User user) {
+            this.user = user;
+        }
+
+        /**
+         * @return A Principal Object that contains the user
+         */
+        @Override
+        public Principal getUserPrincipal() {
+            return new UserPrincipal(user);
+        }
+
+        /**
+         * Checks for the role of the user.
+         * Allow an admin to do everything a registered one can also do
+         *
+         * @param role - The role to check
+         * @return
+         */
+        @Override
+        public boolean isUserInRole(String role) {
+            if (user.getRole() == UserRole.ADMIN) {
+                return true;
+            } else {
+                return UserRole.valueOf(role) == user.getRole();
+            }
+        }
+
+        @Override
+        public boolean isSecure() {
+            // TODO: set this to true when ssl enabled
+            return false;
+        }
+
+        @Override
+        public String getAuthenticationScheme() {
+            return null;
         }
     }
 }

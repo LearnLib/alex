@@ -31,43 +31,17 @@
 
             .state('home', {
                 url: '/home',
-                controller: 'HomeController',
                 templateUrl: paths.COMPONENTS + '/core/views/pages/home.html'
             })
 
             // =========================================================
             // project related routes
 
-            .state('project', {
-                url: '/project',
+            .state('projects', {
+                url: '/projects',
                 views: {
                     '@': {
-                        controller: 'ProjectController',
-                        templateUrl: paths.COMPONENTS + '/core/views/pages/project.html'
-                    }
-                },
-                data: {
-                    requiresProject: true
-                }
-            })
-            .state('project.create', {
-                url: '/create',
-                views: {
-                    '@': {
-                        controller: 'ProjectCreateController',
-                        templateUrl: paths.COMPONENTS + '/core/views/pages/project-create.html'
-                    }
-                },
-                data: {
-                    requiresProject: false
-                }
-            })
-            .state('project.settings', {
-                url: '/settings',
-                views: {
-                    '@': {
-                        templateUrl: paths.COMPONENTS + '/core/views/pages/project-settings.html',
-                        controller: 'ProjectSettingsController'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/projects.html'
                     }
                 }
             })

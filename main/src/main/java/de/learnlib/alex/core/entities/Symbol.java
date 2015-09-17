@@ -50,7 +50,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The Project the Symbol belongs to. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
-
     @JsonIgnore
     private Project project;
 
@@ -62,7 +61,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     /** The ID and revision of the symbol. */
     @Embedded
-    //@Column(nullable = false)
     @JsonIgnore
     private IdRevisionPair idRevisionPair;
 

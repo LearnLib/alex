@@ -3,6 +3,7 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.apache.logging.log4j.LogManager;
@@ -92,14 +93,16 @@ public class ProjectDAOImpl implements ProjectDAO {
     }
 
     @Override
-    public List<Project> getAll(EmbeddableFields... embedFields) {
+    public List<Project> getAll(User user, EmbeddableFields... embedFields) {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         // get the Projects
         @SuppressWarnings("unchecked") // it should be a list of Projects
-        List<Project> result = session.createCriteria(Project.class).list();
+        List<Project> result = session.createCriteria(Project.class)
+                .add(Restrictions.eq("user", user))
+                .list();
 
         // load lazy relations
         for (Project p : result) {

@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
@@ -53,7 +54,7 @@ public interface ProjectDAO {
 
     /**
      * Save the given project.
-     * 
+     *
      * @param project
      *            The project to be saved.
      * @throws ValidationException
@@ -68,7 +69,7 @@ public interface ProjectDAO {
      *         The fields to include in returned project. By default no additional data will be fetched from the DB.
      * @return All projects in a list.
      */
-    List<Project> getAll(EmbeddableFields... embedFields);
+    List<Project> getAll(User user, EmbeddableFields... embedFields);
 
     /**
      * Get a specific project by its ID.
@@ -85,7 +86,7 @@ public interface ProjectDAO {
 
     /**
      * Update a project.
-     * 
+     *
      * @param project
      *            The project to update.
      * @throws NotFoundException
@@ -97,7 +98,7 @@ public interface ProjectDAO {
 
     /**
      * Delete a project.
-     * 
+     *
      * @param id
      *            The id of the project to delete.
      * @throws NotFoundException

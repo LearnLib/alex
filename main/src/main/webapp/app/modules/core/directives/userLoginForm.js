@@ -5,9 +5,9 @@
         .module('ALEX.core')
         .directive('userLoginForm', userLoginForm);
 
-    userLoginForm.$inject = ['$window', 'paths', 'UserResource', 'jwtHelper'];
+    userLoginForm.$inject = ['$state', '$window', 'paths', 'UserResource', 'jwtHelper', 'ToastService'];
 
-    function userLoginForm($window, paths, UserResource, jwtHelper) {
+    function userLoginForm($state, $window, paths, UserResource, jwtHelper, Toast) {
         return {
             scope: true,
             templateUrl: paths.COMPONENTS + '/core/views/directives/user-login-form.html',
@@ -21,13 +21,15 @@
                 if (scope.user.email && scope.user.password) {
                     UserResource.login(scope.user)
                         .then(function (response) {
+                            Toast.info('You have logged in!');
+
                             var token = response.data.token;
                             var tokenPayload = jwtHelper.decodeToken(token);
 
-                            console.log(tokenPayload);
-
                             $window.sessionStorage.setItem('jwt', token);
-                            scope.user = {};
+
+                            // go to the users project page
+                            $state.go('projects');
                         })
                 }
             }

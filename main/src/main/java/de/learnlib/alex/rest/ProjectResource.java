@@ -2,10 +2,15 @@ package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.security.UnauthorizedException;
+import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
+import org.eclipse.jetty.server.UserIdentity;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
@@ -17,11 +22,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 /**
@@ -39,9 +41,13 @@ public class ProjectResource {
     @Inject
     private ProjectDAO projectDAO;
 
+    /** The security context containing the user of the request */
+    @Context
+    SecurityContext securityContext;
+
     /**
      * Create a new Project.
-     * 
+     *
      * @param project
      *            The project to create.
      * @return On success the added project (enhanced with information from the DB); an error message on failure.
@@ -52,7 +58,11 @@ public class ProjectResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
     public Response create(Project project) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        project.setUser(user);
+
         try {
             projectDAO.create(project);
             String projectURL = uri.getBaseUri() + "projects/" + project.getId();
@@ -74,8 +84,11 @@ public class ProjectResource {
      * @successResponse 200 OK
      */
     @GET
+    @RolesAllowed({"REGISTERED"})
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("embed") String embed) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
             embeddableFields = parseEmbeddableFields(embed);
@@ -83,13 +96,13 @@ public class ProjectResource {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
         }
 
-        List<Project> projects = projectDAO.getAll(embeddableFields);
+        List<Project> projects = projectDAO.getAll(user, embeddableFields);
         return ResponseHelper.renderList(projects, Status.OK);
     }
 
     /**
      * Get a specific project.
-     * 
+     *
      * @param id
      *            The ID of the project.
      * @param embed
@@ -103,23 +116,33 @@ public class ProjectResource {
      */
     @GET
     @Path("/{id}")
+    @RolesAllowed({"REGISTERED"})
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") long id, @QueryParam("embed") String embed) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
             embeddableFields = parseEmbeddableFields(embed);
             Project project = projectDAO.getByID(id, embeddableFields);
-            return Response.ok(project).build();
+
+            if (project.getUser().equals(user)) {
+                return Response.ok(project).build();
+            } else {
+                throw new UnauthorizedException("You are not allowed to view this project");
+            }
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.NOT_FOUND, null);
+        } catch (UnauthorizedException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.UNAUTHORIZED, e);
         }
     }
 
     /**
      * Update a specific project.
-     * 
+     *
      * @param id
      *            The ID of the project.
      * @param project
@@ -132,26 +155,35 @@ public class ProjectResource {
      */
     @PUT
     @Path("/{id}")
+    @RolesAllowed({"REGISTERED"})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") long id, Project project) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         if (id != project.getId()) {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             try {
-                projectDAO.update(project);
-                return Response.ok(project).build();
+                if(user.equals(project.getUser())) {
+                    projectDAO.update(project);
+                    return Response.ok(project).build();
+                } else {
+                    throw new UnauthorizedException("You are not allowed to update this project");
+                }
             } catch (NotFoundException e) {
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.NOT_FOUND, e);
             } catch (ValidationException e) {
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.BAD_REQUEST, e);
+            } catch (UnauthorizedException e) {
+                return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.UNAUTHORIZED, e);
             }
         }
     }
 
     /**
      * Delete a specific project.
-     * 
+     *
      * @param id
      *            The ID of the project.
      * @return On success no content will be returned; an error message on failure.
@@ -161,12 +193,22 @@ public class ProjectResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
     public Response delete(@PathParam("id") long id) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
-            projectDAO.delete(id);
-            return Response.status(Status.NO_CONTENT).build();
+            Project project = projectDAO.getByID(id);
+            if (project.getUser().equals(user)) {
+                projectDAO.delete(id);
+                return Response.status(Status.NO_CONTENT).build();
+            } else {
+                throw new UnauthorizedException("You are not allowed to delete this project");
+            }
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.NOT_FOUND, e);
+        } catch (UnauthorizedException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.UNAUTHORIZED, e);
         }
     }
 

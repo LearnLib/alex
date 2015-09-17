@@ -7,6 +7,7 @@ import de.learnlib.alex.security.RsaKeyHolder;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.lang.JoseException;
 
@@ -23,6 +24,7 @@ public class ALEXApplication extends ResourceConfig {
         packages(true, "de.learnlib.alex");
 
         register(MultiPartFeature.class);
+        register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
 
         try {
             RsaKeyHolder.setKey(RsaJwkGenerator.generateJwk(2048));
