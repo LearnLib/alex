@@ -31,6 +31,9 @@
                             // go to the users project page
                             $state.go('projects');
                         })
+                        .catch(function () {
+                            Toast.danger('Login failed');
+                        })
                 }
             }
         }

@@ -86,11 +86,18 @@
             <version>${jersey.version}</version>
         </dependency>
 
-        <!-- Shiro -->
+        <!-- jose4j for jwt -->
         <dependency>
             <groupId>org.bitbucket.b_c</groupId>
             <artifactId>jose4j</artifactId>
             <version>${jose4j.version}</version>
+        </dependency>
+
+        <!-- shiro -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <version>${shiro.version}</version>
         </dependency>
 
         <!-- jsoup -->

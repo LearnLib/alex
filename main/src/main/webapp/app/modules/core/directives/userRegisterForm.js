@@ -24,6 +24,9 @@
                             Toast.success('Registration successful');
                             scope.user = {};
                         })
+                        .catch(function (response) {
+                            Toast.danger('Registration failed. ' + response.data.message);
+                        })
                 }
             }
         }

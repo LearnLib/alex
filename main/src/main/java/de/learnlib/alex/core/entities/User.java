@@ -1,11 +1,15 @@
 package de.learnlib.alex.core.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
  * The model for a user
+ * TODO: remove password and salt from json responses
  */
 @Entity
 public class User implements Serializable {
@@ -30,6 +34,9 @@ public class User implements Serializable {
     @NotNull
     private String password;
 
+    private String salt;
+
+    @JsonIgnore
     private UserRole role;
 
     public User() {
@@ -96,5 +103,13 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }

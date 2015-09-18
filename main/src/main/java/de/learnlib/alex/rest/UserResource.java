@@ -5,22 +5,23 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.security.RsaKeyHolder;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
-import org.jose4j.jwk.RsaJsonWebKey;
-import org.jose4j.jwk.RsaJwkGenerator;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.consumer.JwtConsumer;
-import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.lang.JoseException;
 
+import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+
 import javax.inject.Inject;
+import javax.validation.ConstraintValidatorContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.ValidationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 
 /**
@@ -28,6 +29,8 @@ import java.util.List;
  */
 @Path("/users")
 public class UserResource {
+
+    private final int HASH_ITERATIONS = 2048;
 
     @Inject
     private UserDAO userDAO;
@@ -37,10 +40,23 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(User user) {
         try {
+            // validate email address
+            if (! new EmailValidator().isValid(user.getEmail(), null)) {
+                throw new ValidationException("The email is not valid");
+            }
+
+            // create and save hashed password and salt
+            String salt = new SecureRandomNumberGenerator().nextBytes().toBase64();
+            String hashedPassword = new Sha512Hash(user.getPassword(), salt, HASH_ITERATIONS).toBase64();
+
+            user.setPassword(hashedPassword);
+            user.setSalt(salt);
+
+            // create user
             userDAO.create(user);
             return Response.status(Status.CREATED).entity(user).build();
         } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.BAD_REQUEST, e);
         }
     }
 
@@ -59,7 +75,12 @@ public class UserResource {
         User realUser = userDAO.getByEmail(user.getEmail());
         if (realUser != null) {
             try {
-                return Response.ok(generateJWT(realUser)).build();
+                String hashedPassword = new Sha512Hash(user.getPassword(), realUser.getSalt(), HASH_ITERATIONS).toBase64();
+                if (hashedPassword.equals(realUser.getPassword())) {
+                    return Response.ok(generateJWT(realUser)).build();
+                } else {
+                    return Response.status(Status.BAD_REQUEST).build();
+                }
             } catch (JoseException e) {
                 e.printStackTrace();
                 return Response.status(Status.NOT_FOUND).build();
@@ -69,7 +90,15 @@ public class UserResource {
         }
     }
 
-    private String generateJWT(User user) throws JoseException{
+    /**
+     * Generates a JWT as String representation with JSON {"token": [the-encoded-token]}
+     * Encodes the id and the role of the user as "userId" and "userRole" in the claims of the jwt
+     *
+     * @param user The user to generate the JWT from
+     * @return The string representation of the jwt
+     * @throws JoseException
+     */
+    private String generateJWT(User user) throws JoseException {
 
         // generate claims with user data
         JwtClaims claims = new JwtClaims();
