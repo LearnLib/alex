@@ -1,13 +1,19 @@
 package de.learnlib.alex.rest;
 
+import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
+import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
+import org.apache.shiro.authz.UnauthorizedException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
@@ -19,10 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.List;
 
 /**
@@ -46,6 +49,14 @@ public class SymbolGroupResource {
     @Inject
     private SymbolDAO symbolDAO;
 
+    /** The ProjectDAO to use. */
+    @Inject
+    private ProjectDAO projectDAO;
+
+    /** The security context containing the user of the request */
+    @Context
+    SecurityContext securityContext;
+
     /**
      * Create a new group.
      *
@@ -61,14 +72,23 @@ public class SymbolGroupResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
     public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
+            Project project = projectDAO.getByID(projectId);
+            if (!project.getUser().equals(user)) {
+                throw new ValidationException("You are not the owner of the project");
+            }
+
             group.setProjectId(projectId);
+            group.setUser(user);
             symbolGroupDAO.create(group);
 
             String groupURL = uri.getBaseUri() + "projects/" + group.getProjectId() + "/groups/" + group.getId();
             return Response.status(Response.Status.CREATED).header("Location", groupURL).entity(group).build();
-        } catch (ValidationException e) {
+        } catch (ValidationException | NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.create",
                                                                Response.Status.BAD_REQUEST, e);
         }
@@ -89,10 +109,13 @@ public class SymbolGroupResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
     public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
             SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
-            List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId, embeddableFields);
+            List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId, user.getId(), embeddableFields);
             return ResponseHelper.renderList(groups, Response.Status.OK);
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
@@ -121,6 +144,7 @@ public class SymbolGroupResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
     public Response get(@PathParam("project_id") long projectId,
                         @PathParam("id") Long id,
                         @QueryParam("embed") String embed) {
@@ -152,6 +176,7 @@ public class SymbolGroupResource {
     @GET
     @Path("/{id}/symbols")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
     public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         try {
             List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(projectId, id);
@@ -181,16 +206,26 @@ public class SymbolGroupResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
     public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
-            symbolGroupDAO.update(group);
-            return Response.ok(group).build();
+            if (group.getUserId().equals(user.getId())) {
+                symbolGroupDAO.update(group);
+                return Response.ok(group).build();
+            } else {
+                throw new UnauthorizedException("You are not allowed to edit this group");
+            }
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
                                                                Response.Status.NOT_FOUND, e);
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
                                                                Response.Status.BAD_REQUEST, e);
+        } catch (UnauthorizedException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
+                                                                Response.Status.UNAUTHORIZED, e);
         }
     }
 
@@ -208,16 +243,27 @@ public class SymbolGroupResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
     public Response deleteAResultSet(@PathParam("project_id") long projectId,  @PathParam("id") Long id) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
-            symbolGroupDAO.delete(projectId, id);
-            return Response.noContent().build();
+            SymbolGroup group = symbolGroupDAO.get(projectId, id);
+            if (group.getUserId().equals(user.getId())) {
+                symbolGroupDAO.delete(projectId, id);
+                return Response.noContent().build();
+            } else {
+                throw new UnauthorizedException("You are not allowed to delete the group");
+            }
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
                                                                Response.Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
                                                                Response.Status.NOT_FOUND, e);
+        } catch (UnauthorizedException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
+                                                                Response.Status.UNAUTHORIZED, e);
         }
     }
 

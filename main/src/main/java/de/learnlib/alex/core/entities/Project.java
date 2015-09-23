@@ -49,7 +49,6 @@ public class Project implements Serializable {
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @Cascade({CascadeType.SAVE_UPDATE})
     @JsonIgnore
     private User user;
 

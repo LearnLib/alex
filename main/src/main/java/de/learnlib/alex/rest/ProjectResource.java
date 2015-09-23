@@ -4,11 +4,10 @@ import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.alex.security.UnauthorizedException;
 import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
-import org.eclipse.jetty.server.UserIdentity;
+import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;

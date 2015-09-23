@@ -1,10 +1,6 @@
 package de.learnlib.alex.core.dao;
 
-import de.learnlib.alex.core.entities.IdRevisionPair;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.SymbolGroup;
-import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.core.entities.*;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
@@ -62,12 +58,13 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public List<SymbolGroup> getAll(long projectId, EmbeddableFields... embedFields) throws NotFoundException {
+    public List<SymbolGroup> getAll(long userId, long projectId, EmbeddableFields... embedFields) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         Project project = (Project) session.load(Project.class, projectId);
+        User user = (User) session.load(User.class, userId);
 
         if (project == null) {
             HibernateUtil.rollbackTransaction();
@@ -76,6 +73,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         List<SymbolGroup> resultList = session.createCriteria(SymbolGroup.class)
                                                 .add(Restrictions.eq("project", project))
+                                                .add(Restrictions.eq("user", user))
                                                 .list();
 
         for (SymbolGroup group : resultList) {

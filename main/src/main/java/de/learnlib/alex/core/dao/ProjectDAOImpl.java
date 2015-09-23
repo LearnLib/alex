@@ -36,6 +36,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
         try {
 
+            // TODO: fix this branch with multi user
             if (project.getGroups().size() > 0) { // create new project from json with existing groups
                 Integer i = 0;
                 for (SymbolGroup group: project.getGroups()) {
@@ -65,6 +66,7 @@ public class ProjectDAOImpl implements ProjectDAO {
                 SymbolGroup defaultGroup = new SymbolGroup();
                 defaultGroup.setName("Default Group");
                 defaultGroup.setProject(project);
+                defaultGroup.setUser(project.getUser());
                 project.addGroup(defaultGroup);
                 project.setDefaultGroup(defaultGroup);
 

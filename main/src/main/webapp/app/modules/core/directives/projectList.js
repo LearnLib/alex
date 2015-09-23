@@ -5,9 +5,9 @@
         .module('ALEX.core')
         .directive('projectList', projectList);
 
-    projectList.$inject = ['$rootScope', 'paths', 'ProjectResource', 'ToastService', '_'];
+    projectList.$inject = ['$rootScope', '$state', 'paths', 'ProjectResource', 'ToastService', '_', 'SessionService'];
 
-    function projectList($rootScope, paths, ProjectResource, Toast, _) {
+    function projectList($rootScope, $state, paths, ProjectResource, Toast, _, Session) {
         return {
             scope: true,
             templateUrl: paths.COMPONENTS + '/core/views/directives/project-list.html',
@@ -28,12 +28,12 @@
 
             ProjectResource.getAll()
                 .then(function (projects) {
-                    console.log(projects);
                     scope.projects = projects;
                 });
 
             scope.openProject = function (project) {
-                console.log(project)
+                Session.project.save(project);
+                $state.go('dashboard');
             };
 
             scope.deleteProject = function (project) {

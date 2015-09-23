@@ -35,6 +35,7 @@
         SymbolGroup.build = function (data) {
             return angular.extend(new SymbolGroup(data.name), {
                 id: data.id,
+                user: data.user,
                 project: data.project,
                 symbols: _.map(data.symbols, Symbol.build)
             });

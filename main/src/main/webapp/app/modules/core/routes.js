@@ -3,21 +3,14 @@
 
     angular
         .module('ALEX.core')
-        .config([
-            '$stateProvider', '$urlRouterProvider', 'paths',
-            config
-        ])
-        .run([
-            '$rootScope', '$state', 'SessionService',
-            run
-        ]);
+        .config(config)
+        .run(run);
+
+    config.$inject = ['$stateProvider', '$urlRouterProvider', 'paths'];
+    run.$inject = ['$rootScope', '$state', 'SessionService', 'ToastService'];
 
     /**
      * Define application routes
-     *
-     * @param $stateProvider
-     * @param $urlRouterProvider
-     * @param paths
      */
     function config($stateProvider, $urlRouterProvider, paths) {
 
@@ -31,7 +24,18 @@
 
             .state('home', {
                 url: '/home',
-                templateUrl: paths.COMPONENTS + '/core/views/pages/home.html'
+                templateUrl: paths.COMPONENTS + '/core/views/pages/home.html',
+                controller: 'HomeController'
+            })
+
+            .state('dashboard', {
+                url: '/dashboard',
+                views: {
+                    '@': {
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/dashboard.html'
+                    }
+                },
+                data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
             })
 
             // =========================================================
@@ -41,9 +45,11 @@
                 url: '/projects',
                 views: {
                     '@': {
-                        templateUrl: paths.COMPONENTS + '/core/views/pages/projects.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/projects.html',
+                        controller: 'ProjectsController'
                     }
-                }
+                },
+                data: {roles: ['REGISTERED', 'ADMIN']}
             })
 
             // =========================================================
@@ -57,9 +63,7 @@
                         controller: 'CountersController'
                     }
                 },
-                data: {
-                    requiresProject: false
-                }
+                data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
             })
 
             // =========================================================
@@ -73,9 +77,7 @@
                         templateUrl: paths.COMPONENTS + '/core/views/pages/symbols.html'
                     }
                 },
-                data: {
-                    requiresProject: true
-                }
+                data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
             })
             .state('symbols.trash', {
                 url: '/trash',
@@ -84,7 +86,8 @@
                         controller: 'SymbolsTrashController',
                         templateUrl: paths.COMPONENTS + '/core/views/pages/symbols-trash.html'
                     }
-                }
+                },
+                data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
             })
             .state('symbols.history', {
                 url: '/{symbolId:int}/history',
@@ -93,7 +96,8 @@
                         controller: 'SymbolsHistoryController',
                         templateUrl: paths.COMPONENTS + '/core/views/pages/symbols-history.html'
                     }
-                }
+                },
+                data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
             })
             .state('symbols.actions', {
                 url: '/{symbolId:int}/actions',
@@ -102,8 +106,8 @@
                         controller: 'SymbolsActionsController',
                         templateUrl: paths.COMPONENTS + '/core/views/pages/symbols-actions.html'
                     }
-                }
-
+                },
+                data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
             })
             .state('symbols.import', {
                 url: '/import',
@@ -112,8 +116,8 @@
                         controller: 'SymbolsImportController',
                         templateUrl: paths.COMPONENTS + '/core/views/pages/symbols-import.html'
                     }
-                }
-
+                },
+                data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
             })
 
             // =========================================================
@@ -122,9 +126,7 @@
             .state('learn', {
                 abstract: true,
                 url: '/learn',
-                data: {
-                    requiresProject: true
-                }
+                data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
             })
             .state('learn.setup', {
                 url: '/setup',
@@ -173,14 +175,12 @@
             })
 
             // =========================================================
-            // static pages related routes
+            // other page routes
 
             .state('about', {
                 url: '/about',
                 templateUrl: paths.COMPONENTS + '/core/views/pages/about.html',
-                data: {
-                    requiresProject: false
-                }
+                data: {}
             })
 
             .state('error', {
@@ -193,27 +193,27 @@
                 url: '/files',
                 controller: 'FilesController',
                 templateUrl: paths.COMPONENTS + '/core/views/pages/files.html',
-                data: {
-                    requiresProject: true
-                }
+                data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
             })
     }
 
     /**
      * Validate routes on state change
-     *
-     * @param $rootScope
-     * @param $state
-     * @param SessionService
      */
-    function run($rootScope, $state, SessionService) {
-
+    function run($rootScope, $state, Session, Toast) {
         // route validation
         $rootScope.$on("$stateChangeStart", stateChangeStart);
 
         function stateChangeStart(event, toState) {
             if (toState.data) {
-                if (toState.data.requiresProject && SessionService.project.get() == null) {
+                var user = Session.user.get();
+                var project = Session.project.get();
+
+                if ((toState.data.roles && (user === null || toState.data.roles.indexOf(user.role) === -1))
+                    || (toState.data.requiresProject && project === null)) {
+
+                    Toast.error('You are not allowed to go to this page!');
+
                     $state.go("home");
                     event.preventDefault();
                 }

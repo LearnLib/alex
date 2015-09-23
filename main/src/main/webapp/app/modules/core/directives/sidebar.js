@@ -5,9 +5,9 @@
         .module('ALEX.core')
         .directive('sidebar', navigation);
 
-    navigation.$inject = ['paths', '$state', 'SessionService'];
+    navigation.$inject = ['$rootScope', 'paths', '$state', 'SessionService'];
 
-    function navigation(paths, $state, Session) {
+    function navigation($rootScope, paths, $state, Session) {
         return {
             scope: {},
             replace: true,
@@ -23,6 +23,8 @@
              */
             scope.project = Session.project.get();
 
+            scope.user = Session.user.get();
+
             /**
              * Indicator for the collapsed state
              * @type {boolean}
@@ -33,19 +35,34 @@
             (function init() {
 
                 // load project into scope when projectOpened is emitted
-                scope.$on('project.opened', function () {
-                    scope.project = Session.project.get();
+                $rootScope.$on('project:opened', function (event, project) {
+                    scope.project = project;
                 });
 
                 // delete project from scope when projectOpened is emitted
-                scope.$on('project.closed', function () {
+                $rootScope.$on('project:closed', function () {
                     scope.project = null;
                 });
+
+                $rootScope.$on('user:loggedIn', function (event, user) {
+                    scope.user = user;
+                });
+
+                $rootScope.$on('user:loggedOut', function () {
+                    scope.user = null;
+                })
             }());
 
             /** Removes the project object from the session and redirect to the start page */
             scope.closeProject = function () {
                 Session.project.remove();
+                $state.go('projects');
+            };
+
+            /** Remove project & user from the session */
+            scope.logout = function () {
+                Session.project.remove();
+                Session.user.remove();
                 $state.go('home');
             };
 

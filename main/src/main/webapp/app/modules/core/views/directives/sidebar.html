@@ -17,24 +17,26 @@
     </header>
 
     <div id="sidebar-body">
-        <div class="sidebar-group" ng-if="!project">
-            <a ui-sref="home" class="sidebar-group-item" ng-class="{'active':isState('home')}"
-               tooltip="Startpage" tooltip-placement="right">
+        <div class="sidebar-group" ng-if="user">
+            <div class="sidebar-group-title">
+                <strong>User</strong>
+            </div>
+            <a ui-sref="users.settings" class="sidebar-group-item" tooltip="Settings" tooltip-placement="right">
                 <div class="sidebar-group-item-icon">
-                    <i class="fa fa-fw fa-home"></i>
+                    <i class="fa fa-fw fa-user"></i>
                 </div>
-                <div class="sidebar-group-item-label">Startpage</div>
+                <div class="sidebar-group-item-label">Settings</div>
             </a>
-            <a ui-sref="project.create" class="sidebar-group-item" ng-class="{'active':isState('project.create')}"
-               tooltip="New Project" tooltip-placement="right">
+            <a href class="sidebar-group-item" tooltip="Logout" tooltip-placement="right"
+                    ng-click="logout()">
                 <div class="sidebar-group-item-icon">
-                    <i class="fa fa-fw fa-plus"></i>
+                    <i class="fa fa-fw fa-sign-out"></i>
                 </div>
-                <div class="sidebar-group-item-label">Create a project</div>
+                <div class="sidebar-group-item-label">Logout</div>
             </a>
         </div>
 
-        <div ng-if="project">
+        <div ng-if="project && user">
             <div class="sidebar-group">
                 <div class="sidebar-group-title">
                     <strong ng-bind="project.name"></strong>

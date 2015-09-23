@@ -5,9 +5,9 @@
         .module('ALEX.core')
         .directive('userLoginForm', userLoginForm);
 
-    userLoginForm.$inject = ['$state', '$window', 'paths', 'UserResource', 'jwtHelper', 'ToastService'];
+    userLoginForm.$inject = ['$state', '$window', 'paths', 'UserResource', 'jwtHelper', 'ToastService', 'SessionService'];
 
-    function userLoginForm($state, $window, paths, UserResource, jwtHelper, Toast) {
+    function userLoginForm($state, $window, paths, UserResource, jwtHelper, Toast, Session) {
         return {
             scope: true,
             templateUrl: paths.COMPONENTS + '/core/views/directives/user-login-form.html',
@@ -27,6 +27,12 @@
                             var tokenPayload = jwtHelper.decodeToken(token);
 
                             $window.sessionStorage.setItem('jwt', token);
+
+                            // save user in session
+                            Session.user.save({
+                                id: tokenPayload.userId,
+                                role: tokenPayload.userRole
+                            });
 
                             // go to the users project page
                             $state.go('projects');
