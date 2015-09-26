@@ -30,18 +30,30 @@ import java.util.List;
 @Path("/users")
 public class UserResource {
 
+    /**
+     * Number of iterations to perform for a securely hashed password
+     */
     private final int HASH_ITERATIONS = 2048;
 
+    /**
+     * The UserDAO to user
+     */
     @Inject
     private UserDAO userDAO;
 
+    /**
+     * Creates a new user
+     *
+     * @param user The user to create
+     * @return An HTTP response
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(User user) {
         try {
             // validate email address
-            if (! new EmailValidator().isValid(user.getEmail(), null)) {
+            if (!new EmailValidator().isValid(user.getEmail(), null)) {
                 throw new ValidationException("The email is not valid");
             }
 
@@ -60,6 +72,11 @@ public class UserResource {
         }
     }
 
+    /**
+     * Get all users. Should only be allowed to call by an admin
+     *
+     * @return An HTTP response containing all registered users
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
@@ -67,6 +84,12 @@ public class UserResource {
         return ResponseHelper.renderList(users, Status.OK);
     }
 
+    /**
+     * Logs in a user by generating a unique JWT for him that needs to be send in every request
+     *
+     * @param user The user to login
+     * @return An HTTP response containing a signed JWT of the user on success
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

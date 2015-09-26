@@ -148,9 +148,11 @@ public class SymbolGroupResource {
     public Response get(@PathParam("project_id") long projectId,
                         @PathParam("id") Long id,
                         @QueryParam("embed") String embed) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
             SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
-            SymbolGroup group = symbolGroupDAO.get(projectId, id, embeddableFields);
+            SymbolGroup group = symbolGroupDAO.get(user, projectId, id, embeddableFields);
             return Response.ok(group).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get",
@@ -178,8 +180,10 @@ public class SymbolGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"REGISTERED"})
     public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
-            List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(projectId, id);
+            List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(user, projectId, id);
             return ResponseHelper.renderList(symbols, Response.Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getSymbols",
@@ -248,9 +252,9 @@ public class SymbolGroupResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
-            SymbolGroup group = symbolGroupDAO.get(projectId, id);
+            SymbolGroup group = symbolGroupDAO.get(user, projectId, id);
             if (group.getUserId().equals(user.getId())) {
-                symbolGroupDAO.delete(projectId, id);
+                symbolGroupDAO.delete(user, projectId, id);
                 return Response.noContent().build();
             } else {
                 throw new UnauthorizedException("You are not allowed to delete the group");

@@ -77,7 +77,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                                 .list();
 
         for (SymbolGroup group : resultList) {
-            initLazyRelations(session, group, embedFields);
+            initLazyRelations(session, user, group, embedFields);
         }
 
         HibernateUtil.commitTransaction();
@@ -85,7 +85,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public SymbolGroup get(long projectId, Long groupId, EmbeddableFields... embedFields)
+    public SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields)
             throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
@@ -103,7 +103,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                              + " in the project " + projectId + ".");
         }
 
-        initLazyRelations(session, result, embedFields);
+        initLazyRelations(session, user, result, embedFields);
 
         HibernateUtil.commitTransaction();
         return result;
@@ -134,8 +134,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public void delete(long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
-        SymbolGroup group = get(projectId, groupId, EmbeddableFields.ALL);
+    public void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
+        SymbolGroup group = get(user, projectId, groupId, EmbeddableFields.ALL);
 
         // start session
         Session session = HibernateUtil.getSession();
@@ -170,7 +170,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         }
     }
 
-    private void initLazyRelations(Session session, SymbolGroup group, EmbeddableFields... embedFields) {
+    private void initLazyRelations(Session session, User user, SymbolGroup group, EmbeddableFields... embedFields) {
         Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
         if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
@@ -182,7 +182,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                                                                     group.getProjectId(),
                                                                                     group.getId(),
                                                                                     SymbolVisibilityLevel.ALL);
-                List<Symbol> symbols = symbolDAO.getAll(session, group.getProjectId(), idRevisionPairs);
+                List<Symbol> symbols = symbolDAO.getAll(session, user, group.getProjectId(), idRevisionPairs);
                 group.setSymbols(new HashSet<>(symbols));
             } catch (NotFoundException e) {
                 group.setSymbols(null);

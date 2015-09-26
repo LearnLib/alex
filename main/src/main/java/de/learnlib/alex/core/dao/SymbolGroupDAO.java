@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
@@ -66,6 +67,7 @@ public interface SymbolGroupDAO {
     /**
      * Get one group.
      *
+     * @param user The owner of the group
      * @param projectId
      *         The project the group belongs to.
      * @param groupId
@@ -76,7 +78,7 @@ public interface SymbolGroupDAO {
      * @throws NotFoundException
      *         If the Project or the Group could not be found.
      */
-    SymbolGroup get(long projectId, Long groupId, EmbeddableFields... embedFields) throws NotFoundException;
+    SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Update a group.
@@ -93,6 +95,7 @@ public interface SymbolGroupDAO {
     /**
      * Delete a group.
      *
+     * @param user The owner of the group
      * @param projectId
      *         The project the group belongs to.
      * @param groupId
@@ -102,6 +105,6 @@ public interface SymbolGroupDAO {
      * @throws NotFoundException
      *         If The project or group could not be found.
      */
-    void delete(long projectId, Long groupId) throws IllegalArgumentException, NotFoundException;
+    void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException;
 
 }

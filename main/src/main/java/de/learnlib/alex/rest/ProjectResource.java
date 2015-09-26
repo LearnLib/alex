@@ -72,7 +72,7 @@ public class ProjectResource {
     }
 
     /**
-     * Get a list of all the projects.
+     * Get a list of all the projects owned by the user of the request.
      *
      * @param embed
      *         By default no related objects are included in the projects. However you can ask to include them with
@@ -124,6 +124,8 @@ public class ProjectResource {
         try {
             embeddableFields = parseEmbeddableFields(embed);
             Project project = projectDAO.getByID(id, embeddableFields);
+
+
 
             if (project.getUser().equals(user)) {
                 return Response.ok(project).build();
@@ -225,5 +227,4 @@ public class ProjectResource {
 
         return embedFields;
     }
-
 }
