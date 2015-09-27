@@ -5,18 +5,14 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.security.RsaKeyHolder;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.lang.JoseException;
 
-import org.apache.shiro.crypto.hash.Sha512Hash;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.validation.ConstraintValidatorContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.ValidationException;
@@ -29,11 +25,6 @@ import java.util.List;
  */
 @Path("/users")
 public class UserResource {
-
-    /**
-     * Number of iterations to perform for a securely hashed password
-     */
-    private final int HASH_ITERATIONS = 2048;
 
     /**
      * The UserDAO to user
@@ -57,12 +48,7 @@ public class UserResource {
                 throw new ValidationException("The email is not valid");
             }
 
-            // create and save hashed password and salt
-            String salt = new SecureRandomNumberGenerator().nextBytes().toBase64();
-            String hashedPassword = new Sha512Hash(user.getPassword(), salt, HASH_ITERATIONS).toBase64();
-
-            user.setPassword(hashedPassword);
-            user.setSalt(salt);
+            user.setEncryptedPassword(user.getPassword());
 
             // create user
             userDAO.create(user);
@@ -79,9 +65,23 @@ public class UserResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
     public Response getAll() {
         List<User> users = userDAO.getAll();
         return ResponseHelper.renderList(users, Status.OK);
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
+    public Response delete(@PathParam("id") long userId) {
+        try {
+            userDAO.delete(userId);
+            return Response.status(Status.OK).build();
+        } catch (de.learnlib.alex.exceptions.NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.NOT_FOUND, e);
+        }
     }
 
     /**
@@ -98,8 +98,7 @@ public class UserResource {
         User realUser = userDAO.getByEmail(user.getEmail());
         if (realUser != null) {
             try {
-                String hashedPassword = new Sha512Hash(user.getPassword(), realUser.getSalt(), HASH_ITERATIONS).toBase64();
-                if (hashedPassword.equals(realUser.getPassword())) {
+                if (realUser.isValidPassword(user.getPassword())) {
                     return Response.ok(generateJWT(realUser)).build();
                 } else {
                     return Response.status(Status.BAD_REQUEST).build();

@@ -1,0 +1,51 @@
+<view-header title="Manage Users"></view-header>
+
+<div class="view-body">
+    <div class="alx-container">
+        <div class="row">
+
+            <h3>Registered Users</h3>
+            <hr>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="1">ID</th>
+                    <th width="1">Email</th>
+                    <th>Role</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="user in users" ng-class="{'info': user.role === 'ADMIN'}">
+                    <td ng-bind="user.id"></td>
+                    <td ng-bind="user.email"></td>
+                    <td ng-bind="user.role"></td>
+                    <th>
+
+                        <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
+                            <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <ul class="dropdown-menu pull-left" role="menu">
+                                <li>
+                                    <a href>
+                                        <i class="fa fa-edit fa-fw"></i> Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href ng-click="deleteUser(user)">
+                                        <i class="fa fa-trash fa-fw"></i> Delete
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </th>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

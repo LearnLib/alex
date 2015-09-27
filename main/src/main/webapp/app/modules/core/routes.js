@@ -175,6 +175,24 @@
             })
 
             // =========================================================
+            // admin related routes
+
+            .state('admin', {
+                abstract: true,
+                url: '/admin',
+                data: {requiresProject: false, roles: ['ADMIN']}
+            })
+            .state('admin.users', {
+                url: '/users',
+                views: {
+                    '@': {
+                        controller: 'AdminUsersController',
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/admin-users.html'
+                    }
+                }
+            })
+
+            // =========================================================
             // other page routes
 
             .state('about', {
@@ -212,7 +230,7 @@
                 if ((toState.data.roles && (user === null || toState.data.roles.indexOf(user.role) === -1))
                     || (toState.data.requiresProject && project === null)) {
 
-                    Toast.error('You are not allowed to go to this page!');
+                    Toast.danger('You are not allowed to go to this page!');
 
                     $state.go("home");
                     event.preventDefault();

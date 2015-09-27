@@ -1,7 +1,8 @@
 package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha512Hash;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,6 +17,9 @@ public class User implements Serializable {
 
     // auto generated id for saving it into the db
     private static final long serialVersionUID = -3567360676364330143L;
+
+    // the number of iterations to perform to create a secure hash
+    private static final int HASH_ITERATIONS = 2048;
 
     /**
      * The unique id of the user
@@ -36,7 +40,6 @@ public class User implements Serializable {
 
     private String salt;
 
-    @JsonIgnore
     private UserRole role;
 
     public User() {
@@ -46,6 +49,18 @@ public class User implements Serializable {
     public User(Long id) {
         role = UserRole.REGISTERED;
         this.id = id;
+    }
+
+    @JsonIgnore
+    public void setEncryptedPassword(String password) {
+        this.salt = new SecureRandomNumberGenerator().nextBytes().toBase64();
+        this.password = new Sha512Hash(password, this.salt, HASH_ITERATIONS).toBase64();
+    }
+
+    @JsonIgnore
+    public boolean isValidPassword(String password) {
+        String hashedPassword = new Sha512Hash(password, this.salt, HASH_ITERATIONS).toBase64();
+        return hashedPassword.equals(this.password);
     }
 
     // auto generated equals and hashcode method

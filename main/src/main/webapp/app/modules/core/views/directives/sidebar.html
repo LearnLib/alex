@@ -36,6 +36,18 @@
             </a>
         </div>
 
+        <div class="sidebar-group" ng-if="user.role === 'ADMIN'">
+            <div class="sidebar-group-title">
+                <strong>Admin</strong>
+            </div>
+            <a ui-sref="admin.users" class="sidebar-group-item" tooltip="User Management" tooltip-placement="right">
+                <div class="sidebar-group-item-icon">
+                    <i class="fa fa-fw fa-users"></i>
+                </div>
+                <div class="sidebar-group-item-label">Manage Users</div>
+            </a>
+        </div>
+
         <div ng-if="project && user">
             <div class="sidebar-group">
                 <div class="sidebar-group-title">

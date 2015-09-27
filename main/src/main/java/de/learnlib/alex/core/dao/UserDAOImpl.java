@@ -1,6 +1,8 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.UserRole;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -38,6 +40,20 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public List<User> getAllByRole(UserRole role) {
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        @SuppressWarnings("unchecked")
+        List<User> users = session.createCriteria(User.class)
+                .add(Restrictions.eq("role", role))
+                .list();
+
+        HibernateUtil.commitTransaction();
+        return users;
+    }
+
+    @Override
     public User getByEmail(String email) {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -59,5 +75,29 @@ public class UserDAOImpl implements UserDAO {
         HibernateUtil.commitTransaction();
 
         return user;
+    }
+
+    @Override
+    public void delete(Long id) throws NotFoundException {
+        User user = getById(id);
+
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        // make sure there is at least one registered admin
+        if (user.getRole().equals(UserRole.ADMIN)) {
+
+            @SuppressWarnings("unchecked")
+            List<User> admins = session.createCriteria(User.class)
+                    .add(Restrictions.eq("role", UserRole.ADMIN))
+                    .list();
+
+            if (admins.size() == 1) {
+                throw new NotFoundException("There has to be at least one admin left");
+            }
+        }
+
+        session.delete(user);
+        HibernateUtil.commitTransaction();
     }
 }
