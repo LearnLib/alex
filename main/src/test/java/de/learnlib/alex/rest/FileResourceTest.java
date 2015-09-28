@@ -6,6 +6,7 @@ import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
+import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.learner.Learner;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -29,6 +30,9 @@ public class FileResourceTest extends JerseyTest {
     private static final long PROJECT_TEST_ID = 10;
 
     @Mock
+    private UserDAO userDAO;
+
+    @Mock
     private ProjectDAO projectDAO;
 
     @Mock
@@ -50,7 +54,7 @@ public class FileResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        return new ALEXTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
+        return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
                                        learnerResultDAO, learner, FileResource.class);
     }
 

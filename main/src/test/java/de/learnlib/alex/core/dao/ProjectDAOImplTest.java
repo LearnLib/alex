@@ -6,6 +6,7 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
@@ -30,14 +31,19 @@ public class ProjectDAOImplTest {
     private static final String BASE_URL = "http://example.com";
 
     private static ProjectDAO dao = new ProjectDAOImpl();
+
+    private User user;
     private Project project;
 
     @Before
     public void setUp() {
+        user = new User();
+
         project = new Project();
         project.setName("ProjectDAOImplTest Project ");
         project.setBaseUrl(BASE_URL);
         project.setDescription("Lorem Ipsum");
+        project.setUser(user);
 
         Symbol symbol = new Symbol();
         symbol.setName("ProjectDAOImplTest Project - Symbol 1");
@@ -109,7 +115,7 @@ public class ProjectDAOImplTest {
             projects.add(tmpProject);
         }
 
-        List<Project> projectsFromDB = dao.getAll(ProjectDAO.EmbeddableFields.ALL);
+        List<Project> projectsFromDB = dao.getAll(user, ProjectDAO.EmbeddableFields.ALL);
 
         for (Project x : projects) {
             assertTrue(projectsFromDB.contains(x));

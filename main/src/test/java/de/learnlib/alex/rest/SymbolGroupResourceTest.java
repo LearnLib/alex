@@ -138,7 +138,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
         List<SymbolGroup> groups = new LinkedList<>();
         groups.add(group1);
         groups.add(group2);
-        given(symbolGroupDAO.getAll(user, PROJECT_TEST_ID)).willReturn(groups);
+        given(symbolGroupDAO.getAll(user.getId(), PROJECT_TEST_ID)).willReturn(groups); // TODO: should user not user.getId()
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups")
                             .request().get();
@@ -161,7 +161,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
-        willThrow(NotFoundException.class).given(symbolGroupDAO).getAll(user, PROJECT_TEST_ID);
+        willThrow(NotFoundException.class).given(symbolGroupDAO).getAll(user.getId(), PROJECT_TEST_ID); //TODO: should use user not user.getId()
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups").request().get();
 

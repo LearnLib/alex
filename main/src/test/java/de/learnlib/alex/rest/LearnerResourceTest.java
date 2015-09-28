@@ -6,11 +6,13 @@ import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
+import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -47,6 +49,9 @@ public class LearnerResourceTest extends JerseyTest {
     private static final String RESUME_JSON = "{\"eqOracle\": {\"type\": \"complete\"}}";
 
     @Mock
+    private UserDAO userDAO;
+
+    @Mock
     private ProjectDAO projectDAO;
 
     @Mock
@@ -62,6 +67,9 @@ public class LearnerResourceTest extends JerseyTest {
     private LearnerResultDAO learnerResultDAO;
 
     @Mock
+    private User user;
+
+    @Mock
     private Project project;
 
     @Mock
@@ -71,7 +79,7 @@ public class LearnerResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        return new ALEXTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
+        return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
                                              learnerResultDAO, learner, LearnerResource.class);
     }
 
@@ -81,7 +89,7 @@ public class LearnerResourceTest extends JerseyTest {
         super.setUp();
         given(projectDAO.getByID(PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
         Symbol resetSymbol = mock(Symbol.class);
-        given(symbolDAO.get(PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L))).willReturn(resetSymbol);
+        given(symbolDAO.get(user, PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L))).willReturn(resetSymbol);
 
         LearnerResult result = mock(LearnerResult.class);
         given(result.getProjectId()).willReturn(PROJECT_TEST_ID);
@@ -112,7 +120,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldNotStartALearningProcessIfTheResetSymbolDoesNotExist() throws NotFoundException {
-        given(symbolDAO.get(PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L)))
+        given(symbolDAO.get(user, PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L)))
                 .willThrow(NotFoundException.class);
 
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(START_JSON));
@@ -123,7 +131,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldNotStartALearningProcessIfASymbolDoesNotExist() throws NotFoundException {
-        given(symbolDAO.getAll(eq(PROJECT_TEST_ID), any(List.class))).willThrow(NotFoundException.class);
+        given(symbolDAO.getAll(eq(user), eq(PROJECT_TEST_ID), any(List.class))).willThrow(NotFoundException.class);
 
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(START_JSON));
 
@@ -292,7 +300,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfOutputShouldBeCreatedWithANotExistingResetSymbol() throws NotFoundException {
-        given(symbolDAO.get(PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L)))
+        given(symbolDAO.get(user, PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L)))
                 .willThrow(NotFoundException.class);
 
         String json = "{\"resetSymbol\":"
@@ -321,7 +329,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfOutputShouldBeCreatedWithForNotExistingSymbols() throws NotFoundException {
-        given(symbolDAO.get(PROJECT_TEST_ID, new IdRevisionPair(2, 4))).willThrow(NotFoundException.class);
+        given(symbolDAO.get(user, PROJECT_TEST_ID, new IdRevisionPair(2, 4))).willThrow(NotFoundException.class);
 
         String json = "{\"resetSymbol\":"
                         + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"

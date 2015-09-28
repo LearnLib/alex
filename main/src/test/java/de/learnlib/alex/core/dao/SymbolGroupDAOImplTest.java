@@ -3,6 +3,7 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.After;
 import org.junit.Before;
@@ -24,6 +25,7 @@ public class SymbolGroupDAOImplTest {
     private static SymbolGroupDAO symbolGroupDAO;
     private static SymbolDAO symbolDAO;
 
+    private User user;
     private Project project;
     private SymbolGroup group;
     private SymbolGroup group2;
@@ -38,9 +40,12 @@ public class SymbolGroupDAOImplTest {
 
     @Before
     public void setUp() {
+        user = new User();
+
         project = new Project();
         project.setName("SymbolGroupDAO - Test Project");
         project.setBaseUrl("http://example.com/");
+        project.setUser(user);
         projectDAO.create(project);
 
         group = new SymbolGroup();
@@ -112,13 +117,13 @@ public class SymbolGroupDAOImplTest {
             groups.add(newGroup);
         }
 
-        List<SymbolGroup> groupsInDB = symbolGroupDAO.getAll(project.getId());
+        List<SymbolGroup> groupsInDB = symbolGroupDAO.getAll(user.getId(), project.getId()); // TODO: should use just user
         assertEquals(groups.size() + 1, groupsInDB.size()); // +1: default group
     }
 
     @Test
     public void shouldThrowAnExceptionIfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
-        symbolGroupDAO.getAll(-1L);
+        symbolGroupDAO.getAll(user.getId(), -1L); // TODO: should use just user
     }
 
     @Test
@@ -137,14 +142,14 @@ public class SymbolGroupDAOImplTest {
             groups.add(newGroup);
         }
 
-        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), 1L);
+        SymbolGroup groupInDB = symbolGroupDAO.get(user, project.getId(), 1L);
         assertEquals(project, groupInDB.getProject());
         assertEquals("Group 1", groupInDB.getName());
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheGroupWasNotFound() throws NotFoundException {
-        symbolGroupDAO.get(-1L, -1L); // should fail
+        symbolGroupDAO.get(user, -1L, -1L); // should fail
     }
 
     @Test
@@ -154,7 +159,7 @@ public class SymbolGroupDAOImplTest {
         group.setName("New Name");
         symbolGroupDAO.update(group);
 
-        SymbolGroup groupInDB = symbolGroupDAO.get(project.getId(), group.getId());
+        SymbolGroup groupInDB = symbolGroupDAO.get(user, project.getId(), group.getId());
         assertEquals("New Name", groupInDB.getName());
     }
 
@@ -173,14 +178,14 @@ public class SymbolGroupDAOImplTest {
         symbol.setGroup(group);
         symbolDAO.update(symbol);
 
-        symbolGroupDAO.delete(project.getId(), group.getId());
+        symbolGroupDAO.delete(user, project.getId(), group.getId());
 
         try {
-            symbolGroupDAO.get(project.getId(), group.getId()); // should fail
+            symbolGroupDAO.get(user, project.getId(), group.getId()); // should fail
             fail("After deleting a group, it was still in the DB.");
         } catch (NotFoundException e) {
             // Symbol was not found -> It was deleted -> success
-            Symbol symbolInDB = symbolDAO.getWithLatestRevision(project.getId(), symbol.getId());
+            Symbol symbolInDB = symbolDAO.getWithLatestRevision(user, project.getId(), symbol.getId());
             assertEquals(project.getDefaultGroup(), symbolInDB.getGroup());
             assertTrue(symbolInDB.isHidden());
         }
@@ -188,6 +193,6 @@ public class SymbolGroupDAOImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotDeleteTheDefaultGroupOfAProject() throws NotFoundException {
-        symbolGroupDAO.delete(project.getId(), project.getDefaultGroup().getId());
+        symbolGroupDAO.delete(user, project.getId(), project.getDefaultGroup().getId());
     }
 }

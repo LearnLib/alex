@@ -6,6 +6,7 @@ import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
+import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.learner.Learner;
@@ -30,6 +31,9 @@ public class CounterResourceTest extends JerseyTest {
     private static final long PROJECT_TEST_ID = 10;
     private static final String  COUNTER_NAME = "Counter";
     private static final Integer COUNTER_VALUE = 42;
+
+    @Mock
+    private UserDAO userDAO;
 
     @Mock
     private ProjectDAO projectDAO;
@@ -57,8 +61,8 @@ public class CounterResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        return new ALEXTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
-                                             learnerResultDAO, learner, CounterResource.class);
+        return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
+                                       learnerResultDAO, learner, CounterResource.class);
     }
 
     @Before
