@@ -50,7 +50,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The Project the Symbol belongs to. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
-
     @JsonIgnore
     private Project project;
 
@@ -62,7 +61,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     /** The ID and revision of the symbol. */
     @Embedded
-    //@Column(nullable = false)
     @JsonIgnore
     private IdRevisionPair idRevisionPair;
 
@@ -79,6 +77,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @Size(min = 1, max = 15)
     private String abbreviation;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JsonIgnore
+    private User user;
 
     /**
      * flag to mark a symbol as hidden.
@@ -163,6 +165,25 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
         this.project = new Project(projectId);
+    }
+
+    @JsonIgnore
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    @JsonProperty("user")
+    public Long getUserId() {
+        if (user == null) {
+            return 0L;
+        } else {
+            return user.getId();
+        }
     }
 
     /**

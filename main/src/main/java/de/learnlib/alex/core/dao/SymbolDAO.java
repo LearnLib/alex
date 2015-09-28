@@ -3,6 +3,7 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
@@ -37,6 +38,7 @@ public interface SymbolDAO {
     /**
      * Get a list of specific symbols of a project.
      *
+     * @param user The owner of the symbols
      * @param projectId
      *         The project the symbols should belong to.
      * @param idRevPairs
@@ -45,27 +47,43 @@ public interface SymbolDAO {
      * @throws NotFoundException
      *         If the project or one of the symbols could not be found.
      */
-    List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException;
+    List<Symbol> getAll(User user, Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException;
 
-    List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId) throws NotFoundException;
+    /**
+     * Get all symbols of a project.
+     *
+     * @param user The user of the symbol
+     * @param projectID
+     *         The project the symbols should belong to.
+     * @param visibilityLevel
+     *         Include symbols that are currently marked as hidden?
+     * @return A list of symbols belonging to the project.
+     */
+    List<Symbol> getAllWithLatestRevision(User user, Long projectID, SymbolVisibilityLevel visibilityLevel)
+            throws NotFoundException;
 
-    List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel)
+    List<Symbol> getAllWithLatestRevision(User user, Long projectId, Long groupId)
+            throws NotFoundException;
+
+    List<Symbol> getAllWithLatestRevision(User user, Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel)
             throws NotFoundException;
 
     /**
      * Get a list of symbols by their ids. Fetch only the latest revision of each.
      *
+     * @param user The owner of the symbol
      * @param projectId
      *         The project the symbols should belong to.
      * @param ids
      *         The ids of the symbols you want to get.
      * @return A list of symbols. Can be empty.
      */
-    List<Symbol> getByIdsWithLatestRevision(Long projectId, Long... ids) throws NotFoundException;
+    List<Symbol> getByIdsWithLatestRevision(User user, Long projectId, Long... ids) throws NotFoundException;
 
     /**
      * Get a list of symbols by their ids. Fetch only the latest revision of each.
      *
+     * @param user The owner of the symbol
      * @param projectId
      *         The project the symbols should belong to.
      * @param visibilityLevel
@@ -74,22 +92,10 @@ public interface SymbolDAO {
      *         The ids of the symbols you want to get.
      * @return A list of symbols. Can be empty.
      */
-    List<Symbol> getByIdsWithLatestRevision(Long projectId, SymbolVisibilityLevel visibilityLevel, Long... ids)
+    List<Symbol> getByIdsWithLatestRevision(User user, Long projectId, SymbolVisibilityLevel visibilityLevel, Long... ids)
             throws NotFoundException;
 
-    /**
-     * Get all symbols of a project.
-     *
-     * @param projectID
-     *         The project the symbols should belong to.
-     * @param visibilityLevel
-     *         Include symbols that are currently marked as hidden?
-     * @return A list of symbols belonging to the project.
-     */
-    List<Symbol> getAllWithLatestRevision(Long projectID, SymbolVisibilityLevel visibilityLevel)
-            throws NotFoundException;
-
-    Symbol get(Long projectId, IdRevisionPair idRevisionPair) throws NotFoundException;
+    Symbol get(User user, Long projectId, IdRevisionPair idRevisionPair) throws NotFoundException;
 
     /**
      * Get a specific symbol by its identifying parameters.
@@ -102,7 +108,7 @@ public interface SymbolDAO {
      *            The wanted revision of the symbol.
      * @return The Symbol or null.
      */
-    Symbol get(Long projectId, Long id, Long revision) throws NotFoundException;
+    Symbol get(User user, Long projectId, Long id, Long revision) throws NotFoundException;
 
     /**
      * Get a specific symbol by its identifying parameters and the last
@@ -114,9 +120,9 @@ public interface SymbolDAO {
      *            The ID of the symbol itself in the project.
      * @return The Symbol or null.
      */
-    Symbol getWithLatestRevision(Long projectId, Long id) throws NotFoundException;
+    Symbol getWithLatestRevision(User user, Long projectId, Long id) throws NotFoundException;
 
-    List<Symbol> getWithAllRevisions(Long projectId, Long id) throws NotFoundException;
+    List<Symbol> getWithAllRevisions(User user, Long projectId, Long id) throws NotFoundException;
 
     /**
      * Update a symbol.

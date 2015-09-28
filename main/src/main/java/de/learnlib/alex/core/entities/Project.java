@@ -9,13 +9,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,70 +22,98 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Project implements Serializable {
 
-    /** to be serializable. */
+    /**
+     * to be serializable.
+     */
     private static final long serialVersionUID = -6760395646972200067L;
 
-    /** Use the logger for the server part. */
+    /**
+     * Use the logger for the server part.
+     */
     private static final Logger LOGGER = LogManager.getLogger("server");
 
-    /** The project ID. */
+    /**
+     * The project ID.
+     */
     @Id
     @GeneratedValue
     private Long id;
 
     /**
      * The name of the project. This property is required & must be unique.
+     *
      * @requiredField
      */
     @NotBlank
     @Column(unique = true)
     private String name;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JsonIgnore
+    private User user;
+
     /**
      * The root URL of the project.
+     *
      * @requiredField
      */
     @NotBlank
     private String baseUrl;
 
-    /** A text to describe the Project. */
+    /**
+     * A text to describe the Project.
+     */
     private String description;
 
-    /** The list of groups in the project. */
+    /**
+     * The list of groups in the project.
+     */
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
     @JsonProperty("groups")
     private Set<SymbolGroup> groups;
 
-    /** The default group of the project. */
+    /**
+     * The default group of the project.
+     */
     @OneToOne
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
     @JsonIgnore
     private SymbolGroup defaultGroup;
 
-    /** The next id for a group in the project. */
+    /**
+     * The next id for a group in the project.
+     */
     @JsonIgnore
     private Long nextGroupId;
 
-    /** The symbols used to test. */
+    /**
+     * The symbols used to test.
+     */
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
     @JsonProperty("symbols")
     private Set<Symbol> symbols;
 
-    /** The next id for a symbol in this project. */
+    /**
+     * The next id for a symbol in this project.
+     */
     @JsonIgnore
     private Long nextSymbolId;
 
-    /** The results of the test for the project. */
+    /**
+     * The results of the test for the project.
+     */
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<LearnerResult> testResults;
 
-    /** The counters of the project. */
+    /**
+     * The counters of the project.
+     */
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.REMOVE })
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<Counter> counters;
 
@@ -104,9 +126,8 @@ public class Project implements Serializable {
 
     /**
      * Constructor which set the ID.
-     * 
-     * @param projectId
-     *            The ID.
+     *
+     * @param projectId The ID.
      */
     public Project(Long projectId) {
         this.id = projectId;
@@ -118,7 +139,7 @@ public class Project implements Serializable {
 
     /**
      * Get the ID of the project.
-     * 
+     *
      * @return The ID.
      */
     public Long getId() {
@@ -127,9 +148,8 @@ public class Project implements Serializable {
 
     /**
      * Set the ID of this project.
-     * 
-     * @param id
-     *            The new ID.
+     *
+     * @param id The new ID.
      */
     public void setId(Long id) {
         this.id = id;
@@ -137,7 +157,7 @@ public class Project implements Serializable {
 
     /**
      * Get the name of this project.
-     * 
+     *
      * @return The name.
      */
     public String getName() {
@@ -146,9 +166,8 @@ public class Project implements Serializable {
 
     /**
      * Set a new name for the project. The name must be there and be unique.
-     * 
-     * @param name
-     *            The new name.
+     *
+     * @param name The new name.
      */
     public void setName(String name) {
         this.name = name;
@@ -166,8 +185,7 @@ public class Project implements Serializable {
     /**
      * Set the base URL of the Project.
      *
-     * @param baseUrl
-     *            The new base URL.
+     * @param baseUrl The new base URL.
      */
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
@@ -185,8 +203,7 @@ public class Project implements Serializable {
     /**
      * Set the description of this project.
      *
-     * @param description
-     *            The new description.
+     * @param description The new description.
      */
     public void setDescription(String description) {
         this.description = description;
@@ -205,8 +222,7 @@ public class Project implements Serializable {
     /**
      * Set a new set of groups that are used in the project.
      *
-     * @param groups
-     *         The new set of groups.
+     * @param groups The new set of groups.
      */
     public void setGroups(Set<SymbolGroup> groups) {
         this.groups = groups;
@@ -215,8 +231,7 @@ public class Project implements Serializable {
     /**
      * Add one group to the project.
      *
-     * @param group
-     *         The group to add.
+     * @param group The group to add.
      */
     public void addGroup(SymbolGroup group) {
         this.groups.add(group);
@@ -235,8 +250,7 @@ public class Project implements Serializable {
     /**
      * Set a new default group for the project..
      *
-     * @param defaultGroup
-     *         The new default group.
+     * @param defaultGroup The new default group.
      */
     public void setDefaultGroup(SymbolGroup defaultGroup) {
         if (defaultGroup == null) {
@@ -262,8 +276,7 @@ public class Project implements Serializable {
     /**
      * Set a new ID that a group in the project should have.
      *
-     * @param nextGroupId
-     *         The new next group id.
+     * @param nextGroupId The new next group id.
      */
     public void setNextGroupId(Long nextGroupId) {
         this.nextGroupId = nextGroupId;
@@ -271,7 +284,7 @@ public class Project implements Serializable {
 
     /**
      * Get the set of symbols in the project.
-     * 
+     *
      * @return The Set of Symbols.
      */
     @JsonIgnore
@@ -280,18 +293,41 @@ public class Project implements Serializable {
     }
 
     /**
-     * @param symbols
-     *            the symbols to set
+     * @param symbols the symbols to set
      */
     public void setSymbols(Set<Symbol> symbols) {
         this.symbols = symbols;
+    }
+
+    @JsonIgnore
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    @JsonProperty("user")
+    public Long getUserId() {
+        if (user == null) {
+            return 0L;
+        } else {
+            return user.getId();
+        }
+    }
+
+    @JsonProperty("user")
+    public void setUserId(Long userId) {
+        user = new User(userId);
     }
 
     /**
      * Add a Symbol to the Project and set the Project in the Symbol.
      * This only establishes the bidirectional relation does nothing else,
      * e.g. it does not take care of the right id.
-     * 
+     *
      * @param symbol The Symbol to add.
      */
     public void addSymbol(Symbol symbol) {
@@ -301,7 +337,7 @@ public class Project implements Serializable {
 
     /**
      * Get the amount of Symbols related to this project.
-     * 
+     *
      * @return The current count of Symbols. If the project has no symbols (== null) 0 is returned.
      */
     @JsonProperty("symbolAmount")
@@ -325,8 +361,7 @@ public class Project implements Serializable {
     /**
      * Set the ID the next symbol in this project should have.
      *
-     * @param nextSymbolId
-     *         The next free id for a symbol.
+     * @param nextSymbolId The next free id for a symbol.
      */
     public void setNextSymbolId(Long nextSymbolId) {
         this.nextSymbolId = nextSymbolId;
@@ -345,8 +380,7 @@ public class Project implements Serializable {
     /**
      * Set the related test results for this project.
      *
-     * @param testResults
-     *         The test result of the project.
+     * @param testResults The test result of the project.
      */
     @JsonIgnore
     public void setTestResults(Set<LearnerResult> testResults) {

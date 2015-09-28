@@ -1,10 +1,6 @@
 package de.learnlib.alex.core.dao;
 
-import de.learnlib.alex.core.entities.IdRevisionPair;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.SymbolGroup;
-import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.core.entities.*;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
@@ -62,12 +58,13 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public List<SymbolGroup> getAll(long projectId, EmbeddableFields... embedFields) throws NotFoundException {
+    public List<SymbolGroup> getAll(long userId, long projectId, EmbeddableFields... embedFields) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         Project project = (Project) session.load(Project.class, projectId);
+        User user = (User) session.load(User.class, userId);
 
         if (project == null) {
             HibernateUtil.rollbackTransaction();
@@ -76,10 +73,11 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         List<SymbolGroup> resultList = session.createCriteria(SymbolGroup.class)
                                                 .add(Restrictions.eq("project", project))
+                                                .add(Restrictions.eq("user", user))
                                                 .list();
 
         for (SymbolGroup group : resultList) {
-            initLazyRelations(session, group, embedFields);
+            initLazyRelations(session, user, group, embedFields);
         }
 
         HibernateUtil.commitTransaction();
@@ -87,7 +85,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public SymbolGroup get(long projectId, Long groupId, EmbeddableFields... embedFields)
+    public SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields)
             throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
@@ -105,7 +103,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                              + " in the project " + projectId + ".");
         }
 
-        initLazyRelations(session, result, embedFields);
+        initLazyRelations(session, user, result, embedFields);
 
         HibernateUtil.commitTransaction();
         return result;
@@ -136,8 +134,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public void delete(long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
-        SymbolGroup group = get(projectId, groupId, EmbeddableFields.ALL);
+    public void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
+        SymbolGroup group = get(user, projectId, groupId, EmbeddableFields.ALL);
 
         // start session
         Session session = HibernateUtil.getSession();
@@ -172,7 +170,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         }
     }
 
-    private void initLazyRelations(Session session, SymbolGroup group, EmbeddableFields... embedFields) {
+    private void initLazyRelations(Session session, User user, SymbolGroup group, EmbeddableFields... embedFields) {
         Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
         if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
@@ -184,7 +182,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                                                                     group.getProjectId(),
                                                                                     group.getId(),
                                                                                     SymbolVisibilityLevel.ALL);
-                List<Symbol> symbols = symbolDAO.getAll(session, group.getProjectId(), idRevisionPairs);
+                List<Symbol> symbols = symbolDAO.getAll(session, user, group.getProjectId(), idRevisionPairs);
                 group.setSymbols(new HashSet<>(symbols));
             } catch (NotFoundException e) {
                 group.setSymbols(null);

@@ -1,12 +1,7 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.actions.ExecuteSymbolAction;
-import de.learnlib.alex.core.entities.IdRevisionPair;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.SymbolAction;
-import de.learnlib.alex.core.entities.SymbolGroup;
-import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.core.entities.*;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Hibernate;
@@ -135,19 +130,19 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol> getAll(Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException {
+    public List<Symbol> getAll(User user, Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        List<Symbol> result = getAll(session, projectId, idRevPairs);
+        List<Symbol> result = getAll(session, user, projectId, idRevPairs);
 
         // done
         HibernateUtil.commitTransaction();
         return result;
     }
 
-    List<Symbol> getAll(Session session, Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException {
+    List<Symbol> getAll(Session session, User user, Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException {
         // no DB interaction if no symbols are requested
         if (idRevPairs.isEmpty()) {
             return new LinkedList<>();
@@ -160,6 +155,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
         DetachedCriteria symbolIds = DetachedCriteria.forClass(Symbol.class)
                                                         .add(Restrictions.eq("project.id", projectId))
+                                                        .add(Restrictions.eq("user", user))
                                                         .add(symbolIdRestrictions)
                                                         .setProjection(Projections.property("symbolId"));
 
@@ -181,12 +177,12 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId) throws NotFoundException {
-        return getAllWithLatestRevision(projectId, groupId, SymbolVisibilityLevel.VISIBLE);
+    public List<Symbol> getAllWithLatestRevision(User user, Long projectId, Long groupId) throws NotFoundException {
+        return getAllWithLatestRevision(user, projectId, groupId, SymbolVisibilityLevel.VISIBLE);
     }
 
     @Override
-    public List<Symbol> getAllWithLatestRevision(Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel)
+    public List<Symbol> getAllWithLatestRevision(User user, Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel)
             throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
@@ -199,7 +195,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         if (idRevPairs.isEmpty()) {
             return new LinkedList<>();
         }
-        return getAll(projectId, idRevPairs);
+        return getAll(user, projectId, idRevPairs);
     }
 
     List<IdRevisionPair> getIdRevisionPairs(Session session,
@@ -235,25 +231,25 @@ public class SymbolDAOImpl implements SymbolDAO {
 
 
     @Override
-    public List<Symbol> getByIdsWithLatestRevision(Long projectId, Long... ids) throws NotFoundException {
-        return getByIdsWithLatestRevision(projectId, SymbolVisibilityLevel.ALL, ids);
+    public List<Symbol> getByIdsWithLatestRevision(User user, Long projectId, Long... ids) throws NotFoundException {
+        return getByIdsWithLatestRevision(user, projectId, SymbolVisibilityLevel.ALL, ids);
     }
 
     @Override
-    public List<Symbol> getByIdsWithLatestRevision(Long projectId, SymbolVisibilityLevel visibilityLevel,
+    public List<Symbol> getByIdsWithLatestRevision(User user, Long projectId, SymbolVisibilityLevel visibilityLevel,
                                                    Long... ids) throws NotFoundException {
         try {
             // start session
             Session session = HibernateUtil.getSession();
             HibernateUtil.beginTransaction();
 
-            return getByIdsWithLatestRevision(session, projectId, visibilityLevel, ids);
+            return getByIdsWithLatestRevision(session, user, projectId, visibilityLevel, ids);
         } finally {
             HibernateUtil.commitTransaction();
         }
     }
 
-    public List<Symbol> getByIdsWithLatestRevision(Session session, Long projectId,
+    public List<Symbol> getByIdsWithLatestRevision(Session session, User user, Long projectId,
                                                    SymbolVisibilityLevel visibilityLevel, Long... ids)
             throws NotFoundException {
         // get latest revision
@@ -274,11 +270,11 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new NotFoundException("Could not find symbols in the project " + projectId
                                                      + " with the ids " + Arrays.toString(ids) + ".");
         }
-        return getAll(session, projectId, idRevPairs);
+        return getAll(session, user, projectId, idRevPairs);
     }
 
     @Override
-    public List<Symbol> getAllWithLatestRevision(Long projectId, SymbolVisibilityLevel visibilityLevel)
+    public List<Symbol> getAllWithLatestRevision(User user, Long projectId, SymbolVisibilityLevel visibilityLevel)
             throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
@@ -292,6 +288,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         @SuppressWarnings("unchecked") // should return a list of Symbols
         List<Long> ids = session.createCriteria(Symbol.class)
                                     .add(Restrictions.eq("project", project))
+                                    .add(Restrictions.eq("user", user))
                                     .setProjection(Projections.property("idRevisionPair.id"))
                                     .list();
 
@@ -300,14 +297,14 @@ public class SymbolDAOImpl implements SymbolDAO {
         if (ids.isEmpty()) {
             return new LinkedList<>();
         }
-        return getByIdsWithLatestRevision(projectId, visibilityLevel, ids.toArray(new Long[ids.size()]));
+        return getByIdsWithLatestRevision(user, projectId, visibilityLevel, ids.toArray(new Long[ids.size()]));
     }
 
     @Override
-    public Symbol get(Long projectId, IdRevisionPair idRevisionPair) throws NotFoundException {
+    public Symbol get(User user, Long projectId, IdRevisionPair idRevisionPair) throws NotFoundException {
         List<IdRevisionPair> idRevisionList =  new LinkedList<>();
         idRevisionList.add(idRevisionPair);
-        List<Symbol> resultList = getAll(projectId, idRevisionList);
+        List<Symbol> resultList = getAll(user, projectId, idRevisionList);
 
         if (resultList.isEmpty()) {
             throw new NotFoundException("Could not find a symbol in the project " + projectId
@@ -317,24 +314,24 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public Symbol get(Long projectId, Long id, Long revision) throws NotFoundException {
+    public Symbol get(User user, Long projectId, Long id, Long revision) throws NotFoundException {
         IdRevisionPair idRevisionPair = new IdRevisionPair(id, revision);
-        return get(projectId, idRevisionPair);
+        return get(user, projectId, idRevisionPair);
     }
 
     @Override
-    public Symbol getWithLatestRevision(Long projectId, Long id) throws NotFoundException {
+    public Symbol getWithLatestRevision(User user, Long projectId, Long id) throws NotFoundException {
         HibernateUtil.beginTransaction();
         Session session = HibernateUtil.getSession();
 
-        Symbol result = getWithLatestRevision(session, projectId, id);
+        Symbol result = getWithLatestRevision(session, user, projectId, id);
 
         HibernateUtil.commitTransaction();
         return result;
     }
 
-    private Symbol getWithLatestRevision(Session session, Long projectId, Long id) throws NotFoundException {
-        List<Symbol> resultList = getByIdsWithLatestRevision(session, projectId, SymbolVisibilityLevel.ALL, id);
+    private Symbol getWithLatestRevision(Session session, User user, Long projectId, Long id) throws NotFoundException {
+        List<Symbol> resultList = getByIdsWithLatestRevision(session, user, projectId, SymbolVisibilityLevel.ALL, id);
 
         if (resultList.isEmpty()) {
             throw new NotFoundException("Could not find symbols in the project " + projectId
@@ -344,7 +341,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol> getWithAllRevisions(Long projectId, Long id) throws NotFoundException {
+    public List<Symbol> getWithAllRevisions(User user, Long projectId, Long id) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -352,6 +349,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         @SuppressWarnings("unchecked") // should return a list of revisions (type: Long)
         List<Long> revisions = session.createCriteria(Symbol.class)
                                         .add(Restrictions.eq("project.id", projectId))
+                                        .add(Restrictions.eq("user", user))
                                         .add(Restrictions.eq("idRevisionPair.id", id))
                                         .setProjection(Projections.property("idRevisionPair.revision"))
                                         .addOrder(Order.asc("idRevisionPair.revision"))
@@ -367,7 +365,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         List<IdRevisionPair> idRevisionList =  new LinkedList<>();
         revisions.forEach(revision -> idRevisionList.add(new IdRevisionPair(id, revision)));
 
-        return getAll(projectId, idRevisionList);
+        return getAll(user, projectId, idRevisionList);
     }
 
     @Override
@@ -454,7 +452,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         Symbol symbolInDB;
         try {
-            symbolInDB = getWithLatestRevision(session, symbol.getProjectId(), symbol.getId());
+            symbolInDB = getWithLatestRevision(session, symbol.getUser(), symbol.getProjectId(), symbol.getId());
         } catch (NotFoundException e) {
             throw new NotFoundException("Update failed: Could not find the symbols with the id " + symbol.getId()
                                                 + " in the project " + symbol.getProjectId() + ".");
@@ -655,8 +653,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         Junction restrictions = Restrictions.conjunction()
                                     .add(Restrictions.eq("project", symbol.getProject()))
                                     .add(Restrictions.disjunction()
-                                                 .add(Restrictions.eq("name", symbol.getName()))
-                                                 .add(Restrictions.eq("abbreviation", symbol.getAbbreviation())));
+                                            .add(Restrictions.eq("name", symbol.getName()))
+                                            .add(Restrictions.eq("abbreviation", symbol.getAbbreviation())));
         if (symbol.getId() != null) {
             restrictions = restrictions.add(Restrictions.ne("idRevisionPair.id", symbol.getId()));
         }

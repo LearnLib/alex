@@ -5,49 +5,18 @@
         .module('ALEX.core')
         .controller('HomeController', HomeController);
 
-    HomeController.$inject = ['$scope', '$state', 'ProjectResource', 'SessionService'];
+    HomeController.$inject = ['$state', 'SessionService'];
 
-    /**
-     * The controller for the landing page. It lists the projects.
-     *
-     * Template: 'views/home.html'
-     *
-     * @param $scope - The controllers scope
-     * @param $state - The ui.router $state service
-     * @param ProjectResource - The API resource for projects
-     * @param Session - The SessionService
-     * @constructor
-     */
-    function HomeController($scope, $state, ProjectResource, Session) {
+    function HomeController($state, Session) {
+        var user = Session.user.get();
+        var project = Session.project.get();
 
-        /**
-         * The list of all created projects
-         * @type {Project[]}
-         */
-        $scope.projects = [];
-
-        (function init() {
-
-            // redirect to the project dash page if one is open
-            if (Session.project.get() !== null) {
-                $state.go('project');
+        if (user !== null) {
+            if (project !== null) {
+                $state.go('dashboard');
+            } else {
+                $state.go('projects');
             }
-
-            // get all projects from the server
-            ProjectResource.getAll()
-                .then(function (projects) {
-                    $scope.projects = projects;
-                });
-        }());
-
-        /**
-         * Opens a project by saving it into the session and redirect to the projects dashboard.
-         *
-         * @param {Project} project - The project that should be saved in the sessionStorage
-         */
-        $scope.openProject = function (project) {
-            Session.project.save(project);
-            $state.go('project');
         }
     }
 }());

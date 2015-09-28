@@ -49,6 +49,10 @@ public class SymbolGroup implements Serializable {
     @Column(nullable = false)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JsonIgnore
+    private User user;
+
     /**
      * The name of the group.
      * @requiredField
@@ -87,6 +91,30 @@ public class SymbolGroup implements Serializable {
      */
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    @JsonIgnore
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    @JsonProperty("user")
+    public Long getUserId() {
+        if (user == null) {
+            return 0L;
+        } else {
+            return user.getId();
+        }
+    }
+
+    @JsonProperty("user")
+    public void setUserId(Long userId) {
+        user = new User(userId);
     }
 
     /**

@@ -3,17 +3,11 @@ package de.learnlib.alex.rest;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.entities.IdRevisionPair;
-import de.learnlib.alex.core.entities.LearnerConfiguration;
-import de.learnlib.alex.core.entities.LearnerResult;
-import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
-import de.learnlib.alex.core.entities.LearnerStatus;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.SymbolSet;
+import de.learnlib.alex.core.entities.*;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
@@ -26,9 +20,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,6 +54,10 @@ public class LearnerResource {
     @Inject
     private Learner learner;
 
+    /** The security context containing the user of the request */
+    @Context
+    SecurityContext securityContext;
+
     /**
      * Start the learning.
      *
@@ -76,18 +76,20 @@ public class LearnerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         LearnerStatus status = new LearnerStatus(learner);
         try {
             Project project = projectDAO.getByID(projectId, ProjectDAO.EmbeddableFields.ALL);
 
             try {
-                Symbol resetSymbol = symbolDAO.get(projectId, configuration.getResetSymbolAsIdRevisionPair());
+                Symbol resetSymbol = symbolDAO.get(user, projectId, configuration.getResetSymbolAsIdRevisionPair());
                 configuration.setResetSymbol(resetSymbol);
             } catch (NotFoundException e) { // Extra exception to emphasize that this is the reset symbol.
                 throw new NotFoundException("Could not find the reset symbol!", e);
             }
 
-            List<Symbol> symbols = symbolDAO.getAll(projectId, configuration.getSymbolsAsIdRevisionPairs());
+            List<Symbol> symbols = symbolDAO.getAll(user, projectId, configuration.getSymbolsAsIdRevisionPairs());
             configuration.setSymbols(symbols);
 
             learner.start(project, configuration);
@@ -230,6 +232,8 @@ public class LearnerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
             Project project = projectDAO.getByID(projectId);
 
@@ -237,7 +241,7 @@ public class LearnerResource {
             if (resetSymbolAsIdRevisionPair == null) {
                 throw new NotFoundException("No reset symbol specified!");
             }
-            Symbol resetSymbol = symbolDAO.get(projectId, resetSymbolAsIdRevisionPair);
+            Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsIdRevisionPair);
             symbolSet.setResetSymbol(resetSymbol);
 
             List<Symbol> symbols = loadSymbols(projectId, symbolSet.getSymbolsAsIdRevisionPairs());
@@ -255,10 +259,12 @@ public class LearnerResource {
 
     // load all from SymbolDAO always orders the Symbols by ID
     private List<Symbol> loadSymbols(Long projectId, List<IdRevisionPair> idRevisionPairs) throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         List<Symbol> symbols = new LinkedList<>();
 
         for (IdRevisionPair pair : idRevisionPairs) {
-            Symbol symbol = symbolDAO.get(projectId, pair);
+            Symbol symbol = symbolDAO.get(user, projectId, pair);
             symbols.add(symbol);
         }
 

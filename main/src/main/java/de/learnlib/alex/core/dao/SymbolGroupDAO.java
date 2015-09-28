@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
@@ -51,6 +52,8 @@ public interface SymbolGroupDAO {
     /**
      * Get a list of all groups withing one project.
      *
+     * @param userId
+     *         The id of the owner of the group
      * @param projectId
      *         The project the groups should belong to.
      * @param embedFields
@@ -59,11 +62,12 @@ public interface SymbolGroupDAO {
      * @throws NotFoundException
      *         If no project with the given id was found.
      */
-    List<SymbolGroup> getAll(long projectId, EmbeddableFields... embedFields) throws NotFoundException;
+    List<SymbolGroup> getAll(long userId, long projectId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Get one group.
      *
+     * @param user The owner of the group
      * @param projectId
      *         The project the group belongs to.
      * @param groupId
@@ -74,7 +78,7 @@ public interface SymbolGroupDAO {
      * @throws NotFoundException
      *         If the Project or the Group could not be found.
      */
-    SymbolGroup get(long projectId, Long groupId, EmbeddableFields... embedFields) throws NotFoundException;
+    SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Update a group.
@@ -91,6 +95,7 @@ public interface SymbolGroupDAO {
     /**
      * Delete a group.
      *
+     * @param user The owner of the group
      * @param projectId
      *         The project the group belongs to.
      * @param groupId
@@ -100,6 +105,6 @@ public interface SymbolGroupDAO {
      * @throws NotFoundException
      *         If The project or group could not be found.
      */
-    void delete(long projectId, Long groupId) throws IllegalArgumentException, NotFoundException;
+    void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException;
 
 }

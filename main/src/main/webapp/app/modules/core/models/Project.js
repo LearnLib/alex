@@ -43,7 +43,8 @@
                 data.description
             ), {
                 id: data.id,
-                groups: data.groups
+                groups: data.groups,
+                user: data.user
             });
         };
 

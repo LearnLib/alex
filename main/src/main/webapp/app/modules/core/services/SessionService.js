@@ -14,15 +14,20 @@
      *
      * @param $rootScope
      * @param Project
-     * @return {{project: {get: get, save: save, remove: remove}}}
+     * @returns {{project: {get: getProject, save: saveProject, remove: removeProject}, user: {get: getUser, save: saveUser, remove: removeUser}}}
      * @constructor
      */
     function SessionService($rootScope, Project) {
         return {
             project: {
-                get: get,
-                save: save,
-                remove: remove
+                get: getProject,
+                save: saveProject,
+                remove: removeProject
+            },
+            user: {
+                get: getUser,
+                save: saveUser,
+                remove: removeUser
             }
         };
 
@@ -31,7 +36,7 @@
          *
          * @return {Project}
          */
-        function get() {
+        function getProject() {
             var project = sessionStorage.getItem('project');
             return project === null ? null : Project.build(angular.fromJson(project));
         }
@@ -41,17 +46,34 @@
          *
          * @param project
          */
-        function save(project) {
+        function saveProject(project) {
             sessionStorage.setItem('project', angular.toJson(project));
-            $rootScope.$broadcast('project.opened');
+            $rootScope.$emit('project:opened', project);
         }
 
         /**
          * Remove the stored project from session storage an emit the 'project.closed' event
          */
-        function remove() {
+        function removeProject() {
             sessionStorage.removeItem('project');
-            $rootScope.$broadcast('project.closed');
+            $rootScope.$emit('project:closed');
+        }
+
+
+        function getUser() {
+            var user = sessionStorage.getItem('user');
+            return user === null ? null : angular.fromJson(user);
+        }
+
+        function saveUser(user) {
+            sessionStorage.setItem('user', angular.toJson(user));
+            $rootScope.$emit('user:loggedIn', user);
+        }
+
+        function removeUser() {
+            sessionStorage.removeItem('user');
+            sessionStorage.removeItem('jwt');
+            $rootScope.$emit('user:loggedOut');
         }
     }
 }());

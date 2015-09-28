@@ -73,7 +73,8 @@ module.exports = function (grunt) {
                         'bower_components/n3-line-chart/build/line-chart.min.js',
                         'bower_components/Sortable/Sortable.min.js',
                         'bower_components/Sortable/ng-sortable.js',
-                        'bower_components/ng-file-upload/ng-file-upload.min.js'
+                        'bower_components/ng-file-upload/ng-file-upload.min.js',
+                        'bower_components/angular-jwt/dist/angular-jwt.min.js'
                     ],
                     dest: 'app/libs.min.js'
                 }
