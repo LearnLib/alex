@@ -4,7 +4,7 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.exceptions.NotFoundException;
 
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 import java.util.List;
 
 /**

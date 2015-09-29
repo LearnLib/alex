@@ -62,7 +62,7 @@ public class SymbolGroup implements Serializable {
 
     /** The Symbols manged by this group. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE })
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.DELETE })
     private Set<Symbol> symbols;
 
     /**

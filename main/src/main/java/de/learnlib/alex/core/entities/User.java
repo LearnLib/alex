@@ -3,10 +3,14 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * The model for a user
@@ -41,6 +45,18 @@ public class User implements Serializable {
     private String salt;
 
     private UserRole role;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<Project> projects;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<SymbolGroup> symbolGroups;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<Symbol> symbols;
 
     public User() {
         role = UserRole.REGISTERED;
@@ -126,5 +142,34 @@ public class User implements Serializable {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
+
+    public Set<SymbolGroup> getSymbolGroups() {
+        return symbolGroups;
+    }
+
+    public void setSymbolGroups(Set<SymbolGroup> symbolGroups) {
+        this.symbolGroups = symbolGroups;
+    }
+
+    public Set<Symbol> getSymbols() {
+        return symbols;
+    }
+
+    public void setSymbols(Set<Symbol> symbols) {
+        this.symbols = symbols;
+    }
+
+    @Override
+    public String toString() {
+        return "User [" + id + "]: " + email;
     }
 }

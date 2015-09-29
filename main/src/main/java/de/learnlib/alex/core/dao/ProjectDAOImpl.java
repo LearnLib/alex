@@ -34,6 +34,10 @@ public class ProjectDAOImpl implements ProjectDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
+        System.out.println("===============================");
+        System.out.println("Project User: " + project.getUser() + " (" + project.getUserId() + ")");
+        System.out.println("===============================");
+
         try {
 
             // TODO: fix this branch with multi user
@@ -63,6 +67,7 @@ public class ProjectDAOImpl implements ProjectDAO {
                     i++;
                 }
             } else {
+                System.out.println("#### creating Default Group");
                 SymbolGroup defaultGroup = new SymbolGroup();
                 defaultGroup.setName("Default Group");
                 defaultGroup.setProject(project);
@@ -75,6 +80,7 @@ public class ProjectDAOImpl implements ProjectDAO {
                     symbol.setId(nextSymbolId);
                     symbol.setRevision(0L);
                     symbol.setProject(project);
+                    symbol.setUser(project.getUser());
                     if (symbol.getGroup() == null) {
                         symbol.setGroup(defaultGroup);
                     }
@@ -89,6 +95,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         } catch (javax.validation.ConstraintViolationException
                 | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
+            e.printStackTrace();
             throw new javax.validation.ValidationException(
                     "The Project was not created because it did not pass the validation!", e);
         }

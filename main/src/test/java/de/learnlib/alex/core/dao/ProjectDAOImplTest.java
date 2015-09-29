@@ -12,7 +12,9 @@ import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.validation.ValidationException;
@@ -30,15 +32,25 @@ public class ProjectDAOImplTest {
     private static final int PROJECT_COUNT = 5;
     private static final String BASE_URL = "http://example.com";
 
-    private static ProjectDAO dao = new ProjectDAOImpl();
+    private static UserDAO userDAO;
+    private static ProjectDAO projectDAO;
 
-    private User user;
+    private static User user;
     private Project project;
+
+    @BeforeClass
+    public static void beforeClass() {
+        userDAO = new UserDAOImpl();
+        projectDAO = new ProjectDAOImpl();
+
+        user = new User();
+        user.setEmail("ProjectDAOImplTest@alex-tests.example");
+        user.setEncryptedPassword("alex");
+        userDAO.create(user);
+    }
 
     @Before
     public void setUp() {
-        user = new User();
-
         project = new Project();
         project.setName("ProjectDAOImplTest Project ");
         project.setBaseUrl(BASE_URL);
@@ -51,23 +63,28 @@ public class ProjectDAOImplTest {
         symbol.addAction(new WaitAction());
         project.addSymbol(symbol);
 
-        dao.create(project);
+        projectDAO.create(project);
     }
 
     @After
     public void tearDown() {
-        // at the end make sure that the project is removed from the DB
+        // at the end make sure that the user & project is removed from the DB
         try {
-            dao.delete(project.getId());
+            projectDAO.delete(project.getId());
         } catch (NotFoundException e) {
             // nothing to worry about
             System.out.println("ProjectDAOImplTest.tearDown(): project deletion failed.");
         }
     }
 
+    @AfterClass
+    public static void afterClass() throws NotFoundException {
+        userDAO.delete(user.getId());
+    }
+
     @Test
     public void shouldCreateValidProject() throws NotFoundException {
-        Project p2 = dao.getByID(project.getId(), ProjectDAO.EmbeddableFields.ALL);
+        Project p2 = projectDAO.getByID(project.getId(), ProjectDAO.EmbeddableFields.ALL);
 
         assertNotNull(p2);
         assertEquals(project.getName(), p2.getName());
@@ -85,7 +102,7 @@ public class ProjectDAOImplTest {
         Project p2 = new Project();
         project.setBaseUrl(BASE_URL);
 
-        dao.create(p2); // should fail
+        projectDAO.create(p2); // should fail
     }
 
     @Test(expected = ValidationException.class)
@@ -93,7 +110,7 @@ public class ProjectDAOImplTest {
         Project p2 = new Project();
         project.setName("Test Project - Without Base URL");
 
-        dao.create(p2); // should fail
+        projectDAO.create(p2); // should fail
     }
 
     @Test(expected = ValidationException.class)
@@ -101,7 +118,7 @@ public class ProjectDAOImplTest {
         Project p2 = new Project();
         p2.setName(project.getName());
 
-        dao.create(p2); // should fail
+        projectDAO.create(p2); // should fail
     }
 
     @Test
@@ -111,11 +128,12 @@ public class ProjectDAOImplTest {
             Project tmpProject = new Project();
             tmpProject.setName("Project No. " + i);
             tmpProject.setBaseUrl(BASE_URL);
-            dao.create(tmpProject);
+            tmpProject.setUser(user);
+            projectDAO.create(tmpProject);
             projects.add(tmpProject);
         }
 
-        List<Project> projectsFromDB = dao.getAll(user, ProjectDAO.EmbeddableFields.ALL);
+        List<Project> projectsFromDB = projectDAO.getAll(user, ProjectDAO.EmbeddableFields.ALL);
 
         for (Project x : projects) {
             assertTrue(projectsFromDB.contains(x));
@@ -133,9 +151,9 @@ public class ProjectDAOImplTest {
     @Test
     public void shouldUpdateValidProject() throws NotFoundException {
         project.setName("An other Test Project");
-        dao.update(project);
+        projectDAO.update(project);
 
-        Project project2 = dao.getByID(project.getId(), ProjectDAO.EmbeddableFields.ALL);
+        Project project2 = projectDAO.getByID(project.getId(), ProjectDAO.EmbeddableFields.ALL);
         assertEquals("An other Test Project", project2.getName());
         assertEquals(project.getSymbolsSize(), project2.getSymbolsSize());
         assertEquals(project.getNextSymbolId(), project2.getNextSymbolId());
@@ -146,7 +164,7 @@ public class ProjectDAOImplTest {
         project.setId(-1L);
         project.setName("An other Test Project");
 
-        dao.update(project); // should fail
+        projectDAO.update(project); // should fail
     }
 
     @Test(expected = ValidationException.class)
@@ -154,11 +172,11 @@ public class ProjectDAOImplTest {
         Project p2 = new Project();
         p2.setName("Test Project - Update Without Name");
         p2.setBaseUrl(BASE_URL);
-        dao.create(p2);
+        projectDAO.create(p2);
 
         p2.setName("");
 
-        dao.update(p2); // should fail
+        projectDAO.update(p2); // should fail
     }
 
     @Test(expected = ValidationException.class)
@@ -166,11 +184,11 @@ public class ProjectDAOImplTest {
         Project p2 = new Project();
         p2.setName("Test Project - Update Without Base URL");
         p2.setBaseUrl(BASE_URL);
-        dao.create(p2);
+        projectDAO.create(p2);
 
         p2.setBaseUrl("");
 
-        dao.update(p2); // should fail
+        projectDAO.update(p2); // should fail
     }
 
     @Test(expected = ValidationException.class)
@@ -178,11 +196,11 @@ public class ProjectDAOImplTest {
         Project p2 = new Project();
         p2.setName("Test Project - Update Without Unique Name");
         p2.setBaseUrl(BASE_URL);
-        dao.create(p2);
+        projectDAO.create(p2);
 
         p2.setName(project.getName());
 
-        dao.update(p2); // should fail
+        projectDAO.update(p2); // should fail
     }
 
     @Test
@@ -199,11 +217,11 @@ public class ProjectDAOImplTest {
         assertTrue(symbols.size() > 0);
 
         // delete the project
-        dao.delete(project.getId());
+        projectDAO.delete(project.getId());
 
         // test if the project was removed
         try {
-            dao.getByID(project.getId());
+            projectDAO.getByID(project.getId());
             fail("Project was not relay deleted!");
         } catch (NotFoundException ignored) {
             // success
@@ -233,7 +251,7 @@ public class ProjectDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void shouldNotDeleteInvalidID() throws NotFoundException {
-        dao.delete(-1);
+        projectDAO.delete(-1);
     }
 
 }

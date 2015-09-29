@@ -13,8 +13,6 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.lang.JoseException;
 
-import javax.xml.bind.ValidationException;
-
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
  */
@@ -64,7 +62,7 @@ public class ALEXApplication extends ResourceConfig {
 
                 userDAO.create(admin);
             }
-        } catch (JoseException | ValidationException e) {
+        } catch (JoseException e) {
             e.printStackTrace();
             System.exit(0);
         }
