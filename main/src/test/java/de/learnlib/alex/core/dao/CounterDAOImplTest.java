@@ -2,8 +2,10 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,24 +22,33 @@ public class CounterDAOImplTest {
     private static final Integer COUNTER_VALUE = 42;
     private static final int AMOUNT_OF_COUNTERS = 10;
 
+    private static UserDAO userDAO;
     private static ProjectDAO projectDAO;
     private static CounterDAO counterDAO;
 
+    private User user;
     private Project project;
     private Counter counter;
 
     @BeforeClass
     public static void beforeClass() {
+        userDAO = new UserDAOImpl();
         projectDAO = new ProjectDAOImpl();
         counterDAO = new CounterDAOImpl();
     }
 
     @Before
     public void setUp() {
+        user = new User();
+        user.setEmail("CounterDAOImplTest@alex.example");
+        user.setEncryptedPassword("alex");
+        userDAO.create(user);
+
         // create project
         project = new Project();
         project.setName("SymbolDAO - Test Project");
         project.setBaseUrl("http://example.com/");
+        project.setUser(user);
         projectDAO.create(project);
 
         counter = new Counter();
@@ -48,7 +59,7 @@ public class CounterDAOImplTest {
 
     @After
     public void tearDown() throws NotFoundException {
-        projectDAO.delete(project.getId());
+        userDAO.delete(user.getId());
     }
 
     @Test

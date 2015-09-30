@@ -44,6 +44,7 @@ import static org.mockito.Mockito.verify;
 
 public class SymbolResourceTest extends JerseyTest {
 
+    private static final long USER_TEST_ID = 8;
     private static final long PROJECT_TEST_ID = 10;
     private static final long SYMBOL_TEST_ID = 1;
     private static final long SYMBOL_TEST_REV = 3;
@@ -92,7 +93,7 @@ public class SymbolResourceTest extends JerseyTest {
         super.setUp();
 
         user = new User();
-        user.setId(PROJECT_TEST_ID);
+        user.setId(USER_TEST_ID);
         given(userDAO.getById(user.getId())).willReturn(user);
 
         project = new Project();
@@ -559,7 +560,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().post(null);
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO, never()).hide(eq(PROJECT_TEST_ID), any(Long[].class));
+        verify(symbolDAO, never()).hide(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(Long[].class));
     }
 
     @Test
@@ -568,7 +569,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().post(null);
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO, never()).hide(eq(PROJECT_TEST_ID), any(Long[].class));
+        verify(symbolDAO, never()).hide(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(Long[].class));
     }
 
     @Test
@@ -614,7 +615,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().post(null);
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO, never()).show(eq(PROJECT_TEST_ID), any(Long[].class));
+        verify(symbolDAO, never()).show(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(Long[].class));
     }
 
     @Test
@@ -623,7 +624,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().post(null);
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO, never()).show(eq(PROJECT_TEST_ID), any(Long[].class));
+        verify(symbolDAO, never()).show(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(Long[].class));
     }
 
 }

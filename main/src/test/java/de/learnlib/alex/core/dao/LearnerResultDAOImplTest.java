@@ -2,6 +2,7 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
@@ -12,6 +13,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,9 +35,11 @@ public class LearnerResultDAOImplTest {
 
     private static final int RESULTS_AMOUNT = 5;
 
+    private static UserDAO userDAO;
     private static ProjectDAO projectDAO;
     private static LearnerResultDAO learnerResultDAO;
 
+    private User user;
     private Project project;
     private LearnerResult learnerResult;
 
@@ -44,17 +48,24 @@ public class LearnerResultDAOImplTest {
 
     @BeforeClass
     public static void beforeClass() {
+        userDAO = new UserDAOImpl();
         projectDAO = new ProjectDAOImpl();
         learnerResultDAO = new LearnerResultDAOImpl();
     }
 
     @Before
     public void setUp() {
+        user = new User();
+        user.setEmail("LearnerResultDAOImplTest@alex-tests.example");
+        user.setEncryptedPassword("alex");
+        userDAO.create(user);
+
         ((LearnerResultDAOImpl) learnerResultDAO).setLearner(learner);
 
         project = new Project();
         project.setName("LearnerResultDAO - Test Project");
         project.setBaseUrl("http://example.com/");
+        project.setUser(user);
         projectDAO.create(project);
 
         learnerResult = new LearnerResult();
@@ -63,7 +74,7 @@ public class LearnerResultDAOImplTest {
 
     @After
     public void tearDown() throws NotFoundException {
-        projectDAO.delete(project.getId());
+        userDAO.delete(user.getId());
     }
 
     @Test

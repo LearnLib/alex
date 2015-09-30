@@ -35,22 +35,22 @@ public class ProjectDAOImplTest {
     private static UserDAO userDAO;
     private static ProjectDAO projectDAO;
 
-    private static User user;
+    private User user;
     private Project project;
 
     @BeforeClass
     public static void beforeClass() {
         userDAO = new UserDAOImpl();
         projectDAO = new ProjectDAOImpl();
-
-        user = new User();
-        user.setEmail("ProjectDAOImplTest@alex-tests.example");
-        user.setEncryptedPassword("alex");
-        userDAO.create(user);
     }
 
     @Before
     public void setUp() {
+        user = new User();
+        user.setEmail("ProjectDAOImplTest@alex-tests.example");
+        user.setEncryptedPassword("alex");
+        userDAO.create(user);
+
         project = new Project();
         project.setName("ProjectDAOImplTest Project ");
         project.setBaseUrl(BASE_URL);
@@ -67,19 +67,9 @@ public class ProjectDAOImplTest {
     }
 
     @After
-    public void tearDown() {
-        // at the end make sure that the user & project is removed from the DB
-        try {
-            projectDAO.delete(project.getId());
-        } catch (NotFoundException e) {
-            // nothing to worry about
-            System.out.println("ProjectDAOImplTest.tearDown(): project deletion failed.");
-        }
-    }
-
-    @AfterClass
-    public static void afterClass() throws NotFoundException {
-        userDAO.delete(user.getId());
+    public void tearDown() throws NotFoundException {
+        // at the end make sure that the user and all his stuff is removed from the DB
+       userDAO.delete(user.getId());
     }
 
     @Test

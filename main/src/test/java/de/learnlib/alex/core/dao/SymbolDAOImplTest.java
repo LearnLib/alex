@@ -20,6 +20,7 @@ import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,6 +39,7 @@ public class SymbolDAOImplTest {
 
     private static final int SYMBOL_COUNT = 5;
 
+    private static UserDAO userDAO;
     private static ProjectDAO projectDAO;
     private static SymbolGroupDAOImpl symbolGroupDAO;
     private static SymbolDAO symbolDAO;
@@ -51,6 +53,7 @@ public class SymbolDAOImplTest {
 
     @BeforeClass
     public static void beforeClass() {
+        userDAO = new UserDAOImpl();
         projectDAO = new ProjectDAOImpl();
         symbolGroupDAO = new SymbolGroupDAOImpl();
         symbolDAO = new SymbolDAOImpl();
@@ -59,6 +62,9 @@ public class SymbolDAOImplTest {
     @Before
     public void setUp() {
         user = new User();
+        user.setEmail("SymbolDAOIMplTest@alex.example");
+        user.setEncryptedPassword("alex");
+        userDAO.create(user);
 
         // create project
         project = new Project();
@@ -71,10 +77,12 @@ public class SymbolDAOImplTest {
         group = new SymbolGroup();
         group.setName("Symbol");
         group.setProject(project);
+        group.setUser(user);
         symbolGroupDAO.create(group);
 
         // create symbol 1
         symbol = new Symbol();
+        symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
         symbol.setName("SymbolDAOImplTest Symbol - Web ");
@@ -114,6 +122,7 @@ public class SymbolDAOImplTest {
         symbol2.setName("SymbolDAOImplTest Symbol - Web 2");
         symbol2.setAbbreviation("webtest2");
         symbol2.setProject(project);
+        symbol2.setUser(user);
 
         // create symbol list
         symbols = new LinkedList<>();
@@ -123,7 +132,7 @@ public class SymbolDAOImplTest {
 
     @After
     public void tearDown() throws NotFoundException {
-        projectDAO.delete(project.getId());
+        userDAO.delete(user.getId());
     }
 
     @Test
@@ -209,6 +218,7 @@ public class SymbolDAOImplTest {
         symbolDAO.create(symbol);
         Symbol symb2 = new Symbol();
         symb2.setProject(symbol.getProject());
+        symb2.setUser(user);
         symb2.setName(symbol.getName());
 
         symbolDAO.create(symb2); // should fail
@@ -326,6 +336,7 @@ public class SymbolDAOImplTest {
         Long idBefore = project.getNextSymbolId();
         Symbol invalidSymbol = new Symbol();
         invalidSymbol.setProject(symbol.getProject());
+        invalidSymbol.setUser(user);
         invalidSymbol.setName(symbol.getName());
         symbolDAO.create(invalidSymbol);
 
@@ -344,6 +355,7 @@ public class SymbolDAOImplTest {
     public void shouldBeAllowedToHaveTheSameNameAndAbbreviationInDifferentProjects() throws NotFoundException {
         Symbol symb2 = new Symbol();
         symb2.setProject(project);
+        symb2.setUser(user);
         symb2.setName(symbol.getName());
         symb2.setAbbreviation(symbol.getAbbreviation());
 
@@ -548,6 +560,7 @@ public class SymbolDAOImplTest {
         symbolDAO.create(symbol);
         Symbol symb2 = new Symbol();
         symb2.setProject(project);
+        symb2.setUser(user);
         symb2.setName("Test Symbol - Update Without Unique Name");
         symb2.setAbbreviation("upd_uni_na");
         symbolDAO.create(symb2);
@@ -687,6 +700,7 @@ public class SymbolDAOImplTest {
         for (int i = 0; i < SYMBOL_COUNT; i++) {
             Symbol s = new Symbol();
             s.setProject(project);
+            s.setUser(user);
             project.getSymbols().add(s);
             if (i % 2 == 0) {  // add every second symbol to another group
                 s.setGroup(group);
@@ -720,6 +734,7 @@ public class SymbolDAOImplTest {
         for (int i = 0; i < SYMBOL_COUNT; i++) {
             Symbol s = new Symbol();
             s.setProject(project);
+            s.setUser(user);
             project.getSymbols().add(s);
             if (i % 2 == 0) { // add every second symbol to another group
                 s.setGroup(group);

@@ -72,8 +72,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         }
 
         List<SymbolGroup> resultList = session.createCriteria(SymbolGroup.class)
-                                                .add(Restrictions.eq("project", project))
                                                 .add(Restrictions.eq("user", user))
+                                                .add(Restrictions.eq("project", project))
                                                 .list();
 
         for (SymbolGroup group : resultList) {
@@ -93,6 +93,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         Project project = (Project) session.load(Project.class, projectId);
         SymbolGroup result = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("user", user)
                                                     .using("project", project)
                                                     .using("id", groupId)
                                                     .load();
@@ -118,7 +119,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         checkConstrains(session, group); // will throw an ValidationException, if something is wrong
 
         SymbolGroup groupInDB = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
-                                                        .using("project", group.getProject())
+                                                        .using("user", group.getUser())
+                .using("project", group.getProject())
                                                         .using("id", group.getId())
                                                         .load();
         if (groupInDB == null) {
@@ -154,12 +156,14 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             session.update(symbol);
         }
 
+        group.setSymbols(null);
         session.delete(group);
         HibernateUtil.commitTransaction();
     }
 
     private void checkConstrains(Session session, SymbolGroup group) throws ValidationException {
         List<SymbolGroup> constrainsTestList = session.createCriteria(SymbolGroup.class)
+                                                        .add(Restrictions.eq("user", group.getUser()))
                                                         .add(Restrictions.eq("project", group.getProject()))
                                                         .add(Restrictions.eq("name", group.getName()))
                                                         .list();
@@ -179,6 +183,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
             try {
                 List<IdRevisionPair> idRevisionPairs = symbolDAO.getIdRevisionPairs(session,
+                                                                                    group.getUserId(),
                                                                                     group.getProjectId(),
                                                                                     group.getId(),
                                                                                     SymbolVisibilityLevel.ALL);

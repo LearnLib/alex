@@ -166,7 +166,7 @@ public interface SymbolDAO {
      * @throws NotFoundException
      *             When the Symbol was not found.
      */
-    void hide(Long projectId, Long... ids) throws NotFoundException;
+    void hide(Long userId, Long projectId, Long... ids) throws NotFoundException;
 
     /**
      * Revive a symbol from the hidden state.
@@ -178,6 +178,6 @@ public interface SymbolDAO {
      * @throws NotFoundException
      *             When the Symbol was not found.
      */
-    void show(Long projectId, Long... ids) throws NotFoundException;
+    void show(Long userId, Long projectId, Long... ids) throws NotFoundException;
 
 }

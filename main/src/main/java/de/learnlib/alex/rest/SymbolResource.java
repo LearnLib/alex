@@ -481,7 +481,7 @@ public class SymbolResource {
 
         try {
             Long[] idsArray = ids.toArray(new Long[ids.size()]);
-            symbolDAO.hide(projectId, idsArray);
+            symbolDAO.hide(user.getId(), projectId, idsArray);
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId, idsArray);
 
             return ResponseHelper.renderList(symbols, Status.OK);
@@ -535,7 +535,7 @@ public class SymbolResource {
 
         try {
             Long[] idsArray = ids.toArray(new Long[ids.size()]);
-            symbolDAO.show(projectId, idsArray);
+            symbolDAO.show(user.getId(), projectId, idsArray);
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId, idsArray);
 
             return ResponseHelper.renderList(symbols, Status.OK);

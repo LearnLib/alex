@@ -6,6 +6,7 @@ import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import static org.junit.Assert.fail;
 public class SymbolGroupDAOImplTest {
 
     private static final int AMOUNT_OF_GROUPS = 10;
+    private static UserDAO userDAO;
     private static ProjectDAO projectDAO;
     private static SymbolGroupDAO symbolGroupDAO;
     private static SymbolDAO symbolDAO;
@@ -33,6 +35,7 @@ public class SymbolGroupDAOImplTest {
 
     @BeforeClass
     public static void beforeClass() {
+        userDAO = new UserDAOImpl();
         projectDAO = new ProjectDAOImpl();
         symbolGroupDAO = new SymbolGroupDAOImpl();
         symbolDAO = new SymbolDAOImpl();
@@ -41,6 +44,9 @@ public class SymbolGroupDAOImplTest {
     @Before
     public void setUp() {
         user = new User();
+        user.setEmail("SymbolGroupDAOImplTest@alex.example");
+        user.setEncryptedPassword("alex");
+        userDAO.create(user);
 
         project = new Project();
         project.setName("SymbolGroupDAO - Test Project");
@@ -51,22 +57,25 @@ public class SymbolGroupDAOImplTest {
         group = new SymbolGroup();
         group.setProject(project);
         group.setName("SymbolGroupDAO - Test Group");
+        group.setUser(user);
 
         group2 = new SymbolGroup();
         group2.setProject(project);
         group2.setName("SymbolGroupDAO - Test Group 2");
+        group2.setUser(user);
 
         symbol = new Symbol();
         symbol.setName("SymbolGroupDAOImpl - Test Symbol");
         symbol.setAbbreviation("test");
         symbol.setProject(project);
         symbol.setGroup(group);
+        symbol.setUser(user);
         symbolDAO.create(symbol);
     }
 
     @After
     public void tearDown() throws NotFoundException {
-        projectDAO.delete(project.getId());
+        userDAO.delete(user.getId());
     }
 
     @Test
@@ -108,6 +117,7 @@ public class SymbolGroupDAOImplTest {
             SymbolGroup newGroup = new SymbolGroup();
             newGroup.setName("Group " + i);
             newGroup.setProject(project);
+            newGroup.setUser(user);
 
             symbolGroupDAO.create(newGroup);
 
@@ -133,6 +143,7 @@ public class SymbolGroupDAOImplTest {
             SymbolGroup newGroup = new SymbolGroup();
             newGroup.setName("Group " + i);
             newGroup.setProject(project);
+            newGroup.setUser(user);
 
             symbolGroupDAO.create(newGroup);
 
@@ -184,7 +195,7 @@ public class SymbolGroupDAOImplTest {
             symbolGroupDAO.get(user, project.getId(), group.getId()); // should fail
             fail("After deleting a group, it was still in the DB.");
         } catch (NotFoundException e) {
-            // Symbol was not found -> It was deleted -> success
+            // SymbolGroup was not found -> It was deleted -> success
             Symbol symbolInDB = symbolDAO.getWithLatestRevision(user, project.getId(), symbol.getId());
             assertEquals(project.getDefaultGroup(), symbolInDB.getGroup());
             assertTrue(symbolInDB.isHidden());
