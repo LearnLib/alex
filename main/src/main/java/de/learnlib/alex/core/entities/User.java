@@ -62,6 +62,10 @@ public class User implements Serializable {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<SymbolAction> actions;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<Counter> counters;
+
     public User() {
         role = UserRole.REGISTERED;
     }

@@ -2,7 +2,9 @@ package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.entities.Counter;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import de.learnlib.alex.utils.StringList;
@@ -13,8 +15,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 /**
@@ -29,6 +33,10 @@ public class CounterResource {
     @Inject
     private  CounterDAO counterDAO;
 
+    /** The security context containing the user of the request */
+    @Context
+    SecurityContext securityContext;
+
     /**
      * Get all counters of a project.
      *
@@ -41,8 +49,10 @@ public class CounterResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCounters(@PathParam("project_id") Long projectId) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
-            List<Counter> counters = counterDAO.getAll(projectId);
+            List<Counter> counters = counterDAO.getAll(user.getId(), projectId);
             return ResponseHelper.renderList(counters, Response.Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("CounterResource.getAll", Response.Status.NOT_FOUND, e);
@@ -63,15 +73,16 @@ public class CounterResource {
     @Path("/{counter_name}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
-            counterDAO.delete(projectId, name);
+            counterDAO.delete(user.getId(), projectId, name);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("CounterResource.deleteCounter",
                                                                Response.Status.NOT_FOUND,
                                                                e);
         }
-
     }
 
     /**
@@ -89,8 +100,10 @@ public class CounterResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCounter(@PathParam("project_id") Long projectId,
                                   @PathParam("counter_names") StringList names) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
-            counterDAO.delete(projectId, names.toArray(new String[names.size()]));
+            counterDAO.delete(user.getId(), projectId, names.toArray(new String[names.size()]));
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("CounterResource.deleteCounter",

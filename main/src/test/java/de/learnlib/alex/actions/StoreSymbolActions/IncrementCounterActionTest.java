@@ -23,6 +23,7 @@ import static org.mockito.Mockito.verify;
 
 public class IncrementCounterActionTest {
 
+    private static final Long USER_ID = 3L;
     private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
 
@@ -66,20 +67,20 @@ public class IncrementCounterActionTest {
         ExecuteResult result = incrementAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).increment(PROJECT_ID, TEST_NAME);
+        verify(counters).increment(USER_ID, PROJECT_ID, TEST_NAME);
     }
 
     @Test
     public void shouldFailIncrementingIfCounterIsNotDeclared() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        willThrow(IllegalStateException.class).given(counters).increment(PROJECT_ID, TEST_NAME);
+        willThrow(IllegalStateException.class).given(counters).increment(USER_ID, PROJECT_ID, TEST_NAME);
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
         ExecuteResult result = incrementAction.execute(connector);
 
         assertEquals(ExecuteResult.FAILED, result);
-        verify(counters).increment(PROJECT_ID, TEST_NAME);
+        verify(counters).increment(USER_ID, PROJECT_ID, TEST_NAME);
     }
 
 }

@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verify;
 
 public class CounterResourceTest extends JerseyTest {
 
+    private static final Long USER_ID = 3L;
     private static final long PROJECT_TEST_ID = 10;
     private static final String  COUNTER_NAME = "Counter";
     private static final Integer COUNTER_VALUE = 42;
@@ -91,7 +92,7 @@ public class CounterResourceTest extends JerseyTest {
 
     @Test
     public void shouldGetAllCounters() throws NotFoundException {
-        given(counterDAO.getAll(PROJECT_TEST_ID)).willReturn(Arrays.asList(counters));
+        given(counterDAO.getAll(USER_ID, PROJECT_TEST_ID)).willReturn(Arrays.asList(counters));
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/counters").request().get();
         String json = response.readEntity(String.class);
@@ -108,7 +109,7 @@ public class CounterResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404WhenAskingForAllCounterOfANotExistingProject() throws NotFoundException {
-        given(counterDAO.getAll(PROJECT_TEST_ID)).willThrow(NotFoundException.class);
+        given(counterDAO.getAll(USER_ID, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/counters").request().get();
 
@@ -120,17 +121,17 @@ public class CounterResourceTest extends JerseyTest {
         Response response = target("/projects/" + PROJECT_TEST_ID + "/counters/" + COUNTER_NAME).request().delete();
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        verify(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME);
+        verify(counterDAO).delete(USER_ID, PROJECT_TEST_ID, COUNTER_NAME);
     }
 
     @Test
     public void shouldReturn404WhenDeleteAnInvalidCounter() throws NotFoundException {
-        willThrow(NotFoundException.class).given(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME);
+        willThrow(NotFoundException.class).given(counterDAO).delete(USER_ID, PROJECT_TEST_ID, COUNTER_NAME);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/counters/" + COUNTER_NAME).request().delete();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME);
+        verify(counterDAO).delete(USER_ID, PROJECT_TEST_ID, COUNTER_NAME);
     }
 
     @Test
@@ -139,18 +140,18 @@ public class CounterResourceTest extends JerseyTest {
         Response response = target(path).request().delete();
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        verify(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
+        verify(counterDAO).delete(USER_ID, PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
     }
 
     @Test
     public void shouldReturn404WhenDeleteInvalidCounters() throws NotFoundException {
         String path = "/projects/" + PROJECT_TEST_ID + "/counters/batch/" + COUNTER_NAME + "," + COUNTER_NAME + "2";
-        willThrow(NotFoundException.class).given(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
+        willThrow(NotFoundException.class).given(counterDAO).delete(USER_ID, PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
 
         Response response = target(path).request().delete();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(counterDAO).delete(PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
+        verify(counterDAO).delete(USER_ID, PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
     }
 
 }

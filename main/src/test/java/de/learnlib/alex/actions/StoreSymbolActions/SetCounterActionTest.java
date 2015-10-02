@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 
 public class SetCounterActionTest {
 
+    private static final Long USER_UD = 3L;
     private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
     private static final Integer TEST_VALUE = 42;
@@ -67,7 +68,7 @@ public class SetCounterActionTest {
         ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).set(PROJECT_ID, TEST_NAME, TEST_VALUE);
+        verify(counters).set(USER_UD, PROJECT_ID, TEST_NAME, TEST_VALUE);
     }
 
     @Test
@@ -79,7 +80,7 @@ public class SetCounterActionTest {
         ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).set(PROJECT_ID, TEST_NAME, TEST_VALUE);
+        verify(counters).set(USER_UD, PROJECT_ID, TEST_NAME, TEST_VALUE);
     }
 
 }

@@ -16,6 +16,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class CounterStoreConnectorTest {
 
+    private static final Long    USER_ID       = 3L;
     private static final Long    PROJECT_ID    = 10L;
     private static final String  COUNTER_NAME  = "counter";
     private static final Integer COUNTER_VALUE = 42;
@@ -35,18 +36,18 @@ public class CounterStoreConnectorTest {
 
     @Test
     public void shouldCorrectlyCreateACounter() throws NotFoundException {
-        given(counterDAO.get(PROJECT_ID, COUNTER_NAME)).willThrow(NotFoundException.class);
+        given(counterDAO.get(USER_ID, PROJECT_ID, COUNTER_NAME)).willThrow(NotFoundException.class);
 
-        connector.set(PROJECT_ID, COUNTER_NAME, COUNTER_VALUE);
+        connector.set(USER_ID, PROJECT_ID, COUNTER_NAME, COUNTER_VALUE);
 
         verify(counterDAO).create(any(Counter.class));
     }
 
     @Test
     public void shouldCorrectlyUpdateACounter() throws NotFoundException {
-        given(counterDAO.get(PROJECT_ID, COUNTER_NAME)).willReturn(counter);
+        given(counterDAO.get(USER_ID, PROJECT_ID, COUNTER_NAME)).willReturn(counter);
 
-        connector.set(PROJECT_ID, COUNTER_NAME, COUNTER_VALUE);
+        connector.set(USER_ID, PROJECT_ID, COUNTER_NAME, COUNTER_VALUE);
 
         verify(counterDAO).update(any(Counter.class));
         verify(counter).setValue(COUNTER_VALUE);
@@ -55,9 +56,9 @@ public class CounterStoreConnectorTest {
     @Test
     public void shouldIncrementACounter() throws NotFoundException {
         given(counter.getValue()).willReturn(COUNTER_VALUE);
-        given(counterDAO.get(PROJECT_ID, COUNTER_NAME)).willReturn(counter);
+        given(counterDAO.get(USER_ID, PROJECT_ID, COUNTER_NAME)).willReturn(counter);
 
-        connector.increment(PROJECT_ID, COUNTER_NAME);
+        connector.increment(USER_ID, PROJECT_ID, COUNTER_NAME);
 
         verify(counterDAO).update(any(Counter.class));
         verify(counter).setValue(COUNTER_VALUE + 1);

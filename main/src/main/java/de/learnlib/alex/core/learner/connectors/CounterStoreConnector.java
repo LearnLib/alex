@@ -4,6 +4,7 @@ import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.CounterDAOImpl;
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 
 /**
@@ -11,7 +12,9 @@ import de.learnlib.alex.exceptions.NotFoundException;
  */
 public class CounterStoreConnector implements Connector {
 
-    /** The DAO to persist the counters to and fetch the counters from. */
+    /**
+     * The DAO to persist the counters to and fetch the counters from.
+     */
     private CounterDAO counterDAO;
 
     /**
@@ -36,48 +39,49 @@ public class CounterStoreConnector implements Connector {
         // nothing to do here
     }
 
-    public void set(Long projectId, String name, Integer value) {
+    public void set(Long userId, Long projectId, String name, Integer value) {
         Counter counter;
         try {
-            counter = counterDAO.get(projectId, name);
+            counter = counterDAO.get(userId, projectId, name);
             counter.setValue(value);
             counterDAO.update(counter);
         } catch (NotFoundException e) {
-            createCounter(projectId, name, value);
+            createCounter(userId, projectId, name, value);
         }
     }
 
     public void reset(Long projectId, String name) {
-        set(projectId, name, 0);
+        // TODO: is this method even used?
+        //set(projectId, name, 0);
     }
 
-    public void increment(Long projectId, String name) {
+    public void increment(Long userId, Long projectId, String name) {
         Counter counter;
         try {
-            counter = counterDAO.get(projectId, name);
+            counter = counterDAO.get(userId, projectId, name);
             counter.setValue(counter.getValue() + 1);
             counterDAO.update(counter);
         } catch (NotFoundException e) {
-            createCounter(projectId, name, 1);
+            createCounter(userId, projectId, name, 1);
         }
     }
 
-    public Integer get(Long projectId, String name) throws IllegalStateException {
+    public Integer get(Long userId, Long projectId, String name) throws IllegalStateException {
         try {
             Counter counter;
-            counter = counterDAO.get(projectId, name);
+            counter = counterDAO.get(userId, projectId, name);
             return counter.getValue();
         } catch (NotFoundException e) {
             throw new IllegalStateException("The counter '" + name + "' was not set and has no value!");
         }
     }
 
-    void createCounter(Long projectId, String name, Integer value) {
+    void createCounter(Long userId, Long projectId, String name, Integer value) {
         Counter counter = new Counter();
+        counter.setUser(new User(userId));
         counter.setProject(new Project(projectId));
         counter.setName(name);
         counter.setValue(value);
         counterDAO.create(counter);
     }
-
 }

@@ -1,5 +1,6 @@
 package de.learnlib.alex.utils;
 
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import de.learnlib.alex.core.learner.connectors.FileStoreConnector;
@@ -90,7 +91,8 @@ public final class SearchHelper {
             String variableValue;
             switch (text.charAt(variableStartPos + 2)) {
                 case '#': // counter
-                    variableValue = String.valueOf(connector.getConnector(CounterStoreConnector.class).get(projectId, variableName));
+                    variableValue = String.valueOf(connector.getConnector(CounterStoreConnector.class)
+                            .get(userId, projectId, variableName));
                     result.append(variableValue);
                     break;
                 case '$': // variable:

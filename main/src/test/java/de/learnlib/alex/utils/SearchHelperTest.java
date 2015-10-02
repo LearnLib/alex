@@ -23,7 +23,7 @@ public class SearchHelperTest {
         VariableStoreConnector variables = mock(VariableStoreConnector.class);
         given(variables.get("name")).willReturn("Jon Doe");
         CounterStoreConnector counter = mock(CounterStoreConnector.class);
-        given(counter.get(PROJECT_ID, "counter")).willReturn(COUNTER_VALUE);
+        given(counter.get(USER_ID, PROJECT_ID, "counter")).willReturn(COUNTER_VALUE);
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counter);
