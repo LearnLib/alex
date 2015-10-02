@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,17 +32,23 @@ public class CallActionTest {
     public static final String TEST_BASE_URL = "http://example.com/api";
     public static final String TEST_API_PATH = "/test";
     public static final String TEST_API_URL = TEST_BASE_URL + TEST_API_PATH;
-    private static final Long PROJECT_ID = 42L;
 
     @Mock
     private WebServiceConnector connector;
+
+    @Mock
+    private User user;
+
+    @Mock
+    private Project project;
 
     private CallAction c;
 
     @Before
     public void setUp() {
         c = new CallAction();
-        c.setProject(new Project(PROJECT_ID));
+        c.setUser(user);
+        c.setProject(project);
         c.setMethod(CallAction.Method.GET);
         c.setUrl(TEST_API_PATH);
         HashMap<String, String> cookies = new HashMap<>();

@@ -3,9 +3,13 @@ package de.learnlib.alex.actions.WebSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,9 +20,15 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class GotoActionTest {
 
-    private static final Long PROJECT_ID = 42L;
+    @Mock
+    private User user;
+
+    @Mock
+    private Project project;
+
     private static final String FAKE_URL = "http://example.com";
 
     private GotoAction g;
@@ -26,7 +36,8 @@ public class GotoActionTest {
     @Before
     public void setUp() {
         g = new GotoAction();
-        g.setProject(new Project(PROJECT_ID));
+        g.setUser(user);
+        g.setProject(project);
         g.setUrl(FAKE_URL);
     }
 

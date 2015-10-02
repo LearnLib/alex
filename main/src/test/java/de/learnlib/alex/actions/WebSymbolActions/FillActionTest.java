@@ -3,9 +3,13 @@ package de.learnlib.alex.actions.WebSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
@@ -21,15 +25,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class FillActionTest {
 
-    private static final Long PROJECT_ID = 42L;
+    @Mock
+    private User user;
+
+    @Mock
+    private Project project;
+
     private FillAction f;
 
     @Before
     public void setUp() {
         f = new FillAction();
-        f.setProject(new Project(PROJECT_ID));
+        f.setUser(user);
+        f.setProject(project);
         f.setNode("#node");
         f.setValue("Lorem Ipsum");
     }

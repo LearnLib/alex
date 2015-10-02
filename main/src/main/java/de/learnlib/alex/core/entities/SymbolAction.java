@@ -95,6 +95,13 @@ public abstract class SymbolAction implements Serializable {
     @JsonIgnore
     protected Long id;
 
+    /** The user the actions belongs to. */
+    @NaturalId
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    @JsonIgnore
+    protected User user;
+
     /** The project the actions belongs to. */
     @NaturalId
     @ManyToOne
@@ -145,6 +152,25 @@ public abstract class SymbolAction implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * The user of the action.
+     *
+     * @return The related user.
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Set a new user as 'parent' of teh action.
+     *
+     * @param user
+     *         The new related user.
+     */
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
@@ -282,7 +308,7 @@ public abstract class SymbolAction implements Serializable {
     protected abstract ExecuteResult execute(ConnectorManager connector);
 
     protected final String insertVariableValues(String text) {
-        return SearchHelper.insertVariableValues(connectorManager, project.getId(), text);
+        return SearchHelper.insertVariableValues(connectorManager, user.getId(), project.getId(), text);
     }
 
     protected final ExecuteResult getSuccessOutput() {

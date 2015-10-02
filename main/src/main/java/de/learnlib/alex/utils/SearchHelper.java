@@ -64,6 +64,8 @@ public final class SearchHelper {
      *
      * @param connector
      *         The connectors to connect to the counter and variable stores.
+     * @param userId
+     *         The user id for the context.
      * @param projectId
      *         The project as context.
      * @param text
@@ -72,7 +74,7 @@ public final class SearchHelper {
      * @throws IllegalStateException
      *         If a variable value should be inserted, but the variable does not exists or was never set.
      */
-    public static String insertVariableValues(ConnectorManager connector, Long projectId, String text)
+    public static String insertVariableValues(ConnectorManager connector, Long userId, Long projectId, String text)
                          throws IllegalStateException {
         StringBuilder result = new StringBuilder();
         int variableStartPos = text.indexOf("{{");
@@ -97,7 +99,7 @@ public final class SearchHelper {
                     break;
                 case '/': // file name
                     variableValue = connector.getConnector(FileStoreConnector.class)
-                                             .getAbsoluteFileLocation(projectId, variableName);
+                                             .getAbsoluteFileLocation(userId, projectId, variableName);
                     result.append(variableValue);
                     break;
                 default: // bullshit

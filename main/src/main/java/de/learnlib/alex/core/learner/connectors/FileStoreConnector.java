@@ -26,9 +26,9 @@ public class FileStoreConnector implements Connector {
         // nothing to do here
     }
 
-    public String getAbsoluteFileLocation(Long projectId, String fileName) throws IllegalStateException {
+    public String getAbsoluteFileLocation(Long userId, Long projectId, String fileName) throws IllegalStateException {
         try {
-            return fileDAO.getAbsoulteFilePath(projectId, fileName);
+            return fileDAO.getAbsoulteFilePath(userId, projectId, fileName);
         } catch (NotFoundException e) {
             throw new IllegalStateException("No file with the name '" + fileName + "' was uploaded into the project "
                                                     + projectId + ".");

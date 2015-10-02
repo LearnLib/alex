@@ -58,6 +58,10 @@ public class User implements Serializable {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<Symbol> symbols;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<SymbolAction> actions;
+
     public User() {
         role = UserRole.REGISTERED;
     }
@@ -166,6 +170,14 @@ public class User implements Serializable {
 
     public void setSymbols(Set<Symbol> symbols) {
         this.symbols = symbols;
+    }
+
+    public Set<SymbolAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(Set<SymbolAction> actions) {
+        this.actions = actions;
     }
 
     @Override

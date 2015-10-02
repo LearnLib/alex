@@ -3,9 +3,13 @@ package de.learnlib.alex.actions.WebSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,16 +22,22 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CheckTextWebActionTest {
 
-    private static final Long PROJECT_ID = 42L;
+    @Mock
+    private User user;
+
+    @Mock
+    private Project project;
 
     private CheckTextWebAction checkText;
 
     @Before
     public void setUp() {
         checkText = new CheckTextWebAction();
-        checkText.setProject(new Project(PROJECT_ID));
+        checkText.setUser(user);
+        checkText.setProject(project);
         checkText.setValue("Foobar");
         checkText.setRegexp(false);
     }
