@@ -30,6 +30,7 @@ import java.util.List;
  * @resourceDescription Operations about projects
  */
 @Path("/projects")
+@RolesAllowed({"REGISTERED"})
 public class ProjectResource {
 
     /** Context information about the URI. */
@@ -57,7 +58,6 @@ public class ProjectResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
     public Response create(Project project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         project.setUser(user);
@@ -83,7 +83,6 @@ public class ProjectResource {
      * @successResponse 200 OK
      */
     @GET
-    @RolesAllowed({"REGISTERED"})
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
@@ -115,7 +114,6 @@ public class ProjectResource {
      */
     @GET
     @Path("/{id}")
-    @RolesAllowed({"REGISTERED"})
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") long id, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
@@ -156,7 +154,6 @@ public class ProjectResource {
      */
     @PUT
     @Path("/{id}")
-    @RolesAllowed({"REGISTERED"})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") long id, Project project) {
@@ -194,7 +191,6 @@ public class ProjectResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
     public Response delete(@PathParam("id") long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 

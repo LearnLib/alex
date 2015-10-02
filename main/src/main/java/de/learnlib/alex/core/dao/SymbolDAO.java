@@ -158,7 +158,9 @@ public interface SymbolDAO {
 
     /**
      * Mark a symbol as hidden.
-     * 
+     *
+     * @param userId
+     *              The ID of the user the symbols belongs to.
      * @param projectId
      *            The ID of the project the symbol belongs to.
      * @param ids
