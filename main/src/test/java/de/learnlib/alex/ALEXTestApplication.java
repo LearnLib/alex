@@ -1,6 +1,7 @@
 package de.learnlib.alex;
 
 import de.learnlib.alex.core.dao.CounterDAO;
+import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
@@ -19,6 +20,7 @@ public class ALEXTestApplication extends ResourceConfig {
                                final SymbolGroupDAO symbolGroupDAO,
                                final SymbolDAO symbolDAO,
                                final LearnerResultDAO learnerResultDAO,
+                               final FileDAO fileDAO,
                                final Learner learner,
                                Class<?>... classes) {
         super(classes);
@@ -34,6 +36,7 @@ public class ALEXTestApplication extends ResourceConfig {
                 bind(counterDAO).to(CounterDAO.class);
                 bind(symbolGroupDAO).to(SymbolGroupDAO.class);
                 bind(symbolDAO).to(SymbolDAO.class);
+                bind(fileDAO).to(FileDAO.class);
                 bind(learner).to(Learner.class);
                 bind(learnerResultDAO).to(LearnerResultDAO.class);
             }

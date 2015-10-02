@@ -2,6 +2,7 @@ package de.learnlib.alex.rest;
 
 import de.learnlib.alex.ALEXTestApplication;
 import de.learnlib.alex.core.dao.CounterDAO;
+import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
@@ -55,6 +56,9 @@ public class ProjectResourceTest extends JerseyTest {
     private LearnerResultDAO learnerResultDAO;
 
     @Mock
+    private FileDAO fileDAO;
+
+    @Mock
     private Learner learner;
 
     private User user;
@@ -84,7 +88,7 @@ public class ProjectResourceTest extends JerseyTest {
         }
 
         return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
-                                             learnerResultDAO, learner, ProjectResource.class);
+                                             learnerResultDAO, fileDAO, learner, ProjectResource.class);
     }
 
     @Test

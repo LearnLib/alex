@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.ALEXTestApplication;
 import de.learnlib.alex.core.dao.CounterDAO;
+import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
@@ -68,6 +69,9 @@ public class SymbolResourceTest extends JerseyTest {
     private LearnerResultDAO learnerResultDAO;
 
     @Mock
+    private FileDAO fileDAO;
+
+    @Mock
     private Learner learner;
 
     private User user;
@@ -84,7 +88,7 @@ public class SymbolResourceTest extends JerseyTest {
         MockitoAnnotations.initMocks(this);
 
         return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
-                                             learnerResultDAO, learner, SymbolResource.class);
+                                             learnerResultDAO, fileDAO, learner, SymbolResource.class);
     }
 
     @Before
