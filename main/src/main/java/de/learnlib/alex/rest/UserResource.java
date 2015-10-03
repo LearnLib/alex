@@ -2,9 +2,12 @@ package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.security.RsaKeyHolder;
+import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
@@ -14,7 +17,9 @@ import org.jose4j.lang.JoseException;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
 import javax.xml.bind.ValidationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -31,6 +36,10 @@ public class UserResource {
      */
     @Inject
     private UserDAO userDAO;
+
+    /** The security context containing the user of the request */
+    @Context
+    SecurityContext securityContext;
 
     /**
      * Creates a new user
@@ -58,6 +67,20 @@ public class UserResource {
         }
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
+    public Response get(@PathParam("id") Long userId) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        if (user.getRole().equals(UserRole.ADMIN) || user.getId().equals(userId)) {
+            return Response.ok(userDAO.getById(userId)).build();
+        } else {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+    }
+
     /**
      * Get all users. Should only be allowed to call by an admin
      *
@@ -74,13 +97,21 @@ public class UserResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({"REGISTERED"})
     public Response delete(@PathParam("id") long userId) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
-            userDAO.delete(userId);
-            return Response.status(Status.OK).build();
+            if (user.getRole().equals(UserRole.ADMIN) || user.getId().equals(userId)) {
+                userDAO.delete(userId);
+                return Response.status(Status.OK).build();
+            } else {
+                throw new UnauthorizedException("You are not allowed to delete this user");
+            }
         } catch (de.learnlib.alex.exceptions.NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.NOT_FOUND, e);
+        } catch (UnauthorizedException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.UNAUTHORIZED, e);
         }
     }
 

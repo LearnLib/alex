@@ -6,7 +6,6 @@ import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -46,22 +45,27 @@ public class User implements Serializable {
 
     private UserRole role;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<Project> projects;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<SymbolGroup> symbolGroups;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<Symbol> symbols;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<SymbolAction> actions;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<Counter> counters;
@@ -182,6 +186,14 @@ public class User implements Serializable {
 
     public void setActions(Set<SymbolAction> actions) {
         this.actions = actions;
+    }
+
+    public Set<Counter> getCounters() {
+        return counters;
+    }
+
+    public void setCounters(Set<Counter> counters) {
+        this.counters = counters;
     }
 
     @Override

@@ -123,8 +123,6 @@ public class ProjectResource {
             embeddableFields = parseEmbeddableFields(embed);
             Project project = projectDAO.getByID(id, embeddableFields);
 
-
-
             if (project.getUser().equals(user)) {
                 return Response.ok(project).build();
             } else {
