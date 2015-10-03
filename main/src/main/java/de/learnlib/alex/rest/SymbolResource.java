@@ -523,7 +523,7 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
-            symbolDAO.show(projectId, id);
+            symbolDAO.show(user.getId(), projectId, id);
             Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
             return Response.ok(symbol).build();
         } catch (NotFoundException e) {

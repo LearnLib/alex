@@ -27,6 +27,8 @@ public class ALEXTestApplication extends ResourceConfig {
 
         register(MultiPartFeature.class);
 
+        register(FakeAuthenticationFilter.class);
+
         // register some classes/ objects for IoC.
         register(new AbstractBinder() {
             @Override

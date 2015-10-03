@@ -35,6 +35,7 @@ import static org.mockito.Mockito.verify;
 
 public class ProjectResourceTest extends JerseyTest {
 
+    private static final Long USER_TEST_ID = 1L;
     private static final Long PROJECT_TEST_ID = 1L;
 
     @Mock
@@ -73,7 +74,7 @@ public class ProjectResourceTest extends JerseyTest {
         symbol.setAbbreviation("prts");
 
         user = new User();
-        user.setId(PROJECT_TEST_ID);
+        user.setId(USER_TEST_ID);
         given(userDAO.getById(user.getId())).willReturn(user);
 
         project = new Project();

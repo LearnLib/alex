@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.ALEXTestApplication;
+import de.learnlib.alex.FakeAuthenticationFilter;
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
@@ -45,7 +46,7 @@ import static org.mockito.Mockito.verify;
 
 public class SymbolResourceTest extends JerseyTest {
 
-    private static final long USER_TEST_ID = 8;
+    private static final long USER_TEST_ID = FakeAuthenticationFilter.FAKE_USER_ID;
     private static final long PROJECT_TEST_ID = 10;
     private static final long SYMBOL_TEST_ID = 1;
     private static final long SYMBOL_TEST_REV = 3;
@@ -98,11 +99,12 @@ public class SymbolResourceTest extends JerseyTest {
 
         user = new User();
         user.setId(USER_TEST_ID);
-        given(userDAO.getById(user.getId())).willReturn(user);
+        given(userDAO.getById(USER_TEST_ID)).willReturn(user);
 
         project = new Project();
         project.setId(PROJECT_TEST_ID);
-        given(projectDAO.getByID(project.getId())).willReturn(project);
+        project.setUser(user);
+        given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(project);
 
         group = new SymbolGroup();
         group.setName("Symbol Resource Test Group");
@@ -112,6 +114,7 @@ public class SymbolResourceTest extends JerseyTest {
         symbol.setRevision(1L);
         symbol.setName("Symbol Resource Test Symbol");
         symbol.setAbbreviation("srts");
+        symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
 
@@ -120,8 +123,9 @@ public class SymbolResourceTest extends JerseyTest {
         symbol2.setRevision(1L);
         symbol2.setName("Symbol Resource Test Symbol 2");
         symbol2.setAbbreviation("srts 2");
+        symbol2.setUser(user);
         symbol2.setProject(project);
-        symbol2.getGroup();
+        symbol2.setGroup(group);
 
         symbols = new LinkedList<>();
         symbols.add(symbol);
@@ -279,7 +283,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],\"group\":0,"
                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                + "\"project\":10,\"revision\":1}]";
+                + "\"project\":10,\"revision\":1,\"user\":" + USER_TEST_ID + "}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).getAllWithLatestRevision(user, project.getId(), SymbolVisibilityLevel.VISIBLE);
@@ -297,7 +301,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],\"group\":0,"
                                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                                + "\"project\":10,\"revision\":1}]";
+                                + "\"project\":10,\"revision\":1,\"user\":" + USER_TEST_ID + "}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).getAllWithLatestRevision(user, project.getId(), SymbolVisibilityLevel.ALL);
@@ -531,7 +535,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         Symbol responseSymbol = response.readEntity(Symbol.class);
         assertEquals(symbol, responseSymbol);
-        verify(symbolDAO).hide(PROJECT_TEST_ID, symbol.getId());
+        verify(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, symbol.getId());
     }
 
     @Test
@@ -546,7 +550,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
-        verify(symbolDAO).hide(PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
+        verify(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
     }
 
     @Test
@@ -586,7 +590,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         Symbol responseSymbol = response.readEntity(Symbol.class);
         assertEquals(symbol, responseSymbol);
-        verify(symbolDAO).show(PROJECT_TEST_ID, symbol.getId());
+        verify(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID, symbol.getId());
     }
 
     @Test
@@ -601,7 +605,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
-        verify(symbolDAO).show(PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
+        verify(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
     }
 
     @Test

@@ -4,10 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,18 +25,29 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class IncrementCounterActionTest {
 
     private static final Long USER_ID = 3L;
     private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
 
+    @Mock
+    private User user;
+
+    @Mock
+    private Project project;
+
     private IncrementCounterAction incrementAction;
 
     @Before
     public void setUp() {
+        given(user.getId()).willReturn(USER_ID);
+        given(project.getId()).willReturn(PROJECT_ID);
+
         incrementAction = new IncrementCounterAction();
-        incrementAction.setProject(new Project(PROJECT_ID));
+        incrementAction.setUser(user);
+        incrementAction.setProject(project);
         incrementAction.setName(TEST_NAME);
     }
 

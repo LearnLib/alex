@@ -54,6 +54,7 @@ public class CounterDAOImplTest {
         projectDAO.create(project);
 
         counter = new Counter();
+        counter.setUser(user);
         counter.setProject(project);
         counter.setName(COUNTER_NAME);
         counter.setValue(COUNTER_VALUE);
@@ -91,6 +92,7 @@ public class CounterDAOImplTest {
     public void getAllCountersOfOneProject() throws NotFoundException {
         for (int i = 0; i < AMOUNT_OF_COUNTERS; i++) {
             Counter tmpCounter = new Counter();
+            tmpCounter.setUser(user);
             tmpCounter.setProject(project);
             tmpCounter.setName("CounterNo" + i);
             tmpCounter.setValue(i);

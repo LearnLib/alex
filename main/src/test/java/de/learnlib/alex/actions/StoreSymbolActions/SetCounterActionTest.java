@@ -4,10 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,19 +23,30 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SetCounterActionTest {
 
-    private static final Long USER_UD = 3L;
+    private static final Long USER_ID = 3L;
     private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
     private static final Integer TEST_VALUE = 42;
+
+    @Mock
+    private User user;
+
+    @Mock
+    private Project project;
 
     private SetCounterAction setAction;
 
     @Before
     public void setUp() {
+        given(user.getId()).willReturn(USER_ID);
+        given(project.getId()).willReturn(PROJECT_ID);
+
         setAction = new SetCounterAction();
-        setAction.setProject(new Project(PROJECT_ID));
+        setAction.setUser(user);
+        setAction.setProject(project);
         setAction.setName(TEST_NAME);
         setAction.setValue(TEST_VALUE);
     }
@@ -68,7 +83,7 @@ public class SetCounterActionTest {
         ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).set(USER_UD, PROJECT_ID, TEST_NAME, TEST_VALUE);
+        verify(counters).set(USER_ID, PROJECT_ID, TEST_NAME, TEST_VALUE);
     }
 
     @Test
@@ -80,7 +95,7 @@ public class SetCounterActionTest {
         ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).set(USER_UD, PROJECT_ID, TEST_NAME, TEST_VALUE);
+        verify(counters).set(USER_ID, PROJECT_ID, TEST_NAME, TEST_VALUE);
     }
 
 }

@@ -122,7 +122,12 @@ public class CounterDAOImpl implements CounterDAO {
                 .add(Restrictions.eq("user.id", userId))
                 .list();
 
-        counters.forEach(session::delete);
-        HibernateUtil.commitTransaction();
+        if (names.length == counters.size()) { // all counters found -> delete them & success
+            counters.forEach(session::delete);
+            HibernateUtil.commitTransaction();
+        } else {
+            HibernateUtil.rollbackTransaction();
+            throw new NotFoundException("Could not delete the counter(s), becauser at least one does not exists!");
+        }
     }
 }

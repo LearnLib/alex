@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import de.learnlib.alex.ALEXTestApplication;
+import de.learnlib.alex.FakeAuthenticationFilter;
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.verify;
 
 public class SymbolGroupResourceTest extends JerseyTest {
 
+    private static final long USER_TEST_ID = FakeAuthenticationFilter.FAKE_USER_ID;
     private static final long PROJECT_TEST_ID = 10;
 
     @Mock
@@ -91,7 +93,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
         MockitoAnnotations.initMocks(this);
 
         user = new User();
-        user.setId(PROJECT_TEST_ID);
+        user.setId(USER_TEST_ID);
         given(userDAO.getById(user.getId())).willReturn(user);
 
         return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,

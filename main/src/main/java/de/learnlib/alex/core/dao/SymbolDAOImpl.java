@@ -217,6 +217,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         // get latest revision
         List<Object[]> idRevList = session.createCriteria(Symbol.class)
+                                            .add(Restrictions.eq("user.id", userId))
                                             .add(Restrictions.eq("project.id", projectId))
                                             .add(Restrictions.eq("group", group))
                                             .add(visibilityLevel.getCriterion())
@@ -635,7 +636,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     private List<Symbol> getSymbols(Session session, Long userId, Long projectId, Long symbolId) throws NotFoundException {
         @SuppressWarnings("should return a list of Symbols")
         List<Symbol> symbols = session.createCriteria(Symbol.class)
-                                        .add(Restrictions.eq("user", userId))
+                                        .add(Restrictions.eq("user.id", userId))
                                         .add(Restrictions.eq("project.id", projectId))
                                         .add(Restrictions.eq("idRevisionPair.id", symbolId))
                                         .list();
@@ -661,6 +662,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     private void checkUniqueConstrains(Session session, Symbol symbol) throws IllegalArgumentException {
         // put constrains into a query
         Junction restrictions = Restrictions.conjunction()
+                                    .add(Restrictions.eq("user", symbol.getUser()))
                                     .add(Restrictions.eq("project", symbol.getProject()))
                                     .add(Restrictions.disjunction()
                                             .add(Restrictions.eq("name", symbol.getName()))
@@ -687,6 +689,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         for (int i = 0; i < symbol.getActions().size(); i++) {
             SymbolAction action = symbol.getActions().get(i);
             action.setId(null);
+            action.setUser(symbol.getUser());
             action.setProject(symbol.getProject());
             action.setSymbol(symbol);
             action.setNumber(i);
@@ -710,6 +713,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
                 if (symbolToExecute == null) { // it was not in the set of all symbols
                     symbolToExecute = (Symbol) session.createCriteria(Symbol.class)
+                                                        .add(Restrictions.eq("user", action.getUser()))
                                                         .add(Restrictions.eq("project", action.getProject()))
                                                         .add(Restrictions.eq("idRevisionPair", idAndRevision))
                                                         .uniqueResult();
@@ -726,6 +730,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     public static void loadLazyRelations(Symbol symbol) {
+        Hibernate.initialize(symbol.getUser());
         Hibernate.initialize(symbol.getGroup());
 
         Hibernate.initialize(symbol.getActions());

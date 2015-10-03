@@ -153,6 +153,7 @@ public class SymbolDAOImplTest {
         assertEquals(symbol.getRevision(), symbolInDB.getRevision());
         assertEquals(group, symbol.getGroup());
         assertEquals(symbol.getProject(), symbolInDB.getProject());
+        assertEquals(symbol.getUser(), symbolInDB.getUser());
         assertEquals(project, project2);
         assertEquals(Long.valueOf(idBefore + 1), project2.getNextSymbolId());
 
@@ -645,13 +646,13 @@ public class SymbolDAOImplTest {
         symbol.setName(symbol.getName() + " - updated");
         symbolDAO.update(symbol);
 
-        symbolDAO.hide(symbol.getProject().getId(), symbol.getId());
+        symbolDAO.hide(user.getId(), project.getId(), symbol.getId());
 
-        Symbol symbolRev1 = symbolDAO.get(user, symbol.getProject().getId(), symbol.getId(), 1L);
+        Symbol symbolRev1 = symbolDAO.get(user, project.getId(), symbol.getId(), 1L);
         assertNotNull(symbolRev1);
         assertTrue(symbolRev1.isHidden());
 
-        Symbol symbolRev2 = symbolDAO.get(user, symbol.getProject().getId(), symbol.getId(), 2L);
+        Symbol symbolRev2 = symbolDAO.get(user, project.getId(), symbol.getId(), 2L);
         assertNotNull(symbolRev2);
         assertTrue(symbolRev2.isHidden());
     }
@@ -660,7 +661,7 @@ public class SymbolDAOImplTest {
     public void shouldNotHideAnythingByInvalidID() throws NotFoundException {
         symbolDAO.create(symbol);
 
-        symbolDAO.hide(project.getId(), -1L); // should fail
+        symbolDAO.hide(user.getId(), project.getId(), -1L); // should fail
     }
 
     @Test
@@ -669,14 +670,14 @@ public class SymbolDAOImplTest {
         symbol.setName(symbol.getName() + " - updated");
         symbolDAO.update(symbol);
 
-        symbolDAO.hide(symbol.getProject().getId(), symbol.getId());
-        symbolDAO.show(symbol.getProject().getId(), symbol.getId());
+        symbolDAO.hide(user.getId(), project.getId(), symbol.getId());
+        symbolDAO.show(user.getId(), project.getId(), symbol.getId());
 
-        Symbol symbolRev1 = symbolDAO.get(user, symbol.getProject().getId(), symbol.getId(), 1L);
+        Symbol symbolRev1 = symbolDAO.get(user, project.getId(), symbol.getId(), 1L);
         assertNotNull(symbolRev1);
         assertFalse(symbolRev1.isHidden());
 
-        Symbol symbolRev2 = symbolDAO.get(user, symbol.getProject().getId(), symbol.getId(), 2L);
+        Symbol symbolRev2 = symbolDAO.get(user, project.getId(), symbol.getId(), 2L);
         assertNotNull(symbolRev2);
         assertFalse(symbolRev2.isHidden());
     }
@@ -685,7 +686,7 @@ public class SymbolDAOImplTest {
     public void shouldNotShowAnythingByInvalidID() throws NotFoundException {
         symbolDAO.create(symbol);
 
-        symbolDAO.show(project.getId(), -1L); // should fail
+        symbolDAO.show(user.getId(), project.getId(), -1L); // should fail
     }
 
     private List<Symbol> createTestSymbolLists() throws NotFoundException {
