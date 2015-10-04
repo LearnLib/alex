@@ -38,11 +38,20 @@ public class User implements Serializable {
     @Column(unique = true)
     private String email;
 
+    /**
+     * The hash of the users password
+     */
     @NotNull
     private String password;
 
+    /**
+     * The salt that is used to hash the password
+     */
     private String salt;
 
+    /**
+     * The role of the user
+     */
     private UserRole role;
 
     @JsonIgnore
@@ -69,6 +78,11 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<Counter> counters;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<LearnerResult> learnerResults;
 
     public User() {
         role = UserRole.REGISTERED;
@@ -194,6 +208,14 @@ public class User implements Serializable {
 
     public void setCounters(Set<Counter> counters) {
         this.counters = counters;
+    }
+
+    public Set<LearnerResult> getLearnerResults() {
+        return learnerResults;
+    }
+
+    public void setLearnerResults(Set<LearnerResult> learnerResults) {
+        this.learnerResults = learnerResults;
     }
 
     @Override

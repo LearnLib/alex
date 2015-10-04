@@ -17,14 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.NaturalId;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
@@ -180,6 +173,9 @@ public class LearnerResult implements Serializable {
         }
     }
 
+    /** The user of the LearnerResult */
+    private User user;
+
     /** The id of the LearnerResult in the DB. */
     private Long id;
 
@@ -263,7 +259,6 @@ public class LearnerResult implements Serializable {
      */
     @NaturalId
     @ManyToOne
-    //@JoinColumn(name = "projectId")
     @JsonIgnore
     public Project getProject() {
         return project;
@@ -305,6 +300,30 @@ public class LearnerResult implements Serializable {
     public void setProjectId(Long projectId) {
         this.project = new Project(projectId);
         this.jsonChanged = true;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        this.jsonChanged = true;
+    }
+
+    @NaturalId
+    @ManyToOne
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    @Transient
+    @JsonProperty("user")
+    public Long getUserId() {
+        return user == null ? 0L : user.getId();
+    }
+
+    @JsonProperty("user")
+    public void setUserId(Long userId) {
+        user = new User(userId);
+        jsonChanged = true;
     }
 
     /**
@@ -622,6 +641,7 @@ public class LearnerResult implements Serializable {
             setProject(newResult.getProject());
             setTestNo(newResult.getTestNo());
             setStepNo(newResult.getStepNo());
+            setUser(newResult.getUser());
             setStatistics(newResult.statistics);
             setConfiguration(newResult.getConfiguration());
             setSigma(newResult.getSigma());

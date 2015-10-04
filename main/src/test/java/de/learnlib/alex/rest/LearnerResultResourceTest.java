@@ -34,6 +34,7 @@ import static org.mockito.Mockito.verify;
 
 public class LearnerResultResourceTest extends JerseyTest {
 
+    private static final Long USER_TEST_ID = 4L;
     private static final long PROJECT_ID = 1L;
     private static final long RESULT_ID = 10L;
     private static final int TEST_RESULT_AMOUNT = 10;
@@ -81,6 +82,10 @@ public class LearnerResultResourceTest extends JerseyTest {
 
         project = new Project();
         project.setId(PROJECT_ID);
+
+        user = new User();
+        user.setId(USER_TEST_ID);
+        given(userDAO.getById(user.getId())).willReturn(user);
     }
 
     @Test
@@ -99,7 +104,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
             results.add(learnerResult.getJSON());
         }
-        given(learnerResultDAO.getAllAsJSON(PROJECT_ID)).willReturn(results);
+        given(learnerResultDAO.getAllAsJSON(user.getId(), PROJECT_ID)).willReturn(results);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -110,7 +115,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatGettingAllFinalResultsReturns404IfTheProjectIdIsInvalid() throws NotFoundException {
-        given(learnerResultDAO.getAllAsJSON(PROJECT_ID)).willThrow(NotFoundException.class);
+        given(learnerResultDAO.getAllAsJSON(user.getId(), PROJECT_ID)).willThrow(NotFoundException.class);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").request().get();
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
@@ -175,7 +180,7 @@ public class LearnerResultResourceTest extends JerseyTest {
             ids.add(RESULT_ID + i);
             results.add(tmpList);
         }
-        given(learnerResultDAO.getAllAsJson(PROJECT_ID, ids)).willReturn(results);
+        given(learnerResultDAO.getAllAsJson(user.getId(), PROJECT_ID, ids)).willReturn(results);
 
         StringBuilder idsAsString = new StringBuilder();
         for (Long id : ids) {
@@ -199,12 +204,13 @@ public class LearnerResultResourceTest extends JerseyTest {
         sigma.add("1");
 
         LearnerResult learnerResult = new LearnerResult();
+        learnerResult.setUser(user);
         learnerResult.setProject(project);
         learnerResult.setTestNo(RESULT_ID);
         learnerResult.setStepNo(0L);
         learnerResult.setSigma(sigma);
 
-        given(learnerResultDAO.getAsJSON(PROJECT_ID, RESULT_ID)).willReturn(learnerResult.getJSON());
+        given(learnerResultDAO.getAsJSON(USER_TEST_ID, PROJECT_ID, RESULT_ID)).willReturn(learnerResult.getJSON());
 
         // when
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID).request().get();
@@ -219,7 +225,7 @@ public class LearnerResultResourceTest extends JerseyTest {
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID).request().delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(learnerResultDAO).delete(PROJECT_ID, RESULT_ID);
+        verify(learnerResultDAO).delete(USER_TEST_ID, PROJECT_ID, RESULT_ID);
     }
 
     @Test
@@ -228,7 +234,7 @@ public class LearnerResultResourceTest extends JerseyTest {
                                 .request().delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        verify(learnerResultDAO).delete(USER_TEST_ID, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
     }
 
     @Test

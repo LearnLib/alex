@@ -35,7 +35,7 @@ import static org.mockito.Mockito.verify;
 
 public class ProjectResourceTest extends JerseyTest {
 
-    private static final Long USER_TEST_ID = 1L;
+    private static final Long USER_TEST_ID = 3L;
     private static final Long PROJECT_TEST_ID = 1L;
 
     @Mock

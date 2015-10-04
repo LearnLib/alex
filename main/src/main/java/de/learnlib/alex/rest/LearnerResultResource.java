@@ -1,7 +1,9 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
@@ -12,9 +14,11 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.validation.ValidationException;
+import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 /**
@@ -29,6 +33,10 @@ public class LearnerResultResource {
     @Inject
     private LearnerResultDAO learnerResultDAO;
 
+    /** The security context containing the user of the request */
+    @Context
+    SecurityContext securityContext;
+
     /**
      * Get all final / last results of each test run within one project.
      *
@@ -42,8 +50,10 @@ public class LearnerResultResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllFinalResults(@PathParam("project_id") long projectId) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
-            List<String> resultsAsJSON = learnerResultDAO.getAllAsJSON(projectId);
+            List<String> resultsAsJSON = learnerResultDAO.getAllAsJSON(user.getId(), projectId);
             return ResponseHelper.renderStringList(resultsAsJSON, Response.Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getAllFinalResults",
@@ -68,12 +78,14 @@ public class LearnerResultResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllStep(@PathParam("project_id") Long projectId,
                                @PathParam("test_nos") IdsList testNos) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
             if (testNos.size() == 1) {
-                List<String> result = learnerResultDAO.getAllAsJSON(projectId, testNos.get(0));
+                List<String> result = learnerResultDAO.getAllAsJSON(user.getId(), projectId, testNos.get(0));
                 return ResponseHelper.renderStringList(result, Response.Status.OK);
             } else {
-                List<List<String>> result = learnerResultDAO.getAllAsJson(projectId, testNos);
+                List<List<String>> result = learnerResultDAO.getAllAsJson(user.getId(), projectId, testNos);
                 return ResponseHelper.renderStringList(result, Response.Status.OK);
             }
         } catch (NotFoundException e) {
@@ -98,8 +110,10 @@ public class LearnerResultResource {
     @Path("{test_no}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOneFinalResult(@PathParam("project_id") long projectId, @PathParam("test_no") long testNo) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
-            String json = learnerResultDAO.getAsJSON(projectId, testNo);
+            String json = learnerResultDAO.getAsJSON(user.getId(), projectId, testNo);
             return Response.ok(json).build();
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getOneFinalResult",
@@ -124,9 +138,11 @@ public class LearnerResultResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteResultSet(@PathParam("project_id") Long projectId,
                                     @PathParam("test_numbers") IdsList testNumbers) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
         try {
             Long[] numbersLongArray = testNumbers.toArray(new Long[testNumbers.size()]);
-            learnerResultDAO.delete(projectId, numbersLongArray);
+            learnerResultDAO.delete(user.getId(), projectId, numbersLongArray);
             return Response.status(Response.Status.NO_CONTENT).build();
 
         }  catch (NotFoundException e) {

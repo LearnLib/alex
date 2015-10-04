@@ -106,9 +106,9 @@ public class CounterResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectJSON = "[{\"name\":\"" + COUNTER_NAME + " 1\",\"value\":" + COUNTER_VALUE + ","
-                                    + "\"user\":" + USER_TEST_ID + ",\"project\":" + PROJECT_TEST_ID + "},"
+                                    + "\"project\":" + PROJECT_TEST_ID + ",\"user\":" + USER_TEST_ID + "},"
                           +  "{\"name\":\"" + COUNTER_NAME + " 2\",\"value\":" + COUNTER_VALUE + ","
-                                    + "\"user\":" + USER_TEST_ID +",\"project\":" + PROJECT_TEST_ID + "}"
+                                    + "\"project\":" + PROJECT_TEST_ID +",\"user\":" + USER_TEST_ID + "}"
                           + "]";
         assertEquals(expectJSON, json);
         assertEquals(String.valueOf(counters.length), response.getHeaderString("X-Total-Count"));
