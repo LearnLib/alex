@@ -555,7 +555,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404OnHideWhenSymbolNotFound() throws NotFoundException {
-        willThrow(new NotFoundException()).given(symbolDAO).hide(PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        willThrow(new NotFoundException()).given(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, SYMBOL_TEST_ID);
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/hide";
         Response response = target(path).request().post(null);
 
@@ -610,7 +610,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404OnShowWhenSymbolNotFound() throws NotFoundException {
-        willThrow(new NotFoundException()).given(symbolDAO).show(PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        willThrow(new NotFoundException()).given(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID, SYMBOL_TEST_ID);
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/show";
         Response response = target(path).request().post(null);
 

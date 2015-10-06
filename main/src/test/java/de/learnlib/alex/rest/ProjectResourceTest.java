@@ -1,6 +1,7 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.ALEXTestApplication;
+import de.learnlib.alex.FakeAuthenticationFilter;
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.verify;
 
 public class ProjectResourceTest extends JerseyTest {
 
-    private static final Long USER_TEST_ID = 3L;
+    private static final Long USER_TEST_ID = FakeAuthenticationFilter.FAKE_USER_ID;
     private static final Long PROJECT_TEST_ID = 1L;
 
     @Mock
@@ -78,6 +79,7 @@ public class ProjectResourceTest extends JerseyTest {
         given(userDAO.getById(user.getId())).willReturn(user);
 
         project = new Project();
+        project.setUser(user);
         project.setId(PROJECT_TEST_ID);
         project.setName("Test Project");
         project.addSymbol(symbol);
@@ -179,7 +181,8 @@ public class ProjectResourceTest extends JerseyTest {
         String json = "{\"id\": " + project.getId() + ","
                         + "\"name\": \"" + project.getName() + "\","
                         + "\"baseUrl\": \"" + project.getBaseUrl() + "\","
-                        + "\"description\": \"" + project.getDescription() + "\"}";
+                        + "\"description\": \"" + project.getDescription() + "\","
+                        + "\"user\": \"" + project.getUserId() + "\"}";
 
         target("/project").request().post(Entity.json(project));
         Response response = target("/projects/" + project.getId()).request().put(Entity.json(json));

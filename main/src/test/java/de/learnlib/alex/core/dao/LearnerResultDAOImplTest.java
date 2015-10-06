@@ -184,7 +184,7 @@ public class LearnerResultDAOImplTest {
                                         + "\"duration\":0,\"eqsUsed\":0,\"mqsUsed\":0,"
                                         + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0"
                                     + "},"
-                                    + "\"stepNo\":" + i + ",\"testNo\":" + result.getTestNo() + "}";
+                                    + "\"stepNo\":" + i + ",\"testNo\":" + result.getTestNo() + ",\"user\":" + user.getId() + "}";
             String resultAsJSON = resultsInDBAsJSON.get(i);
 
             assertEquals(expectedJSON, resultAsJSON);

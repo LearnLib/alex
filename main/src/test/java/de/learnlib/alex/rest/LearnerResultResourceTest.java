@@ -1,6 +1,7 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.ALEXTestApplication;
+import de.learnlib.alex.FakeAuthenticationFilter;
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.verify;
 
 public class LearnerResultResourceTest extends JerseyTest {
 
-    private static final Long USER_TEST_ID = 4L;
+    private static final Long USER_TEST_ID = FakeAuthenticationFilter.FAKE_USER_ID;
     private static final long PROJECT_ID = 1L;
     private static final long RESULT_ID = 10L;
     private static final int TEST_RESULT_AMOUNT = 10;

@@ -107,20 +107,24 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
         project = new Project();
         project.setId(PROJECT_TEST_ID);
+        project.setUser(user);
         given(projectDAO.getByID(project.getId())).willReturn(project);
 
         group1 = new SymbolGroup();
         group1.setName("SymbolGroupResource - Test Group 1");
+        group1.setUser(user);
         group1.setProject(project);
 
         group2 = new SymbolGroup();
         group2.setName("SymbolGroupResource - Test Group 2");
+        group2.setUser(user);
         group2.setProject(project);
     }
 
     @Test
     public void shouldCreateValidGroup() throws JsonProcessingException {
         group1.setProject(null);
+        group1.setUser(null);
         String json = writeGroup(group1);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups").request().post(Entity.json(json));
@@ -167,7 +171,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
-        willThrow(NotFoundException.class).given(symbolGroupDAO).getAll(user.getId(), PROJECT_TEST_ID); //TODO: should use user not user.getId()
+        willThrow(NotFoundException.class).given(symbolGroupDAO).getAll(USER_TEST_ID, PROJECT_TEST_ID); //TODO: should use user not user.getId()
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups").request().get();
 
