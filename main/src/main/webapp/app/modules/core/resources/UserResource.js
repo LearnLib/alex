@@ -29,6 +29,7 @@
         function getAll() {
             return $http.get(uri)
                 .then(function (response) {
+                    console.log(response.data);
                     return response.data;
                 })
         }

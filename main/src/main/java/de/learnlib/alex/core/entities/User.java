@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.hibernate.annotations.*;
@@ -154,6 +155,8 @@ public class User implements Serializable {
         this.role = role;
     }
 
+    @JsonIgnore
+    @JsonProperty("password")
     public String getPassword() {
         return password;
     }
@@ -162,6 +165,8 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    @JsonIgnore
+    @JsonProperty("salt")
     public String getSalt() {
         return salt;
     }

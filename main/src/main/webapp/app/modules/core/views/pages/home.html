@@ -7,15 +7,22 @@
     <div class="row">
         <div class="col-xs-4 col-xs-push-4">
 
-            <h3>Register</h3>
-            <hr>
-            <user-register-form></user-register-form>
+            <tabset justified="true">
+                <tab heading="Login">
+                    <br>
+                    <user-login-form></user-login-form>
+                </tab>
+                <tab heading="Create Account">
+                    <br>
+                    <user-register-form></user-register-form>
+                </tab>
+            </tabset>
 
             <hr>
 
-            <h3>Login</h3>
-            <hr>
-            <user-login-form></user-login-form>
+            <div class="text-right">
+                <a href="#">Forgot your password?</a>
+            </div>
 
         </div>
     </div>
