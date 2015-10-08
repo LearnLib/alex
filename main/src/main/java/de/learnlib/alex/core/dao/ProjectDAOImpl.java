@@ -34,10 +34,6 @@ public class ProjectDAOImpl implements ProjectDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        System.out.println("===============================");
-        System.out.println("Project User: " + project.getUser() + " (" + project.getUserId() + ")");
-        System.out.println("===============================");
-
         try {
 
             // TODO: fix this branch with multi user
@@ -67,7 +63,6 @@ public class ProjectDAOImpl implements ProjectDAO {
                     i++;
                 }
             } else {
-                System.out.println("#### creating Default Group");
                 SymbolGroup defaultGroup = new SymbolGroup();
                 defaultGroup.setName("Default Group");
                 defaultGroup.setProject(project);

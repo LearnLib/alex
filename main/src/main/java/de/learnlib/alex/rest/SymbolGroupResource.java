@@ -248,8 +248,7 @@ public class SymbolGroupResource {
 
         try {
             SymbolGroup group = symbolGroupDAO.get(user, projectId, id);
-            System.out.println("group: " + group);
-
+            
             if (group.getUserId().equals(user.getId())) {
                 symbolGroupDAO.delete(user, projectId, id);
                 return Response.noContent().build();
