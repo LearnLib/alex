@@ -138,7 +138,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
             results.add(learnerResult.getJSON());
         }
-        given(learnerResultDAO.getAllAsJSON(PROJECT_ID, RESULT_ID)).willReturn(results);
+        given(learnerResultDAO.getAllAsJSON(USER_TEST_ID, PROJECT_ID, RESULT_ID)).willReturn(results);
 
         String path = "/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "/complete";
         Response response = target(path).request().get();
@@ -150,7 +150,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatGettingAllResultsOfOneRunReturns404IfTheProjectIdIsInvalid() throws NotFoundException {
-        given(learnerResultDAO.getAllAsJSON(PROJECT_ID, RESULT_ID)).willThrow(NotFoundException.class);
+        given(learnerResultDAO.getAllAsJSON(USER_TEST_ID, PROJECT_ID, RESULT_ID)).willThrow(NotFoundException.class);
 
         String path = "/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "/complete";
         Response response = target(path).request().get();

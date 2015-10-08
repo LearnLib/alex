@@ -43,11 +43,12 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Override
     public void create(LearnerResult learnerResult) throws ValidationException {
         // new LearnerResults should have a project, not a test number not a step number
-        if (learnerResult.getProject() == null
+        if (learnerResult.getUser() == null
+                || learnerResult.getProject() == null
                 || learnerResult.getTestNo() != null
                 || learnerResult.getStepNo() != null) {
             throw new ValidationException(
-                "To create a LearnResult it must have a Project but must not have a test no. nor step no.");
+                "To create a LearnResult it must have a User and Project but must not have a test no. nor step no.");
         }
 
         // start session
@@ -56,6 +57,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         // get the current highest test no in the project and add 1 for the next id
         Long maxTestNo = (Long) session.createCriteria(LearnerResult.class)
+                                        .add(Restrictions.eq("user", learnerResult.getUser()))
                                         .add(Restrictions.eq("project", learnerResult.getProject()))
                                         .setProjection(Projections.max("testNo"))
                                         .uniqueResult();
@@ -153,7 +155,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                 .list();
 
         if (result.isEmpty()) {
-            throw new NotFoundException("No result with the test no. " + testNo + " was found.");
+            throw new NotFoundException("No result with the test no. " + testNo + " for user " + userId + "was found.");
         }
 
         // done
@@ -161,24 +163,25 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public LearnerResult get(Long projectId, Long testNo) throws NotFoundException {
+    public LearnerResult get(Long userId, Long projectId, Long testNo) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        LearnerResult result = get(session, projectId, testNo);
+        LearnerResult result = get(session, userId, projectId, testNo);
 
         // done
         HibernateUtil.commitTransaction();
         return result;
     }
 
-    private LearnerResult get(Session session, Long projectId, Long testNo) throws NotFoundException {
+    private LearnerResult get(Session session, Long userId, Long projectId, Long testNo) throws NotFoundException {
         if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
         LearnerResult result = (LearnerResult) session.createCriteria(LearnerResult.class)
+                                                        .add(Restrictions.eq("user.id", userId))
                                                         .add(Restrictions.eq("project.id", projectId))
                                                         .add(Restrictions.eq("testNo", testNo))
                                                         .add(Restrictions.eq("stepNo", 0L))
@@ -254,7 +257,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     private void updateSummary(Session session, LearnerResult result) throws NotFoundException {
-        LearnerResult summaryResult = get(session, result.getProjectId(), result.getTestNo());
+        LearnerResult summaryResult = get(session, result.getUserId(), result.getProjectId(), result.getTestNo());
         summaryResult.setErrorText(result.getErrorText());
         summaryResult.setHypothesis(result.getHypothesis());
 

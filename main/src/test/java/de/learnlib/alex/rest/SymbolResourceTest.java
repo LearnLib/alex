@@ -555,6 +555,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404OnHideWhenSymbolNotFound() throws NotFoundException {
+        given(symbolDAO.getWithLatestRevision(user, PROJECT_TEST_ID, symbol.getId())).willReturn(symbol);
         willThrow(new NotFoundException()).given(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, SYMBOL_TEST_ID);
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/hide";
         Response response = target(path).request().post(null);

@@ -134,6 +134,10 @@ public class LearnerResource {
             projectDAO.getByID(user.getId(), projectId); // check if project exists
 
             LearnerResult lastResult = learner.getResult(user);
+            if (lastResult == null) {
+                return Response.status(Status.NOT_FOUND).build();
+            }
+
             if (lastResult.getProjectId() != projectId || lastResult.getTestNo() != testRunNo) {
                 LOGGER.info("could not resume the learner of another project or with an wrong test run.");
                 return Response.status(Status.NOT_MODIFIED).entity(status).build();
@@ -214,7 +218,7 @@ public class LearnerResource {
         }
 
         try {
-            learnerResultDAO.get(resultInThread.getProjectId(), resultInThread.getTestNo());
+            learnerResultDAO.get(resultInThread.getUserId(), resultInThread.getProjectId(), resultInThread.getTestNo());
         } catch (NotFoundException nfe) {
             IllegalArgumentException e = new IllegalArgumentException("The last learned result was deleted.");
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.status", Status.NOT_FOUND, e);
@@ -245,7 +249,7 @@ public class LearnerResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
-            Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
+            Project project = projectDAO.getByID(user.getId(), projectId);
 
             IdRevisionPair resetSymbolAsIdRevisionPair = symbolSet.getResetSymbolAsIdRevisionPair();
             if (resetSymbolAsIdRevisionPair == null) {
@@ -254,7 +258,7 @@ public class LearnerResource {
             Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsIdRevisionPair);
             symbolSet.setResetSymbol(resetSymbol);
 
-            List<Symbol> symbols = loadSymbols(projectId, symbolSet.getSymbolsAsIdRevisionPairs());
+            List<Symbol> symbols = loadSymbols(user, projectId, symbolSet.getSymbolsAsIdRevisionPairs());
             symbolSet.setSymbols(symbols);
 
             List<String> results = learner.readOutputs(user, project, resetSymbol, symbols);
@@ -268,9 +272,8 @@ public class LearnerResource {
     }
 
     // load all from SymbolDAO always orders the Symbols by ID
-    private List<Symbol> loadSymbols(Long projectId, List<IdRevisionPair> idRevisionPairs) throws NotFoundException {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-
+    private List<Symbol> loadSymbols(User user, Long projectId, List<IdRevisionPair> idRevisionPairs)
+            throws NotFoundException {
         List<Symbol> symbols = new LinkedList<>();
 
         for (IdRevisionPair pair : idRevisionPairs) {

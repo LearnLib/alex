@@ -22,6 +22,13 @@ public class FakeAuthenticationFilter implements ContainerRequestFilter {
 
     public static final Long FAKE_USER_ID = 21L;
 
+    public static final User FAKE_USER = new User();
+
+    {
+        FAKE_USER.setRole(UserRole.ADMIN);
+        FAKE_USER.setId(FAKE_USER_ID);
+    }
+
     /**
      * checks for the availability of a JWT and puts the corresponding user into a SecurityContext that can be injected
      * into Resources. Uses dummy user without role if no JWT is available.
@@ -31,12 +38,8 @@ public class FakeAuthenticationFilter implements ContainerRequestFilter {
      */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        User user = new User();
-        user.setId(FAKE_USER_ID);
-        user.setRole(UserRole.ADMIN);
-
         // create injectable security context with user here
-        requestContext.setSecurityContext(new AuthContext(user));
+        requestContext.setSecurityContext(new AuthContext(FAKE_USER));
     }
 
     /**

@@ -209,7 +209,7 @@ public class LearnerResultDAOImplTest {
             learnerResultDAO.update(learnerResult);
         }
 
-        LearnerResult resultInDB = learnerResultDAO.get(project.getId(), learnerResult.getTestNo());
+        LearnerResult resultInDB = learnerResultDAO.get(user.getId(), project.getId(), learnerResult.getTestNo());
         learnerResult.setStepNo(0L);
         assertEquals(learnerResult, resultInDB);
     }
@@ -217,12 +217,12 @@ public class LearnerResultDAOImplTest {
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingOneFinalResultThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.get(-1L, learnerResult.getTestNo()); // should fail
+        learnerResultDAO.get(user.getId(), -1L, learnerResult.getTestNo()); // should fail
     }
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingOneFinalResultThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.get(project.getId(), -1L); // should fail
+        learnerResultDAO.get(user.getId(), project.getId(), -1L); // should fail
     }
 
     @Test

@@ -77,7 +77,7 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    LearnerResult get(Long projectId, Long testRunNo) throws NotFoundException;
+    LearnerResult get(Long userId, Long projectId, Long testRunNo) throws NotFoundException;
 
     /**
      * Get the latest LearnerResult of a given test run as JSON data, e.g. the final result.

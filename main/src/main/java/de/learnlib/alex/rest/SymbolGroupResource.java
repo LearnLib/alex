@@ -35,6 +35,7 @@ import java.util.List;
  * @resourceDescription Operations for groups
  */
 @Path("/projects/{project_id}/groups")
+@RolesAllowed("REGISTERED")
 public class SymbolGroupResource {
 
     /** Context information about the URI. */
@@ -72,7 +73,6 @@ public class SymbolGroupResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
     public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
@@ -109,13 +109,12 @@ public class SymbolGroupResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
     public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
             SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
-            List<SymbolGroup> groups = symbolGroupDAO.getAll(projectId, user.getId(), embeddableFields);
+            List<SymbolGroup> groups = symbolGroupDAO.getAll(user.getId(), projectId, embeddableFields);
             return ResponseHelper.renderList(groups, Response.Status.OK);
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
@@ -144,7 +143,6 @@ public class SymbolGroupResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
     public Response get(@PathParam("project_id") long projectId,
                         @PathParam("id") Long id,
                         @QueryParam("embed") String embed) {
@@ -178,7 +176,6 @@ public class SymbolGroupResource {
     @GET
     @Path("/{id}/symbols")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
     public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
@@ -210,7 +207,6 @@ public class SymbolGroupResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
     public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
@@ -247,12 +243,13 @@ public class SymbolGroupResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
     public Response deleteAResultSet(@PathParam("project_id") long projectId,  @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
             SymbolGroup group = symbolGroupDAO.get(user, projectId, id);
+            System.out.println("group: " + group);
+
             if (group.getUserId().equals(user.getId())) {
                 symbolGroupDAO.delete(user, projectId, id);
                 return Response.noContent().build();

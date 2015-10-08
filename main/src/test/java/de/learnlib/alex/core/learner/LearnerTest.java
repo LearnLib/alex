@@ -59,7 +59,7 @@ public class LearnerTest {
     @Before
     public void setUp() {
         given(project.getBaseUrl()).willReturn(FAKE_URL);
-        given(threadFactory.createThread(contextHandler, project, learnerConfiguration)).willReturn(thread);
+        given(threadFactory.createThread(contextHandler, user, project, learnerConfiguration)).willReturn(thread);
         given(contextHandlerFactory.createContext(project)).willReturn(contextHandler);
 
         learner = new Learner(threadFactory, contextHandlerFactory);

@@ -109,7 +109,7 @@ public class Learner {
         }
 
         contextHandler = contextHandlerFactory.createContext(project);
-        LearnerThread learnThread = learnThreadFactory.createThread(contextHandler, project, configuration);
+        LearnerThread learnThread = learnThreadFactory.createThread(contextHandler, user, project, configuration);
         startThread(user, learnThread);
 
         // get the sul here once so that the timer doesn't get '0' for .getStatisticalData.getCount() after continuing

@@ -5,6 +5,7 @@ import de.learnlib.alex.core.entities.LearnAlgorithms;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,9 @@ public class LearnerThreadFactoryTest {
     private ConnectorContextHandler contextHandler;
 
     @Mock
+    private User user;
+
+    @Mock
     private Project project;
 
     @Mock
@@ -53,7 +57,7 @@ public class LearnerThreadFactoryTest {
 
     @Test
     public void shouldCreateThreadForWebSymbols() {
-        LearnerThread thread = factory.createThread(contextHandler, project, learnerConfiguration);
+        LearnerThread thread = factory.createThread(contextHandler, user, project, learnerConfiguration);
 
         assertNotNull(thread);
     }
@@ -61,7 +65,7 @@ public class LearnerThreadFactoryTest {
     @Test
     public void shouldCreateThreadForRESTSymbols() {
         given(project.getBaseUrl()).willReturn(FAKE_URL);
-        LearnerThread thread = factory.createThread(contextHandler, project, learnerConfiguration);
+        LearnerThread thread = factory.createThread(contextHandler, user, project, learnerConfiguration);
 
         assertNotNull(thread);
     }
@@ -70,7 +74,7 @@ public class LearnerThreadFactoryTest {
     public void shouldFailWithoutSymbols() {
         learnerConfiguration.getSymbols().clear();
 
-        factory.createThread(contextHandler, project, learnerConfiguration); // should fail
+        factory.createThread(contextHandler, user, project, learnerConfiguration); // should fail
     }
 
 }

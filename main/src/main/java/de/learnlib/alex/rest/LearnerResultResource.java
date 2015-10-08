@@ -56,7 +56,7 @@ public class LearnerResultResource {
             List<String> resultsAsJSON = learnerResultDAO.getAllAsJSON(user.getId(), projectId);
             return ResponseHelper.renderStringList(resultsAsJSON, Response.Status.OK);
         } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getAllFinalResults",
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllFinalResults",
                                                                 Response.Status.NOT_FOUND, e);
         }
     }
@@ -76,8 +76,8 @@ public class LearnerResultResource {
     @GET
     @Path("{test_nos}/complete")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllStep(@PathParam("project_id") Long projectId,
-                               @PathParam("test_nos") IdsList testNos) {
+    public Response getAllSteps(@PathParam("project_id") Long projectId,
+                                @PathParam("test_nos") IdsList testNos) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
@@ -89,7 +89,7 @@ public class LearnerResultResource {
                 return ResponseHelper.renderStringList(result, Response.Status.OK);
             }
         } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getAllStep",
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
                                                                Response.Status.NOT_FOUND,  e);
         }
     }
@@ -116,7 +116,7 @@ public class LearnerResultResource {
             String json = learnerResultDAO.getAsJSON(user.getId(), projectId, testNo);
             return Response.ok(json).build();
         } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.getOneFinalResult",
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getOneFinalResult",
                                                                Response.Status.NOT_FOUND,  e);
         }
     }
@@ -146,10 +146,10 @@ public class LearnerResultResource {
             return Response.status(Response.Status.NO_CONTENT).build();
 
         }  catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteResultSet",
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.deleteResultSet",
                                                                 Response.Status.NOT_FOUND,  e);
         } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("HypothesesResource.deleteResultSet",
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.deleteResultSet",
                                                                 Response.Status.BAD_REQUEST, e);
         }
     }

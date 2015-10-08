@@ -69,7 +69,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
     @Mock
     private Learner learner;
 
-    private User user;
+    private User user = FakeAuthenticationFilter.FAKE_USER;
     private Project project;
     private SymbolGroup group1;
     private SymbolGroup group2;
@@ -92,12 +92,10 @@ public class SymbolGroupResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        user = new User();
-        user.setId(USER_TEST_ID);
-        given(userDAO.getById(user.getId())).willReturn(user);
+        given(userDAO.getById(USER_TEST_ID)).willReturn(user);
 
         return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
-                                             learnerResultDAO, fileDAO, learner, SymbolGroupResource.class);
+                                       learnerResultDAO, fileDAO, learner, SymbolGroupResource.class);
     }
 
     @Before
@@ -171,7 +169,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
-        willThrow(NotFoundException.class).given(symbolGroupDAO).getAll(USER_TEST_ID, PROJECT_TEST_ID); //TODO: should use user not user.getId()
+        willThrow(NotFoundException.class).given(symbolGroupDAO).getAll(USER_TEST_ID, PROJECT_TEST_ID);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups").request().get();
 
@@ -234,6 +232,8 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
     @Test
     public void shouldDeleteAGroup() throws NotFoundException {
+        given(symbolGroupDAO.get(user, PROJECT_TEST_ID, group1.getId())).willReturn(group1);
+
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
         Response response = target(path).request().delete();
 
@@ -243,6 +243,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn400IfYouWantToDeleteADefaultGroup() throws NotFoundException {
+        given(symbolGroupDAO.get(user, PROJECT_TEST_ID, group1.getId())).willReturn(group1);
         willThrow(IllegalArgumentException.class).given(symbolGroupDAO).delete(user, PROJECT_TEST_ID, group1.getId());
 
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
