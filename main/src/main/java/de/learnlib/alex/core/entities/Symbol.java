@@ -187,6 +187,11 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         }
     }
 
+    @JsonProperty("user")
+    public void setUserId(Long userid) {
+        user = new User(userid);
+    }
+
     /**
      * Get related group of the symbol.
      *

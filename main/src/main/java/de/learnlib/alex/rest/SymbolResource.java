@@ -329,7 +329,7 @@ public class SymbolResource {
 
         if (!Objects.equals(id, symbol.getId())
                 || !Objects.equals(projectId, symbol.getProjectId())
-                || !symbol.getUserId().equals(user.getId())) {
+                || !symbol.getUser().equals(user) {
             return  Response.status(Status.BAD_REQUEST).build();
         }
 
