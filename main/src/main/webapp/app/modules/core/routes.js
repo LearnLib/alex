@@ -32,7 +32,7 @@
                 url: '/dashboard',
                 views: {
                     '@': {
-                        templateUrl: paths.COMPONENTS + '/core/views/pages/dashboard.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/project-dashboard.html'
                     }
                 },
                 data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
