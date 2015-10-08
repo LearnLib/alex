@@ -146,7 +146,7 @@ public class SymbolDAOImplTest {
         // then
         Symbol symbolInDB = symbolDAO.get(user, project.getId(), symbol.getId(), symbol.getRevision());
         assertNotNull(symbolInDB);
-        Project project2 = projectDAO.getByID(symbolInDB.getProjectId());
+        Project project2 = projectDAO.getByID(user.getId(), symbolInDB.getProjectId());
 
         assertEquals(symbol.getName(), symbolInDB.getName());
         assertEquals(symbol.getAbbreviation(), symbolInDB.getAbbreviation());
@@ -237,7 +237,7 @@ public class SymbolDAOImplTest {
         Symbol symbolInDB = symbolDAO.get(user, project.getId(), symbol.getId(), symbol.getRevision());
         assertNotNull(symbolInDB);
         Symbol websymbolInDB = symbolInDB;
-        Project project2 = projectDAO.getByID(symbolInDB.getProjectId());
+        Project project2 = projectDAO.getByID(user.getId(), symbolInDB.getProjectId());
 
         assertEquals(symbol.getName(), symbolInDB.getName());
         assertEquals(symbol.getAbbreviation(), symbolInDB.getAbbreviation());

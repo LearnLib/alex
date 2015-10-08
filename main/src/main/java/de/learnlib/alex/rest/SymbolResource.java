@@ -85,7 +85,7 @@ public class SymbolResource {
         try {
             checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
 
-            Project project = projectDAO.getByID(projectId);
+            Project project = projectDAO.getByID(user.getId(), projectId);
             if (project.getUser().equals(user)) {
                 symbol.setUser(user);
                 symbolDAO.create(symbol);
@@ -126,7 +126,7 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
-            Project project = projectDAO.getByID(projectId);
+            Project project = projectDAO.getByID(user.getId(), projectId);
             if (project.getUser().equals(user)) {
                 for (Symbol symbol : symbols) {
                     checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException

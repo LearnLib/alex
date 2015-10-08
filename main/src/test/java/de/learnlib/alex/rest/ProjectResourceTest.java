@@ -84,7 +84,7 @@ public class ProjectResourceTest extends JerseyTest {
         project.setName("Test Project");
         project.addSymbol(symbol);
         try {
-            given(projectDAO.getByID(PROJECT_TEST_ID)).willReturn(project);
+            given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willReturn(project);
         } catch (NotFoundException e) {
             e.printStackTrace();
             fail();
@@ -148,12 +148,13 @@ public class ProjectResourceTest extends JerseyTest {
         Response response = target("/projects/" + PROJECT_TEST_ID).request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
-        verify(projectDAO).getByID(PROJECT_TEST_ID);
+        verify(projectDAO).getByID(USER_TEST_ID, PROJECT_TEST_ID);
     }
 
     @Test
     public void shouldGetTheRightProjectWithEmbedded() throws NotFoundException {
-        given(projectDAO.getByID(PROJECT_TEST_ID,
+        given(projectDAO.getByID(USER_TEST_ID,
+                                 PROJECT_TEST_ID,
                                  ProjectDAO.EmbeddableFields.SYMBOLS,
                                  ProjectDAO.EmbeddableFields.TEST_RESULTS))
                 .willReturn(project);
@@ -161,19 +162,20 @@ public class ProjectResourceTest extends JerseyTest {
                                 .request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
-        verify(projectDAO).getByID(PROJECT_TEST_ID,
+        verify(projectDAO).getByID(USER_TEST_ID,
+                                   PROJECT_TEST_ID,
                                    ProjectDAO.EmbeddableFields.SYMBOLS,
                                    ProjectDAO.EmbeddableFields.TEST_RESULTS);
     }
 
     @Test
     public void shouldReturn404WhenProjectNotFound() throws NotFoundException {
-        given(projectDAO.getByID(PROJECT_TEST_ID)).willThrow(NotFoundException.class);
+        given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
         Response response = target("/projects/" + PROJECT_TEST_ID).request().get();
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(projectDAO).getByID(PROJECT_TEST_ID);
+        verify(projectDAO).getByID(USER_TEST_ID, PROJECT_TEST_ID);
     }
 
     @Test
@@ -231,12 +233,12 @@ public class ProjectResourceTest extends JerseyTest {
         Response response = target("/projects/" + project.getId()).request().delete();
         assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(projectDAO).delete(project.getId());
+        verify(projectDAO).delete(USER_TEST_ID, project.getId());
     }
 
     @Test
     public void shouldReturn404OnDeleteWhenProjectNotFound() throws NotFoundException {
-        willThrow(NotFoundException.class).given(projectDAO).delete(PROJECT_TEST_ID);
+        willThrow(NotFoundException.class).given(projectDAO).delete(USER_TEST_ID, PROJECT_TEST_ID);
         Response response = target("/projects/" + PROJECT_TEST_ID).request().delete();
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());

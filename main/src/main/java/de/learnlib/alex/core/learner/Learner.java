@@ -5,6 +5,7 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
  */
 public class Learner {
 
+    private static final int MAX_CONCURRENT_THREADS = 1;
+
     /**
      * Factory to create a new ContextHandler.
      */
@@ -38,16 +41,14 @@ public class Learner {
     private LearnerThreadFactory learnThreadFactory;
 
     /**
-     * The current learning thread. Could be null.
+     * The last thread of an user, if one exists.
      */
-    private LearnerThread learnThread;
+    private HashMap<User, LearnerThread> userThreads;
 
     /**
-     * The SUL of the current learning thread.
+     * The current learning activeThreads. Could be empty.
      */
-    private ResetCounterSUL resetCounterSUL;
-
-    private Long startTime;
+    private HashMap<User, LearnerThread> activeThreads;
 
     /**
      * Constructor which only set the thread factory.
@@ -68,20 +69,32 @@ public class Learner {
     public Learner(LearnerThreadFactory learnThreadFactory, ConnectorContextHandlerFactory contextHandlerFactory) {
         this.learnThreadFactory = learnThreadFactory;
         this.contextHandlerFactory = contextHandlerFactory;
+        this.activeThreads = new HashMap<>();
+        this.userThreads   = new HashMap<>();
     }
 
     /**
      * Start a learning process by activating a LearningThread.
      *
-     * @param project       The project the learning process runs in.
-     * @param configuration The configuration to use for the learning process.
-     * @throws IllegalArgumentException If the configuration was invalid.
-     * @throws IllegalStateException    If a learning process is already active.
+     * @param user
+     *         The user that wants to start the learning process.
+     * @param project
+     *         The project the learning process runs in.
+     * @param configuration
+     *         The configuration to use for the learning process.
+     * @throws IllegalArgumentException
+     *         If the configuration was invalid.
+     * @throws IllegalStateException
+     *         If a learning process is already active.
      */
-    public void start(Project project, LearnerConfiguration configuration)
+    public void start(User user, Project project, LearnerConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException {
-        if (isActive()) {
+        if (isActive(user)) {
             throw new IllegalStateException("You can only start the learning if no other learning is active");
+        }
+
+        if (activeThreads.size() >= MAX_CONCURRENT_THREADS) {
+            throw new IllegalStateException("Maximum amount of parallel threads reached.");
         }
 
         // TODO: make it nicer than this instanceof stuff, because you have to somehow tell the eq oracle that the
@@ -96,14 +109,12 @@ public class Learner {
         }
 
         contextHandler = contextHandlerFactory.createContext(project);
-        learnThread = learnThreadFactory.createThread(contextHandler, project, configuration);
-        Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
-        thread.start();
+        LearnerThread learnThread = learnThreadFactory.createThread(contextHandler, project, configuration);
+        startThread(user, learnThread);
 
         // get the sul here once so that the timer doesn't get '0' for .getStatisticalData.getCount() after continuing
         // a learning process
-        resetCounterSUL = learnThread.getResetCounterSUL();
-        startTime = new Date().getTime();
+        learnThread.getResetCounterSUL();
     }
 
     /**
@@ -113,17 +124,32 @@ public class Learner {
      * @throws IllegalArgumentException If the new configuration has errors.
      * @throws IllegalStateException    If a learning process is already active.
      */
-    public void resume(LearnerResumeConfiguration newConfiguration)
+    public void resume(User user, LearnerResumeConfiguration newConfiguration)
             throws IllegalArgumentException, IllegalStateException {
-        if (isActive()) {
+        if (isActive(user)) {
             throw new IllegalStateException("You can only restart the learning if no other learning is active");
         }
 
         newConfiguration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
-        validateCounterExample(newConfiguration);
+        validateCounterExample(user, newConfiguration);
 
-        learnThread = learnThreadFactory.updateThread(learnThread, newConfiguration);
+        LearnerThread previousThread = userThreads.get(user);
+        LearnerThread learnThread = learnThreadFactory.updateThread(previousThread, newConfiguration);
+        startThread(user, learnThread);
+    }
+
+    /**
+     * Starts the thread and updates the thread maps.
+     *
+     * @param user
+     *         The user that starts the thread.
+     * @param learnThread
+     *         The thread to start.
+     */
+    private void startThread(User user, LearnerThread learnThread) {
         Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
+        userThreads.put(user, learnThread);
+        activeThreads.put(user, learnThread);
         thread.start();
     }
 
@@ -133,10 +159,11 @@ public class Learner {
      * @param newConfiguration The new configuration.
      * @throws IllegalArgumentException If the new configuration is based on manual counterexamples and at least one of them is wrong.
      */
-    private void validateCounterExample(LearnerResumeConfiguration newConfiguration) throws IllegalArgumentException {
+    private void validateCounterExample(User user, LearnerResumeConfiguration newConfiguration)
+            throws IllegalArgumentException {
         if (newConfiguration.getEqOracle() instanceof SampleEQOracleProxy) {
             SampleEQOracleProxy oracle = (SampleEQOracleProxy) newConfiguration.getEqOracle();
-            LearnerResult lastResult = getResult();
+            LearnerResult lastResult = getResult(user);
 
             for (List<SampleEQOracleProxy.InputOutputPair> counterexample : oracle.getCounterExamples()) {
                 List<Symbol> symbolsFromCounterexample = new ArrayList<>();
@@ -160,9 +187,10 @@ public class Learner {
                 }
 
                 // finally check if the given sample matches the behavior of the SUL
-                List<String> results = readOutputs(lastResult.getProject(),
-                        lastResult.getConfiguration().getResetSymbol(),
-                        symbolsFromCounterexample);
+                List<String> results = readOutputs(lastResult.getUser(),
+                                                   lastResult.getProject(),
+                                                   lastResult.getConfiguration().getResetSymbol(),
+                                                   symbolsFromCounterexample);
                 if (!results.equals(outputs)) {
                     throw new IllegalArgumentException("At least one of the given samples for counterexamples"
                             + " is not matching the behavior of the SUL.");
@@ -174,8 +202,12 @@ public class Learner {
     /**
      * Ends the learning process after the current step.
      */
-    public void stop() {
-        learnThread.interrupt();
+    public void stop(User user) {
+        LearnerThread learnerThread = activeThreads.get(user);
+
+        if (learnerThread != null) {
+            learnerThread.interrupt();
+        }
     }
 
     /**
@@ -183,8 +215,22 @@ public class Learner {
      *
      * @return true if the learning process is active, false otherwise.
      */
-    public boolean isActive() {
-        return learnThread != null && learnThread.isActive();
+    public boolean isActive(User user) {
+        LearnerThread learnerThread = activeThreads.get(user);
+
+        // if no active thread for the user exists -> return false
+        if (learnerThread == null) {
+            return false;
+        }
+
+        // if an 'active' thread existed, but it is actually finished -> clean up activeThread map & return false
+        if (!learnerThread.isActive()) {
+            activeThreads.remove(user);
+            return  false;
+        }
+
+        // otherwise an active thread exists -> return true
+        return true;
     }
 
     /**
@@ -193,9 +239,11 @@ public class Learner {
      *
      * @return The current result of the LearnerThread.
      */
-    public LearnerResult getResult() {
-        if (learnThread != null) {
-            return learnThread.getResult();
+    public LearnerResult getResult(User user) {
+        LearnerThread learnerThread = userThreads.get(user);
+
+        if (learnerThread != null) {
+            return learnerThread.getResult();
         } else {
             return null;
         }
@@ -206,8 +254,15 @@ public class Learner {
      *
      * @return null if the learnThread has not been started or the number of executed MQs in the current learn process
      */
-    public Long getMQsUsed() {
-        return learnThread == null ? null : resetCounterSUL.getStatisticalData().getCount();
+    public Long getMQsUsed(User user) {
+        LearnerThread learnerThread = userThreads.get(user);
+
+        if (learnerThread == null) {
+            return null;
+        } else {
+            ResetCounterSUL resetCounterSUL = learnerThread.getResetCounterSUL();
+            return resetCounterSUL.getStatisticalData().getCount();
+        }
     }
 
     /**
@@ -215,8 +270,15 @@ public class Learner {
      *
      * @return The time the learner started learning
      */
-    public Long getStartTime() {
-        return startTime;
+    public Long getStartTime(User user) {
+        LearnerThread learnerThread = userThreads.get(user);
+
+        if (learnerThread == null) {
+            return null;
+        } else {
+            return getResult(user).getStatistics().getStartTime().getTime();
+        }
+
     }
 
     /**
@@ -227,7 +289,8 @@ public class Learner {
      * @param symbols     The symbol sequence to execute in order to generate the output sequence.
      * @return The following output sequence.
      */
-    public List<String> readOutputs(Project project, Symbol resetSymbol, List<Symbol> symbols) throws LearnerException {
+    public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols)
+            throws LearnerException {
         if (contextHandler == null) {
             contextHandler = contextHandlerFactory.createContext(project);
         }

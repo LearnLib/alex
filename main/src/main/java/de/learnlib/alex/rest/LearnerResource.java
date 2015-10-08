@@ -13,6 +13,7 @@ import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -34,6 +35,7 @@ import java.util.List;
  * @resourceDescription Operations about the learning
  */
 @Path("/learner/")
+@RolesAllowed({"REGISTERED"})
 public class LearnerResource {
 
     /** Use the logger for the server part. */
@@ -78,9 +80,9 @@ public class LearnerResource {
     public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        LearnerStatus status = new LearnerStatus(learner);
+        LearnerStatus status = new LearnerStatus(user, learner);
         try {
-            Project project = projectDAO.getByID(projectId, ProjectDAO.EmbeddableFields.ALL);
+            Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
 
             try {
                 Symbol resetSymbol = symbolDAO.get(user, projectId, configuration.getResetSymbolAsIdRevisionPair());
@@ -92,7 +94,7 @@ public class LearnerResource {
             List<Symbol> symbols = symbolDAO.getAll(user, projectId, configuration.getSymbolsAsIdRevisionPairs());
             configuration.setSymbols(symbols);
 
-            learner.start(project, configuration);
+            learner.start(user, project, configuration);
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
             LOGGER.info("tried to start the learning again.");
@@ -125,17 +127,19 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response resume(@PathParam("project_id") long projectId, @PathParam("test_run") long testRunNo,
                            LearnerResumeConfiguration configuration) {
-        LearnerStatus status = new LearnerStatus(learner);
-        try {
-            Project project = projectDAO.getByID(projectId); // check if project exists
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-            LearnerResult lastResult = learner.getResult();
+        LearnerStatus status = new LearnerStatus(user, learner);
+        try {
+            projectDAO.getByID(user.getId(), projectId); // check if project exists
+
+            LearnerResult lastResult = learner.getResult(user);
             if (lastResult.getProjectId() != projectId || lastResult.getTestNo() != testRunNo) {
                 LOGGER.info("could not resume the learner of another project or with an wrong test run.");
                 return Response.status(Status.NOT_MODIFIED).entity(status).build();
             }
 
-            learner.resume(configuration);
+            learner.resume(user, configuration);
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
             LOGGER.info("tried to restart the learning while the learner is running.");
@@ -161,9 +165,11 @@ public class LearnerResource {
     @Path("/stop")
     @Produces(MediaType.APPLICATION_JSON)
     public Response stop() {
-        LearnerStatus status = new LearnerStatus(learner);
-        if (learner.isActive()) {
-            learner.stop(); // Hammer Time
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        LearnerStatus status = new LearnerStatus(user, learner);
+        if (learner.isActive(user)) {
+            learner.stop(user); // Hammer Time
         } else {
             LOGGER.info("tried to stop the learning again.");
         }
@@ -181,7 +187,9 @@ public class LearnerResource {
     @Path("/active")
     @Produces(MediaType.APPLICATION_JSON)
     public Response isActive() {
-        LearnerStatus status = new LearnerStatus(learner);
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        LearnerStatus status = new LearnerStatus(user, learner);
         return Response.ok(status).build();
     }
 
@@ -197,7 +205,9 @@ public class LearnerResource {
     @Path("/status")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getResult() {
-        LearnerResult resultInThread = learner.getResult();
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        LearnerResult resultInThread = learner.getResult(user);
         if (resultInThread == null) {
             IllegalStateException e = new IllegalStateException("No result was learned in this instance of ALEX.");
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.status", Status.NOT_FOUND, e);
@@ -235,7 +245,7 @@ public class LearnerResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
-            Project project = projectDAO.getByID(projectId);
+            Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
 
             IdRevisionPair resetSymbolAsIdRevisionPair = symbolSet.getResetSymbolAsIdRevisionPair();
             if (resetSymbolAsIdRevisionPair == null) {
@@ -247,7 +257,7 @@ public class LearnerResource {
             List<Symbol> symbols = loadSymbols(projectId, symbolSet.getSymbolsAsIdRevisionPairs());
             symbolSet.setSymbols(symbols);
 
-            List<String> results = learner.readOutputs(project, resetSymbol, symbols);
+            List<String> results = learner.readOutputs(user, project, resetSymbol, symbols);
 
             return ResponseHelper.renderList(results, Status.OK);
         } catch (NotFoundException e) {

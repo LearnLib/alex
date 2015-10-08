@@ -226,7 +226,7 @@ public class LearnerResultResourceTest extends JerseyTest {
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID).request().delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(learnerResultDAO).delete(USER_TEST_ID, PROJECT_ID, RESULT_ID);
+        verify(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID);
     }
 
     @Test
@@ -235,7 +235,7 @@ public class LearnerResultResourceTest extends JerseyTest {
                                 .request().delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(learnerResultDAO).delete(USER_TEST_ID, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        verify(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
     }
 
     @Test
@@ -246,7 +246,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnInvalidTestNo() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
                             .request().delete();
@@ -256,7 +256,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnActiveTestNo() throws NotFoundException {
-        willThrow(ValidationException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(ValidationException.class).given(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
                             .request().delete();
@@ -266,7 +266,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatNoTestNumberToDeleteIsHandledProperly() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/,,,,")
                             .request().delete();
@@ -276,7 +276,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatANotValidTestNumberStringOnDeletionIsHandledProperly() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/foobar")
                             .request().delete();

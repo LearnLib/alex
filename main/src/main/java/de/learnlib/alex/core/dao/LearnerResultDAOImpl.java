@@ -2,6 +2,7 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerStatus;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import de.learnlib.alex.core.learner.Learner;
@@ -269,14 +270,14 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public void delete(Long userId, Long projectId, Long... testNo) throws NotFoundException, ValidationException {
-        checkIfResultsCanBeDeleted(projectId, testNo); // check before the session is opened
+    public void delete(User user, Long projectId, Long... testNo) throws NotFoundException, ValidationException {
+        checkIfResultsCanBeDeleted(user, projectId, testNo); // check before the session is opened
 
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        List<Long> validTestNumbers = getTestNumbersInDB(session, userId, projectId, testNo);
+        List<Long> validTestNumbers = getTestNumbersInDB(session, user.getId(), projectId, testNo);
         Set<Long> diffSet = setDifference(Arrays.asList(testNo), validTestNumbers);
         if (diffSet.size() > 0) {
             throw new NotFoundException("The result with the number " + diffSet + " was not found, thus nothing could"
@@ -285,7 +286,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         @SuppressWarnings("unchecked") // should always return a list of LernerResults
         List<LearnerResult> results = session.createCriteria(LearnerResult.class)
-                .add(Restrictions.eq("user.id", userId))
+                .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("project.id", projectId))
                 .add(Restrictions.in("testNo", testNo))
                 .list();
@@ -296,9 +297,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         HibernateUtil.commitTransaction();
     }
 
-    private void checkIfResultsCanBeDeleted(Long projectId, Long... testNo) throws ValidationException {
+    private void checkIfResultsCanBeDeleted(User user, Long projectId, Long... testNo) throws ValidationException {
         // don't delete the learnResult of the active learning process
-        LearnerStatus status = new LearnerStatus(learner);
+        LearnerStatus status = new LearnerStatus(user, learner);
         Long activeTestNo = status.getTestNo();
         Long activeProjectId = status.getProjectId();
 

@@ -142,7 +142,7 @@ public class LearnerResultResource {
 
         try {
             Long[] numbersLongArray = testNumbers.toArray(new Long[testNumbers.size()]);
-            learnerResultDAO.delete(user.getId(), projectId, numbersLongArray);
+            learnerResultDAO.delete(user, projectId, numbersLongArray);
             return Response.status(Response.Status.NO_CONTENT).build();
 
         }  catch (NotFoundException e) {

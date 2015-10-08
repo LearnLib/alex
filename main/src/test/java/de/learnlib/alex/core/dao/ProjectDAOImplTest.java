@@ -74,7 +74,7 @@ public class ProjectDAOImplTest {
 
     @Test
     public void shouldCreateValidProject() throws NotFoundException {
-        Project p2 = projectDAO.getByID(project.getId(), ProjectDAO.EmbeddableFields.ALL);
+        Project p2 = projectDAO.getByID(user.getId(), project.getId(), ProjectDAO.EmbeddableFields.ALL);
 
         assertNotNull(p2);
         assertEquals(project.getName(), p2.getName());
@@ -143,7 +143,7 @@ public class ProjectDAOImplTest {
         project.setName("An other Test Project");
         projectDAO.update(project);
 
-        Project project2 = projectDAO.getByID(project.getId(), ProjectDAO.EmbeddableFields.ALL);
+        Project project2 = projectDAO.getByID(user.getId(), project.getId(), ProjectDAO.EmbeddableFields.ALL);
         assertEquals("An other Test Project", project2.getName());
         assertEquals(project.getSymbolsSize(), project2.getSymbolsSize());
         assertEquals(project.getNextSymbolId(), project2.getNextSymbolId());
@@ -207,11 +207,11 @@ public class ProjectDAOImplTest {
         assertTrue(symbols.size() > 0);
 
         // delete the project
-        projectDAO.delete(project.getId());
+        projectDAO.delete(user.getId(), project.getId());
 
         // test if the project was removed
         try {
-            projectDAO.getByID(project.getId());
+            projectDAO.getByID(user.getId(), project.getId());
             fail("Project was not relay deleted!");
         } catch (NotFoundException ignored) {
             // success
@@ -241,7 +241,7 @@ public class ProjectDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void shouldNotDeleteInvalidID() throws NotFoundException {
-        projectDAO.delete(-1);
+        projectDAO.delete(user.getId(), -1L);
     }
 
 }

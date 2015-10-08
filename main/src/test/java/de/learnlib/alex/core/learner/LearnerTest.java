@@ -5,6 +5,7 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
@@ -42,6 +43,9 @@ public class LearnerTest {
     private ConnectorContextHandler contextHandler;
 
     @Mock
+    private User user;
+
+    @Mock
     private Project project;
 
     @Mock
@@ -64,9 +68,9 @@ public class LearnerTest {
     @Test(expected = IllegalStateException.class)
     public void shouldOnlyStartTheThreadOnce() {
         given(thread.isActive()).willReturn(true);
-        learner.start(project, learnerConfiguration);
+        learner.start(user, project, learnerConfiguration);
 
-        learner.start(project, learnerConfiguration); // should fail
+        learner.start(user, project, learnerConfiguration); // should fail
     }
 
     @Test
@@ -80,7 +84,7 @@ public class LearnerTest {
             symbols.add(symbol);
         }
 
-        List<String> outputs = learner.readOutputs(project, resetSymbol, symbols);
+        List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols);
 
         assertEquals(symbols.size(), outputs.size());
         assertTrue("at least one output was not OK", outputs.stream().allMatch(output -> output.equals("OK")));

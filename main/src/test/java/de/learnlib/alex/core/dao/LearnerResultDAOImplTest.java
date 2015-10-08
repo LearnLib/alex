@@ -304,7 +304,7 @@ public class LearnerResultDAOImplTest {
             learnerResultDAO.update(learnerResult);
         }
 
-        learnerResultDAO.delete(user.getId(), project.getId(), learnerResult.getTestNo());
+        learnerResultDAO.delete(user, project.getId(), learnerResult.getTestNo());
 
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -330,7 +330,7 @@ public class LearnerResultDAOImplTest {
             ids[i] = learnerResults.get(i).getTestNo();
         }
 
-        learnerResultDAO.delete(user.getId(), project.getId(), ids);
+        learnerResultDAO.delete(user, project.getId(), ids);
 
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -357,16 +357,16 @@ public class LearnerResultDAOImplTest {
         }
         ids[ids.length - 1] = -1L;
 
-        learnerResultDAO.delete(user.getId(), project.getId(), ids); // should fail
+        learnerResultDAO.delete(user, project.getId(), ids); // should fail
     }
 
     @Test(expected = ValidationException.class)
     public void shouldThrowAnExceptionIfTheTestResultToDeleteIsActive() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
-        given(learner.isActive()).willReturn(true);
-        given(learner.getResult()).willReturn(learnerResult);
+        given(learner.isActive(user)).willReturn(true);
+        given(learner.getResult(user)).willReturn(learnerResult);
 
-        learnerResultDAO.delete(user.getId(), project.getId(), learnerResult.getTestNo()); // should fail
+        learnerResultDAO.delete(user, project.getId(), learnerResult.getTestNo()); // should fail
     }
 
     private void initLearnerResult(LearnerResult result) {

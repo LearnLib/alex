@@ -77,7 +77,7 @@ public class SymbolGroupResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
-            Project project = projectDAO.getByID(projectId);
+            Project project = projectDAO.getByID(user.getId(), projectId);
             if (!project.getUser().equals(user)) {
                 throw new ValidationException("You are not the owner of the project");
             }

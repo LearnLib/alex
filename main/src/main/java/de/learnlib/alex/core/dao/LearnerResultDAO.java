@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
@@ -127,7 +128,7 @@ public interface LearnerResultDAO {
     /**
      * Remove a complete test run of a project.
      *
-     * @param userId
+     * @param user
      *         The user of the LearnerResult
      * @param projectId
      *         The project id.
@@ -136,5 +137,5 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    void delete(Long userId, Long projectId, Long... testNo) throws  NotFoundException;
+    void delete(User user, Long projectId, Long... testNo) throws  NotFoundException;
 }

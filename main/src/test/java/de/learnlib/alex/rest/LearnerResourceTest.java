@@ -39,6 +39,7 @@ import static org.mockito.Mockito.verify;
 
 public class LearnerResourceTest extends JerseyTest {
 
+    private static final long USER_TEST_ID = 1;
     private static final long PROJECT_TEST_ID = 1;
     private static final long TEST_NO = 2;
     private static final long RESET_SYMBOL_TEST_ID = 3;
@@ -91,15 +92,15 @@ public class LearnerResourceTest extends JerseyTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        given(projectDAO.getByID(PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
+        given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
         Symbol resetSymbol = mock(Symbol.class);
         given(symbolDAO.get(user, PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L))).willReturn(resetSymbol);
 
         LearnerResult result = mock(LearnerResult.class);
         given(result.getProjectId()).willReturn(PROJECT_TEST_ID);
         given(result.getTestNo()).willReturn(TEST_NO);
-        given(learner.isActive()).willReturn(true);
-        given(learner.getResult()).willReturn(result);
+        given(learner.isActive(user)).willReturn(true);
+        given(learner.getResult(user)).willReturn(result);
     }
 
     @Test
@@ -109,17 +110,18 @@ public class LearnerResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
-        verify(learner).start(eq(project), any(LearnerConfiguration.class));
+        verify(learner).start(eq(user), eq(project), any(LearnerConfiguration.class));
     }
 
     @Test
     public void shouldNotStartALearningProcessIfTheProjectDoesNotExist() throws NotFoundException {
-        given(projectDAO.getByID(PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.ALL)).willThrow(NotFoundException.class);
+        given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.ALL))
+                .willThrow(NotFoundException.class);
 
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(START_JSON));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).start(any(Project.class), any(LearnerConfiguration.class));
+        verify(learner, never()).start(any(User.class), any(Project.class), any(LearnerConfiguration.class));
     }
 
     @Test
@@ -130,7 +132,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(START_JSON));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).start(any(Project.class), any(LearnerConfiguration.class));
+        verify(learner, never()).start(any(User.class), any(Project.class), any(LearnerConfiguration.class));
     }
 
     @Test
@@ -140,23 +142,25 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(START_JSON));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).start(any(Project.class), any(LearnerConfiguration.class));
+        verify(learner, never()).start(any(User.class), any(Project.class), any(LearnerConfiguration.class));
     }
 
     @Test
     public void shouldNotStartALearningProcessIfTheConfigurationIsInvalid() throws NotFoundException {
-        willThrow(IllegalArgumentException.class).given(learner).start(any(Project.class),
+        willThrow(IllegalArgumentException.class).given(learner).start(any(User.class),
+                                                                       any(Project.class),
                                                                        any(LearnerConfiguration.class));
 
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(START_JSON));
 
-        verify(learner).start(any(Project.class), any(LearnerConfiguration.class));
+        verify(learner).start(any(User.class), any(Project.class), any(LearnerConfiguration.class));
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void shouldNotStartALearningProcessTwice() {
-        willThrow(IllegalStateException.class).given(learner).start(any(Project.class),
+        willThrow(IllegalStateException.class).given(learner).start(any(User.class),
+                                                                    any(Project.class),
                                                                     any(LearnerConfiguration.class));
 
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(START_JSON));
@@ -172,7 +176,7 @@ public class LearnerResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
-        verify(learner).resume(any(LearnerConfiguration.class));
+        verify(learner).resume(any(User.class), any(LearnerConfiguration.class));
     }
 
     @Test
@@ -182,20 +186,20 @@ public class LearnerResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
-        verify(learner).stop();
+        verify(learner).stop(user);
     }
 
     @Test
     public void shouldNotStopIfTheLearningIsNotActive() {
-        given(learner.isActive()).willReturn(false);
-        given(learner.getResult()).willReturn(null);
+        given(learner.isActive(user)).willReturn(false);
+        given(learner.getResult(user)).willReturn(null);
 
         Response response = target("/learner/stop").request().post(Entity.json(""));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":false}";
         assertEquals(expectedJSON, response.readEntity(String.class));
-        verify(learner, never()).stop();
+        verify(learner, never()).stop(user);
     }
 
     @Test
@@ -209,7 +213,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnTheRightActiveInformationIfNoLearningProcessIsActive() {
-        given(learner.isActive()).willReturn(false);
+        given(learner.isActive(user)).willReturn(false);
 
         Response response = target("/learner/active").request().get();
 
@@ -221,7 +225,7 @@ public class LearnerResourceTest extends JerseyTest {
     @Test
     public void shouldReturnAnActiveStatus() {
         LearnerResult realResult = new LearnerResult();
-        given(learner.getResult()).willReturn(realResult);
+        given(learner.getResult(user)).willReturn(realResult);
 
         Response response = target("/learner/status").request().get();
 
@@ -230,7 +234,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfNoStatusIsAvailable() {
-        given(learner.getResult()).willReturn(null);
+        given(learner.getResult(user)).willReturn(null);
 
         Response response = target("/learner/status").request().get();
 
@@ -272,7 +276,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn400IfCreatingAnOutputFailed() throws NotFoundException {
-        given(learner.readOutputs(any(Project.class), any(Symbol.class), any(List.class)))
+        given(learner.readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(List.class)))
                 .willThrow(LearnerException.class);
 
         String json = "{\"resetSymbol\":"
@@ -288,7 +292,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfOutputShouldBeCreatedForANotExistingProject() throws NotFoundException {
-        given(projectDAO.getByID(PROJECT_TEST_ID)).willThrow(NotFoundException.class);
+        given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
         String json = "{\"resetSymbol\":"
                 + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
@@ -299,7 +303,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(Project.class), any(Symbol.class), any(List.class));
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(List.class));
     }
 
     @Test
@@ -316,7 +320,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(Project.class), any(Symbol.class), any(List.class));
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(List.class));
     }
 
     @Test
@@ -328,7 +332,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(Project.class), any(Symbol.class), any(List.class));
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(List.class));
     }
 
     @Test
@@ -344,9 +348,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(Project.class), any(Symbol.class), any(List.class));
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(List.class));
     }
-
-
 
 }
