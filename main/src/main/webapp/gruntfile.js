@@ -33,7 +33,7 @@ module.exports = function (grunt) {
         'bower_components/angular-ui-router/release/angular-ui-router.min.js',
         'bower_components/angular-animate/angular-animate.min.js',
         'bower_components/lodash/lodash.min.js',
-        'bower_components/angular-selection-model/dist/selection-model.min.js',
+        'bower_components/selection-model/dist/selection-model.min.js',
         'bower_components/angular-ui-ace/ui-ace.min.js',
         'bower_components/ace-builds/src-min/ace.js',
         'bower_components/ace-builds/src-min/theme-eclipse.js',
