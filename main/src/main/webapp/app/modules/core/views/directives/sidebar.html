@@ -21,7 +21,8 @@
             <div class="sidebar-group-title">
                 <strong>User</strong>
             </div>
-            <a ui-sref="users.settings" class="sidebar-group-item" tooltip="Settings" tooltip-placement="right">
+            <a ui-sref="users.settings" class="sidebar-group-item" tooltip="Settings" tooltip-placement="right"
+               ng-class="{'active':isState('users.settings')}">
                 <div class="sidebar-group-item-icon">
                     <i class="fa fa-fw fa-user"></i>
                 </div>
@@ -40,11 +41,25 @@
             <div class="sidebar-group-title">
                 <strong>Admin</strong>
             </div>
-            <a ui-sref="admin.users" class="sidebar-group-item" tooltip="User Management" tooltip-placement="right">
+            <a ui-sref="admin.users" class="sidebar-group-item" tooltip="User Management" tooltip-placement="right"
+               ng-class="{'active':isState('admin.users')}">
                 <div class="sidebar-group-item-icon">
                     <i class="fa fa-fw fa-users"></i>
                 </div>
                 <div class="sidebar-group-item-label">Manage Users</div>
+            </a>
+        </div>
+
+        <div class="sidebar-group" ng-if="user && !project">
+            <div class="sidebar-group-title">
+                <strong>Projects</strong>
+            </div>
+            <a ui-sref="projects" class="sidebar-group-item" tooltip="Projects" tooltip-placement="right"
+               ng-class="{'active':isState('projects')}">
+                <div class="sidebar-group-item-icon">
+                    <i class="fa fa-fw fa-briefcase"></i>
+                </div>
+                <div class="sidebar-group-item-label">Overview</div>
             </a>
         </div>
 
@@ -53,20 +68,12 @@
                 <div class="sidebar-group-title">
                     <strong ng-bind="project.name"></strong>
                 </div>
-                <a ui-sref="project" class="sidebar-group-item" ng-class="{'active':isState('project')}"
+                <a ui-sref="dashboard" class="sidebar-group-item" ng-class="{'active':isState('dashboard')}"
                    tooltip="Dashboard" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-dashboard"></i>
                     </div>
                     <div class="sidebar-group-item-label">Dashboard</div>
-                </a>
-                <a ui-sref="project.settings" class="sidebar-group-item"
-                   ng-class="{'active':isState('project.settings')}"
-                   tooltip="Project Settings" tooltip-placement="right">
-                    <div class="sidebar-group-item-icon">
-                        <i class="fa fa-fw fa-gear"></i>
-                    </div>
-                    <div class="sidebar-group-item-label">Settings</div>
                 </a>
                 <a ui-sref="files" class="sidebar-group-item" ng-class="{'active':isState('files')}"
                    tooltip="Files" tooltip-placement="right">
@@ -145,20 +152,4 @@
             </div>
         </div>
     </div>
-
-
-    <!--<ul class="nav navbar-nav navbar-right">-->
-    <!--<li class="dropdown" dropdown dropdown-navigation>-->
-    <!--<a href="#" dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button"-->
-    <!--aria-expanded="false">App <span class="caret"></span></a>-->
-    <!--<ul class="dropdown-menu" role="menu">-->
-    <!--<li><a ui-sref="about">About</a></li>-->
-    <!--<li><a ui-sref="help">Help</a></li>-->
-    <!--<li class="divider"></li>-->
-    <!--<li><a href="/restdocs/index.html" target="_blank">REST API</a></li>-->
-    <!--</ul>-->
-    <!--</li>-->
-    <!--</ul>-->
-
-
 </aside>

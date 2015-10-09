@@ -47,7 +47,7 @@ public class SetCounterAction extends SymbolAction {
     public ExecuteResult execute(ConnectorManager connector) {
         CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
         try {
-            storeConnector.set(project.getId(), name, counterValue);
+            storeConnector.set(getUser().getId(), project.getId(), name, counterValue);
             return getSuccessOutput();
         } catch (IllegalStateException e) {
             return getFailedOutput();

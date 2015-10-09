@@ -10,13 +10,13 @@ import java.util.List;
 
 public interface FileDAO {
 
-    void create(Long projectId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
+    void create(Long userId, Long projectId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
             throws IllegalArgumentException, IOException, IllegalStateException;
 
-    List<UploadableFile> getAll(Long projectId) throws NotFoundException;
+    List<UploadableFile> getAll(Long userId, Long projectId) throws NotFoundException;
 
-    String getAbsoulteFilePath(Long projectId, String fileName) throws NotFoundException;
+    String getAbsoulteFilePath(Long userId, Long projectId, String fileName) throws NotFoundException;
 
-    void delete(Long projectId, String fileName) throws NotFoundException;
+    void delete(Long userId, Long projectId, String fileName) throws NotFoundException;
 
 }

@@ -27,9 +27,11 @@ public class FileDAOImpl implements FileDAO {
     }
 
     @Override
-    public void create(Long projectId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
+    public void create(Long userId, Long projectId, InputStream uploadedInputStream,
+                       FormDataContentDisposition fileDetail)
             throws IllegalArgumentException, IOException, IllegalStateException {
         java.nio.file.Path uploadedDirectoryLocation = Paths.get(uploadedDirectoryBaseLocation.toString(),
+                                                                 String.valueOf(userId),
                                                                  String.valueOf(projectId));
 
         File uploadDirectory = uploadedDirectoryLocation.toFile();
@@ -53,8 +55,8 @@ public class FileDAOImpl implements FileDAO {
     }
 
     @Override
-    public List<UploadableFile> getAll(Long projectId) throws NotFoundException {
-        File uploadDirectory = getUploadDirectory(projectId);
+    public List<UploadableFile> getAll(Long userId, Long projectId) throws NotFoundException {
+        File uploadDirectory = getUploadDirectory(userId, projectId);
 
         List<UploadableFile> files = new LinkedList<>();
         for (File f : uploadDirectory.listFiles()) {
@@ -69,8 +71,8 @@ public class FileDAOImpl implements FileDAO {
     }
 
     @Override
-    public String getAbsoulteFilePath(Long projectId, String fileName) throws NotFoundException {
-        File uploadDirectory = getUploadDirectory(projectId);
+    public String getAbsoulteFilePath(Long userId, Long projectId, String fileName) throws NotFoundException {
+        File uploadDirectory = getUploadDirectory(userId, projectId);
 
         java.nio.file.Path uploadedFileLocation = Paths.get(uploadDirectory.getPath(), fileName);
         File file = uploadedFileLocation.toFile();
@@ -83,8 +85,8 @@ public class FileDAOImpl implements FileDAO {
     }
 
     @Override
-    public void delete(Long projectId, String fileName) throws NotFoundException {
-        File uploadDirectory = getUploadDirectory(projectId);
+    public void delete(Long userId, Long projectId, String fileName) throws NotFoundException {
+        File uploadDirectory = getUploadDirectory(userId, projectId);
 
         java.nio.file.Path uploadedFileLocation = Paths.get(uploadDirectory.getPath(), fileName);
         File file = uploadedFileLocation.toFile();
@@ -96,8 +98,9 @@ public class FileDAOImpl implements FileDAO {
         file.delete();
     }
 
-    private File getUploadDirectory(Long projectId) throws NotFoundException {
+    private File getUploadDirectory(Long userId, Long projectId) throws NotFoundException {
         java.nio.file.Path uploadedDirectoryLocation = Paths.get(uploadedDirectoryBaseLocation.toString(),
+                                                                 String.valueOf(userId),
                                                                  String.valueOf(projectId));
         File uploadDirectory = uploadedDirectoryLocation.toFile();
 

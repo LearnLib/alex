@@ -6,6 +6,7 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.api.LearningAlgorithm;
 
@@ -40,13 +41,13 @@ public class LearnerThreadFactory {
      *         The LearnerConfiguration to use for the learning.
      * @return A new thread ready to use for learning.
      */
-    public LearnerThread createThread(ConnectorContextHandler contextHandler, Project project,
+    public LearnerThread createThread(ConnectorContextHandler contextHandler, User user, Project project,
                                       LearnerConfiguration configuration) {
         if (configuration.getSymbols().isEmpty()) {
             throw new IllegalArgumentException("No Symbols found.");
         }
 
-        LearnerResult learnerResult = createLearnerResult(project, configuration);
+        LearnerResult learnerResult = createLearnerResult(user, project, configuration);
         contextHandler.setResetSymbol(configuration.getResetSymbol());
 
         return new LearnerThread(learnerResultDAO, learnerResult, contextHandler);
@@ -73,9 +74,10 @@ public class LearnerThreadFactory {
         return new LearnerThread(learnerResultDAO, learnerResult, thread.getCachedSUL(), learner, symbols);
     }
 
-    private LearnerResult createLearnerResult(Project project, LearnerConfiguration configuration) {
+    private LearnerResult createLearnerResult(User user, Project project, LearnerConfiguration configuration) {
         LearnerResult learnerResult = new LearnerResult();
         learnerResult.setConfiguration(configuration);
+        learnerResult.setUser(user);
         learnerResult.setProject(project);
 
         return learnerResult;

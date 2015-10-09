@@ -75,6 +75,7 @@ public class ProjectDAOImpl implements ProjectDAO {
                     symbol.setId(nextSymbolId);
                     symbol.setRevision(0L);
                     symbol.setProject(project);
+                    symbol.setUser(project.getUser());
                     if (symbol.getGroup() == null) {
                         symbol.setGroup(defaultGroup);
                     }
@@ -89,6 +90,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         } catch (javax.validation.ConstraintViolationException
                 | org.hibernate.exception.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
+            e.printStackTrace();
             throw new javax.validation.ValidationException(
                     "The Project was not created because it did not pass the validation!", e);
         }
@@ -117,13 +119,13 @@ public class ProjectDAOImpl implements ProjectDAO {
     }
 
     @Override
-    public Project getByID(long id, EmbeddableFields... embedFields) throws NotFoundException {
+    public Project getByID(Long userId, Long projectId, EmbeddableFields... embedFields) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         // get the Project
-        Project result = (Project) session.get(Project.class, id);
+        Project result = (Project) session.get(Project.class, projectId);
 
         // load lazy relations
         if (result != null) {
@@ -134,7 +136,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         HibernateUtil.commitTransaction();
 
         if (result == null) {
-            throw new NotFoundException("Could not find the project with the id " + id + ".");
+            throw new NotFoundException("Could not find the project with the id " + projectId + ".");
         }
         return result;
     }
@@ -171,8 +173,8 @@ public class ProjectDAOImpl implements ProjectDAO {
     }
 
     @Override
-    public void delete(long id) throws NotFoundException {
-        Project project = getByID(id, EmbeddableFields.ALL);
+    public void delete(Long userId, Long projectId) throws NotFoundException {
+        Project project = getByID(userId, projectId, EmbeddableFields.ALL);
 
         // start session
         Session session = HibernateUtil.getSession();

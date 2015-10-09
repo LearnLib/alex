@@ -30,6 +30,7 @@ import java.util.List;
  * @resourceDescription Operations about projects
  */
 @Path("/projects")
+@RolesAllowed({"REGISTERED"})
 public class ProjectResource {
 
     /** Context information about the URI. */
@@ -57,7 +58,6 @@ public class ProjectResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
     public Response create(Project project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         project.setUser(user);
@@ -83,7 +83,6 @@ public class ProjectResource {
      * @successResponse 200 OK
      */
     @GET
-    @RolesAllowed({"REGISTERED"})
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
@@ -102,7 +101,7 @@ public class ProjectResource {
     /**
      * Get a specific project.
      *
-     * @param id
+     * @param projectId
      *            The ID of the project.
      * @param embed
      *         By default no related objects are included in the project. However you can ask to include them with
@@ -115,17 +114,14 @@ public class ProjectResource {
      */
     @GET
     @Path("/{id}")
-    @RolesAllowed({"REGISTERED"})
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("id") long id, @QueryParam("embed") String embed) {
+    public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
             embeddableFields = parseEmbeddableFields(embed);
-            Project project = projectDAO.getByID(id, embeddableFields);
-
-
+            Project project = projectDAO.getByID(user.getId(), projectId, embeddableFields);
 
             if (project.getUser().equals(user)) {
                 return Response.ok(project).build();
@@ -156,7 +152,6 @@ public class ProjectResource {
      */
     @PUT
     @Path("/{id}")
-    @RolesAllowed({"REGISTERED"})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") long id, Project project) {
@@ -185,7 +180,7 @@ public class ProjectResource {
     /**
      * Delete a specific project.
      *
-     * @param id
+     * @param projectId
      *            The ID of the project.
      * @return On success no content will be returned; an error message on failure.
      * @successResponse 204 OK & no content
@@ -194,14 +189,13 @@ public class ProjectResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
-    public Response delete(@PathParam("id") long id) {
+    public Response delete(@PathParam("id") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
-            Project project = projectDAO.getByID(id);
+            Project project = projectDAO.getByID(user.getId(), projectId);
             if (project.getUser().equals(user)) {
-                projectDAO.delete(id);
+                projectDAO.delete(user.getId(), projectId);
                 return Response.status(Status.NO_CONTENT).build();
             } else {
                 throw new UnauthorizedException("You are not allowed to delete this project");

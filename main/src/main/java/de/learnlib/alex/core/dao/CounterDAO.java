@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Counter;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.jvnet.hk2.annotations.Service;
 
@@ -27,17 +28,21 @@ public interface CounterDAO {
     /**
      * Get all counter of a project.
      *
+     * @param userId
+     *          The user that owns the counters
      * @param projectId
      *         The project of the counters.
      * @return A list of counters within the given project.
      * @throws NotFoundException
      *         If no project with the given ID exists.
      */
-    List<Counter> getAll(Long projectId) throws NotFoundException;
+    List<Counter> getAll(Long userId, Long projectId) throws NotFoundException;
 
     /**
      * Get a specific counter.
      *
+     * @param userId
+     *         The user that owns the counter.
      * @param projectId
      *         The project of the counter.
      * @param name
@@ -46,7 +51,7 @@ public interface CounterDAO {
      * @throws NotFoundException
      *         If the counter was not found.
      */
-    Counter get(Long projectId, String name) throws NotFoundException;
+    Counter get(Long userId, Long projectId, String name) throws NotFoundException;
 
     /**
      * Update a counter.
@@ -63,6 +68,8 @@ public interface CounterDAO {
     /**
      * Deletes counters.
      *
+     * @param userId
+     *          The user that owns the counters
      * @param projectId
      *         The project of the counter.
      * @param names
@@ -70,6 +77,6 @@ public interface CounterDAO {
      * @throws NotFoundException
      *         If the project or counter was not found.
      */
-    void delete(Long projectId, String... names) throws NotFoundException;
+    void delete(Long userId, Long projectId, String... names) throws NotFoundException;
 
 }

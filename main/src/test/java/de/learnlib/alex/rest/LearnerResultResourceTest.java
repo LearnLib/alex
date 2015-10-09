@@ -1,13 +1,17 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.ALEXTestApplication;
+import de.learnlib.alex.FakeAuthenticationFilter;
 import de.learnlib.alex.core.dao.CounterDAO;
+import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
+import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 import net.automatalib.words.Alphabet;
@@ -31,9 +35,13 @@ import static org.mockito.Mockito.verify;
 
 public class LearnerResultResourceTest extends JerseyTest {
 
+    private static final Long USER_TEST_ID = FakeAuthenticationFilter.FAKE_USER_ID;
     private static final long PROJECT_ID = 1L;
     private static final long RESULT_ID = 10L;
     private static final int TEST_RESULT_AMOUNT = 10;
+
+    @Mock
+    private UserDAO userDAO;
 
     @Mock
     private ProjectDAO projectDAO;
@@ -51,7 +59,13 @@ public class LearnerResultResourceTest extends JerseyTest {
     private LearnerResultDAO learnerResultDAO;
 
     @Mock
+    private FileDAO fileDAO;
+
+    @Mock
     private Learner learner;
+
+    @Mock
+    private User user;
 
     private Project project;
 
@@ -59,8 +73,8 @@ public class LearnerResultResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        return new ALEXTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
-                                             learnerResultDAO, learner, LearnerResultResource.class);
+        return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
+                                       learnerResultDAO, fileDAO, learner, LearnerResultResource.class);
     }
 
     @Before
@@ -69,6 +83,10 @@ public class LearnerResultResourceTest extends JerseyTest {
 
         project = new Project();
         project.setId(PROJECT_ID);
+
+        user = new User();
+        user.setId(USER_TEST_ID);
+        given(userDAO.getById(user.getId())).willReturn(user);
     }
 
     @Test
@@ -87,7 +105,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
             results.add(learnerResult.getJSON());
         }
-        given(learnerResultDAO.getAllAsJSON(PROJECT_ID)).willReturn(results);
+        given(learnerResultDAO.getAllAsJSON(user.getId(), PROJECT_ID)).willReturn(results);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -98,7 +116,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatGettingAllFinalResultsReturns404IfTheProjectIdIsInvalid() throws NotFoundException {
-        given(learnerResultDAO.getAllAsJSON(PROJECT_ID)).willThrow(NotFoundException.class);
+        given(learnerResultDAO.getAllAsJSON(user.getId(), PROJECT_ID)).willThrow(NotFoundException.class);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").request().get();
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
@@ -120,7 +138,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
             results.add(learnerResult.getJSON());
         }
-        given(learnerResultDAO.getAllAsJSON(PROJECT_ID, RESULT_ID)).willReturn(results);
+        given(learnerResultDAO.getAllAsJSON(USER_TEST_ID, PROJECT_ID, RESULT_ID)).willReturn(results);
 
         String path = "/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "/complete";
         Response response = target(path).request().get();
@@ -132,7 +150,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatGettingAllResultsOfOneRunReturns404IfTheProjectIdIsInvalid() throws NotFoundException {
-        given(learnerResultDAO.getAllAsJSON(PROJECT_ID, RESULT_ID)).willThrow(NotFoundException.class);
+        given(learnerResultDAO.getAllAsJSON(USER_TEST_ID, PROJECT_ID, RESULT_ID)).willThrow(NotFoundException.class);
 
         String path = "/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "/complete";
         Response response = target(path).request().get();
@@ -163,7 +181,7 @@ public class LearnerResultResourceTest extends JerseyTest {
             ids.add(RESULT_ID + i);
             results.add(tmpList);
         }
-        given(learnerResultDAO.getAllAsJson(PROJECT_ID, ids)).willReturn(results);
+        given(learnerResultDAO.getAllAsJson(user.getId(), PROJECT_ID, ids)).willReturn(results);
 
         StringBuilder idsAsString = new StringBuilder();
         for (Long id : ids) {
@@ -187,12 +205,13 @@ public class LearnerResultResourceTest extends JerseyTest {
         sigma.add("1");
 
         LearnerResult learnerResult = new LearnerResult();
+        learnerResult.setUser(user);
         learnerResult.setProject(project);
         learnerResult.setTestNo(RESULT_ID);
         learnerResult.setStepNo(0L);
         learnerResult.setSigma(sigma);
 
-        given(learnerResultDAO.getAsJSON(PROJECT_ID, RESULT_ID)).willReturn(learnerResult.getJSON());
+        given(learnerResultDAO.getAsJSON(USER_TEST_ID, PROJECT_ID, RESULT_ID)).willReturn(learnerResult.getJSON());
 
         // when
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID).request().get();
@@ -207,7 +226,7 @@ public class LearnerResultResourceTest extends JerseyTest {
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID).request().delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(learnerResultDAO).delete(PROJECT_ID, RESULT_ID);
+        verify(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID);
     }
 
     @Test
@@ -216,7 +235,7 @@ public class LearnerResultResourceTest extends JerseyTest {
                                 .request().delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        verify(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
     }
 
     @Test
@@ -227,7 +246,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnInvalidTestNo() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
                             .request().delete();
@@ -237,7 +256,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnActiveTestNo() throws NotFoundException {
-        willThrow(ValidationException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(ValidationException.class).given(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
                             .request().delete();
@@ -247,7 +266,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatNoTestNumberToDeleteIsHandledProperly() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/,,,,")
                             .request().delete();
@@ -257,7 +276,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatANotValidTestNumberStringOnDeletionIsHandledProperly() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(user, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/foobar")
                             .request().delete();

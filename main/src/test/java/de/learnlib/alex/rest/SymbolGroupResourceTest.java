@@ -6,14 +6,18 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import de.learnlib.alex.ALEXTestApplication;
+import de.learnlib.alex.FakeAuthenticationFilter;
 import de.learnlib.alex.core.dao.CounterDAO;
+import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
+import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.PropertyFilterMixIn;
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.glassfish.jersey.test.JerseyTest;
@@ -38,7 +42,11 @@ import static org.mockito.Mockito.verify;
 
 public class SymbolGroupResourceTest extends JerseyTest {
 
+    private static final long USER_TEST_ID = FakeAuthenticationFilter.FAKE_USER_ID;
     private static final long PROJECT_TEST_ID = 10;
+
+    @Mock
+    private UserDAO userDAO;
 
     @Mock
     private ProjectDAO projectDAO;
@@ -56,8 +64,12 @@ public class SymbolGroupResourceTest extends JerseyTest {
     private LearnerResultDAO learnerResultDAO;
 
     @Mock
+    private FileDAO fileDAO;
+
+    @Mock
     private Learner learner;
 
+    private User user = FakeAuthenticationFilter.FAKE_USER;
     private Project project;
     private SymbolGroup group1;
     private SymbolGroup group2;
@@ -80,8 +92,10 @@ public class SymbolGroupResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        return new ALEXTestApplication(projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
-                                             learnerResultDAO, learner, SymbolGroupResource.class);
+        given(userDAO.getById(USER_TEST_ID)).willReturn(user);
+
+        return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
+                                       learnerResultDAO, fileDAO, learner, SymbolGroupResource.class);
     }
 
     @Before
@@ -91,20 +105,24 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
         project = new Project();
         project.setId(PROJECT_TEST_ID);
-        given(projectDAO.getByID(project.getId())).willReturn(project);
+        project.setUser(user);
+        given(projectDAO.getByID(user.getId(), project.getId())).willReturn(project);
 
         group1 = new SymbolGroup();
         group1.setName("SymbolGroupResource - Test Group 1");
+        group1.setUser(user);
         group1.setProject(project);
 
         group2 = new SymbolGroup();
         group2.setName("SymbolGroupResource - Test Group 2");
+        group2.setUser(user);
         group2.setProject(project);
     }
 
     @Test
     public void shouldCreateValidGroup() throws JsonProcessingException {
         group1.setProject(null);
+        group1.setUser(null);
         String json = writeGroup(group1);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups").request().post(Entity.json(json));
@@ -128,7 +146,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
         List<SymbolGroup> groups = new LinkedList<>();
         groups.add(group1);
         groups.add(group2);
-        given(symbolGroupDAO.getAll(PROJECT_TEST_ID)).willReturn(groups);
+        given(symbolGroupDAO.getAll(user.getId(), PROJECT_TEST_ID)).willReturn(groups); // TODO: should user not user.getId()
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups")
                             .request().get();
@@ -146,12 +164,12 @@ public class SymbolGroupResourceTest extends JerseyTest {
         Response response = target(path).request().get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO).getAllWithLatestRevision(PROJECT_TEST_ID, group1.getId());
+        verify(symbolDAO).getAllWithLatestRevision(user, PROJECT_TEST_ID, group1.getId());
     }
 
     @Test
     public void shouldReturn404IfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
-        willThrow(NotFoundException.class).given(symbolGroupDAO).getAll(PROJECT_TEST_ID);
+        willThrow(NotFoundException.class).given(symbolGroupDAO).getAll(USER_TEST_ID, PROJECT_TEST_ID);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups").request().get();
 
@@ -160,7 +178,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
     @Test
     public void shouldGetTheRightGroup() throws IOException, NotFoundException {
-        given(symbolGroupDAO.get(PROJECT_TEST_ID, 1L)).willReturn(group1);
+        given(symbolGroupDAO.get(user, PROJECT_TEST_ID, 1L)).willReturn(group1);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups/1").request().get();
 
@@ -168,12 +186,12 @@ public class SymbolGroupResourceTest extends JerseyTest {
         String responseBody = response.readEntity(String.class);
         SymbolGroup groupInResponse = readGroup(responseBody);
         assertEquals(group1, groupInResponse);
-        verify(symbolGroupDAO).get(PROJECT_TEST_ID, 1L);
+        verify(symbolGroupDAO).get(user, PROJECT_TEST_ID, 1L);
     }
 
     @Test
     public void shouldReturn404IfYouWantToGetANonExistingGroup() throws NotFoundException {
-        willThrow(NotFoundException.class).given(symbolGroupDAO).get(PROJECT_TEST_ID, 1L);
+        willThrow(NotFoundException.class).given(symbolGroupDAO).get(user, PROJECT_TEST_ID, 1L);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups/1").request().get();
 
@@ -214,16 +232,19 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
     @Test
     public void shouldDeleteAGroup() throws NotFoundException {
+        given(symbolGroupDAO.get(user, PROJECT_TEST_ID, group1.getId())).willReturn(group1);
+
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
         Response response = target(path).request().delete();
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        verify(symbolGroupDAO).delete(PROJECT_TEST_ID, group1.getId());
+        verify(symbolGroupDAO).delete(user, PROJECT_TEST_ID, group1.getId());
     }
 
     @Test
     public void shouldReturn400IfYouWantToDeleteADefaultGroup() throws NotFoundException {
-        willThrow(IllegalArgumentException.class).given(symbolGroupDAO).delete(PROJECT_TEST_ID, group1.getId());
+        given(symbolGroupDAO.get(user, PROJECT_TEST_ID, group1.getId())).willReturn(group1);
+        willThrow(IllegalArgumentException.class).given(symbolGroupDAO).delete(user, PROJECT_TEST_ID, group1.getId());
 
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
         Response response = target(path).request().delete();

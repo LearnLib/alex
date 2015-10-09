@@ -408,7 +408,7 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return "[Project " + id + "] " + name + "(" + baseUrl + ")";
+        return "[Project " + id + "]: " + user + ", " + name + "(" + baseUrl + ")";
     }
 
 }

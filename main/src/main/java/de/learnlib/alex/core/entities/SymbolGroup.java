@@ -49,7 +49,9 @@ public class SymbolGroup implements Serializable {
     @Column(nullable = false)
     private Long id;
 
+    @NaturalId
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "userId")
     @JsonIgnore
     private User user;
 
@@ -62,7 +64,7 @@ public class SymbolGroup implements Serializable {
 
     /** The Symbols manged by this group. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE })
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.DELETE })
     private Set<Symbol> symbols;
 
     /**
@@ -253,6 +255,6 @@ public class SymbolGroup implements Serializable {
 
     @Override
     public String toString() {
-        return "SymbolGroup[" + groupId + "] (" + project + ", " + id + "): " + name;
+        return "SymbolGroup[" + groupId + "]: " + user + ", " + project + ", " + id + ", " + name;
     }
 }

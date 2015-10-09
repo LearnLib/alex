@@ -14,6 +14,7 @@ import static org.mockito.Mockito.verify;
 
 public class SearchHelperTest {
 
+    private static final Long USER_ID = 10L;
     private static final Long PROJECT_ID = 10L;
     private static final int COUNTER_VALUE = 42;
 
@@ -22,12 +23,12 @@ public class SearchHelperTest {
         VariableStoreConnector variables = mock(VariableStoreConnector.class);
         given(variables.get("name")).willReturn("Jon Doe");
         CounterStoreConnector counter = mock(CounterStoreConnector.class);
-        given(counter.get(PROJECT_ID, "counter")).willReturn(COUNTER_VALUE);
+        given(counter.get(USER_ID, PROJECT_ID, "counter")).willReturn(COUNTER_VALUE);
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counter);
 
-        String result = SearchHelper.insertVariableValues(connector, PROJECT_ID,
+        String result = SearchHelper.insertVariableValues(connector, USER_ID, PROJECT_ID,
                                                           "Hello {{$name}}, you are {{user}} no. {{#counter}}!");
 
         assertEquals("Hello Jon Doe, you are {{user}} no. " + COUNTER_VALUE + "!", result);
@@ -37,7 +38,7 @@ public class SearchHelperTest {
     public void shouldNotReplaceAnythingIfTextContainsNoVariables() {
         ConnectorManager connector = mock(ConnectorManager.class);
 
-        String result = SearchHelper.insertVariableValues(connector, PROJECT_ID,
+        String result = SearchHelper.insertVariableValues(connector, USER_ID, PROJECT_ID,
                                                           "Hello Jon Doe, you are user no. 42!");
 
         assertEquals("Hello Jon Doe, you are user no. " + COUNTER_VALUE + "!", result);

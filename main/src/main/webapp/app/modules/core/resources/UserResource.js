@@ -12,15 +12,24 @@
 
         return {
             getAll: getAll,
+            get: get,
             create: create,
             login: login,
             remove: remove,
             update: update
         };
 
+        function get(userId) {
+            return $http.get(uri + '/' + userId)
+                .then(function (response) {
+                    return response.data;
+                })
+        }
+
         function getAll() {
             return $http.get(uri)
                 .then(function (response) {
+                    console.log(response.data);
                     return response.data;
                 })
         }

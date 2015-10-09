@@ -1,5 +1,6 @@
 package de.learnlib.alex.utils;
 
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import de.learnlib.alex.core.learner.connectors.FileStoreConnector;
@@ -64,6 +65,8 @@ public final class SearchHelper {
      *
      * @param connector
      *         The connectors to connect to the counter and variable stores.
+     * @param userId
+     *         The user id for the context.
      * @param projectId
      *         The project as context.
      * @param text
@@ -72,7 +75,7 @@ public final class SearchHelper {
      * @throws IllegalStateException
      *         If a variable value should be inserted, but the variable does not exists or was never set.
      */
-    public static String insertVariableValues(ConnectorManager connector, Long projectId, String text)
+    public static String insertVariableValues(ConnectorManager connector, Long userId, Long projectId, String text)
                          throws IllegalStateException {
         StringBuilder result = new StringBuilder();
         int variableStartPos = text.indexOf("{{");
@@ -88,7 +91,8 @@ public final class SearchHelper {
             String variableValue;
             switch (text.charAt(variableStartPos + 2)) {
                 case '#': // counter
-                    variableValue = String.valueOf(connector.getConnector(CounterStoreConnector.class).get(projectId, variableName));
+                    variableValue = String.valueOf(connector.getConnector(CounterStoreConnector.class)
+                            .get(userId, projectId, variableName));
                     result.append(variableValue);
                     break;
                 case '$': // variable:
@@ -97,7 +101,7 @@ public final class SearchHelper {
                     break;
                 case '/': // file name
                     variableValue = connector.getConnector(FileStoreConnector.class)
-                                             .getAbsoluteFileLocation(projectId, variableName);
+                                             .getAbsoluteFileLocation(userId, projectId, variableName);
                     result.append(variableValue);
                     break;
                 default: // bullshit

@@ -158,7 +158,9 @@ public interface SymbolDAO {
 
     /**
      * Mark a symbol as hidden.
-     * 
+     *
+     * @param userId
+     *              The ID of the user the symbols belongs to.
      * @param projectId
      *            The ID of the project the symbol belongs to.
      * @param ids
@@ -166,7 +168,7 @@ public interface SymbolDAO {
      * @throws NotFoundException
      *             When the Symbol was not found.
      */
-    void hide(Long projectId, Long... ids) throws NotFoundException;
+    void hide(Long userId, Long projectId, Long... ids) throws NotFoundException;
 
     /**
      * Revive a symbol from the hidden state.
@@ -178,6 +180,6 @@ public interface SymbolDAO {
      * @throws NotFoundException
      *             When the Symbol was not found.
      */
-    void show(Long projectId, Long... ids) throws NotFoundException;
+    void show(Long userId, Long projectId, Long... ids) throws NotFoundException;
 
 }

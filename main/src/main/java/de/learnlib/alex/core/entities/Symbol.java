@@ -79,6 +79,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     private String abbreviation;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "userId")
     @JsonIgnore
     private User user;
 
@@ -184,6 +185,11 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         } else {
             return user.getId();
         }
+    }
+
+    @JsonProperty("user")
+    public void setUserId(Long userid) {
+        user = new User(userid);
     }
 
     /**
@@ -437,7 +443,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @Override
     public String toString() {
-        return "Symbol[" + symbolId + "] " + this.project + "/" + this.getId() + "/" + this.getRevision() + ": "
+        return "Symbol[" + symbolId + "] " + this.user + this.project + "/" + this.getId() + "/" + this.getRevision() + ", "
                 + name + "(" + abbreviation + ")";
     }
 

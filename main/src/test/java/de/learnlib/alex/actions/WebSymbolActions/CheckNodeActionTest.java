@@ -3,9 +3,13 @@ package de.learnlib.alex.actions.WebSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
@@ -20,15 +24,22 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CheckNodeActionTest {
 
-    private static final Long PROJECT_ID = 42L;
+    @Mock
+    private User user;
+
+    @Mock
+    private Project project;
+
     private CheckNodeAction checkNode;
 
     @Before
     public void setUp() {
         checkNode = new CheckNodeAction();
-        checkNode.setProject(new Project(PROJECT_ID));
+        checkNode.setUser(user);
+        checkNode.setProject(project);
         checkNode.setValue("#node");
 }
 

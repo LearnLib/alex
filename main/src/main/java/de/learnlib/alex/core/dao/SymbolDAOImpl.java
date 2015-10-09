@@ -116,6 +116,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         project.addSymbol(symbol);
 
         SymbolGroup group = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("user", symbol.getUser())
                                                     .using("project", project)
                                                     .using("id", symbol.getGroupId())
                                                     .load();
@@ -154,8 +155,8 @@ public class SymbolDAOImpl implements SymbolDAO {
             symbolIdRestrictions.add(Restrictions.eq("idRevisionPair", pair));
         }
         DetachedCriteria symbolIds = DetachedCriteria.forClass(Symbol.class)
+                                                        .add(Restrictions.eq("user.id", user.getId()))
                                                         .add(Restrictions.eq("project.id", projectId))
-                                                        .add(Restrictions.eq("user", user))
                                                         .add(symbolIdRestrictions)
                                                         .setProjection(Projections.property("symbolId"));
 
@@ -188,7 +189,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        List<IdRevisionPair> idRevPairs = getIdRevisionPairs(session, projectId, groupId, visibilityLevel);
+        List<IdRevisionPair> idRevPairs = getIdRevisionPairs(session, user.getId(), projectId, groupId, visibilityLevel);
 
         HibernateUtil.commitTransaction();
 
@@ -199,10 +200,12 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     List<IdRevisionPair> getIdRevisionPairs(Session session,
-                                      Long projectId,
-                                      Long groupId,
-                                      SymbolVisibilityLevel visibilityLevel) throws NotFoundException {
+                                            Long userId,
+                                            Long projectId,
+                                            Long groupId,
+                                        SymbolVisibilityLevel visibilityLevel) throws NotFoundException {
         SymbolGroup group = (SymbolGroup) session.createCriteria(SymbolGroup.class)
+                                                    .add(Restrictions.eq("user.id", userId))
                                                     .add(Restrictions.eq("project.id", projectId))
                                                     .add(Restrictions.eq("id", groupId))
                                                     .uniqueResult();
@@ -214,6 +217,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         // get latest revision
         List<Object[]> idRevList = session.createCriteria(Symbol.class)
+                                            .add(Restrictions.eq("user.id", userId))
                                             .add(Restrictions.eq("project.id", projectId))
                                             .add(Restrictions.eq("group", group))
                                             .add(visibilityLevel.getCriterion())
@@ -255,6 +259,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         // get latest revision
         @SuppressWarnings("unchecked") // should return a list of objects arrays which contain 2 Long values.
         List<Object[]> idRevList = session.createCriteria(Symbol.class)
+                                            .add(Restrictions.eq("user", user))
                                             .add(Restrictions.eq("project.id", projectId))
                                             .add(Restrictions.in("idRevisionPair.id", ids))
                                             .add(visibilityLevel.getCriterion())
@@ -262,7 +267,6 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                                    .add(Projections.groupProperty("idRevisionPair.id"))
                                                                    .add(Projections.max("idRevisionPair.revision"))
                                             ).list();
-
 
         List<IdRevisionPair> idRevPairs = createIdRevisionPairList(idRevList);
 
@@ -469,10 +473,12 @@ public class SymbolDAOImpl implements SymbolDAO {
         checkUniqueConstrains(session, symbol); // will throw exception if the symbol is invalid
 
         SymbolGroup oldGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("user", symbol.getUser())
                                                     .using("project", symbol.getProject())
                                                     .using("id", symbolInDB.getGroupId())
                                                     .load();
         SymbolGroup newGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("user", symbol.getUser())
                                                     .using("project", symbol.getProject())
                                                     .using("id", symbol.getGroupId())
                                                     .load();
@@ -489,6 +495,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         // update group
         if (!newGroup.equals(oldGroup)) {
             List<Symbol> symbols = session.createCriteria(Symbol.class)
+                                            .add(Restrictions.eq("user", symbol.getUser()))
                                             .add(Restrictions.eq("project", symbol.getProject()))
                                             .add(Restrictions.eq("idRevisionPair.id", symbol.getId()))
                                             .list();
@@ -531,10 +538,12 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     private void move(Session session, Symbol symbol, Long newGroupId) throws NotFoundException {
         SymbolGroup oldGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("user", symbol.getUser())
                                                     .using("project", symbol.getProject())
                                                     .using("id", symbol.getGroupId())
                                                     .load();
         SymbolGroup newGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+                                                    .using("user", symbol.getUser())
                                                     .using("project", symbol.getProject())
                                                     .using("id", newGroupId)
                                                     .load();
@@ -545,6 +554,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         if (!newGroup.equals(oldGroup)) {
             List<Symbol> symbols = session.createCriteria(Symbol.class)
+                                            .add(Restrictions.eq("user", symbol.getUser()))
                                             .add(Restrictions.eq("project", symbol.getProject()))
                                             .add(Restrictions.eq("idRevisionPair.id", symbol.getId()))
                                             .list();
@@ -553,7 +563,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public void hide(Long projectId, Long... ids) throws NotFoundException {
+    public void hide(Long userId, Long projectId, Long... ids) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -561,7 +571,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         // update
         try {
             for (Long id : ids) {
-                List<Symbol> symbols = getSymbols(session, projectId, id);
+                List<Symbol> symbols = getSymbols(session, userId, projectId, id);
 
                 hideSymbols(session, symbols);
             }
@@ -584,7 +594,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public void show(Long projectId, Long... ids) throws NotFoundException {
+    public void show(Long userId, Long projectId, Long... ids) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -592,7 +602,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         // update
         try {
             for (Long id : ids) {
-                List<Symbol> symbols = getSymbols(session, projectId, id);
+                List<Symbol> symbols = getSymbols(session, userId, projectId, id);
                 showSymbols(session, symbols);
             }
         } catch (IllegalArgumentException e) {
@@ -623,9 +633,10 @@ public class SymbolDAOImpl implements SymbolDAO {
         return idRevPairs;
     }
 
-    private List<Symbol> getSymbols(Session session, Long projectId, Long symbolId) throws NotFoundException {
+    private List<Symbol> getSymbols(Session session, Long userId, Long projectId, Long symbolId) throws NotFoundException {
         @SuppressWarnings("should return a list of Symbols")
         List<Symbol> symbols = session.createCriteria(Symbol.class)
+                                        .add(Restrictions.eq("user.id", userId))
                                         .add(Restrictions.eq("project.id", projectId))
                                         .add(Restrictions.eq("idRevisionPair.id", symbolId))
                                         .list();
@@ -651,6 +662,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     private void checkUniqueConstrains(Session session, Symbol symbol) throws IllegalArgumentException {
         // put constrains into a query
         Junction restrictions = Restrictions.conjunction()
+                                    .add(Restrictions.eq("user", symbol.getUser()))
                                     .add(Restrictions.eq("project", symbol.getProject()))
                                     .add(Restrictions.disjunction()
                                             .add(Restrictions.eq("name", symbol.getName()))
@@ -677,6 +689,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         for (int i = 0; i < symbol.getActions().size(); i++) {
             SymbolAction action = symbol.getActions().get(i);
             action.setId(null);
+            action.setUser(symbol.getUser());
             action.setProject(symbol.getProject());
             action.setSymbol(symbol);
             action.setNumber(i);
@@ -700,6 +713,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
                 if (symbolToExecute == null) { // it was not in the set of all symbols
                     symbolToExecute = (Symbol) session.createCriteria(Symbol.class)
+                                                        .add(Restrictions.eq("user", action.getUser()))
                                                         .add(Restrictions.eq("project", action.getProject()))
                                                         .add(Restrictions.eq("idRevisionPair", idAndRevision))
                                                         .uniqueResult();
@@ -716,6 +730,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     public static void loadLazyRelations(Symbol symbol) {
+        Hibernate.initialize(symbol.getUser());
         Hibernate.initialize(symbol.getGroup());
 
         Hibernate.initialize(symbol.getActions());

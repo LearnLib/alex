@@ -99,7 +99,7 @@ public class WebSymbolTest {
                     + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"value\":\"F[oO0]+\","
                         + "\"regexp\":true},"
                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"duration\":" + ONE_SECOND + "}"
-                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":0,\"revision\":null}";
+                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":0,\"revision\":null,\"user\":0}";
         symbol.setProject(null);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -123,7 +123,7 @@ public class WebSymbolTest {
                                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
                                         + "\"duration\":" + ONE_SECOND + "}"
                                 + "],\"group\":2,\"hidden\":false,\"id\":null,\"name\":\"WebSymbol\",\"project\":1,"
-                                + "\"revision\":null}";
+                                + "\"revision\":null,\"user\":0}";
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symbol);
 

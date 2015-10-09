@@ -2,6 +2,7 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerStatus;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import de.learnlib.alex.core.learner.Learner;
@@ -42,11 +43,12 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Override
     public void create(LearnerResult learnerResult) throws ValidationException {
         // new LearnerResults should have a project, not a test number not a step number
-        if (learnerResult.getProject() == null
+        if (learnerResult.getUser() == null
+                || learnerResult.getProject() == null
                 || learnerResult.getTestNo() != null
                 || learnerResult.getStepNo() != null) {
             throw new ValidationException(
-                "To create a LearnResult it must have a Project but must not have a test no. nor step no.");
+                "To create a LearnResult it must have a User and Project but must not have a test no. nor step no.");
         }
 
         // start session
@@ -55,6 +57,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         // get the current highest test no in the project and add 1 for the next id
         Long maxTestNo = (Long) session.createCriteria(LearnerResult.class)
+                                        .add(Restrictions.eq("user", learnerResult.getUser()))
                                         .add(Restrictions.eq("project", learnerResult.getProject()))
                                         .setProjection(Projections.max("testNo"))
                                         .uniqueResult();
@@ -72,7 +75,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public List<String> getAllAsJSON(Long projectId) throws NotFoundException {
+    public List<String> getAllAsJSON(Long userId, Long projectId) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -84,11 +87,12 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         // fetch the LearnerResults of the project with the the highest step no.
         @SuppressWarnings("unchecked") // should return a list of LearnerResults
         List<String> resultsAsJSON = session.createCriteria(LearnerResult.class)
-                                            .add(Restrictions.eq("project.id", projectId))
-                                            .add(Restrictions.eq("stepNo", 0L))
-                                            .setProjection(Projections.property("JSON"))
-                                            .addOrder(Order.asc("testNo"))
-                                            .list();
+                .add(Restrictions.eq("user.id", userId))
+                .add(Restrictions.eq("project.id", projectId))
+                .add(Restrictions.eq("stepNo", 0L))
+                .setProjection(Projections.property("JSON"))
+                .addOrder(Order.asc("testNo"))
+                .list();
 
         // done
         HibernateUtil.commitTransaction();
@@ -96,13 +100,13 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public List<String> getAllAsJSON(Long projectId, Long testNo) throws NotFoundException {
+    public List<String> getAllAsJSON(Long userId, Long projectId, Long testNo) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         try {
-            List<String> result = getAllAsJSON(session, projectId, testNo);
+            List<String> result = getAllAsJSON(session, userId, projectId, testNo);
 
             // done
             HibernateUtil.commitTransaction();
@@ -114,7 +118,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public List<List<String>> getAllAsJson(Long projectId, List<Long> testNos) throws NotFoundException {
+    public List<List<String>> getAllAsJson(Long userId, Long projectId, List<Long> testNos) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -123,7 +127,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         try {
             for (Long testNo : testNos) {
-                List<String> stepsOfOneTestRun = getAllAsJSON(session, projectId, testNo);
+                List<String> stepsOfOneTestRun = getAllAsJSON(session, userId, projectId, testNo);
                 result.add(stepsOfOneTestRun);
             }
             // done
@@ -135,7 +139,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         }
     }
 
-    private List<String> getAllAsJSON(Session session, Long projectId, Long testNo) throws NotFoundException {
+    private List<String> getAllAsJSON(Session session, Long userId, Long projectId, Long testNo) throws NotFoundException {
         if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
@@ -143,14 +147,15 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         // fetch the LearnerResults of the project with the the highest step no.
         @SuppressWarnings("unchecked") // should return a list of LearnerResults
         List<String> result = session.createCriteria(LearnerResult.class)
-                                        .add(Restrictions.eq("project.id", projectId))
-                                        .add(Restrictions.eq("testNo", testNo))
-                                        .setProjection(Projections.property("JSON"))
-                                        .addOrder(Order.asc("stepNo"))
-                                        .list();
+                .add(Restrictions.eq("user.id", userId))
+                .add(Restrictions.eq("project.id", projectId))
+                .add(Restrictions.eq("testNo", testNo))
+                .setProjection(Projections.property("JSON"))
+                .addOrder(Order.asc("stepNo"))
+                .list();
 
         if (result.isEmpty()) {
-            throw new NotFoundException("No result with the test no. " + testNo + " was found.");
+            throw new NotFoundException("No result with the test no. " + testNo + " for user " + userId + "was found.");
         }
 
         // done
@@ -158,24 +163,25 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public LearnerResult get(Long projectId, Long testNo) throws NotFoundException {
+    public LearnerResult get(Long userId, Long projectId, Long testNo) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        LearnerResult result = get(session, projectId, testNo);
+        LearnerResult result = get(session, userId, projectId, testNo);
 
         // done
         HibernateUtil.commitTransaction();
         return result;
     }
 
-    private LearnerResult get(Session session, Long projectId, Long testNo) throws NotFoundException {
+    private LearnerResult get(Session session, Long userId, Long projectId, Long testNo) throws NotFoundException {
         if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
         LearnerResult result = (LearnerResult) session.createCriteria(LearnerResult.class)
+                                                        .add(Restrictions.eq("user.id", userId))
                                                         .add(Restrictions.eq("project.id", projectId))
                                                         .add(Restrictions.eq("testNo", testNo))
                                                         .add(Restrictions.eq("stepNo", 0L))
@@ -190,7 +196,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public String getAsJSON(Long projectId, Long testNo) throws NotFoundException {
+    public String getAsJSON(Long userId, Long projectId, Long testNo) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -199,7 +205,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
-        String result = getAsJSON(session, projectId, testNo, 0L);
+        String result = getAsJSON(session, userId, projectId, testNo, 0L);
 
         if (result == null) {
             HibernateUtil.rollbackTransaction();
@@ -213,7 +219,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public String getAsJSON(Long projectId, Long testNo, Long stepNo) throws NotFoundException {
+    public String getAsJSON(Long userId, Long projectId, Long testNo, Long stepNo) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -222,7 +228,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
-        String result = getAsJSON(session, projectId, testNo, stepNo);
+        String result = getAsJSON(session, userId, projectId, testNo, stepNo);
 
         if (result == null) {
             throw new NotFoundException("The result with the test no. " + testNo
@@ -251,7 +257,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     private void updateSummary(Session session, LearnerResult result) throws NotFoundException {
-        LearnerResult summaryResult = get(session, result.getProjectId(), result.getTestNo());
+        LearnerResult summaryResult = get(session, result.getUserId(), result.getProjectId(), result.getTestNo());
         summaryResult.setErrorText(result.getErrorText());
         summaryResult.setHypothesis(result.getHypothesis());
 
@@ -267,14 +273,14 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public void delete(Long projectId, Long... testNo) throws NotFoundException, ValidationException {
-        checkIfResultsCanBeDeleted(projectId, testNo); // check before the session is opened
+    public void delete(User user, Long projectId, Long... testNo) throws NotFoundException, ValidationException {
+        checkIfResultsCanBeDeleted(user, projectId, testNo); // check before the session is opened
 
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        List<Long> validTestNumbers = getTestNumbersInDB(session, projectId, testNo);
+        List<Long> validTestNumbers = getTestNumbersInDB(session, user.getId(), projectId, testNo);
         Set<Long> diffSet = setDifference(Arrays.asList(testNo), validTestNumbers);
         if (diffSet.size() > 0) {
             throw new NotFoundException("The result with the number " + diffSet + " was not found, thus nothing could"
@@ -283,18 +289,20 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         @SuppressWarnings("unchecked") // should always return a list of LernerResults
         List<LearnerResult> results = session.createCriteria(LearnerResult.class)
-                                                .add(Restrictions.eq("project.id", projectId))
-                                                .add(Restrictions.in("testNo", testNo))
-                                                .list();
+                .add(Restrictions.eq("user", user))
+                .add(Restrictions.eq("project.id", projectId))
+                .add(Restrictions.in("testNo", testNo))
+                .list();
+
         results.forEach(session::delete);
 
         // done
         HibernateUtil.commitTransaction();
     }
 
-    private void checkIfResultsCanBeDeleted(Long projectId, Long... testNo) throws ValidationException {
+    private void checkIfResultsCanBeDeleted(User user, Long projectId, Long... testNo) throws ValidationException {
         // don't delete the learnResult of the active learning process
-        LearnerStatus status = new LearnerStatus(learner);
+        LearnerStatus status = new LearnerStatus(user, learner);
         Long activeTestNo = status.getTestNo();
         Long activeProjectId = status.getProjectId();
 
@@ -313,21 +321,23 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         }
     }
 
-    private String getAsJSON(Session session, long projectId, long testNo, long stepNo) {
+    private String getAsJSON(Session session, Long userId, Long projectId, Long testNo, Long stepNo) {
         return (String) session.createCriteria(LearnerResult.class)
-                                .add(Restrictions.eq("project.id", projectId))
-                                .add(Restrictions.eq("testNo", testNo))
-                                .add(Restrictions.eq("stepNo", stepNo))
-                                .setProjection(Projections.property("JSON"))
-                                .uniqueResult();
+                .add(Restrictions.eq("user.id", userId))
+                .add(Restrictions.eq("project.id", projectId))
+                .add(Restrictions.eq("testNo", testNo))
+                .add(Restrictions.eq("stepNo", stepNo))
+                .setProjection(Projections.property("JSON"))
+                .uniqueResult();
     }
 
-    private List<Long> getTestNumbersInDB(Session session, Long projectId, Long... testNo) {
+    private List<Long> getTestNumbersInDB(Session session, Long userId, Long projectId, Long... testNo) {
         return session.createCriteria(LearnerResult.class)
-                        .add(Restrictions.eq("project.id", projectId))
-                        .add(Restrictions.in("testNo", testNo))
-                        .setProjection(Projections.distinct(Projections.property("testNo")))
-                        .list();
+                .add(Restrictions.eq("user.id", userId))
+                .add(Restrictions.eq("project.id", projectId))
+                .add(Restrictions.in("testNo", testNo))
+                .setProjection(Projections.distinct(Projections.property("testNo")))
+                .list();
     }
 
     private Set<Long> setDifference(Collection<Long> collectionA, Collection<Long> collectionB) {

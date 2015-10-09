@@ -74,7 +74,9 @@ public interface ProjectDAO {
     /**
      * Get a specific project by its ID.
      *
-     * @param id
+     * @param userId
+     *          The ID of the user.
+     * @param projectId
      *         The ID of the project to find.
      * @param embedFields
      *         The fields to include in returned project. By default no additional data will be fetched from the DB.
@@ -82,7 +84,7 @@ public interface ProjectDAO {
      * @throws NotFoundException
      *         If the project could not be found.
      */
-    Project getByID(long id, EmbeddableFields... embedFields) throws NotFoundException;
+    Project getByID(Long userId, Long projectId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Update a project.
@@ -99,11 +101,13 @@ public interface ProjectDAO {
     /**
      * Delete a project.
      *
-     * @param id
-     *            The id of the project to delete.
+     * @param userId
+     *         The id of the user.
+     * @param projectId
+     *         The id of the project to delete.
      * @throws NotFoundException
-     *            When the Project id was not found.
+     *         When the Project id was not found.
      */
-    void delete(long id) throws NotFoundException;
+    void delete(Long userId, Long projectId) throws NotFoundException;
 
 }

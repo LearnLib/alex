@@ -7,7 +7,7 @@ import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
@@ -98,6 +98,11 @@ public class UserDAOImpl implements UserDAO {
         }
 
         session.delete(user);
-        HibernateUtil.commitTransaction();
+        try {
+            HibernateUtil.commitTransaction();
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

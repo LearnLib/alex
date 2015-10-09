@@ -1,12 +1,16 @@
 package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * The model for a user
@@ -35,12 +39,51 @@ public class User implements Serializable {
     @Column(unique = true)
     private String email;
 
+    /**
+     * The hash of the users password
+     */
     @NotNull
     private String password;
 
+    /**
+     * The salt that is used to hash the password
+     */
     private String salt;
 
+    /**
+     * The role of the user
+     */
     private UserRole role;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<Project> projects;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<SymbolGroup> symbolGroups;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<Symbol> symbols;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<SymbolAction> actions;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<Counter> counters;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    private Set<LearnerResult> learnerResults;
 
     public User() {
         role = UserRole.REGISTERED;
@@ -112,6 +155,8 @@ public class User implements Serializable {
         this.role = role;
     }
 
+    @JsonIgnore
+    @JsonProperty("password")
     public String getPassword() {
         return password;
     }
@@ -120,11 +165,66 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    @JsonIgnore
+    @JsonProperty("salt")
     public String getSalt() {
         return salt;
     }
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
+
+    public Set<SymbolGroup> getSymbolGroups() {
+        return symbolGroups;
+    }
+
+    public void setSymbolGroups(Set<SymbolGroup> symbolGroups) {
+        this.symbolGroups = symbolGroups;
+    }
+
+    public Set<Symbol> getSymbols() {
+        return symbols;
+    }
+
+    public void setSymbols(Set<Symbol> symbols) {
+        this.symbols = symbols;
+    }
+
+    public Set<SymbolAction> getActions() {
+        return actions;
+    }
+
+    public void setActions(Set<SymbolAction> actions) {
+        this.actions = actions;
+    }
+
+    public Set<Counter> getCounters() {
+        return counters;
+    }
+
+    public void setCounters(Set<Counter> counters) {
+        this.counters = counters;
+    }
+
+    public Set<LearnerResult> getLearnerResults() {
+        return learnerResults;
+    }
+
+    public void setLearnerResults(Set<LearnerResult> learnerResults) {
+        this.learnerResults = learnerResults;
+    }
+
+    @Override
+    public String toString() {
+        return "User [" + id + "]: " + email;
     }
 }

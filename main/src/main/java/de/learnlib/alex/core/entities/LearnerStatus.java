@@ -15,6 +15,9 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerStatus {
 
+    @JsonIgnore
+    private final User user;
+
     /**
      * The learn process to observe.
      */
@@ -50,8 +53,13 @@ public class LearnerStatus {
      *
      * @param learner The learner to get the information from.
      */
-    public LearnerStatus(Learner learner) {
+    public LearnerStatus(User user, Learner learner) {
+        this.user = user;
         this.learner = learner;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     /**
@@ -71,7 +79,7 @@ public class LearnerStatus {
      */
     @JsonProperty
     public boolean isActive() {
-        return learner.isActive();
+        return learner.isActive(user);
     }
 
     /**
@@ -83,7 +91,7 @@ public class LearnerStatus {
     @JsonProperty("project")
     public Long getProjectId() {
         if (isActive()) {
-            LearnerResult result = learner.getResult();
+            LearnerResult result = learner.getResult(user);
             if (result == null) {
                 return 0L;
             }
@@ -102,7 +110,7 @@ public class LearnerStatus {
     @JsonProperty
     public Long getTestNo() {
         if (isActive()) {
-            LearnerResult result = learner.getResult();
+            LearnerResult result = learner.getResult(user);
             if (result == null) {
                 return 0L;
             }
@@ -114,10 +122,10 @@ public class LearnerStatus {
 
     @JsonProperty
     public LearnerStatusStatistics getStatistics() {
-        if (!learner.isActive()) {
+        if (!learner.isActive(user)) {
             return null;
         } else {
-            return new LearnerStatusStatistics(learner.getStartTime(), learner.getMQsUsed());
+            return new LearnerStatusStatistics(learner.getStartTime(user), learner.getMQsUsed(user));
         }
     }
 }

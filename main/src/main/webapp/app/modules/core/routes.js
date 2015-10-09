@@ -32,10 +32,28 @@
                 url: '/dashboard',
                 views: {
                     '@': {
-                        templateUrl: paths.COMPONENTS + '/core/views/pages/dashboard.html'
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/project-dashboard.html'
                     }
                 },
                 data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            })
+
+            // =========================================================
+            // user related routes
+
+            .state('users', {
+                abstract: true,
+                url: '/users',
+                data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN']}
+            })
+            .state('users.settings', {
+                url: '/settings',
+                views: {
+                    '@': {
+                        controller: 'UserSettingsController',
+                        templateUrl: paths.COMPONENTS + '/core/views/pages/user-settings.html'
+                    }
+                }
             })
 
             // =========================================================

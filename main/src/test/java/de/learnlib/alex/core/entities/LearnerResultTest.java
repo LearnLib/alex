@@ -18,6 +18,7 @@ import static org.mockito.Mockito.mock;
 
 public class LearnerResultTest {
 
+    private static final Long USER_ID = 3L;
     private static final Long PROJECT_ID = 3L;
     private static final Long ID = 3L;
     private static final Long STEP_NO = 3L;
@@ -42,7 +43,7 @@ public class LearnerResultTest {
                                                     + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\""
                                                     + ",\"symbolsUsed\":0"
                                                 + "},"
-                                                + "\"stepNo\":" + STEP_NO + ",\"testNo\":" + ID + "}";
+                                                + "\"stepNo\":" + STEP_NO + ",\"testNo\":" + ID + ",\"user\":" + USER_ID + "}";
 
     @Test
     public void shouldCreateTheCorrectJSON() throws JsonProcessingException {
@@ -66,6 +67,8 @@ public class LearnerResultTest {
         statistics.setStartTime(TEST_DATE);
         statistics.setDuration(TEST_DURATION);
 
+        User user = new User(USER_ID);
+
         LearnerResult result = new LearnerResult();
         result.setProject(project);
         result.setTestNo(ID);
@@ -73,6 +76,7 @@ public class LearnerResultTest {
         result.setStatistics(statistics);
         result.setSigma(sigma);
         result.createHypothesisFrom(hypothesis);
+        result.setUser(user);
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(result);

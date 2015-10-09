@@ -46,7 +46,8 @@
                 revision: data.revision,
                 project: data.project,
                 hidden: data.hidden,
-                group: data.group
+                group: data.group,
+                user: data.user
             });
         };
 
