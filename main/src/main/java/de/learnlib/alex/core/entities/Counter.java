@@ -2,6 +2,7 @@ package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -18,6 +19,7 @@ import java.io.Serializable;
  * A simple counter class.
  */
 @Entity
+@JsonPropertyOrder(alphabetic = true)
 public class Counter implements Serializable {
 
     /** to be serializable. */
