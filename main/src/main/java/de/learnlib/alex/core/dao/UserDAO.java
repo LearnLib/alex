@@ -58,4 +58,12 @@ public interface UserDAO {
      * @throws NotFoundException
      */
     void delete(Long id) throws NotFoundException;
+
+    /**
+     * Updates a user
+     *
+     * @param user The user to update
+     * @throws ValidationException
+     */
+    void update(User user) throws ValidationException;
 }

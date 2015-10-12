@@ -3,9 +3,7 @@
 <div class="view-body">
     <div class="alx-container">
 
-        <button class="btn btn-sm btn-default" ng-click="deleteUser()">
-            <i class="fa fa-fw fa-trash-o"></i> Delete Profile
-        </button>
+        <user-edit-form user="user" ng-if="user"></user-edit-form>
 
     </div>
 </div>

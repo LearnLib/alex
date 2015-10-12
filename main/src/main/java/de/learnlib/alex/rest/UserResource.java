@@ -9,6 +9,7 @@ import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
+import org.jose4j.json.internal.json_simple.JSONObject;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -16,6 +17,7 @@ import org.jose4j.lang.JoseException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.persistence.Entity;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -37,7 +39,9 @@ public class UserResource {
     @Inject
     private UserDAO userDAO;
 
-    /** The security context containing the user of the request */
+    /**
+     * The security context containing the user of the request
+     */
     @Context
     SecurityContext securityContext;
 
@@ -64,6 +68,80 @@ public class UserResource {
             return Response.status(Status.CREATED).entity(user).build();
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.BAD_REQUEST, e);
+        }
+    }
+
+    /**
+     * Changes the password of the user
+     *
+     * @param userId The id of the user
+     * @param json   The pair oldPassword:newPassword as json
+     * @return 200 OK on success, 400 BAD_REQUEST otherwise
+     */
+    @PUT
+    @Path("/{id}/password")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
+    public Response changePassword(@PathParam("id") Long userId, JSONObject json) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        String oldPassword = (String) json.get("oldPassword");
+        String newPassword = (String) json.get("newPassword");
+
+        if (user.getId().equals(userId)) {
+            User realUser = userDAO.getById(userId);
+            if (realUser.isValidPassword(oldPassword)) {
+                realUser.setEncryptedPassword(newPassword);
+                userDAO.update(realUser);
+            } else {
+                return Response.noContent().build();
+            }
+        } else {
+            return Response.noContent().build();
+        }
+
+        return Response.ok().build();
+    }
+
+    /**
+     * Changes the email of the user.
+     * Therefore, check if another user already has the mail and send an error
+     *
+     * @param userId The id of the user
+     * @param json   the json with a property 'email'
+     * @return 200 OK & the updated user on success, 400 BAD_REQUEST otherwise
+     */
+    @PUT
+    @Path("/{id}/email")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"REGISTERED"})
+    public Response changeEmail(@PathParam("id") Long userId, JSONObject json) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        String email = (String) json.get("email");
+
+        try {
+            User realUser = userDAO.getById(userId);
+            User testUser = userDAO.getByEmail(email);
+
+            if (testUser != null) {
+                throw new ValidationException("The email is already taken!");
+            }
+            if (!new EmailValidator().isValid(user.getEmail(), null)) {
+                throw new ValidationException("The email is not valid!");
+            }
+            if (email.equals(user.getEmail())) {
+                throw new ValidationException("The email is the same as the current one!");
+            }
+
+            realUser.setEmail(email);
+            userDAO.update(realUser);
+            // TODO: send the user a verification email
+
+            return Response.ok(realUser).build();
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeEmail", Status.BAD_REQUEST, e);
         }
     }
 
