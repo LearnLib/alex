@@ -5,17 +5,17 @@
         .module('ALEX.core')
         .factory('Symbol', SymbolModel);
 
-    SymbolModel.$inject = ['_', 'ActionBuilder'];
+    SymbolModel.$inject = ['_', 'ActionService'];
 
     /**
      * The factory for the symbol model.
      *
      * @param _ - Lodash
-     * @param ActionBuilder - The factory that creates Actions
+     * @param ActionService - The factory that creates Actions
      * @returns {Symbol} - The symbol model
      * @constructor
      */
-    function SymbolModel(_, ActionBuilder) {
+    function SymbolModel(_, ActionService) {
 
         /**
          * The symbol model
@@ -41,7 +41,7 @@
                 data.name,
                 data.abbreviation
             ), {
-                actions: data.actions ? ActionBuilder.createFromObjects(data.actions) : [],
+                actions: data.actions ? _.map(data.actions, ActionService.buildFromData) : [],
                 id: data.id,
                 revision: data.revision,
                 project: data.project,

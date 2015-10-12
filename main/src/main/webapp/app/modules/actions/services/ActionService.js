@@ -5,47 +5,53 @@
         .module('ALEX.actions')
         .factory('ActionService', ActionService);
 
-    /**
-     * Contains functions to instantiate new actions according to their group and action type
-     *
-     * @returns {{register: register, get: get}}
-     * @constructor
-     */
-    function ActionService() {
+    ActionService.$inject = [
+        'ClearWebAction', 'ClickWebAction', 'CheckForTextWebAction', 'CheckForNodeWebAction',
+        'CheckPageTitleAction', 'ClickLinkByTextWebAction', 'FillWebAction', 'GoToWebAction', 'SelectWebAction',
+        'SubmitWebAction', 'CallRestAction', 'CheckAttributeExistsRestAction', 'CheckAttributeTypeRestAction',
+        'CheckAttributeValueRestAction', 'CheckHeaderFieldRestAction', 'CheckHTTPBodyTextRestAction',
+        'CheckStatusRestAction', 'AssertCounterAction', 'AssertVariableAction', 'ExecuteSymbolGeneralAction',
+        'IncrementCounterGeneralAction', 'SetCounterGeneralAction', 'SetVariableGeneralAction',
+        'SetVariableByCookieAction', 'SetVariableByJsonAttributeGeneralAction', 'SetVariableByNodeGeneralAction',
+        'WaitGeneralAction'
+    ];
 
-        // = [actionGroupType][actionType]
-        var map = {};
+    function ActionService(ClearWebAction, ClickWebAction, CheckForTextWebAction, CheckForNodeWebAction,
+                           CheckPageTitleAction, ClickLinkByTextWebAction, FillWebAction, GoToWebAction, SelectWebAction,
+                           SubmitWebAction, CallRestAction, CheckAttributeExistsRestAction, CheckAttributeTypeRestAction,
+                           CheckAttributeValueRestAction, CheckHeaderFieldRestAction, CheckHTTPBodyTextRestAction,
+                           CheckStatusRestAction, AssertCounterAction, AssertVariableAction, ExecuteSymbolGeneralAction,
+                           IncrementCounterGeneralAction, SetCounterGeneralAction, SetVariableGeneralAction,
+                           SetVariableByCookieAction, SetVariableByJsonAttributeGeneralAction,
+                           SetVariableByNodeGeneralAction, WaitGeneralAction) {
+
+        // map: actionType {string} -> actionConstructor {fn}
+        var actionMap = {};
+
+        // register all actions
+        for (var i = 0; i < arguments.length; i++) {
+            var action = arguments[i];
+            actionMap[action.type] = action;
+        }
+
+        function buildFromData(data) {
+            var actionConstructor = actionMap[data.type];
+            var action = new actionConstructor();
+            for (var key in data) {
+                if (key[0] !== '_') {
+                    action.set(key, data[key]);
+                }
+            }
+            return action;
+        }
+
+        function buildFromType(type) {
+            return buildFromData({type: type});
+        }
 
         return {
-            register: register,
-            get: get
+            buildFromData: buildFromData,
+            buildFromType: buildFromType,
         };
-
-        /**
-         * Registers a new action so that it is available for others
-         *
-         * @param {number} actionGroupType
-         * @param {string} actionType
-         * @param {function} action
-         */
-        function register(actionGroupType, actionType, action) {
-            if (map[actionGroupType] === undefined) {
-                map[actionGroupType] = function () {
-                };
-            }
-            map[actionGroupType][actionType] = action;
-            return this;
-        }
-
-        /**
-         * Gets the function to instantiate a specific action
-         *
-         * @param {number} actionGroupType
-         * @param {string} actionType
-         * @returns {function}
-         */
-        function get(actionGroupType, actionType) {
-            return map[actionGroupType][actionType];
-        }
     }
 }());

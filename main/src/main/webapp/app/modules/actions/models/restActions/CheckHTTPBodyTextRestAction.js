@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CheckHTTPBodyTextRestAction', CheckHTTPBodyTextRestActionFactory);
-
-    CheckHTTPBodyTextRestActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('CheckHTTPBodyTextRestAction', factory);
 
     /**
-     * The factory for CheckHTTPBodyTextRestAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {CheckHTTPBodyTextRestAction}
-     * @constructor
      */
-    function CheckHTTPBodyTextRestActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Searches for a string value in the body of an HTTP response
@@ -26,7 +19,7 @@
          * @constructor
          */
         function CheckHTTPBodyTextRestAction(value, isRegexp) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CHECK_HTTP_BODY_TEXT);
+            AbstractAction.call(this, CheckHTTPBodyTextRestAction.type);
             this.value = value || null;
             this.regexp = isRegexp || false;
         }
@@ -37,9 +30,17 @@
          * @returns {string}
          */
         CheckHTTPBodyTextRestAction.prototype.toString = function () {
-            return 'Search in the HTTP response body for ' + (this.regexp ? 'regexp' : 'string') + ' "' + this.value + '"';
+            if (this.regexp) {
+                return 'Search in the response with regexp "' + this.value + '"';
+            } else {
+                return 'Search in the response body for "' + this.value + '"';
+            }
         };
+
+        CheckHTTPBodyTextRestAction.type = 'rest_checkForText';
 
         return CheckHTTPBodyTextRestAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

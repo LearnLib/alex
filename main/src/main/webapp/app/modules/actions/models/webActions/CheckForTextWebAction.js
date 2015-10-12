@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CheckForTextWebAction', CheckForTextWebActionFactory);
-
-    CheckForTextWebActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('CheckForTextWebAction', factory);
 
     /**
-     * The factory for CheckForTextWebAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {CheckForTextWebAction}
-     * @constructor
      */
-    function CheckForTextWebActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Searches for a piece of text or a regular expression in the HTML document
@@ -26,8 +19,8 @@
          * @constructor
          */
         function CheckForTextWebAction(value, isRegexp) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].CHECK_FOR_TEXT);
-            this.value = value || null;
+            AbstractAction.call(this, CheckForTextWebAction.type);
+            this.value = value || '';
             this.regexp = isRegexp || false;
         }
 
@@ -37,9 +30,17 @@
          * @returns {string}
          */
         CheckForTextWebAction.prototype.toString = function () {
-            return 'Search for ' + (this.regexp ? 'regexp' : '') + ' "' + this.value + '" in the document';
+            if (this.regexp) {
+                return 'Check if the document matches "' + this.value + '"';
+            } else {
+                return 'Search for "' + this.value + '" in the document';
+            }
         };
+
+        CheckForTextWebAction.type = 'web_checkForText';
 
         return CheckForTextWebAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

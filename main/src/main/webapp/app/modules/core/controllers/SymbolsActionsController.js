@@ -7,7 +7,7 @@
 
     SymbolsActionsController.$inject = [
         '$scope', '$stateParams', 'Symbol', 'SymbolResource', 'SessionService', 'ToastService', 'ErrorService', '_',
-        'ActionBuilder', 'ClipboardService', '$state', 'PromptService'
+        'ActionService', 'ClipboardService', '$state', 'PromptService'
     ];
 
     /**
@@ -25,14 +25,14 @@
      * @param Toast - The ToastService
      * @param Error - The ErrorService
      * @param _ - Lodash
-     * @param ActionBuilder - The ActionBuilder
+     * @param ActionService - The ActionService
      * @param Clipboard - The ClipboardService
      * @param $state - ui.router $state
      * @param Prompt - PromptService
      * @constructor
      */
     function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, Session, Toast, Error, _,
-                                      ActionBuilder, Clipboard, $state, Prompt) {
+                                      ActionService, Clipboard, $state, Prompt) {
 
         /**
          * A copy of $scope.symbol to revert unsaved changes
@@ -222,7 +222,7 @@
         $scope.pasteActions = function () {
             var actions = Clipboard.paste('actions');
             if (actions !== null) {
-                _.forEach(ActionBuilder.createFromObjects(actions), $scope.addAction);
+                _(actions).map(ActionService.buildFromData).forEach($scope.addAction);
                 Toast.info(actions.length + 'action[s] pasted from clipboard');
                 setChanged(true);
             }

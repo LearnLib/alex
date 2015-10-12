@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CheckAttributeValueRestAction', CheckAttributeValueRestActionFactory);
-
-    CheckAttributeValueRestActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('CheckAttributeValueRestAction', factory);
 
     /**
-     * The factory for CheckAttributeValueRestAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {CheckAttributeValueRestAction}
-     * @constructor
      */
-    function CheckAttributeValueRestActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Checks if a property of a JSON object in a HTTP response body has a specific value or matches a regular
@@ -28,7 +21,7 @@
          * @constructor
          */
         function CheckAttributeValueRestAction(attribute, value, isRegexp) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CHECK_ATTRIBUTE_VALUE);
+            AbstractAction.call(this, CheckAttributeValueRestAction.type);
             this.attribute = attribute || null;
             this.value = value || null;
             this.regexp = isRegexp || false
@@ -40,9 +33,17 @@
          * @returns {string}
          */
         CheckAttributeValueRestAction.prototype.toString = function () {
-            return 'Check the JSON of a HTTP response to have attribute "' + this.attribute + '" to be' + (this.regexp ? ' like ' : ' ') + '"' + this.value + '"';
+            if (this.regexp) {
+                return 'Check if JSON attribute "' + this.attribute + '" matches "' + this.value + '"';
+            } else {
+                return 'Check JSON attribute "' + this.attribute + '" to equal "' + this.value + '"';
+            }
         };
+
+        CheckAttributeValueRestAction.type = 'rest_checkAttributeValue';
 
         return CheckAttributeValueRestAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

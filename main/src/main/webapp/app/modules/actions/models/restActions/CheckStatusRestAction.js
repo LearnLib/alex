@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CheckStatusRestAction', CheckStatusRestActionFactory);
-
-    CheckStatusRestActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('CheckStatusRestAction', factory);
 
     /**
-     * The factory for CheckStatusRestAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {CheckStatusRestAction}
-     * @constructor
      */
-    function CheckStatusRestActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Checks for the status code (e.g. 404) in an HTTP response
@@ -25,7 +18,7 @@
          * @constructor
          */
         function CheckStatusRestAction(status) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CHECK_STATUS);
+            AbstractAction.call(this, CheckStatusRestAction.type);
             this.status = status || null;
         }
 
@@ -35,9 +28,13 @@
          * @returns {string}
          */
         CheckStatusRestAction.prototype.toString = function () {
-            return 'Check HTTP response status to be "' + this.status + '"'
+            return 'Check HTTP response status to be "' + this.status + '"';
         };
+
+        CheckStatusRestAction.type = 'rest_checkStatus';
 
         return CheckStatusRestAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

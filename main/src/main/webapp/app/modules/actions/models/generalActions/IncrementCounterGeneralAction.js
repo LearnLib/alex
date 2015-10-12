@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('IncrementCounterGeneralAction', IncrementCounterGeneralActionFactory);
-
-    IncrementCounterGeneralActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('IncrementCounterGeneralAction', factory);
 
     /**
-     * The factory for IncrementCounterGeneralAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {IncrementCounterGeneralAction}
-     * @constructor
      */
-    function IncrementCounterGeneralActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Increments a counter by one
@@ -25,7 +18,7 @@
          * @constructor
          */
         function IncrementCounterGeneralAction(name) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].INCREMENT_COUNTER);
+            AbstractAction.call(this, IncrementCounterGeneralAction.type);
             this.name = name || null;
         }
 
@@ -38,6 +31,10 @@
             return 'Increment counter "' + this.name + '"';
         };
 
+        IncrementCounterGeneralAction.type = 'incrementCounter';
+
         return IncrementCounterGeneralAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

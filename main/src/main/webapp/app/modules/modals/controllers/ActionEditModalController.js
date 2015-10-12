@@ -6,7 +6,7 @@
         .controller('ActionEditModalController', ActionEditModalController);
 
     ActionEditModalController.$inject = [
-        '$scope', '$modalInstance', 'modalData', 'actionTypes', 'ActionBuilder', 'SymbolResource', 'SessionService'
+        '$scope', '$modalInstance', 'modalData', 'ActionService', 'SymbolResource', 'SessionService'
     ];
 
     /**
@@ -17,22 +17,15 @@
      * @param $scope - The controllers scope
      * @param $modalInstance - The model instance
      * @param modalData - The data that is passed to this controller
-     * @param actionTypes - The constant for action type names
-     * @param ActionBuilder - The Service for creating actions
+     * @param ActionService - The Service for creating actions
      * @param SymbolResource - The API Resource for symbols
      * @param Session - The SessionService
      * @constructor
      */
-    function ActionEditModalController($scope, $modalInstance, modalData, actionTypes, ActionBuilder, SymbolResource, Session) {
+    function ActionEditModalController($scope, $modalInstance, modalData, ActionService, SymbolResource, Session) {
 
         // the project in the session
         var project = Session.project.get();
-
-        /**
-         * The constant for actions type names
-         * @type {Object}
-         */
-        $scope.actionTypes = actionTypes;
 
         /**
          * The copy of the action that should be edited
@@ -61,7 +54,7 @@
             // because actions are identified by temporary id
             // a new action has to be build and given the old id manually
             var id = $scope.action._id;
-            $scope.action = ActionBuilder.createFromObject($scope.action);
+            $scope.action = ActionService.buildFromData($scope.action);
             $scope.action._id = id;
             $modalInstance.close($scope.action);
         };

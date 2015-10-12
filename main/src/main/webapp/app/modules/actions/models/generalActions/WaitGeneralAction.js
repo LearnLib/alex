@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('WaitGeneralAction', WaitGeneralActionFactory);
-
-    WaitGeneralActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('WaitGeneralAction', factory);
 
     /**
-     * The factory for WaitGeneralAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {WaitGeneralAction}
-     * @constructor
      */
-    function WaitGeneralActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Wait for a certain amount of time before executing the next action+
@@ -25,7 +18,7 @@
          * @constructor
          */
         function WaitGeneralAction(duration) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].WAIT);
+            AbstractAction.call(this, WaitGeneralAction.type);
             this.duration = duration || 0;
         }
 
@@ -38,6 +31,10 @@
             return 'Wait for ' + this.duration + 'ms'
         };
 
+        WaitGeneralAction.type = 'wait';
+
         return WaitGeneralAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

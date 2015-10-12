@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('SetCounterGeneralAction', SetCounterGeneralActionFactory);
-
-    SetCounterGeneralActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('SetCounterGeneralAction', factory);
 
     /**
-     * The factory for SetCounterGeneralAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {SetCounterGeneralAction}
-     * @constructor
      */
-    function SetCounterGeneralActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Sets a counter to an integer value and creates it implicitly if the counter has not been initialized or used
@@ -27,7 +20,7 @@
          * @constructor
          */
         function SetCounterGeneralAction(name, value) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].SET_COUNTER);
+            AbstractAction.call(this, SetCounterGeneralAction.type);
             this.name = name || null;
             this.value = value || null;
         }
@@ -41,6 +34,10 @@
             return 'Set counter "' + this.name + '" to "' + this.value + '"';
         };
 
+        SetCounterGeneralAction.type = 'setCounter';
+
         return SetCounterGeneralAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

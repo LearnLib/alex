@@ -15,15 +15,52 @@
             <div class="col-xs-5">
 
                 <accordion close-others="true" class="action-types-accordion">
-                    <accordion-group ng-repeat="(k1,v1) in actionGroupTypes">
+                    <accordion-group>
                         <accordion-heading>
-                            <div><strong ng-bind="::(k1|formatEnumKey)"></strong></div>
+                            <div><strong>Web</strong></div>
                         </accordion-heading>
 
-                        <a href ng-repeat="(k2,v2) in actionTypes[actionGroupTypes[k1]]"
-                           ng-click="selectNewActionType(v2)"
-                           ng-bind="::(k2|formatEnumKey)"></a>
+                        <a href ng-click="selectNewActionType('web_clear')">Clear input</a>
+                        <a href ng-click="selectNewActionType('web_click')">Click element</a>
+                        <a href ng-click="selectNewActionType('web_clickLinkByText')">Click link by text</a>
+                        <a href ng-click="selectNewActionType('web_fill')">Fill input</a>
+                        <a href ng-click="selectNewActionType('web_checkForText')">Search for text</a>
+                        <a href ng-click="selectNewActionType('web_checkForNode')">Search element</a>
+                        <a href ng-click="selectNewActionType('web_checkPageTitle')">Check page title</a>
+                        <a href ng-click="selectNewActionType('web_submit')">Submit form</a>
+                        <a href ng-click="selectNewActionType('web_goto')">Open URL</a>
+                        <a href ng-click="selectNewActionType('web_select')">Select from list</a>
+                    </accordion-group>
 
+                    <accordion-group>
+                        <accordion-heading>
+                            <div><strong>REST</strong></div>
+                        </accordion-heading>
+
+                        <a href ng-click="selectNewActionType('rest_call')">Make request</a>
+                        <a href ng-click="selectNewActionType('rest_checkStatus')">Check status</a>
+                        <a href ng-click="selectNewActionType('rest_checkHeaderField')">Check header field</a>
+                        <a href ng-click="selectNewActionType('rest_checkForText')">Search in body</a>
+                        <a href ng-click="selectNewActionType('rest_checkAttributeExists')">Check attribute</a>
+                        <a href ng-click="selectNewActionType('rest_checkAttributeValue')">Check attribute value</a>
+                        <a href ng-click="selectNewActionType('rest_checkAttributeType')">Check attribute type</a>
+                    </accordion-group>
+
+                    <accordion-group>
+                        <accordion-heading>
+                            <div><strong>Misc</strong></div>
+                        </accordion-heading>
+
+                        <a href ng-click="selectNewActionType('assertCounter')">Assert counter</a>
+                        <a href ng-click="selectNewActionType('assertVariable')">Assert variable</a>
+                        <a href ng-click="selectNewActionType('executeSymbol')">Execute symbol</a>
+                        <a href ng-click="selectNewActionType('incrementCounter')">Increment counter</a>
+                        <a href ng-click="selectNewActionType('setCounter')">Set counter</a>
+                        <a href ng-click="selectNewActionType('setVariable')">Set variable</a>
+                        <a href ng-click="selectNewActionType('setVariableByCookie')">Set variable by cookie</a>
+                        <a href ng-click="selectNewActionType('setVariableByJSON')">Set variable by JSON</a>
+                        <a href ng-click="selectNewActionType('setVariableByHTML')">Set variable by HTML</a>
+                        <a href ng-click="selectNewActionType('wait')">Wait</a>
                     </accordion-group>
                 </accordion>
 

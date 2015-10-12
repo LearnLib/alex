@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('SetVariableByNodeGeneralAction', SetVariableByNodeGeneralActionFactory);
-
-    SetVariableByNodeGeneralActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('SetVariableByNodeGeneralAction', factory);
 
     /**
-     * The factory for SetVariableByNodeGeneralAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {SetVariableByNodeGeneralAction}
-     * @constructor
      */
-    function SetVariableByNodeGeneralActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Extracts the text content value of an element and saves it value in a variable
@@ -26,7 +19,7 @@
          * @constructor
          */
         function SetVariableByNodeGeneralAction(name, selector) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].SET_VARIABLE_BY_NODE);
+            AbstractAction.call(this, SetVariableByNodeGeneralAction.type);
             this.name = name || null;
             this.value = selector || null;
         }
@@ -40,6 +33,10 @@
             return 'Set variable "' + this.name + '" to the value of the element "' + this.value + '"';
         };
 
+        SetVariableByNodeGeneralAction.type = 'setVariableByHTML';
+
         return SetVariableByNodeGeneralAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

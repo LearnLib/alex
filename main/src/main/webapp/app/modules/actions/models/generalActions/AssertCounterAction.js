@@ -3,11 +3,9 @@
 
     angular
         .module('ALEX.actions')
-        .factory('AssertCounterAction', AssertCounterActionFactory);
+        .factory('AssertCounterAction', factory);
 
-    AssertCounterActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
-
-    function AssertCounterActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Action to compare the value of a counter to another integer value
@@ -18,7 +16,7 @@
          * @constructor
          */
         function AssertCounterAction(name, value, operator) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].ASSERT_COUNTER);
+            AbstractAction.call(this, AssertCounterAction.type);
             this.name = name || null;
             this.value = value || null;
             this.operator = operator || null;
@@ -53,6 +51,10 @@
             return 'Check if counter "' + this.name + '" is ' + s + ' ' + this.value;
         };
 
+        AssertCounterAction.type = 'assertCounter';
+
         return AssertCounterAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

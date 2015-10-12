@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CheckHeaderFieldRestAction', CheckHeaderFieldRestActionFactory);
-
-    CheckHeaderFieldRestActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('CheckHeaderFieldRestAction', factory);
 
     /**
-     * The factory for CheckHeaderFieldRestAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {CheckHeaderFieldRestAction}
-     * @constructor
      */
-    function CheckHeaderFieldRestActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Checks a value in the header fields of an HTTP response
@@ -27,7 +20,7 @@
          * @constructor
          */
         function CheckHeaderFieldRestAction(key, value, isRegexp) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CHECK_HEADER_FIELD);
+            AbstractAction.call(this, CheckHeaderFieldRestAction.type);
             this.key = key || null;
             this.value = value || null;
             this.regexp = isRegexp || false;
@@ -39,9 +32,17 @@
          * @returns {string}
          */
         CheckHeaderFieldRestAction.prototype.toString = function () {
-            return 'Check HTTP response header field "' + this.key + '" to be' + (this.regexp ? ' like ' : ' ') + '"' + this.value + '"';
+            if (this.regexp) {
+                return 'Check if HTTP header field "' + this.key + '" matches "' + this.value + '"';
+            } else {
+                return 'Check HTTP header field "' + this.key + '" to equal "' + this.value + '"';
+            }
         };
+
+        CheckHeaderFieldRestAction.type = 'rest_checkHeaderField';
 
         return CheckHeaderFieldRestAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

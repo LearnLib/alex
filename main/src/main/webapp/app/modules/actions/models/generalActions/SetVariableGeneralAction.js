@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('SetVariableGeneralAction', SetVariableGeneralActionFactory);
-
-    SetVariableGeneralActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('SetVariableGeneralAction', factory);
 
     /**
-     * The factory for SetVariableGeneralAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {SetVariableGeneralAction}
-     * @constructor
      */
-    function SetVariableGeneralActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Sets a variable to a specific value and implicitly initializes it if it has not been created before
@@ -26,7 +19,7 @@
          * @constructor
          */
         function SetVariableGeneralAction(name, value) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].SET_VARIABLE);
+            AbstractAction.call(this, SetVariableGeneralAction.type);
             this.name = name || null;
             this.value = value || null;
         }
@@ -40,6 +33,10 @@
             return 'Set variable "' + this.name + '" to "' + this.value + '"';
         };
 
+        SetVariableGeneralAction.type = 'setVariable';
+
         return SetVariableGeneralAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());
