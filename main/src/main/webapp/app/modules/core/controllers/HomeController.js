@@ -7,6 +7,14 @@
 
     HomeController.$inject = ['$state', 'SessionService'];
 
+    /**
+     * The controller of the index page.
+
+     *
+     * @param $state
+     * @param Session
+     * @constructor
+     */
     function HomeController($state, Session) {
         var user = Session.user.get();
         var project = Session.project.get();

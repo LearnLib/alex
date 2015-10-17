@@ -75,10 +75,7 @@
          * @returns {number} - The amount of enabled actions
          */
         Symbol.prototype.countEnabledActions = function () {
-            for (var i = 0, c = 0; i < this.actions.length; i++) {
-                c += this.actions[i].disabled ? 0 : 1;
-            }
-            return c;
+            return _.filter(this.actions, {disabled: false}).length;
         };
 
         /**

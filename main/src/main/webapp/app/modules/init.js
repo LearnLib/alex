@@ -7,17 +7,17 @@
         });
 
     angular.module('dagreD3', [])
-        .factory('_', function () {
+        .factory('dagreD3', function () {
             return window.dagreD3;
         });
 
     angular.module('d3', [])
-        .factory('_', function () {
+        .factory('d3', function () {
             return window.d3;
         });
 
     angular.module('graphlib', [])
-        .factory('_', function () {
+        .factory('graphlib', function () {
             return window.graphlib;
         });
 
