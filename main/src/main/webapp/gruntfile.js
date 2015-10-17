@@ -63,7 +63,7 @@ module.exports = function (grunt) {
                 },
                 app: {
                     files: {
-                        './app/app.min.js': ['./app/app.js']
+                        './app/alex.min.js': ['./app/alex.js']
                     }
                 }
             },
@@ -73,8 +73,8 @@ module.exports = function (grunt) {
                     separator: ';\n'
                 },
                 app: {
-                    src: ['app/templates.js', scripts],
-                    dest: './app/app.js'
+                    src: scripts,
+                    dest: './app/alex.js'
                 },
                 libs: {
                     src: libraries,
@@ -85,14 +85,26 @@ module.exports = function (grunt) {
             html2js: {
                 options: {
                     useStrict: true,
-                    base: '../webapp'
+                    base: '../webapp',
+                    module: 'ALEX.templates',
+                    singleModule: true,
+                    htmlmin: {
+                        collapseBooleanAttributes: false,
+                        collapseWhitespace: true,
+                        removeAttributeQuotes: false,
+                        removeComments: true,
+                        removeEmptyAttributes: false,
+                        removeRedundantAttributes: false,
+                        removeScriptTypeAttributes: false,
+                        removeStyleLinkTypeAttributes: false
+                    }
                 },
                 all: {
                     src: [
                         'app/modules/core/views/**/*.html',
                         'app/modules/actions/views/*.html',
                         'app/modules/modals/views/*.html'],
-                    dest: 'app/templates.js'
+                    dest: 'app/alex.templates.js'
                 }
             },
 
@@ -148,10 +160,6 @@ module.exports = function (grunt) {
                 }
             },
 
-            clean: {
-                js: ["app/templates.js"]
-            },
-
             bower: {
                 install: {
                     options: {
@@ -177,10 +185,10 @@ module.exports = function (grunt) {
             },
 
             postcss: {
-                options:  {
+                options: {
                     map: false,
 
-                    processors : [
+                    processors: [
                         require('autoprefixer-core')({
                             browsers: 'last 2 versions'
                         })
@@ -204,7 +212,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-postcss');
 
-    grunt.registerTask('build-js', ['html2js', 'concat', 'uglify', 'clean']);
+    grunt.registerTask('build-js', ['html2js', 'concat', 'uglify']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);
     grunt.registerTask('default', ['build-js', 'build-css']);
     grunt.registerTask('test-unit', ['karma']);

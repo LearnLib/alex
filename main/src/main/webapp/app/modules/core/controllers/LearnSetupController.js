@@ -6,7 +6,7 @@
         .controller('LearnSetupController', LearnSetupController);
 
     LearnSetupController.$inject = [
-        '$scope', '$state', 'SymbolGroupResource', 'SessionService', 'LearnConfiguration', 'LearnerService',
+        '$scope', '$state', 'SymbolGroupResource', 'SessionService', 'LearnConfiguration', 'LearnerResource',
         'ToastService', '_', 'LearnResultResource'
     ];
 

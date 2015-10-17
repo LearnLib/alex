@@ -5,7 +5,7 @@
         .module('ALEX.core')
         .directive('learnerStatusWidget', learnerStatusWidget);
 
-    learnerStatusWidget.$inject = ['LearnerService', 'ToastService', 'paths'];
+    learnerStatusWidget.$inject = ['LearnerResource', 'ToastService', 'paths'];
 
     /**
      * The directive of the dashboard widget that displays the current status of the learner
@@ -14,7 +14,7 @@
      *          <learner-status-widget></learner-status-widget>
      *      </dashboard-widget>
      *
-     * @param Learner - The LearnerService
+     * @param Learner - The LearnerResource
      * @param Toast - The ToastService
      * @param paths - The applications paths constant
      * @returns {{require: string, templateUrl: string, link: link}}

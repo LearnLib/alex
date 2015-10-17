@@ -5,7 +5,7 @@
         .controller('LearnStartController', LearnStartController);
 
     LearnStartController.$inject = [
-        '$scope', '$interval', 'SessionService', 'LearnerService', 'LearnResultResource', 'ToastService', '_',
+        '$scope', '$interval', 'SessionService', 'LearnerResource', 'LearnResultResource', 'ToastService', '_',
         'ErrorService', 'LearnConfiguration', 'CounterExampleService'
     ];
 

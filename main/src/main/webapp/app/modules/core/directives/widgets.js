@@ -9,7 +9,7 @@
 
     widget.$inject = ['paths'];
     counterexamplesWidget.$inject = [
-        'paths', 'CounterExampleService', 'LearnerService', 'ToastService', 'SymbolResource', '$q'
+        'paths', 'CounterExampleService', 'LearnerResource', 'ToastService', 'SymbolResource', '$q'
     ];
     learnResumeSettingsWidget.$inject = ['paths', 'EqOracle'];
 
@@ -55,7 +55,7 @@
      *
      * @param paths - The application paths constant
      * @param CounterExampleService - The service for sharing a counterexample with a hypothesis
-     * @param Learner - The LearnerService for communication with the Learner
+     * @param Learner - The LearnerResource for communication with the Learner
      * @param Toast - The ToastService
      * @param SymbolResource
      * @param $q - The angular $q service
