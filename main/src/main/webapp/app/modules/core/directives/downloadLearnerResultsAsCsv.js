@@ -58,7 +58,7 @@
                 for (var i = 0; i < results.length; i++) {
                     csv += results[i].project + ',';
                     csv += results[i].testNo + ',';
-                    csv += '"' + results[i].statistics.startTime + '",';
+                    csv += '"' + results[i].statistics.startDate + '",';
                     csv += results[i].stepNo + ',';
                     csv += results[i].configuration.algorithm + ',';
                     csv += results[i].configuration.eqOracle.type + ',';

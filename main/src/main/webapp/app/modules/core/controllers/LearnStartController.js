@@ -107,7 +107,7 @@
 
                         if (data.statistics) {
                             $scope.mqsUsed = data.statistics.mqsUsed;
-                            $scope.duration = Date.now() - data.statistics.startTime;
+                            $scope.duration = Date.now() - Math.ceil(data.statistics.startTime / 1000000);
                         }
                     });
             }, intervalTime);

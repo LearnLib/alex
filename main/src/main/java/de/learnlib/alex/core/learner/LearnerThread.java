@@ -260,7 +260,8 @@ public class LearnerThread extends Thread {
 
     private void learnOneStep() throws NotFoundException {
         LearnerResult.Statistics statistics = result.getStatistics();
-        statistics.setStartTime(new Date());
+        statistics.setStartTime(System.nanoTime());
+        statistics.setStartDate(new Date());
         statistics.setEqsUsed(0L);
 
         if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
@@ -314,8 +315,8 @@ public class LearnerThread extends Thread {
         // statistics
         LearnerResult.Statistics statistics = result.getStatistics();
 
-        long startTime = statistics.getStartTime().getTime();
-        long currentTime = new Date().getTime();
+        long startTime = statistics.getStartTime();
+        long currentTime = System.nanoTime();
 
         statistics.setDuration(currentTime - startTime);
         statistics.setMqsUsed(Math.abs(resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed()));

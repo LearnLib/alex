@@ -41,7 +41,8 @@
          * @returns {LearnResult} - The instance of LearnResult from the data
          */
         LearnResult.build = function (data) {
-            return angular.extend(new LearnResult(), {
+            var learnResult = new LearnResult();
+            angular.extend(learnResult, {
                 configuration: LearnConfiguration.build(data.configuration),
                 hypothesis: data.hypothesis,
                 project: data.project,
@@ -53,6 +54,12 @@
                 error: data.error,
                 errorText: data.errorText
             });
+
+            // convert ns to ms
+            learnResult.statistics.startTime = Math.ceil(learnResult.statistics.startTime / 1000000);
+            learnResult.statistics.duration = Math.ceil(learnResult.statistics.duration / 1000000);
+
+            return learnResult;
         };
 
         /**
