@@ -16,6 +16,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,6 +24,63 @@ import java.util.concurrent.TimeUnit;
  * This is a facade around Seleniums {@link WebDriver}.
  */
 public class WebSiteConnector implements Connector {
+
+    public enum WebBrowser {
+        FIREFOX(FirefoxDriver.class),
+        CHROME(ChromeDriver.class),
+        IE(InternetExplorerDriver.class),
+        HTMLUNITDRIVER(HtmlUnitDriver.class);
+
+        private Class webDriverClass;
+
+        WebBrowser(Class webDriverClass) {
+            this.webDriverClass = webDriverClass;
+        }
+
+        public WebDriver getWebDriver() {
+            try {
+                if (this == HTMLUNITDRIVER) {
+                    HtmlUnitDriver driver = (HtmlUnitDriver) webDriverClass.getConstructor(BrowserVersion.class)
+                                                                           .newInstance(BrowserVersion.FIREFOX_38);
+                    enableJavaScript(driver);
+                    return driver;
+                } else {
+                    return (WebDriver) webDriverClass.getConstructor().newInstance();
+                }
+            // todo: logging and error handling
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        /**
+         * Solves issues with "wrong" or non strict JavaScript that is executed on the page (e.g. jQuery).
+         * Uses reflections to get the private 'webClient' property from the UnitDriver and set the flag
+         * to ignore js errors.
+         */
+        private void enableJavaScript(HtmlUnitDriver htmlUnitDriver) {
+            try {
+                LOGGER.debug("Try enabling JavaScript");
+                htmlUnitDriver.setJavascriptEnabled(true);
+                Field f = htmlUnitDriver.getClass().getDeclaredField("webClient");
+                f.setAccessible(true);
+                WebClient client = (WebClient) f.get(htmlUnitDriver);
+                client.getOptions().setThrowExceptionOnScriptError(false);
+            } catch (NoSuchFieldException e) {
+                LOGGER.warn("Enabling JavaScript failed. Private Property 'webClient' does not exist", e);
+            } catch (IllegalAccessException e) {
+                LOGGER.warn("Enabling JavaScript failed. Problem accessing private 'webClient'", e);
+            }
+        }
+    }
 
     /** How long we should wait before doing the next step. Introduced by Selenium. */
     private static final int IMPLICITLY_WAIT_TIME = 1;
@@ -58,43 +116,11 @@ public class WebSiteConnector implements Connector {
     @Override
     public void reset() {
         String driverName = System.getProperty("alex.driver", "HTMLUnitDriver");
-        switch (driverName.toLowerCase()) {
-            case "firefox":
-                this.driver = new FirefoxDriver();
-                break;
-            case "chrome":
-                this.driver = new ChromeDriver();
-                break;
-            case "ie":
-                this.driver = new InternetExplorerDriver();
-                break;
-            default:
-                this.driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_38);
-                enableJavaScript((HtmlUnitDriver) this.driver);
-        }
+        WebBrowser webBrowser = WebBrowser.valueOf(driverName.toUpperCase());
 
+        this.driver = webBrowser.getWebDriver();
         this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
         this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
-    }
-
-    /**
-     * Solves issues with "wrong" or non strict JavaScript that is executed on the page (e.g. jQuery).
-     * Uses reflections to get the private 'webClient' property from the UnitDriver and set the flag
-     * to ignore js errors.
-     */
-    private void enableJavaScript(HtmlUnitDriver htmlUnitDriver) {
-        try {
-            LOGGER.debug("Try enabling JavaScript");
-            htmlUnitDriver.setJavascriptEnabled(true);
-            Field f = htmlUnitDriver.getClass().getDeclaredField("webClient");
-            f.setAccessible(true);
-            WebClient client = (WebClient) f.get(htmlUnitDriver);
-            client.getOptions().setThrowExceptionOnScriptError(false);
-        } catch (NoSuchFieldException e) {
-            LOGGER.warn("Enabling JavaScript failed. Private Property 'webClient' does not exist", e);
-        } catch (IllegalAccessException e) {
-            LOGGER.warn("Enabling JavaScript failed. Problem accessing private 'webClient'", e);
-        }
     }
 
     @Override
