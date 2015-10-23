@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('ClickWebAction', ClickWebActionFactory);
-
-    ClickWebActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('ClickWebAction', factory);
 
     /**
-     * The factory for ClickWebAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {ClickWebAction}
-     * @constructor
      */
-    function ClickWebActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Clicks on an element
@@ -25,8 +18,8 @@
          * @constructor
          */
         function ClickWebAction(node) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].CLICK);
-            this.node = node || null;
+            AbstractAction.call(this, ClickWebAction.type);
+            this.node = node || '';
         }
 
         ClickWebAction.prototype = Object.create(AbstractAction.prototype);
@@ -38,6 +31,10 @@
             return 'Click on element "' + this.node + '"';
         };
 
+        ClickWebAction.type = 'web_click';
+
         return ClickWebAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

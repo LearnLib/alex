@@ -276,9 +276,8 @@ public class Learner {
         if (learnerThread == null) {
             return null;
         } else {
-            return getResult(user).getStatistics().getStartTime().getTime();
+            return getResult(user).getStatistics().getStartTime();
         }
-
     }
 
     /**

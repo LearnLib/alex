@@ -97,8 +97,6 @@
         $scope.removeSymbols = function (symbols) {
             var group;
             _.forEach(symbols, function (symbol) {
-                //delete symbol._selected;
-                //delete symbol._collapsed;
                 group = findGroupFromSymbol(symbol);
                 _.remove(group.symbols, {id: symbol.id});
             })

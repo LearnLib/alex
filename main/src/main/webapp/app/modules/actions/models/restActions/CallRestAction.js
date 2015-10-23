@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CallRestAction', CallRestActionFactory);
-
-    CallRestActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('CallRestAction', factory);
 
     /**
-     * The factory for CallRestAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {CallRestAction}
-     * @constructor
      */
-    function CallRestActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Makes an HTTP request
@@ -27,7 +20,7 @@
          * @constructor
          */
         function CallRestAction(method, url, data) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CALL_URL);
+            AbstractAction.call(this, CallRestAction.type);
             this.method = method || null;
             this.url = url || null;
             this.data = data || null;
@@ -83,9 +76,13 @@
          * @returns {string}
          */
         CallRestAction.prototype.toString = function () {
-            return 'Make a "' + this.method + '" request to "' + this.url + '"';
+            return 'Make a ' + this.method + ' request to "' + this.url + '"';
         };
+
+        CallRestAction.type = 'rest_call';
 
         return CallRestAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

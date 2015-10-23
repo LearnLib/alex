@@ -79,10 +79,13 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void delete(Long id) throws NotFoundException {
-        User user = getById(id);
-
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
+        User user = (User) session.get(User.class, id);
+
+        if (user == null) {
+            throw new NotFoundException("There is no such user to delete");
+        }
 
         // make sure there is at least one registered admin
         if (user.getRole().equals(UserRole.ADMIN)) {
@@ -98,11 +101,18 @@ public class UserDAOImpl implements UserDAO {
         }
 
         session.delete(user);
-        try {
-            HibernateUtil.commitTransaction();
-        } catch (org.hibernate.exception.ConstraintViolationException e) {
-            e.printStackTrace();
-            throw e;
+        HibernateUtil.commitTransaction();
+    }
+
+    @Override
+    public void update(User user) throws ValidationException {
+        if (getByEmail(user.getEmail()) != null) {
+            throw new ValidationException("The email already exists");
         }
+
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+        session.update(user);
+        HibernateUtil.commitTransaction();
     }
 }

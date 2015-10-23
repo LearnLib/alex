@@ -182,7 +182,9 @@ public class LearnerResultDAOImplTest {
                                     + "\"project\":" + project.getId() + ",\"sigma\":[\"0\",\"1\"],"
                                     + "\"statistics\":{"
                                         + "\"duration\":0,\"eqsUsed\":0,\"mqsUsed\":0,"
-                                        + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0"
+                                        + "\"startDate\":\"1970-01-01T00:00:00.000+00:00\","
+                                        + "\"startTime\":0,"
+                                        + "\"symbolsUsed\":0"
                                     + "},"
                                     + "\"stepNo\":" + i + ",\"testNo\":" + result.getTestNo() + ",\"user\":" + user.getId() + "}";
             String resultAsJSON = resultsInDBAsJSON.get(i);
@@ -402,8 +404,10 @@ public class LearnerResultDAOImplTest {
                 + "]},"
                 + "\"project\":" + result.getProjectId() + ",\"sigma\":[\"0\",\"1\"],"
                 + "\"statistics\":{"
-                    + "\"duration\":0,\"eqsUsed\":0,\"mqsUsed\":0"
-                    + ",\"startTime\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0"
+                    + "\"duration\":0,\"eqsUsed\":0,\"mqsUsed\":0,"
+                    + "\"startDate\":\"1970-01-01T00:00:00.000+00:00\","
+                    + "\"startTime\":0,"
+                    + "\"symbolsUsed\":0"
                 + "},"
                 + "\"stepNo\":" + result.getStepNo() + ",\"testNo\":" + result.getTestNo() + ",\"user\":" + user.getId() + "}";
     }

@@ -6,7 +6,7 @@
         .controller('SymbolsImportController', SymbolsImportController);
 
     SymbolsImportController.$inject = [
-        '$scope', 'SessionService', 'Symbol', 'SymbolResource', '_', 'ToastService', 'actionTypes', 'actionGroupTypes',
+        '$scope', 'SessionService', 'Symbol', 'SymbolResource', '_', 'ToastService',
     ];
 
     /**
@@ -20,11 +20,9 @@
      * @param SymbolResource - The Symbol API Resource handler
      * @param _ - Lodash
      * @param Toast - The ToastService
-     * @param actionTypes - The dictionary with action types
-     * @param actionGroupTypes - The enum with action group types
      * @constructor
      */
-    function SymbolsImportController($scope, Session, Symbol, SymbolResource, _, Toast, actionTypes, actionGroupTypes) {
+    function SymbolsImportController($scope, Session, Symbol, SymbolResource, _, Toast) {
 
         // The project that is saved in the sessionStorage
         var project = Session.project.get();
@@ -81,7 +79,7 @@
                                 // adjust referenced ids according to the max. existing id
                                 if (existingSymbols.length > 0 && $scope.adjustReferences) {
                                     _.forEach(symbol.actions, function (action) {
-                                        if (action.type === actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL) {
+                                        if (action.type === 'executeSymbol') {
                                             action.symbolToExecute.id += maxId;
                                         }
                                     })

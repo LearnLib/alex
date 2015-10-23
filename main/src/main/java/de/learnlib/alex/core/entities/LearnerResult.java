@@ -56,7 +56,10 @@ public class LearnerResult implements Serializable {
          * The format is conform with the ISO 8601 (JavaScript-Style).
          */
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
-        private Date startTime;
+        private Date startDate;
+
+        /** The time the test started in ns */
+        private long startTime;
 
         /** The duration of the learn step. */
         private long duration;
@@ -74,7 +77,8 @@ public class LearnerResult implements Serializable {
          * Default constructor.
          */
         public Statistics() {
-            this.startTime = new Date(0);
+            this.startDate = new Date(0);
+            this.startTime = 0;
         }
 
         /**
@@ -82,18 +86,37 @@ public class LearnerResult implements Serializable {
          *
          * @return The start time.
          */
-        public Date getStartTime() {
+        public long getStartTime() {
             return startTime;
         }
 
         /**
-         * Set the start time of the learn step.
+         * Set the start time
          *
          * @param startTime
-         *         The new start time.
+         *          The time in ns
          */
-        public void setStartTime(Date startTime) {
+        public void setStartTime(long startTime) {
             this.startTime = startTime;
+        }
+
+        /**
+         * Get the date of when the test run started
+         *
+         * @return The date
+         */
+        public Date getStartDate() {
+            return startDate;
+        }
+
+        /**
+         * Set the date when the test started
+         *
+         * @param startDate
+         *          The date object
+         */
+        public void setStartDate(Date startDate) {
+            this.startDate = startDate;
         }
 
         /**

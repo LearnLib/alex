@@ -3,43 +3,46 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CheckPageTitleAction', CheckPageTitleActionFactory);
-
-    CheckPageTitleActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('CheckPageTitleAction', factory);
 
     /**
-     * The factory for CheckForTextWebAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
-     * @returns {CheckForTextWebAction}
-     * @constructor
+     * @returns {CheckPageTitleAction}
      */
-    function CheckPageTitleActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
-         * Searches for a piece of text or a regular expression in the HTML document
+         * Searches for a piece of text or a regular expression in the HTML document.
+         * Type should be 'web_checkPageTitle'
          *
-         * @param {string} title - The page title to look for
-         * @param {boolean} regexp - If the title should be interpreted as regexp
+         * @param {string} title - The page title to look for or the regexp to match the title against
+         * @param {boolean} isRegexp - If the title should be interpreted as regexp
          * @constructor
          */
-        function CheckPageTitleAction(title, regexp) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].CHECK_PAGE_TITLE);
-            this.title = title || null;
-            this.regexp = regexp || false;
+        function CheckPageTitleAction(title, isRegexp) {
+            AbstractAction.call(this, CheckPageTitleAction.type);
+            this.title = title || '';
+            this.regexp = isRegexp || false;
         }
 
+        // inherit functions from AbstractAction
         CheckPageTitleAction.prototype = Object.create(AbstractAction.prototype);
 
         /**
-         * @returns {string}
+         * @returns {string} - The string representation of the action
          */
         CheckPageTitleAction.prototype.toString = function () {
-            return 'Check the page title to equal "' + this.title + '"';
+            if (this.regexp) {
+                return 'Check if the page title matches "' + this.title + '"';
+            } else {
+                return 'Check if the page title equals "' + this.title + '"';
+            }
         };
+
+        CheckPageTitleAction.type = 'web_checkPageTitle';
 
         return CheckPageTitleAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

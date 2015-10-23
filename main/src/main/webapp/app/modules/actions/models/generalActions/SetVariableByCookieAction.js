@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('SetVariableByCookieAction', SetVariableByCookieAction);
-
-    SetVariableByCookieAction.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('SetVariableByCookieAction', factory);
 
     /**
-     * The factory for SetVariableGeneralAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
-     * @returns {SetVariableGeneralAction}
-     * @constructor
+     * @returns {SetVariableByCookieAction}
      */
-    function SetVariableByCookieAction(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Sets a variable to a specific value and implicitly initializes it if it has not been created before
@@ -27,7 +20,7 @@
          * @constructor
          */
         function SetVariableByCookieAction(name, value, cookieType) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].SET_VARIABLE_BY_COOKIE);
+            AbstractAction.call(this, SetVariableByCookieAction.type);
             this.name = name || null;
             this.value = value || null;
             this.cookieType = cookieType || 'WEB';
@@ -42,6 +35,10 @@
             return 'Set variable "' + this.name + '" to the value of the cookie: "' + this.value + '"';
         };
 
+        SetVariableByCookieAction.type = 'setVariableByCookie';
+
         return SetVariableByCookieAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

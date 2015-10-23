@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('ExecuteSymbolGeneralAction', ExecuteSymbolGeneralActionFactory);
-
-    ExecuteSymbolGeneralActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('ExecuteSymbolGeneralAction', factory);
 
     /**
-     * The factory for ExecuteSymbolGeneralAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {ExecuteSymbolGeneralAction}
-     * @constructor
      */
-    function ExecuteSymbolGeneralActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Executes another symbol before continuing with other actions
@@ -26,7 +19,7 @@
          * @constructor
          */
         function ExecuteSymbolGeneralAction(symbolName, idRevisionPair) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].EXECUTE_SYMBOL);
+            AbstractAction.call(this, ExecuteSymbolGeneralAction.type);
 
             var _symbol = {
                 name: symbolName || null,
@@ -80,6 +73,10 @@
             }
         };
 
+        ExecuteSymbolGeneralAction.type = 'executeSymbol';
+
         return ExecuteSymbolGeneralAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

@@ -3,15 +3,12 @@
 
     angular
         .module('ALEX.actions')
-        .factory('AbstractAction', AbstractActionFactory);
+        .factory('AbstractAction', factory);
 
     /**
-     * The factory that contains the model for an abstract action
-     *
      * @returns {AbstractAction}
-     * @constructor
      */
-    function AbstractActionFactory() {
+    function factory() {
 
         /**
          * The action model all other actions should extend from
@@ -34,7 +31,7 @@
         };
 
         AbstractAction.prototype.toString = function () {
-            return this.type + ': No string representation available'
+            return 'There is no string representation available for type "' + this.type + '"';
         };
 
         return AbstractAction;

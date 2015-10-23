@@ -3,20 +3,9 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CheckAttributeExistsRestAction', CheckAttributeExistsRestActionFactory);
+        .factory('CheckAttributeExistsRestAction', factory);
 
-    CheckAttributeExistsRestActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
-
-    /**
-     * The factory for CheckAttributeExistsRestAction
-     *
-     * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
-     * @returns {CheckAttributeExistsRestAction}
-     * @constructor
-     */
-    function CheckAttributeExistsRestActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.
@@ -26,7 +15,7 @@
          * @constructor
          */
         function CheckAttributeExistsRestAction(attribute) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CHECK_ATTRIBUTE_EXISTS);
+            AbstractAction.call(this, CheckAttributeExistsRestAction.type);
             this.attribute = this.attribute = attribute || null;
         }
 
@@ -39,6 +28,10 @@
             return 'Check if the JSON of a HTTP response has attribute "' + this.attribute + '"';
         };
 
+        CheckAttributeExistsRestAction.type = 'rest_checkAttributeExists';
+
         return CheckAttributeExistsRestAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

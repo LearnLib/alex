@@ -3,20 +3,9 @@
 
     angular
         .module('ALEX.actions')
-        .factory('CheckAttributeTypeRestAction', CheckAttributeTypeRestActionFactory);
+        .factory('CheckAttributeTypeRestAction', factory);
 
-    CheckAttributeTypeRestActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
-
-    /**
-     * The factory for CheckAttributeTypeRestAction
-     *
-     * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
-     * @returns {CheckAttributeTypeRestAction}
-     * @constructor
-     */
-    function CheckAttributeTypeRestActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Checks if a property of the JSON of a HTTP response has a specific type
@@ -26,7 +15,7 @@
          * @constructor
          */
         function CheckAttributeTypeRestAction(attribute, jsonType) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.REST].CHECK_ATTRIBUTE_TYPE);
+            AbstractAction.call(this, CheckAttributeTypeRestAction.type);
             this.attribute = attribute || null;
             this.jsonType = jsonType || null;
         }
@@ -37,9 +26,13 @@
          * @returns {string}
          */
         CheckAttributeTypeRestAction.prototype.toString = function () {
-            return 'Check the JSON of a HTTP response to have attribute "' + this.attribute + '" to be' + (this.regexp ? ' like ' : ' ') + '"' + this.value + '"';
+            return 'Check the JSON attribute "' + this.attribute + '" is type of "' + this.jsonType + '"';
         };
+
+        CheckAttributeTypeRestAction.type = 'rest_checkAttributeType';
 
         return CheckAttributeTypeRestAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

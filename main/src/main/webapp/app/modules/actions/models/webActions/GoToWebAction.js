@@ -3,21 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('GoToWebAction', GoToWebActionFactory);
-
-    GoToWebActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('GoToWebAction', factory);
 
     /**
-     * The factory for GoToWebAction
-     *
-     * @param ActionService
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {GoToWebAction}
-     * @constructor
      */
-    function GoToWebActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Goes to a URL
@@ -26,7 +18,7 @@
          * @constructor
          */
         function GoToWebAction(url) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].GO_TO);
+            AbstractAction.call(this, GoToWebAction.type);
             this.url = url || null;
         }
 
@@ -36,9 +28,13 @@
          * @returns {string}
          */
         GoToWebAction.prototype.toString = function () {
-            return 'Go to URL "' + this.url + '"';
+            return 'Open URL "' + this.url + '"';
         };
+
+        GoToWebAction.type = 'web_goto';
 
         return GoToWebAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

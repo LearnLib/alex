@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('ClickLinkByTextWebAction', ClickLinkByTextWebActionFactory);
-
-    ClickLinkByTextWebActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('ClickLinkByTextWebAction', factory);
 
     /**
-     * The factory for ClickLinkByTextWebAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {ClickLinkByTextWebAction}
-     * @constructor
      */
-    function ClickLinkByTextWebActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Clicks on a link with a specific text value
@@ -25,7 +18,7 @@
          * @constructor
          */
         function ClickLinkByTextWebAction(value) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].CLICK_LINK_BY_TEXT);
+            AbstractAction.call(this, ClickLinkByTextWebAction.type);
             this.value = value || null;
         }
 
@@ -38,6 +31,10 @@
             return 'Click on link with text "' + this.value + '"';
         };
 
+        ClickLinkByTextWebAction.type = 'web_clickLinkByText';
+
         return ClickLinkByTextWebAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

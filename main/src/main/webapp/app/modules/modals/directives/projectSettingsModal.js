@@ -6,7 +6,7 @@
         .directive('projectSettingsModalHandle', projectSettingsModalHandle)
         .controller('ProjectSettingsModalController', ProjectSettingsModalController);
 
-    projectSettingsModalHandle.$inject = ['$modal', 'paths', 'LearnerService', 'ToastService'];
+    projectSettingsModalHandle.$inject = ['$modal', 'paths', 'LearnerResource', 'ToastService'];
 
     function projectSettingsModalHandle($modal, paths, Learner, Toast) {
         return {

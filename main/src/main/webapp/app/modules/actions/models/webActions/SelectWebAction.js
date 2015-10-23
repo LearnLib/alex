@@ -3,20 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('SelectWebAction', SelectWebActionFactory);
-
-    SelectWebActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('SelectWebAction', factory);
 
     /**
-     * The factory for SelectWebAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {SelectWebAction}
-     * @constructor
      */
-    function SelectWebActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Selects an entry from a select box
@@ -27,9 +20,9 @@
          * @constructor
          */
         function SelectWebAction(node, value, selectBy) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].SELECT);
-            this.node = node || null;
-            this.value = value || null;
+            AbstractAction.call(this, SelectWebAction.type);
+            this.node = node || '';
+            this.value = value || '';
             this.selectBy = selectBy || 'TEXT';
         }
 
@@ -42,6 +35,10 @@
             return 'Select value "' + this.value + '" from select input "' + this.node + '"';
         };
 
+        SelectWebAction.type = 'web_select';
+
         return SelectWebAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

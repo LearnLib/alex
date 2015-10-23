@@ -3,32 +3,25 @@
 
     angular
         .module('ALEX.actions')
-        .factory('FillWebAction', FillWebActionFactory);
-
-    FillWebActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+        .factory('FillWebAction', factory);
 
     /**
-     * The factory for FillWebAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {FillWebAction}
-     * @constructor
      */
-    function FillWebActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Fills an input element with a value
          *
-         * @param {string} node - The CSS selector of an element
+         * @param {selector} selector - The CSS selector of an element
          * @param {string} value - The value it should be filled with
          * @constructor
          */
-        function FillWebAction(node, value) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].FILL);
-            this.node = node || null;
-            this.value = value || null
+        function FillWebAction(selector, value) {
+            AbstractAction.call(this, FillWebAction.type);
+            this.node = selector || '';
+            this.value = value || '';
         }
 
         FillWebAction.prototype = Object.create(AbstractAction.prototype);
@@ -37,9 +30,13 @@
          * @returns {string}
          */
         FillWebAction.prototype.toString = function () {
-            return 'Fill element "' + this.node + '" with "' + this.value + '"';
+            return 'Fill input "' + this.node + '" with "' + this.value + '"';
         };
+
+        FillWebAction.type = 'web_fill';
 
         return FillWebAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

@@ -3,11 +3,13 @@
 
     angular
         .module('ALEX.actions')
-        .factory('AssertVariableAction', AssertVariableActionFactory);
+        .factory('AssertVariableAction', factory);
 
-    AssertVariableActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
-
-    function AssertVariableActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    /**
+     * @param AbstractAction
+     * @returns {AssertVariableAction}
+     */
+    function factory(AbstractAction) {
 
         /**
          * Action to check if the value of a variable equals or matches a specific string value
@@ -18,7 +20,7 @@
          * @constructor
          */
         function AssertVariableAction(name, value, regexp) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.GENERAL].ASSERT_VARIABLE);
+            AbstractAction.call(this, AssertVariableAction.type);
             this.name = name || null;
             this.value = value || null;
             this.regexp = regexp || false;
@@ -34,6 +36,10 @@
             }
         };
 
+        AssertVariableAction.type = 'assertVariable';
+
         return AssertVariableAction;
     }
+
+    factory.$inject = ['AbstractAction'];
 }());

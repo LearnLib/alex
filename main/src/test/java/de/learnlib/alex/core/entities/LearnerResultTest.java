@@ -23,6 +23,7 @@ public class LearnerResultTest {
     private static final Long ID = 3L;
     private static final Long STEP_NO = 3L;
     private static final Date TEST_DATE = new Date(0);
+    private static final long TEST_TIME = 5000;
     private static final long TEST_DURATION = 9001;
     private static final int EQS_USED = 123;
     private static final String EXPECTED_JSON = "{\"configuration\":{"
@@ -40,8 +41,9 @@ public class LearnerResultTest {
                                                 + "\"project\":" + PROJECT_ID + ",\"sigma\":[\"0\",\"1\"],"
                                                 + "\"statistics\":{"
                                                     + "\"duration\":" + TEST_DURATION + ",\"eqsUsed\":0,\"mqsUsed\":0,"
-                                                    + "\"startTime\":\"1970-01-01T00:00:00.000+00:00\""
-                                                    + ",\"symbolsUsed\":0"
+                                                    + "\"startDate\":\"1970-01-01T00:00:00.000+00:00\","
+                                                    + "\"startTime\":" + TEST_TIME + ","
+                                                    + "\"symbolsUsed\":0"
                                                 + "},"
                                                 + "\"stepNo\":" + STEP_NO + ",\"testNo\":" + ID + ",\"user\":" + USER_ID + "}";
 
@@ -64,7 +66,8 @@ public class LearnerResultTest {
         given(project.getId()).willReturn(PROJECT_ID);
 
         LearnerResult.Statistics statistics = new LearnerResult.Statistics();
-        statistics.setStartTime(TEST_DATE);
+        statistics.setStartDate(TEST_DATE);
+        statistics.setStartTime(TEST_TIME);
         statistics.setDuration(TEST_DURATION);
 
         User user = new User(USER_ID);
@@ -97,7 +100,7 @@ public class LearnerResultTest {
                         + "\"testNo\":" + ID + ",\"project\":" + PROJECT_ID + ","
                         + "\"sigma\":[\"0\",\"1\"],\"stepNo\":" + STEP_NO + ", \"statistics\": {"
                             + "\"eqsUsed\":" + EQS_USED + ", \"duration\": " + TEST_DURATION + ", \"mqsUsed\":0,"
-                            + "\"startTime\": \"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0}"
+                            + "\"startDate\": \"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0, \"startTime\": " + TEST_TIME + "}"
                         + "}";
 
         LearnerResult resultFromJSON = new LearnerResult();
@@ -107,7 +110,8 @@ public class LearnerResultTest {
 
         LearnerResult.Statistics statistics = new LearnerResult.Statistics();
         statistics.setEqsUsed(EQS_USED);
-        statistics.setStartTime(TEST_DATE);
+        statistics.setStartTime(TEST_TIME);
+        statistics.setStartDate(TEST_DATE);
         statistics.setDuration(TEST_DURATION);
 
         assertEquals(PROJECT_ID, resultFromJSON.getProjectId());

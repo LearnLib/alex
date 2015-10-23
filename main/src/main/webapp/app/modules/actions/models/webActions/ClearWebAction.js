@@ -3,30 +3,25 @@
 
     angular
         .module('ALEX.actions')
-        .factory('ClearWebAction', ClearWebActionFactory);
+        .factory('ClearWebAction', factory);
 
-    ClearWebActionFactory.$inject = ['AbstractAction', 'actionGroupTypes', 'actionTypes'];
+    factory.$inject = ['AbstractAction'];
 
     /**
-     * The factory for ClearWebAction
-     *
      * @param AbstractAction
-     * @param actionGroupTypes
-     * @param actionTypes
      * @returns {ClearWebAction}
-     * @constructor
      */
-    function ClearWebActionFactory(AbstractAction, actionGroupTypes, actionTypes) {
+    function factory(AbstractAction) {
 
         /**
          * Remove all inputs from an element
          *
-         * @param {string} node - The CSS selector of the element
+         * @param {string} selector - The CSS selector of the element
          * @constructor
          */
-        function ClearWebAction(node) {
-            AbstractAction.call(this, actionTypes[actionGroupTypes.WEB].CLEAR);
-            this.node = node || null;
+        function ClearWebAction(selector) {
+            AbstractAction.call(this, ClearWebAction.type);
+            this.node = selector || '';
         }
 
         ClearWebAction.prototype = Object.create(AbstractAction.prototype);
@@ -35,8 +30,10 @@
          * @returns {string}
          */
         ClearWebAction.prototype.toString = function () {
-            return 'Clear element "' + this.node + '"';
+            return 'Clear input "' + this.node + '"';
         };
+
+        ClearWebAction.type = 'web_clear';
 
         return ClearWebAction;
     }
