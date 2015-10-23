@@ -33,7 +33,7 @@
         /**
          * Changes the password of a user
          *
-         * @param {*} user - The user whose password should be changed
+         * @param {User} user - The user whose password should be changed
          * @param {string} oldPassword - The old password
          * @param {string} newPassword - The new password
          * @returns {*} - A promise
@@ -48,7 +48,7 @@
         /**
          * Changes the email of a user
          *
-         * @param {*} user - The user whose email should be changed
+         * @param {User} user - The user whose email should be changed
          * @param {string} email - The new email
          * @returns {*} - A promise
          */
@@ -86,7 +86,7 @@
         /**
          * Creates a new user
          *
-         * @param {*} user - The user to create
+         * @param {User} user - The user to create
          * @returns {*} - A promise
          */
         function create(user) {
@@ -96,7 +96,7 @@
         /**
          * Logs in a user
          *
-         * @param user - The user to login
+         * @param {User} user - The user to login
          * @returns {*} - A promise that contains the jwt
          */
         function login(user) {
@@ -106,7 +106,7 @@
         /**
          * Removes a user
          *
-         * @param {*} user - the user to remove
+         * @param {User} user - the user to remove
          * @returns {*} - A promise
          */
         function remove(user) {
@@ -116,11 +116,11 @@
         /**
          * Updates a user. Should only be called by admins.
          *
-         * @param {*} user - The user to update
+         * @param {User} user - The user to update
          * @returns {*} - A promise that contains the updated user
          */
         function update(user) {
-            return $http.put(uri, user)
+            return $http.put(uri + '/' + user.id, user)
                 .then(function (response) {
                     return response.data;
                 })

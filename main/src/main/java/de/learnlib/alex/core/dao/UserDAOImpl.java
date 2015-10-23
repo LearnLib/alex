@@ -106,10 +106,6 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void update(User user) throws ValidationException {
-        if (getByEmail(user.getEmail()) != null) {
-            throw new ValidationException("The email already exists");
-        }
-
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
         session.update(user);

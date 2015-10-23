@@ -389,10 +389,7 @@ body {
 
 .project-list {
   .project-list-item {
-    &:hover {
-      cursor: pointer;
-      background: #f2f2f2;
-    }
+    @include selection-list-item();
   }
 }
 

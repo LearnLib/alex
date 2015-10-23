@@ -17,7 +17,6 @@ import org.jose4j.lang.JoseException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.persistence.Entity;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -170,6 +169,40 @@ public class UserResource {
     public Response getAll() {
         List<User> users = userDAO.getAll();
         return ResponseHelper.renderList(users, Status.OK);
+    }
+
+    /**
+     * Updates a given user.
+     *
+     * @param userId       The id of the user to update
+     * @param userToUpdate The user to update
+     * @return An HTTP response with the updated user on success, BAD_REQUEST otherwise
+     */
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
+    public Response update(@PathParam("id") long userId, User userToUpdate) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        try {
+            // check if the only admin wants to take away his admin rights
+            if (userToUpdate.getRole().equals(UserRole.REGISTERED)
+                    && userToUpdate.getEmail().equals(user.getEmail())) {
+
+                List<User> admins = userDAO.getAllByRole(UserRole.ADMIN);
+                if (admins.size() == 1) {
+                    throw new BadRequestException("The only admin left cannot take away his own admin rights.");
+                }
+            }
+
+            userDAO.update(user);
+        } catch (BadRequestException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.update", Status.BAD_REQUEST, e);
+        }
+
+        return Response.ok(user).build();
     }
 
     @DELETE

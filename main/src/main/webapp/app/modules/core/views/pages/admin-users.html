@@ -22,25 +22,9 @@
                     <td ng-bind="user.email"></td>
                     <td ng-bind="user.role"></td>
                     <th>
-
-                        <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
-                            <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
-                                <i class="fa fa-bars"></i>
-                            </button>
-                            <ul class="dropdown-menu pull-left" role="menu">
-                                <li>
-                                    <a href>
-                                        <i class="fa fa-edit fa-fw"></i> Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href ng-click="deleteUser(user)">
-                                        <i class="fa fa-trash fa-fw"></i> Delete
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-
+                        <button class="btn btn-icon btn-xs pull-right" user-edit-modal-handle user="user">
+                            <i class="fa fa-edit fa-fw"></i> Edit
+                        </button>
                     </th>
                 </tr>
                 </tbody>

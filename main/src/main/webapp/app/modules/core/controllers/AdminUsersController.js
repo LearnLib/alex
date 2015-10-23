@@ -5,23 +5,22 @@
         .module('ALEX.core')
         .controller('AdminUsersController', AdminUsersController);
 
-    AdminUsersController.$inject = ['$scope', 'UserResource', '_', 'ToastService', 'PromptService'];
+    AdminUsersController.$inject = ['$rootScope', '$scope', 'UserResource', '_'];
 
     /**
      * The controller for the user management page
      *
+     * @param $rootScope
      * @param $scope
      * @param UserResource
      * @param _
-     * @param Toast
-     * @param PromptService
      * @constructor
      */
-    function AdminUsersController($scope, UserResource, _, Toast, PromptService) {
+    function AdminUsersController($rootScope, $scope, UserResource, _) {
 
         /**
          * All registered users
-         * @type {Array}
+         * @type {User[]}
          */
         $scope.users = [];
 
@@ -31,22 +30,21 @@
                 $scope.users = users;
             });
 
-        /**
-         * Deletes a user
-         * @param user - The user to delete
-         */
-        $scope.deleteUser = function (user) {
-            PromptService.confirm('Do you want to delete this user permanently?')
-                .then(function(){
-                    UserResource.remove(user)
-                        .then(function() {
-                            Toast.success('The user has been deleted');
-                            _.remove($scope.users, {id: user.id});
-                        })
-                        .catch(function (response) {
-                            Toast.danger('Deletion failed. ' + response.data.message);
-                        })
-                })
-        }
+        var userUpdatedOffHandler = $rootScope.$on('user:updated', function (evt, user) {
+            var i = _.findIndex($scope.users, {id: user.id});
+            if (i > -1) {
+                $scope.users[i] = user;
+            }
+        });
+
+        var userDeletedOffHandler = $rootScope.$on('user:deleted', function (evt, user) {
+            _.remove($scope.users, {id: user.id});
+        });
+
+        // remove events on destroy
+        $scope.$on('$destroy', function () {
+            userUpdatedOffHandler();
+            userDeletedOffHandler();
+        })
     }
 }());

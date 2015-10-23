@@ -9,7 +9,6 @@
 
     /**
      * The controller of the index page.
-
      *
      * @param $state
      * @param Session
