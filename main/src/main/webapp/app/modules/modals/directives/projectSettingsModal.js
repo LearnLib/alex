@@ -3,12 +3,11 @@
 
     angular
         .module('ALEX.modals')
-        .directive('projectSettingsModalHandle', projectSettingsModalHandle)
-        .controller('ProjectSettingsModalController', ProjectSettingsModalController);
+        .directive('projectSettingsModalHandle', projectSettingsModalHandle);
 
-    projectSettingsModalHandle.$inject = ['$modal', 'paths', 'LearnerResource', 'ToastService'];
+    projectSettingsModalHandle.$inject = ['$modal', 'paths', 'Project', 'LearnerResource', 'ToastService'];
 
-    function projectSettingsModalHandle($modal, paths, Learner, Toast) {
+    function projectSettingsModalHandle($modal, paths, Project, Learner, Toast) {
         return {
             restrict: 'A',
             scope: {
@@ -35,7 +34,7 @@
                                 resolve: {
                                     modalData: function () {
                                         return {
-                                            project: scope.project
+                                            project: Project.build(scope.project)
                                         }
                                     }
                                 }
@@ -44,61 +43,5 @@
                     });
             }
         }
-    }
-
-    ProjectSettingsModalController.$inject = [
-        '$rootScope', '$scope', '$modalInstance', 'modalData', 'Project', 'ProjectResource', 'ToastService'
-    ];
-
-    function ProjectSettingsModalController($rootScope, $scope, $modalInstance, modalData, Project, ProjectResource, Toast) {
-        $scope.project = Project.build(modalData.project);
-
-        $scope.errorMsg = null;
-
-        $scope.updateProject = function () {
-            ProjectResource.update($scope.project)
-                .then(function (updatedProject) {
-                    $rootScope.$emit('project:updated', updatedProject);
-                    $scope.closeModal();
-                    Toast.success('Project updated');
-                })
-                .catch(function (response) {
-                    $scope.errorMsg = response.data.message;
-                })
-        };
-
-        $scope.closeModal = function () {
-            $modalInstance.dismiss();
-        };
-
-        ///**
-        // * Saves the project including symbol groups into a json file
-        // */
-        //$scope.exportProject = function () {
-        //    SymbolGroupResource.getAll($scope.project.id, {embedSymbols: true})
-        //        .then(function(groups){
-        //
-        //            var projectToExport = angular.copy($scope.project);
-        //            projectToExport.groups = groups;
-        //
-        //            // prepare project for export
-        //            delete projectToExport.id;
-        //            _.forEach(projectToExport.groups, function(group){
-        //                delete group.id;
-        //                delete group.project;
-        //                _.forEach(group.symbols, function(symbol){
-        //                    delete symbol.project;
-        //                    delete symbol.group;
-        //                    delete symbol.id;
-        //                    delete symbol.revision;
-        //                })
-        //            });
-        //
-        //            FileDownloadService.downloadJson(projectToExport)
-        //                .then(function(){
-        //                    Toast.success('Project exported');
-        //                });
-        //        })
-        //}
     }
 }());

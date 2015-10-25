@@ -60,7 +60,13 @@
         </div>
         <!-- /Description -->
 
-        <div class="alert alert-danger alert-condensed" ng-show="errorMsg" ng-bind="errorMsg"></div>
+        <div ng-if="error !== null">
+            <hr />
+            <div class="alert alert-danger alert-condensed">
+                <strong>Updating the project failed!</strong> <br />
+                <span ng-bind="error"></span>
+            </div>
+        </div>
 
     </div>
 

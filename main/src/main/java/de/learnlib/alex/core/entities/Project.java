@@ -45,7 +45,6 @@ public class Project implements Serializable {
      * @requiredField
      */
     @NotBlank
-    @Column(unique = true)
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

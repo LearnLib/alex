@@ -35,20 +35,23 @@
                 $scope.projects = projects;
             });
 
-        var projectCreatedOffHandler = $rootScope.$on('project:created', function (evt, project) {
-            $scope.projects.push(project);
-        });
+        var projectCreatedOffHandler =
+            $rootScope.$on('project:created', function (evt, project) {
+                $scope.projects.push(project);
+            });
 
-        var projectUpdatedOffHandler = $rootScope.$on('project:updated', function (evt, project) {
-            var index = _.findIndex($scope.projects, {id: project.id});
-            if (index > -1) $scope.projects[index] = project;
-        });
+        var projectUpdatedOffHandler =
+            $rootScope.$on('project:updated', function (evt, project) {
+                var index = _.findIndex($scope.projects, {id: project.id});
+                if (index > -1) $scope.projects[index] = project;
+            });
 
-        var projectDeletedOffHandler =$rootScope.$on('project:deleted', function (evt, project) {
-            _.remove($scope.projects, {id: project.id});
-        });
+        var projectDeletedOffHandler =
+            $rootScope.$on('project:deleted', function (evt, project) {
+                _.remove($scope.projects, {id: project.id});
+            });
 
-        $scope.$on('$destroy', function(){
+        $scope.$on('$destroy', function () {
             projectCreatedOffHandler();
             projectUpdatedOffHandler();
             projectDeletedOffHandler();

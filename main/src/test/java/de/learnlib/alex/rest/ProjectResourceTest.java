@@ -117,6 +117,19 @@ public class ProjectResourceTest extends JerseyTest {
     }
 
     @Test
+    public void shouldReturn400IfProjectNameAlreadyExistsForAUser() {
+        Project p = new Project();
+        p.setUser(user);
+        p.setBaseUrl("http://abc");
+        p.setName("Test Project");
+
+        willThrow(new ValidationException("Test Message")).given(projectDAO).create(project);
+
+        Response response = target("/projects").request().post(Entity.json(project));
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
     public void shouldReturnAllProjectsWithoutEmbedded() {
         List<Project> projects = new ArrayList<>();
         projects.add(project);

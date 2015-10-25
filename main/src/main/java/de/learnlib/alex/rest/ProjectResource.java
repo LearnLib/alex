@@ -12,15 +12,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
 import java.util.List;
@@ -63,6 +55,10 @@ public class ProjectResource {
         project.setUser(user);
 
         try {
+            if (projectDAO.getByName(user.getId(), project.getName()) != null) {
+                throw new ValidationException("There is already a project with that name");
+            }
+
             projectDAO.create(project);
             String projectURL = uri.getBaseUri() + "projects/" + project.getId();
             return Response.status(Status.CREATED).header("Location", projectURL).entity(project).build();
@@ -162,6 +158,9 @@ public class ProjectResource {
         } else {
             try {
                 if(user.equals(project.getUser())) {
+                    if (projectDAO.getByName(user.getId(), project.getName()) != null) {
+                        throw new ValidationException("There is already a project with that name");
+                    }
                     projectDAO.update(project);
                     return Response.ok(project).build();
                 } else {

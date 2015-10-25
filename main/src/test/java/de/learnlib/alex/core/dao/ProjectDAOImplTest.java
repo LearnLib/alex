@@ -112,6 +112,18 @@ public class ProjectDAOImplTest {
     }
 
     @Test
+    public void shouldGetAProjectByItsName() {
+        Project p = projectDAO.getByName(user.getId(), "ProjectDAOImplTest Project ");
+        assertEquals(p, project);
+    }
+
+    @Test
+    public void shouldReturnNullIfProjectWithAGivenNameCannotBeFound() {
+        Project p = projectDAO.getByName(user.getId(), "Non existing project name");
+        assertNull(p);
+    }
+
+    @Test
     public void shouldGetAllProjects() {
         List<Project> projects = new LinkedList<>();
         for (int i = 0; i < PROJECT_COUNT; i++) {

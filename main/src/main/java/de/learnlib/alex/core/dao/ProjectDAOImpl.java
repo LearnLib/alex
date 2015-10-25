@@ -142,6 +142,22 @@ public class ProjectDAOImpl implements ProjectDAO {
     }
 
     @Override
+    public Project getByName(Long userId, String projectName) {
+        // start session
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        Project result = (Project) session.createCriteria(Project.class)
+                .add(Restrictions.eq("user.id", userId))
+                .add(Restrictions.eq("name", projectName))
+                .uniqueResult();
+
+        HibernateUtil.commitTransaction();
+
+        return result;
+    }
+
+    @Override
     public void update(Project project) throws NotFoundException, ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
