@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
@@ -71,6 +72,7 @@ public class CallAction extends RESTSymbolAction {
     private HashMap<String, String> cookies; // OM NOM NOM NOM!!!
 
     /** Optional data to sent with a POST or PUT request. */
+    @Column(columnDefinition = "CLOB")
     private String data;
 
     public CallAction() {
