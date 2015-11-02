@@ -158,7 +158,8 @@ public class ProjectResource {
         } else {
             try {
                 if(user.equals(project.getUser())) {
-                    if (projectDAO.getByName(user.getId(), project.getName()) != null) {
+                    Project p = projectDAO.getByName(user.getId(), project.getName());
+                    if (p != null && !p.equals(project)) {
                         throw new ValidationException("There is already a project with that name");
                     }
                     projectDAO.update(project);
