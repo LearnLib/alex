@@ -3,6 +3,7 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
@@ -55,7 +56,11 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * The algorithm to be used during the learning.
      * @requiredField
      */
+    @Transient
     private LearnAlgorithms algorithm;
+
+    @Transient
+    private WebSiteConnector.WebBrowser browser;
 
     /** A shot comment to describe the learn set up. */
     @Size(max = 255)
@@ -163,6 +168,18 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     public void setAlgorithm(LearnAlgorithms algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public WebSiteConnector.WebBrowser getBrowser() {
+        if (browser == null) {
+            return WebSiteConnector.WebBrowser.HTMLUNITDRIVER;
+        } else {
+            return browser;
+        }
+    }
+
+    public void setBrowser(WebSiteConnector.WebBrowser browser) {
+        this.browser = browser;
     }
 
     /**

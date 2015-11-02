@@ -27,10 +27,12 @@ public class LearnerResultTest {
     private static final long TEST_DURATION = 9001;
     private static final int EQS_USED = 123;
     private static final String EXPECTED_JSON = "{\"configuration\":{"
-                                                    + "\"algorithm\":\"TTT\",\"comment\":\"\",\"eqOracle\":"
-                                                    + "{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,"
-                                                    + "\"maxNoOfTests\":1},\"maxAmountOfStepsToLearn\":0,"
-                                                    + "\"resetSymbol\":null,\"symbols\":[]},"
+                                                    + "\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\","
+                                                    + "\"comment\":\"\",\"eqOracle\":"
+                                                        + "{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,"
+                                                        + "\"maxNoOfTests\":1},"
+                                                    + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,"
+                                                    + "\"symbols\":[]},"
                                                 + "\"counterExample\":\"\",\"hypothesis\":{"
                                                     + "\"nodes\":[0,1],\"initNode\":0,\"edges\":["
                                                         + "{\"from\":0,\"input\":\"0\",\"to\":0,\"output\":\"OK\"},"

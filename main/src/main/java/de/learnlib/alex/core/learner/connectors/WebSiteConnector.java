@@ -1,5 +1,7 @@
 package de.learnlib.alex.core.learner.connectors;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import de.learnlib.alex.core.learner.BaseUrlManager;
@@ -35,6 +37,17 @@ public class WebSiteConnector implements Connector {
 
         WebBrowser(Class webDriverClass) {
             this.webDriverClass = webDriverClass;
+        }
+
+        @JsonCreator
+        public static WebBrowser fromString(String name) throws IllegalArgumentException {
+            return WebBrowser.valueOf(name.toUpperCase());
+        }
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return name().toLowerCase();
         }
 
         public WebDriver getWebDriver() {

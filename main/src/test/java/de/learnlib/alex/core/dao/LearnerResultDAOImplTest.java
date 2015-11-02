@@ -168,7 +168,7 @@ public class LearnerResultDAOImplTest {
         assertEquals(RESULTS_AMOUNT, resultsInDBAsJSON.size());
         for (int i = 0; i < resultsInDBAsJSON.size(); i++) {
             String expectedJSON = "{\"configuration\":{"
-                                        + "\"algorithm\":\"TTT\",\"comment\":\"\","
+                                        + "\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\",\"comment\":\"\","
                                         + "\"eqOracle\":{\"type\":\"random_word\","
                                             + "\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1}"
                                         + ",\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]},"
@@ -392,8 +392,8 @@ public class LearnerResultDAOImplTest {
     }
 
     private String generateExpectedJSON(LearnerResult result) {
-        return "{\"configuration\":{\"algorithm\":\"TTT\",\"comment\":\"\",\"eqOracle\":"
-                    + "{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1},"
+        return "{\"configuration\":{\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\",\"comment\":\"\","
+                    +"\"eqOracle\":{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1},"
                     + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]},"
                 + "\"counterExample\":\"\",\"hypothesis\":{"
                     + "\"nodes\":[0,1],\"initNode\":0,\"edges\":["
