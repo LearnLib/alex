@@ -1,5 +1,6 @@
 package de.learnlib.alex.core.learner.connectors;
 
+import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.Project;
 
 /**
@@ -14,11 +15,11 @@ public class ConnectorContextHandlerFactory {
      *         The current project in which the context should be.
      * @return A ContextHandler for the project with all the connectors.
      */
-    public ConnectorContextHandler createContext(Project project) {
+    public ConnectorContextHandler createContext(Project project, WebSiteConnector.WebBrowser browser) {
         ConnectorContextHandler context = new ConnectorContextHandler();
         String baseUrl = project.getBaseUrl();
 
-        context.addConnector(new WebSiteConnector(baseUrl));
+        context.addConnector(new WebSiteConnector(baseUrl, browser));
         context.addConnector(new WebServiceConnector(baseUrl));
         context.addConnector(new CounterStoreConnector());
         context.addConnector(new VariableStoreConnector());

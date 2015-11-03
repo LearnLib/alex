@@ -107,11 +107,13 @@ public class WebSiteConnector implements Connector {
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("server");
 
-    /** The driver used to send and receive data to a WebSite. */
-    private WebDriver driver;
+    private WebBrowser browser;
 
     /** A managed base url to use. */
     private BaseUrlManager baseUrl;
+
+    /** The driver used to send and receive data to a WebSite. */
+    private WebDriver driver;
 
     /**
      * Constructor.
@@ -119,8 +121,9 @@ public class WebSiteConnector implements Connector {
      * @param baseUrl
      *         The new base url to use for further request. All request will be based on this!
      */
-    public WebSiteConnector(String baseUrl) {
+    public WebSiteConnector(String baseUrl, WebBrowser browser) {
         this.baseUrl = new BaseUrlManager(baseUrl);
+        this.browser = browser;
     }
 
     /**
@@ -128,10 +131,7 @@ public class WebSiteConnector implements Connector {
      */
     @Override
     public void reset() {
-        String driverName = System.getProperty("alex.driver", "HTMLUnitDriver");
-        WebBrowser webBrowser = WebBrowser.valueOf(driverName.toUpperCase());
-
-        this.driver = webBrowser.getWebDriver();
+        this.driver = browser.getWebDriver();
         this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
         this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
     }

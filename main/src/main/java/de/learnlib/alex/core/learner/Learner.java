@@ -10,6 +10,7 @@ import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOraclePr
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.oracles.ResetCounterSUL;
 
@@ -111,7 +112,8 @@ public class Learner {
             configuration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
         }
 
-        contextHandler = contextHandlerFactory.createContext(project);
+        WebSiteConnector.WebBrowser browser = configuration.getBrowser();
+        contextHandler = contextHandlerFactory.createContext(project, browser);
         LearnerThread learnThread = learnThreadFactory.createThread(contextHandler, user, project, configuration);
         startThread(user, learnThread);
 
@@ -294,7 +296,8 @@ public class Learner {
     public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols)
             throws LearnerException {
         if (contextHandler == null) {
-            contextHandler = contextHandlerFactory.createContext(project);
+            // todo: remove hardcoded browser
+            contextHandler = contextHandlerFactory.createContext(project, WebSiteConnector.WebBrowser.HTMLUNITDRIVER);
         }
         contextHandler.setResetSymbol(resetSymbol);
 
