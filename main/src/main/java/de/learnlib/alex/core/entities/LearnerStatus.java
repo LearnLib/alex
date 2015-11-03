@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.learner.Learner;
 
-import java.util.Date;
-
 /**
  * Class to provide information about the current learn process.
  */

@@ -3,14 +3,15 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
-import de.learnlib.alex.core.learner.Learner;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.inject.Inject;
 
 /**
  * Implementation of a LearnerResultDAO using Hibernate.

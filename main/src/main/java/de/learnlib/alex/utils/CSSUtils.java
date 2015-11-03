@@ -1,12 +1,18 @@
 package de.learnlib.alex.utils;
 
 /**
- * Utility class for CSS stuff
+ * Utility class for CSS stuff.
  */
-public class CSSUtils {
+public final class CSSUtils {
 
     /**
-     * Escape special characters in css id selectors
+     * Deactivate the constructor because this is a utility class.
+     */
+    private CSSUtils() {
+    }
+
+    /**
+     * Escape special characters in css id selectors.
      *
      * Port of https://github.com/mathiasbynens/CSS.escape/blob/master/css.escape.js
      *
@@ -26,21 +32,22 @@ public class CSSUtils {
             }
 
             if (
-                (unit >= 1 && unit <= 31) || unit.equals(127) ||
-                (i.equals(0) && unit >= 48 && unit <= 57) ||
-                (i.equals(1) && unit >= 48 && unit <= 57 && firstUnit.equals(45))
+                (unit >= 1 && unit <= 31)
+                || unit.equals(127)
+                || (i.equals(0) && unit >= 48 && unit <= 57)
+                || (i.equals(1) && unit >= 48 && unit <= 57 && firstUnit.equals(45))
             ) {
                 result += "\\" + Integer.toHexString(unit) + " ";
                 continue;
             }
 
             if (
-                unit >= 128 ||
-                unit.equals(45) ||
-                unit.equals(95) ||
-                unit >= 48 && unit <= 57 ||
-                unit >= 65 && unit <= 90 ||
-                unit >= 97 && unit <= 122
+                unit >= 128
+                || unit.equals(45)
+                || unit.equals(95)
+                || unit >= 48 && unit <= 57
+                || unit >= 65 && unit <= 90
+                || unit >= 97 && unit <= 122
             ) {
                 result += c;
                 continue;
@@ -53,7 +60,7 @@ public class CSSUtils {
     }
 
     /**
-     * Escapes special characters in CSS selectors in case it contains ids
+     * Escapes special characters in CSS selectors in case it contains ids.
      *
      * @param css The css string to escape
      * @return The escaped css string

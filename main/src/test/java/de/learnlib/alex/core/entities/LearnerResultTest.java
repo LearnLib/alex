@@ -47,7 +47,8 @@ public class LearnerResultTest {
                                                     + "\"startTime\":" + TEST_TIME + ","
                                                     + "\"symbolsUsed\":0"
                                                 + "},"
-                                                + "\"stepNo\":" + STEP_NO + ",\"testNo\":" + ID + ",\"user\":" + USER_ID + "}";
+                                                + "\"stepNo\":" + STEP_NO + ",\"testNo\":" + ID + ",\"user\":"
+                                                    + USER_ID + "}";
 
     @Test
     public void shouldCreateTheCorrectJSON() throws JsonProcessingException {
@@ -102,7 +103,8 @@ public class LearnerResultTest {
                         + "\"testNo\":" + ID + ",\"project\":" + PROJECT_ID + ","
                         + "\"sigma\":[\"0\",\"1\"],\"stepNo\":" + STEP_NO + ", \"statistics\": {"
                             + "\"eqsUsed\":" + EQS_USED + ", \"duration\": " + TEST_DURATION + ", \"mqsUsed\":0,"
-                            + "\"startDate\": \"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0, \"startTime\": " + TEST_TIME + "}"
+                            + "\"startDate\": \"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0, \"startTime\": "
+                                + TEST_TIME + "}"
                         + "}";
 
         LearnerResult resultFromJSON = new LearnerResult();

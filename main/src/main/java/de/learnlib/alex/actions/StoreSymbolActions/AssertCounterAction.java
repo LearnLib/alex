@@ -69,7 +69,11 @@ public class AssertCounterAction extends SymbolAction {
                 break;
         }
 
-        return result ? getSuccessOutput() : getFailedOutput();
+        if (result) {
+            return getSuccessOutput();
+        } else {
+            return getFailedOutput();
+        }
     }
 
     // auto generated getter & setter

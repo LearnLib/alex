@@ -8,8 +8,8 @@ import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.UserPrincipal;
-import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.IdRevisionPairList;
+import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
@@ -28,8 +28,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,7 +62,7 @@ public class SymbolResource {
 
     /** The security context containing the user of the request */
     @Context
-    SecurityContext securityContext;
+    private SecurityContext securityContext;
 
     /** The {@link ProjectDAO} to use. */
     @Inject

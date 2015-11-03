@@ -1,6 +1,19 @@
 package de.learnlib.alex;
 
-import de.learnlib.alex.core.dao.*;
+import de.learnlib.alex.core.dao.CounterDAO;
+import de.learnlib.alex.core.dao.CounterDAOImpl;
+import de.learnlib.alex.core.dao.FileDAO;
+import de.learnlib.alex.core.dao.FileDAOImpl;
+import de.learnlib.alex.core.dao.LearnerResultDAO;
+import de.learnlib.alex.core.dao.LearnerResultDAOImpl;
+import de.learnlib.alex.core.dao.ProjectDAO;
+import de.learnlib.alex.core.dao.ProjectDAOImpl;
+import de.learnlib.alex.core.dao.SymbolDAO;
+import de.learnlib.alex.core.dao.SymbolDAOImpl;
+import de.learnlib.alex.core.dao.SymbolGroupDAO;
+import de.learnlib.alex.core.dao.SymbolGroupDAOImpl;
+import de.learnlib.alex.core.dao.UserDAO;
+import de.learnlib.alex.core.dao.UserDAOImpl;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.core.learner.Learner;

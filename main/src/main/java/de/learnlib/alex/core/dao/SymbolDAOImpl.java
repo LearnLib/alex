@@ -1,7 +1,13 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.actions.ExecuteSymbolAction;
-import de.learnlib.alex.core.entities.*;
+import de.learnlib.alex.core.entities.IdRevisionPair;
+import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Hibernate;

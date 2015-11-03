@@ -1,6 +1,5 @@
 package de.learnlib.alex.utils;
 
-import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import de.learnlib.alex.core.learner.connectors.FileStoreConnector;

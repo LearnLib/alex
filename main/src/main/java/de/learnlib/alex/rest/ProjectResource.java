@@ -12,9 +12,21 @@ import org.apache.shiro.authz.UnauthorizedException;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 /**
@@ -35,7 +47,7 @@ public class ProjectResource {
 
     /** The security context containing the user of the request */
     @Context
-    SecurityContext securityContext;
+    private SecurityContext securityContext;
 
     /**
      * Create a new Project.
@@ -157,7 +169,7 @@ public class ProjectResource {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             try {
-                if(user.equals(project.getUser())) {
+                if (user.equals(project.getUser())) {
                     Project p = projectDAO.getByName(user.getId(), project.getName());
                     if (p != null && !p.equals(project)) {
                         throw new ValidationException("There is already a project with that name");

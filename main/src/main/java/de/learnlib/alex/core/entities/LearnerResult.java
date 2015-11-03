@@ -17,7 +17,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.NaturalId;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
@@ -340,7 +347,11 @@ public class LearnerResult implements Serializable {
     @Transient
     @JsonProperty("user")
     public Long getUserId() {
-        return user == null ? 0L : user.getId();
+        if (user == null) {
+            return 0L;
+        }
+
+        return user.getId();
     }
 
     @JsonProperty("user")
@@ -599,7 +610,7 @@ public class LearnerResult implements Serializable {
      *
      * @param error - dummy
      */
-    public void setError(Boolean error){
+    public void setError(Boolean error) {
         // do nothing :)
     }
 

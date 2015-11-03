@@ -2,7 +2,6 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.HibernateException;
@@ -10,7 +9,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import javax.validation.ValidationException;
-import java.util.LinkedList;
 import java.util.List;
 
 /**

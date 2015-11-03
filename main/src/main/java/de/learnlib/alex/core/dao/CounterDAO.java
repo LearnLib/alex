@@ -1,7 +1,6 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Counter;
-import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.jvnet.hk2.annotations.Service;
 

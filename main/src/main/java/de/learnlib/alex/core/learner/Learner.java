@@ -13,7 +13,10 @@ import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.oracles.ResetCounterSUL;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 

@@ -9,6 +9,7 @@ import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,7 +18,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.validation.ValidationException;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class LearnerResultResource {
 
     /** The security context containing the user of the request */
     @Context
-    SecurityContext securityContext;
+    private SecurityContext securityContext;
 
     /**
      * Get all final / last results of each test run within one project.

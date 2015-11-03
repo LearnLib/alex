@@ -25,7 +25,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 /**
@@ -56,7 +60,7 @@ public class SymbolGroupResource {
 
     /** The security context containing the user of the request */
     @Context
-    SecurityContext securityContext;
+    private SecurityContext securityContext;
 
     /**
      * Create a new group.
@@ -248,7 +252,7 @@ public class SymbolGroupResource {
 
         try {
             SymbolGroup group = symbolGroupDAO.get(user, projectId, id);
-            
+
             if (group.getUserId().equals(user.getId())) {
                 symbolGroupDAO.delete(user, projectId, id);
                 return Response.noContent().build();

@@ -26,7 +26,7 @@ import java.security.Principal;
 public class AuthenticationFilter implements ContainerRequestFilter {
 
     @Inject
-    UserDAO userDAO;
+    private UserDAO userDAO;
 
     /**
      * checks for the availability of a JWT and puts the corresponding user into a SecurityContext that can be injected

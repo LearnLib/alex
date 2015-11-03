@@ -12,10 +12,10 @@ import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
 import de.learnlib.alex.core.dao.UserDAO;
+import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
-import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
@@ -431,7 +431,7 @@ public class SymbolResourceTest extends JerseyTest {
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch/1:1,2:1").request().get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() {});
+        List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
         assertEquals(responseSymbols.get(0).getIdRevisionPair(), idRevisionPairs.get(0));
         assertEquals(responseSymbols.get(1).getIdRevisionPair(), idRevisionPairs.get(1));

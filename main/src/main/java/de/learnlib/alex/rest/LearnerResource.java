@@ -3,7 +3,15 @@ package de.learnlib.alex.rest;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.entities.*;
+import de.learnlib.alex.core.entities.IdRevisionPair;
+import de.learnlib.alex.core.entities.LearnerConfiguration;
+import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
+import de.learnlib.alex.core.entities.LearnerStatus;
+import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.SymbolSet;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -58,7 +66,7 @@ public class LearnerResource {
 
     /** The security context containing the user of the request */
     @Context
-    SecurityContext securityContext;
+    private SecurityContext securityContext;
 
     /**
      * Start the learning.

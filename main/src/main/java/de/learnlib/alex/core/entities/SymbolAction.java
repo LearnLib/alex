@@ -3,7 +3,6 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import de.learnlib.alex.actions.StoreSymbolActions.*;
 import de.learnlib.alex.actions.ExecuteSymbolAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CallAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckAttributeExistsAction;
@@ -13,6 +12,14 @@ import de.learnlib.alex.actions.RESTSymbolActions.CheckHeaderFieldAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckStatusAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.alex.actions.RESTSymbolActions.RESTSymbolAction;
+import de.learnlib.alex.actions.StoreSymbolActions.AssertCounterAction;
+import de.learnlib.alex.actions.StoreSymbolActions.AssertVariableAction;
+import de.learnlib.alex.actions.StoreSymbolActions.IncrementCounterAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetCounterAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByCookieAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByHTMLElementAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
 import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckPageTitleAction;
@@ -283,7 +290,9 @@ public abstract class SymbolAction implements Serializable {
      * @param disabled
      *          true if the action should be executed, false if should be skipped
      */
-    public void setDisabled(boolean disabled) { this.disabled = disabled; }
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 
     /**
      * Execute the action.

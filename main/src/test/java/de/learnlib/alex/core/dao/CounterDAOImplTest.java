@@ -5,7 +5,6 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,7 +17,7 @@ import static org.junit.Assert.fail;
 
 public class CounterDAOImplTest {
 
-    public static final Long USER_ID = 3l;
+    public static final Long USER_ID = 3L;
     public static final String   COUNTER_NAME  = "CounterNo1";
     private static final Integer COUNTER_VALUE = 42;
     private static final int AMOUNT_OF_COUNTERS = 10;

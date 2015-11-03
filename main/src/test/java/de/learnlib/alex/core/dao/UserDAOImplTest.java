@@ -9,7 +9,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.validation.ValidationException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +17,9 @@ import static org.junit.Assert.assertTrue;
 
 public class UserDAOImplTest {
 
+    private static final String ADMIN_MAIL = "UserDAOImplTest@alex-tests.example";
+
     private static UserDAO userDAO;
-    private static String ADMIN_MAIL = "UserDAOImplTest@alex-tests.example";
 
     private User admin;
 
@@ -189,11 +189,11 @@ public class UserDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void shouldFailToDeleteAUserOnInvalidId() throws NotFoundException {
-        userDAO.delete(-1l);
+        userDAO.delete(-1L);
     }
 
     @Test(expected = NotFoundException.class)
-    public void shouldNotDeleteOnlyExistingAdmin () throws NotFoundException {
+    public void shouldNotDeleteOnlyExistingAdmin() throws NotFoundException {
         userDAO.delete(admin.getId());
     }
 }

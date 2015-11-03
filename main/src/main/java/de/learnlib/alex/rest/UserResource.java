@@ -17,13 +17,21 @@ import org.jose4j.lang.JoseException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.SecurityContext;
-import javax.xml.bind.ValidationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
+import javax.xml.bind.ValidationException;
 import java.util.List;
 
 /**
@@ -42,7 +50,7 @@ public class UserResource {
      * The security context containing the user of the request
      */
     @Context
-    SecurityContext securityContext;
+    private SecurityContext securityContext;
 
     /**
      * Creates a new user

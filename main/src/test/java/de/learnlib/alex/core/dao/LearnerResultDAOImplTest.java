@@ -13,7 +13,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -111,7 +110,8 @@ public class LearnerResultDAOImplTest {
         expectedJSON = generateExpectedJSON(result2);
         assertTrue(result2.getTestNo() > 0);
         assertTrue(result2.getStepNo() == 0);
-        jsonFromDB = learnerResultDAO.getAsJSON(user.getId(), project.getId(), result2.getTestNo(), result2.getStepNo());
+        jsonFromDB = learnerResultDAO.getAsJSON(user.getId(), project.getId(),
+                                                result2.getTestNo(), result2.getStepNo());
         assertEquals(expectedJSON, jsonFromDB);
 
         /* check relations */
@@ -163,7 +163,8 @@ public class LearnerResultDAOImplTest {
     @Test
     public void shouldGetAllResultsOfOneRun() throws NotFoundException {
         LearnerResult result = createLearnerResultsList().get(RESULTS_AMOUNT - 1);
-        List<String> resultsInDBAsJSON = learnerResultDAO.getAllAsJSON(user.getId(), project.getId(), result.getTestNo());
+        List<String> resultsInDBAsJSON = learnerResultDAO.getAllAsJSON(user.getId(), project.getId(),
+                                                                       result.getTestNo());
 
         assertEquals(RESULTS_AMOUNT, resultsInDBAsJSON.size());
         for (int i = 0; i < resultsInDBAsJSON.size(); i++) {
@@ -186,7 +187,8 @@ public class LearnerResultDAOImplTest {
                                         + "\"startTime\":0,"
                                         + "\"symbolsUsed\":0"
                                     + "},"
-                                    + "\"stepNo\":" + i + ",\"testNo\":" + result.getTestNo() + ",\"user\":" + user.getId() + "}";
+                                    + "\"stepNo\":" + i + ",\"testNo\":" + result.getTestNo() + ","
+                                    + "\"user\":" + user.getId() + "}";
             String resultAsJSON = resultsInDBAsJSON.get(i);
 
             assertEquals(expectedJSON, resultAsJSON);
@@ -266,7 +268,8 @@ public class LearnerResultDAOImplTest {
             learnerResultDAO.update(learnerResult);
         }
 
-        String jsonInDB = learnerResultDAO.getAsJSON(user.getId(), project.getId(), learnerResult.getTestNo(), RESULTS_AMOUNT / 2L);
+        String jsonInDB = learnerResultDAO.getAsJSON(user.getId(), project.getId(),
+                                                     learnerResult.getTestNo(), RESULTS_AMOUNT / 2L);
         assertEquals(middleResult, jsonInDB);
     }
 
@@ -393,7 +396,7 @@ public class LearnerResultDAOImplTest {
 
     private String generateExpectedJSON(LearnerResult result) {
         return "{\"configuration\":{\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\",\"comment\":\"\","
-                    +"\"eqOracle\":{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1},"
+                    + "\"eqOracle\":{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1},"
                     + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]},"
                 + "\"counterExample\":\"\",\"hypothesis\":{"
                     + "\"nodes\":[0,1],\"initNode\":0,\"edges\":["
@@ -409,7 +412,8 @@ public class LearnerResultDAOImplTest {
                     + "\"startTime\":0,"
                     + "\"symbolsUsed\":0"
                 + "},"
-                + "\"stepNo\":" + result.getStepNo() + ",\"testNo\":" + result.getTestNo() + ",\"user\":" + user.getId() + "}";
+                + "\"stepNo\":" + result.getStepNo() + ",\"testNo\":" + result.getTestNo() + ","
+                + "\"user\":" + user.getId() + "}";
     }
 
     private List<LearnerResult> createLearnerResultsList() throws NotFoundException {

@@ -32,7 +32,7 @@ public class FileResource {
 
     /** The security context containing the user of the request */
     @Context
-    SecurityContext securityContext;
+    private SecurityContext securityContext;
 
     @Inject
     private FileDAO fileDAO;

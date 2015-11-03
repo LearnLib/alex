@@ -2,18 +2,22 @@ package de.learnlib.alex.security;
 
 import org.jose4j.jwk.RsaJsonWebKey;
 
-import java.security.Key;
-
 /**
  * Holds the RSA public/private key pair that is used to sign and verify JWTs
  * The key should be created once the application has started and saved in here
  */
-public class RsaKeyHolder {
+public final class RsaKeyHolder {
 
     /**
      * The RSA public/private key pair
      */
     private static RsaJsonWebKey rsaJsonWebKey;
+
+    /**
+     * Deactivate the constructor because this is a utility class.
+     */
+    private RsaKeyHolder() {
+    }
 
     /**
      * Set the RSA key pair

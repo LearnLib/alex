@@ -35,7 +35,7 @@ public class CounterResource {
 
     /** The security context containing the user of the request */
     @Context
-    SecurityContext securityContext;
+    private SecurityContext securityContext;
 
     /**
      * Get all counters of a project.

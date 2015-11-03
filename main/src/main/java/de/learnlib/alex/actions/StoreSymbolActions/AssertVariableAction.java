@@ -42,9 +42,17 @@ public class AssertVariableAction extends SymbolAction {
         String variableValue = storeConnector.get(name);
 
         if (regexp) {
-            return variableValue.matches(value) ? getSuccessOutput() : getFailedOutput();
+            if (variableValue.matches(value)) {
+                return getSuccessOutput();
+            } else {
+                return getFailedOutput();
+            }
         } else {
-            return variableValue.equals(value) ? getSuccessOutput() : getFailedOutput();
+            if (variableValue.equals(value)) {
+                return getSuccessOutput();
+            } else {
+                return getFailedOutput();
+            }
         }
     }
 
