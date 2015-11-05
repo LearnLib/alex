@@ -8,7 +8,7 @@ import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.hibernate.validator.internal.constraintvalidators.EmailValidator;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jose4j.json.internal.json_simple.JSONObject;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
