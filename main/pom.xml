@@ -301,7 +301,7 @@
                             <docletArtifact>
                                 <groupId>com.carma</groupId>
                                 <artifactId>swagger-doclet</artifactId>
-                                <version>1.1.0</version>
+                                <version>1.1.1</version>
                             </docletArtifact>
                             <reportOutputDirectory>${basedir}/src/main/webapp</reportOutputDirectory>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
