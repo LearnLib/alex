@@ -9,11 +9,15 @@ Swagger
 -------
 To create this documentation a tool called [Swagger](http://swagger.io/) is used together with
 [an JavaDoc doclet](https://github.com/Carma-Public/swagger-jaxrs-doclet) which creates the files for swagger based on
-the code and some extra informations in the JavaDoc.
+the code and some extra information in the JavaDoc.
+
+To test REST resources which require an active user, please use the Login method (which do not need an active user)
+and copy the returned token into the 'api_key' field on the top of the page.
 
 Please notice: The swagger specification and the doclet both support inheritance of model classes, but sadly is
 swagger-ui incapable to render this information
-(there is an [open issue](https://github.com/swagger-api/swagger-ui/issues/300) about this).
+(there is are [several](https://github.com/swagger-api/swagger-ui/issues/300) 
+[issues](https://github.com/swagger-api/swagger-ui/issues/1526) about that).
 
 Actions
 -------
