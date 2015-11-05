@@ -12,16 +12,14 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
- * Action to check the page title
+ * Action to check the page title.
  */
 @Entity
 @DiscriminatorValue("web_checkPageTitle")
 @JsonTypeName("web_checkPageTitle")
 public class CheckPageTitleAction extends WebSymbolAction {
 
-    /**
-     * The title of the web page
-     */
+    /** The title of the web page. */
     @NotBlank
     private String title;
 

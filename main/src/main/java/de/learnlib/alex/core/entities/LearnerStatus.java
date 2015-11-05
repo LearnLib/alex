@@ -23,7 +23,7 @@ public class LearnerStatus {
     private final Learner learner;
 
     /**
-     * Statistics Class for the learner status
+     * Statistics Class for the learner status.
      */
     @JsonPropertyOrder(alphabetic = true)
     private class LearnerStatusStatistics {

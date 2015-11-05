@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * Interface to describe how Files are handled.
+ */
 public interface FileDAO {
 
     void create(Long userId, Long projectId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail)

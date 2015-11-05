@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 /**
- * Action to assert the equality of the content of a variable with a given string
+ * Action to assert the equality of the content of a variable with a given string.
  */
 @Entity
 @DiscriminatorValue("assertVariable")
@@ -32,7 +32,7 @@ public class AssertVariableAction extends SymbolAction {
     private String value;
 
     /**
-     * Whether the value of the variable is matched against a regular expression
+     * Whether the value of the variable is matched against a regular expression.
      */
     private boolean regexp;
 

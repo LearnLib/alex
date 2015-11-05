@@ -26,11 +26,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * REST API to manage files.
+ * @resourcePath files
+ * @resourceDescription Operations about files
+ */
 @Path("/projects/{project_id}/files")
 @RolesAllowed({"REGISTERED"})
 public class FileResource {
 
-    /** The security context containing the user of the request */
+    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
 

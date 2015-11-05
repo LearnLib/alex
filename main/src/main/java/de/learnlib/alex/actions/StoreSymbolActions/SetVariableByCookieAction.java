@@ -14,17 +14,27 @@ import javax.persistence.Entity;
 import javax.ws.rs.core.NewCookie;
 import java.util.Map;
 
+/**
+ * Action to set the value of a variable based on a response cookie.
+ */
 @Entity
 @DiscriminatorValue("setVariableByCookie")
 @JsonTypeName("setVariableByCookie")
 public class SetVariableByCookieAction extends SetVariableAction {
 
+    /**
+     * Enum to differentiate web & REST cookies.
+     */
     private enum CookieType {
-        WEB, REST
+        /** Cookies from or to a web interface. */
+        WEB,
+
+        /** Cookies from or to an REST interface. */
+        REST
     }
 
     /**
-     * The type of the cookie. Either by selenium cookie or from a http request
+     * The type of the cookie. Either by selenium cookie or from a http request.
      *
      * @requiredField
      */

@@ -13,6 +13,9 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Simple implementation of a FileDAO.
+ */
 public class FileDAOImpl implements FileDAO {
 
     private java.nio.file.Path uploadedDirectoryBaseLocation;

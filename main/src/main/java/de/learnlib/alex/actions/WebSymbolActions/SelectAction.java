@@ -20,8 +20,18 @@ import javax.persistence.Entity;
 @JsonTypeName("web_select")
 public class SelectAction extends FillAction {
 
+    /**
+     * Enum to choose how to interact with the selection input.
+     */
     private enum SelectByType {
-        VALUE, TEXT, INDEX;
+        /** Select by the value attribute. */
+        VALUE,
+
+        /** Select by the option text. */
+        TEXT,
+
+        /** Selecct simply by using the index starting at 0. */
+        INDEX
     }
 
     /**

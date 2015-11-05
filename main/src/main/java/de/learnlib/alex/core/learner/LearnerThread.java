@@ -227,7 +227,7 @@ public class LearnerThread extends Thread {
     }
 
     /**
-     * Get the ResetCounterSUL
+     * Get the ResetCounterSUL.
      *
      * @return The active ResetCounterSUL
      */

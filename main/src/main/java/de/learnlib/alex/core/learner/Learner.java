@@ -255,7 +255,7 @@ public class Learner {
     }
 
     /**
-     * Get the number of executed MQs in the current learn process
+     * Get the number of executed MQs in the current learn process.
      *
      * @return null if the learnThread has not been started or the number of executed MQs in the current learn process
      */
@@ -271,7 +271,7 @@ public class Learner {
     }
 
     /**
-     * Get the time the learner started learning
+     * Get the time the learner started learning.
      *
      * @return The time the learner started learning
      */

@@ -7,6 +7,12 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
+/**
+ * Proxy around a WMethodEQOracle.
+ * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
+ *
+ * @see de.learnlib.eqtests.basic.WMethodEQOracle
+ */
 @JsonTypeName("wmethod")
 public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy {
 

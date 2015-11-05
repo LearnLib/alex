@@ -8,27 +8,27 @@ import javax.validation.ValidationException;
 import java.util.List;
 
 /**
- * Interface for database operations on users
+ * Interface for database operations on users.
  */
 public interface UserDAO {
 
     /**
      * Creates a new user
-     *
+     *.
      * @param user The user to create
      * @throws ValidationException
      */
     void create(User user) throws ValidationException;
 
     /**
-     * Gets a list of all registered users
+     * Gets a list of all registered users.
      *
      * @return The list of all users
      */
     List<User> getAll();
 
     /**
-     * Gets a list of registered users with a specific role
+     * Gets a list of registered users with a specific role.
      *
      * @param role The role of the user
      * @return A list of all users with the given role
@@ -36,7 +36,7 @@ public interface UserDAO {
     List<User> getAllByRole(UserRole role);
 
     /**
-     * Gets a user by its email
+     * Gets a user by its email.
      *
      * @param email The users email
      * @return The user with the given email
@@ -44,7 +44,7 @@ public interface UserDAO {
     User getByEmail(String email);
 
     /**
-     * Gets a user by its id
+     * Gets a user by its id.
      *
      * @param id The id of the user
      * @return The user with the given id
@@ -52,7 +52,7 @@ public interface UserDAO {
     User getById(Long id);
 
     /**
-     * Deletes a user from the database. Admins can only be deleted if there is more than one available
+     * Deletes a user from the database. Admins can only be deleted if there is more than one available.
      *
      * @param id The id of the user to delete
      * @throws NotFoundException
@@ -60,7 +60,7 @@ public interface UserDAO {
     void delete(Long id) throws NotFoundException;
 
     /**
-     * Updates a user
+     * Updates a user.
      *
      * @param user The user to update
      * @throws ValidationException

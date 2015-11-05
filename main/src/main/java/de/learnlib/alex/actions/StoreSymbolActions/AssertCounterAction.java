@@ -12,16 +12,31 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 /**
- * Action to assert the value of a counter
+ * Action to assert the value of a counter.
  */
 @Entity
 @DiscriminatorValue("assertCounter")
 @JsonTypeName("assertCounter")
 public class AssertCounterAction extends SymbolAction {
 
-    // assert types to mimic <, <=, ==, >=, > in this order
+    /**
+     * Assert types to mimic the different operators.
+     */
     private enum Operator {
-        LESS_THAN, LESS_OR_EQUAL, EQUAL, GREATER_OR_EQUAL, GREATER_THAN
+        /** '<'. */
+        LESS_THAN,
+
+        /** '<='. */
+        LESS_OR_EQUAL,
+
+        /** '=='. */
+        EQUAL,
+
+        /** '>='. */
+        GREATER_OR_EQUAL,
+
+        /** '>'. */
+        GREATER_THAN
     }
 
     /**
@@ -37,7 +52,7 @@ public class AssertCounterAction extends SymbolAction {
     private Integer value;
 
     /**
-     * The method to compare the counterVariable value with the one given
+     * The method to compare the counterVariable value with the one given.
      */
     @NotNull
     private Operator operator;

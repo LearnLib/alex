@@ -33,7 +33,7 @@ public class LearnerResultResource {
     @Inject
     private LearnerResultDAO learnerResultDAO;
 
-    /** The security context containing the user of the request */
+    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
 

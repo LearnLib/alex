@@ -27,12 +27,23 @@ import java.util.concurrent.TimeUnit;
  */
 public class WebSiteConnector implements Connector {
 
+    /**
+     * Enum to select the browser used by Selenium.
+     */
     public enum WebBrowser {
+        /** Use Mozilla Firefox. */
         FIREFOX(FirefoxDriver.class),
+
+        /** Use Google Chrome. */
         CHROME(ChromeDriver.class),
+
+        /** Use the Internet Explorer by Microsoft. */
         IE(InternetExplorerDriver.class),
+
+        /** Simple & headless browser. This is the default driver. */
         HTMLUNITDRIVER(HtmlUnitDriver.class);
 
+        /** The connected WebDriver class. */
         private Class webDriverClass;
 
         WebBrowser(Class webDriverClass) {

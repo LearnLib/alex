@@ -5,7 +5,7 @@ import de.learnlib.alex.core.entities.IdRevisionPair;
 import java.util.LinkedList;
 
 /**
- * Helper class to allow batch get of symbols by id/revision pairs
+ * Helper class to allow batch get of symbols by id/revision pairs.
  */
 public class IdRevisionPairList extends LinkedList<IdRevisionPair> {
 
@@ -29,8 +29,8 @@ public class IdRevisionPairList extends LinkedList<IdRevisionPair> {
                 throw new IllegalArgumentException("Wrong format used for id/revision pairs");
             }
             add(new IdRevisionPair(
-                    Long.valueOf(idRevision[0]),
-                    Long.valueOf(idRevision[1])));
+                    Long.parseLong(idRevision[0]),
+                    Long.parseLong(idRevision[1])));
         }
     }
 }

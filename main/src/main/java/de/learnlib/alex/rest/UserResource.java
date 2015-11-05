@@ -35,25 +35,25 @@ import javax.xml.bind.ValidationException;
 import java.util.List;
 
 /**
- * REST resource to handle users
+ * REST resource to handle users.
  */
 @Path("/users")
 public class UserResource {
 
     /**
-     * The UserDAO to user
+     * The UserDAO to user.
      */
     @Inject
     private UserDAO userDAO;
 
     /**
-     * The security context containing the user of the request
+     * The security context containing the user of the request.
      */
     @Context
     private SecurityContext securityContext;
 
     /**
-     * Creates a new user
+     * Creates a new user.
      *
      * @param user The user to create
      * @return An HTTP response
@@ -79,7 +79,7 @@ public class UserResource {
     }
 
     /**
-     * Changes the password of the user
+     * Changes the password of the user.
      *
      * @param userId The id of the user
      * @param json   The pair oldPassword:newPassword as json
@@ -167,7 +167,7 @@ public class UserResource {
     }
 
     /**
-     * Get all users. Should only be allowed to call by an admin
+     * Get all users. Should only be allowed to call by an admin.
      *
      * @return An HTTP response containing all registered users
      */
@@ -235,7 +235,7 @@ public class UserResource {
     }
 
     /**
-     * Logs in a user by generating a unique JWT for him that needs to be send in every request
+     * Logs in a user by generating a unique JWT for him that needs to be send in every request.
      *
      * @param user The user to login
      * @return An HTTP response containing a signed JWT of the user on success
@@ -263,7 +263,7 @@ public class UserResource {
     }
 
     /**
-     * Generates a JWT as String representation with JSON {"token": [the-encoded-token]}
+     * Generates a JWT as String representation with JSON {"token": [the-encoded-token]}.
      * Encodes the id and the role of the user as "userId" and "userRole" in the claims of the jwt
      *
      * @param user The user to generate the JWT from
@@ -271,7 +271,6 @@ public class UserResource {
      * @throws JoseException
      */
     private String generateJWT(User user) throws JoseException {
-
         // generate claims with user data
         JwtClaims claims = new JwtClaims();
         claims.setIssuer("ALEX");

@@ -10,6 +10,9 @@ import org.hibernate.criterion.Restrictions;
 import javax.validation.ValidationException;
 import java.util.List;
 
+/**
+ * Implementation of a UserDAO using Hibernate.
+ */
 public class UserDAOImpl implements UserDAO {
 
     @Override

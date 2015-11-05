@@ -3,6 +3,9 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotBlank;
 
+/**
+ * Entity to describe an file which was uploaded.
+ */
 public class UploadableFile {
     @JsonProperty("project")
     private Long projectId;

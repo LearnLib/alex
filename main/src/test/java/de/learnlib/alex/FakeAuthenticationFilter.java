@@ -43,7 +43,7 @@ public class FakeAuthenticationFilter implements ContainerRequestFilter {
     }
 
     /**
-     * Custom Security context that allows to save a user instance in the context
+     * Custom Security context that allows to save a user instance in the context.
      */
     private class AuthContext implements SecurityContext {
 

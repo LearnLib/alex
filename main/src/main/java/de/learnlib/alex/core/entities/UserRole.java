@@ -1,17 +1,17 @@
 package de.learnlib.alex.core.entities;
 
 /**
- * Enumeration for User roles
+ * Enumeration for User roles.
  */
 public enum UserRole {
 
     /**
-     * User is default registered user
+     * User is default registered user.
      */
     REGISTERED,
 
     /**
-     * User is administrator with higher privileges
+     * User is administrator with higher privileges.
      */
     ADMIN
 //

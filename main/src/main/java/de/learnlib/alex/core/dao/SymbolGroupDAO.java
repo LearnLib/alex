@@ -12,11 +12,17 @@ import java.util.List;
  */
 public interface SymbolGroupDAO {
 
+    /**
+     * Enum to selecct which fields should be not only referenced but directly be included, i.e. loaded from the DB.
+     */
     enum EmbeddableFields {
+        /** Fetch all fields. */
         ALL,
 
+        /** Fetch all the symbols with all actions. */
         COMPLETE_SYMBOLS,
 
+        /** Fetch the symbols. */
         SYMBOLS;
 
         /**

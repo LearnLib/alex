@@ -4,6 +4,9 @@ import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.FileDAOImpl;
 import de.learnlib.alex.exceptions.NotFoundException;
 
+/**
+ * Connector to store and manage files.
+ */
 public class FileStoreConnector implements Connector {
 
     private FileDAO fileDAO;

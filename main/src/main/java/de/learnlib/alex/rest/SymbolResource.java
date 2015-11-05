@@ -60,7 +60,7 @@ public class SymbolResource {
     @Inject
     private SymbolDAO symbolDAO;
 
-    /** The security context containing the user of the request */
+    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
 
@@ -194,7 +194,7 @@ public class SymbolResource {
     }
 
     /**
-     * Get Symbols by a list of id/revision pairs
+     * Get Symbols by a list of id/revision pairs.
      *
      * @param projectId
      *          The ID of the project

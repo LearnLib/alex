@@ -64,7 +64,7 @@ public class LearnerResource {
     @Inject
     private Learner learner;
 
-    /** The security context containing the user of the request */
+    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
 
@@ -275,7 +275,7 @@ public class LearnerResource {
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.NOT_FOUND, e);
         } catch (LearnerException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST , e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
         }
     }
 

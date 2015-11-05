@@ -1,6 +1,5 @@
 package de.learnlib.alex.core.learner.connectors;
 
-import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.Project;
 
 /**

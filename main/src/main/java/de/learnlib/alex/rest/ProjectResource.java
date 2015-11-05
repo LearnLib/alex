@@ -45,7 +45,7 @@ public class ProjectResource {
     @Inject
     private ProjectDAO projectDAO;
 
-    /** The security context containing the user of the request */
+    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
 

@@ -65,13 +65,13 @@ public class LearnerResult implements Serializable {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
         private Date startDate;
 
-        /** The time the test started in ns */
+        /** The time the test started in ns. */
         private long startTime;
 
         /** The duration of the learn step. */
         private long duration;
 
-        /** The amount of equivalence queries.. */
+        /** The amount of equivalence queries. */
         private long eqsUsed;
 
         /** The amount of membership queries/ SUL resets. */
@@ -98,7 +98,7 @@ public class LearnerResult implements Serializable {
         }
 
         /**
-         * Set the start time
+         * Set the start time.
          *
          * @param startTime
          *          The time in ns
@@ -108,7 +108,7 @@ public class LearnerResult implements Serializable {
         }
 
         /**
-         * Get the date of when the test run started
+         * Get the date of when the test run started.
          *
          * @return The date
          */
@@ -117,7 +117,7 @@ public class LearnerResult implements Serializable {
         }
 
         /**
-         * Set the date when the test started
+         * Set the date when the test started.
          *
          * @param startDate
          *          The date object
@@ -203,7 +203,7 @@ public class LearnerResult implements Serializable {
         }
     }
 
-    /** The user of the LearnerResult */
+    /** The user of the LearnerResult. */
     private User user;
 
     /** The id of the LearnerResult in the DB. */

@@ -36,7 +36,7 @@ public class WebServiceConnector implements Connector {
     /** The response body of the last call done by the connection. */
     private String body;
 
-    /** The cookies from th last call done by the connection */
+    /** The cookies from th last call done by the connection. */
     private Map<String, NewCookie> cookies;
 
     /**
