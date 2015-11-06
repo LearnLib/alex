@@ -31,6 +31,12 @@ import org.jose4j.lang.JoseException;
  */
 public class ALEXApplication extends ResourceConfig {
 
+    /** The E-Mail for the default admin, i.e. the admin that will be auto created if no other admin exists. */
+    public static final String DEFAULT_ADMIN_EMAIL = "admin@alex.example";
+
+    /** The Password for the default admin, i.e. the admin that will be auto created if no other admin exists. */
+    public static final String DEFAULT_ADMIN_PASSWORD = "admin";
+
     /**
      * Constructor where the magic happens.
      */
@@ -69,9 +75,9 @@ public class ALEXApplication extends ResourceConfig {
             // create an admin if none exists
             if (userDAO.getAllByRole(UserRole.ADMIN).size() == 0) {
                 User admin = new User();
-                admin.setEmail("admin@alex.de");
+                admin.setEmail(DEFAULT_ADMIN_EMAIL);
                 admin.setRole(UserRole.ADMIN);
-                admin.setEncryptedPassword("admin");
+                admin.setEncryptedPassword(DEFAULT_ADMIN_PASSWORD);
 
                 userDAO.create(admin);
             }
