@@ -112,6 +112,6 @@ public class IdRevisionPair implements Serializable {
 
     @Override
     public String toString() {
-        return "(" + id + "/" + revision + ")";
+        return "<" + id + ":" + revision + ">";
     }
 }

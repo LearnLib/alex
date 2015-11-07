@@ -6,6 +6,20 @@
 		</Console>
 	</Appenders>
 	<Loggers>
+        <!-- Loggers of the dependencies. -->
+        <Logger name="com.gargoylesoftware.htmlunit" level="warn"/>
+        <Logger name="hsqldb.db" level="warn"/>
+        <Logger name="org.hibernate" level="warn"/>
+
+        <!-- Change the level of the following 2 Loggers to 'all' to get an inside view of Hibernates work,
+             or to 'off' to keep the output clean. -->
+        <Logger name="org.hibernate.SQL" level="off"/>
+        <Logger name="org.hibernate.type.descriptor.sql" level="off"/>
+
+        <!-- Our own logger. -->
+        <Logger name="learner" level="trace" />
+        <Logger name="server" level="info" />
+
 		<Root level="info">
 			<AppenderRef ref="Console" />
 		</Root>

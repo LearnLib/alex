@@ -1,5 +1,6 @@
 package de.learnlib.alex.actions.RESTSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
@@ -13,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Cookie;
+import java.beans.Transient;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,8 +31,8 @@ public class CallAction extends RESTSymbolAction {
     /** to be serializable. */
     private static final long serialVersionUID = 7971257988991996022L;
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /**
      * Enumeration to specify the HTTP method.
@@ -223,6 +225,7 @@ public class CallAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         try {
+            LOGGER.info("do REST request '"+ method + " " + url + "'.");
             doRequest(target);
             return getSuccessOutput();
         } catch (Exception e) {
@@ -250,7 +253,7 @@ public class CallAction extends RESTSymbolAction {
                               getCookiesWithVariableValues());
                 break;
             default:
-                LOGGER.info("tried to make a call to a REST API with an unknown method '" + method.name() + "'.");
+                LOGGER.warn("tried to make a call to a REST API with an unknown method '" + method.name() + "'.");
         }
     }
 

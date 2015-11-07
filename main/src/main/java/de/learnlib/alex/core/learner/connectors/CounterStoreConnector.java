@@ -6,11 +6,16 @@ import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Connector to store and manage counters.
  */
 public class CounterStoreConnector implements Connector {
+
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /**
      * The DAO to persist the counters to and fetch the counters from.
@@ -46,8 +51,10 @@ public class CounterStoreConnector implements Connector {
             counter.setValue(value);
             counterDAO.update(counter);
         } catch (NotFoundException e) {
-            createCounter(userId, projectId, name, value);
+            counter = createCounter(userId, projectId, name, value);
         }
+        LOGGER.debug("Set the counter '" + name + "' in the project <" + projectId + "> "
+                     + "of user <" + userId + "> to '" + value + "'.");
     }
 
     public void reset(Long projectId, String name) {
@@ -62,8 +69,10 @@ public class CounterStoreConnector implements Connector {
             counter.setValue(counter.getValue() + 1);
             counterDAO.update(counter);
         } catch (NotFoundException e) {
-            createCounter(userId, projectId, name, 1);
+            counter = createCounter(userId, projectId, name, 1);
         }
+        LOGGER.debug("Incremented the counter '" + name + "' in the project <" + projectId + "> "
+                     + "of user <" + userId + "> to '" + counter.getValue() + "'.");
     }
 
     public Integer get(Long userId, Long projectId, String name) throws IllegalStateException {
@@ -76,12 +85,13 @@ public class CounterStoreConnector implements Connector {
         }
     }
 
-    void createCounter(Long userId, Long projectId, String name, Integer value) {
+    Counter createCounter(Long userId, Long projectId, String name, Integer value) {
         Counter counter = new Counter();
         counter.setUser(new User(userId));
         counter.setProject(new Project(projectId));
         counter.setName(name);
         counter.setValue(value);
         counterDAO.create(counter);
+        return counter;
     }
 }

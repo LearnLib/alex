@@ -37,9 +37,9 @@ import java.util.List;
 public class LearnerThread extends Thread {
 
     /**
-     * Use the logger for the server part.
+     * Use the learner logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /**
      * Is the thread still running?
@@ -210,7 +210,9 @@ public class LearnerThread extends Thread {
 
     @Override
     public void run() {
+        LOGGER.trace("LearnThread.run() - enter");
         active = true;
+
         try {
             learn();
         } catch (Exception e) {
@@ -223,7 +225,9 @@ public class LearnerThread extends Thread {
                         e);
             }
         }
+
         active = false;
+        LOGGER.trace("LearnThread.run() - exit");
     }
 
     /**
@@ -259,6 +263,7 @@ public class LearnerThread extends Thread {
     }
 
     private void learnOneStep() throws NotFoundException {
+        LOGGER.trace("LearnerThread.learnOneStep()");
         LearnerResult.Statistics statistics = result.getStatistics();
         statistics.setStartTime(System.nanoTime());
         statistics.setStartDate(new Date());
@@ -274,6 +279,7 @@ public class LearnerThread extends Thread {
     }
 
     private void learnFirstStep() {
+        LOGGER.trace("LearnerThread.learnFirstStep()");
         learnerResultDAO.create(result);
         learner.startLearning();
         result.createHypothesisFrom(learner.getHypothesisModel());
@@ -304,6 +310,7 @@ public class LearnerThread extends Thread {
         // remember
         result.getStatistics().setEqsUsed(result.getStatistics().getEqsUsed() + 1);
         result.setCounterExample(newCounterExample);
+        LOGGER.info("The new counter example is '" + newCounterExample + "'.");
     }
 
     private void refineHypothesis() {

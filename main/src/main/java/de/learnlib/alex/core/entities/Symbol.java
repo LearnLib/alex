@@ -38,8 +38,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** to be serializable. */
     private static final long serialVersionUID = 7987585761829495962L;
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /** The ID of the Symbol in the DB. */
     @Id
@@ -391,19 +391,22 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) throws SULException {
-        for (int i = 0; i < actions.size(); i++) {
+        ExecuteResult result = ExecuteResult.OK;
+        for (int i = 0; i < actions.size() && result == ExecuteResult.OK; i++) {
             SymbolAction action = actions.get(i);
             if (!action.isDisabled()) {
-                ExecuteResult result = executeAction(action, connector);
+                ExecuteResult actionResult = executeAction(action, connector);
 
-                if (!action.isIgnoreFailure() && result != ExecuteResult.OK) {
+                if (!action.isIgnoreFailure() && actionResult != ExecuteResult.OK) {
+                    result = actionResult;
                     result.setFailedActionNumber(i);
-                    return result;
                 }
             }
         }
 
-        return ExecuteResult.OK;
+        LOGGER.info("Executed the Symbol " + idRevisionPair.toString() + " (" + name + ") "
+                    + "which returned '" + result + "'.");
+        return result;
     }
 
     private ExecuteResult executeAction(SymbolAction action, ConnectorManager connector) {

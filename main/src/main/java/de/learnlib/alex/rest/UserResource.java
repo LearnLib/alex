@@ -7,6 +7,8 @@ import de.learnlib.alex.security.RsaKeyHolder;
 import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jose4j.json.internal.json_simple.JSONObject;
@@ -40,6 +42,9 @@ import java.util.List;
 @Path("/users")
 public class UserResource {
 
+    /** Use the logger for the server part. */
+    private static final Logger LOGGER = LogManager.getLogger("server");
+
     /**
      * The UserDAO to user.
      */
@@ -62,6 +67,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(User user) {
+        LOGGER.trace("UserResource.create(" + user + ").");
         try {
             // validate email address
             if (!new EmailValidator().isValid(user.getEmail(), null)) {
@@ -92,6 +98,7 @@ public class UserResource {
     @RolesAllowed({"REGISTERED"})
     public Response changePassword(@PathParam("id") Long userId, JSONObject json) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("UserResource.changePassword(" + userId + ", " + json + ") for user " + user + ".");
 
         String oldPassword = (String) json.get("oldPassword");
         String newPassword = (String) json.get("newPassword");
@@ -126,8 +133,9 @@ public class UserResource {
     @RolesAllowed({"REGISTERED"})
     public Response changeEmail(@PathParam("id") Long userId, JSONObject json) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        String email = (String) json.get("email");
+        LOGGER.trace("UserResource.changeEmail(" + userId + ", " + json + ") for user " + user + ".");
 
+        String email = (String) json.get("email");
         try {
             User realUser = userDAO.getById(userId);
             User testUser = userDAO.getByEmail(email);
@@ -158,6 +166,7 @@ public class UserResource {
     @RolesAllowed({"REGISTERED"})
     public Response get(@PathParam("id") Long userId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("UserResource.get(" + userId + ") for user " + user + ".");
 
         if (user.getRole().equals(UserRole.ADMIN) || user.getId().equals(userId)) {
             return Response.ok(userDAO.getById(userId)).build();
@@ -193,6 +202,7 @@ public class UserResource {
     @RolesAllowed({"ADMIN"})
     public Response update(@PathParam("id") long userId, User userToUpdate) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("UserResource.update(" + userId + ", " + userToUpdate + ") for user " + user + ".");
 
         try {
             // check if the only admin wants to take away his admin rights
@@ -219,6 +229,7 @@ public class UserResource {
     @RolesAllowed({"REGISTERED"})
     public Response delete(@PathParam("id") long userId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("UserResource.delete(" + userId + ") for user " + user + ".");
 
         try {
             if (user.getRole().equals(UserRole.ADMIN) || user.getId().equals(userId)) {
@@ -246,6 +257,8 @@ public class UserResource {
     @Path("/login")
     public Response login(User user) {
         User realUser = userDAO.getByEmail(user.getEmail());
+        LOGGER.trace("UserResource.login(" + user + ") for user " + realUser + ".");
+
         if (realUser != null) {
             try {
                 if (realUser.isValidPassword(user.getPassword())) {

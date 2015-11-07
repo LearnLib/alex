@@ -7,6 +7,8 @@ import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.annotation.security.RolesAllowed;
@@ -36,6 +38,9 @@ import java.util.List;
 @Path("/projects")
 @RolesAllowed({"REGISTERED"})
 public class ProjectResource {
+
+    /** Use the logger for the server part. */
+    private static final Logger LOGGER = LogManager.getLogger("server");
 
     /** Context information about the URI. */
     @Context

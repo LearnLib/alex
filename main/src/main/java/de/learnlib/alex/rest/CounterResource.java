@@ -8,6 +8,8 @@ import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import de.learnlib.alex.utils.StringList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -28,6 +30,9 @@ import java.util.List;
  */
 @Path("/projects/{project_id}/counters")
 public class CounterResource {
+
+    /** Use the logger for the server part. */
+    private static final Logger LOGGER = LogManager.getLogger("server");
 
     /** The CounterDAO to use. */
     @Inject
@@ -50,6 +55,7 @@ public class CounterResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCounters(@PathParam("project_id") Long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("CounterResource.getAllCounters(" + projectId + ") for user " + user.toString() + ".");
 
         try {
             List<Counter> counters = counterDAO.getAll(user.getId(), projectId);
@@ -74,6 +80,7 @@ public class CounterResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("CounterResource.deleteCounter(" + projectId + ", " + name +  ") for user " + user + ".");
 
         try {
             counterDAO.delete(user.getId(), projectId, name);
@@ -101,6 +108,7 @@ public class CounterResource {
     public Response deleteCounter(@PathParam("project_id") Long projectId,
                                   @PathParam("counter_names") StringList names) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("CounterResource.deleteCounter(" + projectId + ", " + names +  ") for user " + user + ".");
 
         try {
             counterDAO.delete(user.getId(), projectId, names.toArray(new String[names.size()]));

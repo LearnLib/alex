@@ -92,16 +92,18 @@ public class WebSiteConnector implements Connector {
          */
         private void enableJavaScript(HtmlUnitDriver htmlUnitDriver) {
             try {
-                LOGGER.debug("Try enabling JavaScript");
+                LOGGER.debug("Try enabling JavaScript for the HTMLUnitDriver");
                 htmlUnitDriver.setJavascriptEnabled(true);
                 Field f = htmlUnitDriver.getClass().getDeclaredField("webClient");
                 f.setAccessible(true);
                 WebClient client = (WebClient) f.get(htmlUnitDriver);
                 client.getOptions().setThrowExceptionOnScriptError(false);
             } catch (NoSuchFieldException e) {
-                LOGGER.warn("Enabling JavaScript failed. Private Property 'webClient' does not exist", e);
+                LOGGER.warn("Enabling JavaScript for the HTMLUnitDriver failed. "
+                            + "Private Property 'webClient' does not exist", e);
             } catch (IllegalAccessException e) {
-                LOGGER.warn("Enabling JavaScript failed. Problem accessing private 'webClient'", e);
+                LOGGER.warn("Enabling JavaScript for the HTMLUnitDriver failed. "
+                            + "Problem accessing private 'webClient'", e);
             }
         }
     }
@@ -115,8 +117,8 @@ public class WebSiteConnector implements Connector {
     /** Max. time to wait for JavaScript to load before aborting */
     private static final int JAVASCRIPT_LOADING_THRESHOLD = 5000; // 5 seconds
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("leaner");
 
     private WebBrowser browser;
 

@@ -44,12 +44,7 @@ public class IncrementCounterAction extends SymbolAction {
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
-        try {
-            storeConnector.increment(user.getId(), project.getId(), name);
-            return getSuccessOutput();
-        } catch (IllegalStateException e) {
-            return getFailedOutput();
-        }
-
+        storeConnector.increment(user.getId(), project.getId(), name);
+        return getSuccessOutput();
     }
 }

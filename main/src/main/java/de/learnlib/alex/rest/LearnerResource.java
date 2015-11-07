@@ -87,6 +87,7 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResource.start(" + projectId + ", " + configuration +  ") for user " + user + ".");
 
         LearnerStatus status = new LearnerStatus(user, learner);
         try {
@@ -136,6 +137,8 @@ public class LearnerResource {
     public Response resume(@PathParam("project_id") long projectId, @PathParam("test_run") long testRunNo,
                            LearnerResumeConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResource.resume(" + projectId + ", " + testRunNo + ", " + configuration +  ") "
+                     + "for user " + user + ".");
 
         LearnerStatus status = new LearnerStatus(user, learner);
         try {
@@ -178,6 +181,7 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response stop() {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResource.stop() for user " + user + ".");
 
         LearnerStatus status = new LearnerStatus(user, learner);
         if (learner.isActive(user)) {
@@ -200,6 +204,7 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response isActive() {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResource.isActive() for user " + user + ".");
 
         LearnerStatus status = new LearnerStatus(user, learner);
         return Response.ok(status).build();
@@ -218,6 +223,7 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getResult() {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResource.getResult() for user " + user + ".");
 
         LearnerResult resultInThread = learner.getResult(user);
         if (resultInThread == null) {
@@ -255,6 +261,7 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResource.readOutput(" + projectId + ", " + symbolSet + ") for user " + user + ".");
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);

@@ -7,6 +7,8 @@ import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
@@ -28,6 +30,9 @@ import java.util.List;
  */
 @Path("/projects/{project_id}/results")
 public class LearnerResultResource {
+
+    /** Use the logger for the server part. */
+    private static final Logger LOGGER = LogManager.getLogger("server");
 
     /** The {@link de.learnlib.alex.core.dao.LearnerResultDAO} to use. */
     @Inject
@@ -51,6 +56,7 @@ public class LearnerResultResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllFinalResults(@PathParam("project_id") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResultResource.getAllFinalResults(" + projectId + ") for user " + user + ".");
 
         try {
             List<String> resultsAsJSON = learnerResultDAO.getAllAsJSON(user.getId(), projectId);
@@ -79,6 +85,7 @@ public class LearnerResultResource {
     public Response getAllSteps(@PathParam("project_id") Long projectId,
                                 @PathParam("test_nos") IdsList testNos) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResultResource.getAllSteps(" + projectId + ", " + testNos + ") for user " + user + ".");
 
         try {
             if (testNos.size() == 1) {
@@ -111,6 +118,8 @@ public class LearnerResultResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOneFinalResult(@PathParam("project_id") long projectId, @PathParam("test_no") long testNo) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResultResource.getOneFinalResult(" + projectId + ", " + testNo + ") "
+                     + "for user " + user + ".");
 
         try {
             String json = learnerResultDAO.getAsJSON(user.getId(), projectId, testNo);
@@ -139,6 +148,8 @@ public class LearnerResultResource {
     public Response deleteResultSet(@PathParam("project_id") Long projectId,
                                     @PathParam("test_numbers") IdsList testNumbers) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNumbers + ") "
+                     + "for user " + user + ".");
 
         try {
             Long[] numbersLongArray = testNumbers.toArray(new Long[testNumbers.size()]);

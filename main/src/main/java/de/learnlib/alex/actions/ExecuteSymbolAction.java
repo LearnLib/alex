@@ -28,8 +28,8 @@ public class ExecuteSymbolAction extends SymbolAction {
     /** to be serializable. */
     private static final long serialVersionUID = 3143716533295082498L;
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /**
      * Reference to the Symbol that will be executed.
@@ -107,11 +107,15 @@ public class ExecuteSymbolAction extends SymbolAction {
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         if (symbolToExecute == null) {
-            LOGGER.info("ExecuteSymbolAction.execute: Symbol not found!");
+            LOGGER.info("Could not find the other Symbol <"
+                        + symbolToExecute.getId() + ":" + + symbolToExecute.getRevision() + "> to execute.");
             return getFailedOutput();
         }
 
         ExecuteResult symbolResult = symbolToExecute.execute(connector);
+        LOGGER.info("Executed other Symbol <"+ symbolToExecute.getId() + ":" + + symbolToExecute.getRevision() + "> "
+                    + " with the result of '" + symbolResult + "' "
+                    + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated +").");
 
         if (symbolResult == ExecuteResult.OK) {
             return getSuccessOutput();

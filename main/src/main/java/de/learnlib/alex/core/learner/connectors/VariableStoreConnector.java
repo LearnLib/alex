@@ -1,5 +1,8 @@
 package de.learnlib.alex.core.learner.connectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +10,9 @@ import java.util.Map;
  * Connector to hold and manage variables.
  */
 public class VariableStoreConnector implements Connector {
+
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /** The variable store. */
     private Map<String, String> store;
@@ -38,6 +44,7 @@ public class VariableStoreConnector implements Connector {
      */
     public void set(String name, String value) {
         store.put(name, value);
+        LOGGER.debug("Set the variable '" + name + "' to the value '" + value + "'.");
     }
 
     /**

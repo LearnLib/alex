@@ -21,8 +21,8 @@ public class GotoAction extends WebSymbolAction {
     /** to be serializable. */
     private static final long serialVersionUID = -9158530821188611940L;
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /** The URL of the site. */
     private String url;
@@ -61,9 +61,10 @@ public class GotoAction extends WebSymbolAction {
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
             connector.get(getURLWithVariableValues());
+            LOGGER.info("Could goto '" + url + "'.");
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info("Could not goto " + url, e);
+            LOGGER.info("Could not goto '" + url + "'.", e);
             return getFailedOutput();
         }
     }

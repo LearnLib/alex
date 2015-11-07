@@ -13,8 +13,8 @@ import java.io.IOException;
  */
 public final class JSONHelpers {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /**
      * Disabled default constructor, this is only a utility class with static methods.
@@ -35,9 +35,14 @@ public final class JSONHelpers {
         try {
             JsonNode node = getNodeByAttribute(json, attribute);
             if (node == null) {
+                LOGGER.info("Could not extract the value of the attribute '" + attribute + "' "
+                            + "in the body '" + json + "'.");
                 return  null;
             } else {
-                return node.asText();
+                String value = node.asText();
+                LOGGER.info("The attribute '" + attribute + "' has the value '" + value + "' "
+                            + " in the body '" + json + "'.");
+                return value;
             }
         } catch (IOException e) {
             LOGGER.info("Could not pares the JSON to get the value of an attribute.", e);
@@ -58,9 +63,14 @@ public final class JSONHelpers {
         try {
             JsonNode node = getNodeByAttribute(json, attribute);
             if (node == null) {
+                LOGGER.info("Could not extract the type of the attribute '" + attribute + "' "
+                            + "in the body '" + json + "'.");
                 return  null;
             } else {
-                return node.getNodeType();
+                JsonNodeType nodeType = node.getNodeType();
+                LOGGER.info("The attribute '" + attribute + "' has the type '" + nodeType + "' "
+                                    + " in the body '" + json + "'.");
+                return nodeType;
             }
         } catch (IOException e) {
             LOGGER.info("Could not pares the JSON to get the type of an attribute.", e);

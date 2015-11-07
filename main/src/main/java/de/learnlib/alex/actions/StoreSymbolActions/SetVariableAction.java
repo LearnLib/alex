@@ -46,11 +46,7 @@ public class SetVariableAction extends SymbolAction {
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
-        try {
-            storeConnector.set(name, value);
-            return getSuccessOutput();
-        } catch (IllegalStateException e) {
-            return getFailedOutput();
-        }
+        storeConnector.set(name, value);
+        return getSuccessOutput();
     }
 }
