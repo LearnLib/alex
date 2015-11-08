@@ -125,7 +125,7 @@ module.exports = function (grunt) {
                 },
                 html: {
                     files: ['app/modules/**/*.html'],
-                    tasks: ['build-js'],
+                    tasks: ['build-html'],
                     options: {
                         spawn: false
                     }
@@ -207,13 +207,13 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-postcss');
 
-    grunt.registerTask('build-js', ['html2js', 'concat', 'uglify']);
+    grunt.registerTask('build-js', ['concat', 'uglify']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);
-    grunt.registerTask('default', ['build-js', 'build-css']);
+    grunt.registerTask('build-html', ['html2js']);
+    grunt.registerTask('default', ['build-html', 'build-js', 'build-css']);
     grunt.registerTask('test-unit', ['karma']);
 };

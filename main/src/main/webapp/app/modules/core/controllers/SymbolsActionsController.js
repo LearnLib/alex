@@ -222,7 +222,10 @@
         $scope.pasteActions = function () {
             var actions = Clipboard.paste('actions');
             if (actions !== null) {
-                _(actions).map(ActionService.buildFromData).forEach($scope.addAction);
+                actions = _.map(actions, function (action) {
+                    return ActionService.buildFromData(action);
+                });
+                _.forEach(actions, $scope.addAction);
                 Toast.info(actions.length + 'action[s] pasted from clipboard');
                 setChanged(true);
             }
