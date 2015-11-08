@@ -21,6 +21,13 @@
             return window.graphlib;
         });
 
+    angular.module('ALEX.controllers', []);
+    angular.module('ALEX.directives', []);
+    angular.module('ALEX.entities', []);
+    angular.module('ALEX.filters', []);
+    angular.module('ALEX.services', []);
+    angular.module('ALEX.resources', []);
+
     angular.module('ALEX', [
         // plain js libraries as modules
         'lodash',
@@ -42,8 +49,11 @@
 
         // application specific modules
         'ALEX.templates',
-        'ALEX.core',
-        'ALEX.actions',
-        'ALEX.modals'
+        'ALEX.controllers',
+        'ALEX.directives',
+        'ALEX.entities',
+        'ALEX.filters',
+        'ALEX.services',
+        'ALEX.resources'
     ])
 }());

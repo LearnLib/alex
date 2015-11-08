@@ -1,0 +1,89 @@
+<div class="modal-header">
+
+    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+    <h3 class="modal-title">Create Action</h3>
+    <span class="text-muted">Create a new action for a symbol</span>
+</div>
+
+<form ng-submit="createAction()" id="action-create-form">
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xs-5">
+
+                <accordion close-others="true" class="action-types-accordion">
+                    <accordion-group>
+                        <accordion-heading>
+                            <div><strong>Web</strong></div>
+                        </accordion-heading>
+
+                        <a href ng-click="selectNewActionType('web_clear')">Clear input</a>
+                        <a href ng-click="selectNewActionType('web_click')">Click element</a>
+                        <a href ng-click="selectNewActionType('web_clickLinkByText')">Click link by text</a>
+                        <a href ng-click="selectNewActionType('web_fill')">Fill input</a>
+                        <a href ng-click="selectNewActionType('web_checkForText')">Search for text</a>
+                        <a href ng-click="selectNewActionType('web_checkForNode')">Search element</a>
+                        <a href ng-click="selectNewActionType('web_checkPageTitle')">Check page title</a>
+                        <a href ng-click="selectNewActionType('web_submit')">Submit form</a>
+                        <a href ng-click="selectNewActionType('web_goto')">Open URL</a>
+                        <a href ng-click="selectNewActionType('web_select')">Select from list</a>
+                    </accordion-group>
+
+                    <accordion-group>
+                        <accordion-heading>
+                            <div><strong>REST</strong></div>
+                        </accordion-heading>
+
+                        <a href ng-click="selectNewActionType('rest_call')">Make request</a>
+                        <a href ng-click="selectNewActionType('rest_checkStatus')">Check status</a>
+                        <a href ng-click="selectNewActionType('rest_checkHeaderField')">Check header field</a>
+                        <a href ng-click="selectNewActionType('rest_checkForText')">Search in body</a>
+                        <a href ng-click="selectNewActionType('rest_checkAttributeExists')">Check attribute</a>
+                        <a href ng-click="selectNewActionType('rest_checkAttributeValue')">Check attribute value</a>
+                        <a href ng-click="selectNewActionType('rest_checkAttributeType')">Check attribute type</a>
+                    </accordion-group>
+
+                    <accordion-group>
+                        <accordion-heading>
+                            <div><strong>Misc</strong></div>
+                        </accordion-heading>
+
+                        <a href ng-click="selectNewActionType('assertCounter')">Assert counter</a>
+                        <a href ng-click="selectNewActionType('assertVariable')">Assert variable</a>
+                        <a href ng-click="selectNewActionType('executeSymbol')">Execute symbol</a>
+                        <a href ng-click="selectNewActionType('incrementCounter')">Increment counter</a>
+                        <a href ng-click="selectNewActionType('setCounter')">Set counter</a>
+                        <a href ng-click="selectNewActionType('setVariable')">Set variable</a>
+                        <a href ng-click="selectNewActionType('setVariableByCookie')">Set variable by cookie</a>
+                        <a href ng-click="selectNewActionType('setVariableByJSON')">Set variable by JSON</a>
+                        <a href ng-click="selectNewActionType('setVariableByHTML')">Set variable by HTML</a>
+                        <a href ng-click="selectNewActionType('wait')">Wait</a>
+                    </accordion-group>
+                </accordion>
+
+            </div>
+            <div class="col-xs-7">
+
+                <div class="alert alert-info alert-condensed" ng-show="action === null">
+                    Please select an action type
+                </div>
+
+                <action-form-fields action="action"
+                                    symbols="symbols"
+                                    map="map"
+                                    ng-if="action !== null">
+                </action-form-fields>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <a href class="btn btn-info btn-sm" ng-click="createActionAndContinue()">Create and Continue</a>
+        <button class="btn btn-primary btn-sm" type="submit">Create</button>
+    </div>
+
+</form>

@@ -2,30 +2,15 @@ module.exports = function (grunt) {
 
     var scripts = [
         'app/modules/init.js',
-
-        // core module
-        'app/modules/core/init.js',
-        'app/modules/core/constants.js',
-        'app/modules/core/routes.js',
-        'app/modules/core/controllers/*.js',
-        'app/modules/core/directives/*.js',
-        'app/modules/core/filters/*.js',
-        'app/modules/core/models/*.js',
-        'app/modules/core/resources/*.js',
-        'app/modules/core/services/*.js',
-
-        // actions module
-        'app/modules/actions/init.js',
-        'app/modules/actions/constants.js',
-        'app/modules/actions/directives/**/*.js',
-        'app/modules/actions/services/**/*.js',
-        'app/modules/actions/models/**/*.js',
-
-        // modals module
-        'app/modules/modals/init.js',
-        'app/modules/modals/controllers/*.js',
-        'app/modules/modals/directives/*.js',
-        'app/modules/modals/services/*.js'
+        'app/modules/constants.js',
+        'app/modules/config.js',
+        'app/modules/routes.js',
+        'app/modules/controllers/**/*.js',
+        'app/modules/directives/**/*.js',
+        'app/modules/entities/**/*.js',
+        'app/modules/filters/**/*.js',
+        'app/modules/resources/**/*.js',
+        'app/modules/services/**/*.js'
     ];
 
     var libraries = [
@@ -85,7 +70,7 @@ module.exports = function (grunt) {
             html2js: {
                 options: {
                     useStrict: true,
-                    base: '../webapp',
+                    base: '../webapp/app',
                     module: 'ALEX.templates',
                     singleModule: true,
                     htmlmin: {
@@ -100,10 +85,7 @@ module.exports = function (grunt) {
                     }
                 },
                 all: {
-                    src: [
-                        'app/modules/core/views/**/*.html',
-                        'app/modules/actions/views/*.html',
-                        'app/modules/modals/views/*.html'],
+                    src: ['app/views/**/*.html'],
                     dest: 'app/alex.templates.js'
                 }
             },
@@ -197,6 +179,17 @@ module.exports = function (grunt) {
                 dist: {
                     src: 'app/stylesheets/style.css'
                 }
+            },
+
+            ngAnnotate: {
+                options: {
+                    singleQuotes: true
+                },
+                dist: {
+                    files: {
+                        'app/alex.js': ['app/alex.js']
+                    }
+                }
             }
         });
 
@@ -210,8 +203,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-postcss');
+    grunt.loadNpmTasks('grunt-ng-annotate');
 
-    grunt.registerTask('build-js', ['concat', 'uglify']);
+    grunt.registerTask('build-js', ['concat', 'ngAnnotate', 'uglify']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-html', 'build-js', 'build-css']);
