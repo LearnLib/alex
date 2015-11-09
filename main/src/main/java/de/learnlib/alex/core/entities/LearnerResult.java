@@ -65,7 +65,12 @@ public class LearnerResult implements Serializable {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
         private Date startDate;
 
-        /** The time the test started in ns. */
+        /**
+         * The 'time' the test started in nanoseconds.
+         * This is just internally user to calculate the duration and the Java value for the used 'nanoTime' has no
+         * real world meaning.
+         * */
+        @JsonIgnore
         private long startTime;
 
         /** The duration of the learn step. */
@@ -86,6 +91,7 @@ public class LearnerResult implements Serializable {
         public Statistics() {
             this.startDate = new Date(0);
             this.startTime = 0;
+            this.duration  = 0;
         }
 
         /**

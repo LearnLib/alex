@@ -85,17 +85,4 @@ public class IncrementCounterActionTest {
         verify(counters).increment(USER_ID, PROJECT_ID, TEST_NAME);
     }
 
-    @Test
-    public void shouldFailIncrementingIfCounterIsNotDeclared() {
-        CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        willThrow(IllegalStateException.class).given(counters).increment(USER_ID, PROJECT_ID, TEST_NAME);
-        ConnectorManager connector = mock(ConnectorManager.class);
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
-
-        ExecuteResult result = incrementAction.execute(connector);
-
-        assertEquals(ExecuteResult.FAILED, result);
-        verify(counters).increment(USER_ID, PROJECT_ID, TEST_NAME);
-    }
-
 }

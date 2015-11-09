@@ -107,8 +107,8 @@ public class ExecuteSymbolAction extends SymbolAction {
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         if (symbolToExecute == null) {
-            LOGGER.info("Could not find the other Symbol <"
-                        + symbolToExecute.getId() + ":" + + symbolToExecute.getRevision() + "> to execute.");
+            LOGGER.info("No other Symbol to execute was set "
+                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated +").");
             return getFailedOutput();
         }
 

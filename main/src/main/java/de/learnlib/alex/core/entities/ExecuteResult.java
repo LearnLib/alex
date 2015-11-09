@@ -39,10 +39,10 @@ public enum ExecuteResult {
 
     @Override
     public String toString() {
-        if (this == FAILED) {
-            return this.name() + "(" + (failedActionNumber + 1) + ")";
+        if (failedActionNumber == null) {
+            return this.name(); // most likely OK
         } else {
-            return this.name();
+            return this.name() + "(" + (failedActionNumber + 1) + ")";
         }
     }
 }

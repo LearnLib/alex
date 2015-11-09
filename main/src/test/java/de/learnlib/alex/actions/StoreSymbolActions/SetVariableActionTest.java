@@ -68,17 +68,4 @@ public class SetVariableActionTest {
         verify(variables).set(TEST_NAME, TEST_VALUE);
     }
 
-    @Test
-    public void shouldFailIfVariableIsNotDeclared() {
-        VariableStoreConnector variables = mock(VariableStoreConnector.class);
-        willThrow(IllegalStateException.class).given(variables).set(TEST_NAME, TEST_VALUE);
-        ConnectorManager connector = mock(ConnectorManager.class);
-        given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
-
-        ExecuteResult result = setAction.execute(connector);
-
-        assertEquals(ExecuteResult.FAILED, result);
-        verify(variables).set(TEST_NAME, TEST_VALUE);
-    }
-
 }

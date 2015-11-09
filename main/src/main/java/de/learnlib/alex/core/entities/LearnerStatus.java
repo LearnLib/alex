@@ -1,10 +1,13 @@
 package de.learnlib.alex.core.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.learner.Learner;
+
+import java.util.Date;
 
 /**
  * Class to provide information about the current learn process.
@@ -28,17 +31,18 @@ public class LearnerStatus {
     @JsonPropertyOrder(alphabetic = true)
     private class LearnerStatusStatistics {
 
-        private Long startTime;
+        private Date startDate;
 
         private Long mqsUsed;
 
-        public LearnerStatusStatistics(Long startTime, Long mqsUsed) {
-            this.startTime = startTime;
+        public LearnerStatusStatistics(Date startDate, Long mqsUsed) {
+            this.startDate = startDate;
             this.mqsUsed = mqsUsed;
         }
 
-        public Long getStartTime() {
-            return startTime;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
+        public Date getStartDate() {
+            return startDate;
         }
 
         public Long getMqsUsed() {
@@ -123,7 +127,7 @@ public class LearnerStatus {
         if (!learner.isActive(user)) {
             return null;
         } else {
-            return new LearnerStatusStatistics(learner.getStartTime(user), learner.getMQsUsed(user));
+            return new LearnerStatusStatistics(learner.getStartDate(user), learner.getMQsUsed(user));
         }
     }
 }

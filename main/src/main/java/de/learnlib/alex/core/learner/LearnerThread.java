@@ -210,8 +210,8 @@ public class LearnerThread extends Thread {
 
     @Override
     public void run() {
-        LOGGER.trace("LearnThread.run() - enter");
         active = true;
+        LOGGER.trace("LearnThread.run() - enter");
 
         try {
             learn();
@@ -226,8 +226,8 @@ public class LearnerThread extends Thread {
             }
         }
 
-        active = false;
         LOGGER.trace("LearnThread.run() - exit");
+        active = false;
     }
 
     /**
@@ -265,8 +265,9 @@ public class LearnerThread extends Thread {
     private void learnOneStep() throws NotFoundException {
         LOGGER.trace("LearnerThread.learnOneStep()");
         LearnerResult.Statistics statistics = result.getStatistics();
-        statistics.setStartTime(System.nanoTime());
         statistics.setStartDate(new Date());
+        statistics.setStartTime(System.nanoTime());
+        statistics.setDuration(0L);
         statistics.setEqsUsed(0L);
 
         if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
@@ -326,6 +327,9 @@ public class LearnerThread extends Thread {
         long currentTime = System.nanoTime();
 
         statistics.setDuration(currentTime - startTime);
+        LOGGER.debug("Duration of the learning: " + statistics.getDuration() + " "
+                     + "(start: " + startTime + ", end: " + currentTime + ").");
+
         statistics.setMqsUsed(Math.abs(resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed()));
         statistics.setSymbolsUsed(Math.abs(symbolCounterSUL.getStatisticalData().getCount() - statistics.getSymbolsUsed()));
 
