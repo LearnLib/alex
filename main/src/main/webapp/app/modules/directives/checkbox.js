@@ -17,14 +17,13 @@
      * @returns {{restrict: string, template: string, scope: {model: string}, link: link}}
      */
     function checkbox() {
-        var template = '' +
-            '<span class="alx-checkbox">' +
-            '   <i class="fa fa-fw" ng-class="model._selected ? \'fa-check-square-o\' : \'fa-square-o\'"></i>' +
-            '</span>';
-
         return {
             restrict: 'E',
-            template: template,
+            template: `
+                <span class="alx-checkbox">
+                    <i class="fa fa-fw" ng-class="model._selected ? 'fa-check-square-o':'fa-square-o'"></i>
+                </span>
+            `,
             scope: {
                 model: '='
             },
@@ -53,14 +52,13 @@
      * @returns {{restrict: string, template: string, scope: {model: string}, link: link}}
      */
     function checkboxMultiple() {
-        var template = '' +
-            '<span class="alx-checkbox">' +
-            '   <i class="fa fa-fw" ng-class="checked ? \'fa-check-square-o\' : \'fa-square-o\'"></i>' +
-            '</span>';
-
         return {
             restrict: 'E',
-            template: template,
+            template: `
+                <span class="alx-checkbox">
+                    <i class="fa fa-fw" ng-class="checked ? 'fa-check-square-o' : 'fa-square-o'"></i>
+                </span>
+            `,
             scope: {
                 model: '='
             },

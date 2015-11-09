@@ -60,11 +60,7 @@
 
                 <symbol-group-list>
                     <symbol-group-list-item ng-repeat="group in groups track by $index | orderBy:'-name':true"
-                                            group="group">
-
-                        <symbol-group-list-item-header></symbol-group-list-item-header>
-
-                        <symbol-group-list-item-content>
+                                            group="group" editable="false">
 
                             <symbol-list>
                                 <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true"
@@ -72,7 +68,7 @@
                                                   selection-model-selected-items="selectedSymbols"
                                                   symbol="symbol">
 
-                                    <a href class="pull-right" ng-if="resetSymbol !== symbol"
+                                    <a href="" class="pull-right" ng-if="resetSymbol !== symbol"
                                        ng-click="setResetSymbol(symbol)"
                                        tooltip="Set as reset symbol" tooltip-placement="left"
                                        selection-model-ignore>
@@ -83,8 +79,6 @@
 
                                 </symbol-list-item>
                             </symbol-list>
-
-                        </symbol-group-list-item-content>
 
                     </symbol-group-list-item>
                 </symbol-group-list>

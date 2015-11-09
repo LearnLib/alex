@@ -1,41 +1,43 @@
-(function () {
+(function() {
     'use strict';
 
     angular
         .module('ALEX.directives')
-        .directive('widget', widget)
-        .directive('counterexamplesWidget', counterexamplesWidget)
-        .directive('learnResumeSettingsWidget', learnResumeSettingsWidget);
+        .directive('counterexamplesWidget', counterexamplesWidget);
 
-    /**
-     * The directive for displaying a widget without content. Use is a a wrapper for any content you like.
-     *
-     * Attribute 'title' {string} can be applied for displaying a widget title.
-     *
-     * Use: '<widget title="..."></widget>'
-     *
-     * @returns {{scope: {title: string}, templateUrl: string, transclude: boolean, link: link}}
-     */
-    function widget() {
-        return {
-            scope: {
-                title: '@'
-            },
-            templateUrl: 'views/directives/widget.html',
-            transclude: true,
-            link: link
-        };
+    const template = `
+        <form class="form form-condensed" ng-submit="testAndAddCounterExample()">
+            <p class="text-muted">
+                <em>Click on the labels of the hypothesis to create a counterexample.</em>
+            </p>
+            <div class="list-group list-group-condensed" ng-sortable="{animation:150}">
+                <div class="list-group-item counterexample-list-item" ng-repeat="io in counterExample">
+                    <i class="fa fa-fw fa-close pull-right" ng-click="removeInputOutputAt($index)"></i>
+                    <span class="label label-primary">{{io.input}}</span>
+                    <span class="label" ng-class="io.output === 'OK' ? 'label-success' : 'label-danger'">
+                        {{io.output}}
+                    </span>
+                </div>
+            </div>
+            <div ng-show="counterExample.length > 0">
+                <button class="btn btn-default btn-sm btn-block">Add counterexample</button>
+                <hr>
+            </div>
+        </form>
 
-        function link(scope) {
-
-            /**
-             * The title that should be displayed in the widget header
-             * @type {string}
-             */
-            scope.title = scope.title || 'Untitled';
-        }
-    }
-
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="ce in tmpCounterExamples">
+                <span class="pull-right" ng-click="removeCounterExampleAt($index)">
+                    <i class="fa fa-trash"></i>
+                </span>
+                <div class="clearfix" style="margin-right: 32px;">
+                    <span class="label label-primary pull-left" style="margin: 0 3px 3px 0"
+                          ng-repeat="c in ce" ng-bind="c.input">
+                    </span>
+                </div>
+            </li>
+        </ul>
+    `;
 
     /**
      * The directive for the content of the counterexample widget that is used to create and test counterexamples.
@@ -43,14 +45,16 @@
      *
      * Attribute 'counterexamples' {array} should be the model where the created counterexamples are put into.
      *
-     * Use: '<div counterexamples-widget counterexamples="..."></div>'
+     * Use: '<widget title="...">
+     *          <counterexamples-widget counterexamples="..."></counterexamples-widget>
+     *       </widget>'
      *
      * @param CounterExampleService - The service for sharing a counterexample with a hypothesis
      * @param LearnerResource - The LearnerResource for communication with the Learner
      * @param ToastService - The ToastService
      * @param SymbolResource
      * @param $q - The angular $q service
-     * @returns {{scope: {counterexamples: string}, templateUrl: string, link: link}}
+     * @returns {{scope: {counterexamples: string}, template: string, link: link}}
      */
     // @ngInject
     function counterexamplesWidget(CounterExampleService, LearnerResource, ToastService, SymbolResource, $q) {
@@ -59,7 +63,7 @@
                 counterexamples: '=',
                 learnResult: '='
             },
-            templateUrl: 'views/directives/counterexamples-widget.html',
+            template: template,
             link: link
         };
 
@@ -179,52 +183,6 @@
 
                 return deferred.promise;
             }
-        }
-    }
-
-
-    /**
-     * The directive for the widget of the sidebar where learn resume configurations can be edited. Should be included
-     * into a <div widget></div> directive for visual appeal.
-     *
-     * Expects an attribute 'learnConfiguration' attached to the element whose value should be a LearnConfiguration
-     * object.
-     *
-     * Use: <div learn-resume-settings-widget learn-configuration="..."></div>
-     *
-     * @param EqOracle
-     * @returns {{scope: {learnConfiguration: string}, templateUrl: string, link: link}}
-     */
-    // @ngInject
-    function learnResumeSettingsWidget(EqOracle) {
-        return {
-            scope: {
-                learnConfiguration: '='
-            },
-            templateUrl: 'views/directives/learn-resume-settings-widget.html',
-            link: link
-        };
-
-        function link(scope) {
-
-            /**
-             * The dictionary for eq oracle types
-             * @type {Object}
-             */
-            scope.eqOracles = EqOracle.types;
-
-            /**
-             * The selected eq oracle type from the select box
-             * @type {string}
-             */
-            scope.selectedEqOracle = scope.learnConfiguration.eqOracle.type;
-
-            /**
-             * Creates a new eq oracle object from the selected type and assigns it to the configuration
-             */
-            scope.setEqOracle = function () {
-                scope.learnConfiguration.eqOracle = EqOracle.build(scope.selectedEqOracle);
-            };
         }
     }
 }());

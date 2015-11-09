@@ -1,4 +1,5 @@
 (function () {
+    'use strict';
 
     angular
         .module('ALEX.directives')
@@ -20,7 +21,7 @@
      * @param dagreD3
      * @param d3
      * @param graphlib
-     * @returns {{scope: {result: string, layoutSettings: string, isSelectable: string}, templateUrl: string, link: link}}
+     * @returns {{scope: {result: string, layoutSettings: string, isSelectable: string}, template: string, link: link}}
      */
     // @ngInject
     function hypothesis($window, CounterExampleService, _, dagreD3, d3, graphlib) {
@@ -30,7 +31,11 @@
                 layoutSettings: '=',
                 isSelectable: '@'
             },
-            templateUrl: 'views/directives/hypothesis.html',
+            template: `
+                <div class="hypothesis-wrapper">
+                    <svg class="hypothesis"></svg>
+                </div>
+            `,
             link: link
         };
         function link(scope, el) {

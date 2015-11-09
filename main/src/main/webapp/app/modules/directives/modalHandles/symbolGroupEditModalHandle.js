@@ -16,10 +16,11 @@
      * Use: '<button symbol-group-edit-modal group="..." on-updated="..." on-deleted="...">Click Me!</button>'
      *
      * @param $modal - The ui.bootstrap $modal service
+     * @param SymbolGroup - The symbolGroup model
      * @returns {{scope: {group: string, onUpdated: string, onDeleted: string}, link: link}}
      */
     // @ngInject
-    function symbolGroupEditModalHandle($modal) {
+    function symbolGroupEditModalHandle($modal, SymbolGroup) {
         return {
             restrict: 'A',
             scope: {
@@ -30,30 +31,20 @@
             link: link
         };
 
-        function link(scope, el, attrs) {
-            el.on('click', handleModal);
-
-            function handleModal() {
-                var modal = $modal.open({
+        function link(scope, el) {
+            el.on('click', () => {
+                $modal.open({
                     templateUrl: 'views/modals/symbol-group-edit-modal.html',
                     controller: 'SymbolGroupEditModalController',
                     resolve: {
                         modalData: function () {
                             return {
-                                group: scope.group
+                                group: SymbolGroup.build(scope.group)
                             }
                         }
                     }
-                });
-
-                modal.result.then(function (data) {
-                    if (data.status === 'updated') {
-                        scope.onUpdated()(data.newGroup, data.oldGroup);
-                    } else if (data.status === 'deleted') {
-                        scope.onDeleted()(data.group);
-                    }
                 })
-            }
+            });
         }
     }
 }());

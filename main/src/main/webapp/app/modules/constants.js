@@ -27,4 +27,10 @@
             IE: 'IE',
             HTMLUNITDRIVER: 'HTMLUNITDRIVER'
         })
+
+        .constant('events', {
+            GROUP_CREATED: 'group:created',
+            GROUP_UPDATED: 'group:updated',
+            GROUP_DELETED: 'group:deleted'
+        })
 }());

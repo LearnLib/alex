@@ -9,7 +9,19 @@
     function userRegisterForm(UserResource, ToastService) {
         return {
             scope: true,
-            templateUrl: 'views/directives/user-register-form.html',
+            template: `
+                <form ng-submit="register()">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control" placeholder="Email address" ng-model="user.email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" placeholder="Password" ng-model="user.password">
+                    </div>
+                    <button class="btn btn-sm btn-block btn-primary">Create Account</button>
+                </form>
+            `,
             link: link
         };
 

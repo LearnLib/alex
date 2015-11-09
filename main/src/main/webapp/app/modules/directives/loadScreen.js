@@ -13,13 +13,19 @@
      * Use is like '<load-screen></load-screen>'.
      *
      * @param $http - The angular $http service
-     * @returns {{scope: {}, templateUrl: string, link: link}}
+     * @returns {{scope: {}, template: string, link: link}}
      */
     // @ngInject
     function loadScreen($http) {
         return {
             scope: {},
-            templateUrl: 'views/directives/load-screen.html',
+            template: `
+                <div id="load-screen">
+                    <p class="text-center" id="load-screen-indicator">
+                        <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
+                    </p>
+                </div>
+            `,
             link: link
         };
 

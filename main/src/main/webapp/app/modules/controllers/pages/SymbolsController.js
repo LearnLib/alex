@@ -16,11 +16,13 @@
      * @param _ - Lodash
      * @param ToastService - The ToastService
      * @param FileDownloadService - The FileDownloadService
+     * @param events
+     * @param EventBus
      * @constructor
      */
     // @ngInject
     function SymbolsController($scope, SessionService, Symbol, SymbolResource, SymbolGroupResource, _, ToastService,
-                               FileDownloadService) {
+                               FileDownloadService, events, EventBus) {
 
         /**
          * The project that is saved in the session
@@ -47,12 +49,25 @@
         $scope.groups = [];
 
         // fetch all symbol groups and include all symbols
-        (function init() {
-            SymbolGroupResource.getAll($scope.project.id, {embedSymbols: true})
-                .then(function (groups) {
-                    $scope.groups = groups;
-                })
-        }());
+        SymbolGroupResource.getAll($scope.project.id, {embedSymbols: true})
+            .then(groups => {
+                $scope.groups = groups;
+            });
+
+        // listen on group create event
+        EventBus.on(events.GROUP_CREATED, (evt, data) => {
+            $scope.addGroup(data.group);
+        }, $scope);
+
+        // listen on group update event
+        EventBus.on(events.GROUP_UPDATED, (evt, data) => {
+            $scope.updateGroup(data.group);
+        }, $scope);
+
+        // listen on group delete event
+        EventBus.on(events.GROUP_DELETED, (evt, data) => {
+            $scope.deleteGroup(data.group);
+        }, $scope);
 
         /**
          * Finds the symbol group object from a given symbol. Returns undefined if no symbol group was found.
@@ -198,7 +213,6 @@
          * @param {SymbolGroup} group
          */
         $scope.deleteGroup = function (group) {
-            console.log(group.id);
             $scope.removeSymbols(group.symbols);
             _.remove($scope.groups, {id: group.id});
         };

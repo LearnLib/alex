@@ -15,7 +15,7 @@
      *
      * Use it like '<view-heading title="..."> ... </view-heading>'
      *
-     * @returns {{scope: {title: string, subTitle: string}, transclude: boolean, templateUrl: string}}
+     * @returns {{scope: {title: string}, transclude: boolean, template: string}}
      */
     function viewHeader() {
         return {
@@ -23,7 +23,14 @@
                 title: '@'
             },
             transclude: true,
-            templateUrl: 'views/directives/view-header.html'
+            template: `
+                <div class="view-header">
+                    <div class="alx-container-fluid">
+                        <div class="view-header-title-pre" ng-transclude></div>
+                        <h2 class="view-header-title" ng-bind="title"></h2>
+                    </div>
+                </div>
+            `
         }
     }
 }());

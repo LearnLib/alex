@@ -20,16 +20,15 @@
      */
     // @ngInject
     function discriminationTree(_, d3, dagreD3, graphlib, $window) {
-        var template = '' +
-            '<div class="discrimination-tree-wrapper">' +
-            '   <svg><g></g></svg>' +
-            '</div>';
-
         return {
             scope: {
                 data: '='
             },
-            template: template,
+            template: `
+                <div class="discrimination-tree-wrapper">
+                   <svg><g></g></svg>
+                </div>
+            `,
             link: link
         };
 
@@ -189,13 +188,13 @@
 
                 function zoomHandler() {
                     svgGroup.attr('transform', 'translate(' + zoom.translate()
-                    + ')' + ' scale(' + zoom.scale() + ')');
+                        + ')' + ' scale(' + zoom.scale() + ')');
                 }
 
                 // resize the svg to its parents size on window resize
                 // and call it once so that svg gets the proper dimensions
                 $window.addEventListener('resize', fitSize);
-                scope.$on('$destroy', function(){
+                scope.$on('$destroy', function () {
                     $window.removeEventListener('resize', fitSize);
                 });
 

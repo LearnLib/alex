@@ -5,34 +5,54 @@
         .module('ALEX.directives')
         .directive('projectDetailsWidget', projectDetailsWidget);
 
+    const template = `
+        <table class="table table-condensed">
+            <tbody>
+            <tr>
+                <td><strong>Name</strong></td>
+                <td ng-bind="::project.name"></td>
+            </tr>
+            <tr>
+                <td><strong>URL</strong></td>
+                <td><a href="{{::project.baseUrl}}" target="_blank" ng-bind="::project.baseUrl"></a></td>
+            </tr>
+            <tr>
+                <td><strong>#Groups</strong></td>
+                <td ng-bind="numberOfGroups"></td>
+            </tr>
+            <tr>
+                <td><strong>#Symbols</strong></td>
+                <td ng-bind="numberOfSymbols"></td>
+            </tr>
+            <tr>
+                <td><strong>#Tests</strong></td>
+                <td ng-bind="numberOfTests"></td>
+            </tr>
+            </tbody>
+        </table>
+    `;
+
     /**
      * The directive for the dashboard widget that displays information about the current project.
      *
-     * Use: <dashboard-widget>
+     * Use: <widget title="...">
      *          <project-details-widget></project-details-widget>
-     *      </dashboard-widget>
+     *      </widget>
      *
      * @param SessionService - The SessionService
      * @param SymbolGroupResource - The SymbolGroup Resource
      * @param LearnResultResource - The LearnResult Resource
-     * @returns {{require: string, templateUrl: string, link: link}}
+     * @returns {{scope: {}, template: string, link: link}}
      */
     // @ngInject
     function projectDetailsWidget(SessionService, SymbolGroupResource, LearnResultResource) {
         return {
-            require: '^dashboardWidget',
-            templateUrl: 'views/directives/project-details-widget.html',
+            scope: {},
+            template: template,
             link: link
         };
 
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         * @param ctrl - The dashboardWidget controller
-         */
-        function link(scope, el, attrs, ctrl) {
-            ctrl.setWidgetTitle('About this Project');
+        function link(scope) {
 
             /**
              * The project in sessionStorage

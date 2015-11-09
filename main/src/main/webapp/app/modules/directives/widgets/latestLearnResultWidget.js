@@ -5,34 +5,42 @@
         .module('ALEX.directives')
         .directive('latestLearnResultWidget', latestLearnResultWidget);
 
+    const template = `
+        <div class="text-muted" ng-if="!result">
+            <em>There are no learn results in the database</em>
+        </div>
+        <div ng-if="result">
+            <p>
+                The latest learning process started at
+                <strong ng-bind="::(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></strong> with EQ-oracle
+                <strong ng-bind="::(result.configuration.eqOracle.type | formatEqOracle)"></strong> and the
+                <strong ng-bind="::(result.configuration.algorithm | formatAlgorithm)"></strong> algorithm.
+            </p>
+            <a class="btn btn-xs btn-default" ui-sref="learn.results.compare({testNos: [result.testNo]})">Check it out</a>
+        </div>
+    `;
+
     /**
      * The directive for the dashboard widget that displays information about the latest learning result, if there
      * exists one.
      *
-     * Use: <dashboard-widget>
+     * Use: <widget title="...">
      *          <latest-learn-result-widget></latest-learn-result-widget>
-     *      </dashboard-widget>
+     *      </widget>
      *
      * @param SessionService - The SessionService
      * @param LearnResultResource - The LearnResult factory
-     * @returns {{require: string, templateUrl: string, link: link}}
+     * @returns {{scope: {}, template: string, link: link}}
      */
     // @ngInject
     function latestLearnResultWidget(SessionService, LearnResultResource) {
         return {
-            require: '^dashboardWidget',
-            templateUrl: 'views/directives/latest-learn-result-widget.html',
+            scope: {},
+            template: template,
             link: link
         };
 
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         * @param ctrl - The controller of dashboardWidget
-         */
-        function link(scope, el, attrs, ctrl) {
-            ctrl.setWidgetTitle('Latest Learn Result');
+        function link(scope) {
 
             /**
              * The latest learning result

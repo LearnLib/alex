@@ -16,16 +16,14 @@
      */
     // @ngInject
     function actionBar($window) {
-
-        var template = '' +
-            '<div class="action-bar" layout-toggle-element>' +
-            '   <div class="alx-container-fluid" ng-transclude></div>' +
-            '</div>';
-
         return {
             replace: true,
             transclude: true,
-            template: template,
+            template: `
+                <div class="action-bar" layout-toggle-element>
+                    <div class="alx-container-fluid" ng-transclude></div>
+                </div>
+            `,
             link: link
         };
 

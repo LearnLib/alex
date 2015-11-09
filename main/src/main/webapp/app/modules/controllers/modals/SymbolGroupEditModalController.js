@@ -12,19 +12,20 @@
      * @param $scope
      * @param $modalInstance
      * @param modalData - The data that is passed to this controller
-     * @param SymbolGroup
      * @param SymbolGroupResource
      * @param ToastService - The ToastService
+     * @param events - The applications events
+     * @param EventBus
      * @constructor
      */
     // @ngInject
-    function SymbolGroupEditModalController($scope, $modalInstance, modalData, SymbolGroup, SymbolGroupResource, ToastService) {
+    function SymbolGroupEditModalController($scope, $modalInstance, modalData, SymbolGroupResource, ToastService, events, EventBus) {
 
         /**
          * The symbol group that should be edited
          * @type {SymbolGroup}
          */
-        $scope.group = SymbolGroup.build(modalData.group);
+        $scope.group = modalData.group;
 
         /**
          * An error message that can be displayed in the template
@@ -41,11 +42,10 @@
             SymbolGroupResource.update($scope.group)
                 .then(function (updatedGroup) {
                     ToastService.success('Group updated');
-                    $modalInstance.close({
-                        status: 'updated',
-                        newGroup: updatedGroup,
-                        oldGroup: modalData.group
+                    EventBus.emit(events.GROUP_UPDATED, {
+                        group: updatedGroup
                     });
+                    $modalInstance.dismiss();
                 })
                 .catch(function (response) {
                     $scope.errorMsg = response.data.message;
@@ -61,10 +61,10 @@
             SymbolGroupResource.delete($scope.group)
                 .then(function () {
                     ToastService.success('Group <strong>' + $scope.group.name + '</strong> deleted');
-                    $modalInstance.close({
-                        status: 'deleted',
+                    EventBus.emit(events.GROUP_DELETED, {
                         group: $scope.group
                     });
+                    $modalInstance.dismiss();
                 })
                 .catch(function (response) {
                     $scope.errorMsg = response.data.message;

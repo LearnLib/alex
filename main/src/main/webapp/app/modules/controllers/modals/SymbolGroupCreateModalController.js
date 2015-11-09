@@ -10,18 +10,21 @@
      *
      * @param $scope
      * @param $modalInstance
-     * @param modalData
+     * @param SessionService
      * @param SymbolGroup
      * @param SymbolGroupResource
      * @param _
      * @param ToastService
+     * @param events
+     * @param EventBus
      * @constructor
      */
     // @ngInject
-    function SymbolGroupCreateModalController($scope, $modalInstance, modalData, SymbolGroup, SymbolGroupResource, _, ToastService) {
+    function SymbolGroupCreateModalController($scope, $modalInstance, SessionService, SymbolGroup, SymbolGroupResource,
+                                              _, ToastService, events, EventBus) {
 
         // the id of the project where the new symbol group should be created in
-        var projectId = modalData.projectId;
+        const project = SessionService.project.get();
 
         /**
          * The new symbol group
@@ -43,12 +46,10 @@
         $scope.errorMsg = null;
 
         // load all existing symbol groups
-        (function init() {
-            SymbolGroupResource.getAll(projectId)
-                .then(function (groups) {
-                    $scope.groups = groups;
-                });
-        }());
+        SymbolGroupResource.getAll(project.id)
+            .then(groups => {
+                $scope.groups = groups;
+            });
 
         /**
          * Creates a new symbol group and closes the modal on success and passes the newly created symbol group
@@ -56,15 +57,18 @@
         $scope.createGroup = function () {
             $scope.errorMsg = null;
 
-            var index = _.findIndex($scope.groups, {name: $scope.group.name});
+            const index = _.findIndex($scope.groups, {name: $scope.group.name});
 
             if (index === -1) {
-                SymbolGroupResource.create(projectId, $scope.group)
-                    .then(function (createdGroup) {
+                SymbolGroupResource.create(project.id, $scope.group)
+                    .then(createdGroup => {
                         ToastService.success('Symbol group <strong>' + createdGroup.name + '</strong> created');
-                        $modalInstance.close(createdGroup);
+                        EventBus.emit(events.GROUP_CREATED, {
+                            group: createdGroup
+                        });
+                        $modalInstance.dismiss();
                     })
-                    .catch(function (response) {
+                    .catch(response => {
                         $scope.errorMsg = response.data.message;
                     });
             } else {

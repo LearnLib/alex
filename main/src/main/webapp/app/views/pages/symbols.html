@@ -63,17 +63,7 @@
 
         <symbol-group-list>
             <symbol-group-list-item ng-repeat="group in groups | orderBy:'-name':true"
-                                    group="group">
-
-                <symbol-group-list-item-header>
-                    <a href symbol-group-edit-modal-handle
-                       group="group" on-updated="updateGroup" on-deleted="deleteGroup"
-                            tooltip="Edit this group" tooltip-placement="left">
-                        <i class="fa fa-fw fa-gear"></i>
-                    </a>
-                </symbol-group-list-item-header>
-
-                <symbol-group-list-item-content>
+                                    group="group" editable="true">
 
                     <symbol-list>
                         <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true"
@@ -120,8 +110,6 @@
 
                         </symbol-list-item>
                     </symbol-list>
-
-                </symbol-group-list-item-content>
 
             </symbol-group-list-item>
         </symbol-group-list>

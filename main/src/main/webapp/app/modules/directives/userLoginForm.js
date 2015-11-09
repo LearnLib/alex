@@ -9,7 +9,19 @@
     function userLoginForm($state, $window, UserResource, jwtHelper, ToastService, SessionService) {
         return {
             scope: true,
-            templateUrl: 'views/directives/user-login-form.html',
+            template: `
+                <form ng-submit="login()">
+                    <div class="form-group">
+                        <label>Email</label>
+                            <input type="text" class="form-control" placeholder="Email address" ng-model="user.email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" placeholder="Password" ng-model="user.password">
+                    </div>
+                    <button class="btn btn-sm btn-block btn-primary">Login</button>
+                </form>
+            `,
             link: link
         };
 

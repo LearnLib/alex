@@ -190,6 +190,19 @@ module.exports = function (grunt) {
                         'app/alex.js': ['app/alex.js']
                     }
                 }
+            },
+
+            babel: {
+                options: {
+                    sourceMap: false,
+                    presets: ['es2015'],
+                    compact: false
+                },
+                dist: {
+                    files: {
+                        'app/alex.js': 'app/alex.js'
+                    }
+                }
             }
         });
 
@@ -204,8 +217,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-ng-annotate');
+    grunt.loadNpmTasks('grunt-babel');
 
-    grunt.registerTask('build-js', ['concat', 'ngAnnotate', 'uglify']);
+    grunt.registerTask('build-js', ['concat', 'babel', 'ngAnnotate', 'uglify']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-html', 'build-js', 'build-css']);
