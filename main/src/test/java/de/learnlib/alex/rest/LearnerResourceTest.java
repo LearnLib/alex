@@ -27,6 +27,7 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -100,6 +101,7 @@ public class LearnerResourceTest extends JerseyTest {
         given(result.getUserId()).willReturn(USER_TEST_ID);
         given(result.getProjectId()).willReturn(PROJECT_TEST_ID);
         given(result.getTestNo()).willReturn(TEST_NO);
+        given(learner.getStartDate(user)).willReturn(new Date(0));
         given(learner.isActive(user)).willReturn(true);
         given(learner.getResult(user)).willReturn(result);
     }
@@ -109,7 +111,11 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().post(Entity.json(START_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{"
+                                + "\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
+                                  + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
+                                + "\"testNo\":" + TEST_NO
+                              + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).start(eq(user), eq(project), any(LearnerConfiguration.class));
     }
@@ -180,7 +186,7 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).resume(any(User.class), any(LearnerConfiguration.class));
     }
@@ -190,7 +196,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/stop").request().post(Entity.json(""));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).stop(user);
     }
@@ -213,7 +219,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/active").request().get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startTime\":0},\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
     }
 

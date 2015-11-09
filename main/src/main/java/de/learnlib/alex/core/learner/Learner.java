@@ -15,6 +15,7 @@ import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.oracles.ResetCounterSUL;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -271,17 +272,17 @@ public class Learner {
     }
 
     /**
-     * Get the time the learner started learning.
+     * Get the date and time when the learner started learning.
      *
-     * @return The time the learner started learning
+     * @return The date and time when the learner started learning.
      */
-    public Long getStartTime(User user) {
+    public Date getStartDate(User user) {
         LearnerThread learnerThread = userThreads.get(user);
 
         if (learnerThread == null) {
             return null;
         } else {
-            return getResult(user).getStatistics().getStartTime();
+            return getResult(user).getStatistics().getStartDate();
         }
     }
 

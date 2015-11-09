@@ -55,7 +55,6 @@
             });
 
             // convert ns to ms
-            learnResult.statistics.startTime = Math.ceil(learnResult.statistics.startTime / 1000000);
             learnResult.statistics.duration = Math.ceil(learnResult.statistics.duration / 1000000);
 
             return learnResult;
