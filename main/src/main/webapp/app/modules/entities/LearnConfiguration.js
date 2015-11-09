@@ -10,11 +10,12 @@
      *
      * @param learnAlgorithms - The dictionary for learning algorithms
      * @param EqOracle - The factory for EQ-oracles
+     * @param webBrowser - The available web browsers
      * @returns {LearnConfiguration}
      * @constructor
      */
     // @ngInject
-    function LearnConfigurationFactory(learnAlgorithms, EqOracle) {
+    function LearnConfigurationFactory(learnAlgorithms, EqOracle, webBrowser) {
 
         /**
          * The model for a learning configuration
@@ -27,6 +28,7 @@
             this.algorithm = learnAlgorithms.TTT;
             this.resetSymbol = null;
             this.comment = null;
+            this.browser = webBrowser.HTMLUNITDRIVER;
         }
 
         /**
@@ -39,6 +41,7 @@
             delete this.algorithm;
             delete this.resetSymbol;
             delete this.comment;
+            delete this.browser;
             return this;
         };
 
@@ -79,7 +82,8 @@
                 maxAmountOfStepsToLearn: data.maxAmountOfStepsToLearn,
                 algorithm: data.algorithm,
                 eqOracle: EqOracle.build(data.eqOracle),
-                resetSymbol: data.resetSymbol
+                resetSymbol: data.resetSymbol,
+                browser: data.browser
             });
         };
 

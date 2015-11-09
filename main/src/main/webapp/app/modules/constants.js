@@ -19,4 +19,12 @@
             DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
             TTT: 'TTT'
         })
+
+        // available selenium web drivers
+        .constant('webBrowser', {
+            FIREFOX: 'FIREFOX',
+            CHROME: 'CHROME',
+            IE: 'IE',
+            HTMLUNITDRIVER: 'HTMLUNITDRIVER'
+        })
 }());

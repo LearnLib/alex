@@ -18,7 +18,8 @@
      * @constructor
      */
     // @ngInject
-    function LearnSetupSettingsModalController($scope, $modalInstance, modalData, learnAlgorithms, EqOracle, LearnConfiguration) {
+    function LearnSetupSettingsModalController($scope, $modalInstance, modalData, learnAlgorithms, EqOracle,
+                                               LearnConfiguration, webBrowser) {
 
         /**
          * The constants for eqOracles types
@@ -34,6 +35,11 @@
          * The constants for learnAlgorithm names
          */
         $scope.learnAlgorithms = learnAlgorithms;
+
+        /**
+         * The web driver enum
+         */
+        $scope.webBrowser = webBrowser;
 
         /**
          * The LearnConfiguration to be edited
