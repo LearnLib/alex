@@ -17,12 +17,11 @@
      * @param _ - Lodash
      * @param ErrorService - The ErrorService
      * @param LearnConfiguration
-     * @param CounterExampleService - The service that contains the current counterexample
      * @constructor
      */
     // @ngInject
     function LearnStartController($scope, $interval, SessionService, LearnerResource, LearnResultResource, ToastService, _, ErrorService,
-                                  LearnConfiguration, CounterExampleService) {
+                                  LearnConfiguration) {
 
         // The project that is stored in the session
         var project = SessionService.project.get();
@@ -65,7 +64,6 @@
 
         // initialize the controller
         (function init() {
-            CounterExampleService.resetCurrentCounterexample();
             poll();
 
             // stop polling when you leave the page
@@ -133,7 +131,6 @@
 
             LearnerResource.resume(project.id, _.last($scope.results).testNo, config)
                 .then(function () {
-                    CounterExampleService.resetCurrentCounterexample();
                     poll();
                 })
                 .catch(function (response) {

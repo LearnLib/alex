@@ -1,57 +1,58 @@
-<view-header title="Files"></view-header>
+<div ng-controller="FilesController as vm">
+    <view-header title="Files"></view-header>
 
-<action-bar>
-    <div ng-show="files.length > 0">
-        <checkbox-multiple model="files" class="pull-left"></checkbox-multiple>
-        <button class="btn btn-default btn-sm" ng-click="deleteSelectedFiles()">Delete</button>
-    </div>
-</action-bar>
-
-<div class="view-body">
-    <div class="alx-container-fluid">
-
-        <div ngf-drop ngf-select class="alert alert-info" ng-model="filesToUpload" ng-show="!filesToUpload.length"
-             ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="false">
-            Drag & Drop files here or click to upload
+    <action-bar>
+        <div ng-if="vm.files.length > 0">
+            <checkbox-multiple model="vm.files" class="pull-left"></checkbox-multiple>
+            <button class="btn btn-default btn-sm" ng-click="vm.deleteSelectedFiles()">Delete</button>
         </div>
+    </action-bar>
 
-        <div ng-show="filesToUpload.length">
-            <div class="btn-group btn-group-sm">
-                <button class="btn btn-primary"
-                        ng-click="upload()">
-                    <span class="label label-info" ng-bind="filesToUpload.length"></span>&nbsp; Upload Files
-                </button>
-                <button class="btn btn-primary">
-                    <span ng-bind="progress"></span>%
-                </button>
+    <div class="view-body">
+        <div class="alx-container-fluid">
+
+            <div ngf-drop ngf-select class="alert alert-info" ng-model="vm.filesToUpload" ng-if="!vm.filesToUpload.length"
+                 ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="false">
+                Drag & Drop files here or click to upload
             </div>
 
-            <button class="btn btn-default btn-sm pull-right"
-                    ng-click="filesToUpload = null">
-                <i class="fa fa-fw fa-close"></i> Cancel
-            </button>
-        </div>
-
-        <hr>
-
-        <div class="file-list">
-            <div class="file-list-item"
-                 ng-repeat="file in files"
-                 selection-model
-                 selection-model-selected-items="selectedFiles">
-
-                <checkbox selection-model-ignore class="pull-left" model="file"></checkbox>
-
-                <div class="file-list-item-content">
-                    <span ng-bind="file.name"></span>
-                    <button class="btn btn-icon btn-xs pull-right"
-                            ng-click="deleteFile(file)">
-                        <i class="fa fa-fw fa-trash"></i> Delete
+            <div ng-show="vm.filesToUpload.length">
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-primary" ng-click="vm.upload()">
+                        <span class="label label-info" ng-bind="vm.filesToUpload.length"></span>&nbsp; Upload Files
+                    </button>
+                    <button class="btn btn-primary">
+                        <span ng-bind="vm.progress"></span>%
                     </button>
                 </div>
 
+                <button class="btn btn-default btn-sm pull-right"
+                        ng-click="vm.filesToUpload = null">
+                    <i class="fa fa-fw fa-close"></i> Cancel
+                </button>
             </div>
-        </div>
 
+            <hr>
+
+            <div class="file-list">
+                <div class="file-list-item"
+                     ng-repeat="file in vm.files"
+                     selection-model
+                     selection-model-selected-items="vm.selectedFiles">
+
+                    <checkbox selection-model-ignore class="pull-left" model="file"></checkbox>
+
+                    <div class="file-list-item-content">
+                        <span ng-bind="file.name"></span>
+                        <button class="btn btn-icon btn-xs pull-right"
+                                ng-click="vm.deleteFile(file)">
+                            <i class="fa fa-fw fa-trash"></i> Delete
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>

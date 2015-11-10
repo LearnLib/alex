@@ -22,6 +22,10 @@
              */
             scope.project = SessionService.project.get();
 
+            /**
+             * The user that is in the session
+             * @type {User|null}
+             */
             scope.user = SessionService.user.get();
 
             /**

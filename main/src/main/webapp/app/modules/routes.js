@@ -22,8 +22,7 @@
 
             .state('home', {
                 url: '/home',
-                templateUrl: 'views/pages/home.html',
-                controller: 'HomeController'
+                templateUrl: 'views/pages/home.html'
             })
 
             .state('dashboard', {
@@ -202,7 +201,6 @@
                 url: '/users',
                 views: {
                     '@': {
-                        controller: 'AdminUsersController',
                         templateUrl: 'views/pages/admin-users.html'
                     }
                 }
@@ -219,13 +217,11 @@
 
             .state('error', {
                 url: '/error',
-                controller: 'ErrorController',
                 templateUrl: 'views/pages/error.html'
             })
 
             .state('files', {
                 url: '/files',
-                controller: 'FilesController',
                 templateUrl: 'views/pages/files.html',
                 data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
             })
@@ -236,6 +232,7 @@
      */
     // @ngInject
     function run($rootScope, $state, SessionService, ToastService) {
+
         // route validation
         $rootScope.$on("$stateChangeStart", stateChangeStart);
 

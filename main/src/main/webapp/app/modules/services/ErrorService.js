@@ -1,9 +1,8 @@
 (function () {
     'use strict';
 
-    angular
-        .module('ALEX.services')
-        .service('ErrorService', ErrorService);
+    // the instance of the errorService
+    let instance = null;
 
     /**
      * Used to store an error message and can redirect to the error page.
@@ -13,22 +12,31 @@
      * @constructor
      */
     // @ngInject
-    function ErrorService($state) {
-        var errorMessage = null;
+    class ErrorService {
 
-        return {
-            getErrorMessage: getErrorMessage,
-            setErrorMessage: setErrorMessage,
-            goToErrorPage: goToErrorPage
-        };
+        /**
+         * Constructor
+         * @param $state - The ui.router $state service
+         * @returns {*}
+         */
+        constructor($state) {
+            // return the instance if available
+            if (instance !== null) return instance;
+
+            this.$state = $state;
+            this.errorMessage = null;
+
+            // create an instance of ErrorService
+            instance = this;
+        }
 
         /**
          * Gets the error message and removes it from the service
          * @returns {string|null}
          */
-        function getErrorMessage() {
-            var msg = errorMessage;
-            errorMessage = null;
+        getErrorMessage() {
+            const msg = this.errorMessage;
+            this.errorMessage = null;
             return msg;
         }
 
@@ -36,15 +44,17 @@
          * Sets the error message
          * @param {string} message
          */
-        function setErrorMessage(message) {
-            errorMessage = message;
+        setErrorMessage(message) {
+            this.errorMessage = message;
         }
 
-        /**
-         * Redirects to the error page
-         */
-        function goToErrorPage() {
-            $state.go('error');
+        /** Redirects to the error page */
+        goToErrorPage() {
+            this.$state.go('error');
         }
     }
+
+    angular
+        .module('ALEX.services')
+        .service('ErrorService', ErrorService);
 }());

@@ -1,11 +1,11 @@
-<div class="alx-container">
+<div class="alx-container" ng-controller="ErrorController as vm">
     <div class="text-center alert-container">
         <div class="alert alert-danger">
             <i class="fa fa-5x fa-warning"></i>
 
             <h3>Something went wrong!</h3>
 
-            <p ng-bind="::errorMessage"></p>
+            <p ng-bind="::vm.errorMessage"></p>
         </div>
     </div>
 </div>

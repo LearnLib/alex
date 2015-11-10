@@ -49,15 +49,16 @@
      *          <counterexamples-widget counterexamples="..."></counterexamples-widget>
      *       </widget>'
      *
-     * @param CounterExampleService - The service for sharing a counterexample with a hypothesis
      * @param LearnerResource - The LearnerResource for communication with the Learner
      * @param ToastService - The ToastService
      * @param SymbolResource
      * @param $q - The angular $q service
+     * @param EventBus
+     * @param events
      * @returns {{scope: {counterexamples: string}, template: string, link: link}}
      */
     // @ngInject
-    function counterexamplesWidget(CounterExampleService, LearnerResource, ToastService, SymbolResource, $q) {
+    function counterexamplesWidget(LearnerResource, ToastService, SymbolResource, $q, EventBus, events) {
         return {
             scope: {
                 counterexamples: '=',
@@ -69,7 +70,7 @@
 
         function link(scope) {
 
-            var symbols = [];
+            let symbols = [];
 
             /**
              * The array of input output pairs of the shared counterexample
@@ -88,11 +89,13 @@
                 scope.counterexamples = scope.tmpCounterExamples;
             }
 
-            function init() {
-                scope.counterExample = CounterExampleService.getCurrentCounterexample()
-            }
 
-            init();
+            EventBus.on(events.HYPOTHESIS_LABEL_SELECTED, (evt, data) => {
+                scope.counterExample.push({
+                    input: data.input,
+                    output: data.output
+                })
+            }, scope);
 
             /**
              * Removes a input output pair from the temporary counterexamples array.
@@ -115,7 +118,6 @@
                             scope.counterExample[i].output = counterexample[i];
                         }
                         scope.tmpCounterExamples.push(scope.counterExample);
-                        CounterExampleService.resetCurrentCounterexample();
                         renewCounterexamples();
                         init();
                     })

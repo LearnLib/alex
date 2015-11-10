@@ -8,23 +8,24 @@
     /**
      * The directive that is used to display hypotheses.
      *
-     * Attribute 'isSelectable' should only be true if it should be possible to select counterexamples from the
-     * hypothesis that are stored in the CounterExampleService. It is automatically 'false' if not defined
+     * Attribute 'isSelectable' should only be true if it should be possible to select input output pairs from the
+     * hypothesis
      *
      * Attribute 'layoutSettings' is optional.
      *
      * Use: <hypothesis test="..." is-selectable="true|false" layout-settings="..."></hypothesis>
      *
      * @param $window
-     * @param CounterExampleService
      * @param _
      * @param dagreD3
      * @param d3
      * @param graphlib
+     * @param EventBus
+     * @param events
      * @returns {{scope: {result: string, layoutSettings: string, isSelectable: string}, template: string, link: link}}
      */
     // @ngInject
-    function hypothesis($window, CounterExampleService, _, dagreD3, d3, graphlib) {
+    function hypothesis($window, _, dagreD3, d3, graphlib, EventBus, events) {
         return {
             scope: {
                 result: '=',
@@ -193,8 +194,11 @@
                         var label = this.innerHTML.split('/'); // separate abbreviation from output
                         var abbreviation = label[0];
                         var output = label[1];
-                        scope.$apply(function () {
-                            CounterExampleService.addIOPairToCurrentCounterexample(abbreviation, output);
+                        scope.$apply(() => {
+                            EventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {
+                                input: abbreviation,
+                                output: output
+                            })
                         });
                     });
                 }

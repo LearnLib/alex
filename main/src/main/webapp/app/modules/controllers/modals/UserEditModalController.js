@@ -9,17 +9,19 @@
      * The controller for the modal window that handles editing a user.
      * This should only be called by an admin.
      *
-     * @param $rootScope
      * @param $scope
      * @param $modalInstance
      * @param modalData
      * @param UserResource
      * @param ToastService
      * @param PromptService
+     * @param EventBus
+     * @param events
      * @constructor
      */
     // @ngInject
-    function UserEditModalController($rootScope, $scope, $modalInstance, modalData, UserResource, ToastService, PromptService) {
+    function UserEditModalController($scope, $modalInstance, modalData, UserResource, ToastService, PromptService,
+                                     EventBus, events) {
 
         /**
          * The error message in case the update goes wrong
@@ -38,11 +40,12 @@
             $scope.error = null;
 
             UserResource.update($scope.user)
-                .then(function () {
-                    $rootScope.$emit('user:updated', $scope.user);
+                .then(() => {
+                    EventBus.emit(events.USER_UPDATED, {user: $scope.user});
                     ToastService.success('User updated successfully');
                     $scope.closeModal();
-                }).catch(function (response) {
+                })
+                .catch(response => {
                     $scope.error = response.data.message;
                 })
         };
@@ -52,14 +55,14 @@
             $scope.error = null;
 
             PromptService.confirm('Do you want to delete this user permanently?')
-                .then(function () {
+                .then(() => {
                     UserResource.remove($scope.user)
-                        .then(function () {
-                            $rootScope.$emit('user:deleted', $scope.user);
+                        .then(() => {
+                            EventBus.emit(events.USER_DELETED, {user: $scope.user});
                             ToastService.success('The user has been deleted');
                             $scope.closeModal();
                         })
-                        .catch(function (response) {
+                        .catch(response => {
                             $scope.error = response.data.message;
                         })
                 })

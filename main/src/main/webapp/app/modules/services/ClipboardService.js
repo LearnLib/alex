@@ -1,69 +1,63 @@
 (function () {
     'use strict';
 
-    angular
-        .module('ALEX.services')
-        .factory('ClipboardService', ClipboardService);
+    /** The factory for the Clipboard */
+    class ClipboardService {
 
-    /**
-     * The factory for the Clipboard
-     *
-     * @returns {Clipboard}
-     * @constructor
-     */
-    function ClipboardService() {
-
-        /**
-         * The Clipboard
-         * @constructor
-         */
-        function Clipboard() {
+        /** Constructor */
+        constructor() {
 
             /**
              * The map of clipboard entries
-             * @type {{}}
+             * @type {Map}
              */
-            this.entries = {}
+            this.entries = new Map();
         }
 
         /**
-         * @param {string} key
-         * @param {*} data
+         * Copies an item to the Clipboard
+         * @param {string} key - The key the data is saved under
+         * @param {any} data - the data to copy to the clipboard
          */
-        Clipboard.prototype.copy = function (key, data) {
-            this.entries[key] = {
+        copy(key, data) {
+            this.entries.set(key, {
                 data: data,
                 mode: 'copy'
-            }
-        };
+            });
+        }
 
         /**
-         * @param {string} key
-         * @param {*} data
+         * Cuts an item to the clipboard
+         * @param {string} key - The key under which the data is accessed
+         * @param {any} data - The data to store
          */
-        Clipboard.prototype.cut = function (key, data) {
-            this.entries[key] = {
+        cut(key, data) {
+            this.entries.set(key, {
                 data: data,
                 mode: 'cut'
-            }
-        };
+            });
+        }
 
         /**
-         * @param {string} key
-         * @returns {*|null}
+         * Pastes an item from the clipboard. Deletes the item if mode has been 'cut'
+         * @param {string} key - The key whose data to get
+         * @returns {any|null}
          */
-        Clipboard.prototype.paste = function (key) {
-            if (this.entries[key]) {
-                var data = this.entries[key].data;
-                if (this.entries[key].mode === 'cut') {
-                    delete this.entries[key];
+        paste(key) {
+            if (this.entries.has(key)) {
+                const item = this.entries.get(key);
+                const data = item.data;
+                if (item.mode === 'cut') {
+                    this.entries.delete(key);
                 }
                 return data;
             } else {
                 return null;
             }
-        };
-
-        return new Clipboard();
+        }
     }
+
+    angular
+        .module('ALEX.services')
+        .factory('ClipboardService', () => new ClipboardService());
 }());

@@ -1,34 +1,25 @@
 (function () {
     'use strict';
 
-    angular
-        .module('ALEX.services')
-        .service('ToastService', ToastService);
+    /** A service that is used as a wrapper around the ngToast module. */
+        // @ngInject
+    class ToastService {
 
-    /**
-     * A service that is used as a wrapper around the ngToast module.
-     *
-     * @param ngToast - The ngToast service
-     * @returns {{success: success, danger: danger, info: info}}
-     * @constructor
-     */
-    // @ngInject
-    function ToastService(ngToast) {
-
-        return {
-            success: success,
-            danger: danger,
-            info: info
-        };
+        /**
+         * Constructor
+         * @param ngToast - The ngToast service
+         */
+        constructor(ngToast) {
+            this.ngToast = ngToast;
+        }
 
         /**
          * Creates a toast message.
-         *
          * @param {string} type - a bootstrap alert class type: 'success', 'error', 'info' etc.
-         * @param {string} message - The message to be displayed
+         * @param {string} message - The message to display
          */
-        function createToast(type, message) {
-            ngToast.create({
+        createToast(type, message) {
+            this.ngToast.create({
                 className: type,
                 content: message,
                 dismissButton: true
@@ -37,29 +28,28 @@
 
         /**
          * Create a success toast message
-         *
-         * @param {String} message - The message to be displayed
+         * @param {String} message - The message to display
          */
-        function success(message) {
-            createToast('success', message);
+        success(message) {
+            this.createToast('success', message);
         }
 
         /**
          * Create an error / danger toast message
-         *
-         * @param {String} message - The message to be displayed
+         * @param {String} message - The message display
          */
-        function danger(message) {
-            createToast('danger', message);
+        danger(message) {
+            this.createToast('danger', message);
         }
 
         /**
          * Create an info toast message
-         *
-         * @param {String} message - The message to be displayed
+         * @param {String} message - The message to display
          */
-        function info(message) {
-            createToast('info', message);
+        info(message) {
+            this.createToast('info', message);
         }
     }
+
+    angular.module('ALEX.services').service('ToastService', ToastService);
 }());

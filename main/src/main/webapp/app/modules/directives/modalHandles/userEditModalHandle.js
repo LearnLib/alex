@@ -27,7 +27,7 @@
         };
 
         function link(scope, el) {
-            el.on('click', function () {
+            el.on('click', () => {
                 $modal.open({
                     templateUrl: 'views/modals/user-edit-modal.html',
                     controller: 'UserEditModalController',

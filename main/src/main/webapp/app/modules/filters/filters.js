@@ -21,7 +21,7 @@
          * @returns {string}
          */
         function filter(string) {
-            return string.toLowerCase().split('_').join(' ').replace(/\w\S*/g, function (txt) {
+            return string.toLowerCase().split('_').join(' ').replace(/\w\S*/g, txt => {
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             })
         }

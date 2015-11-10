@@ -1,35 +1,37 @@
-<view-header title="Manage Users"></view-header>
+<div ng-controller="AdminUsersController as vm">
+    <view-header title="Manage Users"></view-header>
 
-<div class="view-body">
-    <div class="alx-container">
-        <div class="row">
+    <div class="view-body">
+        <div class="alx-container">
+            <div class="row">
 
-            <h3>Registered Users</h3>
-            <hr>
+                <h3>Registered Users</h3>
+                <hr>
 
-            <table class="table">
-                <thead>
-                <tr>
-                    <th width="1">ID</th>
-                    <th width="1">Email</th>
-                    <th>Role</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="user in users" ng-class="{'info': user.role === 'ADMIN'}">
-                    <td ng-bind="user.id"></td>
-                    <td ng-bind="user.email"></td>
-                    <td ng-bind="user.role"></td>
-                    <th>
-                        <button class="btn btn-icon btn-xs pull-right" user-edit-modal-handle user="user">
-                            <i class="fa fa-edit fa-fw"></i> Edit
-                        </button>
-                    </th>
-                </tr>
-                </tbody>
-            </table>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th width="1">ID</th>
+                        <th width="1">Email</th>
+                        <th>Role</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="user in vm.users" ng-class="{'info': user.role === 'ADMIN'}">
+                        <td ng-bind="user.id"></td>
+                        <td ng-bind="user.email"></td>
+                        <td ng-bind="user.role"></td>
+                        <th>
+                            <button class="btn btn-icon btn-xs pull-right" user-edit-modal-handle user="user">
+                                <i class="fa fa-edit fa-fw"></i> Edit
+                            </button>
+                        </th>
+                    </tr>
+                    </tbody>
+                </table>
 
+            </div>
         </div>
     </div>
 </div>

@@ -1,33 +1,27 @@
 (function () {
     'use strict';
 
-    angular
-        .module('ALEX.services')
-        .service('PromptService', PromptService);
-
-    /**
-     * @param $modal
-     * @returns {{prompt: prompt, confirm: confirm}}
-     * @constructor
-     */
+    /** The service for handling promt and confirm dialogs */
     // @ngInject
-    function PromptService($modal) {
+    class PromptService {
 
-        // the available service methods
-        return {
-            prompt: prompt,
-            confirm: confirm
-        };
+        /**
+         * Constructor
+         * @param $modal
+         */
+        constructor($modal) {
+            this.$modal = $modal;
+        }
 
         /**
          * Opens the prompt dialog.
          *
-         * @param text {string} - The text to display
-         * @param options {{regexp: string, errorMsg: string}}
+         * @param {string} text - The text to display
+         * @param {{regexp: string, errorMsg: string}} options}
          * @return {*} - The modal result promise
          */
-        function prompt(text, options) {
-            return $modal.open({
+        prompt(text, options) {
+            return this.$modal.open({
                 templateUrl: 'views/modals/prompt-dialog.html',
                 controller: 'PromptDialogController',
                 resolve: {
@@ -45,21 +39,21 @@
         /**
          * Opens the confirm dialog
          *
-         * @param text - The text to be displayed in the confirm dialog
+         * @param {string} text - The text to be displayed in the confirm dialog
          * @returns {*} - The modal result promise
          */
-        function confirm(text) {
-            return $modal.open({
+        confirm(text) {
+            return this.$modal.open({
                 templateUrl: 'views/modals/confirm-dialog.html',
                 controller: 'ConfirmDialogController',
                 resolve: {
                     modalData: function () {
-                        return {
-                            text: text
-                        };
+                        return {text: text};
                     }
                 }
             }).result;
         }
     }
+
+    angular.module('ALEX.services').service('PromptService', PromptService);
 }());

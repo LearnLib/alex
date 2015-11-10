@@ -1,122 +1,121 @@
 (function () {
     'use strict';
 
-    angular
-        .module('ALEX.controllers')
-        .controller('FilesController', FilesController);
-
-    /**
-     * The controller that manages files of a project handles file uploads
-     *
-     * @param $scope - angular $scope
-     * @param Upload - ngFileUpload Upload service
-     * @param paths - The applications paths constant
-     * @param ToastService - The ToastService
-     * @param SessionService - The SessionService
-     * @param FileResource - The Resource that handles API requests for files
-     * @param _ - Lodash
-     * @constructor
-     */
-    // @ngInject
-    function FilesController($scope, Upload, paths, ToastService, SessionService, FileResource, _) {
-
-        var project = SessionService.project.get();
+    /** The controller of the files page */
+    class FilesController {
 
         /**
-         * All project related files
-         * @type {{name: string, project: number}[]}
+         * Constructor
+         * @param Upload
+         * @param ToastService
+         * @param SessionService
+         * @param FileResource
          */
-        $scope.files = [];
+        constructor(Upload, ToastService, SessionService, FileResource) {
+            this.Upload = Upload;
+            this.ToastService = ToastService;
+            this.SessionService = SessionService;
+            this.FileResource = FileResource;
 
-        /**
-         * The selected files
-         * @type {{name: string, project: number}[]}
-         */
-        $scope.selectedFiles = [];
+            /**
+             * The project that is in the session
+             * @type{Project}
+             */
+            this.project = SessionService.project.get();
 
-        /**
-         * The progress in percent of the current uploading file
-         * @type {number}
-         */
-        $scope.progress = 0;
+            /**
+             * All project related files
+             * @type {{name: string, project: number}[]}
+             */
+            this.files = [];
 
-        /**
-         * The list of files to upload
-         * @type {null|File[]}
-         */
-        $scope.filesToUpload = null;
+            /**
+             * The selected files
+             * @type {{name: string, project: number}[]}
+             */
+            this.selectedFiles = [];
 
-        (function init() {
-            FileResource.getAll(project.id)
-                .then(function (files) {
-                    $scope.files = files;
-                }).catch(function () {
+            /**
+             * The progress in percent of the current uploading file
+             * @type {number}
+             */
+            this.progress = 0;
 
-                });
-        }());
+            /**
+             * The list of files to upload
+             * @type {null|File[]}
+             */
+            this.filesToUpload = null;
+
+            // load all files
+            FileResource.getAll(this.project.id)
+                .then(files => {
+                    this.files = files;
+                })
+                .catch(response => {
+                    ToastService.danger(`Fetching all files failed! ${response.data.message}`);
+                })
+        }
 
         /**
          * Remove a single file from the server and the list
-         *
          * @param {string} file - The name of the file to delete
          */
-        $scope.deleteFile = function (file) {
-            FileResource.delete(project.id, file)
-                .then(function () {
-                    ToastService.success('File "' + file.name + '" has been deleted');
-                    _.remove($scope.files, function (f) {
-                        return f.name === file.name;
-                    });
+        deleteFile(file) {
+            this.FileResource.delete(this.project.id, file)
+                .then(() => {
+                    this.ToastService.success('File "' + file.name + '" has been deleted');
+                    const i = this.files.find(f => f.name === file.name);
+                    if (i > -1) this.files.splice(i, 1);
                 })
         };
 
-        /**
-         * Upload all chosen files piece by piece and add successfully deleted files to the list
-         */
-        $scope.upload = function () {
-            var error = false;
-            var countFiles = $scope.files.length;
+        /** Upload all chosen files piece by piece and add successfully deleted files to the list */
+        upload() {
+            let error = false;
+            const countFiles = this.files.length;
 
-            function next() {
-                $scope.progress = 0;
-                if ($scope.filesToUpload.length > 0) {
-                    var file = $scope.filesToUpload[0];
-                    Upload.upload({
-                        url: '/rest/projects/' + project.id + '/files',
+            const next = () => {
+                this.progress = 0;
+                if (this.filesToUpload.length > 0) {
+                    const file = this.filesToUpload[0];
+                    this.Upload.upload({
+                        url: '/rest/projects/' + this.project.id + '/files',
                         file: file
-                    }).progress(function (evt) {
-                        $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
-                    }).success(function (data) {
-                        $scope.filesToUpload.shift();
-                        $scope.files.push(data);
+                    }).progress(evt => {
+                        this.progress = parseInt(100.0 * evt.loaded / evt.total);
+                    }).success(data => {
+                        this.filesToUpload.shift();
+                        this.files.push(data);
                         next();
-                    }).error(function () {
+                    }).error(() => {
                         error = true;
-                        $scope.filesToUpload.shift();
+                        this.filesToUpload.shift();
                         next();
                     })
                 } else {
-                    if ($scope.files.length === countFiles) {
-                        ToastService.danger('<strong>Upload failed</strong><p>No file could be uploaded</p>');
+                    if (this.files.length === countFiles) {
+                        this.ToastService.danger('<strong>Upload failed</strong><p>No file could be uploaded</p>');
                     } else {
                         if (error) {
-                            ToastService.info('Some files could not be uploaded');
+                            this.ToastService.info('Some files could not be uploaded');
                         } else {
-                            ToastService.success('All files uploaded successfully');
+                            this.ToastService.success('All files uploaded successfully');
                         }
                     }
                 }
-            }
+            };
 
             next();
-        };
+        }
 
-        /**
-         * Batch delete selected files
-         * TODO: call batch resource function as soon as there is an endpoint for that
-         */
-        $scope.deleteSelectedFiles = function () {
-            _.forEach($scope.selectedFiles, $scope.deleteFile);
+        /** Batch delete selected files */
+        deleteSelectedFiles() {
+            this.selectedFiles.forEach(file => {
+                this.deleteFile(file)
+            });
         }
     }
+
+    angular.module('ALEX.controllers').controller('FilesController', FilesController);
 }());

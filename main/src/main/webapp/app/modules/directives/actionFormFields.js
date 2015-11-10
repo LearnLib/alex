@@ -38,7 +38,7 @@
 
         function link(scope) {
             scope.getActionTemplate = function () {
-                return 'app/modules/actions/views/' + scope.action.type + '.html';
+                return 'views/actions/' + scope.action.type + '.html';
             }
         }
     }
