@@ -2,7 +2,7 @@
     'use strict';
 
     /** A service that is used as a wrapper around the ngToast module. */
-        // @ngInject
+    // @ngInject
     class ToastService {
 
         /**

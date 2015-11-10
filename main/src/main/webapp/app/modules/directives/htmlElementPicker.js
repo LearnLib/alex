@@ -32,7 +32,8 @@
             },
             link: link
         };
-        function link(scope, el, attrs) {
+
+        function link(scope, el) {
 
             // The HTML picker element that is dynamically appended and removed to/from the pages DOM tree
             var picker;
@@ -126,12 +127,11 @@
      *
      * @param $window - angular window wrapper
      * @param SessionService - The SessionService
-     * @param paths - The applications paths
      * @param htmlElementPickerInstance - @see{@link htmlElementPickerInstance}
      * @returns {{scope: {}, templateUrl: string, link: link}}
      */
     // @ngInject
-    function htmlElementPickerWindow($window, SessionService, paths, htmlElementPickerInstance) {
+    function htmlElementPickerWindow($window, SessionService, htmlElementPickerInstance) {
         return {
             restrict: 'E',
             scope: {},

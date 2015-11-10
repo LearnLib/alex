@@ -14,10 +14,13 @@
      * @param Symbol
      * @param SymbolResource
      * @param ToastService
+     * @param EventBus
+     * @param events
      * @constructor
      */
     // @ngInject
-    function SymbolEditModalController($scope, $modalInstance, modalData, Symbol, SymbolResource, ToastService) {
+    function SymbolEditModalController($scope, $modalInstance, modalData, Symbol, SymbolResource, ToastService,
+                                       EventBus, events) {
 
         /**
          * The symbol that is passed to the modal as a copy in order to prevent two way binding in the template.
@@ -46,23 +49,21 @@
 
             // do not update on server
             if (angular.isDefined(modalData.updateOnServer) && !modalData.updateOnServer) {
-                $modalInstance.close({
-                    new: $scope.symbol,
-                    old: copy
+                EventBus.emit(events.SYMBOL_UPDATED, {
+                    newSymbol: $scope.symbol,
+                    oldSymbol: copy
                 });
                 return;
             }
 
             // update the symbol and close the modal dialog on success with the updated symbol
             SymbolResource.update($scope.symbol)
-                .then(function (updatedSymbol) {
+                .then(updatedSymbol => {
                     ToastService.success('Symbol updated');
-                    $modalInstance.close({
-                        new: updatedSymbol,
-                        old: copy
-                    });
+                    EventBus.emit(events.SYMBOL_UPDATED, {symbol: updatedSymbol});
+                    $modalInstance.dismiss();
                 })
-                .catch(function (response) {
+                .catch(response => {
                     $scope.errorMsg = response.data.message;
                 })
         };

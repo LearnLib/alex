@@ -14,23 +14,19 @@
      * The callback function should have one parameter that will be the newly created symbol.
      *
      * @param $modal - The $modal service
-     * @returns {{restrict: string, scope: {projectId: string, onCreated: string}, link: link}}
+     * @returns {{restrict: string, scope: {}, link: link}}
      */
     // @ngInject
     function symbolCreateModalHandle($modal) {
         return {
             restrict: 'A',
-            scope: {
-                projectId: '@',
-                onCreated: '&'
-            },
+            scope: {},
             link: link
         };
-        function link(scope, el) {
-            el.on('click', handleModal);
 
-            function handleModal() {
-                var modal = $modal.open({
+        function link(scope, el) {
+            el.on('click', () => {
+                $modal.open({
                     templateUrl: 'views/modals/symbol-create-modal.html',
                     controller: 'SymbolCreateModalController',
                     resolve: {
@@ -41,11 +37,7 @@
                         }
                     }
                 });
-
-                modal.result.then(function (symbol) {
-                    scope.onCreated()(symbol);
-                })
-            }
+            });
         }
     }
 }());

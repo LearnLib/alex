@@ -1,74 +1,79 @@
 (function () {
     'use strict';
 
-    angular
-        .module('ALEX.controllers')
-        .controller('ActionCreateModalController', ActionCreateModalController);
-
-    /**
-     * The controller for the modal dialog that handles the creation of a new action.
-     *
-     * @param $scope
-     * @param $modalInstance
-     * @param modalData
-     * @param ActionService
-     * @param SymbolResource
-     * @param SessionService
-     * @constructor
-     */
+    /** The controller for the modal dialog that handles the creation of a new action. */
     // @ngInject
-    function ActionCreateModalController($scope, $modalInstance, modalData, ActionService, SymbolResource, SessionService) {
-
-        var project = SessionService.project.get();
+    class ActionCreateModalController {
 
         /**
-         * The model for the new action
-         * @type {null|Object}
+         * Constructor
+         * @param $modalInstance
+         * @param ActionService
+         * @param SymbolResource
+         * @param SessionService
+         * @param EventBus
+         * @param events
          */
-        $scope.action = null;
+        constructor($modalInstance, ActionService, SymbolResource, SessionService, EventBus, events) {
+            this.$modalInstance = $modalInstance;
+            this.ActionService = ActionService;
+            this.EventBus = EventBus;
+            this.events = events;
 
-        /**
-         * All symbols of the project
-         * @type {Array}
-         */
-        $scope.symbols = [];
+            const project = SessionService.project.get();
 
-        (function init() {
-            SymbolResource.getAll(project.id)
-                .then(function (symbols) {
-                    $scope.symbols = symbols;
-                })
-        }());
+            /**
+             * The model for the new action
+             * @type {null|Object}
+             */
+            this.action = null;
+
+            /**
+             * All symbols of the project
+             * @type {Symbol[]}
+             */
+            this.symbols = [];
+
+            /**
+             * A map where actions can save temporary key value pairs
+             * @type {{}}
+             */
+            this.map = {};
+
+            // get all symbols
+            SymbolResource.getAll(project.id).then(symbols => {
+                this.symbols = symbols;
+            });
+        }
 
         /**
          * Creates a new instance of an Action by a type that was clicked in the modal dialog.
-         *
          * @param {string} type - The type of the action that should be created
          */
-        $scope.selectNewActionType = function (type) {
-            $scope.action = ActionService.buildFromType(type);
-        };
+        selectNewActionType(type) {
+            this.action = this.ActionService.buildFromType(type);
+        }
 
-        /**
-         * Closes the modal dialog an passes the created action back to the handle that called the modal
-         */
-        $scope.createAction = function () {
-            $modalInstance.close($scope.action);
-        };
+        /** Closes the modal dialog an passes the created action back to the handle that called the modal */
+        createAction() {
+            this.EventBus.emit(this.events.ACTION_CREATED, {action: this.action});
+            this.$modalInstance.dismiss();
+        }
 
-        /**
-         * Creates a new action in the background without closing the dialog
-         */
-        $scope.createActionAndContinue = function () {
-            modalData.addAction($scope.action);
-            $scope.action = null;
-        };
+        /** Creates a new action in the background without closing the dialog */
+        createActionAndContinue() {
+            this.EventBus.emit(this.events.ACTION_CREATED, {action: this.action});
+            this.action = null;
+            this.map = {};
+        }
 
-        /**
-         * Closes the modal dialog without passing any data
-         */
-        $scope.closeModal = function () {
-            $modalInstance.dismiss();
-        };
+        /** Closes the modal dialog without passing any data */
+        closeModal() {
+            this.$modalInstance.dismiss();
+        }
     }
+
+    angular
+        .module('ALEX.controllers')
+        .controller('ActionCreateModalController', ActionCreateModalController);
 }());

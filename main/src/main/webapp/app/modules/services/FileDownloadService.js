@@ -1,25 +1,20 @@
 (function () {
     'use strict';
 
-    angular
-        .module('ALEX.services')
-        .factory('FileDownloadService', FileDownloadService);
-
     /**
      * The service that allows the file download of various filetypes: JSON, SVG, CSV. For each download, it prompts
      * the user for a filename of the downloadable file.
-     *
-     * @param PromptService - The service to create prompts with
-     * @returns {{downloadJson: downloadJson, downloadCSV: downloadCSV, downloadSVG: downloadSVG}}
-     * @constructor
      */
     // @ngInject
-    function FileDownloadService(PromptService) {
-        return {
-            downloadJson: downloadJson,
-            downloadCSV: downloadCSV,
-            downloadSVG: downloadSVG
-        };
+    class FileDownloadService {
+
+        /**
+         * Constructor
+         * @param PromptService
+         */
+        constructor(PromptService) {
+            this.PromptService = PromptService;
+        }
 
         /**
          * Downloads a file.
@@ -29,10 +24,10 @@
          * @param {string} href - The contents of the href attribute which holds the data of the file
          * @private
          */
-        function _download(filename, fileExtension, href) {
+        download(filename, fileExtension, href) {
 
             // create new link element with downloadable
-            var a = document.createElement('a');
+            const a = document.createElement('a');
             a.style.display = 'none';
             a.setAttribute('href', href);
             a.setAttribute('target', '_blank');
@@ -51,8 +46,8 @@
          * @returns {Promise} - The promise with the filename
          * @private
          */
-        function _prompt(fileExtension) {
-            return PromptService.prompt('Enter a name for the ' + fileExtension + ' file.', {
+        prompt(fileExtension) {
+            return this.PromptService.prompt('Enter a name for the ' + fileExtension + ' file.', {
                 regexp: /^[a-zA-Z0-9\.\-,_]+$/,
                 errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
             })
@@ -63,11 +58,11 @@
          *
          * @param {Object} jsonObject - The object that should be downloaded
          */
-        function downloadJson(jsonObject) {
-            return _prompt('JSON')
-                .then(function (filename) {
-                    var href = 'data:text/json;charset=utf-8,' + encodeURIComponent(angular.toJson(jsonObject));
-                    _download(filename, 'json', href);
+        downloadJson(jsonObject) {
+            return this.prompt('JSON')
+                .then(filename => {
+                    const href = 'data:text/json;charset=utf-8,' + encodeURIComponent(angular.toJson(jsonObject));
+                    this.download(filename, 'json', href);
                 })
         }
 
@@ -76,11 +71,11 @@
          *
          * @param {string} csv - The string that represents the csv
          */
-        function downloadCSV(csv) {
-            _prompt('CSV')
-                .then(function (filename) {
-                    var href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-                    _download(filename, 'csv', href);
+        downloadCSV(csv) {
+            this.prompt('CSV')
+                .then(filename => {
+                    const href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                    this.download(filename, 'csv', href);
                 })
         }
 
@@ -91,23 +86,23 @@
          * @param {*|HTMLElement} svg - The svg element that should be downloaded
          * @param {boolean} adjustSize - If the element should be scaled down to its original size or not
          */
-        function downloadSVG(svg, adjustSize) {
-            _prompt('SVG')
-                .then(function (filename) {
+        downloadSVG(svg, adjustSize) {
+            this.prompt('SVG')
+                .then(filename => {
 
                     // copy svg to prevent the svg being clipped due to the window size
-                    var svgCopy = svg.cloneNode(true);
-                    var g = svg.childNodes[0];
+                    const svgCopy = svg.cloneNode(true);
+                    const g = svg.childNodes[0];
 
                     // set proper xml attributes for downloadable file
                     svgCopy.setAttribute('version', '1.1');
                     svgCopy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
                     if (adjustSize) {
-                        var scale = g.getTransformToElement(svg).a;
-                        var dimension = svg.childNodes[0].getBoundingClientRect();
-                        var width = Math.ceil(dimension.width / scale) + 20;    // use 20px as offset
-                        var height = Math.ceil(dimension.height / scale) + 20;
+                        const scale = g.getTransformToElement(svg).a;
+                        const dimension = svg.childNodes[0].getBoundingClientRect();
+                        const width = Math.ceil(dimension.width / scale) + 20;    // use 20px as offset
+                        const height = Math.ceil(dimension.height / scale) + 20;
 
                         svgCopy.setAttribute('width', width);
                         svgCopy.setAttribute('height', height);
@@ -117,11 +112,15 @@
                     // create serialized string from svg element and encode it in
                     // base64 otherwise the file will not be completely downloaded
                     // what results in errors opening the file
-                    var svgString = new XMLSerializer().serializeToString(svgCopy);
-                    var href = 'data:image/svg+xml;base64,\n' + window.btoa(svgString);
+                    const svgString = new XMLSerializer().serializeToString(svgCopy);
+                    const href = 'data:image/svg+xml;base64,\n' + window.btoa(svgString);
 
-                    _download(filename, 'svg', href);
+                    this.download(filename, 'svg', href);
                 })
         }
     }
+
+    angular
+        .module('ALEX.services')
+        .factory('FileDownloadService', () => new FileDownloadService());
 }());

@@ -9,36 +9,25 @@
      * The directive that handles the modal window for the editing of a new symbol. It attaches an click event to the
      * attached element that opens the modal dialog.
      *
-     * Use it as an attribute like 'symbol-edit-modal-handle' and add an attribute 'on-created' which expects a callback
-     * function from the directives parent controller. The callback function should have one parameter that will be the
-     * newly updated symbol.
+     * Use it as an attribute like 'symbol-edit-modal-handle'
      *
      * @param $modal - The $modal service
-     * @returns {{restrict: string, scope: {symbol: string, onUpdated: string}, link: link}}
+     * @returns {{restrict: string, scope: {symbol: string, updateOnServer: string}, link: link}}
      */
     // @ngInject
     function symbolEditModalHandle($modal) {
-
         return {
             restrict: 'A',
             scope: {
                 symbol: '=',
-                onUpdated: '&',
                 updateOnServer: '='
             },
             link: link
         };
 
-        /**
-         * @param scope
-         * @param el
-         * @param attrs
-         */
         function link(scope, el) {
-            el.on('click', handleModal);
-
-            function handleModal() {
-                var modal = $modal.open({
+            el.on('click', () => {
+                $modal.open({
                     templateUrl: 'views/modals/symbol-edit-modal.html',
                     controller: 'SymbolEditModalController',
                     resolve: {
@@ -50,11 +39,7 @@
                         }
                     }
                 });
-
-                modal.result.then(function (symbol) {
-                    scope.onUpdated()(symbol.new, symbol.old);
-                })
-            }
+            });
         }
     }
 }());

@@ -69,6 +69,16 @@
             $scope.deleteGroup(data.group);
         }, $scope);
 
+        // listen on symbol created event
+        EventBus.on(events.SYMBOL_CREATED, (evt, data) => {
+            $scope.addSymbol(data.symbol);
+        }, $scope);
+
+        // listen on symbol update event
+        EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
+            $scope.updateSymbol(data.symbol);
+        }, $scope);
+
         /**
          * Finds the symbol group object from a given symbol. Returns undefined if no symbol group was found.
          *

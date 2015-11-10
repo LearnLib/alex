@@ -7,24 +7,20 @@
 
         <div class="btn-group btn-group-sm" dropdown dropdown-hover>
             <button class="btn btn-primary">
-                </i> Create <i class="fa fa-fw fa-caret-down"></i>
+                Create <i class="fa fa-fw fa-caret-down"></i>
             </button>
             <ul class="dropdown-menu" role="menu">
                 <li>
-                    <a href symbol-create-modal-handle project-id="{{project.id}}" on-created="addSymbol">
-                        Symbol
-                    </a>
+                    <a href="" symbol-create-modal-handle>Symbol</a>
                 </li>
                 <li>
-                    <a href symbol-group-create-modal-handle project-id="{{project.id}}" on-created="addGroup">
-                        Group
-                    </a>
+                    <a href="" symbol-group-create-modal-handle>Group</a>
                 </li>
             </ul>
         </div>
 
         <button class="btn btn-default" ng-class="selectedSymbols.length === 1 ? '' : 'disabled'"
-                symbol-edit-modal-handle symbol="selectedSymbols[0]" on-updated="updateSymbol">
+                symbol-edit-modal-handle symbol="selectedSymbols[0]">
             Edit
         </button>
         <button class="btn btn-default" symbol-move-modal-handle groups="groups" symbols="selectedSymbols"
@@ -78,7 +74,7 @@
                                 </button>
                                 <ul class="dropdown-menu pull-left" role="menu">
                                     <li>
-                                        <a href symbol-edit-modal-handle symbol="symbol" on-updated="updateSymbol">
+                                        <a href symbol-edit-modal-handle symbol="symbol">
                                             <i class="fa fa-edit fa-fw"></i> Edit
                                         </a>
                                     </li>

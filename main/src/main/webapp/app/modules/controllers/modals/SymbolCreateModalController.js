@@ -10,18 +10,21 @@
      *
      * @param $scope
      * @param $modalInstance
-     * @param modalData
+     * @param SessionService
      * @param Symbol
      * @param SymbolResource
      * @param SymbolGroupResource
      * @param ToastService
+     * @param EventBus
+     * @param events
      * @constructor
      */
     // @ngInject
-    function SymbolCreateModalController($scope, $modalInstance, modalData, Symbol, SymbolResource, SymbolGroupResource, ToastService) {
+    function SymbolCreateModalController($scope, $modalInstance, SessionService, Symbol, SymbolResource,
+                                         SymbolGroupResource, ToastService, EventBus, events) {
 
         // the id of the project the new symbol is created for
-        var projectId = null;
+        const project = SessionService.project.get();
 
         /**
          * The model of the symbol that will be created
@@ -48,13 +51,9 @@
         $scope.selectedGroup = null;
 
         // fetch all symbol groups so that they can be selected in the template
-        (function init() {
-            projectId = modalData.projectId;
-            SymbolGroupResource.getAll(projectId)
-                .then(function (groups) {
-                    $scope.groups = groups;
-                });
-        }());
+        SymbolGroupResource.getAll(project.id).then(groups => {
+            $scope.groups = groups;
+        });
 
         /**
          * Makes a request to the API and create a new symbol. If the name of the group the user entered was not found
@@ -63,24 +62,23 @@
         $scope.createSymbol = function () {
             $scope.errorMsg = null;
 
-            var group = _.find($scope.groups, {name: $scope.selectedGroup});
+            const group = _.find($scope.groups, {name: $scope.selectedGroup});
 
             // attach the new symbol to the default group in case none is specified
             $scope.symbol.group = angular.isDefined(group) ? group.id : 0;
 
-            SymbolResource.create(projectId, $scope.symbol)
-                .then(function (createdSymbol) {
+            SymbolResource.create(project.id, $scope.symbol)
+                .then(createdSymbol => {
                     ToastService.success('Created symbol <strong>' + createdSymbol.name + '</strong>');
-                    $modalInstance.close(createdSymbol);
+                    EventBus.emit(events.SYMBOL_CREATED, {symbol: createdSymbol});
+                    $modalInstance.dismiss();
                 })
-                .catch(function (response) {
+                .catch(response => {
                     $scope.errorMsg = response.data.message;
                 })
         };
 
-        /**
-         * Closes the modal dialog
-         */
+        /** Closes the modal dialog */
         $scope.closeModal = function () {
             $modalInstance.dismiss();
         }

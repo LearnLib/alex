@@ -24,6 +24,7 @@
             return this.$modal.open({
                 templateUrl: 'views/modals/prompt-dialog.html',
                 controller: 'PromptDialogController',
+                controllerAs: 'vm',
                 resolve: {
                     modalData: function () {
                         return {
@@ -46,6 +47,7 @@
             return this.$modal.open({
                 templateUrl: 'views/modals/confirm-dialog.html',
                 controller: 'ConfirmDialogController',
+                controllerAs: 'vm',
                 resolve: {
                     modalData: function () {
                         return {text: text};

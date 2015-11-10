@@ -1,12 +1,12 @@
-<form ng-submit="ok()">
+<form ng-submit="vm.ok()">
 
     <div class="modal-body">
-        <h4 ng-bind="text"></h4>
+        <h4 ng-bind="vm.text"></h4>
     </div>
 
     <div class="modal-footer">
         <button type="submit" class="btn btn-primary btn-sm">Yes</button>
-        <a class="btn btn-default btn-sm" ng-click="close()">No</a>
+        <a class="btn btn-default btn-sm" ng-click="vm.close()">No</a>
     </div>
 
 </form>

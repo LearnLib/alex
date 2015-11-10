@@ -53,35 +53,5 @@
         $scope.closeModal = function () {
             $modalInstance.dismiss();
         };
-
-        ///**
-        // * Saves the project including symbol groups into a json file
-        // */
-        //$scope.exportProject = function () {
-        //    SymbolGroupResource.getAll($scope.project.id, {embedSymbols: true})
-        //        .then(function(groups){
-        //
-        //            var projectToExport = angular.copy($scope.project);
-        //            projectToExport.groups = groups;
-        //
-        //            // prepare project for export
-        //            delete projectToExport.id;
-        //            _.forEach(projectToExport.groups, function(group){
-        //                delete group.id;
-        //                delete group.project;
-        //                _.forEach(group.symbols, function(symbol){
-        //                    delete symbol.project;
-        //                    delete symbol.group;
-        //                    delete symbol.id;
-        //                    delete symbol.revision;
-        //                })
-        //            });
-        //
-        //            FileDownloadService.downloadJson(projectToExport)
-        //                .then(function(){
-        //                    ToastService.success('Project exported');
-        //                });
-        //        })
-        //}
     }
 }());

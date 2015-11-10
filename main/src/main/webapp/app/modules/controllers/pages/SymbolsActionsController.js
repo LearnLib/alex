@@ -22,35 +22,31 @@
      * @param ClipboardService - The ClipboardService
      * @param $state - ui.router $state
      * @param PromptService - PromptService
+     * @param EventBus
+     * @param events
      * @constructor
      */
     // @ngInject
     function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, SessionService, ToastService, ErrorService, _,
-                                      ActionService, ClipboardService, $state, PromptService) {
+                                      ActionService, ClipboardService, $state, PromptService, EventBus, events) {
 
         /**
          * A copy of $scope.symbol to revert unsaved changes
          * @type {Symbol|null}
          */
-        var symbolCopy = null;
+        let symbolCopy = null;
 
         /**
          * The project that is stored in the session
          * @type {Project}
          */
-        var project = SessionService.project.get();
+        const project = SessionService.project.get();
 
         /**
          * The symbol whose actions are managed
          * @type {Symbol|null}
          */
         $scope.symbol = null;
-
-        /**
-         * A map where actions can save temporary key value pairs
-         * @type {{}}
-         */
-        $scope.map = {};
 
         /**
          * The list of selected actions
@@ -118,6 +114,16 @@
             });
         }());
 
+        // listen on action created event
+        EventBus.on(events.ACTION_CREATED, (evt, data) => {
+            $scope.addAction(data.action);
+        }, $scope);
+
+        // listen on action updated event
+        EventBus.on(events.ACTION_UPDATED, (evt, data) => {
+            $scope.updateAction(data.action);
+        }, $scope);
+
         /**
          * Deletes a list of actions
          *
@@ -144,7 +150,6 @@
             $scope.symbol.actions.push(action);
             ToastService.success('Action created');
             setChanged(true);
-            $scope.map = {};
         };
 
         /**
@@ -159,7 +164,6 @@
             });
             ToastService.success('Action updated');
             setChanged(true);
-            $scope.map = {};
         };
 
         /**

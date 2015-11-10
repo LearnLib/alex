@@ -10,54 +10,27 @@
      * the attached element. It attaches a click event to the element that opens the modal dialog. Does NOT saves the
      * action on the server.
      *
-     * The directive excepts one additional attribute. 'onCreated' has to be a function with one parameter where the
-     * created action is passed on success.
-     *
-     * Can be used like this: '<button action-create-modal-handle on-created="...">Click Me!</button>'
+     * Can be used like this: '<button action-create-modal-handle>Click Me!</button>'
      *
      * @param $modal - The modal service
-     * @returns {{restrict: string, scope: {onCreated: string}, link: link}}
+     * @returns {{restrict: string, scope: {}, link: link}}
      */
     // @ngInject
     function actionCreateModalHandle($modal) {
-
-        // the directive
         return {
             restrict: 'A',
-            scope: {
-                onCreated: '&'
-            },
+            scope: {},
             link: link
         };
 
-        // handles the directives logic
-        function link(scope, el, attr) {
-            el.on('click', handleModal);
-
-            function handleModal() {
-
-                // create the modal
-                var modal = $modal.open({
+        function link(scope, el) {
+            el.on('click', () => {
+                $modal.open({
                     templateUrl: 'views/modals/action-create-modal.html',
                     controller: 'ActionCreateModalController',
-                    resolve: {
-                        modalData: function () {
-                            return {
-                                addAction: function (action) {
-                                    if (action !== null) {
-                                        scope.onCreated()(action);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    controllerAs: 'vm'
                 });
-
-                // call the callback on success
-                modal.result.then(function (action) {
-                    scope.onCreated()(action);
-                });
-            }
+            });
         }
     }
 }());

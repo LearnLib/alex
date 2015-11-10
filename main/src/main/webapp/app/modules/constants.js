@@ -45,6 +45,14 @@
             // user related events
             USER_UPDATED: 'user:updated',
             USER_DELETED: 'user:deleted',
-            USER_LOGGED_IN: 'user:loggedIn'
+            USER_LOGGED_IN: 'user:loggedIn',
+
+            // action related events
+            ACTION_CREATED: 'action:created',
+            ACTION_UPDATED: 'action:updated',
+
+            // symbol related events
+            SYMBOL_CREATED: 'symbol:created',
+            SYMBOL_UPDATED: 'symbol:updated'
         })
 }());
