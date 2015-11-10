@@ -69,6 +69,8 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(Project project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("ProjectResource.create(" + project + ") for user " + user + ".");
+
         project.setUser(user);
 
         try {
@@ -99,6 +101,7 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("ProjectResource.getAll(" + embed+ ") for user " + user + ".");
 
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
@@ -130,6 +133,7 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("ProjectResource.get(" + projectId + ", " + embed + ") for user " + user + ".");
 
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
@@ -169,6 +173,7 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") long id, Project project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("ProjectResource.update(" + id + ", " + project + ") for user " + user + ".");
 
         if (id != project.getId()) {
             return Response.status(Status.BAD_REQUEST).build();
@@ -208,6 +213,7 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("id") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("ProjectResource.delete(" + projectId + ") for user " + user + ".");
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);

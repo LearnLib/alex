@@ -84,6 +84,7 @@ public class SymbolGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolGroupResource.createGroup(" + projectId + ", " + group +  ") for user " + user + ".");
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);
@@ -120,6 +121,7 @@ public class SymbolGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolGroupResource.getAll(" + projectId + ", " + embed +  ") for user " + user + ".");
 
         try {
             SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
@@ -156,6 +158,7 @@ public class SymbolGroupResource {
                         @PathParam("id") Long id,
                         @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolGroupResource.get(" + projectId + ", " + id + ", " + embed + ") for user " + user + ".");
 
         try {
             SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
@@ -187,6 +190,7 @@ public class SymbolGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolGroupResource.getSymbols(" + projectId + ", " + id + ") for user " + user + ".");
 
         try {
             List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(user, projectId, id);
@@ -218,6 +222,7 @@ public class SymbolGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolGroupResource.update(" + projectId + ", " + id + ", " + group + ") for user " + user + ".");
 
         try {
             if (group.getUserId().equals(user.getId())) {
@@ -254,6 +259,7 @@ public class SymbolGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteAResultSet(@PathParam("project_id") long projectId,  @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolGroupResource.deleteAResultSet(" + projectId + ", " + id + ") for user " + user + ".");
 
         try {
             SymbolGroup group = symbolGroupDAO.get(user, projectId, id);
