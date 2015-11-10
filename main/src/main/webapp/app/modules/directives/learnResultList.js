@@ -25,7 +25,7 @@
      *
      * Everything that is put between the tags is displayed at the most right.
      *
-     * @returns {{transclude: boolean, scope: {result: string}, templateUrl: string}}
+     * @returns {{transclude: boolean, scope: {result: string}, template: string}}
      */
     function learnResultListItem() {
         return {
@@ -33,7 +33,7 @@
             scope: {
                 result: '='
             },
-            templateUrl: `
+            template: `
                 <div class="learn-result-list-item">
                     <checkbox model="result" class="pull-left" selection-model-ignore></checkbox>
                     <div class="learn-result-list-item-content">
