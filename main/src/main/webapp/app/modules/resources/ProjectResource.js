@@ -9,13 +9,12 @@
      * The resource that handles http calls to the API to do CRUD operations on projects
      *
      * @param $http - The $http angular service
-     * @param paths - The constant with application paths
      * @param Project - Project factory
      * @returns {{getAll: getAll, get: get, create: create, update: update, delete: remove}}
      * @constructor
      */
     // @ngInject
-    function Resource($http, paths, Project) {
+    function Resource($http, Project) {
         return {
             getAll: getAll,
             get: get,
@@ -30,8 +29,8 @@
          * @returns {*}
          */
         function getAll() {
-            return $http.get(paths.api.URL + '/projects')
-                .then(Project.transformApiResponse);
+            return $http.get('/rest/projects')
+                .then(response => response.data.map(p => new Project(p)));
         }
 
         /**
@@ -41,19 +40,19 @@
          * @return {*}
          */
         function get(id) {
-            return $http.get(paths.api.URL + '/projects/' + id)
-                .then(Project.transformApiResponse);
+            return $http.get('/rest/projects/' + id)
+                .then(response => new Project(response.data));
         }
 
         /**
          * Make a POST http request to /rest/projects with a project object as data in order to create a new project
          *
-         * @param {Project} project - The project that should be created
+         * @param {ProjectFormModel} project - The project that should be created
          * @return {*}
          */
         function create(project) {
-            return $http.post(paths.api.URL + '/projects', project)
-                .then(Project.transformApiResponse);
+            return $http.post('/rest/projects', project)
+                .then(response => new Project(response.data));
         }
 
         /**
@@ -63,8 +62,8 @@
          * @return {*}
          */
         function update(project) {
-            return $http.put(paths.api.URL + '/projects/' + project.id, project)
-                .then(Project.transformApiResponse);
+            return $http.put('/rest/projects/' + project.id, project)
+                .then(response => new Project(response.data));
         }
 
         /**
@@ -74,7 +73,7 @@
          * @returns {HttpPromise}
          */
         function remove(project) {
-            return $http.delete(paths.api.URL + '/projects/' + project.id)
+            return $http.delete('/rest/projects/' + project.id)
         }
     }
 }());

@@ -6,7 +6,7 @@
         .directive('userRegisterForm', userRegisterForm);
 
     // @ngInject
-    function userRegisterForm(UserResource, ToastService) {
+    function userRegisterForm(UserResource, ToastService, UserFormModel) {
         return {
             scope: true,
             template: `
@@ -26,16 +26,16 @@
         };
 
         function link(scope) {
-            scope.user = {};
+            scope.user = new UserFormModel();
 
             scope.register = function () {
                 if (scope.user.email && scope.user.password) {
                     UserResource.create(scope.user)
-                        .then(function () {
+                        .then(() => {
                             ToastService.success('Registration successful');
-                            scope.user = {};
+                            scope.user = new UserFormModel();
                         })
-                        .catch(function (response) {
+                        .catch(response => {
                             ToastService.danger('Registration failed. ' + response.data.message);
                         })
                 }

@@ -9,15 +9,13 @@
      * The resource to handle actions with users over the API
      *
      * @param $http
-     * @param paths
+     * @param User
      * @returns {{getAll: getAll, get: get, create: create, login: login, remove: remove, update: update,
      *            changePassword: changePassword, changeEmail: changeEmail}}
      * @constructor
      */
     // @ngInject
-    function UserResource($http, paths) {
-        var uri = paths.api.URL + '/users';
-
+    function UserResource($http, User) {
         return {
             getAll: getAll,
             get: get,
@@ -38,7 +36,7 @@
          * @returns {*} - A promise
          */
         function changePassword(user, oldPassword, newPassword) {
-            return $http.put(uri + '/' + user.id + '/password', {
+            return $http.put('/rest/users/' + user.id + '/password', {
                 oldPassword: oldPassword,
                 newPassword: newPassword
             });
@@ -52,7 +50,7 @@
          * @returns {*} - A promise
          */
         function changeEmail(user, email) {
-            return $http.put(uri + '/' + user.id + '/email', {
+            return $http.put('/rest/users/' + user.id + '/email', {
                 email: email
             });
         }
@@ -64,10 +62,8 @@
          * @returns {*} - A promise
          */
         function get(userId) {
-            return $http.get(uri + '/' + userId)
-                .then(function (response) {
-                    return response.data;
-                })
+            return $http.get('/rest/users/' + userId)
+                .then(response => new User(response.data));
         }
 
         /**
@@ -76,20 +72,18 @@
          * @returns {*} - A promise
          */
         function getAll() {
-            return $http.get(uri)
-                .then(function (response) {
-                    return response.data;
-                })
+            return $http.get('/rest/users')
+                .then(response => response.data.map(u => new User(u)))
         }
 
         /**
          * Creates a new user
          *
-         * @param {User} user - The user to create
+         * @param {UserFormModel} user - The user to create
          * @returns {*} - A promise
          */
         function create(user) {
-            return $http.post(uri, user);
+            return $http.post('/rest/users', user);
         }
 
         /**
@@ -99,7 +93,7 @@
          * @returns {*} - A promise that contains the jwt
          */
         function login(user) {
-            return $http.post(uri + '/login', user);
+            return $http.post('/rest/users/login', user);
         }
 
         /**
@@ -109,7 +103,7 @@
          * @returns {*} - A promise
          */
         function remove(user) {
-            return $http.delete(uri + '/' + user.id, {});
+            return $http.delete('/rest/users/' + user.id, {});
         }
 
         /**
@@ -119,10 +113,8 @@
          * @returns {*} - A promise that contains the updated user
          */
         function update(user) {
-            return $http.put(uri + '/' + user.id, user)
-                .then(function (response) {
-                    return response.data;
-                })
+            return $http.put('/rest/users/' + user.id, user)
+                .then(response => new User(response.data))
         }
     }
 }());

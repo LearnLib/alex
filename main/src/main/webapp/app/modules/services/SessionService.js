@@ -12,11 +12,12 @@
      *
      * @param $rootScope
      * @param Project
+     * @param User
      * @returns {{project: {get: getProject, save: saveProject, remove: removeProject}, user: {get: getUser, save: saveUser, remove: removeUser}}}
      * @constructor
      */
     // @ngInject
-    function SessionService($rootScope, Project) {
+    function SessionService($rootScope, Project, User) {
         return {
             project: {
                 get: getProject,
@@ -37,7 +38,7 @@
          */
         function getProject() {
             var project = sessionStorage.getItem('project');
-            return project === null ? null : Project.build(angular.fromJson(project));
+            return project === null ? null : new Project(angular.fromJson(project));
         }
 
         /**
@@ -61,7 +62,7 @@
 
         function getUser() {
             var user = sessionStorage.getItem('user');
-            return user === null ? null : angular.fromJson(user);
+            return user === null ? null : new User(angular.fromJson(user));
         }
 
         function saveUser(user) {

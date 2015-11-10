@@ -6,7 +6,7 @@
         .directive('userLoginForm', userLoginForm);
 
     // @ngInject
-    function userLoginForm($state, $window, UserResource, jwtHelper, ToastService, SessionService) {
+    function userLoginForm($state, $window, UserResource, jwtHelper, ToastService, SessionService, UserFormModel) {
         return {
             scope: true,
             template: `
@@ -26,16 +26,16 @@
         };
 
         function link(scope) {
-            scope.user = {};
+            scope.user = new UserFormModel();
 
             scope.login = function () {
                 if (scope.user.email && scope.user.password) {
                     UserResource.login(scope.user)
-                        .then(function (response) {
+                        .then(response => {
                             ToastService.info('You have logged in!');
 
-                            var token = response.data.token;
-                            var tokenPayload = jwtHelper.decodeToken(token);
+                            const token = response.data.token;
+                            const tokenPayload = jwtHelper.decodeToken(token);
 
                             $window.sessionStorage.setItem('jwt', token);
 
@@ -48,7 +48,7 @@
                             // go to the users project page
                             $state.go('projects');
                         })
-                        .catch(function () {
+                        .catch(() => {
                             ToastService.danger('Login failed');
                         })
                 }

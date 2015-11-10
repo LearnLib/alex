@@ -33,7 +33,7 @@
                     controller: 'UserEditModalController',
                     resolve: {
                         modalData: function () {
-                            return {user: User.build(scope.user)};
+                            return {user: new User(scope.user)};
                         }
                     }
                 })

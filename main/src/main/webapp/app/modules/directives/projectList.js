@@ -10,16 +10,17 @@
      *
      * Usage: <project-list projects="..."></project-list> where property 'projects' expects an array of projects.
      *
-     * @param $rootScope
      * @param $state
      * @param ProjectResource
      * @param ToastService
      * @param SessionService
      * @param PromptService
+     * @param EventBus
+     * @param events
      * @returns {{scope: {projects: string}, templateUrl: string, link: link}}
      */
     // @ngInject
-    function projectList($rootScope, $state, ProjectResource, ToastService, SessionService, PromptService) {
+    function projectList($state, ProjectResource, ToastService, SessionService, PromptService, EventBus, events) {
         return {
             scope: {
                 projects: '='
@@ -45,11 +46,11 @@
              */
             scope.deleteProject = function (project) {
                 PromptService.confirm('Do you really want to delete this project? All related data will be lost.')
-                    .then(function () {
+                    .then(() => {
                         ProjectResource.delete(project)
-                            .then(function () {
+                            .then(() => {
                                 ToastService.success('Project ' + project.name + ' deleted');
-                                $rootScope.$emit('project:deleted', project);
+                                EventBus.emit(events.PROJECT_DELETED, {project: project});
                             })
                     })
             }

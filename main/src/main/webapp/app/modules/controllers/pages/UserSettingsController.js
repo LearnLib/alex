@@ -17,18 +17,17 @@
     function UserSettingsController($scope, UserResource, SessionService) {
 
         // the user from the jwt
-        var user = SessionService.user.get();
+        const user = SessionService.user.get();
 
         /**
          * The user to edit
-         * @type {null}
+         * @type {null|User}
          */
         $scope.user = null;
 
         // fetch the user from the api
-        UserResource.get(user.id)
-            .then(function (user) {
-                $scope.user = user;
-            });
+        UserResource.get(user.id).then(user => {
+            $scope.user = user;
+        });
     }
 }());

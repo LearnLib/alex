@@ -9,13 +9,12 @@
      * The service for interacting with the learner
      *
      * @param $http - The angular $http service
-     * @param paths - The applications paths constant
      * @param LearnResult - The LearnResult factory
      * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive, isCounterexample: isCounterexample}}
      * @constructor
      */
     // @ngInject
-    function LearnerResource($http, paths, LearnResult) {
+    function LearnerResource($http, LearnResult) {
         return {
             start: start,
             stop: stop,
@@ -33,7 +32,7 @@
          * @return {*}
          */
         function start(projectId, learnConfiguration) {
-            return $http.post(paths.api.URL + '/learner/start/' + projectId, learnConfiguration);
+            return $http.post('/rest/learner/start/' + projectId, learnConfiguration);
         }
 
         /**
@@ -43,7 +42,7 @@
          * @return {*}
          */
         function stop() {
-            return $http.get(paths.api.URL + '/learner/stop');
+            return $http.get('/rest/learner/stop');
         }
 
         /**
@@ -56,7 +55,7 @@
          * @return {*}
          */
         function resume(projectId, testNo, learnConfiguration) {
-            return $http.post(paths.api.URL + '/learner/resume/' + projectId + '/' + testNo, learnConfiguration);
+            return $http.post('/rest/learner/resume/' + projectId + '/' + testNo, learnConfiguration);
         }
 
         /**
@@ -66,7 +65,7 @@
          * @return {*}
          */
         function getStatus() {
-            return $http.get(paths.api.URL + '/learner/status')
+            return $http.get('/rest/learner/status')
                 .then(function (response) {
                     return LearnResult.transformApiResponse(response);
                 })
@@ -81,7 +80,7 @@
          * @return {*}
          */
         function isActive() {
-            return $http.get(paths.api.URL + '/learner/active')
+            return $http.get('/rest/learner/active')
                 .then(function (response) {
                     return response.data;
                 })
@@ -96,7 +95,7 @@
          * @returns {*}
          */
         function isCounterexample(projectId, resetSymbol, symbols) {
-            return $http.post(paths.api.URL + '/learner/outputs/' + projectId, {
+            return $http.post('/rest/learner/outputs/' + projectId, {
                 resetSymbol: resetSymbol,
                 symbols: symbols
             }).then(function (response) {

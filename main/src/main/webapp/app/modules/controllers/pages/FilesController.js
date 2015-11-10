@@ -82,7 +82,7 @@
                 if ($scope.filesToUpload.length > 0) {
                     var file = $scope.filesToUpload[0];
                     Upload.upload({
-                        url: paths.api.URL + '/projects/' + project.id + '/files',
+                        url: '/rest/projects/' + project.id + '/files',
                         file: file
                     }).progress(function (evt) {
                         $scope.progress = parseInt(100.0 * evt.loaded / evt.total);

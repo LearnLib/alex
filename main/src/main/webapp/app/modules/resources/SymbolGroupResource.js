@@ -8,13 +8,12 @@
      * The resource that handles http requests to the API to do CRUD operations on symbol groups
      *
      * @param $http - The angular $http service
-     * @param paths - The applications paths constant
      * @param SymbolGroup - The factory for SymbolGroup objects
      * @returns {{getAll: getAll, create: create, update: update, delete: remove}}
      * @constructor
      */
     // @ngInject
-    function Resource($http, paths, SymbolGroup) {
+    function Resource($http, SymbolGroup) {
         return {
             getAll: getAll,
             create: create,
@@ -38,7 +37,7 @@
                 query = '?embed=symbols';
             }
 
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/groups' + query)
+            return $http.get('/rest/projects/' + projectId + '/groups' + query)
                 .then(SymbolGroup.transformApiResponse);
         }
 
@@ -50,7 +49,7 @@
          * @returns {*} - An angular promise
          */
         function create(projectId, group) {
-            return $http.post(paths.api.URL + '/projects/' + projectId + '/groups', group)
+            return $http.post('/rest/projects/' + projectId + '/groups', group)
                 .then(SymbolGroup.transformApiResponse);
         }
 
@@ -61,7 +60,7 @@
          * @returns {*} - An angular promise
          */
         function update(group) {
-            return $http.put(paths.api.URL + '/projects/' + group.project + '/groups/' + group.id, group)
+            return $http.put('/rest/projects/' + group.project + '/groups/' + group.id, group)
                 .then(SymbolGroup.transformApiResponse);
         }
 
@@ -74,7 +73,7 @@
          * @returns {*} - An angular promise
          */
         function remove(group) {
-            return $http.delete(paths.api.URL + '/projects/' + group.project + '/groups/' + group.id)
+            return $http.delete('/rest/projects/' + group.project + '/groups/' + group.id)
         }
     }
 }());

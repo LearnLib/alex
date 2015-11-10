@@ -9,12 +9,11 @@
      * The resource that handles API calls concerning the management of files.
      *
      * @param $http - The angular $http service
-     * @param paths - The ALEX paths constant
      * @returns {{getAll: getAll, delete: remove}}
      * @constructor
      */
     // @ngInject
-    function Resource($http, paths) {
+    function Resource($http) {
         return {
             getAll: getAll,
             delete: remove
@@ -26,7 +25,7 @@
          * @param {number} projectId - The id of the project
          */
         function getAll(projectId) {
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/files')
+            return $http.get('/rest/projects/' + projectId + '/files')
                 .then(function (response) {
                     return response.data;
                 })
@@ -39,7 +38,7 @@
          * @param {File} file - The file object to be deleted
          */
         function remove(projectId, file) {
-            return $http.delete(paths.api.URL + '/projects/' + projectId + '/files/' + encodeURI(file.name))
+            return $http.delete('/rest/projects/' + projectId + '/files/' + encodeURI(file.name))
         }
     }
 }());

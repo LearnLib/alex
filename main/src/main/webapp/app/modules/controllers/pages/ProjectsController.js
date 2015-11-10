@@ -8,15 +8,17 @@
     /**
      * The controller that shows the page to manage projects
      *
-     * @param $rootScope
      * @param $scope
      * @param $state
      * @param SessionService
      * @param ProjectResource
+     * @param EventBus
+     * @param events
+     * @param _
      * @constructor
      */
     // @ngInject
-    function ProjectsController($rootScope, $scope, $state, SessionService, ProjectResource) {
+    function ProjectsController($scope, $state, SessionService, ProjectResource, EventBus, events, _) {
 
         /**
          * The list of all projects
@@ -29,31 +31,25 @@
             $state.go('dashboard');
         }
 
-        ProjectResource.getAll()
-            .then(function (projects) {
-                $scope.projects = projects;
-            });
+        ProjectResource.getAll().then(projects => {
+            $scope.projects = projects;
+        });
 
-        var projectCreatedOffHandler =
-            $rootScope.$on('project:created', function (evt, project) {
-                $scope.projects.push(project);
-            });
+        // listen on project create event
+        EventBus.on(events.PROJECT_CREATED, (evt, data) => {
+            $scope.projects.push(data.project);
+        }, $scope);
 
-        var projectUpdatedOffHandler =
-            $rootScope.$on('project:updated', function (evt, project) {
-                var index = _.findIndex($scope.projects, {id: project.id});
-                if (index > -1) $scope.projects[index] = project;
-            });
+        // listen on project update event
+        EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
+            const project = data.project;
+            const i = _.findIndex($scope.projects, {id: project.id});
+            if (i > -1) $scope.projects[i] = project;
+        }, $scope);
 
-        var projectDeletedOffHandler =
-            $rootScope.$on('project:deleted', function (evt, project) {
-                _.remove($scope.projects, {id: project.id});
-            });
-
-        $scope.$on('$destroy', function () {
-            projectCreatedOffHandler();
-            projectUpdatedOffHandler();
-            projectDeletedOffHandler();
-        })
+        // listen on project delete event
+        EventBus.on(events.PROJECT_DELETED, (evt, data) => {
+            _.remove($scope.projects, {id: data.project.id});
+        }, $scope);
     }
 }());

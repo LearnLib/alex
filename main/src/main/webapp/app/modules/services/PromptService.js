@@ -27,8 +27,8 @@
          * @return {*} - The modal result promise
          */
         function prompt(text, options) {
-            var modal = $modal.open({
-                templateUrl: 'app/modules/modals/views/prompt-dialog.html',
+            return $modal.open({
+                templateUrl: 'views/modals/prompt-dialog.html',
                 controller: 'PromptDialogController',
                 resolve: {
                     modalData: function () {
@@ -39,8 +39,7 @@
                         };
                     }
                 }
-            });
-            return modal.result;
+            }).result;
         }
 
         /**
@@ -50,8 +49,8 @@
          * @returns {*} - The modal result promise
          */
         function confirm(text) {
-            var modal = $modal.open({
-                templateUrl: 'app/modules/modals/views/confirm-dialog.html',
+            return $modal.open({
+                templateUrl: 'views/modals/confirm-dialog.html',
                 controller: 'ConfirmDialogController',
                 resolve: {
                     modalData: function () {
@@ -60,8 +59,7 @@
                         };
                     }
                 }
-            });
-            return modal.result;
+            }).result;
         }
     }
 }());

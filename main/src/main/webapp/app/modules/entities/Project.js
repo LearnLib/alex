@@ -1,70 +1,49 @@
 (function () {
     'use strict';
 
-    angular
-        .module('ALEX.entities')
-        .factory('Project', ProjectFactory);
-
-    /**
-     * The factory for the model of a project.
-     *
-     * @param _ - Lodash
-     * @returns {Project}
-     * @constructor
-     */
-    // @ngInject
-    function ProjectFactory(_) {
+    /** The form model for a Project */
+    class ProjectFormModel {
 
         /**
-         * The model for a Project
-         *
+         * Constructor
          * @param {string} name - The name of the project
          * @param {string} baseUrl - The base URL of the project
-         * @param {string} description - The description of the project
+         * @param {string|null} description - The description of the project
          * @constructor
          */
-        function Project(name, baseUrl, description) {
-            this.name = name || null;
-            this.baseUrl = baseUrl || null;
-            this.description = description || null;
+        constructor(name = '', baseUrl = '', description = null) {
+            this.name = name;
+            this.baseUrl = baseUrl;
+            this.description = description
         }
-
-        /**
-         * Create an instance of Project from an object
-         *
-         * @param {Object} data - The object the project is created from
-         * @returns {Project}
-         */
-        Project.build = function (data) {
-            return angular.extend(new Project(
-                data.name,
-                data.baseUrl,
-                data.description
-            ), {
-                id: data.id,
-                groups: data.groups,
-                user: data.user
-            });
-        };
-
-        /**
-         * Create [an] instance[s] of Project from a HTTP response
-         *
-         * @param {Object} response - The response object from the API
-         * @returns {Project|Project[]} - The Project[s]
-         */
-        Project.transformApiResponse = function (response) {
-            if (angular.isArray(response.data)) {
-                if (response.data.length > 0) {
-                    return _.map(response.data, Project.build);
-                } else {
-                    return [];
-                }
-            } else {
-                return Project.build(response.data);
-            }
-        };
-
-        return Project;
     }
+
+    /** The api result model for a Project */
+    class Project extends ProjectFormModel {
+
+        /**
+         * Constructor
+         * @param {object} obj - The object to create a project from
+         */
+        constructor(obj) {
+            super(obj.name, obj.baseUrl, obj.description);
+
+            /**
+             * The id of the project
+             * @type {number}
+             */
+            this.id = obj.id;
+
+            /**
+             * The id of the user the project belongs to
+             * @type{number}
+             */
+            this.user = obj.user;
+        }
+    }
+
+    angular
+        .module('ALEX.entities')
+        .factory('ProjectFormModel', () => ProjectFormModel)
+        .factory('Project', () => Project);
 }());

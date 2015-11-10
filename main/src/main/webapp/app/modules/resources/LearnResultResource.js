@@ -9,14 +9,13 @@
      * The resource that handles http request to the API to do CRUD operations on learn results
      *
      * @param $http - The angular http service
-     * @param paths - The constant with application paths
      * @param LearnResult - The factory for LearnResult objects
      * @param _ - Lodash
      * @returns {{getFinal: getFinal, getAllFinal: getAllFinal, getComplete: getComplete, delete: remove}}
      * @constructor
      */
     // @ngInject
-    function Resource($http, paths, LearnResult, _) {
+    function Resource($http, LearnResult, _) {
         return {
             getFinal: getFinal,
             getAllFinal: getAllFinal,
@@ -32,7 +31,7 @@
          * @returns {*} - A promise with the learn results
          */
         function getAllFinal(projectId) {
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/results')
+            return $http.get('/rest/projects/' + projectId + '/results')
                 .then(LearnResult.transformApiResponse);
         }
 
@@ -45,7 +44,7 @@
          * @returns {*} - A promise
          */
         function getFinal(projectId, testNo) {
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNo)
+            return $http.get('/rest/projects/' + projectId + '/results/' + testNo)
                 .then(LearnResult.transformApiResponse);
         }
 
@@ -59,7 +58,7 @@
          */
         function getComplete(projectId, testNos) {
             if (angular.isArray(testNos)) {
-                return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNos.join(',') + '/complete')
+                return $http.get('/rest/projects/' + projectId + '/results/' + testNos.join(',') + '/complete')
                     .then(function (response) {
                         if (response.data.length > 0) {
                             if (!angular.isArray(response.data[0])) {
@@ -76,7 +75,7 @@
                         }
                     })
             } else {
-                return $http.get(paths.api.URL + '/projects/' + projectId + '/results/' + testNos + '/complete')
+                return $http.get('/rest/projects/' + projectId + '/results/' + testNos + '/complete')
                     .then(function (response) {
                         response.data.shift();
                         return LearnResult.transformApiResponse(response);
@@ -99,7 +98,7 @@
                 testNos = results.testNo;
                 projectId = results.project;
             }
-            return $http.delete(paths.api.URL + '/projects/' + projectId + '/results/' + testNos, {})
+            return $http.delete('/rest/projects/' + projectId + '/results/' + testNos, {})
         }
     }
 }());

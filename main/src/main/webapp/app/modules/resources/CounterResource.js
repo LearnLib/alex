@@ -6,19 +6,15 @@
         .factory('CounterResource', CounterResource);
 
     /**
-     * The service that communicates with the API in order to read and delete counters. Counters are objects consisting
-     * of a unique 'name' property, a 'value' which holds the current value of the counter in the database and 'project'
-     * for the projects id.
-     *
-     * Example: {"name": "i", "value": 10, "project": 1}
+     * The service that communicates with the API in order to read and delete counters.
      *
      * @param $http - angular $http service
-     * @param paths - application paths constants
+     * @param Counter - The counter model
      * @returns {{getAll: getAll, delete: remove, deleteSome: deleteSome}}
      * @constructor
      */
     // @ngInject
-    function CounterResource($http, paths) {
+    function CounterResource($http, Counter) {
         return {
             getAll: getAll,
             delete: remove,
@@ -33,10 +29,8 @@
          * @returns angular promise object of the request
          */
         function getAll(projectId) {
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/counters')
-                .then(function (response) {
-                    return response.data;
-                })
+            return $http.get('/rest/projects/' + projectId + '/counters')
+                .then(response => response.data.map(c => new Counter(c)));
         }
 
         /**
@@ -48,10 +42,7 @@
          * @returns angular promise object of the request
          */
         function remove(projectId, name) {
-            return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/' + name)
-                .then(function (response) {
-                    return response.data;
-                })
+            return $http.delete('/rest/projects/' + projectId + '/counters/' + name)
         }
 
         /**
@@ -63,11 +54,8 @@
          * @returns angular promise object of the request
          */
         function deleteSome(projectId, names) {
-            var n = names.join(',');
-            return $http.delete(paths.api.URL + '/projects/' + projectId + '/counters/batch/' + n)
-                .then(function (response) {
-                    return response.data;
-                })
+            const n = names.join(',');
+            return $http.delete('/rest/projects/' + projectId + '/counters/batch/' + n)
         }
     }
 }());

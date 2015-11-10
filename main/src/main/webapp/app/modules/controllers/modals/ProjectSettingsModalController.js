@@ -8,17 +8,19 @@
     /**
      * The controller of the modal window for editing a project
      *
-     * @param $rootScope
      * @param $scope
      * @param $modalInstance
      * @param modalData
      * @param Project
      * @param ProjectResource
      * @param ToastService
+     * @param EventBus
+     * @param events
      * @constructor
      */
     // @ngInject
-    function ProjectSettingsModalController($rootScope, $scope, $modalInstance, modalData, Project, ProjectResource, ToastService) {
+    function ProjectSettingsModalController($scope, $modalInstance, modalData, Project, ProjectResource, ToastService,
+                                            EventBus, events) {
 
         /**
          * The project to edit
@@ -37,12 +39,12 @@
             $scope.error = null;
 
             ProjectResource.update($scope.project)
-                .then(function (updatedProject) {
-                    $rootScope.$emit('project:updated', updatedProject);
+                .then(updatedProject => {
+                    EventBus.emit(events.PROJECT_UPDATED, {project: updatedProject});
                     $scope.closeModal();
                     ToastService.success('Project updated');
                 })
-                .catch(function (response) {
+                .catch(response => {
                     $scope.error = response.data.message;
                 })
         };

@@ -4,14 +4,6 @@
     angular
         .module('ALEX')
 
-        // paths that are used in the application
-        .constant('paths', {
-            api: {
-                URL: '/rest',
-                PROXY_URL: '/rest/proxy?url='
-            }
-        })
-
         // learn algorithms
         .constant('learnAlgorithms', {
             LSTAR: 'LSTAR',
@@ -29,6 +21,12 @@
         })
 
         .constant('events', {
+            // project related events
+            PROJECT_CREATED: 'project:created',
+            PROJECT_UPDATED: 'project:updated',
+            PROJECT_DELETED: 'project:deleted',
+
+            // symbol group related events
             GROUP_CREATED: 'group:created',
             GROUP_UPDATED: 'group:updated',
             GROUP_DELETED: 'group:deleted'

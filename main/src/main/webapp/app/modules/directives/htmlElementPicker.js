@@ -275,7 +275,7 @@
             // load project, create proxy address and load the last url in the iframe
             function init() {
                 scope.project = SessionService.project.get();
-                proxyUrl = $window.location.origin + paths.api.PROXY_URL;
+                proxyUrl = $window.location.origin + '/rest/proxy?url=';
 
                 scope.url = htmlElementPickerInstance.getUrl();
                 scope.loadUrl();

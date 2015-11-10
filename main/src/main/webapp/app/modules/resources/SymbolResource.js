@@ -9,14 +9,13 @@
      * The resource that handles http requests to the API to do CRUD operations on symbols
      *
      * @param $http - The angular $http service
-     * @param paths - The constant with application paths
      * @param _ - Lodash
      * @param Symbol - The factory for Symbol objects
      * @returns {{get: get, getAll: getAll, getRevisions: getRevisions, create: create, update: update, delete: remove, move: move, recover: recover}}
      * @constructor
      */
     // @ngInject
-    function Resource($http, paths, _, Symbol) {
+    function Resource($http, _, Symbol) {
         return {
             get: get,
             getAll: getAll,
@@ -37,7 +36,7 @@
          * @param {number} symbolId - The id of the symbol that should be fetched
          */
         function get(projectId, symbolId) {
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId)
+            return $http.get('/rest/projects/' + projectId + '/symbols/' + symbolId)
                 .then(Symbol.transformApiResponse);
         }
 
@@ -56,7 +55,7 @@
             if (options && options.deleted && options.deleted === true) {
                 query = '?visibility=hidden';
             }
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols' + (query ? query : ''))
+            return $http.get('/rest/projects/' + projectId + '/symbols' + (query ? query : ''))
                 .then(Symbol.transformApiResponse);
         }
 
@@ -73,7 +72,7 @@
                 return pair.id + ':' + pair.revision
             }).join(',');
 
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/batch/' + pairs)
+            return $http.get('/rest/projects/' + projectId + '/symbols/batch/' + pairs)
                 .then(Symbol.transformApiResponse)
         }
 
@@ -86,7 +85,7 @@
          * @returns {*}
          */
         function getRevisions(projectId, symbolId) {
-            return $http.get(paths.api.URL + '/projects/' + projectId + '/symbols/' + symbolId + '/complete')
+            return $http.get('/rest/projects/' + projectId + '/symbols/' + symbolId + '/complete')
                 .then(Symbol.transformApiResponse);
         }
 
@@ -98,10 +97,10 @@
          */
         function create(projectId, symbols) {
             if (angular.isArray(symbols)) {
-                return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols/batch', symbols)
+                return $http.post('/rest/projects/' + projectId + '/symbols/batch', symbols)
                     .then(Symbol.transformApiResponse);
             } else {
-                return $http.post(paths.api.URL + '/projects/' + projectId + '/symbols', symbols)
+                return $http.post('/rest/projects/' + projectId + '/symbols', symbols)
                     .then(Symbol.transformApiResponse);
             }
         }
@@ -117,9 +116,9 @@
         function move(symbols, group) {
             if (angular.isArray(symbols)) {
                 var symbolIds = _.pluck(symbols, 'id').join(',');
-                return $http.put(paths.api.URL + '/projects/' + group.project + '/symbols/batch/' + symbolIds + '/moveTo/' + group.id, {})
+                return $http.put('/rest/projects/' + group.project + '/symbols/batch/' + symbolIds + '/moveTo/' + group.id, {})
             } else {
-                return $http.put(paths.api.URL + '/projects/' + group.project + '/symbols/' + symbols.id + '/moveTo/' + group.id, {})
+                return $http.put('/rest/projects/' + group.project + '/symbols/' + symbols.id + '/moveTo/' + group.id, {})
             }
         }
 
@@ -133,11 +132,11 @@
         function update(symbols) {
             if (angular.isArray(symbols)) {
                 var symbolIds = _.pluck(symbols, 'id').join(',');
-                return $http.put(paths.api.URL + '/projects/' + symbols[0].project + '/symbols/batch/' + symbolIds, symbols)
+                return $http.put('/rest/projects/' + symbols[0].project + '/symbols/batch/' + symbolIds, symbols)
                     .then(Symbol.transformApiResponse);
             } else {
                 var symbol = symbols;
-                return $http.put(paths.api.URL + '/projects/' + symbol.project + '/symbols/' + symbol.id, symbol)
+                return $http.put('/rest/projects/' + symbol.project + '/symbols/' + symbol.id, symbol)
                     .then(Symbol.transformApiResponse);
             }
         }
@@ -152,10 +151,10 @@
         function remove(symbols) {
             if (angular.isArray(symbols)) {
                 var symbolIds = _.pluck(symbols, 'id').join(',');
-                return $http.post(paths.api.URL + '/projects/' + symbols[0].project + '/symbols/batch/' + symbolIds + '/hide', {})
+                return $http.post('/rest/projects/' + symbols[0].project + '/symbols/batch/' + symbolIds + '/hide', {})
             } else {
                 var symbol = symbols;
-                return $http.post(paths.api.URL + '/projects/' + symbol.project + '/symbols/' + symbol.id + '/hide', {})
+                return $http.post('/rest/projects/' + symbol.project + '/symbols/' + symbol.id + '/hide', {})
             }
         }
 
@@ -169,10 +168,10 @@
         function recover(symbols) {
             if (angular.isArray(symbols)) {
                 var symbolIds = _.pluck(symbols, 'id').join(',');
-                return $http.post(paths.api.URL + '/projects/' + symbols[0].project + '/symbols/batch/' + symbolIds + '/show', {})
+                return $http.post('/rest/projects/' + symbols[0].project + '/symbols/batch/' + symbolIds + '/show', {})
             } else {
                 var symbol = symbols;
-                return $http.post(paths.api.URL + '/projects/' + symbol.project + '/symbols/' + symbol.id + '/show', {})
+                return $http.post('/rest/projects/' + symbol.project + '/symbols/' + symbol.id + '/show', {})
             }
         }
     }
