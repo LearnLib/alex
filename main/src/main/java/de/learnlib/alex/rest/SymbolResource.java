@@ -85,6 +85,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createSymbol(@PathParam("project_id") Long projectId, Symbol symbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.createSymbol(" + projectId + ", " + symbol + ") for user " + user + ".");
 
         try {
             checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
@@ -128,6 +129,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response batchCreateSymbols(@PathParam("project_id") Long projectId, List<Symbol> symbols) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.batchCreateSymbols(" + projectId + ", " + symbols + ") for user " + user + ".");
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);
@@ -182,6 +184,7 @@ public class SymbolResource {
     public Response getAll(@PathParam("project_id") Long projectId,
                            @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.getAll(" + projectId + ", " + visibilityLevel + ") for user " + user + ".");
 
         List<Symbol> symbols;
         try {
@@ -212,6 +215,8 @@ public class SymbolResource {
     public Response getByIdRevisionPairs(@PathParam("project_id") Long projectId,
                                          @PathParam("idRevisionPairs") IdRevisionPairList idRevisionPairs) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.getByIdRevisionPairs(" + projectId + ", " + idRevisionPairs + ") "
+                     + "for user " + user + ".");
 
         try {
             List<Symbol> symbols = symbolDAO.getAll(user, projectId, idRevisionPairs);
@@ -242,6 +247,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.get(" + projectId + ", " + id + ")  for user " + user + ".");
 
         try {
             Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
@@ -269,6 +275,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getComplete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.getComplete(" + projectId + ", " + id + ")  for user " + user + ".");
 
         try {
             List<Symbol> symbols = symbolDAO.getWithAllRevisions(user, projectId, id);
@@ -295,9 +302,12 @@ public class SymbolResource {
     @GET
     @Path("/{id}:{revision}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getWithRevision(@PathParam("project_id") Long projectId, @PathParam("id") Long id,
-            @PathParam("revision") long revision) {
+    public Response getWithRevision(@PathParam("project_id") Long projectId,
+                                    @PathParam("id") Long id,
+                                    @PathParam("revision") long revision) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.getWithRevision(" + projectId + ", " + id + ", " + revision + ") "
+                     + "for user " + user + ".");
 
         try {
             Symbol symbol = symbolDAO.get(user, projectId, id, revision);
@@ -330,6 +340,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("project_id") Long projectId, @PathParam("id") Long id, Symbol symbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.update(" + projectId + ", " + id + ", " + symbol + ") for user " + user + ".");
 
         if (!Objects.equals(id, symbol.getId())
                 || !Objects.equals(projectId, symbol.getProjectId())
@@ -370,6 +381,8 @@ public class SymbolResource {
                                 @PathParam("ids") IdsList ids,
                                 List<Symbol> symbols) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.batchUpdate(" + projectId + ", " + ids + ", " + symbols + ") "
+                     + "for user " + user + ".");
 
         Set idsSet = new HashSet<>(ids);
         for (Symbol symbol : symbols) {
@@ -407,6 +420,8 @@ public class SymbolResource {
                                              @PathParam("symbol_id") Long symbolId,
                                              @PathParam("group_id") Long groupId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.moveSymbolToAnotherGroup(" + projectId + ", " + symbolId + ", " + groupId + ") "
+                     + "for user " + user + ".");
 
         try {
             Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, symbolId);
@@ -436,6 +451,8 @@ public class SymbolResource {
                                              @PathParam("symbol_ids") IdsList symbolIds,
                                              @PathParam("group_id") Long groupId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.moveSymbolToAnotherGroup(" + projectId + ", " + symbolIds + ", " + groupId + ") "
+                     + "for user " + user + ".");
 
         try {
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId,
@@ -465,6 +482,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response hide(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.hide(" + projectId + ", " + id + ") for user " + user + ".");
 
         try {
             Symbol s = symbolDAO.getWithLatestRevision(user, projectId, id);
@@ -498,6 +516,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response hide(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.hide(" + projectId + ", " + ids + ") for user " + user + ".");
 
         try {
             Long[] idsArray = ids.toArray(new Long[ids.size()]);
@@ -525,6 +544,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response show(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.show(" + projectId + ", " + id + ") for user " + user + ".");
 
         try {
             symbolDAO.show(user.getId(), projectId, id);
@@ -551,6 +571,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response show(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("SymbolResource.show(" + projectId + ", " + ids + ") for user " + user + ".");
 
         try {
             Long[] idsArray = ids.toArray(new Long[ids.size()]);

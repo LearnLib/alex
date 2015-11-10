@@ -54,8 +54,11 @@ public class FileResource {
     public Response uploadFile(@PathParam("project_id") Long projectId,
                                @FormDataParam("file") InputStream uploadedInputStream,
                                @FormDataParam("file") FormDataContentDisposition fileDetail) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("FileResource.uploadFile(" + projectId + ", " + uploadedInputStream + ", " + fileDetail + ") "
+                     + "for user " + user + ".");
+
         try {
-            User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
             fileDAO.create(user.getId(), projectId, uploadedInputStream, fileDetail);
 
             UploadableFile result = new UploadableFile();
@@ -78,8 +81,10 @@ public class FileResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllFiles(@PathParam("project_id") Long projectId) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("FileResource.getAllFiles(" + projectId + ") for user " + user + ".");
+
         try {
-            User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
             List<UploadableFile> allFiles = fileDAO.getAll(user.getId(), projectId);
             return Response.ok(allFiles).build();
         } catch (NotFoundException e) {
@@ -92,8 +97,10 @@ public class FileResource {
     @Path("/{file_name}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteOneFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String fileName) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("FileResource.deleteOneFile(" + projectId + ", " + fileName + ") for user " + user + ".");
+
         try {
-            User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
             fileDAO.delete(user.getId(), projectId, fileName);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (NotFoundException e) {

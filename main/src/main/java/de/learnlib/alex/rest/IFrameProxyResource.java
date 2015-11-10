@@ -55,6 +55,8 @@ public class IFrameProxyResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response doGetProxy(@QueryParam("url") String url, @HeaderParam("Cookie") String cookies) {
+        LOGGER.trace("IFrameProxyResource.doGetProxy(" + url + ", " + cookies + ").");
+
         try {
             Connection connection = Jsoup.connect(url);
             connection = parseAndProcessCookies(connection, cookies);
@@ -86,8 +88,11 @@ public class IFrameProxyResource {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
-    public Response doPostProxy(@QueryParam("url") String url, @HeaderParam("Cookie") String cookies,
+    public Response doPostProxy(@QueryParam("url") String url,
+                                @HeaderParam("Cookie") String cookies,
                                 MultivaluedMap<String, String> body) {
+        LOGGER.trace("IFrameProxyResource.doPostProxy(" + url + ", " + cookies + ", " + body + ").");
+
         try {
             Connection connection = Jsoup.connect(url);
             connection = parseAndProcessCookies(connection, cookies);
