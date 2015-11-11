@@ -68,7 +68,7 @@
         <div class="selectable-list" ng-show="selectedChartMode === null">
 
             <learn-result-list>
-                <learn-result-list-item ng-repeat="result in results"
+                <learn-result-list-item ng-repeat="result in results | orderBy:'-testNo':false"
                                         result="result"
                                         selection-model
                                         selection-model-selected-items="selectedResults">

@@ -10,11 +10,11 @@
             <tbody>
             <tr>
                 <td><strong>Name</strong></td>
-                <td ng-bind="::project.name"></td>
+                <td ng-bind="project.name"></td>
             </tr>
             <tr>
                 <td><strong>URL</strong></td>
-                <td><a href="{{::project.baseUrl}}" target="_blank" ng-bind="::project.baseUrl"></a></td>
+                <td><a href="{{project.baseUrl}}" target="_blank" ng-bind="project.baseUrl"></a></td>
             </tr>
             <tr>
                 <td><strong>#Groups</strong></td>
@@ -30,6 +30,9 @@
             </tr>
             </tbody>
         </table>
+        <button class="btn btn-default btn-xs" project-settings-modal-handle project="project">
+            <i class="fa fa-fw fa-edit"></i> Edit project
+        </button>
     `;
 
     /**
@@ -42,10 +45,12 @@
      * @param SessionService - The SessionService
      * @param SymbolGroupResource - The SymbolGroup Resource
      * @param LearnResultResource - The LearnResult Resource
+     * @param EventBus
+     * @param events
      * @returns {{scope: {}, template: string, link: link}}
      */
     // @ngInject
-    function projectDetailsWidget(SessionService, SymbolGroupResource, LearnResultResource) {
+    function projectDetailsWidget(SessionService, SymbolGroupResource, LearnResultResource, EventBus, events) {
         return {
             scope: {},
             template: template,
@@ -79,7 +84,7 @@
             scope.numberOfTests = null;
 
             SymbolGroupResource.getAll(scope.project.id, {embedSymbols: true})
-                .then(function (groups) {
+                .then(groups => {
                     scope.numberOfGroups = groups.length;
                     var counter = 0;
                     for (var i = 0; i < groups.length; i++) {
@@ -89,9 +94,15 @@
                 });
 
             LearnResultResource.getAllFinal(scope.project.id)
-                .then(function (results) {
+                .then(results => {
                     scope.numberOfTests = results.length;
-                })
+                });
+
+            // listen on project update event
+            EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
+                scope.project = data.project;
+                SessionService.project.save(data.project);
+            }, scope);
         }
     }
 }());

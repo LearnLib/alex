@@ -39,8 +39,10 @@
                     <div class="learn-result-list-item-content">
                         <div class="pull-right" ng-transclude></div>
                         <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
-                        <strong>Test No
-                            <span ng-bind="result.testNo"></span>
+                        <strong>
+                            <a ui-sref="learn.results.compare({testNos: [result.testNo]})">
+                                Test No <span ng-bind="result.testNo"></span>
+                            </a>
                         </strong>,
                         [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
                         <div class="text-muted">
