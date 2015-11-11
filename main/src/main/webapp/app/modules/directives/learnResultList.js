@@ -45,7 +45,7 @@
                         [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
                         <div class="text-muted">
                         <i>
-                            Started: <span ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+                            Started: <span ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
                         </i>
                     </div>
                     <div class="comment text-muted"

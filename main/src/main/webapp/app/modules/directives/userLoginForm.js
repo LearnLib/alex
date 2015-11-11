@@ -13,7 +13,8 @@
                 <form ng-submit="login()">
                     <div class="form-group">
                         <label>Email</label>
-                            <input type="text" class="form-control" placeholder="Email address" ng-model="user.email">
+                            <input type="text" class="form-control" placeholder="Email address" autofocus
+                                   ng-model="user.email">
                     </div>
                     <div class="form-group">
                         <label>Password</label>
