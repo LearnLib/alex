@@ -1,9 +1,11 @@
-<view-header title="Profile Settings"></view-header>
+<div ng-controller="UserSettingsController as vm">
+    <view-header title="Profile Settings"></view-header>
 
-<div class="view-body">
-    <div class="alx-container">
+    <div class="view-body">
+        <div class="alx-container">
 
-        <user-edit-form user="user" ng-if="user"></user-edit-form>
+            <user-edit-form user="vm.user" ng-if="vm.user"></user-edit-form>
 
+        </div>
     </div>
 </div>

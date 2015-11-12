@@ -1,41 +1,39 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('FillWebAction', factory);
+/** Fills an input element with a value */
+class FillWebAction extends Action {
+    static get type() {
+        return 'web_fill';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {FillWebAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(FillWebAction.type);
 
         /**
-         * Fills an input element with a value
-         *
-         * @param {selector} selector - The CSS selector of an element
-         * @param {string} value - The value it should be filled with
-         * @constructor
+         * The CSS selector of an element
+         * @type {*|string}
          */
-        function FillWebAction(selector, value) {
-            AbstractAction.call(this, FillWebAction.type);
-            this.node = selector || '';
-            this.value = value || '';
-        }
-
-        FillWebAction.prototype = Object.create(AbstractAction.prototype);
+        this.node = obj.node || '';
 
         /**
-         * @returns {string}
+         * The value it should be filled with
+         * @type {*|string}
          */
-        FillWebAction.prototype.toString = function () {
-            return 'Fill input "' + this.node + '" with "' + this.value + '"';
-        };
-
-        FillWebAction.type = 'web_fill';
-
-        return FillWebAction;
+        this.value = obj.value || '';
     }
-}());
+
+    /**
+     * The string representation of the action
+     * @returns {string}
+     */
+    toString() {
+        return `Fill input "${this.node}" with "${this.value}"`;
+    };
+}
+
+export default FillWebAction;

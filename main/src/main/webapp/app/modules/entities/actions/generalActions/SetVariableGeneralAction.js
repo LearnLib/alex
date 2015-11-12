@@ -1,41 +1,38 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('SetVariableGeneralAction', factory);
+/** Sets a variable to a specific value and implicitly initializes it if it has not been created before */
+class SetVariableGeneralAction extends Action {
+    static get type() {
+        return 'setVariable';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {SetVariableGeneralAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(SetVariableGeneralAction.type);
 
         /**
-         * Sets a variable to a specific value and implicitly initializes it if it has not been created before
-         *
-         * @param {string} name - The name of the variable
-         * @param {string} value - The value of the variable
-         * @constructor
+         * The name of the variable
+         * @type {*|string}
          */
-        function SetVariableGeneralAction(name, value) {
-            AbstractAction.call(this, SetVariableGeneralAction.type);
-            this.name = name || null;
-            this.value = value || null;
-        }
-
-        SetVariableGeneralAction.prototype = Object.create(AbstractAction.prototype);
+        this.name = obj.name || '';
 
         /**
-         * @returns {string}
+         * The value of the variable
+         * @type {*|string}
          */
-        SetVariableGeneralAction.prototype.toString = function () {
-            return 'Set variable "' + this.name + '" to "' + this.value + '"';
-        };
-
-        SetVariableGeneralAction.type = 'setVariable';
-
-        return SetVariableGeneralAction;
+        this.value = obj.value || '';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return 'Set variable "' + this.name + '" to "' + this.value + '"';
+    }
+}
+
+export default SetVariableGeneralAction;

@@ -1,39 +1,33 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('ClickWebAction', factory);
+/** Submits a form. Can also be applied to an input element of a form */
+class ClickWebAction extends Action {
+    static get type() {
+        return 'web_click';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {ClickWebAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(ClickWebAction.type);
 
         /**
-         * Clicks on an element
-         *
-         * @param {string} node - The CSS selector of an element
-         * @constructor
+         * The CSS selector of an element
+         * @type {*|string}
          */
-        function ClickWebAction(node) {
-            AbstractAction.call(this, ClickWebAction.type);
-            this.node = node || '';
-        }
-
-        ClickWebAction.prototype = Object.create(AbstractAction.prototype);
-
-        /**
-         * @returns {string}
-         */
-        ClickWebAction.prototype.toString = function () {
-            return 'Click on element "' + this.node + '"';
-        };
-
-        ClickWebAction.type = 'web_click';
-
-        return ClickWebAction;
+        this.node = obj.node || '';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return `Click on "${this.node}"`;
+    };
+}
+
+export default ClickWebAction;

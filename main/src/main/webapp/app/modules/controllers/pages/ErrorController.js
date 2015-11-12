@@ -1,35 +1,27 @@
-(function () {
-    'use strict';
+/** The controller of the error page */
+// @ngInject
+class ErrorController {
 
     /**
-     * The controller of the error page
+     * Constructor
+     * @param $state
+     * @param ErrorService
      */
-    // @ngInject
-    class ErrorController {
+    constructor($state, ErrorService) {
 
         /**
-         * Constructor
-         * @param $state
-         * @param ErrorService
+         * The error message
+         * @type{string|null}
          */
-        constructor($state, ErrorService) {
+        this.errorMessage = null;
 
-            /**
-             * The error message
-             * @type{string|null}
-             */
-            this.errorMessage = null;
-
-            const message = ErrorService.getErrorMessage();
-            if (message !== null) {
-                this.errorMessage = message;
-            } else {
-                $state.go('home')
-            }
+        const message = ErrorService.getErrorMessage();
+        if (message !== null) {
+            this.errorMessage = message;
+        } else {
+            $state.go('home')
         }
     }
+}
 
-    angular
-        .module('ALEX.controllers')
-        .controller('ErrorController', ErrorController);
-}());
+export default ErrorController;

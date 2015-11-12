@@ -1,40 +1,38 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('SetVariableByJsonAttributeGeneralAction', factory);
+/** Extracts the text content value of an element and saves it value in a variable */
+class SetVariableByJsonAttributeGeneralAction extends Action {
+    static get type() {
+        return 'setVariableByJSON';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {SetVariableByJsonAttributeGeneralAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
      */
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(SetVariableByJsonAttributeGeneralAction.type);
 
         /**
-         * Extracts the value of a JSON object from a HTTP response and saves it into a variable
-         *
-         * @param {string} name - The name of the variable
-         * @param {string} jsonAttribute - The JSON property
-         * @constructor
+         * The name of the variable
+         * @type {*|string}
          */
-        function SetVariableByJsonAttributeGeneralAction(name, jsonAttribute) {
-            AbstractAction.call(this, SetVariableByJsonAttributeGeneralAction.type);
-            this.name = name || null;
-            this.value = jsonAttribute || null;
-        }
-
-        SetVariableByJsonAttributeGeneralAction.prototype = Object.create(AbstractAction.prototype);
+        this.name = obj.name || '';
 
         /**
-         * @returns {string}
+         * The JSON property
+         * @type {string}
          */
-        SetVariableByJsonAttributeGeneralAction.prototype.toString = function () {
-            return 'Set variable "' + this.name + '" to the value of the JSON attribute "' + this.value + '"';
-        };
-
-        SetVariableByJsonAttributeGeneralAction.type = 'setVariableByJSON';
-
-        return SetVariableByJsonAttributeGeneralAction;
+        this.value = obj.value || '';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return 'Set variable "' + this.name + '" to the value of the JSON attribute "' + this.value + '"';
+    }
+}
+
+export default SetVariableByJsonAttributeGeneralAction;

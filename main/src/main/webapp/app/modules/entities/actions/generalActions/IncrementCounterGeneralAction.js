@@ -1,39 +1,32 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('IncrementCounterGeneralAction', factory);
+/** Sets a variable to a specific value and implicitly initializes it if it has not been created before */
+class IncrementCounterGeneralAction extends Action {
+    static get type() {
+        return 'incrementCounter';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {IncrementCounterGeneralAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(IncrementCounterGeneralAction.type);
 
         /**
-         * Increments a counter by one
-         *
-         * @param {string} name - The name of the counter
-         * @constructor
+         * The name of the counter
+         * @type {*|string}
          */
-        function IncrementCounterGeneralAction(name) {
-            AbstractAction.call(this, IncrementCounterGeneralAction.type);
-            this.name = name || null;
-        }
-
-        IncrementCounterGeneralAction.prototype = Object.create(AbstractAction.prototype);
-
-        /**
-         * @returns {string}
-         */
-        IncrementCounterGeneralAction.prototype.toString = function () {
-            return 'Increment counter "' + this.name + '"';
-        };
-
-        IncrementCounterGeneralAction.type = 'incrementCounter';
-
-        return IncrementCounterGeneralAction;
+        this.name = obj.name || '';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return 'Increment counter "' + this.name + '"';
+    }
+}
+
+export default IncrementCounterGeneralAction;

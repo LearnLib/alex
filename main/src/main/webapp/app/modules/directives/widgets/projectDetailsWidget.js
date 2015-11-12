@@ -1,11 +1,6 @@
-(function () {
-    'use strict';
+import {events} from '../../constants';
 
-    angular
-        .module('ALEX.directives')
-        .directive('projectDetailsWidget', projectDetailsWidget);
-
-    const template = `
+const template = `
         <table class="table table-condensed">
             <tbody>
             <tr>
@@ -35,74 +30,74 @@
         </button>
     `;
 
-    /**
-     * The directive for the dashboard widget that displays information about the current project.
-     *
-     * Use: <widget title="...">
-     *          <project-details-widget></project-details-widget>
-     *      </widget>
-     *
-     * @param SessionService - The SessionService
-     * @param SymbolGroupResource - The SymbolGroup Resource
-     * @param LearnResultResource - The LearnResult Resource
-     * @param EventBus
-     * @param events
-     * @returns {{scope: {}, template: string, link: link}}
-     */
-    // @ngInject
-    function projectDetailsWidget(SessionService, SymbolGroupResource, LearnResultResource, EventBus, events) {
-        return {
-            scope: {},
-            template: template,
-            link: link
-        };
+/**
+ * The directive for the dashboard widget that displays information about the current project.
+ *
+ * Use: <widget title="...">
+ *          <project-details-widget></project-details-widget>
+ *      </widget>
+ *
+ * @param SessionService - The SessionService
+ * @param SymbolGroupResource - The SymbolGroup Resource
+ * @param LearnResultResource - The LearnResult Resource
+ * @param EventBus
+ * @returns {{scope: {}, template: string, link: link}}
+ */
+// @ngInject
+function projectDetailsWidget(SessionService, SymbolGroupResource, LearnResultResource, EventBus) {
+    return {
+        scope: {},
+        template: template,
+        link: link
+    };
 
-        function link(scope) {
+    function link(scope) {
 
-            /**
-             * The project in sessionStorage
-             * @type {Project}
-             */
-            scope.project = SessionService.project.get();
+        /**
+         * The project in sessionStorage
+         * @type {Project}
+         */
+        scope.project = SessionService.project.get();
 
-            /**
-             * The number of symbol groups of the project
-             * @type {null|number}
-             */
-            scope.numberOfGroups = null;
+        /**
+         * The number of symbol groups of the project
+         * @type {null|number}
+         */
+        scope.numberOfGroups = null;
 
-            /**
-             * The number of visible symbols of the project
-             * @type {null|number}
-             */
-            scope.numberOfSymbols = null;
+        /**
+         * The number of visible symbols of the project
+         * @type {null|number}
+         */
+        scope.numberOfSymbols = null;
 
-            /**
-             * The number of persisted test runs in the database
-             * @type {null|number}
-             */
-            scope.numberOfTests = null;
+        /**
+         * The number of persisted test runs in the database
+         * @type {null|number}
+         */
+        scope.numberOfTests = null;
 
-            SymbolGroupResource.getAll(scope.project.id, {embedSymbols: true})
-                .then(groups => {
-                    scope.numberOfGroups = groups.length;
-                    var counter = 0;
-                    for (var i = 0; i < groups.length; i++) {
-                        counter += groups[i].symbols.length;
-                    }
-                    scope.numberOfSymbols = counter;
-                });
+        SymbolGroupResource.getAll(scope.project.id, {embedSymbols: true})
+            .then(groups => {
+                scope.numberOfGroups = groups.length;
+                var counter = 0;
+                for (var i = 0; i < groups.length; i++) {
+                    counter += groups[i].symbols.length;
+                }
+                scope.numberOfSymbols = counter;
+            });
 
-            LearnResultResource.getAllFinal(scope.project.id)
-                .then(results => {
-                    scope.numberOfTests = results.length;
-                });
+        LearnResultResource.getAllFinal(scope.project.id)
+            .then(results => {
+                scope.numberOfTests = results.length;
+            });
 
-            // listen on project update event
-            EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
-                scope.project = data.project;
-                SessionService.project.save(data.project);
-            }, scope);
-        }
+        // listen on project update event
+        EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
+            scope.project = data.project;
+            SessionService.project.save(data.project);
+        }, scope);
     }
-}());
+}
+
+export default projectDetailsWidget;

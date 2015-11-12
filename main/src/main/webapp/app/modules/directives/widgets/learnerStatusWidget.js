@@ -1,11 +1,4 @@
-(function () {
-    'use strict';
-
-    angular
-        .module('ALEX.directives')
-        .directive('learnerStatusWidget', learnerStatusWidget);
-
-    const template = `
+const template = `
         <div class="alert alert-info no-margin-bottom" ng-if="!isActive && !hasFinished">
             The Learner is not active. <a ui-sref="learn.setup">Start learning</a> your application!
         </div>
@@ -21,67 +14,68 @@
         </div>
     `;
 
-    /**
-     * The directive of the dashboard widget that displays the current status of the learner
-     *
-     * Use: <widget title="...">
-     *          <learner-status-widget></learner-status-widget>
-     *      </widget>
-     *
-     * @param LearnerResource - The LearnerResource
-     * @param ToastService - The ToastService
-     * @returns {{scope: {}, template: string, link: link}}
-     */
-    // @ngInject
-    function learnerStatusWidget(LearnerResource, ToastService) {
-        return {
-            scope: {},
-            template: template,
-            link: link
-        };
+/**
+ * The directive of the dashboard widget that displays the current status of the learner
+ *
+ * Use: <widget title="...">
+ *          <learner-status-widget></learner-status-widget>
+ *      </widget>
+ *
+ * @param LearnerResource - The LearnerResource
+ * @param ToastService - The ToastService
+ * @returns {{scope: {}, template: string, link: link}}
+ */
+// @ngInject
+function learnerStatusWidget(LearnerResource, ToastService) {
+    return {
+        scope: {},
+        template: template,
+        link: link
+    };
 
-        function link(scope) {
+    function link(scope) {
 
-            /**
-             * Whether the learner is actively learning an application
-             * @type {boolean}
-             */
-            scope.isActive = false;
+        /**
+         * Whether the learner is actively learning an application
+         * @type {boolean}
+         */
+        scope.isActive = false;
 
-            /**
-             * Whether the learner has finished learning an application
-             * @type {boolean}
-             */
-            scope.hasFinished = false;
+        /**
+         * Whether the learner has finished learning an application
+         * @type {boolean}
+         */
+        scope.hasFinished = false;
 
-            /**
-             * The intermediate or final learning result
-             * @type {null|LearnResult}
-             */
-            scope.result = null;
+        /**
+         * The intermediate or final learning result
+         * @type {null|LearnResult}
+         */
+        scope.result = null;
 
-            LearnerResource.isActive()
-                .then(function (data) {
-                    scope.isActive = data.active;
-                    if (!data.active) {
-                        LearnerResource.getStatus()
-                            .then(function (data) {
-                                if (data !== null) {
-                                    scope.hasFinished = true;
-                                    scope.result = data;
-                                }
-                            });
-                    }
-                });
+        LearnerResource.isActive()
+            .then(function (data) {
+                scope.isActive = data.active;
+                if (!data.active) {
+                    LearnerResource.getStatus()
+                        .then(function (data) {
+                            if (data !== null) {
+                                scope.hasFinished = true;
+                                scope.result = data;
+                            }
+                        });
+                }
+            });
 
-            /**
-             * Induces the Learner to stop learning after the current hypothesis model
-             */
-            scope.abort = function () {
-                LearnerResource.stop().then(function () {
-                    ToastService.info('The Learner stops with the next hypothesis');
-                })
-            }
+        /**
+         * Induces the Learner to stop learning after the current hypothesis model
+         */
+        scope.abort = function () {
+            LearnerResource.stop().then(function () {
+                ToastService.info('The Learner stops with the next hypothesis');
+            })
         }
     }
-}());
+}
+
+export default learnerStatusWidget;

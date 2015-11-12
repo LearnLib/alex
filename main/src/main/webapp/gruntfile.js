@@ -1,18 +1,5 @@
 module.exports = function (grunt) {
 
-    var scripts = [
-        'app/modules/init.js',
-        'app/modules/constants.js',
-        'app/modules/config.js',
-        'app/modules/routes.js',
-        'app/modules/controllers/**/*.js',
-        'app/modules/directives/**/*.js',
-        'app/modules/entities/**/*.js',
-        'app/modules/filters/**/*.js',
-        'app/modules/resources/**/*.js',
-        'app/modules/services/**/*.js'
-    ];
-
     var libraries = [
         'bower_components/angular/angular.min.js',
         'bower_components/angular-ui-router/release/angular-ui-router.min.js',
@@ -56,10 +43,6 @@ module.exports = function (grunt) {
             concat: {
                 options: {
                     separator: ';\n'
-                },
-                app: {
-                    src: scripts,
-                    dest: './app/alex.js'
                 },
                 libs: {
                     src: libraries,
@@ -203,6 +186,21 @@ module.exports = function (grunt) {
                         'app/alex.js': 'app/alex.js'
                     }
                 }
+            },
+
+            browserify: {
+                dist: {
+                    files: {
+                        'app/alex.js': ['app/modules/index.js']
+                    },
+                    options: {
+                        transform: [['babelify', {
+                            sourceMap: false,
+                            presets: ['es2015'],
+                            compact: false
+                        }]]
+                    }
+                }
             }
         });
 
@@ -217,11 +215,11 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-ng-annotate');
-    grunt.loadNpmTasks('grunt-babel');
+    grunt.loadNpmTasks('grunt-browserify');
 
-    grunt.registerTask('build-js', ['concat', 'babel', 'ngAnnotate', 'uglify']);
+    grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);
     grunt.registerTask('build-html', ['html2js']);
-    grunt.registerTask('default', ['build-html', 'build-js', 'build-css']);
+    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'build-css']);
     grunt.registerTask('test-unit', ['karma']);
 };

@@ -1,48 +1,52 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('CheckAttributeValueRestAction', factory);
+/**
+ * Checks if a property of a JSON object in a HTTP response body has a specific value or matches a regular
+ * expression
+ */
+class CheckAttributeValueRestAction extends Action {
+    static get type() {
+        return 'rest_checkAttributeValue';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {CheckAttributeValueRestAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(CheckAttributeValueRestAction.type);
 
         /**
-         * Checks if a property of a JSON object in a HTTP response body has a specific value or matches a regular
-         * expression
-         *
-         * @param {string} attribute - The JSON property
-         * @param {string} value - The value that is searched for in the property
-         * @param {boolean} isRegexp - Whether the value is a regular expression
-         * @constructor
+         * The JSON property
+         * @type {string}
          */
-        function CheckAttributeValueRestAction(attribute, value, isRegexp) {
-            AbstractAction.call(this, CheckAttributeValueRestAction.type);
-            this.attribute = attribute || null;
-            this.value = value || null;
-            this.regexp = isRegexp || false
-        }
-
-        CheckAttributeValueRestAction.prototype = Object.create(AbstractAction.prototype);
+        this.attribute = obj.attribute || '';
 
         /**
-         * @returns {string}
+         * The value that is searched for in the property
+         * @type {*|string}
          */
-        CheckAttributeValueRestAction.prototype.toString = function () {
-            if (this.regexp) {
-                return 'Check if JSON attribute "' + this.attribute + '" matches "' + this.value + '"';
-            } else {
-                return 'Check JSON attribute "' + this.attribute + '" to equal "' + this.value + '"';
-            }
-        };
+        this.value = obj.value || '';
 
-        CheckAttributeValueRestAction.type = 'rest_checkAttributeValue';
-
-        return CheckAttributeValueRestAction;
+        /**
+         * Whether the value is a regular expression
+         * @type {*|boolean}
+         */
+        this.regexp = obj.regexp || false;
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        if (this.regexp) {
+            return 'Check if JSON attribute "' + this.attribute + '" matches "' + this.value + '"';
+        } else {
+            return 'Check JSON attribute "' + this.attribute + '" to equal "' + this.value + '"';
+        }
+    };
+}
+
+export default CheckAttributeValueRestAction;

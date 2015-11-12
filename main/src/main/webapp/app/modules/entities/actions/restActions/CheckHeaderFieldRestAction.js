@@ -1,47 +1,49 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('CheckHeaderFieldRestAction', factory);
+/** Checks a value in the header fields of an HTTP response */
+class CheckHeaderFieldRestAction extends Action {
+    static get type() {
+        return 'rest_checkHeaderField';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {CheckHeaderFieldRestAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(CheckHeaderFieldRestAction.type);
 
         /**
-         * Checks a value in the header fields of an HTTP response
-         *
-         * @param {string} key - The key of the header field
-         * @param {string} value - The expected value of the header field
-         * @param {boolean} isRegexp - Whether the value is interpreted as regular epxression
-         * @constructor
+         * The key of the header field
+         * @type {*|string}
          */
-        function CheckHeaderFieldRestAction(key, value, isRegexp) {
-            AbstractAction.call(this, CheckHeaderFieldRestAction.type);
-            this.key = key || null;
-            this.value = value || null;
-            this.regexp = isRegexp || false;
-        }
-
-        CheckHeaderFieldRestAction.prototype = Object.create(AbstractAction.prototype);
+        this.key = obj.key || '';
 
         /**
-         * @returns {string}
+         * The expected value of the header field
+         * @type {*|string}
          */
-        CheckHeaderFieldRestAction.prototype.toString = function () {
-            if (this.regexp) {
-                return 'Check if HTTP header field "' + this.key + '" matches "' + this.value + '"';
-            } else {
-                return 'Check HTTP header field "' + this.key + '" to equal "' + this.value + '"';
-            }
-        };
+        this.value = obj.value || '';
 
-        CheckHeaderFieldRestAction.type = 'rest_checkHeaderField';
-
-        return CheckHeaderFieldRestAction;
+        /**
+         * Whether the value is interpreted as regular expression
+         * @type {*|boolean}
+         */
+        this.regexp = obj.regexp || false;
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        if (this.regexp) {
+            return 'Check if HTTP header field "' + this.key + '" matches "' + this.value + '"';
+        } else {
+            return 'Check HTTP header field "' + this.key + '" to equal "' + this.value + '"';
+        }
+    };
+}
+
+export default CheckHeaderFieldRestAction;

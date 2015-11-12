@@ -1,27 +1,19 @@
-(function () {
-    'use strict';
-
-    angular
-        .module('ALEX.directives')
-        .directive('symbolGroupList', symbolGroupList)
-        .directive('symbolGroupListItem', symbolGroupListItem);
-
-    function symbolGroupList() {
-        return {
-            transclude: true,
-            template: `
+function symbolGroupList() {
+    return {
+        transclude: true,
+        template: `
                 <div class="symbol-group-list" ng-transclude></div>
             `
-        }
     }
+}
 
-    function symbolGroupListItem() {
-        return {
-            transclude: true,
-            scope: {
-                group: '='
-            },
-            template: `
+function symbolGroupListItem() {
+    return {
+        transclude: true,
+        scope: {
+            group: '='
+        },
+        template: `
                 <div class="symbol-group-list-item" ng-class="{'collapsed':group._collapsed}">
                     <div class="symbol-group-list-item-header">
                         <checkbox-multiple model="group.symbols" class="pull-left"></checkbox-multiple>
@@ -44,9 +36,10 @@
                     <div class="symbol-group-list-item-content" collapse="group._collapsed" ng-transclude></div>
                 </div>
             `,
-            link: function (scope, el, attrs) {
-                scope.editable = attrs.editable === 'true';
-            }
+        link: function (scope, el, attrs) {
+            scope.editable = attrs.editable === 'true';
         }
     }
-}());
+}
+
+export {symbolGroupList, symbolGroupListItem};

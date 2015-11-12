@@ -1,39 +1,33 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('SubmitWebAction', factory);
+/** Submits a form. Can also be applied to an input element of a form */
+class SubmitWebAction extends Action {
+    static get type() {
+        return 'web_submit';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {SubmitWebAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(SubmitWebAction.type);
 
         /**
-         * Submits a form. Can also be applied to an input element of a form
-         *
-         * @param {string} selector - The CSS selector of an element
-         * @constructor
+         * The CSS selector of an element
+         * @type {*|string}
          */
-        function SubmitWebAction(selector) {
-            AbstractAction.call(this, SubmitWebAction.type);
-            this.node = selector || '';
-        }
-
-        SubmitWebAction.prototype = Object.create(AbstractAction.prototype);
-
-        /**
-         * @returns {string}
-         */
-        SubmitWebAction.prototype.toString = function () {
-            return 'Submit form "' + this.node + '"';
-        };
-
-        SubmitWebAction.type = 'web_submit';
-
-        return SubmitWebAction;
+        this.node = obj.node || '';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return `Submit form "${this.node}"`;
+    };
+}
+
+export default SubmitWebAction;

@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 ng-bind="text"></h4>
+    <h4 ng-bind="vm.text"></h4>
 </div>
 
 <form name="prompt_form" ng-submit="vm.ok()">
@@ -11,8 +11,8 @@
                    required>
         </div>
 
-        <div class="alert alert-danger alert-condensed" ng-show="vm.prompt_form.submitted">
-            <small ng-show="vm.prompt_form.user_input.$error" ng-bind="vm.errorMsg"></small>
+        <div class="alert alert-danger alert-condensed" ng-show="prompt_form.submitted">
+            <small ng-show="prompt_form.user_input.$error" ng-bind="errorMsg"></small>
         </div>
 
     </div>

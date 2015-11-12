@@ -1,39 +1,33 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('GoToWebAction', factory);
+/** Opens a URL */
+class GoToWebAction extends Action {
+    static get type() {
+        return 'web_goto';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {GoToWebAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(GoToWebAction.type);
 
         /**
-         * Goes to a URL
-         *
-         * @param {string} url - The url that is called
-         * @constructor
+         * The url that is called
+         * @type {*|string}
          */
-        function GoToWebAction(url) {
-            AbstractAction.call(this, GoToWebAction.type);
-            this.url = url || null;
-        }
-
-        GoToWebAction.prototype = Object.create(AbstractAction.prototype);
-
-        /**
-         * @returns {string}
-         */
-        GoToWebAction.prototype.toString = function () {
-            return 'Open URL "' + this.url + '"';
-        };
-
-        GoToWebAction.type = 'web_goto';
-
-        return GoToWebAction;
+        this.url = obj.url || '';
     }
-}());
+
+    /**
+     * The string representation of the action
+     * @returns {string}
+     */
+    toString() {
+        return `Open URL "${this.url}"`;
+    };
+}
+
+export default GoToWebAction;

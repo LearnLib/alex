@@ -1,43 +1,45 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('SelectWebAction', factory);
+/** Selects an entry from a select box */
+class SelectWebAction extends Action {
+    static get type() {
+        return 'web_select';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {SelectWebAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(SelectWebAction.type);
 
         /**
-         * Selects an entry from a select box
-         *
-         * @param {string} node - The CSS selector of an select element
-         * @param {string} value - The value of the select input that should be selected
-         * @param {string} selectBy - The type the option is selected by {'TEXT', 'VALUE', 'INDEX'}
-         * @constructor
+         * The CSS selector of an select element
+         * @type {*|string}
          */
-        function SelectWebAction(node, value, selectBy) {
-            AbstractAction.call(this, SelectWebAction.type);
-            this.node = node || '';
-            this.value = value || '';
-            this.selectBy = selectBy || 'TEXT';
-        }
-
-        SelectWebAction.prototype = Object.create(AbstractAction.prototype);
+        this.node = obj.node || '';
 
         /**
-         * @returns {string}
+         * The value of the select input that should be selected
+         * @type {*|string}
          */
-        SelectWebAction.prototype.toString = function () {
-            return 'Select value "' + this.value + '" from select input "' + this.node + '"';
-        };
+        this.value = obj.value || '';
 
-        SelectWebAction.type = 'web_select';
-
-        return SelectWebAction;
+        /**
+         * The type the option is selected by {'TEXT', 'VALUE', 'INDEX'}
+         * @type {string}
+         */
+        this.selectBy = obj.selectBy || 'TEXT';
     }
-}());
+
+    /**
+     * Get the string representation of the action
+     * @returns {string}
+     */
+    toString() {
+        return 'Select value "' + this.value + '" from select input "' + this.node + '"';
+    };
+}
+
+export default SelectWebAction;

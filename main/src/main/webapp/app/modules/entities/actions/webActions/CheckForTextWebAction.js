@@ -1,45 +1,42 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('CheckForTextWebAction', factory);
+/** Searches for a piece of text or a regular expression in the HTML document */
+class CheckForTextWebAction extends Action {
+    static get type() {
+        return 'web_checkForText';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {CheckForTextWebAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(CheckForTextWebAction.type);
 
         /**
-         * Searches for a piece of text or a regular expression in the HTML document
-         *
-         * @param {string} value - The piece of text to look for
-         * @param {boolean} isRegexp - Whether the value is a regular expression
-         * @constructor
+         * The piece of text to look for
+         * @type {*|string}
          */
-        function CheckForTextWebAction(value, isRegexp) {
-            AbstractAction.call(this, CheckForTextWebAction.type);
-            this.value = value || '';
-            this.regexp = isRegexp || false;
-        }
-
-        CheckForTextWebAction.prototype = Object.create(AbstractAction.prototype);
+        this.value = obj.value || '';
 
         /**
-         * @returns {string}
+         * Whether the value is a regular expression
+         * @type {*|boolean}
          */
-        CheckForTextWebAction.prototype.toString = function () {
-            if (this.regexp) {
-                return 'Check if the document matches "' + this.value + '"';
-            } else {
-                return 'Search for "' + this.value + '" in the document';
-            }
-        };
-
-        CheckForTextWebAction.type = 'web_checkForText';
-
-        return CheckForTextWebAction;
+        this.regexp = obj.regexp || false;
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        if (this.regexp) {
+            return 'Check if the document matches "' + this.value + '"';
+        } else {
+            return 'Search for "' + this.value + '" in the document';
+        }
+    };
+}
+
+export default CheckForTextWebAction;

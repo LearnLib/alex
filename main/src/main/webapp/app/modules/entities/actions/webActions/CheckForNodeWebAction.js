@@ -1,39 +1,33 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('CheckForNodeWebAction', factory);
+/** Searches for an element with a specific selector in the HTML document */
+class CheckForNodeWebAction extends Action {
+    static get type() {
+        return 'web_checkForNode';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {CheckForNodeWebAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(CheckForNodeWebAction.type);
 
         /**
-         * Searches for an element with a specific selector in the HTML document
-         *
-         * @param {string} selector - The CSS selector of an element
-         * @constructor
+         * The selector of the node to search
+         * @type {string}
          */
-        function CheckForNodeWebAction(selector) {
-            AbstractAction.call(this, CheckForNodeWebAction.type);
-            this.value = selector || '';
-        }
-
-        CheckForNodeWebAction.prototype = Object.create(AbstractAction.prototype);
-
-        /**
-         * @returns {string}
-         */
-        CheckForNodeWebAction.prototype.toString = function () {
-            return 'Search for element "' + this.value + '"';
-        };
-
-        CheckForNodeWebAction.type = 'web_checkForNode';
-
-        return CheckForNodeWebAction;
+        this.value = obj.value || '';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return 'Search for element "' + this.value + '"';
+    };
+}
+
+export default CheckForNodeWebAction;

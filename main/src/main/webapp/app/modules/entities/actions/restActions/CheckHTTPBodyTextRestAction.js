@@ -1,45 +1,43 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('CheckHTTPBodyTextRestAction', factory);
+/** Searches for a string value in the body of an HTTP response */
+class CheckHTTPBodyTextRestAction extends Action {
+    static get type() {
+        return 'rest_checkForText';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {CheckHTTPBodyTextRestAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(CheckHTTPBodyTextRestAction.type);
 
         /**
-         * Searches for a string value in the body of an HTTP response
-         *
-         * @param {string} value - The string that is searched for
-         * @param {boolean} isRegexp - Whether the value is interpreted as regular expression
-         * @constructor
+         * The string that is searched for
+         * @type {*|string}
          */
-        function CheckHTTPBodyTextRestAction(value, isRegexp) {
-            AbstractAction.call(this, CheckHTTPBodyTextRestAction.type);
-            this.value = value || null;
-            this.regexp = isRegexp || false;
-        }
-
-        CheckHTTPBodyTextRestAction.prototype = Object.create(AbstractAction.prototype);
+        this.value = obj.value || '';
 
         /**
-         * @returns {string}
+         * Whether the value is interpreted as regular expression
+         * @type {*|boolean}
          */
-        CheckHTTPBodyTextRestAction.prototype.toString = function () {
-            if (this.regexp) {
-                return 'Search in the response with regexp "' + this.value + '"';
-            } else {
-                return 'Search in the response body for "' + this.value + '"';
-            }
-        };
-
-        CheckHTTPBodyTextRestAction.type = 'rest_checkForText';
-
-        return CheckHTTPBodyTextRestAction;
+        this.regexp = obj.regexp || false;
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        if (this.regexp) {
+            return 'Search in the response with regexp "' + this.value + '"';
+        } else {
+            return 'Search in the response body for "' + this.value + '"';
+        }
+    };
+}
+
+export default CheckHTTPBodyTextRestAction;

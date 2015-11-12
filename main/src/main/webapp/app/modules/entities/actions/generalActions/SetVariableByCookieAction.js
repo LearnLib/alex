@@ -1,43 +1,44 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('SetVariableByCookieAction', factory);
+/** Sets a variable to a specific value and implicitly initializes it if it has not been created before */
+class SetVariableByCookieAction extends Action {
+    static get type() {
+        return 'setVariableByCookie';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {SetVariableByCookieAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(SetVariableByCookieAction.type);
 
         /**
-         * Sets a variable to a specific value and implicitly initializes it if it has not been created before
-         *
-         * @param {string} name - The name of the variable
-         * @param {string} value - The value of the variable
-         * @param {string} cookieType - The type of the cookie (REST|WEB)
-         * @constructor
+         * The name of the variable
+         * @type {*|string}
          */
-        function SetVariableByCookieAction(name, value, cookieType) {
-            AbstractAction.call(this, SetVariableByCookieAction.type);
-            this.name = name || null;
-            this.value = value || null;
-            this.cookieType = cookieType || 'WEB';
-        }
-
-        SetVariableByCookieAction.prototype = Object.create(AbstractAction.prototype);
+        this.name = obj.name || '';
 
         /**
-         * @returns {string}
+         * The value of the variable
+         * @type {*|string}
          */
-        SetVariableByCookieAction.prototype.toString = function () {
-            return 'Set variable "' + this.name + '" to the value of the cookie: "' + this.value + '"';
-        };
+        this.value = obj.value || '';
 
-        SetVariableByCookieAction.type = 'setVariableByCookie';
-
-        return SetVariableByCookieAction;
+        /**
+         * The type of the cookie (REST|WEB)
+         * @type {string}
+         */
+        this.cookieType = obj.cookieType || 'WEB';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return 'Set variable "' + this.name + '" to the value of the cookie: "' + this.value + '"';
+    }
+}
+
+export default SetVariableByCookieAction;

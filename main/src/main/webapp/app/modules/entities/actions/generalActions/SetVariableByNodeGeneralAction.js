@@ -1,41 +1,38 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('SetVariableByNodeGeneralAction', factory);
+/** Extracts the text content value of an element and saves it value in a variable */
+class SetVariableByNodeGeneralAction extends Action {
+    static get type() {
+        return 'setVariableByHTML';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {SetVariableByNodeGeneralAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(SetVariableByNodeGeneralAction.type);
 
         /**
-         * Extracts the text content value of an element and saves it value in a variable
-         *
-         * @param {string} name - The name of the variable
-         * @param {string} selector - The CSS selector of an element
-         * @constructor
+         * The name of the variable
+         * @type {*|string}
          */
-        function SetVariableByNodeGeneralAction(name, selector) {
-            AbstractAction.call(this, SetVariableByNodeGeneralAction.type);
-            this.name = name || null;
-            this.value = selector || null;
-        }
-
-        SetVariableByNodeGeneralAction.prototype = Object.create(AbstractAction.prototype);
+        this.name = obj.name || '';
 
         /**
-         * @returns {string}
+         * The selector of the node
+         * @type {*|string}
          */
-        SetVariableByNodeGeneralAction.prototype.toString = function () {
-            return 'Set variable "' + this.name + '" to the value of the element "' + this.value + '"';
-        };
-
-        SetVariableByNodeGeneralAction.type = 'setVariableByHTML';
-
-        return SetVariableByNodeGeneralAction;
+        this.value = obj.value || '';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return 'Set variable "' + this.name + '" to the value of the element "' + this.value + '"';
+    }
+}
+
+export default SetVariableByNodeGeneralAction;

@@ -1,93 +1,85 @@
-(function () {
-    'use strict';
+/**
+ * The directive that renders an observation table from an ascii representation into a html table. Can only be used
+ * as a tag.
+ *
+ * Attribute 'data' should be the ascii string representation of the table from the LearnLib.
+ *
+ * Use: <observation-table data="..."></observation-table>
+ *
+ * @returns {{restrict: string, scope: {data: string}, link: link, templateUrl: string}}
+ */
+// @ngInject
+function observationTable() {
+    return {
+        restrict: 'E',
+        scope: {
+            data: '='
+        },
+        link: link,
+        templateUrl: 'views/directives/observation-table.html'
+    };
 
-    angular
-        .module('ALEX.directives')
-        .directive('observationTable', observationTable);
+    function link(scope) {
 
-    /**
-     * The directive that renders an observation table from an ascii representation into a html table. Can only be used
-     * as a tag.
-     *
-     * Attribute 'data' should be the ascii string representation of the table from the LearnLib.
-     *
-     * Use: <observation-table data="..."></observation-table>
-     *
-     * @returns {{restrict: string, scope: {data: string}, link: link, templateUrl: string}}
-     */
-    // @ngInject
-    function observationTable() {
-        return {
-            restrict: 'E',
-            scope: {
-                data: '='
-            },
-            link: link,
-            templateUrl: 'views/directives/observation-table.html'
-        };
+        // the object of the table for the template
+        scope.table = null;
 
-        function link(scope) {
+        // render the observation table as soon as the data changes
+        scope.$watch('data', function (n) {
+            if (angular.isDefined(n)) {
+                createObservationTable();
+            }
+        });
 
-            // the object of the table for the template
-            scope.table = null;
+        /**
+         * Parses the ascii representation of the observation table and stores it into scope.table
+         */
+        function createObservationTable() {
 
-            // render the observation table as soon as the data changes
-            scope.$watch('data', function (n) {
-                if (angular.isDefined(n)) {
-                    createObservationTable();
+            // init table structure
+            scope.table = {
+                header: [],
+                body: {
+                    s1: [],
+                    s2: []
                 }
-            });
+            };
 
-            /**
-             * Parses the ascii representation of the observation table and stores it into scope.table
-             */
-            function createObservationTable() {
+            var rows = scope.data.split('\n');  // the rows of the table
+            var marker = 0;                     // a flag that is used to indicate on which set of the table I am
 
-                // init table structure
-                scope.table = {
-                    header: [],
-                    body: {
-                        s1: [],
-                        s2: []
+            if (rows.length > 1) {
+                for (var i = 0; i < rows.length - 1; i++) {
+
+                    // +=====+======+ ... + is checked
+                    // before the third occurrence of this pattern we are in set S\Sigma
+                    // after that we are in set S
+                    if (new RegExp('^(\\+\\=+)+\\+$').test(rows[i])) {
+                        marker++;
+                        continue;
                     }
-                };
 
-                var rows = scope.data.split('\n');  // the rows of the table
-                var marker = 0;                     // a flag that is used to indicate on which set of the table I am
+                    // only check each second row because all others are only separators
+                    if (i % 2 === 1) {
 
-                if (rows.length > 1) {
-                    for (var i = 0; i < rows.length - 1; i++) {
-
-                        // +=====+======+ ... + is checked
-                        // before the third occurrence of this pattern we are in set S\Sigma
-                        // after that we are in set S
-                        if (new RegExp('^(\\+\\=+)+\\+$').test(rows[i])) {
-                            marker++;
-                            continue;
+                        //remove column separators and white spaces around the entry content
+                        rows[i] = rows[i].split('|');
+                        rows[i].shift();
+                        rows[i].pop();
+                        for (var j = 0; j < rows[i].length; j++) {
+                            rows[i][j] = rows[i][j].trim();
                         }
 
-                        // only check each second row because all others are only separators
-                        if (i % 2 === 1) {
+                        // fill the table
+                        if (i === 1) {
+                            scope.table.header = rows[i];
+                        } else {
 
-                            //remove column separators and white spaces around the entry content
-                            rows[i] = rows[i].split('|');
-                            rows[i].shift();
-                            rows[i].pop();
-                            for (var j = 0; j < rows[i].length; j++) {
-                                rows[i][j] = rows[i][j].trim();
-                            }
-
-                            // fill the table
-                            if (i === 1) {
-                                scope.table.header = rows[i];
+                            // depending on which set of the table i am
+                            if (marker === 2) {
+                                scope.table.body.s1.push(rows[i]);
                             } else {
-
-                                // depending on which set of the table i am
-                                if (marker === 2) {
-                                    scope.table.body.s1.push(rows[i]);
-                                } else {
-                                    scope.table.body.s2.push(rows[i]);
-                                }
+                                scope.table.body.s2.push(rows[i]);
                             }
                         }
                     }
@@ -95,4 +87,6 @@
             }
         }
     }
-}());
+}
+
+export default observationTable;

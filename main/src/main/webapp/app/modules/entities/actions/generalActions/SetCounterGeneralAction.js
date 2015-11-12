@@ -1,42 +1,38 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('SetCounterGeneralAction', factory);
+/** Sets a variable to a specific value and implicitly initializes it if it has not been created before */
+class SetCounterGeneralAction extends Action {
+    static get type() {
+        return 'setCounter';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {SetCounterGeneralAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(SetCounterGeneralAction.type);
 
         /**
-         * Sets a counter to an integer value and creates it implicitly if the counter has not been initialized or used
-         * before
-         *
-         * @param {string} name - The name of the counter
-         * @param {number} value - The value of the counter
-         * @constructor
+         * The name of the counter
+         * @type {*|string}
          */
-        function SetCounterGeneralAction(name, value) {
-            AbstractAction.call(this, SetCounterGeneralAction.type);
-            this.name = name || null;
-            this.value = value || null;
-        }
-
-        SetCounterGeneralAction.prototype = Object.create(AbstractAction.prototype);
+        this.name = obj.name || '';
 
         /**
-         * @returns {string}
+         * The value of the counter
+         * @type {*|string}
          */
-        SetCounterGeneralAction.prototype.toString = function () {
-            return 'Set counter "' + this.name + '" to "' + this.value + '"';
-        };
-
-        SetCounterGeneralAction.type = 'setCounter';
-
-        return SetCounterGeneralAction;
+        this.value = obj.value || '';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return 'Set counter "' + this.name + '" to "' + this.value + '"';
+    }
+}
+
+export default SetCounterGeneralAction;

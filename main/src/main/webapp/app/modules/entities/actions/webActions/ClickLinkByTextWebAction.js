@@ -1,39 +1,33 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('ClickLinkByTextWebAction', factory);
+/** Clicks on a link with a specific text value */
+class ClickLinkByTextWebAction extends Action {
+    static get type() {
+        return 'web_clickLinkByText';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {ClickLinkByTextWebAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(ClickLinkByTextWebAction.type);
 
         /**
-         * Clicks on a link with a specific text value
-         *
-         * @param {string} value - The text of the link
-         * @constructor
+         * The text of the link
+         * @type {*|string}
          */
-        function ClickLinkByTextWebAction(value) {
-            AbstractAction.call(this, ClickLinkByTextWebAction.type);
-            this.value = value || null;
-        }
-
-        ClickLinkByTextWebAction.prototype = Object.create(AbstractAction.prototype);
-
-        /**
-         * @returns {string}
-         */
-        ClickLinkByTextWebAction.prototype.toString = function () {
-            return 'Click on link with text "' + this.value + '"';
-        };
-
-        ClickLinkByTextWebAction.type = 'web_clickLinkByText';
-
-        return ClickLinkByTextWebAction;
+        this.value = obj.value || '';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return `Click on link with text "${this.value}"`;
+    };
+}
+
+export default ClickLinkByTextWebAction;

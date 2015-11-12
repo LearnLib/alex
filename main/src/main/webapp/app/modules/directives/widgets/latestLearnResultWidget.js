@@ -1,11 +1,4 @@
-(function () {
-    'use strict';
-
-    angular
-        .module('ALEX.directives')
-        .directive('latestLearnResultWidget', latestLearnResultWidget);
-
-    const template = `
+const template = `
         <div class="text-muted" ng-if="!result">
             <em>There are no learn results in the database</em>
         </div>
@@ -20,40 +13,41 @@
         </div>
     `;
 
-    /**
-     * The directive for the dashboard widget that displays information about the latest learning result, if there
-     * exists one.
-     *
-     * Use: <widget title="...">
-     *          <latest-learn-result-widget></latest-learn-result-widget>
-     *      </widget>
-     *
-     * @param SessionService - The SessionService
-     * @param LearnResultResource - The LearnResult factory
-     * @returns {{scope: {}, template: string, link: link}}
-     */
-    // @ngInject
-    function latestLearnResultWidget(SessionService, LearnResultResource) {
-        return {
-            scope: {},
-            template: template,
-            link: link
-        };
+/**
+ * The directive for the dashboard widget that displays information about the latest learning result, if there
+ * exists one.
+ *
+ * Use: <widget title="...">
+ *          <latest-learn-result-widget></latest-learn-result-widget>
+ *      </widget>
+ *
+ * @param SessionService - The SessionService
+ * @param LearnResultResource - The LearnResult factory
+ * @returns {{scope: {}, template: string, link: link}}
+ */
+// @ngInject
+function latestLearnResultWidget(SessionService, LearnResultResource) {
+    return {
+        scope: {},
+        template: template,
+        link: link
+    };
 
-        function link(scope) {
+    function link(scope) {
 
-            /**
-             * The latest learning result
-             * @type {null|LearnResult}
-             */
-            scope.result = null;
+        /**
+         * The latest learning result
+         * @type {null|LearnResult}
+         */
+        scope.result = null;
 
-            LearnResultResource.getAllFinal(SessionService.project.get().id)
-                .then(function (results) {
-                    if (results.length > 0) {
-                        scope.result = results[results.length - 1];
-                    }
-                })
-        }
+        LearnResultResource.getAllFinal(SessionService.project.get().id)
+            .then(function (results) {
+                if (results.length > 0) {
+                    scope.result = results[results.length - 1];
+                }
+            })
     }
-}());
+}
+
+export default latestLearnResultWidget;

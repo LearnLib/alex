@@ -1,39 +1,33 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('ClearWebAction', factory);
+/** Remove all inputs from an element */
+class ClearWebAction extends Action {
+    static get type() {
+        return 'web_clear';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {ClearWebAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(ClearWebAction.type);
 
         /**
-         * Remove all inputs from an element
-         *
-         * @param {string} selector - The CSS selector of the element
-         * @constructor
+         * The CSS selector of an element
+         * @type {*|string}
          */
-        function ClearWebAction(selector) {
-            AbstractAction.call(this, ClearWebAction.type);
-            this.node = selector || '';
-        }
-
-        ClearWebAction.prototype = Object.create(AbstractAction.prototype);
-
-        /**
-         * @returns {string}
-         */
-        ClearWebAction.prototype.toString = function () {
-            return 'Clear input "' + this.node + '"';
-        };
-
-        ClearWebAction.type = 'web_clear';
-
-        return ClearWebAction;
+        this.node = obj.node || '';
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return `Clear input "${this.node}"`;
+    };
+}
+
+export default ClearWebAction;

@@ -1,39 +1,32 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('WaitGeneralAction', factory);
+/** Wait for a certain amount of time before executing the next action */
+class WaitGeneralAction extends Action {
+    static get type() {
+        return 'wait';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {WaitGeneralAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(WaitGeneralAction.type);
 
         /**
-         * Wait for a certain amount of time before executing the next action+
-         *
-         * @param {number} duration - The time to wait in milliseconds
-         * @constructor
+         * The time to wait in milliseconds
+         * @type {*|number}
          */
-        function WaitGeneralAction(duration) {
-            AbstractAction.call(this, WaitGeneralAction.type);
-            this.duration = duration || 0;
-        }
-
-        WaitGeneralAction.prototype = Object.create(AbstractAction.prototype);
-
-        /**
-         * @returns {string}
-         */
-        WaitGeneralAction.prototype.toString = function () {
-            return 'Wait for ' + this.duration + 'ms'
-        };
-
-        WaitGeneralAction.type = 'wait';
-
-        return WaitGeneralAction;
+        this.duration = obj.duration || 0;
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return 'Wait for ' + this.duration + 'ms';
+    }
+}
+
+export default WaitGeneralAction;

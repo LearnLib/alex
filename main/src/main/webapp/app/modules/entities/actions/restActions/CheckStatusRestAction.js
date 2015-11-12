@@ -1,39 +1,33 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('CheckStatusRestAction', factory);
+/** Checks for the status code (e.g. 404) in an HTTP response */
+class CheckStatusRestAction extends Action {
+    static get type() {
+        return 'rest_checkStatus';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {CheckStatusRestAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(CheckStatusRestAction.type);
 
         /**
-         * Checks for the status code (e.g. 404) in an HTTP response
-         *
-         * @param {number} status - The status code
-         * @constructor
+         * The status code
+         * @type {*|number}
          */
-        function CheckStatusRestAction(status) {
-            AbstractAction.call(this, CheckStatusRestAction.type);
-            this.status = status || null;
-        }
-
-        CheckStatusRestAction.prototype = Object.create(AbstractAction.prototype);
-
-        /**
-         * @returns {string}
-         */
-        CheckStatusRestAction.prototype.toString = function () {
-            return 'Check HTTP response status to be "' + this.status + '"';
-        };
-
-        CheckStatusRestAction.type = 'rest_checkStatus';
-
-        return CheckStatusRestAction;
+        this.status = obj.status || 200;
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return 'Check HTTP response status to be "' + this.status + '"';
+    };
+}
+
+export default CheckStatusRestAction;

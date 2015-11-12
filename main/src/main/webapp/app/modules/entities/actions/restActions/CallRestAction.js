@@ -1,87 +1,102 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('CallRestAction', factory);
+/**
+ * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.
+ * E.g. object.attribute.anotherAttribute
+ */
+class CallRestAction extends Action {
+    static get type() {
+        return 'rest_call';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {CallRestAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
+     * @constructor
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(CallRestAction.type);
 
         /**
-         * Makes an HTTP request
-         *
-         * @param {string} method - The HTTP method in {GET,POST,PUT,DELETE}
-         * @param {string} url - The URL the request is send to
-         * @param {string} data - The body data for POST and PUT requests
-         * @constructor
+         * The HTTP method in {GET,POST,PUT,DELETE}
+         * @type {*|string}
          */
-        function CallRestAction(method, url, data) {
-            AbstractAction.call(this, CallRestAction.type);
-            this.method = method || null;
-            this.url = url || null;
-            this.data = data || null;
-            this.cookies = {};
-            this.headers = {};
-        }
-
-        CallRestAction.prototype = Object.create(AbstractAction.prototype);
+        this.method = obj.method || 'GET';
 
         /**
-         * Adds a cookie to the action
-         *
-         * @param {string} key - The cookie key
-         * @param {string} value - The cookie value
+         * The URL the request is send to
+         * @type {*|string}
          */
-        CallRestAction.prototype.addCookie = function (key, value) {
-            this.cookies[key] = value;
-        };
+        this.url = obj.url || '';
 
         /**
-         * Removes a cookie from the action
-         *
-         * @param {string} key - The key of the cookie
+         * The body data for POST and PUT requests
+         * @type {*|null}
          */
-        CallRestAction.prototype.removeCookie = function (key) {
-            if (angular.isDefined(this.cookies[key])) {
-                delete this.cookies[key];
-            }
-        };
+        this.data = obj.data || null;
 
         /**
-         * Adds a header field entry to the action
-         *
-         * @param {string} key - The Http header field name
-         * @param {string} value - The Http header field value
+         * The cookies to send with the request
+         * @type {{}}
          */
-        CallRestAction.prototype.addHeader = function (key, value) {
-            this.headers[key] = value;
-        };
+        this.cookies = obj.cookies || {};
 
         /**
-         * Removes a header field entry
-         *
-         * @param {string} key - The key of the Http header entry
+         * The HTTP headers of the request
+         * @type {*|{}}
          */
-        CallRestAction.prototype.removeHeader = function (key) {
-            if (angular.isDefined(this.headers[key])) {
-                delete this.headers[key];
-            }
-        };
-
-        /**
-         * @returns {string}
-         */
-        CallRestAction.prototype.toString = function () {
-            return 'Make a ' + this.method + ' request to "' + this.url + '"';
-        };
-
-        CallRestAction.type = 'rest_call';
-
-        return CallRestAction;
+        this.headers = obj.headers || {};
     }
-}());
+
+    /**
+     * Adds a cookie to the action
+     *
+     * @param {string} key - The cookie key
+     * @param {string} value - The cookie value
+     */
+    addCookie(key, value) {
+        this.cookies[key] = value;
+    }
+
+    /**
+     * Removes a cookie from the action
+     *
+     * @param {string} key - The key of the cookie
+     */
+    removeCookie(key) {
+        if (angular.isDefined(this.cookies[key])) {
+            delete this.cookies[key];
+        }
+    }
+
+    /**
+     * Adds a header field entry to the action
+     *
+     * @param {string} key - The Http header field name
+     * @param {string} value - The Http header field value
+     */
+    addHeader(key, value) {
+        this.headers[key] = value;
+    };
+
+    /**
+     * Removes a header field entry
+     *
+     * @param {string} key - The key of the Http header entry
+     */
+    removeHeader(key) {
+        if (angular.isDefined(this.headers[key])) {
+            delete this.headers[key];
+        }
+    };
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        return 'Make a ' + this.method + ' request to "' + this.url + '"';
+    };
+}
+
+export default CallRestAction;

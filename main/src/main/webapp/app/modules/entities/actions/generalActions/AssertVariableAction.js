@@ -1,44 +1,48 @@
-(function () {
-    'use strict';
+import Action from '../Action';
 
-    angular
-        .module('ALEX.entities')
-        .factory('AssertVariableAction', factory);
+/** Action to check if the value of a variable equals or matches a specific string value */
+class AssertVariableAction extends Action {
+    static get type() {
+        return 'assertVariable';
+    }
 
     /**
-     * @param AbstractAction
-     * @returns {AssertVariableAction}
+     * Constructor
+     * @param {object} obj - The object to create the action from
      */
-    // @ngInject
-    function factory(AbstractAction) {
+    constructor(obj) {
+        super(AssertVariableAction.type);
 
         /**
-         * Action to check if the value of a variable equals or matches a specific string value
-         *
-         * @param {string} name - The name of the variable
-         * @param {string} value - The value to assert against
-         * @param {boolean} regexp - If value is a regular expression
-         * @constructor
+         * The name of the variable
+         * @type {*|string}
          */
-        function AssertVariableAction(name, value, regexp) {
-            AbstractAction.call(this, AssertVariableAction.type);
-            this.name = name || null;
-            this.value = value || null;
-            this.regexp = regexp || false;
-        }
+        this.name = obj.name || '';
 
-        AssertVariableAction.prototype = Object.create(AbstractAction.prototype);
+        /**
+         * The value to assert against
+         * @type {*|string}
+         */
+        this.value = obj.value || '';
 
-        AssertVariableAction.prototype.toString = function () {
-            if (this.regexp) {
-                return 'Assert variable "' + this.name + '" to match "' + this.value + '"';
-            } else {
-                return 'Assert variable "' + this.name + '" to equal "' + this.value + '"';
-            }
-        };
-
-        AssertVariableAction.type = 'assertVariable';
-
-        return AssertVariableAction;
+        /**
+         * If value is a regular expression
+         * @type {*|boolean}
+         */
+        this.regexp = obj.regexp || false;
     }
-}());
+
+    /**
+     * A string presentation of the actions
+     * @returns {string}
+     */
+    toString() {
+        if (this.regexp) {
+            return 'Assert variable "' + this.name + '" to match "' + this.value + '"';
+        } else {
+            return 'Assert variable "' + this.name + '" to equal "' + this.value + '"';
+        }
+    }
+}
+
+export default AssertVariableAction;
