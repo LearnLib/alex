@@ -1,80 +1,89 @@
 import {events} from '../../constants';
+import {SymbolFormModel} from '../../entities/Symbol';
 
-/**
- * Handles the behaviour of the modal to create a new symbol.
- *
- * @param $scope
- * @param $modalInstance
- * @param SessionService
- * @param Symbol
- * @param SymbolResource
- * @param SymbolGroupResource
- * @param ToastService
- * @param EventBus
- * @constructor
- */
+/** The controller for the modal window to create a new symbol */
 // @ngInject
-function SymbolCreateModalController($scope, $modalInstance, SessionService, Symbol, SymbolResource,
-                                     SymbolGroupResource, ToastService, EventBus) {
-
-    // the id of the project the new symbol is created for
-    const project = SessionService.project.get();
+class SymbolCreateModalController {
 
     /**
-     * The model of the symbol that will be created
-     * @type {Symbol}
+     * Constructor
+     * @param $modalInstance
+     * @param SymbolResource
+     * @param SymbolGroupResource
+     * @param ToastService
+     * @param SessionService
+     * @param EventBus
      */
-    $scope.symbol = new Symbol();
+    constructor($modalInstance, SymbolResource, SymbolGroupResource, ToastService, SessionService, EventBus) {
+        this.$modalInstance = $modalInstance;
+        this.SymbolResource = SymbolResource;
+        this.ToastService = ToastService;
+        this.EventBus = EventBus;
 
-    /**
-     * An error message that can be displayed in the template
-     * @type {String|null}
-     */
-    $scope.errorMsg = null;
+        /**
+         * The project that is in the session
+         * @type {Project}
+         */
+        this.project = SessionService.project.get();
 
-    /**
-     * The list of available symbol groups where the new symbol could be created in
-     * @type {SymbolGroup[]}
-     */
-    $scope.groups = [];
+        /**
+         * The model of the symbol that will be created
+         * @type {SymbolFormModel}
+         */
+        this.symbol = new SymbolFormModel();
 
-    /**
-     * The symbol group that is selected
-     * @type {null|SymbolGroup}
-     */
-    $scope.selectedGroup = null;
+        /**
+         * The list of available symbol groups where the new symbol could be created in
+         * @type {SymbolGroup[]}
+         */
+        this.groups = [];
 
-    // fetch all symbol groups so that they can be selected in the template
-    SymbolGroupResource.getAll(project.id).then(groups => {
-        $scope.groups = groups;
-    });
+        /**
+         * The symbol group that is selected
+         * @type {null|SymbolGroup}
+         */
+        this.selectedGroup = null;
+
+        /**
+         * An error message that can be displayed in the template
+         * @type {String|null}
+         */
+        this.error = null;
+
+        // fetch all symbol groups so that they can be selected in the template
+        SymbolGroupResource.getAll(this.project.id).then(groups => {
+            this.groups = groups;
+        });
+    }
 
     /**
      * Makes a request to the API and create a new symbol. If the name of the group the user entered was not found
      * the symbol will be put in the default group with the id 0. Closes the modal on success.
      */
-    $scope.createSymbol = function () {
-        $scope.errorMsg = null;
+    createSymbol() {
+        this.error = null;
 
-        const group = _.find($scope.groups, {name: $scope.selectedGroup});
+        const group = this.groups.find(g => g.name === this.selectedGroup);
 
         // attach the new symbol to the default group in case none is specified
-        $scope.symbol.group = angular.isDefined(group) ? group.id : 0;
+        this.symbol.group = group ? group.id : 0;
 
-        SymbolResource.create(project.id, $scope.symbol)
-            .then(createdSymbol => {
-                ToastService.success('Created symbol <strong>' + createdSymbol.name + '</strong>');
-                EventBus.emit(events.SYMBOL_CREATED, {symbol: createdSymbol});
-                $modalInstance.dismiss();
+        this.SymbolResource.create(this.project.id, this.symbol)
+            .then(symbol => {
+                this.ToastService.success(`Created symbol "${symbol.name}"`);
+                this.EventBus.emit(events.SYMBOL_CREATED, {symbol: symbol});
+                this.$modalInstance.dismiss();
             })
             .catch(response => {
-                $scope.errorMsg = response.data.message;
+                this.error = response.data.message;
             })
-    };
+    }
 
-    /** Closes the modal dialog */
-    $scope.closeModal = function () {
-        $modalInstance.dismiss();
+    /**
+     * Closes the modal dialog
+     */
+    close() {
+        this.$modalInstance.dismiss();
     }
 }
 

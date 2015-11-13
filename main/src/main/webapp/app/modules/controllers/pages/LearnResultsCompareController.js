@@ -1,3 +1,5 @@
+import {_} from '../../libraries';
+
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
  *
@@ -6,12 +8,11 @@
  * @param $stateParams - The state parameters
  * @param SessionService - The session service
  * @param LearnResultResource - The API resource for learn results
- * @param _ - Lodash
  * @param ErrorService - The ErrorService
  * @constructor
  */
 // @ngInject
-function LearnResultsCompareController($scope, $timeout, $stateParams, SessionService, LearnResultResource, _, ErrorService) {
+function LearnResultsCompareController($scope, $timeout, $stateParams, SessionService, LearnResultResource, ErrorService) {
 
     // the project that is saved in the session
     var project = SessionService.project.get();

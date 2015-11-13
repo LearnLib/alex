@@ -1,21 +1,21 @@
+import {_} from '../../libraries';
 import {events} from '../../constants';
+import {Symbol} from '../../entities/Symbol';
 
 /**
  * The controller that handles CRUD operations on symbols and symbol groups.
  *
  * @param $scope - angular scope object
  * @param SessionService - The SessionService
- * @param Symbol - The Symbol factory
  * @param SymbolResource - The Symbol API Resource handler
  * @param SymbolGroupResource - The SymbolGroup factory
- * @param _ - Lodash
  * @param ToastService - The ToastService
  * @param FileDownloadService - The FileDownloadService
  * @param EventBus
  * @constructor
  */
 // @ngInject
-function SymbolsController($scope, SessionService, Symbol, SymbolResource, SymbolGroupResource, _, ToastService,
+function SymbolsController($scope, SessionService, SymbolResource, SymbolGroupResource, ToastService,
                            FileDownloadService, EventBus) {
 
     /**

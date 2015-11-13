@@ -1,14 +1,15 @@
+import {_} from '../libraries';
+import {Symbol} from '../entities/Symbol';
+
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbols
  *
  * @param $http - The angular $http service
- * @param _ - Lodash
- * @param Symbol - The factory for Symbol objects
  * @returns {{get: get, getAll: getAll, getRevisions: getRevisions, create: create, update: update, delete: remove, move: move, recover: recover}}
  * @constructor
  */
 // @ngInject
-function SymbolResource($http, _, Symbol) {
+function SymbolResource($http) {
     return {
         get: get,
         getAll: getAll,
@@ -30,7 +31,7 @@ function SymbolResource($http, _, Symbol) {
      */
     function get(projectId, symbolId) {
         return $http.get('/rest/projects/' + projectId + '/symbols/' + symbolId)
-            .then(Symbol.transformApiResponse);
+            .then(response => new Symbol(response.data));
     }
 
     /**
@@ -49,7 +50,7 @@ function SymbolResource($http, _, Symbol) {
             query = '?visibility=hidden';
         }
         return $http.get('/rest/projects/' + projectId + '/symbols' + (query ? query : ''))
-            .then(Symbol.transformApiResponse);
+            .then(response => response.data.map(s => new Symbol(s)));
     }
 
     /**
@@ -66,7 +67,7 @@ function SymbolResource($http, _, Symbol) {
         }).join(',');
 
         return $http.get('/rest/projects/' + projectId + '/symbols/batch/' + pairs)
-            .then(Symbol.transformApiResponse)
+            .then(response => response.data.map(s => new Symbol(s)));
     }
 
     /**
@@ -79,7 +80,7 @@ function SymbolResource($http, _, Symbol) {
      */
     function getRevisions(projectId, symbolId) {
         return $http.get('/rest/projects/' + projectId + '/symbols/' + symbolId + '/complete')
-            .then(Symbol.transformApiResponse);
+            .then(response => response.data.map(s => new Symbol(s)));
     }
 
     /**
@@ -91,10 +92,10 @@ function SymbolResource($http, _, Symbol) {
     function create(projectId, symbols) {
         if (angular.isArray(symbols)) {
             return $http.post('/rest/projects/' + projectId + '/symbols/batch', symbols)
-                .then(Symbol.transformApiResponse);
+                .then(response => response.data.map(s => new Symbol(s)));
         } else {
             return $http.post('/rest/projects/' + projectId + '/symbols', symbols)
-                .then(Symbol.transformApiResponse);
+                .then(response => new Symbol(response.data));
         }
     }
 
@@ -126,11 +127,11 @@ function SymbolResource($http, _, Symbol) {
         if (angular.isArray(symbols)) {
             var symbolIds = _.pluck(symbols, 'id').join(',');
             return $http.put('/rest/projects/' + symbols[0].project + '/symbols/batch/' + symbolIds, symbols)
-                .then(Symbol.transformApiResponse);
+                .then(response => response.data.map(s => new Symbol(s)));
         } else {
             var symbol = symbols;
             return $http.put('/rest/projects/' + symbol.project + '/symbols/' + symbol.id, symbol)
-                .then(Symbol.transformApiResponse);
+                .then(response => new Symbol(response.data));
         }
     }
 

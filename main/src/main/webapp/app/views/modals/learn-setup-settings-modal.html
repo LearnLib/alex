@@ -1,6 +1,5 @@
 <div class="modal-header">
-
-    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.close()">
         <i class="fa fa-close fa-fw"></i>
     </a>
 
@@ -8,17 +7,14 @@
     <span class="text-muted">Manually set some parameters for the Test</span>
 </div>
 
-<form name="learn_config_form" ng-submit="ok()">
-
+<form name="learn_config_form" ng-submit="vm.ok()">
     <div class="modal-body">
 
         <div class="form-group">
-            <label class="control-label">Algorithm</label><br> <span
-                class="text-muted">Select an algorithm that will be used for
-				the learn process</span>
-            <select class="form-control"
-                    ng-model="learnConfiguration.algorithm"
-                    ng-options="(k|formatAlgorithm) for (k,v) in learnAlgorithms">
+            <label class="control-label">Algorithm</label> <br>
+            <span class="text-muted">Select an algorithm that will be used for the learn process</span>
+            <select class="form-control" ng-model="vm.learnConfiguration.algorithm"
+                    ng-options="(k|formatAlgorithm) for (k,v) in vm.learnAlgorithms">
                 <option value="" disabled>select an algorithm</option>
             </select>
         </div>
@@ -26,20 +22,18 @@
         <div class="form-group">
             <label class="control-label">EQ Oracle</label><br>
             <span class="text-muted">Select how counter examples should be found</span>
-            <select class="form-control"
-                    ng-model="selectedEqOracle"
-                    ng-change="setEqOracle()"
-                    ng-options="(v|formatEqOracle) for (k,v) in eqOracles">
+            <select class="form-control" ng-model="vm.selectedEqOracle" ng-change="vm.setEqOracle()"
+                    ng-options="(v|formatEqOracle) for (k,v) in vm.eqOracles">
                 <option value="" disabled>select an EQ-Oracle</option>
             </select>
         </div>
 
         <!-- BEGIN: EQ Oracle: RANDOM -->
-        <div class="form-horizontal form-condensed" ng-if="learnConfiguration.eqOracle.type == eqOracles.RANDOM">
+        <div class="form-horizontal form-condensed" ng-if="vm.learnConfiguration.eqOracle.type === vm.eqOracles.RANDOM">
             <div class="form-group">
                 <div class="col-sm-9">
                     <input class="form-control" name="eq_oracle_random_min_length"
-                           ng-model="learnConfiguration.eqOracle.minLength" type="number"
+                           ng-model="vm.learnConfiguration.eqOracle.minLength" type="number"
                            required min="0"
                            placeholder="0">
                 </div>
@@ -56,7 +50,7 @@
             <div class="form-group">
                 <div class="col-sm-9">
                     <input class="form-control" name="eq_oracle_random_max_length"
-                           ng-model="learnConfiguration.eqOracle.maxLength" type="number"
+                           ng-model="vm.learnConfiguration.eqOracle.maxLength" type="number"
                            required min="0"
                            placeholder="0">
                 </div>
@@ -73,7 +67,7 @@
             <div class="form-group">
                 <div class="col-sm-9">
                     <input class="form-control" name="eq_oracle_random_no_words"
-                           ng-model="learnConfiguration.eqOracle.maxNoOfTests" type="number"
+                           ng-model="vm.learnConfiguration.eqOracle.maxNoOfTests" type="number"
                            required min="0"
                            placeholder="0">
                 </div>
@@ -90,11 +84,12 @@
         <!-- END: EQ Oracle: RANDOM -->
 
         <!-- BEGIN: EQ Oracle: COMPLETE -->
-        <div class="form-horizontal form-condensed" ng-if="learnConfiguration.eqOracle.type == eqOracles.COMPLETE">
+        <div class="form-horizontal form-condensed"
+             ng-if="vm.learnConfiguration.eqOracle.type === vm.eqOracles.COMPLETE">
             <div class="form-group">
                 <div class="col-sm-9">
                     <input class="form-control" name="eq_oracle_complete_min_depth"
-                           ng-model="learnConfiguration.eqOracle.minDepth" type="number"
+                           ng-model="vm.learnConfiguration.eqOracle.minDepth" type="number"
                            required min="0"
                            placeholder="0">
                 </div>
@@ -111,7 +106,7 @@
             <div class="form-group">
                 <div class="col-sm-9">
                     <input class="form-control" name="eq_oracle_complete_max_depth"
-                           ng-model="learnConfiguration.eqOracle.maxDepth" type="number"
+                           ng-model="vm.learnConfiguration.eqOracle.maxDepth" type="number"
                            required min="0"
                            placeholder="0">
                 </div>
@@ -129,11 +124,12 @@
         <!-- END: EQ Oracle: COMPLETE -->
 
         <!-- BEGIN: EQ Oracle: WMETHOD -->
-        <div class="form-horizontal form-condensed" ng-if="learnConfiguration.eqOracle.type == eqOracles.WMETHOD">
+        <div class="form-horizontal form-condensed"
+             ng-if="vm.learnConfiguration.eqOracle.type === vm.eqOracles.WMETHOD">
             <div class="form-group">
                 <div class="col-sm-9">
                     <input class="form-control" name="eq_oracle_wmethod_max_depth"
-                           ng-model="learnConfiguration.eqOracle.maxDepth" type="number"
+                           ng-model="vm.learnConfiguration.eqOracle.maxDepth" type="number"
                            required min="0"
                            placeholder="0">
                 </div>
@@ -152,8 +148,7 @@
         <hr>
         <div class="form-group">
             <label class="control-label">Max Amount of Steps to Learn (0:= never stop)</label>
-            <input name="max_steps" required min="0"
-                   ng-model="learnConfiguration.maxAmountOfStepsToLearn"
+            <input name="max_steps" required min="0" ng-model="vm.learnConfiguration.maxAmountOfStepsToLearn"
                    class="form-control" type="number" placeholder="0">
         </div>
 
@@ -166,24 +161,21 @@
 
         <div class="form-group">
             <label class="control-label">Web Driver</label>
-            <select class="form-control" ng-options="v for (k,v) in webBrowser"
-                    ng-model="learnConfiguration.browser">
+            <select class="form-control" ng-options="(v|formatWebBrowser) for (k,v) in vm.webBrowser"
+                    ng-model="vm.learnConfiguration.browser">
                 <option value="" disabled>Select a Webdriver</option>
             </select>
         </div>
 
         <div class="form-group">
             <label>Comment</label>
-            <textarea class="form-control"
-                      placeholder="Enter a short description of the test"
-                      ng-model="learnConfiguration.comment">
+            <textarea class="form-control" placeholder="Enter a short description of the test"
+                      ng-model="vm.learnConfiguration.comment">
             </textarea>
         </div>
 
     </div>
-
     <div class="modal-footer">
         <button class="btn btn-sm btn-primary" type="submit">Save</button>
     </div>
-
 </form>

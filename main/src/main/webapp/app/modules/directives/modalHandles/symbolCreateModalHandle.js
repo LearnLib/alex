@@ -22,13 +22,7 @@ function symbolCreateModalHandle($modal) {
             $modal.open({
                 templateUrl: 'views/modals/symbol-create-modal.html',
                 controller: 'SymbolCreateModalController',
-                resolve: {
-                    modalData: function () {
-                        return {
-                            projectId: scope.projectId
-                        }
-                    }
-                }
+                controllerAs: 'vm'
             });
         });
     }

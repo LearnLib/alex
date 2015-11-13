@@ -1,38 +1,48 @@
-/**
- * The controller that handles the modal dialog for changing the layout settings of a hyptothesis
- *
- * @param $scope - The controllers $scope
- * @param $modalInstance - The ui.bootstrap $modalInstance service
- * @param modalData - The data that is passed to the controller. Contains the object 'layoutSettings'
- * @constructor
- */
+/** The controller that handles the modal dialog for changing the layout settings of a hypothesis */
 // @ngInject
-function HypothesisLayoutSettingsController($scope, $modalInstance, modalData) {
-    var defaultLayoutProperties = {
-        nodesep: 50,
-        edgesep: 25,
-        ranksep: 50
-    };
+class HypothesisLayoutSettingsController {
 
-    $scope.layoutSettings = {};
+    /**
+     * Constructor
+     * @param $modalInstance
+     * @param modalData
+     */
+    constructor($modalInstance, modalData) {
+        this.$modalInstance = $modalInstance;
 
-    if (modalData.layoutSettings !== null) {
-        $scope.layoutSettings = modalData.layoutSettings;
-    } else {
-        $scope.layoutSettings = defaultLayoutProperties;
+        /**
+         * The default layout settings for a hypothesis
+         * @type {{nodesep: number, edgesep: number, ranksep: number}}
+         */
+        this.defaultLayoutProperties = {
+            nodesep: 50,
+            edgesep: 25,
+            ranksep: 50
+        };
+
+        this.layoutSettings = {};
+
+        if (modalData.layoutSettings !== null) {
+            this.layoutSettings = modalData.layoutSettings;
+        } else {
+            this.layoutSettings = this.defaultLayoutProperties;
+        }
     }
 
-    $scope.update = function () {
-        $modalInstance.close($scope.layoutSettings);
-    };
+    /** Closes the modal window and passes the updated layout settings */
+    update() {
+        this.$modalInstance.close(this.layoutSettings);
+    }
 
-    $scope.close = function () {
-        $modalInstance.dismiss();
-    };
+    /** Closes the modal window */
+    close() {
+        this.$modalInstance.dismiss();
+    }
 
-    $scope.defaultLayoutSettings = function () {
-        $scope.layoutSettings = defaultLayoutProperties;
-    };
+    /** Sets the layout settings to its default values */
+    defaultLayoutSettings() {
+        this.layoutSettings = this.defaultLayoutProperties;
+    }
 }
 
 export default HypothesisLayoutSettingsController;

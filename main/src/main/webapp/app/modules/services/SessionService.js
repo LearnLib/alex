@@ -1,16 +1,17 @@
+import {User} from '../entities/User';
+import {Project} from '../entities/Project';
+
 /**
  * The session that is used in this application to save data in the session storage of the browser to store data in
  * between page refreshes in the same tab. So the project doesn't have to be fetched from the server every time the
  * page refreshes
  *
  * @param $rootScope
- * @param Project
- * @param User
  * @returns {{project: {get: getProject, save: saveProject, remove: removeProject}, user: {get: getUser, save: saveUser, remove: removeUser}}}
  * @constructor
  */
 // @ngInject
-function SessionService($rootScope, Project, User) {
+function SessionService($rootScope) {
     return {
         project: {
             get: getProject,

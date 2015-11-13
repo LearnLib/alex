@@ -1,79 +1,89 @@
+import LearnConfiguration from './LearnConfiguration';
+
 /**
- * The factory for the model of a learn result
- *
- * @param LearnConfiguration - The factory for LearnConfiguration
- * @param _ - Lodash
- * @returns {LearnResult}
- * @constructor
+ * The model for a learner result
  */
-// @ngInject
-function LearnResultFactory(LearnConfiguration, _) {
+class LearnResult {
 
     /**
-     * The model of a learn result
-     *
-     * @constructor
+     * Constructor
+     * @param obj - The object to create a learn result from
      */
-    function LearnResult() {
+    constructor(obj) {
+
+        /**
+         * The learnConfiguration
+         * @type {LearnConfiguration|*}
+         */
+        this.configuration = new LearnConfiguration(obj.configuration);
+
+        /**
+         * The hypothesis
+         * @type {object}
+         */
+        this.hypothesis = obj.hypothesis;
+
+        /**
+         * The project id of the learn result
+         * @type{number}
+         */
+        this.project = obj.project;
+
+        /**
+         * The alphabet the process has been learned with
+         * @type {{id:number,revision:number}[]}
+         */
+        this.sigma = obj.sigma;
+
+        /**
+         * The n in n-th hypothesis
+         * @type {number}
+         */
+        this.stepNo = obj.stepNo;
+
+        /**
+         * The test number
+         * @type {number}
+         */
+        this.testNo = obj.testNo;
+
+        /**
+         * The internal data structure of the used algorithm.
+         * Not available for DHC
+         * @type {string}
+         */
+        this.algorithmInformation = obj.algorithmInformation;
+
+        /**
+         * The statistics of the process
+         * @type {object}
+         */
+        this.statistics = obj.statistics;
+
+        /**
+         * If there has been an error
+         * @type {boolean}
+         */
+        this.error = obj.error;
+
+        /**
+         * The error message why the process failed
+         * @type {string}
+         */
+        this.errorText = obj.errorText;
+
+        // convert ns to ms
+        this.statistics.startTime = Math.ceil(this.statistics.startTime / 1000000);
+        this.statistics.duration = Math.ceil(this.statistics.duration / 1000000);
     }
 
     /**
      * Indicates if an error has been recorded during the step
-     *
      * @returns {boolean}
      */
-    LearnResult.prototype.hasError = function () {
+    hasError() {
         return angular.isDefined(this.error);
-    };
-
-    /**
-     * Creates a new instance of a LearnResult from an object
-     *
-     * @param {Object} data - The object the learn result should be build from
-     * @returns {LearnResult} - The instance of LearnResult from the data
-     */
-    LearnResult.build = function (data) {
-        var learnResult = new LearnResult();
-        angular.extend(learnResult, {
-            configuration: LearnConfiguration.build(data.configuration),
-            hypothesis: data.hypothesis,
-            project: data.project,
-            sigma: data.sigma,
-            stepNo: data.stepNo,
-            testNo: data.testNo,
-            algorithmInformation: data.algorithmInformation,
-            statistics: data.statistics,
-            error: data.error,
-            errorText: data.errorText
-        });
-
-        // convert ns to ms
-        learnResult.statistics.duration = Math.ceil(learnResult.statistics.duration / 1000000);
-
-        return learnResult;
-    };
-
-    /**
-     * Creates LearnResult[s] from an API response
-     *
-     * @param response
-     * @returns {*}
-     */
-    LearnResult.transformApiResponse = function (response) {
-        if (angular.isArray(response.data)) {
-            if (angular.isArray(response.data[0])) {
-                return _.forEach(response.data, function (completeResult) {
-                    _.map(completeResult, LearnResult.build);
-                })
-            } else {
-                return _.map(response.data, LearnResult.build);
-            }
-        } else {
-            return LearnResult.build(response.data);
-        }
-    };
-
-    return LearnResult;
+    }
 }
 
-export default LearnResultFactory;
+export default LearnResult;

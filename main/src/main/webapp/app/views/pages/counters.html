@@ -1,50 +1,51 @@
-<view-header title="Counters"></view-header>
+<div ng-controller="CountersController as vm">
+    <view-header title="Counters"></view-header>
 
-<action-bar>
-    <div ng-show="counters.length > 0">
-        <checkbox-multiple model="counters" class="pull-left"></checkbox-multiple>
+    <action-bar>
+        <div ng-show="vm.counters.length > 0">
+            <checkbox-multiple model="vm.counters" class="pull-left"></checkbox-multiple>
 
-        <div class="pull-left">
-            <button class="btn btn-sm btn-primary" ng-click="deleteSelectedCounters()">
-                Delete
-            </button>
-        </div>
-    </div>
-</action-bar>
-
-<div class="view-body">
-    <div class="alx-container-fluid">
-
-        <div class="alert alert-info alert-condensed" ng-show="counters.length > 0">
-            <i class="fa fa-info fa-fw"></i>
-            Deleted counters will be created as soon as they are used in a learning process, starting with value 0.
-        </div>
-
-        <div class="counter-list"
-             ng-if="counters.length > 0">
-
-            <div class="counter-list-item"
-                 ng-repeat="counter in counters"
-                 selection-model
-                 selection-model-selected-items="selectedCounters">
-
-                <checkbox selection-model-ignore class="pull-left" model="counter"></checkbox>
-
-                <div class="counter-list-item-content">
-                    <button class="btn btn-xs btn-default btn-icon pull-right"
-                            ng-click="deleteCounter(counter)">
-                        <i class="fa fa-trash fa-fw"></i> Delete
-                    </button>
-
-                    <strong ng-bind="counter.name"></strong><br>
-                    <span class="text-muted">Value: <span ng-bind="counter.value"></span></span>
-                </div>
+            <div class="pull-left">
+                <button class="btn btn-sm btn-primary" ng-click="vm.deleteSelectedCounters()">
+                    Delete
+                </button>
             </div>
         </div>
+    </action-bar>
 
-        <div class="alert alert-info" ng-if="counters.length === 0">
-            There aren't any counters yet
+    <div class="view-body">
+        <div class="alx-container-fluid">
+
+            <div class="alert alert-info alert-condensed" ng-show="vm.counters.length > 0">
+                <i class="fa fa-info fa-fw"></i>
+                Deleted counters will be created as soon as they are used in a learning process, starting with value 0.
+            </div>
+
+            <div class="counter-list" ng-if="vm.counters.length > 0">
+
+                <div class="counter-list-item"
+                     ng-repeat="counter in vm.counters"
+                     selection-model
+                     selection-model-selected-items="vm.selectedCounters">
+
+                    <checkbox selection-model-ignore class="pull-left" model="counter"></checkbox>
+
+                    <div class="counter-list-item-content">
+                        <button class="btn btn-xs btn-default btn-icon pull-right"
+                                ng-click="vm.deleteCounter(counter)">
+                            <i class="fa fa-trash fa-fw"></i> Delete
+                        </button>
+
+                        <strong ng-bind="counter.name"></strong><br>
+                        <span class="text-muted">Value: <span ng-bind="counter.value"></span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info" ng-if="vm.counters.length === 0">
+                There aren't any counters yet
+            </div>
+
         </div>
-
     </div>
 </div>

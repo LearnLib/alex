@@ -1,3 +1,7 @@
+import {_} from '../../libraries';
+import {events} from '../../constants';
+import LearnConfiguration from '../../entities/LearnConfiguration';
+
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
  *
@@ -5,16 +9,15 @@
  * @param $state - The ui.router $state service
  * @param SymbolGroupResource - The API resource for symbol groups
  * @param SessionService - The SessionService
- * @param LearnConfiguration
  * @param LearnerResource - The API service for the learner
  * @param ToastService - The ToastService
- * @param _ - Lodash
  * @param LearnResultResource - The API resource for learn results
+ * @param EventBus
  * @constructor
  */
 // @ngInject
-function LearnSetupController($scope, $state, SymbolGroupResource, SessionService, LearnConfiguration, LearnerResource, ToastService, _,
-                              LearnResultResource) {
+function LearnSetupController($scope, $state, SymbolGroupResource, SessionService, LearnerResource, ToastService,
+                              LearnResultResource, EventBus) {
 
     // the project that is stored in the session
     const project = SessionService.project.get();
@@ -55,43 +58,44 @@ function LearnSetupController($scope, $state, SymbolGroupResource, SessionServic
      */
     $scope.canContinueLearnProcess = false;
 
-    (function init() {
+    EventBus.on(events.LEARN_CONFIG_UPDATED, (evt, data) => {
+        $scope.learnConfiguration = data.learnConfiguration;
+    });
 
-        // make sure that there isn't any other learn process active
-        // redirect to the load screen in case there is an active one
-        LearnerResource.isActive()
-            .then(function (data) {
-                if (data.active) {
-                    if (data.project == project.id) {
-                        ToastService.info('There is currently running a learn process.');
-                        $state.go('learn.start');
-                    } else {
-                        ToastService.danger('There is already running a test from another project.');
-                        $state.go('project')
-                    }
+    // make sure that there isn't any other learn process active
+    // redirect to the load screen in case there is an active one
+    LearnerResource.isActive()
+        .then(data => {
+            if (data.active) {
+                if (data.project == project.id) {
+                    ToastService.info('There is currently running a learn process.');
+                    $state.go('learn.start');
                 } else {
-
-                    // load all symbols in case there isn't any active learning process
-                    SymbolGroupResource.getAll(project.id, {embedSymbols: true})
-                        .then(function (groups) {
-                            $scope.groups = groups;
-                            $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
-                        });
-
-                    // load learn results so that their configuration can be reused
-                    LearnResultResource.getAllFinal(project.id)
-                        .then(function (learnResults) {
-                            $scope.learnResults = learnResults;
-                        })
+                    ToastService.danger('There is already running a test from another project.');
+                    $state.go('project')
                 }
-            });
+            } else {
 
-        // get the status to check if there is a learn process that can be continued
-        LearnerResource.getStatus()
-            .then(function (data) {
-                $scope.canContinueLearnProcess = data !== null;
-            });
-    }());
+                // load all symbols in case there isn't any active learning process
+                SymbolGroupResource.getAll(project.id, {embedSymbols: true})
+                    .then(groups => {
+                        $scope.groups = groups;
+                        $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
+                    });
+
+                // load learn results so that their configuration can be reused
+                LearnResultResource.getAllFinal(project.id)
+                    .then(learnResults => {
+                        $scope.learnResults = learnResults;
+                    })
+            }
+        });
+
+    // get the status to check if there is a learn process that can be continued
+    LearnerResource.getStatus()
+        .then(data => {
+            $scope.canContinueLearnProcess = data !== null;
+        });
 
     /**
      * Sets the reset symbol

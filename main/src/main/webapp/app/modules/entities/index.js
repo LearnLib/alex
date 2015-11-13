@@ -1,11 +1,11 @@
 import Action from './actions/Action';
 import Counter from './Counter';
-import EqOracleModel from './EqOracle';
-import LearnConfigurationFactory from './LearnConfiguration';
-import LearnResultFactory from './LearnResult';
+import {RandomEqOracle, CompleteEqOracle, WMethodEqOracle, SampleEqOracle} from './EqOracle';
+import LearnConfiguration from './LearnConfiguration';
+import LearnResult from './LearnResult';
 import {ProjectFormModel, Project} from './Project';
-import SymbolModel from './Symbol';
-import SymbolGroupFactory from './SymbolGroup';
+import {SymbolFormModel, Symbol} from './Symbol';
+import {SymbolGroupFormModel,SymbolGroup} from './SymbolGroup';
 import {UserFormModel, User} from './User';
 
 // web actions
@@ -46,13 +46,18 @@ const moduleName = 'ALEX.entities';
 angular
     .module(moduleName, [])
     .factory('Counter', () => Counter)
-    .factory('EqOracle', EqOracleModel)
-    .factory('LearnConfiguration', LearnConfigurationFactory)
-    .factory('LearnResult', LearnResultFactory)
+    .factory('RandomEqOracle', () => RandomEqOracle)
+    .factory('CompleteEqOracle', () => CompleteEqOracle)
+    .factory('WMethodEqOracle', () => WMethodEqOracle)
+    .factory('SampleEqOracle', () => SampleEqOracle)
+    .factory('LearnConfiguration', () => LearnConfiguration)
+    .factory('LearnResult', () => LearnResult)
     .factory('ProjectFormModel', () => ProjectFormModel)
     .factory('Project', () => Project)
-    .factory('Symbol', SymbolModel)
-    .factory('SymbolGroup', SymbolGroupFactory)
+    .factory('SymbolFormModel', () => SymbolFormModel)
+    .factory('Symbol', () => Symbol)
+    .factory('SymbolGroupFormModel', () => SymbolGroupFormModel)
+    .factory('SymbolGroup', () => SymbolGroup)
     .factory('UserFormModel', () => UserFormModel)
     .factory('User', () => User)
     .factory('Action', () => Action)

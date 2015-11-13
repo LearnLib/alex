@@ -1,72 +1,75 @@
 import {events} from '../../constants';
+import {Symbol} from '../../entities/Symbol';
 
 /**
  * Handles the behaviour of the modal to edit an existing symbol and updates the edited symbol on the server.
- *
- * @param $scope
- * @param $modalInstance
- * @param modalData
- * @param Symbol
- * @param SymbolResource
- * @param ToastService
- * @param EventBus
- * @constructor
  */
 // @ngInject
-function SymbolEditModalController($scope, $modalInstance, modalData, Symbol, SymbolResource, ToastService,
-                                   EventBus) {
+class SymbolEditModalController {
 
     /**
-     * The symbol that is passed to the modal as a copy in order to prevent two way binding in the template.
-     * @type {Symbol}
+     * Constructor
+     * @param $modalInstance
+     * @param modalData
+     * @param SymbolResource
+     * @param ToastService
+     * @param EventBus
      */
-    $scope.symbol = Symbol.build(modalData.symbol);
+    constructor($modalInstance, modalData, SymbolResource, ToastService, EventBus) {
+        this.$modalInstance = $modalInstance;
+        this.modalData = modalData;
+        this.SymbolResource = SymbolResource;
+        this.ToastService = ToastService;
+        this.EventBus = EventBus;
 
-    /**
-     * The error message that is displayed when update fails
-     * @type {null|string}
-     */
-    $scope.errorMsg = null;
+        /**
+         * The symbol to edit
+         * @type {Symbol}
+         */
+        this.symbol = modalData.symbol;
 
-    // The copy of the symbol that will be passed back together with the updated one
-    var copy = Symbol.build($scope.symbol);
+        /**
+         * A copy of the old symbol
+         * @type {Symbol}
+         */
+        this.symbolCopy = new Symbol(modalData.symbol);
 
-    /**
-     * Make a request to the API in order to update the symbol. Close the modal on success.
-     */
-    $scope.updateSymbol = function () {
-        $scope.errorMsg = null;
+        /**
+         * The error message that is displayed when update fails
+         * @type {null|string}
+         */
+        this.errorMsg = null;
+    }
 
-        // remove the selection from the symbol in case there is any
-        delete $scope.symbol._selected;
-        delete $scope.symbol._collapsed;
+    /** Make a request to the API in order to update the symbol. Close the modal on success. */
+    updateSymbol() {
+        this.errorMsg = null;
 
         // do not update on server
-        if (angular.isDefined(modalData.updateOnServer) && !modalData.updateOnServer) {
-            EventBus.emit(events.SYMBOL_UPDATED, {
-                newSymbol: $scope.symbol,
-                oldSymbol: copy
+        if (angular.isDefined(this.modalData.updateOnServer) && !this.modalData.updateOnServer) {
+            this.EventBus.emit(events.SYMBOL_UPDATED, {
+                newSymbol: this.symbol,
+                oldSymbol: this.symbolCopy
             });
+            this.$modalInstance.dismiss();
             return;
         }
 
         // update the symbol and close the modal dialog on success with the updated symbol
-        SymbolResource.update($scope.symbol)
+        this.SymbolResource.update(this.symbol)
             .then(updatedSymbol => {
-                ToastService.success('Symbol updated');
-                EventBus.emit(events.SYMBOL_UPDATED, {symbol: updatedSymbol});
-                $modalInstance.dismiss();
+                this.ToastService.success('Symbol updated');
+                this.EventBus.emit(events.SYMBOL_UPDATED, {symbol: updatedSymbol});
+                this.$modalInstance.dismiss();
             })
             .catch(response => {
-                $scope.errorMsg = response.data.message;
+                this.errorMsg = response.data.message;
             })
     };
 
-    /**
-     * Close the modal dialog
-     */
-    $scope.closeModal = function () {
-        $modalInstance.dismiss();
+    /** Close the modal dialog */
+    close() {
+        this.$modalInstance.dismiss();
     }
 }
 

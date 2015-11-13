@@ -1,13 +1,14 @@
+import LearnResult from '../entities/LearnResult';
+
 /**
  * The service for interacting with the learner
  *
  * @param $http - The angular $http service
- * @param LearnResult - The LearnResult factory
  * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive, isCounterexample: isCounterexample}}
  * @constructor
  */
 // @ngInject
-function LearnerResource($http, LearnResult) {
+function LearnerResource($http) {
     return {
         start: start,
         stop: stop,
@@ -59,12 +60,8 @@ function LearnerResource($http, LearnResult) {
      */
     function getStatus() {
         return $http.get('/rest/learner/status')
-            .then(function (response) {
-                return LearnResult.transformApiResponse(response);
-            })
-            .catch(function () {
-                return null;
-            })
+            .then(response => new LearnResult(response.data))
+            .catch(() => null);
     }
 
     /**
@@ -74,9 +71,7 @@ function LearnerResource($http, LearnResult) {
      */
     function isActive() {
         return $http.get('/rest/learner/active')
-            .then(function (response) {
-                return response.data;
-            })
+            .then(response => response.data)
     }
 
     /**
@@ -91,9 +86,7 @@ function LearnerResource($http, LearnResult) {
         return $http.post('/rest/learner/outputs/' + projectId, {
             resetSymbol: resetSymbol,
             symbols: symbols
-        }).then(function (response) {
-            return response.data;
-        })
+        }).then(response => response.data)
     }
 }
 

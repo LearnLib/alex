@@ -1,3 +1,6 @@
+import {_} from '../../libraries';
+import LearnConfiguration from '../../entities/LearnConfiguration';
+
 /**
  * The controller for showing a load screen during the learning and shows all learn results from the current test
  * in the intermediate steps.
@@ -8,14 +11,12 @@
  * @param LearnerResource - The API service for the learner
  * @param LearnResultResource - The API resource for learn results
  * @param ToastService - The ToastService
- * @param _ - Lodash
  * @param ErrorService - The ErrorService
- * @param LearnConfiguration
  * @constructor
  */
 // @ngInject
-function LearnStartController($scope, $interval, SessionService, LearnerResource, LearnResultResource, ToastService, _, ErrorService,
-                              LearnConfiguration) {
+function LearnStartController($scope, $interval, SessionService, LearnerResource, LearnResultResource, ToastService,
+                              ErrorService) {
 
     // The project that is stored in the session
     var project = SessionService.project.get();
@@ -57,14 +58,12 @@ function LearnStartController($scope, $interval, SessionService, LearnerResource
     $scope.duration = 0;
 
     // initialize the controller
-    (function init() {
-        poll();
+    poll();
 
-        // stop polling when you leave the page
-        $scope.$on("$destroy", function () {
-            $interval.cancel(interval);
-        });
-    }());
+    // stop polling when you leave the page
+    $scope.$on("$destroy", () => {
+        $interval.cancel(interval);
+    });
 
     /**
      * Checks every x seconds if the server has finished learning and sets the test if he did
@@ -73,13 +72,13 @@ function LearnStartController($scope, $interval, SessionService, LearnerResource
         $scope.active = true;
         interval = $interval(function () {
             LearnerResource.isActive()
-                .then(function (data) {
+                .then(data => {
                     if (angular.isDefined(data.mqsUsed)) {
                         $scope.mqsUsed = data.mqsUsed;
                     }
 
                     if (!data.active) {
-                        LearnerResource.getStatus().then(function (result) {
+                        LearnerResource.getStatus().then(result => {
                             if (result.error) {
                                 ErrorService.setErrorMessage(result.errorText);
                                 ErrorService.goToErrorPage();
@@ -100,10 +99,9 @@ function LearnStartController($scope, $interval, SessionService, LearnerResource
 
         // load the complete set of steps for the learn result
         function loadComplete(result) {
-            LearnResultResource.getComplete(project.id, result.testNo)
-                .then(function (results) {
-                    $scope.results = results;
-                });
+            LearnResultResource.getComplete(project.id, result.testNo).then(results => {
+                $scope.results = results;
+            });
         }
     }
 
@@ -121,13 +119,13 @@ function LearnStartController($scope, $interval, SessionService, LearnerResource
      * Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample'
      */
     $scope.resumeLearning = function () {
-        var config = LearnConfiguration.build(_.last($scope.results).configuration).toLearnResumeConfiguration();
+        var config = new LearnConfiguration(_.last($scope.results).configuration).getLearnResumeConfiguration();
 
         LearnerResource.resume(project.id, _.last($scope.results).testNo, config)
-            .then(function () {
+            .then(() => {
                 poll();
             })
-            .catch(function (response) {
+            .catch(response => {
                 ToastService.danger('<p><strong>Resume learning failed!</strong></p>' + response.data.message);
             })
     };

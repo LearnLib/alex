@@ -18,7 +18,8 @@ function symbolGroupCreateModalHandle($modal) {
         el.on('click', () => {
             $modal.open({
                 templateUrl: 'views/modals/symbol-group-create-modal.html',
-                controller: 'SymbolGroupCreateModalController'
+                controller: 'SymbolGroupCreateModalController',
+                controllerAs: 'vm'
             });
         });
     }

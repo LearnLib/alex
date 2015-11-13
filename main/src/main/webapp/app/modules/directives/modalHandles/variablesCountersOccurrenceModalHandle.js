@@ -18,7 +18,8 @@ function variablesCountersOccurrenceModalHandle($modal) {
         el.on('click', () => {
             $modal.open({
                 templateUrl: 'views/modals/variables-counters-occurrence-modal.html',
-                controller: 'VariablesCountersOccurrenceModalController'
+                controller: 'VariablesCountersOccurrenceModalController',
+                controllerAs: 'vm'
             });
         });
     }

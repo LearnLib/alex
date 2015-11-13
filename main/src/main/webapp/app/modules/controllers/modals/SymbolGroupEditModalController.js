@@ -3,73 +3,76 @@ import {events} from '../../constants';
 /**
  * The controller that handles the modal dialog for deleting and updating a symbol group. The modal data that is
  * passed must have an property 'group' whose value should be an instance of SymbolGroup
- *
- * @param $scope
- * @param $modalInstance
- * @param modalData - The data that is passed to this controller
- * @param SymbolGroupResource
- * @param ToastService - The ToastService
- * @param EventBus
- * @constructor
  */
 // @ngInject
-function SymbolGroupEditModalController($scope, $modalInstance, modalData, SymbolGroupResource, ToastService, EventBus) {
+class SymbolGroupEditModalController {
 
     /**
-     * The symbol group that should be edited
-     * @type {SymbolGroup}
+     * Constructor
+     * @param $modalInstance
+     * @param modalData
+     * @param SymbolGroupResource
+     * @param ToastService
+     * @param EventBus
      */
-    $scope.group = modalData.group;
+    constructor($modalInstance, modalData, SymbolGroupResource, ToastService, EventBus) {
+        this.$modalInstance = $modalInstance;
+        this.SymbolGroupResource = SymbolGroupResource;
+        this.ToastService = ToastService;
+        this.EventBus = EventBus;
 
-    /**
-     * An error message that can be displayed in the template
-     * @type {null|String}
-     */
-    $scope.errorMsg = null;
+        /**
+         * The symbol group that should be edited
+         * @type {SymbolGroup}
+         */
+        this.group = modalData.group;
 
-    /**
-     * Updates the symbol group under edit and closes the modal dialog on success
-     */
-    $scope.updateGroup = function () {
-        $scope.errorMsg = null;
+        /**
+         * An error message that can be displayed in the template
+         * @type {null|String}
+         */
+        this.errorMsg = null;
+    }
 
-        SymbolGroupResource.update($scope.group)
-            .then(function (updatedGroup) {
-                ToastService.success('Group updated');
-                EventBus.emit(events.GROUP_UPDATED, {
+
+
+    /** Updates the symbol group under edit and closes the modal dialog on success */
+    updateGroup () {
+        this.errorMsg = null;
+
+        this.SymbolGroupResource.update(this.group)
+            .then(updatedGroup => {
+                this.ToastService.success('Group updated');
+                this.EventBus.emit(events.GROUP_UPDATED, {
                     group: updatedGroup
                 });
-                $modalInstance.dismiss();
+                this.$modalInstance.dismiss();
             })
-            .catch(function (response) {
-                $scope.errorMsg = response.data.message;
+            .catch(response => {
+                this.errorMsg = response.data.message;
             })
     };
 
-    /**
-     * Deletes the symbol group under edit and closes the modal dialog on success
-     */
-    $scope.deleteGroup = function () {
-        $scope.errorMsg = null;
+    /** Deletes the symbol group under edit and closes the modal dialog on success */
+    deleteGroup () {
+        this.errorMsg = null;
 
-        SymbolGroupResource.delete($scope.group)
-            .then(function () {
-                ToastService.success('Group <strong>' + $scope.group.name + '</strong> deleted');
+        this.SymbolGroupResource.delete(this.group)
+            .then(() => {
+                this.ToastService.success('Group <strong>' + this.group.name + '</strong> deleted');
                 EventBus.emit(events.GROUP_DELETED, {
-                    group: $scope.group
+                    group: this.group
                 });
-                $modalInstance.dismiss();
+                this.$modalInstance.dismiss();
             })
-            .catch(function (response) {
-                $scope.errorMsg = response.data.message;
+            .catch(response => {
+                this.errorMsg = response.data.message;
             })
     };
 
-    /**
-     * Closes the modal dialog
-     */
-    $scope.closeModal = function () {
-        $modalInstance.dismiss();
+    /** Closes the modal dialog */
+    close () {
+        this.$modalInstance.dismiss();
     }
 }
 

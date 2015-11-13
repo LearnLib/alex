@@ -14,57 +14,74 @@ import {events} from '../../constants';
  * @constructor
  */
 // @ngInject
-function UserEditModalController($scope, $modalInstance, modalData, UserResource, ToastService, PromptService,
-                                 EventBus) {
+class UserEditModalController {
 
     /**
-     * The error message in case the update goes wrong
-     * @type {null|string}
+     * Constructor
+     * @param $modalInstance
+     * @param modalData
+     * @param UserResource
+     * @param ToastService
+     * @param PromptService
+     * @param EventBus
      */
-    $scope.error = null;
+    constructor($modalInstance, modalData, UserResource, ToastService, PromptService, EventBus) {
+        this.$modalInstance = $modalInstance;
+        this.UserResource = UserResource;
+        this.ToastService = ToastService;
+        this.PromptService = PromptService;
+        this.EventBus = EventBus;
 
-    /**
-     * The user to edit
-     * @type {User}
-     */
-    $scope.user = modalData.user;
+        /**
+         * The error message in case the update goes wrong
+         * @type {null|string}
+         */
+        this.error = null;
+
+        /**
+         * The user to edit
+         * @type {User}
+         */
+        this.user = modalData.user;
+    }
+
 
     /** Updates the user on the server and closes the modal window on success */
-    $scope.updateUser = function () {
-        $scope.error = null;
+    updateUser() {
+        this.error = null;
 
-        UserResource.update($scope.user)
+        this.UserResource.update(this.user)
             .then(() => {
-                EventBus.emit(events.USER_UPDATED, {user: $scope.user});
-                ToastService.success('User updated successfully');
-                $scope.closeModal();
+                this.EventBus.emit(events.USER_UPDATED, {user: this.user});
+                this.ToastService.success('User updated successfully');
+                this.$modalInstance.dismiss()
             })
             .catch(response => {
-                $scope.error = response.data.message;
+                this.error = response.data.message;
             })
     };
 
     /** Deletes a user */
-    $scope.deleteUser = function () {
-        $scope.error = null;
+    deleteUser() {
+        this.error = null;
 
-        PromptService.confirm('Do you want to delete this user permanently?')
+        this.PromptService.confirm('Do you want to delete this user permanently?')
             .then(() => {
-                UserResource.remove($scope.user)
+                this.UserResource.remove(this.user)
                     .then(() => {
-                        EventBus.emit(events.USER_DELETED, {user: $scope.user});
-                        ToastService.success('The user has been deleted');
-                        $scope.closeModal();
+                        this.EventBus.emit(events.USER_DELETED, {user: this.user});
+                        this.ToastService.success('The user has been deleted');
+                        this.$modalInstance.dismiss();
                     })
                     .catch(response => {
-                        $scope.error = response.data.message;
+                        this.error = response.data.message;
                     })
             })
     };
 
     /** Closes the modal window */
-    $scope.closeModal = function () {
-        $modalInstance.dismiss();
+    close() {
+        this.$modalInstance.dismiss();
     }
 }
 

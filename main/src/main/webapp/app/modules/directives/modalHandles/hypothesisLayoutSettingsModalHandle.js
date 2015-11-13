@@ -29,6 +29,7 @@ function hypothesisLayoutSettingsModalHandle($modal) {
             var modal = $modal.open({
                 templateUrl: 'views/modals/hypothesis-layout-settings-modal.html',
                 controller: 'HypothesisLayoutSettingsController',
+                controllerAs: 'vm',
                 resolve: {
                     modalData: function () {
                         return {
@@ -38,7 +39,7 @@ function hypothesisLayoutSettingsModalHandle($modal) {
                 }
             });
 
-            modal.result.then(function (layoutSettings) {
+            modal.result.then(layoutSettings => {
                 scope.onUpdate()(layoutSettings);
             })
         });

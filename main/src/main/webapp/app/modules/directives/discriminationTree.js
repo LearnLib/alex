@@ -1,18 +1,16 @@
+import {_, d3, dagreD3, graphlib} from '../libraries';
+
 /**
  * The directive for displaying a discrimination tree in an svg element. Can be used as an attribute or an element.
  * Expects another property 'data' which holds the string representation of the discrimination tree.
  *
  * Use it like: '<discrimination-tree data="...."></discrimination-tree>'
  *
- * @param _ - Lodash
- * @param d3 - D3
- * @param dagreD3 - dagreD3
- * @param graphlib - graphlib
  * @param $window - angular $window object
  * @returns {{scope: {data: string}, template: string, link: link}}
  */
 // @ngInject
-function discriminationTree(_, d3, dagreD3, graphlib, $window) {
+function discriminationTree($window) {
     return {
         scope: {
             data: '='

@@ -1,6 +1,6 @@
 <div class="modal-header">
 
-    <a class="btn btn-default btn-icon pull-right" ng-click="close()">
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.close()">
         <i class="fa fa-close fa-fw"></i>
     </a>
 
@@ -9,27 +9,27 @@
 
 </div>
 
-<form ng-submit="update()">
+<form ng-submit="vm.update()">
 
     <div class="modal-body">
 
         <div class="form-group">
             <label>Node Separation</label>
-            <input type="number" class="form-control" placeholder="nodesep" ng-model="layoutSettings.nodesep">
+            <input type="number" class="form-control" placeholder="nodesep" ng-model="vm.layoutSettings.nodesep">
 
             <p class="help-block">Number of pixels that separate nodes horizontally in the layout.</p>
         </div>
 
         <div class="form-group">
             <label>Edge Separation</label>
-            <input type="number" class="form-control" placeholder="edgesep" ng-model="layoutSettings.edgesep">
+            <input type="number" class="form-control" placeholder="edgesep" ng-model="vm.layoutSettings.edgesep">
 
             <p class="help-block">Number of pixels that separate edges horizontally in the layout.</p>
         </div>
 
         <div class="form-group">
             <label>Rank Separation</label>
-            <input type="number" class="form-control" placeholder="ranksep" ng-model="layoutSettings.ranksep">
+            <input type="number" class="form-control" placeholder="ranksep" ng-model="vm.layoutSettings.ranksep">
 
             <p class="help-block">Number of pixels between each rank in the layout.</p>
         </div>
@@ -37,7 +37,7 @@
     </div>
 
     <div class="modal-footer">
-        <a href class="btn btn-default btn-sm" ng-click="defaultLayoutSettings()">Default</a>
+        <a href class="btn btn-default btn-sm" ng-click="vm.defaultLayoutSettings()">Default</a>
         <button class="btn btn-primary btn-sm">Update</button>
     </div>
 

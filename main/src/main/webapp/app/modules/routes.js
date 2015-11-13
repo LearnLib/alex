@@ -51,8 +51,7 @@ function config($stateProvider, $urlRouterProvider) {
             url: '/projects',
             views: {
                 '@': {
-                    templateUrl: 'views/pages/projects.html',
-                    controller: 'ProjectsController'
+                    templateUrl: 'views/pages/projects.html'
                 }
             },
             data: {roles: ['REGISTERED', 'ADMIN']}
@@ -65,8 +64,7 @@ function config($stateProvider, $urlRouterProvider) {
             url: '/counters',
             views: {
                 '@': {
-                    templateUrl: 'views/pages/counters.html',
-                    controller: 'CountersController'
+                    templateUrl: 'views/pages/counters.html'
                 }
             },
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
@@ -89,7 +87,6 @@ function config($stateProvider, $urlRouterProvider) {
             url: '/trash',
             views: {
                 '@': {
-                    controller: 'SymbolsTrashController',
                     templateUrl: 'views/pages/symbols-trash.html'
                 }
             },
@@ -99,7 +96,6 @@ function config($stateProvider, $urlRouterProvider) {
             url: '/{symbolId:int}/history',
             views: {
                 '@': {
-                    controller: 'SymbolsHistoryController',
                     templateUrl: 'views/pages/symbols-history.html'
                 }
             },
@@ -156,7 +152,6 @@ function config($stateProvider, $urlRouterProvider) {
             url: '/results',
             views: {
                 '@': {
-                    controller: 'LearnResultsController',
                     templateUrl: 'views/pages/learn-results.html'
                 }
             }

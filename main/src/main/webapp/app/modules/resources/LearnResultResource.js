@@ -1,14 +1,14 @@
+import LearnResult from '../entities/LearnResult';
+
 /**
  * The resource that handles http request to the API to do CRUD operations on learn results
  *
  * @param $http - The angular http service
- * @param LearnResult - The factory for LearnResult objects
- * @param _ - Lodash
  * @returns {{getFinal: getFinal, getAllFinal: getAllFinal, getComplete: getComplete, delete: remove}}
  * @constructor
  */
 // @ngInject
-function LearnResultResource($http, LearnResult, _) {
+function LearnResultResource($http) {
     return {
         getFinal: getFinal,
         getAllFinal: getAllFinal,
@@ -25,7 +25,7 @@ function LearnResultResource($http, LearnResult, _) {
      */
     function getAllFinal(projectId) {
         return $http.get('/rest/projects/' + projectId + '/results')
-            .then(LearnResult.transformApiResponse);
+            .then(response => response.data.map(r => new LearnResult(r)));
     }
 
     /**
@@ -38,7 +38,7 @@ function LearnResultResource($http, LearnResult, _) {
      */
     function getFinal(projectId, testNo) {
         return $http.get('/rest/projects/' + projectId + '/results/' + testNo)
-            .then(LearnResult.transformApiResponse);
+            .then(response => new LearnResult(response.data));
     }
 
     /**
@@ -56,12 +56,12 @@ function LearnResultResource($http, LearnResult, _) {
                     if (response.data.length > 0) {
                         if (!angular.isArray(response.data[0])) {
                             response.data.shift();
-                            return [LearnResult.transformApiResponse(response)]
+                            return [response.data.map(r => new LearnResult(r))]
                         } else {
                             _.forEach(response.data, function (data) {
                                 data.shift(); // remove cumulated results from the beginning
                             });
-                            return LearnResult.transformApiResponse(response);
+                            return response.data.map(r => new LearnResult(r));
                         }
                     } else {
                         return [[]];
@@ -71,7 +71,7 @@ function LearnResultResource($http, LearnResult, _) {
             return $http.get('/rest/projects/' + projectId + '/results/' + testNos + '/complete')
                 .then(function (response) {
                     response.data.shift();
-                    return LearnResult.transformApiResponse(response);
+                    return response.data.map(r => new LearnResult(r));
                 })
         }
     }

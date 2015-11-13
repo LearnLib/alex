@@ -1,51 +1,57 @@
 import {events} from '../../constants';
+import {Project} from '../../entities/Project';
 
 /**
  * The controller of the modal window for editing a project
- *
- * @param $scope
- * @param $modalInstance
- * @param modalData
- * @param Project
- * @param ProjectResource
- * @param ToastService
- * @param EventBus
- * @constructor
  */
 // @ngInject
-function ProjectSettingsModalController($scope, $modalInstance, modalData, Project, ProjectResource, ToastService,
-                                        EventBus) {
+class ProjectSettingsModalController {
 
     /**
-     * The project to edit
-     * @type {Project}
+     * Constructor
+     * @param $modalInstance
+     * @param modalData
+     * @param ProjectResource
+     * @param ToastService
+     * @param EventBus
      */
-    $scope.project = modalData.project;
+    constructor($modalInstance, modalData, ProjectResource, ToastService, EventBus) {
+        this.$modalInstance = $modalInstance;
+        this.ProjectResource = ProjectResource;
+        this.ToastService = ToastService;
+        this.EventBus = EventBus;
 
-    /**
-     * An error message that is displayed on a failed updated
-     * @type {null|string}
-     */
-    $scope.error = null;
+        /**
+         * The project to edit
+         * @type {Project}
+         */
+        this.project = modalData.project;
+
+        /**
+         * An error message that is displayed on a failed updated
+         * @type {null|string}
+         */
+        this.error = null;
+    }
 
     /** Updates the project. Closes the modal window on success. */
-    $scope.updateProject = function () {
-        $scope.error = null;
+    updateProject () {
+        this.error = null;
 
-        ProjectResource.update($scope.project)
+        this.ProjectResource.update(this.project)
             .then(updatedProject => {
-                EventBus.emit(events.PROJECT_UPDATED, {project: updatedProject});
-                $scope.closeModal();
-                ToastService.success('Project updated');
+                this.ToastService.success('Project updated');
+                this.EventBus.emit(events.PROJECT_UPDATED, {project: updatedProject});
+                this.$modalInstance.dismiss();
             })
             .catch(response => {
-                $scope.error = response.data.message;
+                this.error = response.data.message;
             })
     };
 
     /** Closes the modal window */
-    $scope.closeModal = function () {
-        $modalInstance.dismiss();
+    close () {
+        this.$modalInstance.dismiss();
     };
 }
 

@@ -1,3 +1,4 @@
+import {_, d3, dagreD3, graphlib} from '../libraries';
 import {events} from '../constants';
 
 /**
@@ -11,15 +12,11 @@ import {events} from '../constants';
  * Use: <hypothesis test="..." is-selectable="true|false" layout-settings="..."></hypothesis>
  *
  * @param $window
- * @param _
- * @param dagreD3
- * @param d3
- * @param graphlib
  * @param EventBus
  * @returns {{scope: {result: string, layoutSettings: string, isSelectable: string}, template: string, link: link}}
  */
 // @ngInject
-function hypothesis($window, _, dagreD3, d3, graphlib, EventBus) {
+function hypothesis($window, EventBus) {
     return {
         scope: {
             result: '=',

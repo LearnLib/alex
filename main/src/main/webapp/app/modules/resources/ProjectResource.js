@@ -1,13 +1,14 @@
+import {Project} from '../entities/Project';
+
 /**
  * The resource that handles http calls to the API to do CRUD operations on projects
  *
  * @param $http - The $http angular service
- * @param Project - Project factory
  * @returns {{getAll: getAll, get: get, create: create, update: update, delete: remove}}
  * @constructor
  */
 // @ngInject
-function ProjectResource($http, Project) {
+function ProjectResource($http) {
     return {
         getAll: getAll,
         get: get,

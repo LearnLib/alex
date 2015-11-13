@@ -8,19 +8,8 @@ import {filters} from './filters/index';
 import {resources} from './resources/index';
 import {services} from './services/index';
 
-angular.module('lodash', []).factory('_', () => window._);
-angular.module('dagreD3', []).factory('dagreD3', () => window.dagreD3);
-angular.module('d3', []).factory('d3', () => window.d3);
-angular.module('graphlib', []).factory('graphlib', () => window.graphlib);
-
 angular
     .module('ALEX', [
-
-        // plain js libraries as modules
-        'lodash',
-        'dagreD3',
-        'd3',
-        'graphlib',
 
         // modules from external libraries
         'ngAnimate',
@@ -43,6 +32,7 @@ angular
         resources,
         services
     ])
+    .constant('_', window._)
     .config(configuration.config)
     .config(routes.config)
     .run(configuration.run)

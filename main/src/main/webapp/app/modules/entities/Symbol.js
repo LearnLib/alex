@@ -1,88 +1,106 @@
-/**
- * The factory for the symbol model.
- *
- * @param _ - Lodash
- * @param ActionService - The factory that creates Actions
- * @returns {Symbol} - The symbol model
- * @constructor
- */
-// @ngInject
-function SymbolModel(_, ActionService) {
+import ActionService from '../services/ActionService';
+
+/** The model for the symbol create form */
+class SymbolFormModel {
 
     /**
-     * The symbol model
-     *
-     * @param {string} name - The name of the symbol
-     * @param {string} abbreviation - The abbreviation of the symbol
-     * @constructor
+     * Constructor
+     * @param {string} name - The unique name of the symbol
+     * @param {string} abbreviation - The unique abbreviation of the symbol
+     * @param {number} group - The id of the group the symbol should be created in
      */
-    function Symbol(name, abbreviation) {
-        this.name = name || null;
-        this.abbreviation = abbreviation || null;
+    constructor(name = '', abbreviation = '', group = 0) {
+        this.name = name;
+        this.abbreviation = abbreviation;
+        this.group = group;
         this.actions = [];
+    }
+}
+
+
+/** The symbol model */
+class Symbol extends SymbolFormModel {
+
+    /**
+     * Constructor
+     * @param {object} obj - The object to create the symbol from
+     */
+    constructor(obj) {
+        super(obj.name, obj.abbreviation);
+
+        /**
+         * The id of the symbol
+         * @type {number}
+         */
+        this.id = obj.id;
+
+        /**
+         * The revision of the symbol
+         * @type {number}
+         */
+        this.revision = obj.revision;
+
+        /**
+         * The id of the project the symbol belongs to
+         * @type {number}
+         */
+        this.project = obj.project;
+
+        /**
+         * The id of the group the symbol belongs to
+         * @type {number}
+         */
+        this.group = obj.group;
+
+        /**
+         * The id of the user the symbol belongs to
+         * @type {number}
+         */
+        this.user = obj.user;
+
+        /**
+         * The flag if the symbol has been deleted
+         * @type {boolean}
+         */
+        this.hidden = obj.hidden;
+
+        /**
+         * The actions of the symbol
+         * @type {Action[]}
+         */
+        this.actions = obj.actions.map(action => ActionService.create(action));
     }
 
     /**
-     * Builds a symbol instance from an object
-     *
-     * @param {Object} data - The data the symbol instance should be build from
-     * @returns {Symbol} - The symbol instance
+     * Gets the number of enabled actions
+     * @returns {number}
      */
-    Symbol.build = function (data) {
-        return angular.extend(new Symbol(
-            data.name,
-            data.abbreviation
-        ), {
-            actions: data.actions ? _.map(data.actions, ActionService.buildFromData) : [],
-            id: data.id,
-            revision: data.revision,
-            project: data.project,
-            hidden: data.hidden,
-            group: data.group,
-            user: data.user
-        });
-    };
+    countEnabledActions() {
+        return this.actions.filter(action => !action.disabled).length;
+    }
 
     /**
-     * Creates [an] instance[s] of Symbol from a HTTP response
-     *
-     * @param {Object} response - The response object from the API
-     * @returns {Symbol|Symbol[]} - The Symbol[s]
-     */
-    Symbol.transformApiResponse = function (response) {
-        if (angular.isArray(response.data)) {
-            if (response.data.length > 0) {
-                return _.map(response.data, Symbol.build);
-            } else {
-                return [];
-            }
-        } else {
-            return Symbol.build(response.data);
-        }
-    };
-
-    /**
-     * Counts the number of actions that are not skipped by the learner
-     *
-     * @returns {number} - The amount of enabled actions
-     */
-    Symbol.prototype.countEnabledActions = function () {
-        return _.filter(this.actions, {disabled: false}).length;
-    };
-
-    /**
-     * Get the id and revision of the symbol as a pair
-     *
+     * Gets the symbol as id revision pair
      * @returns {{id: number, revision: number}}
      */
-    Symbol.prototype.getIdRevisionPair = function () {
+    getIdRevisionPair() {
         return {
             id: this.id,
             revision: this.revision
         }
-    };
+    }
 
-    return Symbol;
+    /**
+     * Gets a reduced version of the symbol that can be used to export it
+     * @returns {{name: *, abbreviation: *, actions: Action[]}}
+     */
+    getExportableSymbol() {
+        return {
+            name: this.name,
+            abbreviation: this.abbreviation,
+            actions: this.actions
+        }
+    }
 }
 
-export default SymbolModel;
+export {SymbolFormModel, Symbol}

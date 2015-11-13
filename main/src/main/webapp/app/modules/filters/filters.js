@@ -1,4 +1,4 @@
-import {learnAlgorithm, eqOracleType} from '../constants';
+import {learnAlgorithm, eqOracleType, webBrowser} from '../constants';
 
 /**
  * The filter that formats something like 'A_CONSTANT_KEY' to 'A Constant Key'
@@ -25,7 +25,6 @@ function formatEnumKey() {
  *
  * @returns {filter}
  */
-// @ngInject
 function formatEqOracle() {
     return filter;
 
@@ -49,11 +48,33 @@ function formatEqOracle() {
     }
 }
 
+
+/**
+ * Formats the web browser dictionary
+ * @returns {Function}
+ */
+function formatWebBrowser() {
+    return browser => {
+        switch (browser) {
+            case webBrowser.HTMLUNITDRIVER:
+                return 'HTML Unit Driver';
+            case webBrowser.FIREFOX:
+                return 'Firefox';
+            case webBrowser.CHROME:
+                return 'Chrome';
+            case webBrowser.IE:
+                return 'Internet Explorer';
+            default:
+                return browser;
+        }
+    }
+}
+
+
 /**
  * The filter to format a learn algorithm name to something more readable
  * @returns {filter}
  */
-// @ngInject
 function formatAlgorithm() {
     return filter;
 
@@ -106,4 +127,4 @@ function formatMilliseconds() {
     }
 }
 
-export {formatAlgorithm, formatEnumKey, formatEqOracle, formatMilliseconds};
+export {formatAlgorithm, formatEnumKey, formatEqOracle, formatMilliseconds, formatWebBrowser};

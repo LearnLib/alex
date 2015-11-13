@@ -1,3 +1,5 @@
+import {SymbolGroup} from '../entities/SymbolGroup';
+
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbol groups
  *
@@ -25,26 +27,26 @@ function SymbolGroupResource($http, SymbolGroup) {
      * @returns {*} - An angular promise
      */
     function getAll(projectId, options) {
-        var query = '';
+        let query = '';
 
         if (options && options.embedSymbols && options.embedSymbols === true) {
             query = '?embed=symbols';
         }
 
         return $http.get('/rest/projects/' + projectId + '/groups' + query)
-            .then(SymbolGroup.transformApiResponse);
+            .then(response => response.data.map(g => new SymbolGroup(g)));
     }
 
     /**
      * Makes a POST request to /rest/projects/{projectId}/groups in order to create a new symbol group.
      *
      * @param {number} projectId - The id of the project of the symbol group
-     * @param {number} group - The object of the symbol group that should be created
+     * @param {SymbolGroupFormModel} group - The object of the symbol group that should be created
      * @returns {*} - An angular promise
      */
     function create(projectId, group) {
         return $http.post('/rest/projects/' + projectId + '/groups', group)
-            .then(SymbolGroup.transformApiResponse);
+            .then(response => new SymbolGroup(response.data));
     }
 
     /**
@@ -55,7 +57,7 @@ function SymbolGroupResource($http, SymbolGroup) {
      */
     function update(group) {
         return $http.put('/rest/projects/' + group.project + '/groups/' + group.id, group)
-            .then(SymbolGroup.transformApiResponse);
+            .then(response => new SymbolGroup(response.data));
     }
 
     /**

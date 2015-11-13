@@ -1,6 +1,6 @@
 <div class="modal-header">
 
-    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.close()">
         <i class="fa fa-close fa-fw"></i>
     </a>
 
@@ -9,25 +9,25 @@
 
 </div>
 
-<form id="symbol-group-edit-form" name="create_symbol_edit_form" ng-submit="updateGroup()">
+<form id="symbol-group-edit-form" name="create_symbol_edit_form" ng-submit="vm.updateGroup()">
 
     <div class="modal-body">
 
         <div class="form-group">
             <label>Symbol Group Name</label>
-            <input class="form-control" name="name" type="text" placeholder="name" required ng-model="group.name">
+            <input class="form-control" name="name" type="text" placeholder="name" required ng-model="vm.group.name">
         </div>
         <div class="alert alert-danger alert-condensed"
              ng-show="create_symbol_group_form.name.$dirty && create_symbol_group_form.name.$invalid">
             <small ng-show="create_symbol_group_form.name.$error.required"> The field must not be empty.</small>
         </div>
 
-        <div class="alert alert-danger alert-condensed" ng-show="errorMsg" ng-bind="errorMsg"></div>
+        <div class="alert alert-danger alert-condensed" ng-show="vm.errorMsg" ng-bind="vm.errorMsg"></div>
 
     </div>
 
     <div class="modal-footer">
-        <a href class="btn btn-sm btn-default" ng-if="group.id !== 0" ng-click="deleteGroup()">Delete</a>
+        <a href class="btn btn-sm btn-default" ng-if="vm.group.id !== 0" ng-click="vm.deleteGroup()">Delete</a>
         <button class="btn btn-sm btn-primary" type="submit">Update</button>
     </div>
 

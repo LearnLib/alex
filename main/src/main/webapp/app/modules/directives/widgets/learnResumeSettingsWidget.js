@@ -1,3 +1,5 @@
+import {eqOracleType} from '../../constants';
+
 /**
  * The directive for the widget of the sidebar where learn resume configurations can be edited. Should be included
  * into a <div widget></div> directive for visual appeal.
@@ -7,11 +9,11 @@
  *
  * Use: <div learn-resume-settings-widget learn-configuration="..."></div>
  *
- * @param EqOracle
+ * @param EqOracleService
  * @returns {{scope: {learnConfiguration: string}, templateUrl: string, link: link}}
  */
 // @ngInject
-function learnResumeSettingsWidget(EqOracle) {
+function learnResumeSettingsWidget(EqOracleService) {
     return {
         scope: {
             learnConfiguration: '='
@@ -26,7 +28,7 @@ function learnResumeSettingsWidget(EqOracle) {
          * The dictionary for eq oracle types
          * @type {Object}
          */
-        scope.eqOracles = EqOracle.types;
+        scope.eqOracles = eqOracleType ;
 
         /**
          * The selected eq oracle type from the select box
@@ -38,7 +40,7 @@ function learnResumeSettingsWidget(EqOracle) {
          * Creates a new eq oracle object from the selected type and assigns it to the configuration
          */
         scope.setEqOracle = function () {
-            scope.learnConfiguration.eqOracle = EqOracle.build(scope.selectedEqOracle);
+            scope.learnConfiguration.eqOracle = EqOracleService.createFromType(scope.selectedEqOracle);
         };
     }
 }

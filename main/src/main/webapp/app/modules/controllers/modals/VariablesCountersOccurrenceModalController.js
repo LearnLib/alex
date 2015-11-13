@@ -1,3 +1,22 @@
+/** The model for an occurrence */
+class Occurrence {
+
+    /**
+     * Constructor
+     * @param {SymbolGroup} group - The symbol group where the variable/counter is found
+     * @param {Symbol} symbol - The symbol where the variable/counter is found
+     * @param {number} actionPos - The position of the action in the symbol
+     * @param {string} counterOrVariableName - the name of the variable with prefix $ or #
+     */
+    constructor(group, symbol, actionPos, counterOrVariableName) {
+        this.group = group.name;
+        this.symbol = symbol.name;
+        this.action = actionPos;
+        this.name = counterOrVariableName.substring(3, counterOrVariableName.length - 2)
+    }
+}
+
+
 /**
  * The controller of the modal dialog that shows all occurrences of used variables and counters in a project in
  * all visible symbols.
@@ -6,33 +25,41 @@
  * @param $modalInstance - the ui.bootstrap $modalInstance service
  * @param SessionService - The SessionService
  * @param SymbolGroupResource - The API resource for symbol groups
- * @param _ - Lodash
  * @constructor
  */
 // @ngInject
-function VariablesCountersOccurrenceModalController($scope, $modalInstance, SessionService, SymbolGroupResource, _) {
-
-    // the project in the session
-    var project = SessionService.project.get();
+class VariablesCountersOccurrenceModalController {
 
     /**
-     * The occurrences of all variables and counter that where found.
-     *
-     * occurrence object: {group: ..., symbol: ..., action: ..., name: ...} where
-     *   group  := symbol group name
-     *   symbol := symbol name
-     *   action := action position
-     *   name   := variable/counter name
-     *
-     * @type {null|{counters: Array, variables: Array}}
+     * Constructor
+     * @param $modalInstance
+     * @param SessionService
+     * @param SymbolGroupResource
      */
-    $scope.occurrences = null;
+    constructor($modalInstance, SessionService, SymbolGroupResource) {
+        this.$modalInstance = $modalInstance;
 
-    // load all symbol groups and symbols
-    SymbolGroupResource.getAll(project.id, {embedSymbols: true})
-        .then(function (groups) {
-            $scope.occurrences = findOccurrences(groups);
+        //the project that is in the session
+        const project = SessionService.project.get();
+
+        /**
+         * The occurrences of all variables and counter that where found.
+         *
+         * occurrence object: {group: ..., symbol: ..., action: ..., name: ...} where
+         *   group  := symbol group name
+         *   symbol := symbol name
+         *   action := action position
+         *   name   := variable/counter name
+         *
+         * @type {null|{counters: Array, variables: Array}}
+         */
+        this.occurrences = null;
+
+        // load all symbol groups and symbols
+        SymbolGroupResource.getAll(project.id, {embedSymbols: true}).then(groups => {
+            this.occurrences = this.findOccurrences(groups);
         });
+    }
 
     /**
      * Finds all occurrences of variables and counters in all existing actions of the project.
@@ -40,59 +67,39 @@ function VariablesCountersOccurrenceModalController($scope, $modalInstance, Sess
      * @param {SymbolGroup[]} groups - All symbol groups
      * @returns {{counters: Array, variables: Array}} - The occurrences
      */
-    function findOccurrences(groups) {
-        var occurrences = {
+    findOccurrences(groups) {
+        const occurrences = {
             counters: [],
             variables: []
         };
 
-        // list of found counters of a single action property
-        var foundCounters;
-
-        // list of found variables of a single action property
-        var foundVariables;
-
-        /**
-         * Creates an occurrence object
-         *
-         * @param {SymbolGroup} group - The symbol group where the variable/counter is found
-         * @param {Symbol} symbol - The symbol where the variable/counter is found
-         * @param {number} actionPos - The position of the action in the symbol
-         * @param {string} counterOrVariable - the name of the variable with prefix $ or #
-         * @returns {{group: (group.name|*), symbol: *, action: *, name: string}}
-         */
-        function createOccurrence(group, symbol, actionPos, counterOrVariable) {
-            return {
-                group: group.name,
-                symbol: symbol.name,
-                action: actionPos,
-                name: counterOrVariable.substring(3, counterOrVariable.length - 2)
-            }
-        }
-
         // iterate over all groups, each symbol and each action
-        _.forEach(groups, function (group) {
-            _.forEach(group.symbols, function (symbol) {
+        groups.forEach(group => {
+            group.symbols.forEach(symbol => {
 
                 // don't check deleted symbols since they don't matter
                 if (!symbol.hidden) {
-                    _.forEach(symbol.actions, function (action, i) {
+                    symbol.actions.forEach((action, i) => {
 
                         // check for each action property if a counter or a variable was found
                         for (var prop in action) {
                             if (action.hasOwnProperty(prop) && angular.isString(action[prop])) {
-                                foundCounters = action[prop].match(/{{#(.*?)}}/g);
-                                foundVariables = action[prop].match(/{{\$(.*?)}}/g);
+
+                                // list of found counters of a single action property
+                                let foundCounters = action[prop].match(/{{#(.*?)}}/g);
+
+                                // list of found variables of a single action property
+                                let foundVariables = action[prop].match(/{{\$(.*?)}}/g);
 
                                 // add found variables and counters to occurrences
                                 if (foundCounters !== null) {
-                                    _.forEach(foundCounters, function (counter) {
-                                        occurrences.counters.push(createOccurrence(group, symbol, i, counter));
+                                    foundCounters.forEach(counter => {
+                                        occurrences.counters.push(new Occurrence(group, symbol, i, counter));
                                     })
                                 }
                                 if (foundVariables !== null) {
-                                    _.forEach(foundVariables, function (variable) {
-                                        occurrences.variables.push(createOccurrence(group, symbol, i, variable));
+                                    foundVariables.forEach(variable => {
+                                        occurrences.variables.push(new Occurrence(group, symbol, i, variable));
                                     })
                                 }
                             }
@@ -106,8 +113,8 @@ function VariablesCountersOccurrenceModalController($scope, $modalInstance, Sess
     }
 
     /** Close the modal dialog */
-    $scope.close = function () {
-        $modalInstance.dismiss();
+    close() {
+        this.$modalInstance.dismiss();
     }
 }
 

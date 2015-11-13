@@ -1,5 +1,4 @@
 import actionBar from './actionBar';
-import actionFormFields from './actionFormFields';
 import {checkbox, checkboxMultiple} from './checkbox';
 import discriminationTree from './discriminationTree';
 import dispatchResize from './dispatchResize';
@@ -16,16 +15,19 @@ import {learnResultList, learnResultListItem} from './learnResultList';
 import {learnResultPanel, learnResultComparePanel} from './learnResultPanel';
 import loadScreen from './loadScreen';
 import observationTable from './observationTable';
-import projectCreateForm from './projectCreateForm';
 import projectList from './projectList';
 import responsiveIframe from './responsiveIframe';
 import sidebar from './sidebar';
 import {symbolGroupList, symbolGroupListItem} from './symbolGroupList';
 import {symbolList, symbolListItem} from './symbolList';
-import userEditForm from './userEditForm';
-import userLoginForm from './userLoginForm';
-import userRegisterForm from './userRegisterForm';
 import viewHeader from './viewHeader';
+
+// forms
+import actionFormFields from './forms/actionFormFields';
+import projectCreateForm from './forms/projectCreateForm';
+import userEditForm from './forms/userEditForm';
+import userLoginForm from './forms/userLoginForm';
+import userRegisterForm from './forms/userRegisterForm';
 
 // modal handles
 import actionCreateModalHandle from './modalHandles/actionCreateModalHandle';

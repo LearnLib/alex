@@ -48,7 +48,7 @@ class ActionCreateModalController {
      * @param {string} type - The type of the action that should be created
      */
     selectNewActionType(type) {
-        this.action = this.ActionService.buildFromType(type);
+        this.action = this.ActionService.createFromType(type);
     }
 
     /** Closes the modal dialog an passes the created action back to the handle that called the modal */

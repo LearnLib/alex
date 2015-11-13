@@ -1,4 +1,6 @@
+import {_} from '../../libraries';
 import {events} from '../../constants';
+import {Symbol} from '../../entities/Symbol';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
@@ -7,12 +9,10 @@ import {events} from '../../constants';
  *
  * @param $scope - The controllers scope
  * @param $stateParams - The parameters of the state
- * @param Symbol - The factory for Symbol objects
  * @param SymbolResource - The Symbol model
  * @param SessionService - The session service
  * @param ToastService - The ToastService
  * @param ErrorService - The ErrorService
- * @param _ - Lodash
  * @param ActionService - The ActionService
  * @param ClipboardService - The ClipboardService
  * @param $state - ui.router $state
@@ -21,7 +21,7 @@ import {events} from '../../constants';
  * @constructor
  */
 // @ngInject
-function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, SessionService, ToastService, ErrorService, _,
+function SymbolsActionsController($scope, $stateParams, SymbolResource, SessionService, ToastService, ErrorService,
                                   ActionService, ClipboardService, $state, PromptService, EventBus) {
 
     /**
@@ -86,7 +86,7 @@ function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, 
 
             // add symbol to scope and create a copy in order to revert changes
             $scope.symbol = symbol;
-            $scope.symbolCopy = Symbol.build(symbol);
+            $scope.symbolCopy = new Symbol(symbol);
         })
         .catch(() => {
             ErrorService.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + "' could not be found");
@@ -164,7 +164,7 @@ function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, 
     $scope.saveChanges = function () {
 
         // update the copy for later reverting
-        var copy = Symbol.build($scope.symbol);
+        var copy = new Symbol($scope.symbol);
         _.forEach(copy.actions, function (a) {
             delete a._id;
             delete a._selected;
@@ -174,7 +174,7 @@ function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, 
         SymbolResource.update(copy)
             .then(function (updatedSymbol) {
                 $scope.symbol.revision = updatedSymbol.revision;
-                symbolCopy = Symbol.build($scope.symbol);
+                symbolCopy = new Symbol($scope.symbol);
                 ToastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
                 setChanged(false);
                 $scope.hasUnsavedChanges = false;
@@ -213,7 +213,7 @@ function SymbolsActionsController($scope, $stateParams, Symbol, SymbolResource, 
         var actions = ClipboardService.paste('actions');
         if (actions !== null) {
             actions = _.map(actions, function (action) {
-                return ActionService.buildFromData(action);
+                return ActionService.createFromType(action);
             });
             _.forEach(actions, $scope.addAction);
             ToastService.info(actions.length + 'action[s] pasted from clipboard');

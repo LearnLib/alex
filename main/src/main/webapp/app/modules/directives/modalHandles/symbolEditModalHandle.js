@@ -1,3 +1,5 @@
+import {Symbol} from '../../entities/Symbol';
+
 /**
  * The directive that handles the modal window for the editing of a new symbol. It attaches an click event to the
  * attached element that opens the modal dialog.
@@ -23,10 +25,11 @@ function symbolEditModalHandle($modal) {
             $modal.open({
                 templateUrl: 'views/modals/symbol-edit-modal.html',
                 controller: 'SymbolEditModalController',
+                controllerAs: 'vm',
                 resolve: {
                     modalData: function () {
                         return {
-                            symbol: scope.symbol,
+                            symbol: new Symbol(scope.symbol),
                             updateOnServer: scope.updateOnServer
                         };
                     }

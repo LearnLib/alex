@@ -1,6 +1,6 @@
 <div class="modal-header">
 
-    <a class="btn btn-default btn-icon pull-right" ng-click="ok()">
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.ok()">
         <i class="fa fa-close fa-fw"></i>
     </a>
 
@@ -12,7 +12,7 @@
 <div class="modal-body">
 
     <tabset justified="true">
-        <tab ng-repeat="tab in tabs" heading="{{tab.heading}}">
+        <tab ng-repeat="tab in vm.tabs" heading="{{tab.heading}}">
 
             <div class="alert alert-condensed alert-danger" ng-show="tab.result.error">
                 <i class="fa fa-fw fa-warning"></i> <strong>This step failed:</strong>
@@ -52,6 +52,11 @@
                     <td>Steps to Learn</td>
                     <td ng-bind="tab.result.configuration.maxAmountOfStepsToLearn"></td>
                 </tr>
+                <tr>
+                    <td>Web Driver</td>
+                    <td ng-bind="(tab.result.configuration.browser|formatWebBrowser)"></td>
+                </tr>
+
 
                 <tr class="active">
                     <td colspan="2"><strong>Numbers</strong></td>
@@ -85,5 +90,5 @@
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-sm btn-primary" ng-click="ok()">Ok</button>
+    <button class="btn btn-sm btn-primary" ng-click="vm.ok()">Ok</button>
 </div>

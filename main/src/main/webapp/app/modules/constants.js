@@ -46,7 +46,13 @@ const events = {
 
     // symbol related events
     SYMBOL_CREATED: 'symbol:created',
-    SYMBOL_UPDATED: 'symbol:updated'
+    SYMBOL_UPDATED: 'symbol:updated',
+
+    // learn config related events
+    LEARN_CONFIG_UPDATED: 'learnConfig:updated',
+
+    // file related events
+    FILE_LOADED: 'file:loaded'
 };
 
 export {learnAlgorithm, webBrowser, eqOracleType, events};

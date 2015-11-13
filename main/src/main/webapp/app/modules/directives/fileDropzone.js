@@ -1,46 +1,48 @@
+import {events} from '../constants';
+
 /**
  * This directives makes any element a place to drop files from the local pc. Currently this directive only
  * supports to read files as a text. It can only be used as an attribute.
  *
- * Attribute 'onLoaded' expects to be a function with one parameter that represents the value of the loaded
- * file as string
+ * Use: '<div file-dropzone>' with function load(contents) { ... }
  *
- * Use: '<div file-dropzone on-loaded="load">' with function load(contents) { ... }
- *
- * @return {{restrict: string, scope: {onLoaded: string}, link: link}}
+ * @param EventBus
+ * @return {{restrict: string, scope: {}, link: link}}
  */
-function fileDropzone() {
+// @ngInject
+function fileDropzone(EventBus) {
     return {
         restrict: 'A',
-        scope: {
-            onLoaded: '&'
-        },
+        scope: {},
         link: link
     };
+
     function link(scope, el) {
-        var reader = new FileReader();
+        const reader = new FileReader();
 
         // call the callback as soon as a file is loaded
         reader.onload = function (e) {
-            if (angular.isDefined(scope.onLoaded)) {
-                scope.onLoaded()(e.target.result);
-            }
+            scope.$apply(() => {
+                EventBus.emit(events.FILE_LOADED, {
+                    file: e.target.result
+                })
+            });
         };
 
         // attach some styles to the element on dragover etc.
-        el.on('dragover', function (e) {
+        el.on('dragover', e => {
             e.preventDefault();
             e.stopPropagation();
             e.dataTransfer.dropEffect = 'copy';
         });
 
-        el.on('dragenter', function () {
+        el.on('dragenter', () => {
             el[0].style.outline = '2px solid rgba(0,0,0,0.2)';
-        }).on('dragleave', function () {
+        }).on('dragleave', () => {
             el[0].style.outline = '0';
         });
 
-        el.on('drop', function (e) {
+        el.on('drop', e => {
             e.preventDefault();
             e.stopPropagation();
             el[0].style.outline = '0';
@@ -48,25 +50,17 @@ function fileDropzone() {
         });
 
         // create input field and simulate click
-        el.on('click', function () {
-            var input = document.createElement('input');
+        el.on('click', () => {
+            const input = document.createElement('input');
             input.setAttribute('type', 'file');
-            input.addEventListener('change', function (e) {
-                readFiles(e.target.files);
+            input.addEventListener('change', e => {
+                const files = e.target.files;
+                for (let i = 0; i < files.length; i++) {
+                    reader.readAsText(files[i]);
+                }
             }, false);
             input.click();
         });
-
-        /**
-         * Read files as a text file
-         *
-         * @param files
-         */
-        function readFiles(files) {
-            for (var i = 0; i < files.length; i++) {
-                reader.readAsText(files[i]);
-            }
-        }
     }
 }
 

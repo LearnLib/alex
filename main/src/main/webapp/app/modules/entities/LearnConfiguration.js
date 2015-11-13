@@ -1,86 +1,79 @@
 import {learnAlgorithm, webBrowser} from '../constants';
+import {RandomEqOracle} from '../entities/EqOracle';
 
-/**
- * The factory for creating LearnConfiguration objects that are used to configure a learning process
- *
- * @param EqOracle - The factory for EQ-oracles
- * @returns {LearnConfiguration}
- * @constructor
- */
-// @ngInject
-function LearnConfigurationFactory(EqOracle) {
+/** The model for a learn configuration */
+class LearnConfiguration {
 
     /**
-     * The model for a learning configuration
-     * @constructor
+     * Constructor
+     * @param obj - The object to create a learn configuration from
      */
-    function LearnConfiguration() {
-        this.symbols = [];
-        this.maxAmountOfStepsToLearn = 0;
-        this.eqOracle = new EqOracle.Random(1, 10, 20);
-        this.algorithm = learnAlgorithm.TTT;
-        this.resetSymbol = null;
-        this.comment = null;
-        this.browser = webBrowser.HTMLUNITDRIVER;
+    constructor(obj = {}) {
+
+        /**
+         * The list of id/revision pairs of symbols to learn
+         * @type {{id:number, revision:number}[]}
+         */
+        this.symbols = obj.symbols || [];
+
+        /**
+         * The max amount of hypotheses to generate
+         * @type {number}
+         */
+        this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn || 0;
+
+        /**
+         * The EQ oracle to user
+         * @type {*|RandomEqOracle}
+         */
+        this.eqOracle = obj.eqOracle || new RandomEqOracle(1, 10, 20);
+
+        /**
+         * The algorithm to use for learning
+         * @type {string}
+         */
+        this.algorithm = obj.learnAlgorithm || learnAlgorithm.TTT;
+
+        /**
+         * The id/revision pair of the reset symbol
+         * @type {{id:number,revision:number}|null}
+         */
+        this.resetSymbol = obj.resetSymbol || null;
+
+        /**
+         * A comment
+         * @type {string|null}
+         */
+        this.comment = obj.comment || null;
     }
 
     /**
-     * Remove properties from a learning configuration that aren't needed for resuming a learning process
-     *
-     * @returns {LearnConfiguration} - The reduced learning configuration
+     * Adds a symbol to the configuration
+     * @param {Symbol} symbol - The symbol to add to the config
      */
-    LearnConfiguration.prototype.toLearnResumeConfiguration = function () {
-        delete this.symbols;
-        delete this.algorithm;
-        delete this.resetSymbol;
-        delete this.comment;
-        delete this.browser;
-        return this;
-    };
+    addSymbol(symbol) {
+        this.symbols.push(symbol.getIdRevisionPair());
+    }
 
     /**
      * Sets the reset symbols for the configuration
-     *
-     * @param {Symbol} symbol
+     * @param {Symbol} symbol - The reset symbol to use
      */
-    LearnConfiguration.prototype.setResetSymbol = function (symbol) {
-        this.resetSymbol = {
-            id: symbol.id,
-            revision: symbol.revision
-        };
-    };
+    setResetSymbol(symbol) {
+        this.resetSymbol = symbol.getIdRevisionPair();
+    }
 
     /**
-     * Adds a symbol to the configuration that should be used to learn an application
-     *
-     * @param {Symbol} symbol
+     * Get the configuration as required to resume a learn process
+     * @returns {{maxAmountOfStepsToLearn: number, eqOracle: (*), algorithm: (string|*)}}
      */
-    LearnConfiguration.prototype.addSymbol = function (symbol) {
-        this.symbols.push({
-            id: symbol.id,
-            revision: symbol.revision
-        });
-    };
-
-    /**
-     * Creates an instance of LearnConfiguration from an object
-     *
-     * @param {Object} data - The object that is used to create a LearnConfiguration from
-     * @returns {LearnConfiguration}
-     */
-    LearnConfiguration.build = function (data) {
-        return angular.extend(new LearnConfiguration(), {
-            comment: data.comment,
-            symbols: data.symbols,
-            maxAmountOfStepsToLearn: data.maxAmountOfStepsToLearn,
-            algorithm: data.algorithm,
-            eqOracle: EqOracle.build(data.eqOracle),
-            resetSymbol: data.resetSymbol,
-            browser: data.browser
-        });
-    };
-
-    return LearnConfiguration;
+    getLearnResumeConfiguration() {
+        return {
+            maxAmountOfStepsToLearn: this.maxAmountOfStepsToLearn,
+            eqOracle: this.eqOracle,
+            algorithm: this.algorithm
+        }
+    }
 }
 
-export default LearnConfigurationFactory;
+export default LearnConfiguration;

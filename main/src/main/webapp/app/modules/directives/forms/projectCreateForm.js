@@ -1,18 +1,18 @@
-import {events} from '../constants';
+import {events} from '../../constants';
+import {ProjectFormModel} from '../../entities/Project';
 
 /**
  * The directive that renders the form to create a new project.
  *
  * Usage: <project-create-form></project-create-form>
  *
- * @param ProjectFormModel
  * @param ProjectResource
  * @param ToastService
  * @param EventBus
  * @returns {{scope: {}, templateUrl: string, link: link}}
  */
 // @ngInject
-function projectCreateForm(ProjectFormModel, ProjectResource, ToastService, EventBus) {
+function projectCreateForm(ProjectResource, ToastService, EventBus) {
     return {
         scope: {},
         templateUrl: 'views/directives/project-create-form.html',

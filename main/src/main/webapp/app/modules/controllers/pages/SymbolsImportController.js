@@ -1,16 +1,19 @@
+import {_} from '../../libraries';
+import {events} from '../../constants';
+import {Symbol} from '../../entities/Symbol';
+
 /**
  * The controller that handles the import of symbols from a *.json file.
  *
  * @param $scope - The controllers scope
  * @param SessionService - The SessionService
- * @param Symbol - The factory for Symbols
  * @param SymbolResource - The Symbol API Resource handler
- * @param _ - Lodash
  * @param ToastService - The ToastService
+ * @param EventBus - The EventBus
  * @constructor
  */
 // @ngInject
-function SymbolsImportController($scope, SessionService, Symbol, SymbolResource, _, ToastService) {
+function SymbolsImportController($scope, SessionService, SymbolResource, ToastService, EventBus) {
 
     // The project that is saved in the sessionStorage
     var project = SessionService.project.get();
@@ -33,6 +36,16 @@ function SymbolsImportController($scope, SessionService, Symbol, SymbolResource,
      */
     $scope.adjustReferences = true;
 
+    // listen on the file loaded event
+    EventBus.on(events.FILE_LOADED, (evt, data) => {
+        $scope.fileLoaded(data.file);
+    }, $scope);
+
+    // listen on the symbol updated event
+    EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
+        $scope.updateSymbol(data.newSymbol, data.oldSymbol);
+    }, $scope);
+
     /**
      * Creates instances of Symbols from the json string from the *.json file and puts them in the scope.
      *
@@ -40,9 +53,7 @@ function SymbolsImportController($scope, SessionService, Symbol, SymbolResource,
      */
     $scope.fileLoaded = function (data) {
         try {
-            $scope.$apply(function () {
-                $scope.symbols = _.map(angular.fromJson(data), Symbol.build);
-            });
+            $scope.symbols = angular.fromJson(data).map(s => new Symbol(s));
         } catch (e) {
             ToastService.danger('<p><strong>Loading json file failed</strong></p>' + e);
         }
@@ -58,7 +69,7 @@ function SymbolsImportController($scope, SessionService, Symbol, SymbolResource,
                 .then(function (existingSymbols) {
                     var maxId = _.max(existingSymbols, 'id').id;
                     var symbols = _($scope.selectedSymbols)
-                        .map(Symbol.build)
+                        .map(s => new Symbol(s))
                         .forEach(function (symbol) {
                             delete symbol._collapsed;
                             delete symbol._selected;

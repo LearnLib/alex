@@ -1,79 +1,83 @@
 import {events} from '../../constants';
+import {SymbolGroupFormModel} from '../../entities/SymbolGroup';
 
-/**
- * The controller for the modal dialog that handles the creation of a new symbol group.
- *
- * @param $scope
- * @param $modalInstance
- * @param SessionService
- * @param SymbolGroup
- * @param SymbolGroupResource
- * @param _
- * @param ToastService
- * @param EventBus
- * @constructor
- */
+/** The controller for the modal dialog that handles the creation of a new symbol group. */
 // @ngInject
-function SymbolGroupCreateModalController($scope, $modalInstance, SessionService, SymbolGroup, SymbolGroupResource,
-                                          _, ToastService, EventBus) {
-
-    // the id of the project where the new symbol group should be created in
-    const project = SessionService.project.get();
+class SymbolGroupCreateModalController {
 
     /**
-     * The new symbol group
-     * @type {SymbolGroup}
+     * Constructor
+     * @param $modalInstance
+     * @param SessionService
+     * @param SymbolGroupResource
+     * @param ToastService
+     * @param EventBus
      */
-    $scope.group = new SymbolGroup();
+    constructor ($modalInstance, SessionService, SymbolGroupResource, ToastService, EventBus) {
+        this.$modalInstance = $modalInstance;
+        this.SymbolGroupResource = SymbolGroupResource;
+        this.ToastService = ToastService;
+        this.EventBus = EventBus;
 
-    /**
-     * The list of all existing symbol groups. They are used in order to check if the name of the new symbol group
-     * already exists
-     * @type {SymbolGroup[]}
-     */
-    $scope.groups = [];
+        /**
+         * The project that is in the session
+         * @type {Project}
+         */
+        this.project = SessionService.project.get();
 
-    /**
-     * An error message that can be displayed in the modal template
-     * @type {String|null}
-     */
-    $scope.errorMsg = null;
+        /**
+         * The new symbol group
+         * @type {SymbolGroup}
+         */
+        this.group = new SymbolGroupFormModel();
 
-    // load all existing symbol groups
-    SymbolGroupResource.getAll(project.id).then(groups => {
-        $scope.groups = groups;
-    });
+        /**
+         * The list of all existing symbol groups. They are used in order to check if the name of the new symbol group
+         * already exists
+         * @type {SymbolGroup[]}
+         */
+        this.groups = [];
 
-    /**
-     * Creates a new symbol group and closes the modal on success and passes the newly created symbol group
-     */
-    $scope.createGroup = function () {
-        $scope.errorMsg = null;
+        /**
+         * An error message that can be displayed in the modal template
+         * @type {String|null}
+         */
+        this.errorMsg = null;
 
-        const index = _.findIndex($scope.groups, {name: $scope.group.name});
+        // load all existing symbol groups
+        this.SymbolGroupResource.getAll(this.project.id).then(groups => {
+            this.groups = groups;
+        });
+    }
+
+
+
+    /** Creates a new symbol group and closes the modal on success and passes the newly created symbol group */
+    createGroup () {
+        this.errorMsg = null;
+
+        const index = this.groups.findIndex(g => g.name === this.group.name);
 
         if (index === -1) {
-            SymbolGroupResource.create(project.id, $scope.group)
+            this.SymbolGroupResource.create(this.project.id, this.group)
                 .then(createdGroup => {
-                    ToastService.success('Symbol group <strong>' + createdGroup.name + '</strong> created');
-                    EventBus.emit(events.GROUP_CREATED, {
+                    this.ToastService.success('Symbol group <strong>' + createdGroup.name + '</strong> created');
+                    this.EventBus.emit(events.GROUP_CREATED, {
                         group: createdGroup
                     });
-                    $modalInstance.dismiss();
+                    this.$modalInstance.dismiss();
                 })
                 .catch(response => {
-                    $scope.errorMsg = response.data.message;
+                    this.errorMsg = response.data.message;
                 });
         } else {
-            $scope.errorMsg = 'The group name is already in use in this project';
+            this.errorMsg = 'The group name is already in use in this project';
         }
     };
 
-    /**
-     * Close the modal.
-     */
-    $scope.closeModal = function () {
-        $modalInstance.dismiss();
+    /** Close the modal. */
+    close () {
+        this.$modalInstance.dismiss();
     }
 }
 

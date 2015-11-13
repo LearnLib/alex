@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.close()">
         <i class="fa fa-close fa-fw"></i>
     </a>
 
@@ -7,34 +7,35 @@
     <span class="text-muted">Edit an existing user</span>
 </div>
 
-<form ng-submit="updateUser()" id="user-edit-form">
+<form ng-submit="vm.updateUser()" id="user-edit-form">
     <div class="modal-body">
 
         <label>Role</label>
+
         <div class="radio">
             <label>
-                <input type="radio" ng-model="user.role" value="REGISTERED">
+                <input type="radio" ng-model="vm.user.role" value="REGISTERED">
                 Registered
             </label>
         </div>
         <div class="radio">
             <label>
-                <input type="radio" ng-model="user.role" value="ADMIN">
+                <input type="radio" ng-model="vm.user.role" value="ADMIN">
                 Admin
             </label>
         </div>
 
-        <div ng-if="error !== null">
-            <hr />
-            <div class="alert alert-condensed alert-danger" >
-                <strong>Updating the user went wrong!</strong> <br />
-                <span ng-bind="error"></span>
+        <div ng-if="vm.error !== null">
+            <hr/>
+            <div class="alert alert-condensed alert-danger">
+                <strong>Updating the user went wrong!</strong> <br/>
+                <span ng-bind="vm.error"></span>
             </div>
         </div>
     </div>
 
     <div class="modal-footer">
-        <a href="" class="btn btn-default btn-sm" ng-click="deleteUser()">Delete</a>
+        <a href="" class="btn btn-default btn-sm" ng-click="vm.deleteUser()">Delete</a>
         <button class="btn btn-primary btn-sm" type="submit">Update</button>
     </div>
 </form>

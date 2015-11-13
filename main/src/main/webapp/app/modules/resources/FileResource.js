@@ -19,9 +19,7 @@ function FileResource($http) {
      */
     function getAll(projectId) {
         return $http.get('/rest/projects/' + projectId + '/files')
-            .then(function (response) {
-                return response.data;
-            })
+            .then(response => response.data)
     }
 
     /**

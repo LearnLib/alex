@@ -1,5 +1,7 @@
+import {Project} from '../../entities/Project';
+
 // @ngInject
-function projectSettingsModalHandle($modal, Project, LearnerResource, ToastService) {
+function projectSettingsModalHandle($modal, LearnerResource, ToastService) {
     return {
         restrict: 'A',
         scope: {
@@ -21,11 +23,10 @@ function projectSettingsModalHandle($modal, Project, LearnerResource, ToastServi
                         $modal.open({
                             templateUrl: 'views/modals/project-settings-modal.html',
                             controller: 'ProjectSettingsModalController',
+                            controllerAs: 'vm',
                             resolve: {
                                 modalData: function () {
-                                    return {
-                                        project: new Project(scope.project)
-                                    }
+                                    return {project: new Project(scope.project)}
                                 }
                             }
                         });

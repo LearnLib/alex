@@ -1,65 +1,71 @@
-import {webBrowser, learnAlgorithm} from '../../constants';
+import {events, webBrowser, learnAlgorithm, eqOracleType} from '../../constants';
+import LearnConfiguration from '../../entities/LearnConfiguration';
 
 /**
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
  * Passes the edited instance of a LearnConfiguration on success.
- *
- * @param $scope
- * @param $modalInstance
- * @param modalData - The data that is passed to the controller. Must be an object with the property 'learnConfiguration'
- * @param EqOracle - The model for an EqOracle
- * @param LearnConfiguration
- * @constructor
  */
 // @ngInject
-function LearnSetupSettingsModalController($scope, $modalInstance, modalData, EqOracle, LearnConfiguration) {
+class LearnSetupSettingsModalController {
 
     /**
-     * The constants for eqOracles types
+     * Constructor
+     * @param $modalInstance
+     * @param modalData
+     * @param ToastService
+     * @param EventBus
+     * @param EqOracleService
      */
-    $scope.eqOracles = EqOracle.types;
+    constructor($modalInstance, modalData, ToastService, EventBus, EqOracleService) {
+        this.$modalInstance = $modalInstance;
+        this.ToastService = ToastService;
+        this.EventBus = EventBus;
+        this.EqOracleService = EqOracleService;
 
-    /**
-     * The model for the select input that holds a type for an eqOracle
-     */
-    $scope.selectedEqOracle = modalData.learnConfiguration.eqOracle.type;
+        /** The constants for eqOracles types */
+        this.eqOracles = eqOracleType;
 
-    /**
-     * The constants for learnAlgorithm names
-     */
-    $scope.learnAlgorithms = learnAlgorithm;
+        /**
+         * The model for the select input that holds a type for an eqOracle
+         * @type {string}
+         */
+        this.selectedEqOracle = modalData.learnConfiguration.eqOracle.type;
 
-    /**
-     * The web driver enum
-     */
-    $scope.webBrowser = webBrowser;
+        /**
+         * The constants for learnAlgorithm names
+         */
+        this.learnAlgorithms = learnAlgorithm;
 
-    /**
-     * The LearnConfiguration to be edited
-     *
-     * @type {LearnConfiguration}
-     */
-    $scope.learnConfiguration = LearnConfiguration.build(modalData.learnConfiguration);
+        /**
+         * The web driver enum
+         */
+        this.webBrowser = webBrowser;
 
-    /**
-     * Sets the Eq Oracle of the learn configuration depending on the selected value
-     */
-    $scope.setEqOracle = function () {
-        $scope.learnConfiguration.eqOracle = EqOracle.build($scope.selectedEqOracle)
-    };
+        /**
+         * The LearnConfiguration to be edited
+         * @type {LearnConfiguration}
+         */
+        this.learnConfiguration = modalData.learnConfiguration;
+    }
 
-    /**
-     * Close the modal dialog and pass the edited learn configuration instance.
-     */
-    $scope.ok = function () {
-        $modalInstance.close($scope.learnConfiguration);
-    };
 
-    /**
-     * Close the modal dialog.
-     */
-    $scope.closeModal = function () {
-        $modalInstance.dismiss();
+    /** Sets the Eq Oracle of the learn configuration depending on the selected value */
+    setEqOracle() {
+        this.learnConfiguration.eqOracle = this.EqOracleService.createFromType(this.selectedEqOracle)
+    }
+
+    /** Close the modal dialog and pass the edited learn configuration instance. */
+    ok() {
+        this.ToastService.success('Learn coniguration updated');
+        this.EventBus.emit(events.LEARN_CONFIG_UPDATED, {
+            learnConfiguration: this.learnConfiguration
+        });
+        this.$modalInstance.dismiss();
+    }
+
+    /** Close the modal dialog. */
+    close() {
+        this.$modalInstance.dismiss();
     }
 }
 

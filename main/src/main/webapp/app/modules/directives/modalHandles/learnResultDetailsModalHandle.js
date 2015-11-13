@@ -23,6 +23,7 @@ function learnResultDetailsModalHandle($modal) {
             $modal.open({
                 templateUrl: 'views/modals/learn-result-details-modal.html',
                 controller: 'LearnResultDetailsModalController',
+                controllerAs: 'vm',
                 resolve: {
                     modalData: function () {
                         return {result: scope.result}

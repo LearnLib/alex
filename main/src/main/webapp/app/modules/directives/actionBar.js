@@ -21,11 +21,11 @@ function actionBar($window) {
     };
 
     function link(scope, el) {
-        var body = angular.element(document.body);
+        const body = angular.element(document.body);
 
         $window.addEventListener('scroll', handleResize);
 
-        scope.$on('$destroy', function () {
+        scope.$on('$destroy', () => {
             $window.removeEventListener('scroll', handleResize);
             body.removeClass('has-fixed-action-bar');
         });

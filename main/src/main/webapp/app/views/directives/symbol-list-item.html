@@ -1,49 +1,39 @@
-<div class="symbol-list-item"
-     ng-class="isSelectable ? 'selectable' : ''">
+<div class="symbol-list-item" ng-class="{'selectable': isSelectable}">
 
     <checkbox selection-model-ignore model="symbol" class="pull-left"></checkbox>
 
     <div class="symbol-list-item-content">
-        <div class="pull-right"
-             ng-transclude></div>
+        <div class="pull-right" ng-transclude></div>
 
-        <h4 class="symbol-title"
-            ng-bind="symbol.name"></h4>
+        <h4 class="symbol-title" ng-bind="symbol.name"></h4>
 
         [<span ng-bind="symbol.abbreviation"></span>]<br>
 
-        <a ui-sref="symbols.actions({symbolId:symbol.id})"
-           ng-show="showActionsLink">
+        <a ui-sref="symbols.actions({symbolId:symbol.id})" ng-if="symbol.id && !symbol.hidden">
             <span ng-bind="symbol.countEnabledActions()"></span> Actions &nbsp;<i class="fa fa-edit"></i>
         </a>
 
-        <span class="text-muted"
-              ng-show="!showActionsLink">
+        <span class="text-muted" ng-if="!symbol.id || symbol.hidden">
             <span ng-bind="symbol.countEnabledActions()"></span> Actions
         </span>
 
-        <a href ng-click="symbol._collapsed = !symbol._collapsed"
-           selection-model-ignore>
-            <i class="fa fa-fw"
-               ng-class="symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
+        <a href="" ng-click="symbol._collapsed = !symbol._collapsed" selection-model-ignore>
+            <i class="fa fa-fw" ng-class="symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
         </a>
 
         <div collapse="!symbol._collapsed">
-            <div class="panel panel-default"
-                 style="margin-top: 5px;">
-                <div class="panel-heading">
-                    <button class="btn btn-xs btn-default pull-right"
-                            ng-click="symbol._collapsed = !symbol._collapsed">
+            <div class="panel panel-default" style="margin-top: 5px;">
+                <div class="panel-heading clearfix">
+                    <button class="btn btn-xs btn-default pull-right" ng-click="symbol._collapsed = !symbol._collapsed">
                         <i class="fa fa-close"></i>
                     </button>
-                    <a class="btn btn-xs btn-default"
-                       ui-sref="symbols.actions({symbolId:symbol.id})">
+                    <a class="btn btn-xs btn-default" ui-sref="symbols.actions({symbolId:symbol.id})"
+                       ng-if="symbol.id">
                         Edit Actions
                     </a>
                 </div>
                 <ul class="list-group list-group-condensed">
-                    <li class="list-group-item"
-                        ng-repeat="action in symbol.actions" ng-if="!action.disabled">
+                    <li class="list-group-item" ng-repeat="action in symbol.actions" ng-if="!action.disabled">
 
                         <span class="label label-info pull-right" ng-if="action.negated">
                             Negate
@@ -54,7 +44,6 @@
                         </span>
 
                         <span ng-bind="action.toString()"></span>
-
                     </li>
                 </ul>
             </div>

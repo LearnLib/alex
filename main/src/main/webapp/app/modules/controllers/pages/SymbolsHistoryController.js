@@ -1,55 +1,56 @@
+import {Symbol} from '../../entities/Symbol';
+
 /**
  * The controller for the page where the revision history if a symbol is listed and old revisions can be restored
- *
- * @param $scope - The controllers scope
- * @param $stateParams - The ui.router $stateParams service
- * @param Symbol - The factory for Symbol objects
- * @param SymbolResource - The factory for the Symbol model
- * @param SessionService - The SessionService
- * @param ToastService - The ToastService
- * @param ErrorService - The ErrorService
- * @constructor
  */
 // @ngInject
-function SymbolsHistoryController($scope, $stateParams, Symbol, SymbolResource, SessionService, ToastService, ErrorService) {
-
-    // The project in the session
-    var project = SessionService.project.get();
+class SymbolsHistoryController {
 
     /**
-     * All revisions of a symbol
-     * @type {Symbol[]}
+     * Constructor
+     * @param $stateParams
+     * @param SymbolResource
+     * @param SessionService
+     * @param ToastService
+     * @param ErrorService
      */
-    $scope.revisions = [];
+    constructor($stateParams, SymbolResource, SessionService, ToastService, ErrorService) {
+        this.SymbolResource = SymbolResource;
+        this.ToastService = ToastService;
 
-    /**
-     * The most current version of a symbol
-     * @type {Symbol}
-     */
-    $scope.latestRevision = null;
+        // The project in the session
+        const project = SessionService.project.get();
 
-    // init controller
-    (function init() {
+        /**
+         * All revisions of a symbol
+         * @type {Symbol[]}
+         */
+        this.revisions = [];
+
+        /**
+         * The most current version of a symbol
+         * @type {Symbol}
+         */
+        this.latestRevision = null;
 
         // load all revisions of the symbol whose id is passed in the URL
-        SymbolResource.getRevisions(project.id, $stateParams.symbolId)
-            .then(function (revisions) {
-                $scope.latestRevision = revisions.pop();
-                $scope.revisions = revisions;
+        this.SymbolResource.getRevisions(project.id, $stateParams.symbolId)
+            .then(revisions => {
+                this.latestRevision = revisions.pop();
+                this.revisions = revisions;
             })
-            .catch(function () {
+            .catch(() => {
                 ErrorService.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + '" could not be found');
                 ErrorService.goToErrorPage();
             })
-    }());
+    }
 
     /**
      * Restores a previous revision of a symbol by updating the latest with the properties of the revision
-     *
      * @param {Symbol} revision - The revision of the symbol that should be restored
      */
-    $scope.restoreRevision = function (revision) {
-        var symbol = Symbol.build($scope.latestRevision);
+    restoreRevision(revision) {
+        const symbol = new Symbol(this.latestRevision);
 
         // copy all important properties from the revision to the latest
         symbol.name = revision.name;
@@ -57,13 +58,13 @@ function SymbolsHistoryController($scope, $stateParams, Symbol, SymbolResource, 
         symbol.actions = revision.actions;
 
         // update symbol with new properties
-        SymbolResource.update(symbol)
-            .then(function (updatedSymbol) {
-                ToastService.success('Updated symbol to revision <strong>' + revision.revision + '</strong>');
-                $scope.revisions.unshift($scope.latestRevision);
-                $scope.latestRevision = updatedSymbol;
+        this.SymbolResource.update(symbol)
+            .then(updatedSymbol => {
+                this.ToastService.success('Updated symbol to revision <strong>' + revision.revision + '</strong>');
+                this.revisions.unshift($scope.latestRevision);
+                this.latestRevision = updatedSymbol;
             })
-            .catch(function (response) {
+            .catch(response => {
                 ToastService.danger('<p><strong>Update to revision failed</strong></p>' + response.data.message);
             })
     }

@@ -1,6 +1,6 @@
 <div class="modal-header">
 
-    <a class="btn btn-default btn-icon pull-right" ng-click="closeModal()">
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.close()">
         <i class="fa fa-close fa-fw"></i>
     </a>
 
@@ -9,13 +9,13 @@
 
 </div>
 
-<form id="symbol-create-form" name="create_symbol_form" ng-submit="createSymbol()">
+<form id="symbol-create-form" name="create_symbol_form" ng-submit="vm.createSymbol()">
 
     <div class="modal-body">
 
         <div class="form-group">
             <label>Symbol Name</label>
-            <input class="form-control" name="name" type="text" placeholder="name" required ng-model="symbol.name">
+            <input class="form-control" name="name" type="text" placeholder="name" required ng-model="vm.symbol.name">
         </div>
         <div class="alert alert-danger alert-condensed"
              ng-show="create_symbol_form.name.$dirty && create_symbol_form.name.$invalid">
@@ -25,7 +25,7 @@
         <div class="form-group">
             <label>Symbol Abbreviation</label>
             <input class="form-control" name="abbreviation" type="text" placeholder="abbreviation" required
-                   ng-model="symbol.abbreviation">
+                   ng-model="vm.symbol.abbreviation">
         </div>
         <div class="alert alert-danger alert-condensed"
              ng-show="create_symbol_form.abbreviation.$dirty && create_symbol_form.abbreviation.$invalid">
@@ -34,13 +34,13 @@
 
         <div class="form-group">
             <label>Group</label>
-            <input class="form-control" type="text" list="groupNames" ng-model="selectedGroup" placeholder="Group name">
+            <input class="form-control" type="text" list="groupNames" ng-model="vm.selectedGroup" placeholder="Group name">
             <datalist id="groupNames">
-                <option ng-repeat="group in groups" value="{{group.name}}"></option>
+                <option ng-repeat="group in vm.groups" value="{{group.name}}"></option>
             </datalist>
         </div>
 
-        <div class="alert alert-danger alert-condensed" ng-show="errorMsg" ng-bind="errorMsg"></div>
+        <div class="alert alert-danger alert-condensed" ng-show="vm.errorMsg" ng-bind="vm.errorMsg"></div>
 
     </div>
 

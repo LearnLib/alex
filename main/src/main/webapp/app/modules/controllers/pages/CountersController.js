@@ -1,63 +1,72 @@
+import {_} from '../../libraries';
+
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
- *
- * @param $scope - The projects scope
- * @param SessionService - The SessionService
- * @param CounterResource - The CounterResource
- * @param ToastService - The ToastService
- * @param _ - Lodash
- * @constructor
  */
 // @ngInject
-function CountersController($scope, SessionService, CounterResource, ToastService, _) {
-
-    // the sessions project
-    const project = SessionService.project.get();
+class CountersController {
 
     /**
-     * The counters of the project
-     * @type {{name: string, value: number, project: number}[]}
+     * Constructor
+     * @param SessionService
+     * @param CounterResource
+     * @param ToastService
      */
-    $scope.counters = [];
+    constructor(SessionService, CounterResource, ToastService) {
+        this.CounterResource = CounterResource;
+        this.ToastService = ToastService;
 
-    /**
-     * The selected counters objects
-     * @type {{name: string, value: number, project: number}[]}
-     */
-    $scope.selectedCounters = [];
+        /**
+         * The project that is in the session
+         * @type {Project}
+         */
+        this.project = SessionService.project.get();
 
-    // load all existing counters from the server
-    CounterResource.getAll(project.id)
-        .then(function (counters) {
-            $scope.counters = counters;
+        /**
+         * The counters of the project
+         * @type {Counter[]}
+         */
+        this.counters = [];
+
+        /**
+         * The selected counters objects
+         * @type {Counter[]}
+         */
+        this.selectedCounters = [];
+
+        // load all existing counters from the server
+        this.CounterResource.getAll(this.project.id).then(counters => {
+            this.counters = counters;
         });
+    }
+
 
     /**
      * Delete a counter from the server and on success from scope
      *
-     * @param {{name: string, value: number, project: number}} counter - The counter that should be deleted
+     * @param {Counter} counter - The counter that should be deleted
      */
-    $scope.deleteCounter = function (counter) {
-        CounterResource.delete(project.id, counter.name)
+    deleteCounter(counter) {
+        this.CounterResource.delete(this.project.id, counter.name)
             .then(() => {
-                ToastService.success('Counter "' + counter.name + '" deleted');
-                _.remove($scope.counters, {name: counter.name});
+                this.ToastService.success('Counter "' + counter.name + '" deleted');
+                _.remove(this.counters, {name: counter.name});
             })
             .catch(response => {
                 ToastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + response.data.message);
             })
-    };
+    }
 
     /**
      * Delete all selected counters from the server and on success from scope
      */
-    $scope.deleteSelectedCounters = function () {
-        if ($scope.selectedCounters.length > 0) {
-            CounterResource.deleteSome(project.id, _.pluck($scope.selectedCounters, 'name'))
+    deleteSelectedCounters () {
+        if (this.selectedCounters.length > 0) {
+            this.CounterResource.deleteSome(this.project.id, _.pluck(this.selectedCounters, 'name'))
                 .then(() => {
-                    ToastService.success('Counters deleted');
-                    _.forEach($scope.selectedCounters, counter => {
-                        _.remove($scope.counters, {name: counter.name});
+                    this.ToastService.success('Counters deleted');
+                    this.selectedCounters.forEach(counter => {
+                        _.remove(this.counters, {name: counter.name});
                     })
                 })
                 .catch(response => {
