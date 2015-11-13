@@ -2,21 +2,17 @@ import LearnResult from '../entities/LearnResult';
 
 /**
  * The service for interacting with the learner
- *
- * @param $http - The angular $http service
- * @returns {{start: start, stop: stop, resume: resume, getStatus: getStatus, isActive: isActive, isCounterexample: isCounterexample}}
- * @constructor
  */
 // @ngInject
-function LearnerResource($http) {
-    return {
-        start: start,
-        stop: stop,
-        resume: resume,
-        getStatus: getStatus,
-        isActive: isActive,
-        isCounterexample: isCounterexample
-    };
+class LearnerResource {
+
+    /**
+     * Constructor
+     * @param $http
+     */
+    constructor($http) {
+        this.$http = $http;
+    }
 
     /**
      * Start the server side learning process of a project
@@ -25,8 +21,8 @@ function LearnerResource($http) {
      * @param {LearnConfiguration} learnConfiguration
      * @return {*}
      */
-    function start(projectId, learnConfiguration) {
-        return $http.post('/rest/learner/start/' + projectId, learnConfiguration);
+    start(projectId, learnConfiguration) {
+        return this.$http.post(`/rest/learner/start/${projectId}`, learnConfiguration);
     }
 
     /**
@@ -35,8 +31,8 @@ function LearnerResource($http) {
      *
      * @return {*}
      */
-    function stop() {
-        return $http.get('/rest/learner/stop');
+    stop() {
+        return this.$http.get('/rest/learner/stop');
     }
 
     /**
@@ -48,8 +44,8 @@ function LearnerResource($http) {
      * @param {LearnConfiguration} learnConfiguration
      * @return {*}
      */
-    function resume(projectId, testNo, learnConfiguration) {
-        return $http.post('/rest/learner/resume/' + projectId + '/' + testNo, learnConfiguration);
+    resume(projectId, testNo, learnConfiguration) {
+        return this.$http.post(`/rest/learner/resume/${projectId}/${testNo}`, learnConfiguration);
     }
 
     /**
@@ -58,8 +54,8 @@ function LearnerResource($http) {
      *
      * @return {*}
      */
-    function getStatus() {
-        return $http.get('/rest/learner/status')
+    getStatus() {
+        return this.$http.get('/rest/learner/status')
             .then(response => new LearnResult(response.data))
             .catch(() => null);
     }
@@ -69,8 +65,8 @@ function LearnerResource($http) {
      *
      * @return {*}
      */
-    function isActive() {
-        return $http.get('/rest/learner/active')
+    isActive() {
+        return this.$http.get('/rest/learner/active')
             .then(response => response.data)
     }
 
@@ -82,8 +78,8 @@ function LearnerResource($http) {
      * @param {{id: number, revision: number}[]} symbols - The list of id/revision pairs of symbols
      * @returns {*}
      */
-    function isCounterexample(projectId, resetSymbol, symbols) {
-        return $http.post('/rest/learner/outputs/' + projectId, {
+    isCounterexample(projectId, resetSymbol, symbols) {
+        return this.$http.post(`/rest/learner/outputs/${projectId}`, {
             resetSymbol: resetSymbol,
             symbols: symbols
         }).then(response => response.data)

@@ -51,7 +51,7 @@ class LearnResultsController {
     deleteResult(result) {
         this.PromptService.confirm("Do you want to permanently delete this result? Changes cannot be undone.")
             .then(() => {
-                this.LearnResultResource.delete(result)
+                this.LearnResultResource.remove(result)
                     .then(() => {
                         this.ToastService.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
                         _.remove(this.results, {testNo: result.testNo});
@@ -68,8 +68,8 @@ class LearnResultsController {
     deleteResults() {
         if (this.selectedResults.length > 0) {
             this.PromptService.confirm("Do you want to permanently delete theses results? Changes cannot be undone.")
-                .then(function () {
-                    this.LearnResultResource.delete(this.selectedResults)
+                .then(() => {
+                    this.LearnResultResource.remove(this.selectedResults)
                         .then(() => {
                             this.ToastService.success('Learn results deleted');
                             this.selectedResults.forEach(result => {

@@ -77,7 +77,7 @@ function LearnSetupController($scope, $state, SymbolGroupResource, SessionServic
             } else {
 
                 // load all symbols in case there isn't any active learning process
-                SymbolGroupResource.getAll(project.id, {embedSymbols: true})
+                SymbolGroupResource.getAll(project.id, true)
                     .then(groups => {
                         $scope.groups = groups;
                         $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));

@@ -37,7 +37,7 @@ class SymbolsTrashController {
         this.selectedSymbols = [];
 
         // fetch all deleted symbols and save them in scope
-        this.SymbolResource.getAll(this.project.id, {deleted: true}).then(symbols => {
+        this.SymbolResource.getAll(this.project.id, true).then(symbols => {
             this.symbols = symbols;
         });
     }
@@ -60,7 +60,7 @@ class SymbolsTrashController {
     /** Recovers all symbols that were selected and calls $scope.recoverSymbol for each one */
     recoverSelectedSymbols() {
         if (this.selectedSymbols.length > 0) {
-            this.SymbolResource.recover(this.selectedSymbols)
+            this.SymbolResource.recoverMany(this.selectedSymbols)
                 .success(() => {
                     this.ToastService.success('Symbols recovered');
                     this.selectedSymbols.forEach(symbol => {

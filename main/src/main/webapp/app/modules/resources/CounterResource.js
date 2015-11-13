@@ -1,54 +1,51 @@
+import Counter from '../entities/Counter';
+
 /**
  * The service that communicates with the API in order to read and delete counters.
- *
- * @param $http - angular $http service
- * @param Counter - The counter model
- * @returns {{getAll: getAll, delete: remove, deleteSome: deleteSome}}
- * @constructor
  */
 // @ngInject
-function CounterResource($http, Counter) {
-    return {
-        getAll: getAll,
-        delete: remove,
-        deleteSome: deleteSome
-    };
+class CounterResource {
 
     /**
-     * Makes a GET request to /rest/projects/{projectId}/counters in order to fetch all counter of the current
-     * project.
+     * Constructor
+     * @param $http
+     */
+    constructor($http) {
+        this.$http = $http;
+    }
+
+    /**
+     * Fetches all counters from the server
      *
      * @param {number} projectId - The id of a project
      * @returns angular promise object of the request
      */
-    function getAll(projectId) {
-        return $http.get('/rest/projects/' + projectId + '/counters')
+    getAll(projectId) {
+        return this.$http.get(`/rest/projects/${projectId}/counters`)
             .then(response => response.data.map(c => new Counter(c)));
     }
 
     /**
-     * Makes a DELETE request to /rest/projects/{projectId}/counters/{counterName} in order to delete a counter from
-     * the database.
+     * Deletes a single file from the server
      *
      * @param {number} projectId - The id of a project
-     * @param {string} name - The name of a counter
+     * @param {Counter} counter - The counter to delete
      * @returns angular promise object of the request
      */
-    function remove(projectId, name) {
-        return $http.delete('/rest/projects/' + projectId + '/counters/' + name)
+    remove(projectId, counter) {
+        return this.$http.delete(`/rest/projects/${projectId}/counters/${counter.name}`)
     }
 
     /**
-     * Makes a DELETE request to /rest/projects/{projectId}/counters/batch/{counterNames} in order to delete
-     * multiple counters from the database
+     * Deletes multiple files from the server.
      *
      * @param {number} projectId - The id of a project
-     * @param {string[]} names - A list of the names of counters
+     * @param {Counter[]} counters - A list of counters to delete
      * @returns angular promise object of the request
      */
-    function deleteSome(projectId, names) {
-        const n = names.join(',');
-        return $http.delete('/rest/projects/' + projectId + '/counters/batch/' + n)
+    removeMany(projectId, counters) {
+        const names = counters.map(c => c.name).join(',');
+        return this.$http.delete(`/rest/projects/${projectId}/counters/batch/${names}`);
     }
 }
 

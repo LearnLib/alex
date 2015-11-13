@@ -121,7 +121,7 @@ function LearnResultsStatisticsController($scope, SessionService, LearnResultRes
         var chartData;
 
         if ($scope.selectedResults.length > 0) {
-            LearnResultResource.getComplete(project.id, _.pluck($scope.selectedResults, 'testNo'))
+            LearnResultResource.getManyComplete(project.id, _.pluck($scope.selectedResults, 'testNo'))
                 .then(function (completeResults) {
                     chartData =
                         LearnerResultChartService

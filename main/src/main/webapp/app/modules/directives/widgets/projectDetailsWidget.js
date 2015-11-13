@@ -77,7 +77,7 @@ function projectDetailsWidget(SessionService, SymbolGroupResource, LearnResultRe
          */
         scope.numberOfTests = null;
 
-        SymbolGroupResource.getAll(scope.project.id, {embedSymbols: true})
+        SymbolGroupResource.getAll(scope.project.id, true)
             .then(groups => {
                 scope.numberOfGroups = groups.length;
                 var counter = 0;

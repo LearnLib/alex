@@ -41,7 +41,7 @@ function projectList($state, ProjectResource, ToastService, SessionService, Prom
         scope.deleteProject = function (project) {
             PromptService.confirm('Do you really want to delete this project? All related data will be lost.')
                 .then(() => {
-                    ProjectResource.delete(project)
+                    ProjectResource.remove(project)
                         .then(() => {
                             ToastService.success('Project ' + project.name + ' deleted');
                             EventBus.emit(events.PROJECT_DELETED, {project: project});

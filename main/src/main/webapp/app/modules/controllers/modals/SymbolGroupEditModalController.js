@@ -35,9 +35,8 @@ class SymbolGroupEditModalController {
     }
 
 
-
     /** Updates the symbol group under edit and closes the modal dialog on success */
-    updateGroup () {
+    updateGroup() {
         this.errorMsg = null;
 
         this.SymbolGroupResource.update(this.group)
@@ -54,13 +53,13 @@ class SymbolGroupEditModalController {
     };
 
     /** Deletes the symbol group under edit and closes the modal dialog on success */
-    deleteGroup () {
+    deleteGroup() {
         this.errorMsg = null;
 
-        this.SymbolGroupResource.delete(this.group)
+        this.SymbolGroupResource.remove(this.group)
             .then(() => {
-                this.ToastService.success('Group <strong>' + this.group.name + '</strong> deleted');
-                EventBus.emit(events.GROUP_DELETED, {
+                this.ToastService.success(`Group <strong>${this.group.name}</strong> deleted`);
+                this.EventBus.emit(events.GROUP_DELETED, {
                     group: this.group
                 });
                 this.$modalInstance.dismiss();
@@ -71,7 +70,7 @@ class SymbolGroupEditModalController {
     };
 
     /** Closes the modal dialog */
-    close () {
+    close() {
         this.$modalInstance.dismiss();
     }
 }

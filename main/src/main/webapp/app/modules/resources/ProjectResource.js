@@ -2,72 +2,64 @@ import {Project} from '../entities/Project';
 
 /**
  * The resource that handles http calls to the API to do CRUD operations on projects
- *
- * @param $http - The $http angular service
- * @returns {{getAll: getAll, get: get, create: create, update: update, delete: remove}}
- * @constructor
  */
 // @ngInject
-function ProjectResource($http) {
-    return {
-        getAll: getAll,
-        get: get,
-        create: create,
-        update: update,
-        delete: remove
-    };
+class ProjectResource {
 
     /**
-     * Make a GET http request to /rest/projects in order to fetch all existing projects
-     *
+     * Constructor
+     * @param $http
+     */
+    constructor($http) {
+        this.$http = $http;
+    }
+
+    /**
+     * Get all projects of a user
      * @returns {*}
      */
-    function getAll() {
-        return $http.get('/rest/projects')
+    getAll() {
+        return this.$http.get('/rest/projects')
             .then(response => response.data.map(p => new Project(p)));
     }
 
     /**
-     * Make a GET http request to /rest/projects/{id} in order to fetch a single project by its id
-     *
-     * @param {number} id - The id of the project that should be fetched
-     * @return {*}
+     * Get a single project by its id
+     * @param {number} projectId
+     * @returns {*}
      */
-    function get(id) {
-        return $http.get('/rest/projects/' + id)
+    get(projectId) {
+        return this.$http.get(`/rest/projects/${projectId}`)
             .then(response => new Project(response.data));
     }
 
     /**
-     * Make a POST http request to /rest/projects with a project object as data in order to create a new project
-     *
-     * @param {ProjectFormModel} project - The project that should be created
-     * @return {*}
+     * Creates a new project
+     * @param {ProjectFormModel} project - The project to create
+     * @returns {*}
      */
-    function create(project) {
-        return $http.post('/rest/projects', project)
+    create(project) {
+        return this.$http.post('/rest/projects', project)
             .then(response => new Project(response.data));
     }
 
     /**
-     * Make a PUT http request to /rest/projects with a project as data in order to update an existing project
-     *
-     * @param {Project} project - The updated instance of a project that should be updated on the server
-     * @return {*}
+     * Updates a single project
+     * @param {Project} project - The updated project
+     * @returns {*}
      */
-    function update(project) {
-        return $http.put('/rest/projects/' + project.id, project)
+    update(project) {
+        return this.$http.put(`/rest/projects/${project.id}`, project)
             .then(response => new Project(response.data));
     }
 
     /**
-     * Make a DELETE http request to /rest/projects in order to delete an existing project
-     *
-     * @param {Project} project - The project that should be deleted
-     * @returns {HttpPromise}
+     * Deletes a single project from the server
+     * @param {Project} project - The project to delete
+     * @returns {*}
      */
-    function remove(project) {
-        return $http.delete('/rest/projects/' + project.id)
+    remove(project) {
+        return this.$http.delete(`/rest/projects/${project.id}`)
     }
 }
 

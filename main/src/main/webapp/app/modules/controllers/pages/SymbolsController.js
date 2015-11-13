@@ -43,7 +43,7 @@ function SymbolsController($scope, SessionService, SymbolResource, SymbolGroupRe
     $scope.groups = [];
 
     // fetch all symbol groups and include all symbols
-    SymbolGroupResource.getAll($scope.project.id, {embedSymbols: true})
+    SymbolGroupResource.getAll($scope.project.id, true)
         .then(groups => {
             $scope.groups = groups;
         });
@@ -168,12 +168,12 @@ function SymbolsController($scope, SessionService, SymbolResource, SymbolGroupRe
      * @param {Symbol} symbol - The symbol to be deleted
      */
     $scope.deleteSymbol = function (symbol) {
-        SymbolResource.delete(symbol)
-            .success(function () {
+        SymbolResource.remove(symbol)
+            .success(() => {
                 ToastService.success('Symbol <strong>' + symbol.name + '</strong> deleted');
                 $scope.removeSymbols([symbol]);
             })
-            .catch(function (response) {
+            .catch(response => {
                 ToastService.danger('<p><strong>Deleting symbol failed</strong></p>' + response.data.message);
             })
     };
@@ -182,12 +182,12 @@ function SymbolsController($scope, SessionService, SymbolResource, SymbolGroupRe
      * Deletes all symbols that the user selected from the server and the scope, if the deletion was successful
      */
     $scope.deleteSelectedSymbols = function () {
-        SymbolResource.delete($scope.selectedSymbols)
-            .success(function () {
+        SymbolResource.removeMany($scope.selectedSymbols)
+            .success(() => {
                 ToastService.success('Symbols deleted');
                 $scope.removeSymbols($scope.selectedSymbols);
             })
-            .catch(function (response) {
+            .catch(response => {
                 ToastService.danger('<p><strong>Deleting symbols failed</strong></p>' + response.data.message);
             })
     };

@@ -47,7 +47,7 @@ class CountersController {
      * @param {Counter} counter - The counter that should be deleted
      */
     deleteCounter(counter) {
-        this.CounterResource.delete(this.project.id, counter.name)
+        this.CounterResource.remove(this.project.id, counter)
             .then(() => {
                 this.ToastService.success('Counter "' + counter.name + '" deleted');
                 _.remove(this.counters, {name: counter.name});
@@ -62,7 +62,7 @@ class CountersController {
      */
     deleteSelectedCounters () {
         if (this.selectedCounters.length > 0) {
-            this.CounterResource.deleteSome(this.project.id, _.pluck(this.selectedCounters, 'name'))
+            this.CounterResource.removeMany(this.project.id, this.selectedCounters)
                 .then(() => {
                     this.ToastService.success('Counters deleted');
                     this.selectedCounters.forEach(counter => {

@@ -11,13 +11,13 @@ const moduleName = 'ALEX.resources';
 
 angular
     .module(moduleName, [])
-    .factory('CounterResource', CounterResource)
-    .factory('FileResource', FileResource)
-    .factory('LearnerResource', LearnerResource)
-    .factory('LearnResultResource', LearnResultResource)
-    .factory('ProjectResource', ProjectResource)
-    .factory('SymbolGroupResource', SymbolGroupResource)
-    .factory('SymbolResource', SymbolResource)
-    .factory('UserResource', UserResource);
+    .service('CounterResource', CounterResource)
+    .service('FileResource', FileResource)
+    .service('LearnerResource', LearnerResource)
+    .service('LearnResultResource', LearnResultResource)
+    .service('ProjectResource', ProjectResource)
+    .service('SymbolGroupResource', SymbolGroupResource)
+    .service('SymbolResource', SymbolResource)
+    .service('UserResource', UserResource);
 
 export const resources = moduleName;

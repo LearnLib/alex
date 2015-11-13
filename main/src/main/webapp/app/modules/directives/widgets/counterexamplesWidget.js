@@ -138,9 +138,9 @@ function counterexamplesWidget(LearnerResource, ToastService, SymbolResource, $q
             var deferred = $q.defer();
 
             if (symbols.length === 0) {
-                SymbolResource.getByIdRevisionPairs(scope.learnResult.project,
+                SymbolResource.getManyByIdRevisionPairs(scope.learnResult.project,
                     scope.learnResult.configuration.symbols)
-                    .then(function (s) {
+                    .then(s => {
                         symbols = s;
                         test();
                     });

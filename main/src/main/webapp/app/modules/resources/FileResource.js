@@ -1,24 +1,24 @@
 /**
  * The resource that handles API calls concerning the management of files.
- *
- * @param $http - The angular $http service
- * @returns {{getAll: getAll, delete: remove}}
- * @constructor
  */
 // @ngInject
-function FileResource($http) {
-    return {
-        getAll: getAll,
-        delete: remove
-    };
+class FileResource {
+
+    /**
+     * Constructor
+     * @param $http
+     */
+    constructor($http) {
+        this.$http = $http;
+    }
 
     /**
      * Fetches all available files from the server that belong to a project
      *
      * @param {number} projectId - The id of the project
      */
-    function getAll(projectId) {
-        return $http.get('/rest/projects/' + projectId + '/files')
+    getAll(projectId) {
+        return this.$http.get(`/rest/projects/${projectId}/files`)
             .then(response => response.data)
     }
 
@@ -28,9 +28,10 @@ function FileResource($http) {
      * @param {number} projectId - The id of the project
      * @param {File} file - The file object to be deleted
      */
-    function remove(projectId, file) {
-        return $http.delete('/rest/projects/' + projectId + '/files/' + encodeURI(file.name))
+    remove(projectId, file) {
+        const encodedFileName = encodeURI(file.name);
+        return this.$http.delete(`/rest/projects/${projectId}/files/${encodedFileName}`);
     }
 }
 
-export default FileResource
+export default FileResource;

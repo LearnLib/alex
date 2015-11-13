@@ -85,14 +85,14 @@ function SymbolsImportController($scope, SessionService, SymbolResource, ToastSe
                             }
                         })
                         .value();
-                    SymbolResource.create(project.id, symbols)
-                        .then(function (createdSymbols) {
+                    SymbolResource.createMany(project.id, symbols)
+                        .then(createdSymbols => {
                             ToastService.success('Symbols uploaded');
-                            _.forEach(createdSymbols, function (symbol) {
+                            createdSymbols.forEach(symbol => {
                                 _.remove($scope.symbols, {name: symbol.name})
                             })
                         })
-                        .catch(function (response) {
+                        .catch(response => {
                             ToastService.danger('<p><strong>Symbol upload failed</strong></p>' + response.data.message)
                         })
                 });

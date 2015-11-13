@@ -57,7 +57,7 @@ class SymbolMoveModalController {
                 symbol.group = this.selectedGroup.id;
             });
 
-            SymbolResource.move(this.symbols, this.selectedGroup)
+            this.SymbolResource.moveMany(this.symbols, this.selectedGroup)
                 .success(() => {
                     this.ToastService.success('Symbols move to group <strong>' + this.selectedGroup.name + '</strong>');
                     this.$modalInstance.close({

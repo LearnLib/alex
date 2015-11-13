@@ -57,9 +57,9 @@ function LearnResultsCompareController($scope, $timeout, $stateParams, SessionSe
      * @param {number} index - The index of the panel the complete learn result should be displayed in
      */
     function loadComplete(testNos, index) {
-        LearnResultResource.getComplete(project.id, testNos.split(','))
-            .then(function (completeResults) {
-                _.forEach(completeResults, function (result) {
+        LearnResultResource.getManyComplete(project.id, testNos.split(','))
+            .then(completeResults => {
+                completeResults.forEach(result => {
                     if (angular.isUndefined(index)) {
                         $scope.panels.push(result);
                     } else {
