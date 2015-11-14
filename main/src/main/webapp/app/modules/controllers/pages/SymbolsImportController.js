@@ -4,100 +4,106 @@ import {Symbol} from '../../entities/Symbol';
 
 /**
  * The controller that handles the import of symbols from a *.json file.
- *
- * @param $scope - The controllers scope
- * @param SessionService - The SessionService
- * @param SymbolResource - The Symbol API Resource handler
- * @param ToastService - The ToastService
- * @param EventBus - The EventBus
- * @constructor
  */
 // @ngInject
-function SymbolsImportController($scope, SessionService, SymbolResource, ToastService, EventBus) {
-
-    // The project that is saved in the sessionStorage
-    var project = SessionService.project.get();
+class SymbolsImportController {
 
     /**
-     * The symbols that will be uploaded
-     * @type {Symbol[]}
+     * Constructor
+     * @param $scope
+     * @param SessionService
+     * @param SymbolResource
+     * @param ToastService
+     * @param EventBus
      */
-    $scope.symbols = [];
+    constructor($scope, SessionService, SymbolResource, ToastService, EventBus) {
+        this.SymbolResource = SymbolResource;
+        this.ToastService = ToastService;
 
-    /**
-     * The list of selected symbols
-     * @type {Symbol[]}
-     */
-    $scope.selectedSymbols = [];
+        /**
+         * The project that is in the session
+         * @type {Project}
+         */
+        this.project = SessionService.project.get();
 
-    /**
-     * If references to symbol ids from executeSymbol actions should be adjusted or not
-     * @type {boolean}
-     */
-    $scope.adjustReferences = true;
+        /**
+         * The symbols that will be uploaded
+         * @type {Symbol[]}
+         */
+        this.symbols = [];
 
-    // listen on the file loaded event
-    EventBus.on(events.FILE_LOADED, (evt, data) => {
-        $scope.fileLoaded(data.file);
-    }, $scope);
+        /**
+         * The list of selected symbols
+         * @type {Symbol[]}
+         */
+        this.selectedSymbols = [];
 
-    // listen on the symbol updated event
-    EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
-        $scope.updateSymbol(data.newSymbol, data.oldSymbol);
-    }, $scope);
+        /**
+         * If references to symbol ids from executeSymbol actions should be adjusted or not
+         * @type {boolean}
+         */
+        this.adjustReferences = true;
+
+        // listen on the file loaded event
+        EventBus.on(events.FILE_LOADED, (evt, data) => {
+            this.fileLoaded(data.file);
+        }, $scope);
+
+        // listen on the symbol updated event
+        EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
+            this.updateSymbol(data.newSymbol, data.oldSymbol);
+        }, $scope);
+    }
 
     /**
      * Creates instances of Symbols from the json string from the *.json file and puts them in the scope.
      *
      * @param {string} data - The json string of loaded symbols
      */
-    $scope.fileLoaded = function (data) {
+    fileLoaded(data) {
         try {
-            $scope.symbols = angular.fromJson(data).map(s => new Symbol(s));
+            this.symbols = angular.fromJson(data).map(s => new Symbol(s));
         } catch (e) {
-            ToastService.danger('<p><strong>Loading json file failed</strong></p>' + e);
+            this.ToastService.danger('<p><strong>Loading json file failed</strong></p>' + e);
         }
-    };
+    }
 
     /**
      * Makes an API request in order to create the selected symbols. Removes successfully created symbols from the
      * scope.
      */
-    $scope.uploadSelectedSymbols = function () {
-        if ($scope.selectedSymbols.length > 0) {
-            SymbolResource.getAll(project.id)
-                .then(function (existingSymbols) {
-                    var maxId = _.max(existingSymbols, 'id').id;
-                    var symbols = _($scope.selectedSymbols)
-                        .map(s => new Symbol(s))
-                        .forEach(function (symbol) {
-                            delete symbol._collapsed;
-                            delete symbol._selected;
+    uploadSelectedSymbols() {
+        if (this.selectedSymbols.length > 0) {
+            this.SymbolResource.getAll(this.project.id)
+                .then(existingSymbols => {
+                    const maxId = _.max(existingSymbols, 'id').id;
+                    const symbols = this.selectedSymbols.map(s => new Symbol(s));
+                    symbols.forEach(symbol => {
 
-                            // search in all actions of all symbols for an action with the type EXECUTE_SYMBOL and
-                            // adjust referenced ids according to the max. existing id
-                            if (existingSymbols.length > 0 && $scope.adjustReferences) {
-                                _.forEach(symbol.actions, function (action) {
-                                    if (action.type === 'executeSymbol') {
-                                        action.symbolToExecute.id += maxId;
-                                    }
-                                })
-                            }
-                        })
-                        .value();
-                    SymbolResource.createMany(project.id, symbols)
+                        // search in all actions of all symbols for an action with the type EXECUTE_SYMBOL and
+                        // adjust referenced ids according to the max. existing id
+                        if (existingSymbols.length > 0 && this.adjustReferences) {
+                            symbol.actions.forEach(action => {
+                                if (action.type === 'executeSymbol') {
+                                    action.symbolToExecute.id += maxId;
+                                }
+                            })
+                        }
+                    });
+
+                    this.SymbolResource.createMany(this.project.id, symbols)
                         .then(createdSymbols => {
-                            ToastService.success('Symbols uploaded');
+                            this.ToastService.success('Symbols uploaded');
                             createdSymbols.forEach(symbol => {
-                                _.remove($scope.symbols, {name: symbol.name})
+                                _.remove(this.symbols, {name: symbol.name})
                             })
                         })
                         .catch(response => {
-                            ToastService.danger('<p><strong>Symbol upload failed</strong></p>' + response.data.message)
+                            this.ToastService.danger('<p><strong>Symbol upload failed</strong></p>' + response.data.message)
                         })
                 });
         }
-    };
+    }
 
     /**
      * Changes the name and/or the abbreviation a symbol before uploading it to prevent naming conflicts in the
@@ -106,28 +112,27 @@ function SymbolsImportController($scope, SessionService, SymbolResource, ToastSe
      * @param {Symbol} updatedSymbol - The updated symbol
      * @param {Symbol} oldSymbol - The old symbol
      */
-    $scope.updateSymbol = function (updatedSymbol, oldSymbol) {
-        var symbol;
+    updateSymbol(updatedSymbol, oldSymbol) {
 
         // check whether name or abbreviation already exist and don't update symbol
         if (angular.equals(updatedSymbol, oldSymbol)) {
             return;
         } else if (updatedSymbol.name !== oldSymbol.name &&
             updatedSymbol.abbreviation === oldSymbol.abbreviation) {
-            if (_.where($scope.symbols, {name: updatedSymbol.name}).length > 0) {
-                ToastService.danger('Name <strong>' + updatedSymbol.name + '</strong> already exists');
+            if (_.where(this.symbols, {name: updatedSymbol.name}).length > 0) {
+                this.ToastService.danger('Name <strong>' + updatedSymbol.name + '</strong> already exists');
                 return;
             }
         } else if (updatedSymbol.abbreviation !== oldSymbol.abbreviation &&
             updatedSymbol.name === oldSymbol.name) {
-            if (_.where($scope.symbols, {abbreviation: updatedSymbol.abbreviation}).length > 0) {
-                ToastService.danger('Abbreviation <strong>' + updatedSymbol.abbreviation + '</strong> already exists');
+            if (_.where(this.symbols, {abbreviation: updatedSymbol.abbreviation}).length > 0) {
+                this.ToastService.danger('Abbreviation <strong>' + updatedSymbol.abbreviation + '</strong> already exists');
                 return;
             }
         }
 
         // update symbol in scope
-        symbol = _.find($scope.symbols, {name: oldSymbol.name});
+        const symbol = this.symbols.find(s => s.name === oldSymbol.name);
         symbol.name = updatedSymbol.name;
         symbol.abbreviation = updatedSymbol.abbreviation;
     }

@@ -6,7 +6,7 @@
  *
  * Use: <observation-table data="..."></observation-table>
  *
- * @returns {{restrict: string, scope: {data: string}, link: link, templateUrl: string}}
+ * @returns {{restrict: string, scope: {data: string}, link: link, template: string}}
  */
 // @ngInject
 function observationTable() {
@@ -16,7 +16,23 @@ function observationTable() {
             data: '='
         },
         link: link,
-        templateUrl: 'views/directives/observation-table.html'
+        template: `
+            <table class="table table-condensed observation-table">
+                <thead>
+                <tr>
+                    <th ng-repeat="th in table.header" ng-bind="th"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="tr in table.body.s1 track by $index">
+                    <td ng-repeat="td in tr track by $index" ng-bind="td"></td>
+                </tr>
+                <tr ng-repeat="tr in table.body.s2 track by $index" ng-class="$index === 0 ? 'line': ''">
+                    <td ng-repeat="td in tr track by $index" ng-bind="td"></td>
+                </tr>
+                </tbody>
+            </table>
+        `
     };
 
     function link(scope) {

@@ -1,56 +1,58 @@
-<view-header title="ALEX is learning"></view-header>
+<div ng-controller="LearnStartController as vm">
+    <view-header title="ALEX is learning"></view-header>
 
-<div class="learn-start-wrapper" layout-toggle-element>
+    <div class="learn-start-wrapper" layout-toggle-element>
 
-    <div ng-if="active == true" class="alx-container learn-loading-indicator">
-        <div class="alert alert-info">
-            <button class="btn btn-info btn-xs pull-right" ng-click="abort()">
-                <i class="fa fa-close fa-fw"></i> Abort
-            </button>
-            <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is learning ...
-        </div>
-        <hr>
-        <h3>Statistics</h3>
-        <table class="table table-condensed">
-            <col width="120">
-            <tr>
-                <td><strong>Time passed</strong></td>
-                <td ng-bind="(duration | formatMilliseconds)"></td>
-            </tr>
-            <tr>
-                <td><strong>MQs executed</strong></td>
-                <td>
-                    <span ng-show="mqsUsed" ng-bind="mqsUsed"></span>
-                    <span ng-show="!mqsUsed">Not yet available</span>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <div ng-if="!active && results.length > 0">
-
-        <div class="panel-sidebar" ng-class="showSidebar === true ? 'show' : ''">
-            <div widget title="Configuration">
-                <div learn-resume-settings-widget learn-configuration="_.last(results).configuration"></div>
-            </div>
-
-            <div widget title="Counterexamples"
-                 ng-if="_.last(results).configuration.eqOracle.type === 'sample'">
-                <div counterexamples-widget
-                     counterexamples="_.last(results).configuration.eqOracle.counterExamples"
-                     learn-result="_.last(results)"></div>
-            </div>
-        </div>
-
-        <div learn-result-panel results="results">
-            <div class="btn-group btn-group-sm learn-result-panel-resume-button">
-                <button class="btn btn-success" ng-click="resumeLearning()">Resume</button>
-                <button class="btn btn-success" ng-click="toggleSidebar()">
-                    <i class="fa fa-fw" ng-class="showSidebar ? 'fa-close' : 'fa-gear'"></i>
+        <div ng-if="vm.active == true" class="alx-container learn-loading-indicator">
+            <div class="alert alert-info">
+                <button class="btn btn-info btn-xs pull-right" ng-click="vm.abort()">
+                    <i class="fa fa-close fa-fw"></i> Abort
                 </button>
+                <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is learning ...
             </div>
+            <hr>
+            <h3>Statistics</h3>
+            <table class="table table-condensed">
+                <col width="120">
+                <tr>
+                    <td><strong>Time passed</strong></td>
+                    <td ng-bind="(vm.duration | formatMilliseconds)"></td>
+                </tr>
+                <tr>
+                    <td><strong>MQs executed</strong></td>
+                    <td>
+                        <span ng-show="vm.mqsUsed" ng-bind="vm.mqsUsed"></span>
+                        <span ng-show="!vm.mqsUsed">Not yet available</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div ng-if="!vm.active && vm.results.length > 0">
+
+            <div class="panel-sidebar" ng-class="vm.showSidebar === true ? 'show' : ''">
+                <div widget title="Configuration">
+                    <div learn-resume-settings-widget learn-configuration="_.last(vm.results).configuration"></div>
+                </div>
+
+                <div widget title="Counterexamples"
+                     ng-if="_.last(vm.results).configuration.eqOracle.type === 'sample'">
+                    <div counterexamples-widget
+                         counterexamples="_.last(vm.results).configuration.eqOracle.counterExamples"
+                         learn-result="_.last(vm.results)"></div>
+                </div>
+            </div>
+
+            <div learn-result-panel results="vm.results">
+                <div class="btn-group btn-group-sm learn-result-panel-resume-button">
+                    <button class="btn btn-success" ng-click="vm.resumeLearning()">Resume</button>
+                    <button class="btn btn-success" ng-click="vm.toggleSidebar()">
+                        <i class="fa fa-fw" ng-class="vm.showSidebar ? 'fa-close' : 'fa-gear'"></i>
+                    </button>
+                </div>
+            </div>
+
         </div>
 
     </div>
-
 </div>

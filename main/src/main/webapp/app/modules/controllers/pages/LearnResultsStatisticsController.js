@@ -8,73 +8,82 @@
  * @constructor
  */
 // @ngInject
-function LearnResultsStatisticsController($scope, SessionService, LearnResultResource, LearnerResultChartService) {
-
-    // The project that is stored in the session
-    var project = SessionService.project.get();
+class LearnResultsStatisticsController {
 
     /**
-     * The enum that indicates which kind of chart should be displayed
-     * @type {{MULTIPLE_FINAL: number, MULTIPLE_COMPLETE: number}}
+     * Constructor
+     * @param SessionService
+     * @param LearnResultResource
+     * @param LearnerResultChartService
      */
-    $scope.chartModes = {
-        MULTIPLE_FINAL: 0,
-        MULTIPLE_COMPLETE: 1
-    };
+    constructor(SessionService, LearnResultResource, LearnerResultChartService) {
+        this.LearnResultResource = LearnResultResource;
+        this.LearnerResultChartService = LearnerResultChartService;
 
-    /**
-     * The map that indicated from which property of a Learner Result a chart should be created
-     * @type {{RESETS: string, SYMBOLS: string, DURATION: string}}
-     */
-    $scope.chartProperties = LearnerResultChartService.properties;
+        /**
+         * The project that is in the session
+         * @type {Project}
+         */
+        this.project = SessionService.project.get();
 
-    /**
-     * All final Learn Results from the project
-     * @type {LearnResult[]}
-     */
-    $scope.results = [];
+        /**
+         * The enum that indicates which kind of chart should be displayed
+         * @type {{MULTIPLE_FINAL: number, MULTIPLE_COMPLETE: number}}
+         */
+        this.chartModes = {
+            MULTIPLE_FINAL: 0,
+            MULTIPLE_COMPLETE: 1
+        };
 
-    /**
-     * The list of selected learn results
-     * @type {LearnResult[]}
-     */
-    $scope.selectedResults = [];
+        /**
+         * The map that indicated from which property of a Learner Result a chart should be created
+         * @type {{RESETS: string, SYMBOLS: string, DURATION: string}}
+         */
+        this.chartProperties = LearnerResultChartService.properties;
 
-    /**
-     * The mode of the displayed chart
-     * @type {null|number}
-     */
-    $scope.selectedChartMode = null;
+        /**
+         * All final Learn Results from the project
+         * @type {LearnResult[]}
+         */
+        this.results = [];
 
-    /**
-     * The property of a learner result that is displayed in the chart
-     * @type {string}
-     */
-    $scope.selectedChartProperty = $scope.chartProperties.MQS;
+        /**
+         * The list of selected learn results
+         * @type {LearnResult[]}
+         */
+        this.selectedResults = [];
 
-    /**
-     * @type {boolean}
-     */
-    $scope.fullWidth = false;
+        /**
+         * The mode of the displayed chart
+         * @type {null|number}
+         */
+        this.selectedChartMode = null;
 
-    /**
-     * The n3 chart data for the directive
-     * @type {{data: null|Array, options: null|{}}}
-     */
-    $scope.chartData = {
-        data: null,
-        options: null
-    };
+        /**
+         * The property of a learner result that is displayed in the chart
+         * @type {string}
+         */
+        this.selectedChartProperty = this.chartProperties.MQS;
 
-    // initialize the controller
-    (function init() {
+        /**
+         * @type {boolean}
+         */
+        this.fullWidth = false;
+
+        /**
+         * The n3 chart data for the directive
+         * @type {{data: null|Array, options: null|{}}}
+         */
+        this.chartData = {
+            data: null,
+            options: null
+        };
 
         // get all final learn results of the project
-        LearnResultResource.getAllFinal(project.id)
-            .then(function (results) {
-                $scope.results = results;
-            });
-    }());
+        this.LearnResultResource.getAllFinal(this.project.id).then(results => {
+            this.results = results;
+        });
+    }
 
     /**
      * Sets the selected learner result property from which the chart data should be created. Calls the methods
@@ -82,72 +91,66 @@ function LearnResultsStatisticsController($scope, SessionService, LearnResultRes
      *
      * @param {number} property - The learner result property
      */
-    $scope.selectChartProperty = function (property) {
-        $scope.selectedChartProperty = property;
-        if ($scope.selectedChartMode === $scope.chartModes.MULTIPLE_FINAL) {
-            $scope.createChartFromFinalResults();
-        } else if ($scope.selectedChartMode === $scope.chartModes.MULTIPLE_COMPLETE) {
-            $scope.createChartFromCompleteResults();
+    selectChartProperty(property) {
+        this.selectedChartProperty = property;
+        if (this.selectedChartMode === this.chartModes.MULTIPLE_FINAL) {
+            this.createChartFromFinalResults();
+        } else if (this.selectedChartMode === this.chartModes.MULTIPLE_COMPLETE) {
+            this.createChartFromCompleteResults();
         }
-    };
+    }
 
     /**
      * Creates n3 line chart data from the selected final learner results and saves it into the scope. Sets the
      * displayable chart mode to MULTIPLE_FINAL
      */
-    $scope.createChartFromFinalResults = function () {
-        var chartData;
+    createChartFromFinalResults() {
+        if (this.selectedResults.length > 0) {
+            const chartData = LearnerResultChartService
+                .createDataFromMultipleFinalResults(this.selectedResults, this.selectedChartProperty);
 
-        if ($scope.selectedResults.length > 0) {
-            chartData =
-                LearnerResultChartService
-                    .createDataFromMultipleFinalResults($scope.selectedResults, $scope.selectedChartProperty);
-
-            $scope.chartData = {
+            this.chartData = {
                 data: chartData.data,
                 options: chartData.options
             };
 
-            $scope.selectedChartMode = $scope.chartModes.MULTIPLE_FINAL;
+            this.selectedChartMode = this.chartModes.MULTIPLE_FINAL;
         }
-    };
+    }
 
     /**
      * Creates n3 area chart data from the selected learner results. Therefore makes an API request to fetch the
      * complete data from each selected learner result and saves the chart data into the scope. Sets the
      * displayable chart mode to MULTIPLE_COMPLETE
      */
-    $scope.createChartFromCompleteResults = function () {
-        var chartData;
+    createChartFromCompleteResults() {
+        if (this.selectedResults.length > 0) {
+            this.LearnResultResource.getManyComplete(this.project.id, this.selectedResults.map(r => r.testNo))
+                .then(completeResults => {
+                    const chartData = LearnerResultChartService
+                        .createDataFromMultipleCompleteResults(completeResults, this.selectedChartProperty);
 
-        if ($scope.selectedResults.length > 0) {
-            LearnResultResource.getManyComplete(project.id, _.pluck($scope.selectedResults, 'testNo'))
-                .then(function (completeResults) {
-                    chartData =
-                        LearnerResultChartService
-                            .createDataFromMultipleCompleteResults(completeResults, $scope.selectedChartProperty);
-
-                    $scope.chartData = {
+                    this.chartData = {
                         data: chartData.data,
                         options: chartData.options
                     };
 
-                    $scope.selectedChartMode = $scope.chartModes.MULTIPLE_COMPLETE;
+                    this.selectedChartMode = this.chartModes.MULTIPLE_COMPLETE;
                 })
         }
-    };
+    }
 
     /**
      * Resets the chart data and removes the selected chart mode so that the chart disappears and the list of
      * learner results will be shown again
      */
-    $scope.back = function () {
-        $scope.selectedChartMode = null;
-        $scope.chartData = {
+    back() {
+        this.selectedChartMode = null;
+        this.chartData = {
             data: null,
             options: null
         };
-        $scope.fullWidth = false;
+        this.fullWidth = false;
     }
 }
 

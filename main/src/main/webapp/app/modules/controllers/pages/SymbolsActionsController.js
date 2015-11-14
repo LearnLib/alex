@@ -4,231 +4,217 @@ import {Symbol} from '../../entities/Symbol';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
- * manages has to be defined in the url by its id. The URL /symbols/4/actions therefore manages the actions of the
- * symbol with id 4. When no such id was found, the controller redirects to an error page.
- *
- * @param $scope - The controllers scope
- * @param $stateParams - The parameters of the state
- * @param SymbolResource - The Symbol model
- * @param SessionService - The session service
- * @param ToastService - The ToastService
- * @param ErrorService - The ErrorService
- * @param ActionService - The ActionService
- * @param ClipboardService - The ClipboardService
- * @param $state - ui.router $state
- * @param PromptService - PromptService
- * @param EventBus
- * @constructor
+ * manages has to be defined in the url by its id.
  */
 // @ngInject
-function SymbolsActionsController($scope, $stateParams, SymbolResource, SessionService, ToastService, ErrorService,
-                                  ActionService, ClipboardService, $state, PromptService, EventBus) {
+class SymbolsActionsController {
 
     /**
-     * A copy of $scope.symbol to revert unsaved changes
-     * @type {Symbol|null}
+     * Constructor
+     * @param $scope
+     * @param $stateParams
+     * @param SymbolResource
+     * @param SessionService
+     * @param ToastService
+     * @param ErrorService
+     * @param ActionService
+     * @param ClipboardService
+     * @param $state
+     * @param PromptService
+     * @param EventBus
      */
-    let symbolCopy = null;
+    constructor($scope, $stateParams, SymbolResource, SessionService, ToastService, ErrorService,
+                ActionService, ClipboardService, $state, PromptService, EventBus) {
 
-    /**
-     * The project that is stored in the session
-     * @type {Project}
-     */
-    const project = SessionService.project.get();
+        this.SymbolResource = SymbolResource;
+        this.ToastService = ToastService;
+        this.ActionService = ActionService;
+        this.ClipboardService = ClipboardService;
 
-    /**
-     * The symbol whose actions are managed
-     * @type {Symbol|null}
-     */
-    $scope.symbol = null;
+        /**
+         * The project that is stored in the session
+         * @type {Project}
+         */
+        this.project = SessionService.project.get();
 
-    /**
-     * The list of selected actions
-     * @type {Object[]}
-     */
-    $scope.selectedActions = [];
+        /**
+         * The symbol whose actions are managed
+         * @type {Symbol|null}
+         */
+        this.symbol = null;
 
-    /**
-     * Whether there are unsaved changes to the symbol
-     * @type {boolean}
-     */
-    $scope.hasChanged = false;
+        /**
+         * The list of selected actions
+         * @type {Object[]}
+         */
+        this.selectedActions = [];
 
-    /**
-     * Options for ng-sortable directive from Sortable lib
-     * @type {{animation: number, onUpdate: Function}}
-     */
-    $scope.sortableOptions = {
-        animation: 150,
-        onUpdate: function () {
-            setChanged(true);
-        }
-    };
+        /**
+         * Whether there are unsaved changes to the symbol
+         * @type {boolean}
+         */
+        this.hasChanged = false;
 
-    /**
-     * Sets the flag that indicates if the symbol or its actions have changed
-     *
-     * @param {boolean} b - If the symbol has changed by any means
-     */
-    function setChanged(b) {
-        $scope.hasChanged = b;
-    }
+        /**
+         * Options for ng-sortable directive from Sortable lib
+         * @type {{animation: number, onUpdate: Function}}
+         */
+        this.sortableOptions = {
+            animation: 150,
+            onUpdate: () => {
+                this.hasChanged = true
+            }
+        };
 
-    // load all actions from the symbol
-    // redirect to an error page when the symbol from the url id cannot be found
-    SymbolResource.get(project.id, $stateParams.symbolId)
-        .then(symbol => {
+        // load all actions from the symbol
+        // redirect to an error page when the symbol from the url id cannot be found
+        this.SymbolResource.get(this.project.id, $stateParams.symbolId)
+            .then(symbol => {
 
-            // create unique ids for actions so that they can be found
-            _.forEach(symbol.actions, action => {
-                action._id = _.uniqueId();
+                // create unique ids for actions so that they can be found
+                symbol.actions.forEach(action => {
+                    action._id = _.uniqueId();
+                });
+
+                // add symbol to scope and create a copy in order to revert changes
+                this.symbol = symbol;
+                this.symbolCopy = new Symbol(symbol);
+            })
+            .catch(() => {
+                ErrorService.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + "' could not be found");
+                ErrorService.goToErrorPage();
             });
 
-            // add symbol to scope and create a copy in order to revert changes
-            $scope.symbol = symbol;
-            $scope.symbolCopy = new Symbol(symbol);
-        })
-        .catch(() => {
-            ErrorService.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + "' could not be found");
-            ErrorService.goToErrorPage();
+        // show a confirm dialog if the user leaves the page without having saved changes and
+        // redirect to the state that the user was about to go to if he doesn't want to save changes
+        const offHandler = $scope.$on('$stateChangeStart', (event, toState) => {
+            if (this.hasChanged) {
+                event.preventDefault();
+                PromptService.confirm('There are unsaved changes. Do you still want to continue and discard them?')
+                    .then(() => {
+                        offHandler();
+                        $state.go(toState);
+                    })
+            }
         });
 
-    // show a confirm dialog if the user leaves the page without having saved changes and
-    // redirect to the state that the user was about to go to if he doesn't want to save changes
-    const offHandler = $scope.$on('$stateChangeStart', (event, toState) => {
-        if ($scope.hasChanged) {
-            event.preventDefault();
-            PromptService.confirm('There are unsaved changes. Do you still want to continue and discard them?')
-                .then(() => {
-                    offHandler();
-                    $state.go(toState);
-                })
-        }
-    });
+        // listen on action created event
+        EventBus.on(events.ACTION_CREATED, (evt, data) => {
+            this.addAction(data.action);
+        }, $scope);
 
-    // listen on action created event
-    EventBus.on(events.ACTION_CREATED, (evt, data) => {
-        $scope.addAction(data.action);
-    }, $scope);
-
-    // listen on action updated event
-    EventBus.on(events.ACTION_UPDATED, (evt, data) => {
-        $scope.updateAction(data.action);
-    }, $scope);
+        // listen on action updated event
+        EventBus.on(events.ACTION_UPDATED, (evt, data) => {
+            this.updateAction(data.action);
+        }, $scope);
+    }
 
     /**
      * Deletes a list of actions
      *
      * @param {Object[]} actions - The actions to be deleted
      */
-    $scope.deleteActions = function (actions) {
+    deleteActions(actions) {
         if (actions.length > 0) {
-            _.forEach(actions, function (a) {
-                _.remove($scope.symbol.actions, {_id: a._id});
-                _.remove($scope.selectedActions, {id: a._id});
+            actions.forEach(action => {
+                _.remove(this.symbol.actions, {_id: action._id});
             });
-            ToastService.success('Action' + (actions.length > 1 ? 's' : '') + ' deleted');
-            setChanged(true);
+            this.ToastService.success('Action' + (actions.length > 1 ? 's' : '') + ' deleted');
+            this.hasChanged = true;
         }
-    };
+    }
 
     /**
      * Adds a new action to the list of actions of the symbol and gives it a temporary unique id
      *
      * @param {Object} action
      */
-    $scope.addAction = function (action) {
+    addAction(action) {
         action._id = _.uniqueId();
-        $scope.symbol.actions.push(action);
-        ToastService.success('Action created');
-        setChanged(true);
-    };
+        this.symbol.actions.push(action);
+        this.ToastService.success('Action created');
+        this.hasChanged = true;
+    }
 
     /**
      * Updates an existing action
      *
      * @param {Object} updatedAction
      */
-    $scope.updateAction = function (updatedAction) {
-        var action = _.find($scope.symbol.actions, {_id: updatedAction._id});
-        _.forIn(action, function (v, k) {
+    updateAction(updatedAction) {
+        const action = this.symbol.actions.find(a => a._id === updatedAction._id);
+        _.forIn(action, (v, k) => {
             action[k] = updatedAction[k];
         });
-        ToastService.success('Action updated');
-        setChanged(true);
-    };
+        this.ToastService.success('Action updated');
+        this.hasChanged = true;
+    }
 
     /**
      * Saves the changes that were made to the symbol by updating it on the server.
      */
-    $scope.saveChanges = function () {
+    saveChanges() {
 
-        // update the copy for later reverting
-        var copy = new Symbol($scope.symbol);
-        _.forEach(copy.actions, function (a) {
-            delete a._id;
-            delete a._selected;
-        });
+        // make a copy of the symbol
+        const symbolToUpdate = new Symbol(this.symbol);
 
         // update the symbol
-        SymbolResource.update(copy)
-            .then(function (updatedSymbol) {
-                $scope.symbol.revision = updatedSymbol.revision;
-                symbolCopy = new Symbol($scope.symbol);
-                ToastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
-                setChanged(false);
-                $scope.hasUnsavedChanges = false;
+        this.SymbolResource.update(symbolToUpdate)
+            .then(updatedSymbol => {
+                this.symbol.revision = updatedSymbol.revision;
+                this.ToastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
+                this.hasChanged = false;
             })
-            .catch(function (response) {
+            .catch(response => {
                 ToastService.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
             })
-    };
+    }
 
     /**
      * Copies actions to the clipboard
      *
      * @param {Object[]} actions
      */
-    $scope.copyActions = function (actions) {
-        ClipboardService.copy('actions', angular.copy(actions));
-        ToastService.info(actions.length + ' action[s] copied to clipboard');
-    };
+    copyActions(actions) {
+        this.ClipboardService.copy('actions', angular.copy(actions));
+        this.ToastService.info(actions.length + ' action[s] copied to clipboard');
+    }
 
     /**
      * Copies actions to the clipboard and removes them from the scope
      *
      * @param {Object[]} actions
      */
-    $scope.cutActions = function (actions) {
-        ClipboardService.cut('actions', angular.copy(actions));
-        $scope.deleteActions(actions);
-        ToastService.info(actions.length + ' action[s] cut to clipboard');
-        setChanged(true);
-    };
+    cutActions(actions) {
+        this.ClipboardService.cut('actions', angular.copy(actions));
+        this.deleteActions(actions);
+        this.ToastService.info(actions.length + ' action[s] cut to clipboard');
+        this.hasChanged = true;
+    }
 
     /**
      * Pastes the actions from the clipboard to the end of of the action list
      */
-    $scope.pasteActions = function () {
-        var actions = ClipboardService.paste('actions');
+    pasteActions() {
+        let actions = ClipboardService.paste('actions');
         if (actions !== null) {
-            actions = _.map(actions, function (action) {
-                return ActionService.createFromType(action);
+            actions = actions.map(a => this.ActionService.createFromData(a));
+            actions.forEach(action => {
+                this.addAction(action)
             });
-            _.forEach(actions, $scope.addAction);
-            ToastService.info(actions.length + 'action[s] pasted from clipboard');
-            setChanged(true);
+            this.ToastService.info(actions.length + 'action[s] pasted from clipboard');
+            this.hasChanged = true;
         }
-    };
+    }
 
     /**
      * Toggles the disabled flag on an action
      *
      * @param {Object} action
      */
-    $scope.toggleDisableAction = function (action) {
+    toggleDisableAction(action) {
         action.disabled = !action.disabled;
-        setChanged(true);
+        this.hasChanged = true;
     }
 }
 

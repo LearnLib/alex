@@ -1,5 +1,7 @@
+import {events} from '../constants';
+
 // @ngInject
-function sidebar($rootScope, $state, SessionService) {
+function sidebar($state, SessionService, EventBus) {
     return {
         scope: {},
         replace: true,
@@ -27,31 +29,20 @@ function sidebar($rootScope, $state, SessionService) {
          */
         scope.collapsed = false;
 
-        // handle events and stuff
-        (function init() {
+        // listen on project open event
+        EventBus.on(events.PROJECT_OPENED, (evt, data) => {
+            scope.project = data.project;
+        }, scope);
 
-            // load project into scope when projectOpened is emitted
-            $rootScope.$on('project:opened', function (event, project) {
-                scope.project = project;
-            });
-
-            // delete project from scope when projectOpened is emitted
-            $rootScope.$on('project:closed', function () {
-                scope.project = null;
-            });
-
-            $rootScope.$on('user:loggedIn', function (event, user) {
-                scope.user = user;
-            });
-
-            $rootScope.$on('user:loggedOut', function () {
-                scope.user = null;
-            })
-        }());
+        // listen on user login event
+        EventBus.on(events.USER_LOGGED_IN, (evt, data) => {
+            scope.user = data.user;
+        }, scope);
 
         /** Removes the project object from the session and redirect to the start page */
         scope.closeProject = function () {
             SessionService.project.remove();
+            scope.project = null;
             $state.go('projects');
         };
 
@@ -59,6 +50,7 @@ function sidebar($rootScope, $state, SessionService) {
         scope.logout = function () {
             SessionService.project.remove();
             SessionService.user.remove();
+            scope.user = null;
             $state.go('home');
         };
 
@@ -72,8 +64,8 @@ function sidebar($rootScope, $state, SessionService) {
          * Use: isState('state1', 'state2', ...)
          */
         scope.isState = function () {
-            var result = false;
-            for (var i = 0; i < arguments.length; i++) {
+            let result = false;
+            for (let i = 0; i < arguments.length; i++) {
                 result = result || $state.current.name === arguments[i];
             }
             return result;

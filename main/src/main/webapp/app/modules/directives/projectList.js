@@ -31,6 +31,7 @@ function projectList($state, ProjectResource, ToastService, SessionService, Prom
          */
         scope.openProject = function (project) {
             SessionService.project.save(project);
+            EventBus.emit(events.PROJECT_OPENED, {project: project});
             $state.go('dashboard');
         };
 

@@ -1,11 +1,11 @@
-<div class="learn-results-compare-wrapper" layout-toggle-element>
+<div class="learn-results-compare-wrapper" layout-toggle-element ng-controller="LearnResultsCompareController as vm">
 
     <div class="learn-result-compare-panel" learn-result-compare-panel
-         ng-repeat="result in panels" index="{{$index}}" from="{{panels.length}}">
+         ng-repeat="result in vm.panels" index="{{$index}}" from="{{vm.panels.length}}">
 
         <!-- display the learn result -->
         <learn-result-panel results="result" index="{{$index}}" ng-if="result">
-            <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="closePanel($index)">
+            <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
                 <i class="fa fa-close"></i>
             </button>
         </learn-result-panel>
@@ -14,7 +14,7 @@
         <div class="learn-result-panel" ng-if="!result">
             <div class="learn-result-panel-header">
                 <button class="btn btn-sm btn-danger learn-result-panel-close-button pull-right"
-                        ng-click="closePanel($index)">
+                        ng-click="vm.closePanel($index)">
                     <i class="fa fa-close"></i>
                 </button>
             </div>
@@ -22,8 +22,8 @@
                 <div class="alx-container">
 
                     <ul class="list-group">
-                        <li class="list-group-item" ng-repeat="result in results"
-                            ng-click="fillPanel(result, $parent.$index)">
+                        <li class="list-group-item" ng-repeat="result in vm.results"
+                            ng-click="vm.fillPanel(result, $parent.$index)">
 
                             <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
 
@@ -48,16 +48,16 @@
 
     </div>
 
-    <div class="alx-container" ng-if="panels.length === 0">
+    <div class="alx-container" ng-if="vm.panels.length === 0">
         <br>
-        <div class="alert alert-info" ng-click="addPanel()">
+        <div class="alert alert-info" ng-click="vm.addPanel()">
             <strong>Click to add a new panel</strong> or click on the green button on the bottom right
         </div>
     </div>
 
     <!-- add learn result panel button -->
-    <div class="add-panel-button text-center" ng-click="addPanel()" tooltip="Add Panel" tooltip-placement="left"
-         ng-show="panels.length === 0 || panels[panels.length - 1] !== null">
+    <div class="add-panel-button text-center" ng-click="vm.addPanel()" tooltip="Add Panel" tooltip-placement="left"
+         ng-show="vm.panels.length === 0 || vm.panels[vm.panels.length - 1] !== null">
         <i class="fa fa-2x fa-plus"></i>
     </div>
 </div>

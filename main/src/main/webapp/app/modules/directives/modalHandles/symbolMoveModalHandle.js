@@ -4,25 +4,24 @@ import {Symbol} from '../../entities/Symbol';
  * The directive for handling the opening of the modal for moving symbols into another group. Can only be used as
  * an attribute and attaches a click event to its source element.
  *
- * Use: '<button symbol-move-modal-handle symbols="..." onMoved="...">Click Me!</button>'
+ * Use: '<button symbol-move-modal-handle symbols="...">Click Me!</button>'
  *
  * @param $modal - The ui.bootstrap $modal service
- * @returns {{scope: {symbols: string, onMoved: string}, link: link}}
+ * @returns {{scope: {symbols: string}, link: link}}
  */
 // @ngInject
 function symbolMoveModalHandle($modal) {
     return {
         restrict: 'A',
         scope: {
-            symbols: '=',
-            onMoved: '&'
+            symbols: '='
         },
         link: link
     };
 
     function link(scope, el) {
         el.on('click', () => {
-            var modal = $modal.open({
+            $modal.open({
                 templateUrl: 'views/modals/symbol-move-modal.html',
                 controller: 'SymbolMoveModalController',
                 controllerAs: 'vm',
@@ -32,9 +31,6 @@ function symbolMoveModalHandle($modal) {
                     }
                 }
             });
-            modal.result.then(data => {
-                scope.onMoved()(data.symbols, data.group);
-            })
         });
     }
 }

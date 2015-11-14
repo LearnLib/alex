@@ -47,6 +47,7 @@ const events = {
     // symbol related events
     SYMBOL_CREATED: 'symbol:created',
     SYMBOL_UPDATED: 'symbol:updated',
+    SYMBOLS_MOVED: 'symbols:moved',
 
     // learn config related events
     LEARN_CONFIG_UPDATED: 'learnConfig:updated',

@@ -20,9 +20,7 @@ function config($stateProvider, $urlRouterProvider) {
         .state('dashboard', {
             url: '/dashboard',
             views: {
-                '@': {
-                    templateUrl: 'views/pages/project-dashboard.html'
-                }
+                '@': {templateUrl: 'views/pages/project-dashboard.html'}
             },
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
@@ -38,9 +36,7 @@ function config($stateProvider, $urlRouterProvider) {
         .state('users.settings', {
             url: '/settings',
             views: {
-                '@': {
-                    templateUrl: 'views/pages/user-settings.html'
-                }
+                '@': {templateUrl: 'views/pages/user-settings.html'}
             }
         })
 
@@ -50,9 +46,7 @@ function config($stateProvider, $urlRouterProvider) {
         .state('projects', {
             url: '/projects',
             views: {
-                '@': {
-                    templateUrl: 'views/pages/projects.html'
-                }
+                '@': {templateUrl: 'views/pages/projects.html'}
             },
             data: {roles: ['REGISTERED', 'ADMIN']}
         })
@@ -63,9 +57,7 @@ function config($stateProvider, $urlRouterProvider) {
         .state('counters', {
             url: '/counters',
             views: {
-                '@': {
-                    templateUrl: 'views/pages/counters.html'
-                }
+                '@': {templateUrl: 'views/pages/counters.html'}
             },
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
@@ -76,48 +68,35 @@ function config($stateProvider, $urlRouterProvider) {
         .state('symbols', {
             url: '/symbols',
             views: {
-                '@': {
-                    controller: 'SymbolsController',
-                    templateUrl: 'views/pages/symbols.html'
-                }
+                '@': {templateUrl: 'views/pages/symbols.html'}
             },
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('symbols.trash', {
             url: '/trash',
             views: {
-                '@': {
-                    templateUrl: 'views/pages/symbols-trash.html'
-                }
+                '@': {templateUrl: 'views/pages/symbols-trash.html'}
             },
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('symbols.history', {
             url: '/{symbolId:int}/history',
             views: {
-                '@': {
-                    templateUrl: 'views/pages/symbols-history.html'
-                }
+                '@': {templateUrl: 'views/pages/symbols-history.html'}
             },
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('symbols.actions', {
             url: '/{symbolId:int}/actions',
             views: {
-                '@': {
-                    controller: 'SymbolsActionsController',
-                    templateUrl: 'views/pages/symbols-actions.html'
-                }
+                '@': {templateUrl: 'views/pages/symbols-actions.html'}
             },
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('symbols.import', {
             url: '/import',
             views: {
-                '@': {
-                    controller: 'SymbolsImportController',
-                    templateUrl: 'views/pages/symbols-import.html'
-                }
+                '@': {templateUrl: 'views/pages/symbols-import.html'}
             },
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
@@ -133,45 +112,31 @@ function config($stateProvider, $urlRouterProvider) {
         .state('learn.setup', {
             url: '/setup',
             views: {
-                '@': {
-                    controller: 'LearnSetupController',
-                    templateUrl: 'views/pages/learn-setup.html'
-                }
+                '@': {templateUrl: 'views/pages/learn-setup.html'}
             }
         })
         .state('learn.start', {
             url: '/start',
             views: {
-                '@': {
-                    controller: 'LearnStartController',
-                    templateUrl: 'views/pages/learn-start.html'
-                }
+                '@': {templateUrl: 'views/pages/learn-start.html'}
             }
         })
         .state('learn.results', {
             url: '/results',
             views: {
-                '@': {
-                    templateUrl: 'views/pages/learn-results.html'
-                }
+                '@': {templateUrl: 'views/pages/learn-results.html'}
             }
         })
         .state('learn.results.statistics', {
             url: '/statistics',
             views: {
-                '@': {
-                    controller: 'LearnResultsStatisticsController',
-                    templateUrl: 'views/pages/learn-results-statistics.html'
-                }
+                '@': {templateUrl: 'views/pages/learn-results-statistics.html'}
             }
         })
         .state('learn.results.compare', {
             url: '/compare/:testNos',
             views: {
-                '@': {
-                    controller: 'LearnResultsCompareController',
-                    templateUrl: 'views/pages/learn-results-compare.html'
-                }
+                '@': {templateUrl: 'views/pages/learn-results-compare.html'}
             }
         })
 
@@ -186,9 +151,7 @@ function config($stateProvider, $urlRouterProvider) {
         .state('admin.users', {
             url: '/users',
             views: {
-                '@': {
-                    templateUrl: 'views/pages/admin-users.html'
-                }
+                '@': {templateUrl: 'views/pages/admin-users.html'}
             }
         })
 
@@ -224,10 +187,11 @@ function run($rootScope, $state, SessionService, ToastService) {
 
     function stateChangeStart(event, toState) {
         if (toState.data) {
-            var user = SessionService.user.get();
-            var project = SessionService.project.get();
+            const user = SessionService.user.get();
+            const project = SessionService.project.get();
 
-            if ((toState.data.roles && (user === null || toState.data.roles.indexOf(user.role) === -1))
+            if ((toState.data.roles && (user === null
+                || toState.data.roles.indexOf(user.role) === -1))
                 || (toState.data.requiresProject && project === null)) {
 
                 ToastService.danger('You are not allowed to go to this page!');

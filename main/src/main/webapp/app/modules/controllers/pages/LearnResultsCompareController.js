@@ -1,54 +1,58 @@
-import {_} from '../../libraries';
-
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
- *
- * @param $scope - The controllers $scope
- * @param $timeout - angular $timeout service
- * @param $stateParams - The state parameters
- * @param SessionService - The session service
- * @param LearnResultResource - The API resource for learn results
- * @param ErrorService - The ErrorService
- * @constructor
  */
 // @ngInject
-function LearnResultsCompareController($scope, $timeout, $stateParams, SessionService, LearnResultResource, ErrorService) {
-
-    // the project that is saved in the session
-    var project = SessionService.project.get();
+class LearnResultsCompareController {
 
     /**
-     * All final learn results from all tests that were made for a project
-     * @type {LearnResult[]}
+     * Constructor
+     * @param $timeout
+     * @param $stateParams
+     * @param SessionService
+     * @param LearnResultResource
+     * @param ErrorService
      */
-    $scope.results = [];
+    constructor($timeout, $stateParams, SessionService, LearnResultResource, ErrorService) {
+        this.$timeout = $timeout;
+        this.LearnResultResource = LearnResultResource;
+        this.ErrorService = ErrorService;
 
-    /**
-     * The list of active panels where each panel contains a complete learn result set
-     * @type {LearnResult[][]}
-     */
-    $scope.panels = [];
+        /**
+         * The project that is in the session
+         * @type {Project}
+         */
+        this.project = SessionService.project.get();
 
-    /**
-     * The list of layout settings for the current hypothesis that is shown in a panel
-     * @type {Object[]}
-     */
-    $scope.layoutSettings = [];
+        /**
+         * All final learn results from all tests that were made for a project
+         * @type {LearnResult[]}
+         */
+        this.results = [];
 
-    // load all final learn results of all test an then load the complete test results from the test numbers
-    // that are passed from the url in the panels
-    (function init() {
-        if (angular.isUndefined($stateParams.testNos)) {
-            ErrorService.setErrorMessage("There are no test numbers defined in the URL");
-            ErrorService.goToErrorPage();
-        }
-        LearnResultResource.getAllFinal(project.id)
-            .then(function (results) {
-                $scope.results = results;
-                return $stateParams.testNos;
+        /**
+         * The list of active panels where each panel contains a complete learn result set
+         * @type {LearnResult[][]}
+         */
+        this.panels = [];
+
+        /**
+         * The list of layout settings for the current hypothesis that is shown in a panel
+         * @type {Object[]}
+         */
+        this.layoutSettings = [];
+
+        // load all final learn results of all test an then load the complete test results from the test numbers
+        // that are passed from the url in the panels
+        if (!$stateParams.testNos) {
+            this.ErrorService.setErrorMessage("There are no test numbers defined in the URL");
+            this.ErrorService.goToErrorPage();
+        } else {
+            this.LearnResultResource.getAllFinal(this.project.id).then(results => {
+                this.results = results;
+                this.loadComplete($stateParams.testNos);
             })
-            .then(loadComplete);
-    }());
+        }
+    }
 
     /**
      * Loads a complete learn result set from a test number in the panel with a given index
@@ -56,20 +60,20 @@ function LearnResultsCompareController($scope, $timeout, $stateParams, SessionSe
      * @param {String} testNos - The test numbers as concatenated string, separated by a ','
      * @param {number} index - The index of the panel the complete learn result should be displayed in
      */
-    function loadComplete(testNos, index) {
-        LearnResultResource.getManyComplete(project.id, testNos.split(','))
+    loadComplete(testNos, index) {
+        this.LearnResultResource.getManyComplete(this.project.id, testNos.split(','))
             .then(completeResults => {
                 completeResults.forEach(result => {
                     if (angular.isUndefined(index)) {
-                        $scope.panels.push(result);
+                        this.panels.push(result);
                     } else {
-                        $scope.panels[index] = result;
+                        this.panels[index] = result;
                     }
                 });
             })
-            .catch(function (response) {
-                ErrorService.setErrorMessage(response.data.message);
-                ErrorService.goToErrorPage();
+            .catch(response => {
+                this.ErrorService.setErrorMessage(response.data.message);
+                this.ErrorService.goToErrorPage();
             })
     }
 
@@ -79,27 +83,27 @@ function LearnResultsCompareController($scope, $timeout, $stateParams, SessionSe
      * @param {LearnResult} result - The learn result whose complete set should be loaded in a panel
      * @param {number} index - The index of the panel the complete set should be displayed in
      */
-    $scope.fillPanel = function (result, index) {
-        loadComplete(result.testNo + '', index);
-    };
+    fillPanel(result, index) {
+        this.loadComplete(result.testNo + '', index);
+    }
 
     /**
      * Adds a new empty panel
      */
-    $scope.addPanel = function () {
-        $scope.panels.push(null)
-    };
+    addPanel() {
+        this.panels.push(null)
+    }
 
     /**
      * Removes a panel by a given index
      * @param {number} index - The index of the panel to remove
      */
-    $scope.closePanel = function (index) {
-        $scope.panels[index] = null;
-        $timeout(function () {
-            $scope.panels.splice(index, 1);
+    closePanel(index) {
+        this.panels[index] = null;
+        this.$timeout(() => {
+            this.panels.splice(index, 1);
         }, 0);
-        $timeout(function () {
+        this.$timeout(() => {
             window.dispatchEvent(new Event('resize'));
         }, 100)
     }

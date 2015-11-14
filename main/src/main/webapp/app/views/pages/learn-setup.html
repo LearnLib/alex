@@ -1,112 +1,110 @@
-<view-header title="Learn Process Setup"></view-header>
+<div ng-controller="LearnSetupController as vm">
+    <view-header title="Learn Process Setup"></view-header>
 
-<action-bar>
-    <checkbox-multiple model="allSymbols" class="pull-left"></checkbox-multiple>
+    <action-bar>
+        <div ng-if="vm.allSymbols.length > 0">
+            <checkbox-multiple model="vm.allSymbols" class="pull-left"></checkbox-multiple>
 
-    <div class="btn-group btn-group-sm pull-right">
-        <button class="btn btn-primary" ng-click="startLearning()">
-            Start Learning
-        </button>
-        <button class="btn btn-primary" learn-setup-settings-modal-handle
-                learn-configuration="learnConfiguration">
-            <i class="fa fa-gear"></i>
-        </button>
-    </div>
+            <div class="btn-group btn-group-sm pull-right">
+                <button class="btn btn-primary" ng-click="vm.startLearning()">
+                    Start Learning
+                </button>
+                <button class="btn btn-primary" learn-setup-settings-modal-handle
+                        learn-configuration="vm.learnConfiguration">
+                    <i class="fa fa-gear"></i>
+                </button>
+            </div>
 
-    <div class="pull-right" style="margin-right: 6px">
-        <a ui-sref="learn.start" class="btn btn-info btn-sm" ng-if="canContinueLearnProcess">
-            Continue
-        </a>
-    </div>
-</action-bar>
-
-<div class="view-body has-sub-nav">
-    <div class="alx-container-fluid">
-
-        <div class="alert alert-info alert-condensed clearfix">
-
-            <p>
-                Using algorithm <strong ng-bind="(learnConfiguration.algorithm | formatAlgorithm)"></strong>
-                with EQ-Oracle <strong ng-bind="(learnConfiguration.eqOracle.type | formatEqOracle)"></strong>
-                <span ng-if="learnConfiguration.eqOracle.type === 'complete'">
-                    (
-                    min-depth: <span ng-bind="learnConfiguration.eqOracle.minDepth"></span>,
-                    max-depth: <span ng-bind="learnConfiguration.eqOracle.maxDepth"></span>
-                    )
-                </span>
-                <span ng-if="learnConfiguration.eqOracle.type === 'random_word'">
-                    (
-                    min-length: <span ng-bind="learnConfiguration.eqOracle.minLength"></span>,
-                    max-length: <span ng-bind="learnConfiguration.eqOracle.maxLength"></span>,
-                    #words: <span ng-bind="learnConfiguration.eqOracle.maxNoOfTests"></span>
-                    )
-                </span>
-            </p>
-
-            <p ng-show="resetSymbol === null">
-                <em>Please select a reset symbol by clicking on the blue circle</em>
-            </p>
-
-            <p ng-show="resetSymbol !== null">
-                Reset symbol is <strong ng-bind="resetSymbol.name"></strong>
-            </p>
-
+            <div class="pull-right" style="margin-right: 6px">
+                <a ui-sref="learn.start" class="btn btn-info btn-sm" ng-if="vm.canContinueLearnProcess">
+                    Continue
+                </a>
+            </div>
         </div>
-        <hr>
+    </action-bar>
 
-        <div class="row">
+    <div class="view-body has-sub-nav">
+        <div class="alx-container-fluid">
 
-            <div class="col-sm-8 col-md-9">
+            <div class="alert alert-info alert-condensed clearfix">
 
-                <symbol-group-list>
-                    <symbol-group-list-item ng-repeat="group in groups track by $index | orderBy:'-name':true"
-                                            group="group" editable="false">
+                <p>
+                    Using algorithm <strong ng-bind="(vm.learnConfiguration.algorithm | formatAlgorithm)"></strong>
+                    with EQ-Oracle <strong ng-bind="(vm.learnConfiguration.eqOracle.type | formatEqOracle)"></strong>
+                <span ng-if="vm.learnConfiguration.eqOracle.type === 'complete'">
+                    (
+                    min-depth: <span ng-bind="vm.learnConfiguration.eqOracle.minDepth"></span>,
+                    max-depth: <span ng-bind="vm.learnConfiguration.eqOracle.maxDepth"></span>
+                    )
+                </span>
+                <span ng-if="vm.learnConfiguration.eqOracle.type === 'random_word'">
+                    (
+                    min-length: <span ng-bind="vm.learnConfiguration.eqOracle.minLength"></span>,
+                    max-length: <span ng-bind="vm.learnConfiguration.eqOracle.maxLength"></span>,
+                    #words: <span ng-bind="vm.learnConfiguration.eqOracle.maxNoOfTests"></span>
+                    )
+                </span>
+                </p>
+
+                <p ng-if="vm.resetSymbol === null">
+                    <em>Please select a reset symbol by clicking on the blue circle</em>
+                </p>
+
+                <p ng-if="vm.resetSymbol !== null">
+                    Reset symbol is <strong ng-bind="resetSymbol.name"></strong>
+                </p>
+
+            </div>
+            <hr>
+
+            <div class="row">
+                <div class="col-sm-8 col-md-9">
+                    <symbol-group-list>
+                        <symbol-group-list-item ng-repeat="group in vm.groups track by $index | orderBy:'-name':true"
+                                                group="group" editable="false">
 
                             <symbol-list>
                                 <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true"
-                                                  selection-model
-                                                  selection-model-selected-items="selectedSymbols"
-                                                  symbol="symbol">
+                                                  symbol="symbol"
+                                                  selection-model selection-model-selected-items="vm.selectedSymbols">
 
-                                    <a href="" class="pull-right" ng-if="resetSymbol !== symbol"
-                                       ng-click="setResetSymbol(symbol)"
+                                    <a href="" class="pull-right" ng-if="vm.resetSymbol !== symbol"
+                                       ng-click="vm.setResetSymbol(symbol)"
                                        tooltip="Set as reset symbol" tooltip-placement="left"
                                        selection-model-ignore>
                                         <i class="fa fa-circle-thin"></i>
                                     </a>
 
-                                    <span ng-if="resetSymbol === symbol" class="label label-primary">Reset Symbol</span>
+                                    <span ng-if="vm.resetSymbol === symbol"
+                                          class="label label-primary">Reset Symbol</span>
 
                                 </symbol-list-item>
                             </symbol-list>
 
-                    </symbol-group-list-item>
-                </symbol-group-list>
+                        </symbol-group-list-item>
+                    </symbol-group-list>
+                </div>
 
-            </div>
+                <div class="col-sm-4 col-md-3">
+                    <div class="list-group list-group-condensed">
+                        <a href="" class="list-group-item disabled">
+                            Reuse a previous configuration
+                        </a>
+                        <a href="" class="list-group-item"
+                           ng-repeat="result in vm.learnResults | orderBy:'-testNo':false | limitTo:5"
+                           ng-click="vm.reuseConfigurationFromResult(result)">
+                            <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
+                            TestNo <span ng-bind="result.testNo"></span>
 
-            <div class="col-sm-4 col-md-3">
-
-                <div class="list-group list-group-condensed">
-                    <a href class="list-group-item disabled">
-                        Reuse a previous configuration
-                    </a>
-                    <a href class="list-group-item"
-                       ng-repeat="result in learnResults | orderBy:'-testNo':false | limitTo:5"
-                       ng-click="reuseConfigurationFromResult(result)">
-                        <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
-                        TestNo <span ng-bind="result.testNo"></span>
-
-                        <div>
-                            <i class="text-muted"
-                               ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></i>
-                        </div>
-                    </a>
+                            <div>
+                                <i class="text-muted"
+                                   ng-bind="(result.statistics.startTime | date : 'EEE, dd.MM.yyyy, HH:mm')"></i>
+                            </div>
+                        </a>
+                    </div>
                 </div>
 
             </div>
-
         </div>
-
     </div>
 </div>

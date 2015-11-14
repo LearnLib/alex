@@ -4,167 +4,162 @@ import LearnConfiguration from '../../entities/LearnConfiguration';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
- *
- * @param $scope - The controllers scope
- * @param $state - The ui.router $state service
- * @param SymbolGroupResource - The API resource for symbol groups
- * @param SessionService - The SessionService
- * @param LearnerResource - The API service for the learner
- * @param ToastService - The ToastService
- * @param LearnResultResource - The API resource for learn results
- * @param EventBus
- * @constructor
  */
 // @ngInject
-function LearnSetupController($scope, $state, SymbolGroupResource, SessionService, LearnerResource, ToastService,
-                              LearnResultResource, EventBus) {
+class LearnSetupController {
+    constructor($scope, $state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
+                EventBus) {
 
-    // the project that is stored in the session
-    const project = SessionService.project.get();
+        this.$state = $state;
+        this.LearnerResource = LearnerResource;
+        this.ToastService = ToastService;
 
-    /**
-     * All symbol groups that belong the the sessions project
-     * @type {SymbolGroup[]}
-     */
-    $scope.groups = [];
+        /**
+         * The project that is in the session
+         * @type {Project}
+         */
+        this.project = SessionService.project.get();
 
-    /**
-     * The learn results of previous learn processes
-     * @type {learnResult[]}
-     */
-    $scope.learnResults = [];
+        /**
+         * All symbol groups that belong the the sessions project
+         * @type {SymbolGroup[]}
+         */
+        this.groups = [];
 
-    /**
-     * A list of all symbols of all groups that is used in order to select them
-     * @type {Symbol[]}
-     */
-    $scope.allSymbols = [];
+        /**
+         * The learn results of previous learn processes
+         * @type {learnResult[]}
+         */
+        this.learnResults = [];
 
-    /**
-     * The configuration that is send to the server for learning
-     * @type {LearnConfiguration}
-     */
-    $scope.learnConfiguration = new LearnConfiguration();
+        /**
+         * A list of all symbols of all groups that is used in order to select them
+         * @type {Symbol[]}
+         */
+        this.allSymbols = [];
 
-    /**
-     * The symbol that should be used as a reset symbol
-     * @type {Symbol|null}
-     */
-    $scope.resetSymbol = null;
+        /**
+         * A list of selected Symbols
+         * @type {Symbol[]}
+         */
+        this.selectedSymbols = [];
 
-    /**
-     * Indicates whether there is a learning process that can be continued (the last one)
-     * @type {boolean}
-     */
-    $scope.canContinueLearnProcess = false;
+        /**
+         * The configuration that is send to the server for learning
+         * @type {LearnConfiguration}
+         */
+        this.learnConfiguration = new LearnConfiguration();
 
-    EventBus.on(events.LEARN_CONFIG_UPDATED, (evt, data) => {
-        $scope.learnConfiguration = data.learnConfiguration;
-    });
+        /**
+         * The symbol that should be used as a reset symbol
+         * @type {Symbol|null}
+         */
+        this.resetSymbol = null;
 
-    // make sure that there isn't any other learn process active
-    // redirect to the load screen in case there is an active one
-    LearnerResource.isActive()
-        .then(data => {
-            if (data.active) {
-                if (data.project == project.id) {
-                    ToastService.info('There is currently running a learn process.');
-                    $state.go('learn.start');
+        /**
+         * Indicates whether there is a learning process that can be continued (the last one)
+         * @type {boolean}
+         */
+        this.canContinueLearnProcess = false;
+
+        EventBus.on(events.LEARN_CONFIG_UPDATED, (evt, data) => {
+            this.learnConfiguration = data.learnConfiguration;
+        }, $scope);
+
+        // make sure that there isn't any other learn process active
+        // redirect to the load screen in case there is an active one
+        this.LearnerResource.isActive()
+            .then(data => {
+                if (data.active) {
+                    if (data.project == this.project.id) {
+                        this.ToastService.info('There is currently running a learn process.');
+                        this.$state.go('learn.start');
+                    } else {
+                        this.ToastService.danger('There is already running a test from another project.');
+                        this.$state.go('project')
+                    }
                 } else {
-                    ToastService.danger('There is already running a test from another project.');
-                    $state.go('project')
+
+                    // load all symbols in case there isn't any active learning process
+                    SymbolGroupResource.getAll(this.project.id, true)
+                        .then(groups => {
+                            this.groups = groups;
+                            this.allSymbols = _.flatten(this.groups.map(g => g.symbols));
+                        });
+
+                    // load learn results so that their configuration can be reused
+                    LearnResultResource.getAllFinal(this.project.id)
+                        .then(learnResults => {
+                            this.learnResults = learnResults;
+                        })
                 }
-            } else {
+            });
 
-                // load all symbols in case there isn't any active learning process
-                SymbolGroupResource.getAll(project.id, true)
-                    .then(groups => {
-                        $scope.groups = groups;
-                        $scope.allSymbols = _.flatten(_.pluck($scope.groups, 'symbols'));
-                    });
-
-                // load learn results so that their configuration can be reused
-                LearnResultResource.getAllFinal(project.id)
-                    .then(learnResults => {
-                        $scope.learnResults = learnResults;
-                    })
-            }
+        // get the status to check if there is a learn process that can be continued
+        this.LearnerResource.getStatus().then(data => {
+            this.canContinueLearnProcess = data !== null;
         });
-
-    // get the status to check if there is a learn process that can be continued
-    LearnerResource.getStatus()
-        .then(data => {
-            $scope.canContinueLearnProcess = data !== null;
-        });
+    }
 
     /**
      * Sets the reset symbol
-     *
      * @param {Symbol} symbol - The symbol that will be used to reset the sul
      */
-    $scope.setResetSymbol = function (symbol) {
-        $scope.resetSymbol = symbol;
-    };
+    setResetSymbol(symbol) {
+        this.resetSymbol = symbol;
+    }
 
     /**
      * Starts the learning process if symbols are selected and a reset symbol is defined. Redirects to the
      * learning load screen on success.
      */
-    $scope.startLearning = function () {
-        var selectedSymbols;
-
-        if ($scope.resetSymbol === null) {
-            ToastService.danger('You <strong>must</strong> selected a reset symbol in order to start learning!');
-            return;
-        }
-
-        selectedSymbols = _.filter($scope.allSymbols, '_selected');
-
-        if (selectedSymbols.length > 0) {
-            _.forEach(selectedSymbols, function (symbol) {
-                $scope.learnConfiguration.addSymbol(symbol)
-            });
-
-            $scope.learnConfiguration.setResetSymbol($scope.resetSymbol);
-
-            LearnerResource.start(project.id, $scope.learnConfiguration)
-                .success(function () {
-                    ToastService.success('Learn process started successfully.');
-                    $state.go('learn.start');
-                })
-                .catch(function (response) {
-                    ToastService.danger('<p><strong>Start learning failed</strong></p>' + response.data.message);
-                });
+    startLearning() {
+        if (this.resetSymbol === null) {
+            this.ToastService.danger('You <strong>must</strong> selected a reset symbol in order to start learning!');
         } else {
-            ToastService.danger('You <strong>must</strong> at least select one symbol to start learning');
+            if (this.selectedSymbols.length > 0) {
+
+                // add selected symbols and the reset symbol to the learn config
+                this.selectedSymbols.forEach(symbol => {
+                    this.learnConfiguration.addSymbol(symbol)
+                });
+                this.learnConfiguration.setResetSymbol(this.resetSymbol);
+
+                // start learning
+                this.LearnerResource.start(this.project.id, this.learnConfiguration)
+                    .success(() => {
+                        this.ToastService.success('Learn process started successfully.');
+                        this.$state.go('learn.start');
+                    })
+                    .catch(response => {
+                        this.ToastService.danger('<p><strong>Start learning failed</strong></p>' + response.data.message);
+                    });
+            } else {
+                this.ToastService.danger('You <strong>must</strong> at least select one symbol to start learning');
+            }
         }
-    };
+    }
 
-    $scope.reuseConfigurationFromResult = function (result) {
-        var config = result.configuration;
-        $scope.learnConfiguration.algorithm = config.algorithm;
-        $scope.learnConfiguration.eqOracle = config.eqOracle;
-        $scope.learnConfiguration.maxAmountOfStepsToLearn = config.maxAmountOfStepsToLearn;
+    /**
+     * Reuse the properties of a previous learn result for the current one
+     * @param {LearnResult} result
+     */
+    reuseConfigurationFromResult(result) {
+        const config = result.configuration;
+        this.learnConfiguration.algorithm = config.algorithm;
+        this.learnConfiguration.eqOracle = config.eqOracle;
+        this.learnConfiguration.maxAmountOfStepsToLearn = config.maxAmountOfStepsToLearn;
 
-        var ids = _.pluck(config.symbols, 'id');
-        _.forEach($scope.groups, function (group) {
-            _.forEach(group.symbols, function (symbol) {
-                symbol._selected = _.indexOf(ids, symbol.id) > -1;
+        const ids = config.symbols.map(s => s.id);
+        this.groups.forEach(group => {
+            group.symbols.forEach(symbol => {
+                symbol._selected = ids.indexOf(symbol.id) > -1;
                 if (symbol.id === config.resetSymbol.id) {
-                    $scope.resetSymbol = symbol;
+                    this.resetSymbol = symbol;
                 }
             })
         })
-    };
-
-    /**
-     * Updates the learn configuration
-     *
-     * @param {LearnConfiguration} config
-     */
-    $scope.updateLearnConfiguration = function (config) {
-        $scope.learnConfiguration = config;
-    };
+    }
 }
 
 export default LearnSetupController;

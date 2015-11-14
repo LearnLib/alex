@@ -1,5 +1,8 @@
+import {events} from '../../constants';
+
 // @ngInject
-function userLoginForm($state, $window, UserResource, jwtHelper, ToastService, SessionService, UserFormModel) {
+function userLoginForm($state, $window, UserResource, jwtHelper, ToastService, SessionService, UserFormModel,
+                       EventBus) {
     return {
         scope: true,
         template: `
@@ -30,16 +33,15 @@ function userLoginForm($state, $window, UserResource, jwtHelper, ToastService, S
 
                         const token = response.data.token;
                         const tokenPayload = jwtHelper.decodeToken(token);
-
-                        $window.sessionStorage.setItem('jwt', token);
-
-                        // save user in session
-                        SessionService.user.save({
+                        const user = {
                             id: tokenPayload.userId,
                             role: tokenPayload.userRole
-                        });
+                        };
 
-                        // go to the users project page
+                        $window.sessionStorage.setItem('jwt', token);
+                        SessionService.user.save(user);
+
+                        EventBus.emit(events.USER_LOGGED_IN, {user: user});
                         $state.go('projects');
                     })
                     .catch(() => {
