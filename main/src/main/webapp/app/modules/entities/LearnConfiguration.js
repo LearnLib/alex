@@ -65,11 +65,10 @@ class LearnConfiguration {
 
     /**
      * Get the configuration as required to resume a learn process
-     * @returns {{maxAmountOfStepsToLearn: number, eqOracle: (*), algorithm: (string|*)}}
+     * @returns {{eqOracle: (*|RandomEqOracle), algorithm: string}}
      */
     getLearnResumeConfiguration() {
         return {
-            maxAmountOfStepsToLearn: this.maxAmountOfStepsToLearn,
             eqOracle: this.eqOracle,
             algorithm: this.algorithm
         }

@@ -39,7 +39,7 @@ class LearnResultsStatisticsController {
          * The map that indicated from which property of a Learner Result a chart should be created
          * @type {{RESETS: string, SYMBOLS: string, DURATION: string}}
          */
-        this.chartProperties = LearnerResultChartService.properties;
+        this.chartProperties = this.LearnerResultChartService.properties;
 
         /**
          * All final Learn Results from the project
@@ -106,7 +106,7 @@ class LearnResultsStatisticsController {
      */
     createChartFromFinalResults() {
         if (this.selectedResults.length > 0) {
-            const chartData = LearnerResultChartService
+            const chartData = this.LearnerResultChartService
                 .createDataFromMultipleFinalResults(this.selectedResults, this.selectedChartProperty);
 
             this.chartData = {
@@ -127,7 +127,7 @@ class LearnResultsStatisticsController {
         if (this.selectedResults.length > 0) {
             this.LearnResultResource.getManyComplete(this.project.id, this.selectedResults.map(r => r.testNo))
                 .then(completeResults => {
-                    const chartData = LearnerResultChartService
+                    const chartData = this.LearnerResultChartService
                         .createDataFromMultipleCompleteResults(completeResults, this.selectedChartProperty);
 
                     this.chartData = {

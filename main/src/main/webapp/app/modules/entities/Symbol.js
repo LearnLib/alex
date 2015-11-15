@@ -1,5 +1,7 @@
 import ActionService from '../services/ActionService';
 
+const actionService = new ActionService();
+
 /** The model for the symbol create form */
 class SymbolFormModel {
 
@@ -68,7 +70,7 @@ class Symbol extends SymbolFormModel {
          * The actions of the symbol
          * @type {Action[]}
          */
-        this.actions = obj.actions.map(action => ActionService.create(action));
+        this.actions = obj.actions.map(action => actionService.create(action));
     }
 
     /**

@@ -13,7 +13,7 @@ function loadScreen($http) {
     return {
         scope: {},
         template: `
-                <div id="load-screen">
+                <div id="load-screen" ng-if="show">
                     <p class="text-center" id="load-screen-indicator">
                         <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
                     </p>
@@ -22,24 +22,17 @@ function loadScreen($http) {
         link: link
     };
 
-    function link(scope, el) {
+    function link(scope) {
 
         /**
-         * Shows if there are currently any active http requests going on
-         *
-         * @returns {boolean} - If there are any active requests
+         * If the loadscreen is visible or not
+         * @type {boolean}
          */
-        scope.hasPendingRequests = function () {
-            return $http.pendingRequests.length > 0;
-        };
+        scope.show = false;
 
         // watch the change of pendingRequests and change the visibility of the load screen
-        scope.$watch(scope.hasPendingRequests, value => {
-            if (value) {
-                el[0].style.display = 'block';
-            } else {
-                el[0].style.display = 'none';
-            }
+        scope.$watch(() => $http.pendingRequests.length > 0, value => {
+            scope.show = value ? true : false;
         });
     }
 }

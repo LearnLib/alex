@@ -101,8 +101,6 @@ function hypothesis($window, EventBus) {
         }
 
         function layout() {
-            var node;
-
             function createEdgeObject(label) {
                 return {
                     label: label,
@@ -115,7 +113,7 @@ function hypothesis($window, EventBus) {
 
             // add nodes to the graph
             for (var i = 0; i < scope.result.hypothesis.nodes.length; i++) {
-                node = scope.result.hypothesis.nodes[i];
+                let node = scope.result.hypothesis.nodes[i];
                 _graph.setNode(node.toString(), {
                     shape: 'circle',
                     label: node.toString(),
@@ -134,15 +132,12 @@ function hypothesis($window, EventBus) {
             _.forEach(scope.result.hypothesis.edges, function (edge) {
                 if (!graph[edge.from]) {
                     graph[edge.from] = {};
-                    graph[edge.from][edge.to] = [edge.input + "/"
-                    + edge.output];
+                    graph[edge.from][edge.to] = [edge.input + "/" + edge.output];
                 } else {
                     if (!graph[edge.from][edge.to]) {
-                        graph[edge.from][edge.to] = [edge.input + "/"
-                        + edge.output];
+                        graph[edge.from][edge.to] = [edge.input + "/" + edge.output];
                     } else {
-                        graph[edge.from][edge.to].push(edge.input + "/"
-                            + edge.output);
+                        graph[edge.from][edge.to].push(edge.input + "/" + edge.output);
                     }
                 }
             });
@@ -176,37 +171,35 @@ function hypothesis($window, EventBus) {
         }
 
         function handleEvents() {
-            var zoom;
 
             // attach click events for the selection of counter examples to the edge labels
             // only if counterExamples is defined
             if (angular.isDefined(scope.isSelectable)) {
                 _svg.selectAll('.edgeLabel tspan').on('click', function () {
-                    var label = this.innerHTML.split('/'); // separate abbreviation from output
-                    var abbreviation = label[0];
-                    var output = label[1];
+                    const label = this.innerHTML.split('/'); // separate abbreviation from output
                     scope.$apply(() => {
                         EventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {
-                            input: abbreviation,
-                            output: output
+                            input: label[0],
+                            output: label[1]
                         })
                     });
                 });
             }
 
             // Create and handle zoom  & pan event
-            zoom = d3.behavior.zoom().scaleExtent([0.1, 10])
-                .translate([(_svgContainer.clientWidth - _graph.graph().width) / 2, 100]).on("zoom", zoomHandler);
-            zoom(_svg);
+            const zoom = d3.behavior.zoom()
+                .scaleExtent([0.1, 10])
+                .translate([(_svgContainer.clientWidth - _graph.graph().width) / 2, 100])
+                .on("zoom", () => {
+                    _svgGroup.attr('transform', 'translate(' + zoom.translate()
+                        + ')' + ' scale(' + zoom.scale() + ')');
+                });
 
-            function zoomHandler() {
-                _svgGroup.attr('transform', 'translate(' + zoom.translate()
-                    + ')' + ' scale(' + zoom.scale() + ')');
-            }
+            zoom(_svg);
 
             // do this whole stuff so that the size of the svg adjusts to the window
             $window.addEventListener('resize', fitSize);
-            scope.$on('$destroy', function () {
+            scope.$on('$destroy', () => {
                 $window.removeEventListener('resize', fitSize);
             });
 
@@ -216,7 +209,7 @@ function hypothesis($window, EventBus) {
             }
 
             // prevent hypothesis not to be rendered instantly
-            window.setTimeout(function () {
+            window.setTimeout(() => {
                 window.dispatchEvent(new Event('resize'));
             }, 100);
         }

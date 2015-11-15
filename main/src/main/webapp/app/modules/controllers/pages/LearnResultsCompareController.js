@@ -61,7 +61,7 @@ class LearnResultsCompareController {
      * @param {number} index - The index of the panel the complete learn result should be displayed in
      */
     loadComplete(testNos, index) {
-        this.LearnResultResource.getManyComplete(this.project.id, testNos.split(','))
+        this.LearnResultResource.getManyComplete(this.project.id, testNos)
             .then(completeResults => {
                 completeResults.forEach(result => {
                     if (angular.isUndefined(index)) {
@@ -100,12 +100,7 @@ class LearnResultsCompareController {
      */
     closePanel(index) {
         this.panels[index] = null;
-        this.$timeout(() => {
-            this.panels.splice(index, 1);
-        }, 0);
-        this.$timeout(() => {
-            window.dispatchEvent(new Event('resize'));
-        }, 100)
+        this.panels.splice(index, 1);
     }
 }
 

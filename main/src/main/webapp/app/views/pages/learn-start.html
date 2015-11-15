@@ -3,7 +3,7 @@
 
     <div class="learn-start-wrapper" layout-toggle-element>
 
-        <div ng-if="vm.active == true" class="alx-container learn-loading-indicator">
+        <div ng-if="vm.active" class="alx-container learn-loading-indicator">
             <div class="alert alert-info">
                 <button class="btn btn-info btn-xs pull-right" ng-click="vm.abort()">
                     <i class="fa fa-close fa-fw"></i> Abort
@@ -30,7 +30,7 @@
 
         <div ng-if="!vm.active && vm.results.length > 0">
 
-            <div class="panel-sidebar" ng-class="vm.showSidebar === true ? 'show' : ''">
+            <div class="panel-sidebar" ng-class="{'show': vm.showSidebar}">
                 <div widget title="Configuration">
                     <div learn-resume-settings-widget learn-configuration="_.last(vm.results).configuration"></div>
                 </div>

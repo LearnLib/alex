@@ -1,3 +1,4 @@
+import {events} from '../constants';
 import {User} from '../entities/User';
 import {Project} from '../entities/Project';
 
@@ -6,12 +7,12 @@ import {Project} from '../entities/Project';
  * between page refreshes in the same tab. So the project doesn't have to be fetched from the server every time the
  * page refreshes
  *
- * @param $rootScope
+ * @param EventBus
  * @returns {{project: {get: getProject, save: saveProject, remove: removeProject}, user: {get: getUser, save: saveUser, remove: removeUser}}}
  * @constructor
  */
 // @ngInject
-function SessionService($rootScope) {
+function SessionService(EventBus) {
     return {
         project: {
             get: getProject,
@@ -31,7 +32,7 @@ function SessionService($rootScope) {
      * @return {Project}
      */
     function getProject() {
-        var project = sessionStorage.getItem('project');
+        const project = sessionStorage.getItem('project');
         return project === null ? null : new Project(angular.fromJson(project));
     }
 
@@ -42,7 +43,7 @@ function SessionService($rootScope) {
      */
     function saveProject(project) {
         sessionStorage.setItem('project', angular.toJson(project));
-        $rootScope.$emit('project:opened', project);
+        EventBus.emit(events.PROJECT_OPENED, {project: project});
     }
 
     /**
@@ -50,24 +51,22 @@ function SessionService($rootScope) {
      */
     function removeProject() {
         sessionStorage.removeItem('project');
-        $rootScope.$emit('project:closed');
     }
 
 
     function getUser() {
-        var user = sessionStorage.getItem('user');
+        const user = sessionStorage.getItem('user');
         return user === null ? null : new User(angular.fromJson(user));
     }
 
     function saveUser(user) {
         sessionStorage.setItem('user', angular.toJson(user));
-        $rootScope.$emit('user:loggedIn', user);
+        EventBus.emit(events.USER_LOGGED_IN, {user: user});
     }
 
     function removeUser() {
         sessionStorage.removeItem('user');
         sessionStorage.removeItem('jwt');
-        $rootScope.$emit('user:loggedOut');
     }
 }
 

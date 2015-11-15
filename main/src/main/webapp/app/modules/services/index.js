@@ -13,7 +13,7 @@ const moduleName = 'ALEX.services';
 
 angular
     .module(moduleName, [])
-    .factory('ActionService', () => ActionService)
+    .service('ActionService', ActionService)
     .service('ClipboardService', ClipboardService)
     .service('ErrorService', ErrorService)
     .service('EventBus', EventBus)

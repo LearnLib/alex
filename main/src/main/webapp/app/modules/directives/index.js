@@ -1,7 +1,6 @@
 import actionBar from './actionBar';
 import {checkbox, checkboxMultiple} from './checkbox';
 import discriminationTree from './discriminationTree';
-import dispatchResize from './dispatchResize';
 import downloadAsJson from './downloadAsJson';
 import downloadLearnerResultsAsCsv from './downloadLearnerResultsAsCsv';
 import downloadSvg from './downloadSvg';
@@ -61,7 +60,6 @@ angular
     .directive('checkbox', checkbox)
     .directive('checkboxMultiple', checkboxMultiple)
     .directive('discriminationTree', discriminationTree)
-    .directive('dispatchResize', dispatchResize)
     .directive('downloadAsJson', downloadAsJson)
     .directive('downloadLearnerResultsAsCsv', downloadLearnerResultsAsCsv)
     .directive('downloadTableAsCsv', downloadTableAsCsv)

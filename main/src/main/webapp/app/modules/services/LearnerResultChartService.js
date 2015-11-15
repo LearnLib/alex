@@ -1,13 +1,14 @@
+import {_} from '../libraries';
+
 /**
  * The service to create n3 line chart data from learner results. Can create bar chart data from multiple final
  * learner results and area chart data from multiple complete learner results.
  *
- * @param _ - Lodash
  * @returns {{createDataFromMultipleFinalResults: createDataFromMultipleFinalResults, createDataFromMultipleCompleteResults: createDataFromMultipleCompleteResults, properties: {MQS: string, EQS: string, SYMBOL_CALLS: string, SIGMA: string, DURATION: string}}}
  * @constructor
  */
 // @ngInject
-function LearnerResultChartService(_) {
+function LearnerResultChartService() {
 
     // The learner result properties
     var properties = {

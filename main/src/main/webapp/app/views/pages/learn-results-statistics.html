@@ -9,7 +9,7 @@
 
                 <div class="btn-group btn-group-sm pull-left" dropdown dropdown-hover>
                     <button class="btn btn-primary btn-dropdown"
-                            ng-class="{'disabled': vm.selectedResults.length > 0}">
+                            ng-class="{'disabled': vm.selectedResults.length === 0}">
                         Create Chart
                     </button>
                     <ul class="dropdown-menu" role="menu" ng-show="vm.selectedResults.length > 0">
@@ -28,7 +28,7 @@
 
                 <div class="btn-group btn-group-sm pull-right" dropdown dropdown-hover>
                     <button class="btn btn-default btn-dropdown"
-                            ng-class="{'disabled': vm.selectedResults.length > 0}">
+                            ng-class="{'disabled': vm.selectedResults.length === 0}">
                         <i class="fa fa-fw fa-download"></i> Download as *.csv
                     </button>
                     <ul class="dropdown-menu" role="menu" ng-if="vm.selectedResults.length > 0">

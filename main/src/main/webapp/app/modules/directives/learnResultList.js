@@ -38,9 +38,9 @@ function learnResultListItem() {
                         </strong>,
                         [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
                         <div class="text-muted">
-                        <i>
+                        <em>
                             Started: <span ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
-                        </i>
+                        </em>
                     </div>
                     <div class="comment text-muted"
                          ng-show="result.configuration.comment"

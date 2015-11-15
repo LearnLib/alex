@@ -32,7 +32,6 @@ angular
         resources,
         services
     ])
-    .constant('_', window._)
     .config(configuration.config)
     .config(routes.config)
     .run(configuration.run)

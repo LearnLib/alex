@@ -60,8 +60,7 @@ class LearnResultResource {
      * @returns {*} [LearnResult[]]
      */
     getManyComplete(projectId, testNos) {
-        const joinedTestNos = testNos.join(',');
-        return this.$http.get(`/rest/projects/${projectId}/results/${joinedTestNos}/complete`)
+        return this.$http.get(`/rest/projects/${projectId}/results/${testNos}/complete`)
             .then(response => {
                 if (response.data.length > 0) {
                     if (!angular.isArray(response.data[0])) {

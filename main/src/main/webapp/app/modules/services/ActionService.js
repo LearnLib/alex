@@ -114,4 +114,4 @@ class ActionService {
     }
 }
 
-export default new ActionService();
+export default ActionService;

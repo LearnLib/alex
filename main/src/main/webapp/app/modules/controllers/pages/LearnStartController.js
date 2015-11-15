@@ -10,6 +10,7 @@ class LearnStartController {
 
     /**
      * Constructor
+     * @param $scope
      * @param $interval
      * @param SessionService
      * @param LearnerResource
@@ -17,7 +18,7 @@ class LearnStartController {
      * @param ToastService
      * @param ErrorService
      */
-    constructor($interval, SessionService, LearnerResource, LearnResultResource, ToastService, ErrorService) {
+    constructor($scope, $interval, SessionService, LearnerResource, LearnResultResource, ToastService, ErrorService) {
         this.$interval = $interval;
         this.LearnerResource = LearnerResource;
         this.LearnResultResource = LearnResultResource;
@@ -70,6 +71,8 @@ class LearnStartController {
         $scope.$on("$destroy", () => {
             this.$interval.cancel(this.interval);
         });
+
+        this.poll();
     }
 
     /** Checks every x seconds if the server has finished learning and sets the test if he did */

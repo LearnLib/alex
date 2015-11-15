@@ -19,7 +19,7 @@ function actionFormFields() {
                 <div ng-if="action !== null">
                     <hr>
                     <p>
-                        <a href ng-click="advancedOptions = !advancedOptions"><i class="fa fa-gear fa-fw"></i> Advanced Options</a>
+                        <a href="" ng-click="advancedOptions = !advancedOptions"><i class="fa fa-gear fa-fw"></i> Advanced Options</a>
                     </p>
                     <div collapse="!advancedOptions">
                         <div class="checkbox">

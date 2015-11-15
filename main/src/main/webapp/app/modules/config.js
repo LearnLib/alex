@@ -1,3 +1,5 @@
+import {_} from './libraries';
+
 /**
  * Configure some third party libraries and set the http interceptor to send the jwt with each request
  * @param ngToastProvider
@@ -34,10 +36,9 @@ function config(ngToastProvider, selectionModelOptionsProvider, jwtInterceptorPr
 /**
  * Make lodash available for usage in templates
  * @param $rootScope
- * @param _
  */
 // @ngInject
-function run($rootScope, _) {
+function run($rootScope) {
 
     // make lodash available for use in templates
     $rootScope._ = _;
