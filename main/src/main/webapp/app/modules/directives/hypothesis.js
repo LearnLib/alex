@@ -1,5 +1,8 @@
-import {_, d3, dagreD3, graphlib} from '../libraries';
+import _ from 'lodash';
+import {graphlib, dagre, render as Renderer} from 'dagre-d3';
+
 import {events} from '../constants';
+import {d3} from '../libraries';
 
 /**
  * The directive that is used to display hypotheses.
@@ -45,13 +48,13 @@ function hypothesis($window, EventBus) {
             initNode: 'fill: #B3E6B3; stroke: #5cb85c; stroke-width: 3'
         };
 
-        scope.$watch('result', function (result) {
+        scope.$watch('result', result => {
             if (angular.isDefined(result) && result !== null) {
                 createHypothesis();
             }
         });
 
-        scope.$watch('layoutSettings', function (ls) {
+        scope.$watch('layoutSettings', ls => {
             if (angular.isDefined(ls)) {
                 createHypothesis();
             }
@@ -129,7 +132,7 @@ function hypothesis($window, EventBus) {
 
             // build data structure for the alternative representation by
             // pushing some data
-            _.forEach(scope.result.hypothesis.edges, function (edge) {
+            scope.result.hypothesis.edges.forEach(edge => {
                 if (!graph[edge.from]) {
                     graph[edge.from] = {};
                     graph[edge.from][edge.to] = [edge.input + "/" + edge.output];
@@ -150,13 +153,13 @@ function hypothesis($window, EventBus) {
             });
 
             // layout with dagre
-            dagreD3.dagre.layout(_graph, {});
+            dagre.layout(_graph, {});
         }
 
         function render() {
 
             // render the graph in the svg
-            _renderer = new dagreD3.render();
+            _renderer = new Renderer();
             _renderer(_svgGroup, _graph);
 
             // Center graph horizontally

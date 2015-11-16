@@ -518,38 +518,5 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>bootstrap-bower</id>
-            <activation>
-                <file>
-                    <missing>src/main/webapp/bower_components</missing>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.4.0</version>
-                        <executions>
-                            <execution>
-                                <id>grunt-bower</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>grunt</executable>
-                                    <arguments>
-                                        <argument>bower:install</argument>
-                                    </arguments>
-                                    <workingDirectory>src/main/webapp</workingDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 </project>

@@ -33,7 +33,7 @@ function actionEditModalHandle($modal, ActionService) {
 
                         // copy the id because it gets lost otherwise
                         const id = scope.action._id;
-                        const action = ActionService.createFromType(scope.action);
+                        const action = ActionService.create(scope.action);
                         action._id = id;
 
                         return {

@@ -1,4 +1,4 @@
-import {_} from '../../libraries';
+import _ from 'lodash';
 
 /**
  * The controller for listing all final test results.

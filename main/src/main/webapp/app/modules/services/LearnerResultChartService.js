@@ -1,4 +1,4 @@
-import {_} from '../libraries';
+import _ from 'lodash';
 
 /**
  * The service to create n3 line chart data from learner results. Can create bar chart data from multiple final

@@ -1,4 +1,4 @@
-import {_} from './libraries';
+import _ from 'lodash';
 
 /**
  * Configure some third party libraries and set the http interceptor to send the jwt with each request

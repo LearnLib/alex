@@ -1,4 +1,4 @@
-import {_} from '../../libraries';
+import _ from 'lodash';
 import {Symbol} from '../../entities/Symbol';
 
 /**

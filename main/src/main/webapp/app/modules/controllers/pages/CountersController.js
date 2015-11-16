@@ -1,4 +1,4 @@
-import {_} from '../../libraries';
+import _ from 'lodash';
 
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.

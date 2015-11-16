@@ -1,33 +1,29 @@
 module.exports = function (grunt) {
 
     var libraries = [
-        'bower_components/angular/angular.min.js',
-        'bower_components/angular-ui-router/release/angular-ui-router.min.js',
-        'bower_components/angular-animate/angular-animate.min.js',
-        'bower_components/lodash/lodash.min.js',
-        'bower_components/selection-model/dist/selection-model.min.js',
-        'bower_components/angular-ui-ace/ui-ace.min.js',
-        'bower_components/ace-builds/src-min/ace.js',
-        'bower_components/ace-builds/src-min/theme-eclipse.js',
-        'bower_components/ace-builds/src-min/mode-json.js',
-        'bower_components/ngToast/dist/ngToast.min.js',
-        'bower_components/angular-sanitize/angular-sanitize.min.js',
-        'bower_components/angular-bootstrap/ui-bootstrap.min.js',
-        'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
-        'bower_components/d3/d3.min.js',
-        'bower_components/graphlib/dist/graphlib.core.min.js',
-        'bower_components/dagre/dist/dagre.core.min.js',
-        'bower_components/dagre-d3/dist/dagre-d3.core.min.js',
-        'bower_components/n3-line-chart/build/line-chart.min.js',
-        'bower_components/Sortable/Sortable.min.js',
-        'bower_components/Sortable/ng-sortable.js',
-        'bower_components/ng-file-upload/ng-file-upload.min.js',
-        'bower_components/angular-jwt/dist/angular-jwt.min.js'
+        'node_modules/ace-builds/src/ace.js',
+        'node_modules/ace-builds/src/theme-eclipse.js',
+        'node_modules/ace-builds/src/mode-json.js',
+        'node_modules/angular/angular.js',
+        'node_modules/angular-animate/angular-animate.js',
+        'node_modules/angular-bootstrap/ui-bootstrap.js',
+        'node_modules/angular-bootstrap/ui-bootstrap-tpls.js',
+        'node_modules/angular-jwt/dist/angular-jwt.js',
+        'node_modules/angular-sanitize/angular-sanitize.js',
+        'node_modules/angular-ui-ace/src/ui-ace.js',
+        'node_modules/angular-ui-router/release/angular-ui-router.js',
+        'node_modules/d3/d3.js',
+        'node_modules/line-chart/build/line-chart.js',
+        'node_modules/ng-file-upload/dist/ng-file-upload.js',
+        'node_modules/ng-toast/dist/ngToast.js',
+        'node_modules/selection-model/dist/selection-model.js',
+        'node_modules/sortablejs/Sortable.js',
+        'node_modules/sortablejs/ng-sortable.js'
     ];
 
     grunt
         .initConfig({
-            pkg: grunt.file.readJSON('bower.json'),
+            pkg: grunt.file.readJSON('package.json'),
 
             uglify: {
                 options: {
@@ -36,6 +32,11 @@ module.exports = function (grunt) {
                 app: {
                     files: {
                         './app/alex.min.js': ['./app/alex.js']
+                    }
+                },
+                libs: {
+                    files: {
+                        './app/libs.min.js': ['./app/libs.js']
                     }
                 }
             },
@@ -46,7 +47,7 @@ module.exports = function (grunt) {
                 },
                 libs: {
                     src: libraries,
-                    dest: 'app/libs.min.js'
+                    dest: 'app/libs.js'
                 }
             },
 
@@ -118,19 +119,9 @@ module.exports = function (grunt) {
                 target: {
                     files: {
                         'app/style.min.css': [
-                            'bower_components/ngToast/dist/ngToast.min.css',
+                            'node_modules/ng-toast/dist/ngToast.min.css',
                             'app/stylesheets/style.css'
                         ]
-                    }
-                }
-            },
-
-            bower: {
-                install: {
-                    options: {
-                        targetDir: './bower_components/',
-                        verbose: true,
-                        copy: false
                     }
                 }
             },
@@ -141,7 +132,7 @@ module.exports = function (grunt) {
                         {
                             expand: true,
                             flatten: true,
-                            src: ['bower_components/font-awesome/fonts/**'],
+                            src: ['node_modules/font-awesome/fonts/**'],
                             dest: 'app/fonts',
                             filter: 'isFile'
                         }
@@ -211,7 +202,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-ng-annotate');
