@@ -207,9 +207,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-ng-annotate');
     grunt.loadNpmTasks('grunt-browserify');
 
-    grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify']);
+    grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify:app']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);
     grunt.registerTask('build-html', ['html2js']);
-    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'build-css']);
+    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'build-css']);
     grunt.registerTask('test-unit', ['karma']);
 };
