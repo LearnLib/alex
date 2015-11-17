@@ -17,48 +17,18 @@ class ExecuteSymbolGeneralAction extends Action {
          * idRevisionPair
          * @type {*|{id: null, revision: null}}
          */
-        this.symbolToExecute = obj.idRevisionPair || {id: null, revision: null};
+        this.symbolToExecute = obj.symbolToExecute || {id: null, revision: null};
 
-        let _symbol = {
-            name: obj.symbolName || '',
-            revision: null
+        let model = {
+            name: obj.symbolToExecuteName || null,
+            maxRevision: null
         };
 
-        this.getSymbol = function () {
-            return _symbol;
-        };
-
-        this.setSymbol = function (symbols) {
-            let symbol;
-
-            symbols.forEach(s => {
-                if (s.name === _symbol.name) symbol = s;
-            });
-
-            if (symbol) {
-                this.symbolToExecute = {
-                    id: symbol.id,
-                    revision: symbol.revision
-                };
-                _symbol.name = symbol.name;
-                _symbol.revision = symbol.revision;
-            }
+        if (angular.isDefined(obj.getModel)) {
+            model = obj.getModel();
         }
-    }
 
-    /**
-     * @param {string} key - The property to set
-     * @param {any} value - The value to set
-     */
-    set(key, value) {
-        if (key === 'symbolToExecuteName') {
-            this.getSymbol().name = value;
-        } else {
-            if (key === 'symbolToExecute') {
-                this.getSymbol().revision = value.revision;
-            }
-            this[key] = value;
-        }
+        this.getModel = () => model;
     }
 
     /**
@@ -66,7 +36,37 @@ class ExecuteSymbolGeneralAction extends Action {
      * @returns {string}
      */
     toString() {
-        return 'Execute symbol "' + this.getSymbol().name + '", rev. ' + this.symbolToExecute.revision;
+        return 'Execute symbol "' + this.getModel().name + '", rev. ' + this.symbolToExecute.revision;
+    }
+
+    /**
+     * Update the revision of the symbol to execute
+     * @param {Symbol[]} symbols
+     */
+    updateRevision(symbols) {
+        for (let i = 0; i < symbols.length; i++) {
+            if (symbols[i].id === this.symbolToExecute.id) {
+                this.symbolToExecute.revision = symbols[i].revision;
+                break;
+            }
+        }
+    }
+
+    /**
+     * Sets the symbol to execute
+     * @param {string} name - The name of the symbol to execute
+     * @param {Symbol[]} symbols
+     */
+    setSymbol(name, symbols) {
+        this.getModel().maxRevision = null;
+        for (let i = 0; i < symbols.length; i++) {
+            if (symbols[i].name === name) {
+                this.symbolToExecute = symbols[i].getIdRevisionPair();
+                this.getModel().name = name;
+                this.getModel().maxRevision = symbols[i].revision;
+                break;
+            }
+        }
     }
 }
 

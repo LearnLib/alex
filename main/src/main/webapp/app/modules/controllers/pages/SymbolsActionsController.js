@@ -166,7 +166,7 @@ class SymbolsActionsController {
                 this.hasChanged = false;
             })
             .catch(response => {
-                ToastService.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
+                this.ToastService.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
             })
     }
 

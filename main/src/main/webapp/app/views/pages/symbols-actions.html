@@ -10,15 +10,15 @@
         <checkbox-multiple model="vm.symbol.actions" class="pull-left"></checkbox-multiple>
 
         <div class="btn-group btn-group-sm">
-            <button class="btn btn-primary" action-create-modal-handle on-created="addAction">
+            <button class="btn btn-primary" action-create-modal-handle>
                 Create
             </button>
-            <button class="btn btn-default" action-edit-modal-handle action="selectedActions[0]"
-                    ng-class="{'disabled': selectedActions.length !== 1}">
+            <button class="btn btn-default" action-edit-modal-handle action="vm.selectedActions[0]"
+                    ng-class="{'disabled': vm.selectedActions.length !== 1}">
                 Edit
             </button>
-            <button class="btn btn-default" ng-click="vm.deleteActions(selectedActions)"
-                    ng-class="{'disabled': selectedActions.length === 0}">
+            <button class="btn btn-default" ng-click="vm.deleteActions(vm.selectedActions)"
+                    ng-class="{'disabled': vm.selectedActions.length === 0}">
                 Delete
             </button>
         </div>
