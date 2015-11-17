@@ -79,16 +79,30 @@ public final class JSONHelpers {
     }
 
     private static JsonNode getNodeByAttribute(String json, String attribute) throws IOException {
+        if (!isValidJSONPath(attribute)) {
+            throw new IllegalArgumentException("The attribute '" + attribute + "' is not a valid JSON path!");
+        }
+
         ObjectMapper mapper = new ObjectMapper();
         JsonNode current = mapper.readTree(json);
 
-        String[] attributes = attribute.split("\\."); // "\\." is required because it uses regex
+        // split on field separators ('.') and array indexes ('[')
+        String[] attributes = attribute.split("\\.|\\["); // "\\" is required because it uses regex
 
         for (int i = 0; i < attributes.length && current != null; i++) {
-            current = current.get(attributes[i]);
+            if (attributes[i].endsWith("]")) { // array index
+                int arrayIndex = Integer.parseInt(attributes[i].substring(0, attributes[i].length() - 1));
+                current = current.get(arrayIndex);
+            } else { // simple attribute name
+                current = current.get(attributes[i]);
+            }
         }
 
         return current;
+    }
+
+    private static boolean isValidJSONPath(String attribute) {
+        return attribute.matches("^[a-zA-Z0-9-_]+(\\[[0-9]+\\])*(\\.[a-zA-Z0-9-_]+(\\[[0-9]+\\])*)*$");
     }
 
 }
