@@ -109,12 +109,6 @@ module.exports = function (grunt) {
                 }
             },
 
-            karma: {
-                unit: {
-                    configFile: 'tests/unit/karma.conf.js'
-                }
-            },
-
             cssmin: {
                 target: {
                     files: {
@@ -166,19 +160,6 @@ module.exports = function (grunt) {
                 }
             },
 
-            babel: {
-                options: {
-                    sourceMap: false,
-                    presets: ['es2015'],
-                    compact: false
-                },
-                dist: {
-                    files: {
-                        'app/alex.js': 'app/alex.js'
-                    }
-                }
-            },
-
             browserify: {
                 dist: {
                     files: {
@@ -191,6 +172,12 @@ module.exports = function (grunt) {
                             compact: false
                         }]]
                     }
+                }
+            },
+
+            karma: {
+                unit: {
+                    configFile: 'tests/karma.conf.unit.js'
                 }
             }
         });
@@ -211,5 +198,5 @@ module.exports = function (grunt) {
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'build-css']);
-    grunt.registerTask('test-unit', ['karma']);
+    grunt.registerTask('test', ['karma:unit']);
 };

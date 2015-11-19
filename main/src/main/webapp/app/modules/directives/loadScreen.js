@@ -1,40 +1,41 @@
 /**
- * The load screen that is shown during http requests. It lays over the application to prevent further
- * interactions with the page. The navigation is still usable. Add it right after the body and give the element
- * a high value for z-index in the stylesheet.
- *
- * Use is like '<load-screen></load-screen>'.
- *
- * @param $http - The angular $http service
- * @returns {{scope: {}, template: string, link: link}}
+ * The components of the load screen
  */
 // @ngInject
-function loadScreen($http) {
-    return {
-        scope: {},
-        template: `
-                <div id="load-screen" ng-if="show">
-                    <p class="text-center" id="load-screen-indicator">
-                        <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
-                    </p>
-                </div>
-            `,
-        link: link
-    };
+class LoadScreen {
 
-    function link(scope) {
+    /**
+     * Constructor
+     * @param $scope
+     * @param $http
+     */
+    constructor($scope, $http) {
 
         /**
-         * If the loadscreen is visible or not
+         * If the load screen is visible or not
          * @type {boolean}
          */
-        scope.show = false;
+        this.visible = false;
 
-        // watch the change of pendingRequests and change the visibility of the load screen
-        scope.$watch(() => $http.pendingRequests.length > 0, value => {
-            scope.show = value ? true : false;
+        // watch for pending http requests and make the load screen visible
+        $scope.$watch(() => $http.pendingRequests.length > 0, value => {
+            this.visible = value ? true : false;
         });
     }
 }
+
+// the component definition
+const loadScreen = {
+    bindings: {},
+    controller: LoadScreen,
+    controllerAs: 'loadScreen',
+    template: `
+        <div id="load-screen" ng-if="loadScreen.visible">
+            <p class="text-center" id="load-screen-indicator">
+                <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
+            </p>
+        </div>
+    `
+};
 
 export default loadScreen;

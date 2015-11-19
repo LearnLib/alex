@@ -28,7 +28,6 @@ function SessionService(EventBus) {
 
     /**
      * Get the stored project object from the session storage
-     *
      * @return {Project}
      */
     function getProject() {
@@ -38,32 +37,34 @@ function SessionService(EventBus) {
 
     /**
      * Save a project into the session storage end emit the 'project.opened' event
-     *
-     * @param project
+     * @param {Project} project
      */
     function saveProject(project) {
         sessionStorage.setItem('project', angular.toJson(project));
         EventBus.emit(events.PROJECT_OPENED, {project: project});
     }
 
-    /**
-     * Remove the stored project from session storage an emit the 'project.closed' event
-     */
+    /** Remove the stored project from session storage an emit the 'project.closed' event */
     function removeProject() {
         sessionStorage.removeItem('project');
     }
 
-
+    /** Gets the instance of the user that is logged in **/
     function getUser() {
         const user = sessionStorage.getItem('user');
         return user === null ? null : new User(angular.fromJson(user));
     }
 
+    /**
+     * Saves the user in the session
+     * @param {User} user
+     */
     function saveUser(user) {
         sessionStorage.setItem('user', angular.toJson(user));
         EventBus.emit(events.USER_LOGGED_IN, {user: user});
     }
 
+    /** Removes the user and its jwt from the session storage */
     function removeUser() {
         sessionStorage.removeItem('user');
         sessionStorage.removeItem('jwt');

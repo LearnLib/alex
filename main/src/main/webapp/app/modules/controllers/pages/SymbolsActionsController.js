@@ -24,7 +24,7 @@ class SymbolsActionsController {
      * @param EventBus
      */
     constructor($scope, $stateParams, SymbolResource, SessionService, ToastService, ErrorService,
-                ActionService, ClipboardService, $state, PromptService, EventBus) {
+                ActionService, ClipboardService, $state, PromptService, EventBus, $rootScope) {
 
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
@@ -107,6 +107,8 @@ class SymbolsActionsController {
         EventBus.on(events.ACTION_UPDATED, (evt, data) => {
             this.updateAction(data.action);
         }, $scope);
+
+        console.log($rootScope)
     }
 
     /**
@@ -196,9 +198,9 @@ class SymbolsActionsController {
      * Pastes the actions from the clipboard to the end of of the action list
      */
     pasteActions() {
-        let actions = ClipboardService.paste('actions');
+        let actions = this.ClipboardService.paste('actions');
         if (actions !== null) {
-            actions = actions.map(a => this.ActionService.createFromData(a));
+            actions = actions.map(a => this.ActionService.create(a));
             actions.forEach(action => {
                 this.addAction(action)
             });

@@ -76,7 +76,7 @@ angular
     .directive('learnResultListItem', learnResultListItem)
     .directive('learnResultPanel', learnResultPanel)
     .directive('learnResultComparePanel', learnResultComparePanel)
-    .directive('loadScreen', loadScreen)
+    .component('loadScreen', loadScreen)
     .directive('observationTable', observationTable)
     .directive('projectCreateForm', projectCreateForm)
     .directive('projectList', projectList)
@@ -88,7 +88,7 @@ angular
     .directive('symbolListItem', symbolListItem)
     .directive('userEditForm', userEditForm)
     .directive('userLoginForm', userLoginForm)
-    .directive('userRegisterForm', userRegisterForm)
+    .component('userRegisterForm', userRegisterForm)
     .directive('viewHeader', viewHeader)
 
     // modal handles

@@ -1,39 +1,58 @@
+import {UserFormModel} from '../../entities/User';
+
+/** The controller for the user register form component */
 // @ngInject
-function userRegisterForm(UserResource, ToastService, UserFormModel) {
-    return {
-        scope: true,
-        template: `
-                <form ng-submit="register()">
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="text" class="form-control" placeholder="Email address" ng-model="user.email">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" class="form-control" placeholder="Password" ng-model="user.password">
-                    </div>
-                    <button class="btn btn-sm btn-block btn-primary">Create Account</button>
-                </form>
-            `,
-        link: link
-    };
+class UserRegisterFrom {
 
-    function link(scope) {
-        scope.user = new UserFormModel();
+    /**
+     * Constructor
+     * @param UserResource
+     * @param ToastService
+     */
+    constructor(UserResource, ToastService) {
+        this.UserResource = UserResource;
+        this.ToastService = ToastService;
 
-        scope.register = function () {
-            if (scope.user.email && scope.user.password) {
-                UserResource.create(scope.user)
-                    .then(() => {
-                        ToastService.success('Registration successful');
-                        scope.user = new UserFormModel();
-                    })
-                    .catch(response => {
-                        ToastService.danger('Registration failed. ' + response.data.message);
-                    })
-            }
+
+        /**
+         * The user to create
+         * @type {UserFormModel}
+         */
+        this.user = new UserFormModel();
+    }
+
+    register() {
+        if (this.user.email && this.user.password) {
+            this.UserResource.create(this.user)
+                .then(() => {
+                    this.ToastService.success('Registration successful');
+                    this.user = new UserFormModel();
+                })
+                .catch(response => {
+                    this.ToastService.danger(`Registration failed. ${response.data.message}`);
+                })
+        } else {
+            this.ToastService.info('Make sure your inputs are valid.');
         }
     }
 }
+
+const userRegisterForm = {
+    controller: UserRegisterFrom,
+    controllerAs: 'vm',
+    template: `
+        <form ng-submit="vm.register()">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" class="form-control" placeholder="Email address" ng-model="vm.user.email">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" placeholder="Password" ng-model="vm.user.password">
+            </div>
+            <button class="btn btn-sm btn-block btn-primary">Create Account</button>
+        </form>
+    `
+};
 
 export default userRegisterForm;
