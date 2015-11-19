@@ -45,7 +45,6 @@ class LearnResultsCompareController {
         // that are passed from the url in the panels
         if (!$stateParams.testNos) {
             this.ErrorService.setErrorMessage("There are no test numbers defined in the URL");
-            this.ErrorService.goToErrorPage();
         } else {
             this.LearnResultResource.getAllFinal(this.project.id).then(results => {
                 this.results = results;
@@ -73,7 +72,6 @@ class LearnResultsCompareController {
             })
             .catch(response => {
                 this.ErrorService.setErrorMessage(response.data.message);
-                this.ErrorService.goToErrorPage();
             })
     }
 

@@ -82,7 +82,6 @@ class SymbolsActionsController {
             })
             .catch(() => {
                 ErrorService.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + "' could not be found");
-                ErrorService.goToErrorPage();
             });
 
         // show a confirm dialog if the user leaves the page without having saved changes and

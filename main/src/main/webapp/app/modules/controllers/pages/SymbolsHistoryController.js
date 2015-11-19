@@ -41,7 +41,6 @@ class SymbolsHistoryController {
             })
             .catch(() => {
                 ErrorService.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + '" could not be found');
-                ErrorService.goToErrorPage();
             })
     }
 

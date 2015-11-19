@@ -89,7 +89,7 @@ angular
     .directive('userEditForm', userEditForm)
     .directive('userLoginForm', userLoginForm)
     .component('userRegisterForm', userRegisterForm)
-    .directive('viewHeader', viewHeader)
+    .component('viewHeader', viewHeader)
 
     // modal handles
     .directive('actionCreateModalHandle', actionCreateModalHandle)

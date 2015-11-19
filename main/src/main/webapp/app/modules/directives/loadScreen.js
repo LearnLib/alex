@@ -26,7 +26,6 @@ class LoadScreen {
 
 // the component definition
 const loadScreen = {
-    bindings: {},
     controller: LoadScreen,
     controllerAs: 'loadScreen',
     template: `

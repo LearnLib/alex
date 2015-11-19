@@ -21,6 +21,8 @@ describe('HomeController', () => {
 
         project = new Project(ENTITIES.projects[0]);
         user = new User(ENTITIES.users[0]);
+
+        spyOn($state, 'go').and.callThrough();
     }));
 
     function createController() {
@@ -59,18 +61,27 @@ describe('HomeController', () => {
     });
 
     it('should redirect to the project list if a user is logged in but no project is open', () => {
-        //SessionService.user.save(user);
-        //createController();
-        //
-        //$state.go('home');
-        //scope.$digest();
-        //
-        //console.log(HomeController);
-        //console.log($state)
+        SessionService.user.save(user);
+        createController();
+
+        $state.go('home');
+        scope.$digest();
+
+        expect(HomeController.user).toEqual(user);
+        expect(HomeController.project).toBeNull();
+        expect($state.go).toHaveBeenCalledWith('projects');
     });
 
     it('should redirect to the project dashboard if a user is logged in and a project is open', () => {
-        //$state.go('home');
-        //scope.$digest();
+        SessionService.user.save(user);
+        SessionService.project.save(project);
+        createController();
+
+        $state.go('home');
+        scope.$digest();
+
+        expect(HomeController.user).toEqual(user);
+        expect(HomeController.project).toEqual(project);
+        expect($state.go).toHaveBeenCalledWith('dashboard');
     });
 });

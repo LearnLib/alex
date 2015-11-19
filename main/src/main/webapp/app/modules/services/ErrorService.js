@@ -5,10 +5,10 @@ let instance = null;
  * Used to store an error message and can redirect to the error page.
  *
  * @param $state - The ui.router $state service
- * @returns {{getErrorMessage: getErrorMessage, setErrorMessage: setErrorMessage, goToErrorPage: goToErrorPage}}
+ * @returns {{getErrorMessage: getErrorMessage, setErrorMessage: setErrorMessage}}
  * @constructor
  */
-    // @ngInject
+// @ngInject
 class ErrorService {
 
     /**
@@ -43,10 +43,6 @@ class ErrorService {
      */
     setErrorMessage(message) {
         this.errorMessage = message;
-    }
-
-    /** Redirects to the error page */
-    goToErrorPage() {
         this.$state.go('error');
     }
 }

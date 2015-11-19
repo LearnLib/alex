@@ -87,7 +87,6 @@ class LearnStartController {
                         this.LearnerResource.getStatus().then(result => {
                             if (result.error) {
                                 this.ErrorService.setErrorMessage(result.errorText);
-                                this.ErrorService.goToErrorPage();
                             } else {
                                 this.LearnResultResource.getComplete(this.project.id, result.testNo).then(results => {
                                     this.results = results;
