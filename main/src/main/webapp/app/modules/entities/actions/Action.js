@@ -3,16 +3,34 @@ class Action {
 
     /**
      * Constructor
-     * @param {string} type - The unique action type
-     * @param {boolean} negated - Whether the outcome is negated
-     * @param {boolean} ignoreFailure - Whether the learner continues despite failure
-     * @param {boolean} disabled - Whether the execution of the action should be skipped
+     * @param {string} type - The type of the action
+     * @param {object} obj - The object to create an action from
      */
-    constructor(type, negated = false, ignoreFailure = false, disabled = false) {
-        this.type = type;
-        this.negated = negated;
-        this.ignoreFailure = ignoreFailure;
-        this.disabled = disabled;
+    constructor(type, obj) {
+
+        /**
+         * The unique action type
+         * @type {String}
+         */
+        this.type = type || '';
+
+        /**
+         * Whether the outcome is negated
+         * @type {boolean}
+         */
+        this.negated = obj.negated || false;
+
+        /**
+         * Whether the learner continues despite failure
+         * @type {boolean}
+         */
+        this.ignoreFailure = obj.ignoreFailure || false;
+
+        /**
+         * Whether the execution of the action should be skipped
+         * @type {boolean}
+         */
+        this.disabled = obj.disabled || false;
     }
 
     /**

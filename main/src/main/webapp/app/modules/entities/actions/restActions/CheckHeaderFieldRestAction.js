@@ -12,7 +12,7 @@ class CheckHeaderFieldRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckHeaderFieldRestAction.type);
+        super(CheckHeaderFieldRestAction.type, obj);
 
         /**
          * The key of the header field

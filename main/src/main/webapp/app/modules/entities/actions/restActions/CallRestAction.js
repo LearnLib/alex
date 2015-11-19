@@ -15,7 +15,7 @@ class CallRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CallRestAction.type);
+        super(CallRestAction.type, obj);
 
         /**
          * The HTTP method in {GET,POST,PUT,DELETE}

@@ -11,7 +11,7 @@ class SetVariableByNodeGeneralAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(SetVariableByNodeGeneralAction.type);
+        super(SetVariableByNodeGeneralAction.type, obj);
 
         /**
          * The name of the variable

@@ -11,7 +11,7 @@ class CheckPageTitleAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(CheckPageTitleAction.type);
+        super(CheckPageTitleAction.type, obj);
 
         /**
          * The page title to look for or the regexp to match the title against

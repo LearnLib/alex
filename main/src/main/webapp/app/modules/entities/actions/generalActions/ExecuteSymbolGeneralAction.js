@@ -11,7 +11,7 @@ class ExecuteSymbolGeneralAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(ExecuteSymbolGeneralAction.type);
+        super(ExecuteSymbolGeneralAction.type, obj);
 
         /**
          * idRevisionPair

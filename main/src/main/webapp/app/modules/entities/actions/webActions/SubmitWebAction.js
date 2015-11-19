@@ -12,7 +12,7 @@ class SubmitWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(SubmitWebAction.type);
+        super(SubmitWebAction.type, obj);
 
         /**
          * The CSS selector of an element

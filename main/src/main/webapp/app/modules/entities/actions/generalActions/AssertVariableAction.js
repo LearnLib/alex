@@ -11,7 +11,7 @@ class AssertVariableAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(AssertVariableAction.type);
+        super(AssertVariableAction.type, obj);
 
         /**
          * The name of the variable

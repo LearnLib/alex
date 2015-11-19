@@ -11,7 +11,7 @@ class AssertCounterAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(AssertCounterAction.type);
+        super(AssertCounterAction.type, obj);
 
         /**
          * The name of the counter

@@ -12,7 +12,7 @@ class CheckStatusRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckStatusRestAction.type);
+        super(CheckStatusRestAction.type, obj);
 
         /**
          * The status code

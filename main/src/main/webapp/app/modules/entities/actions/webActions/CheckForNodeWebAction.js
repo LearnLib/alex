@@ -12,7 +12,7 @@ class CheckForNodeWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckForNodeWebAction.type);
+        super(CheckForNodeWebAction.type, obj, obj);
 
         /**
          * The selector of the node to search

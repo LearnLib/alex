@@ -11,7 +11,7 @@ class CheckForTextWebAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(CheckForTextWebAction.type);
+        super(CheckForTextWebAction.type, obj);
 
         /**
          * The piece of text to look for

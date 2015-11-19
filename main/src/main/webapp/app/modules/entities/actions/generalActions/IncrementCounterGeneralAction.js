@@ -11,7 +11,7 @@ class IncrementCounterGeneralAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(IncrementCounterGeneralAction.type);
+        super(IncrementCounterGeneralAction.type, obj);
 
         /**
          * The name of the counter

@@ -15,7 +15,7 @@ class CheckAttributeExistsRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckAttributeExistsRestAction.type);
+        super(CheckAttributeExistsRestAction.type, obj);
 
         /**
          * The JSON property

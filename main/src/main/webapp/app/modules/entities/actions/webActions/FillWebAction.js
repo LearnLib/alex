@@ -12,7 +12,7 @@ class FillWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(FillWebAction.type);
+        super(FillWebAction.type, obj);
 
         /**
          * The CSS selector of an element

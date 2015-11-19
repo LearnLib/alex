@@ -11,7 +11,7 @@ class SetVariableByCookieAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(SetVariableByCookieAction.type);
+        super(SetVariableByCookieAction.type, obj);
 
         /**
          * The name of the variable

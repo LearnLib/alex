@@ -12,7 +12,7 @@ class CheckHTTPBodyTextRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckHTTPBodyTextRestAction.type);
+        super(CheckHTTPBodyTextRestAction.type, obj);
 
         /**
          * The string that is searched for

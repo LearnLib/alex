@@ -1,26 +1,6 @@
 import {learnAlgorithm, eqOracleType, webBrowser} from '../constants';
 
 /**
- * The filter that formats something like 'A_CONSTANT_KEY' to 'A Constant Key'
- *
- * @returns {filter}
- */
-function formatEnumKey() {
-    return filter;
-
-    /**
-     * @param {string} string - The enum key in upper snake case format
-     * @returns {string}
-     */
-    function filter(string) {
-        return string.toLowerCase().split('_').join(' ').replace(/\w\S*/g, txt => {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        })
-    }
-}
-
-
-/**
  * The filter to format a EQ type constant to something more readable
  *
  * @returns {filter}
@@ -127,4 +107,4 @@ function formatMilliseconds() {
     }
 }
 
-export {formatAlgorithm, formatEnumKey, formatEqOracle, formatMilliseconds, formatWebBrowser};
+export {formatAlgorithm, formatEqOracle, formatMilliseconds, formatWebBrowser};

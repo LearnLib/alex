@@ -8,11 +8,11 @@ class HomeController {
      * @param SessionService
      */
     constructor($state, SessionService) {
-        const user = SessionService.user.get();
-        const project = SessionService.project.get();
+        this.user = SessionService.user.get();
+        this.project = SessionService.project.get();
 
-        if (user !== null) {
-            if (project !== null) {
+        if (this.user !== null) {
+            if (this.project !== null) {
                 $state.go('dashboard');
             } else {
                 $state.go('projects');

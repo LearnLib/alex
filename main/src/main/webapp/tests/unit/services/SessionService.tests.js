@@ -18,6 +18,12 @@ describe('SessionService', () => {
         user = new User({id: 1});
     }));
 
+    afterEach(() => {
+        sessionStorage.removeItem('project');
+        sessionStorage.removeItem('user');
+        sessionStorage.removeItem('jwt');
+    });
+
     it('should save a project in the sessionStorage and emit the project:opened event', () => {
         EventBus.on('project:opened', (evt, data) => {
             expect(data.project.id).toEqual(project.id);
@@ -25,6 +31,7 @@ describe('SessionService', () => {
         SessionService.project.save(project);
         expect(sessionStorage.getItem('project')).toBeDefined();
     });
+
 
     it('should save a user in the sessionStorage and emit the user:loggedIn event', () => {
         EventBus.on('user:loggedIn', (evt, data) => {
@@ -35,12 +42,14 @@ describe('SessionService', () => {
     });
 
     it('should get the instance of the project', () => {
+        SessionService.project.save(project);
         const p = SessionService.project.get();
         expect(p instanceof Project).toBeTruthy();
         expect(p.id).toEqual(project.id);
     });
 
     it('should get the instance of the user', () => {
+        SessionService.user.save(user);
         const u = SessionService.user.get();
         expect(u instanceof User).toBeTruthy();
         expect(u.id).toEqual(user.id);

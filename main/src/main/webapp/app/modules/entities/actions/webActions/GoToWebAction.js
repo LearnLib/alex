@@ -12,7 +12,7 @@ class GoToWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(GoToWebAction.type);
+        super(GoToWebAction.type, obj);
 
         /**
          * The url that is called

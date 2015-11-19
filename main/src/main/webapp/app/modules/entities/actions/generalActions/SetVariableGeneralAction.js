@@ -11,7 +11,7 @@ class SetVariableGeneralAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(SetVariableGeneralAction.type);
+        super(SetVariableGeneralAction.type, obj);
 
         /**
          * The name of the variable

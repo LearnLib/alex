@@ -11,7 +11,7 @@ class WaitGeneralAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(WaitGeneralAction.type);
+        super(WaitGeneralAction.type, obj);
 
         /**
          * The time to wait in milliseconds

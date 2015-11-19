@@ -1,5 +1,6 @@
 import {configuration} from './config';
 import {routes} from './routes';
+import * as constant from './constants';
 
 import {controllers} from './controllers/index';
 import {directives} from './directives/index';
@@ -35,4 +36,8 @@ angular
     .config(configuration.config)
     .config(routes.config)
     .run(configuration.run)
-    .run(routes.run);
+    .run(routes.run)
+    .constant('learnAlgorithm', constant.learnAlgorithm)
+    .constant('webBrowser', constant.webBrowser)
+    .constant('eqOracleType', constant.eqOracleType)
+    .constant('events', constant.events);

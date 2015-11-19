@@ -12,7 +12,7 @@ class ClearWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(ClearWebAction.type);
+        super(ClearWebAction.type, obj);
 
         /**
          * The CSS selector of an element

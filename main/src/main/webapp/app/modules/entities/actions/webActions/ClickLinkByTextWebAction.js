@@ -12,7 +12,7 @@ class ClickLinkByTextWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(ClickLinkByTextWebAction.type);
+        super(ClickLinkByTextWebAction.type, obj);
 
         /**
          * The text of the link

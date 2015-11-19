@@ -15,7 +15,7 @@ class CheckAttributeValueRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckAttributeValueRestAction.type);
+        super(CheckAttributeValueRestAction.type, obj);
 
         /**
          * The JSON property

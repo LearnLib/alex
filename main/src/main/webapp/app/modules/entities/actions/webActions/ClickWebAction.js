@@ -12,7 +12,7 @@ class ClickWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(ClickWebAction.type);
+        super(ClickWebAction.type, obj);
 
         /**
          * The CSS selector of an element

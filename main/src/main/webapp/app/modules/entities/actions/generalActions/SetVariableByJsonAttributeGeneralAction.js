@@ -11,7 +11,7 @@ class SetVariableByJsonAttributeGeneralAction extends Action {
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(SetVariableByJsonAttributeGeneralAction.type);
+        super(SetVariableByJsonAttributeGeneralAction.type, obj);
 
         /**
          * The name of the variable
