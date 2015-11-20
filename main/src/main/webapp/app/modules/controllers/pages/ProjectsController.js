@@ -14,8 +14,9 @@ class ProjectsController {
      * @param SessionService
      * @param ProjectResource
      * @param EventBus
+     * @param ToastService
      */
-    constructor($scope, $state, SessionService, ProjectResource, EventBus) {
+    constructor($scope, $state, SessionService, ProjectResource, EventBus, ToastService) {
 
         /**
          * The list of all projects
@@ -26,12 +27,17 @@ class ProjectsController {
         // go to the dashboard if there is a project in the session
         if (SessionService.project.get() !== null) {
             $state.go('dashboard');
+            return;
         }
 
         //get all projects from the server
-        ProjectResource.getAll().then(projects => {
-            this.projects = projects;
-        });
+        ProjectResource.getAll()
+            .then(projects => {
+                this.projects = projects;
+            })
+            .catch(response => {
+                ToastService.danger(`Loading project failed. ${response.data.message}`);
+            });
 
         // listen on project create event
         EventBus.on(events.PROJECT_CREATED, (evt, data) => {

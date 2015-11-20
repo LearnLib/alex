@@ -1,45 +1,46 @@
 import {events} from '../../constants';
 import {ProjectFormModel} from '../../entities/Project';
 
-/**
- * The directive that renders the form to create a new project.
- *
- * Usage: <project-create-form></project-create-form>
- *
- * @param ProjectResource
- * @param ToastService
- * @param EventBus
- * @returns {{scope: {}, templateUrl: string, link: link}}
- */
+/** The class of the project create form component */
 // @ngInject
-function projectCreateForm(ProjectResource, ToastService, EventBus) {
-    return {
-        scope: {},
-        templateUrl: 'views/directives/project-create-form.html',
-        link: link
-    };
+class ProjectCreateForm {
 
-    function link(scope) {
+    /**
+     * Constructor
+     * @param ProjectResource
+     * @param ToastService
+     * @param EventBus
+     */
+    constructor(ProjectResource, ToastService, EventBus) {
+        this.ProjectResource = ProjectResource;
+        this.ToastService = ToastService;
+        this.EventBus = EventBus;
 
         /**
          * The empty project model that is used for the form
-         * @type {Project}
+         * @type {ProjectFormModel}
          */
-        scope.project = new ProjectFormModel();
+        this.project = new ProjectFormModel();
+    }
 
-        /** Creates a new project */
-        scope.createProject = function () {
-            ProjectResource.create(scope.project)
-                .then(createdProject => {
-                    ToastService.success('Project "' + createdProject.name + '" created');
-                    EventBus.emit(events.PROJECT_CREATED, {project: createdProject});
-                    scope.project = new ProjectFormModel();
-                })
-                .catch(response => {
-                    ToastService.danger('<p><strong>Creation of project failed</strong></p>' + response.data.message)
-                })
-        }
+    /** Creates a new project */
+    createProject() {
+        this.ProjectResource.create(this.project)
+            .then(createdProject => {
+                this.ToastService.success(`Project "${createdProject.name}" created`);
+                this.EventBus.emit(events.PROJECT_CREATED, {project: createdProject});
+                this.project = new ProjectFormModel();
+            })
+            .catch(response => {
+                this.ToastService.danger('<p><strong>Creation of project failed</strong></p>' + response.data.message)
+            })
     }
 }
+
+const projectCreateForm = {
+    controller: ProjectCreateForm,
+    controllerAs: 'vm',
+    templateUrl: 'views/directives/project-create-form.html'
+};
 
 export default projectCreateForm;

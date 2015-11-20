@@ -1,4 +1,4 @@
-<form id="project-create-form" name="create_form" role="form" ng-submit="createProject()">
+<form id="project-create-form" name="create_form" role="form" ng-submit="vm.createProject()">
 
     <!-- Name -->
     <div class="form-group">
@@ -6,7 +6,7 @@
 
         <p class="text-muted">The name of your project</p>
         <input name="name" type="text" class="form-control" id="project-name"
-               placeholder="Enter a name for the project" ng-model="project.name" ng-required="true">
+               placeholder="Enter a name for the project" ng-model="vm.project.name" ng-required="true">
     </div>
     <div class="alert alert-danger alert-condensed"
          ng-show="create_form.name.$dirty && create_form.name.$invalid">
@@ -20,7 +20,7 @@
 
         <p class="text-muted">The url of your website</p>
         <input name="url" class="form-control" type="text" id="project-url"
-               placeholder="Enter the url of the project" ng-model="project.baseUrl" ng-required="true"
+               placeholder="Enter the url of the project" ng-model="vm.project.baseUrl" ng-required="true"
                ng-pattern="/^(http://|https://).{1,}/">
     </div>
     <div class="alert alert-danger alert-condensed"
@@ -41,7 +41,7 @@
         <p class="text-muted">
             If you want you can describe your new project with a few words
         </p>
-            <textarea name="description" ng-model="project.description" id="project-description"
+            <textarea name="description" ng-model="vm.project.description" id="project-description"
                       placeholder="Enter the description for the project"
                       class="form-control" rows="3"></textarea>
     </div>

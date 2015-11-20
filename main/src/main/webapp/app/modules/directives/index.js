@@ -78,7 +78,7 @@ angular
     .directive('learnResultComparePanel', learnResultComparePanel)
     .component('loadScreen', loadScreen)
     .directive('observationTable', observationTable)
-    .directive('projectCreateForm', projectCreateForm)
+    .component('projectCreateForm', projectCreateForm)
     .directive('projectList', projectList)
     .directive('responsiveIframe', responsiveIframe)
     .directive('sidebar', sidebar)
