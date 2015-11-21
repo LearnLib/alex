@@ -5,12 +5,11 @@
  * Use: '<action-bar></action-bar>'
  *
  * @param $window - angular $window
- * @returns {{replace: boolean, transclude: boolean, template: string, link: link}}
+ * @returns {{transclude: boolean, template: string, link: link}}
  */
 // @ngInject
 function actionBar($window) {
     return {
-        replace: true,
         transclude: true,
         template: `
                 <div class="action-bar" layout-toggle-element>
@@ -22,6 +21,7 @@ function actionBar($window) {
 
     function link(scope, el) {
         const body = angular.element(document.body);
+        const rootEl = angular.element(el.children()[0]);
 
         $window.addEventListener('scroll', handleResize);
 
@@ -32,10 +32,10 @@ function actionBar($window) {
 
         function handleResize() {
             if ($window.scrollY >= 42) {
-                el.addClass('fixed');
+                rootEl.addClass('fixed');
                 body.addClass('has-fixed-action-bar');
             } else {
-                el.removeClass('fixed');
+                rootEl.removeClass('fixed');
                 body.removeClass('has-fixed-action-bar');
             }
         }

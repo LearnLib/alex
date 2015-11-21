@@ -56,4 +56,9 @@ const events = {
     FILE_LOADED: 'file:loaded'
 };
 
-export {learnAlgorithm, webBrowser, eqOracleType, events};
+const chartMode = {
+    CUMULATED: 'cumulated',
+    COMPLETE: 'complete'
+};
+
+export {learnAlgorithm, webBrowser, eqOracleType, events, chartMode};

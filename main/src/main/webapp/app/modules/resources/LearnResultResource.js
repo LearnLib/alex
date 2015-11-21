@@ -67,10 +67,10 @@ class LearnResultResource {
                         response.data.shift();
                         return [response.data.map(r => new LearnResult(r))]
                     } else {
-                        response.data.forEach(data => {
-                            data.shift(); // remove cumulated results from the beginning
+                        return response.data.map(resultList => {
+                            resultList.shift(); // remove the cumulated results at the beginning
+                            return resultList.map(result => new LearnResult(result));
                         });
-                        return response.data.map(r => new LearnResult(r));
                     }
                 } else {
                     return [[]];

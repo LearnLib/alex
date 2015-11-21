@@ -23,7 +23,8 @@ function learnResultListItem() {
     return {
         transclude: true,
         scope: {
-            result: '='
+            result: '=',
+            linkTo: '@'
         },
         template: `
                 <div class="learn-result-list-item">
@@ -32,7 +33,10 @@ function learnResultListItem() {
                         <div class="pull-right" ng-transclude></div>
                         <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
                         <strong>
-                            <a ui-sref="learn.results.compare({testNos: [result.testNo]})">
+                            <a ui-sref="learn.results.compare({testNos: [result.testNo]})" ng-if="linkTo === 'hypothesis'">
+                                Test No <span ng-bind="result.testNo"></span>
+                            </a>
+                            <a ui-sref="statistics.compare({testNos: [result.testNo], mode: 'cumulated'})" ng-if="linkTo === 'statistics'">
                                 Test No <span ng-bind="result.testNo"></span>
                             </a>
                         </strong>,
@@ -42,9 +46,7 @@ function learnResultListItem() {
                             Started: <span ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
                         </em>
                     </div>
-                    <div class="comment text-muted"
-                         ng-show="result.configuration.comment"
-                         ng-bind="result.configuration.comment">
+                    <div class="comment text-muted" ng-show="result.configuration.comment"  ng-bind="result.configuration.comment">
                     </div>
                 </div>
             </div>

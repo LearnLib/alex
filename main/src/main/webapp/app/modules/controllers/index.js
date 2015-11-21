@@ -6,7 +6,8 @@ import FilesController from './pages/FilesController';
 import HomeController from './pages/HomeController';
 import LearnResultsCompareController from './pages/LearnResultsCompareController';
 import LearnResultsController from './pages/LearnResultsController';
-import LearnResultsStatisticsController from './pages/LearnResultsStatisticsController';
+import StatisticsController from './pages/StatisticsController';
+import StatisticsCompareController from './pages/StatisticsCompareController';
 import LearnSetupController from './pages/LearnSetupController';
 import LearnStartController from './pages/LearnStartController';
 import ProjectsController from './pages/ProjectsController';
@@ -47,7 +48,8 @@ angular
     .controller('HomeController', HomeController)
     .controller('LearnResultsCompareController', LearnResultsCompareController)
     .controller('LearnResultsController', LearnResultsController)
-    .controller('LearnResultsStatisticsController', LearnResultsStatisticsController)
+    .controller('StatisticsController', StatisticsController)
+    .controller('StatisticsCompareController', StatisticsCompareController)
     .controller('LearnSetupController', LearnSetupController)
     .controller('LearnStartController', LearnStartController)
     .controller('ProjectsController', ProjectsController)

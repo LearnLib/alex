@@ -106,8 +106,6 @@ class SymbolsActionsController {
         EventBus.on(events.ACTION_UPDATED, (evt, data) => {
             this.updateAction(data.action);
         }, $scope);
-
-        console.log($rootScope)
     }
 
     /**

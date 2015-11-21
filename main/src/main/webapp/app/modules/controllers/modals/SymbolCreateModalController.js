@@ -57,10 +57,10 @@ class SymbolCreateModalController {
     }
 
     /**
-     * Makes a request to the API and create a new symbol. If the name of the group the user entered was not found
-     * the symbol will be put in the default group with the id 0. Closes the modal on success.
+     * Creates a new symbol but does not close the modal windown
+     * @returns {*}
      */
-    createSymbol() {
+    createSymbolAndContinue() {
         this.error = null;
 
         const group = this.groups.find(g => g.name === this.selectedGroup);
@@ -68,15 +68,25 @@ class SymbolCreateModalController {
         // attach the new symbol to the default group in case none is specified
         this.symbol.group = group ? group.id : 0;
 
-        this.SymbolResource.create(this.project.id, this.symbol)
+        return this.SymbolResource.create(this.project.id, this.symbol)
             .then(symbol => {
                 this.ToastService.success(`Created symbol "${symbol.name}"`);
                 this.EventBus.emit(events.SYMBOL_CREATED, {symbol: symbol});
-                this.$modalInstance.dismiss();
+                this.symbol = new SymbolFormModel();
             })
             .catch(response => {
                 this.error = response.data.message;
             })
+    }
+
+    /**
+     * Makes a request to the API and create a new symbol. If the name of the group the user entered was not found
+     * the symbol will be put in the default group with the id 0. Closes the modal on success.
+     */
+    createSymbol() {
+        this.createSymbolAndContinue().then(() => {
+            this.$modalInstance.dismiss();
+        })
     }
 
     /**

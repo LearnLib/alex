@@ -34,7 +34,8 @@
 
         <div class="form-group">
             <label>Group</label>
-            <input class="form-control" type="text" list="groupNames" ng-model="vm.selectedGroup" placeholder="Group name">
+            <input class="form-control" type="text" list="groupNames" ng-model="vm.selectedGroup"
+                   placeholder="Group name">
             <datalist id="groupNames">
                 <option ng-repeat="group in vm.groups" value="{{group.name}}"></option>
             </datalist>
@@ -45,6 +46,7 @@
     </div>
 
     <div class="modal-footer">
+        <a href="" ng-click="vm.createSymbolAndContinue()" class="btn btn-info btn-sm">Create and continue</a>
         <button class="btn btn-primary btn-sm" type="submit">Create</button>
     </div>
 

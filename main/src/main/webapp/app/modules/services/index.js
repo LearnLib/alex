@@ -8,6 +8,7 @@ import LearnerResultChartService from './LearnerResultChartService';
 import PromptService from './PromptService';
 import SessionService from './SessionService';
 import ToastService from './ToastService';
+import LearnerResultDownloadService from './LearnerResultDownloadService';
 
 const moduleName = 'ALEX.services';
 
@@ -19,9 +20,10 @@ angular
     .service('EventBus', EventBus)
     .service('EqOracleService', EqOracleService)
     .service('FileDownloadService', FileDownloadService)
-    .factory('LearnerResultChartService', LearnerResultChartService)
+    .service('LearnerResultChartService', LearnerResultChartService)
     .service('PromptService', PromptService)
     .factory('SessionService', SessionService)
-    .service('ToastService', ToastService);
+    .service('ToastService', ToastService)
+    .service('LearnerResultDownloadService', LearnerResultDownloadService);
 
 export const services = moduleName;

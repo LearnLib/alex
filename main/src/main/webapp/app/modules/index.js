@@ -40,4 +40,5 @@ angular
     .constant('learnAlgorithm', constant.learnAlgorithm)
     .constant('webBrowser', constant.webBrowser)
     .constant('eqOracleType', constant.eqOracleType)
-    .constant('events', constant.events);
+    .constant('events', constant.events)
+    .constant('chartMode', constant.chartMode);

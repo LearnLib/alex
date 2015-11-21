@@ -127,18 +127,31 @@ function config($stateProvider, $urlRouterProvider) {
                 '@': {templateUrl: 'views/pages/learn-results.html'}
             }
         })
-        .state('learn.results.statistics', {
-            url: '/statistics',
-            views: {
-                '@': {templateUrl: 'views/pages/learn-results-statistics.html'}
-            }
-        })
         .state('learn.results.compare', {
             url: '/compare/:testNos',
             views: {
                 '@': {templateUrl: 'views/pages/learn-results-compare.html'}
             }
         })
+
+
+        // =========================================================
+        // statistics related routes
+
+        .state('statistics', {
+            url: '/statistics',
+            views: {
+                '@': {templateUrl: 'views/pages/statistics.html'}
+            },
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+        })
+        .state('statistics.compare', {
+            url: '/{mode:string}/{testNos:string}',
+            views: {
+                '@': {templateUrl: 'views/pages/statistics-compare.html'}
+            }
+        })
+
 
         // =========================================================
         // admin related routes
