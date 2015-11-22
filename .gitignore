@@ -12,6 +12,7 @@ main/src/main/webapp/bower_components
 main/src/main/webapp/node_modules
 main/src/main/webapp/app/app.js
 main/src/main/webapp/app/templates.js
+main/src/main/webapp/tests/coverage
 
 # CSS
 main/src/main/webapp/app/style.min.css
