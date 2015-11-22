@@ -1,74 +1,75 @@
 /**
- * Directive for replacing the default input[type='checkbox'] element to make it look the same in all browsers.
- * Can select a single element and toggles the property '_selected' of it.
- *
- * The attribute 'model' should be the object that can be selected.
- *
- * Use: <checkbox model="..."></checkbox>
- *
- * @returns {{restrict: string, template: string, scope: {model: string}, link: link}}
+ * The controller of the checkbox
+ * Use: <checkbox model="..."></checkbox> where
+ * 'model' should be an object
  */
-function checkbox() {
-    return {
-        restrict: 'E',
-        template: `
-                <span class="alx-checkbox">
-                    <i class="fa fa-fw" ng-class="model._selected ? 'fa-check-square-o':'fa-square-o'"></i>
-                </span>
-            `,
-        scope: {
-            model: '='
-        },
-        link: link
-    };
+class Checkbox {
 
-    function link(scope, el) {
-        el.on('click', () => {
-            scope.$apply(() => {
-                scope.model['_selected'] = !scope.model['_selected'];
-            });
-        });
+    /** select the item given via the model attribute */
+    toggleSelectItem() {
+        if (this.model) {
+            this.model['_selected'] = !this.model['_selected'];
+        }
     }
 }
+
+const checkbox = {
+    bindings: {
+        model: '='
+    },
+    controller: Checkbox,
+    controllerAs: 'vm',
+    template: `
+        <span class="alx-checkbox" ng-click="vm.toggleSelectItem()">
+            <i class="fa fa-fw" ng-class="vm.model._selected ? 'fa-check-square-o':'fa-square-o'"></i>
+        </span>
+    `
+};
 
 /**
- * Directive for replacing the default input[type='checkbox'] element to make it look the same in all browsers.
- * Allows the selection of multiple elements at once by toggling the property '_selected' of each object.
- *
- * The attribute 'model' should be an array of objects or a function that returns one
- *
- * Use: <checkbox-multiple model="..."></checkbox-multiple>
- *
- * @returns {{restrict: string, template: string, scope: {model: string}, link: link}}
+ * The controller of the checkbox for selecting multiple items
+ * Use: <checkbox-multiple model="..." model-fn="..."></checkbox-multiple> where
+ * 'model' should be a list of objects
+ * 'modeFn' should be a function that returns a list of objects
+ * Only one attribute should be given at a time
  */
-function checkboxMultiple() {
-    return {
-        restrict: 'E',
-        template: `
-                <span class="alx-checkbox">
-                    <i class="fa fa-fw" ng-class="checked ? 'fa-check-square-o' : 'fa-square-o'"></i>
-                </span>
-            `,
-        scope: {
-            model: '='
-        },
-        link: link
-    };
+class CheckboxMultiple {
 
-    function link(scope, el) {
-        scope.checked = false;
+    /** Constructor */
+    constructor() {
 
-        el.on('click', () => {
-            scope.checked = !scope.checked;
+        /**
+         * The status of the items
+         * @type {boolean}
+         */
+        this.checked = false;
+    }
 
-            scope.$apply(() => {
-                var items = angular.isFunction(scope.model) ? scope.model() : scope.model;
-                for (var i = 0; i < items.length; i++) {
-                    items[i]['_selected'] = scope.checked;
-                }
-            })
-        });
+    /** Selects or deselects all items */
+    toggleSelectItems() {
+        this.checked = !this.checked;
+
+        if (this.model) {
+            this.model.forEach(item => item['_selected'] = this.checked);
+        } else if (this.modelFn) {
+            const items = this.modelFn();
+            items.forEach(item => item['_selected'] = this.checked);
+        }
     }
 }
+
+const checkboxMultiple = {
+    bindings: {
+        model: '=',
+        modelFn: '&'
+    },
+    controller: CheckboxMultiple,
+    controllerAs: 'vm',
+    template: `
+        <span class="alx-checkbox" ng-click="vm.toggleSelectItems()">
+            <i class="fa fa-fw" ng-class="vm.checked ? 'fa-check-square-o' : 'fa-square-o'"></i>
+        </span>
+    `
+};
 
 export {checkbox, checkboxMultiple};

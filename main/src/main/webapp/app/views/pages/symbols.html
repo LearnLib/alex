@@ -3,7 +3,7 @@
 
     <action-bar>
         <div ng-if="vm.groups.length > 0">
-            <checkbox-multiple model="vm.getAllSymbols" class="pull-left"></checkbox-multiple>
+            <checkbox-multiple model-fn="vm.getAllSymbols()" class="pull-left"></checkbox-multiple>
 
             <div class="btn-group btn-group-sm">
 

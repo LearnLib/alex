@@ -58,9 +58,11 @@ function SessionService(EventBus) {
     /**
      * Saves the user in the session
      * @param {User} user
+     * @param {object|null} jwt
      */
-    function saveUser(user) {
+    function saveUser(user, jwt = null) {
         sessionStorage.setItem('user', angular.toJson(user));
+        if (jwt) sessionStorage.setItem('jwt', jwt);
         EventBus.emit(events.USER_LOGGED_IN, {user: user});
     }
 

@@ -33,12 +33,6 @@ class ActionEditModalController {
          */
         this.symbols = [];
 
-        /**
-         * A map where actions can save temporary key value pairs
-         * @type {{}}
-         */
-        this.map = {};
-
         // fetch all symbols so that symbols have access to it
         SymbolResource.getAll(project.id).then(symbols => {
             this.symbols = symbols;

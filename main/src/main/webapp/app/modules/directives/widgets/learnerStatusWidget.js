@@ -1,4 +1,5 @@
 const template = `
+    <widget title="Learner status">
         <div class="alert alert-info no-margin-bottom" ng-if="!isActive && !hasFinished">
             The Learner is not active. <a ui-sref="learn.setup">Start learning</a> your application!
         </div>
@@ -12,7 +13,8 @@ const template = `
             The Learner is currently learning an application. <hr>
             <button class="btn btn-xs btn-warning pull-right" ng-click="abort()">Abort</button>
         </div>
-    `;
+    </widget>
+`;
 
 /**
  * The directive of the dashboard widget that displays the current status of the learner

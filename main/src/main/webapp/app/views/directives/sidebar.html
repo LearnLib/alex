@@ -1,17 +1,15 @@
-<aside id="sidebar">
+<aside id="sidebar" layout-toggle-element>
 
     <header id="sidebar-header">
         <a href="#home" class="sidebar-header-button logo-button">
             <img src="app/images/favicon.png" height="18" width="18"> <strong>LEX</strong>
         </a>
-
-        <a href class="sidebar-header-button toggle-button" layout-toggle-button ng-click="toggleCollapse()"
+        <a href class="sidebar-header-button toggle-button" layout-toggle-button ng-click="vm.toggleCollapse()"
            tooltip="{{collapsed ? 'Show Sidebar' : 'Hide Sidebar'}}" tooltip-placement="right">
             <i class="fa" ng-class="collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
         </a>
-
         <a ui-sref="about" class="sidebar-header-button about-button"
-                tooltip="About ALEX" tooltip-placement="left">
+           tooltip="About ALEX" tooltip-placement="left">
             <i class="fa fa-question-circle"></i>
         </a>
     </header>
@@ -22,14 +20,14 @@
                 <strong>User</strong>
             </div>
             <a ui-sref="users.settings" class="sidebar-group-item" tooltip="Settings" tooltip-placement="right"
-               ng-class="{'active':isState('users.settings')}">
+               ng-class="{'active':vm.isState('users.settings')}">
                 <div class="sidebar-group-item-icon">
                     <i class="fa fa-fw fa-user"></i>
                 </div>
                 <div class="sidebar-group-item-label">Settings</div>
             </a>
             <a href class="sidebar-group-item" tooltip="Logout" tooltip-placement="right"
-                    ng-click="logout()">
+               ng-click="vm.logout()">
                 <div class="sidebar-group-item-icon">
                     <i class="fa fa-fw fa-sign-out"></i>
                 </div>
@@ -37,12 +35,12 @@
             </a>
         </div>
 
-        <div class="sidebar-group" ng-if="user.role === 'ADMIN'">
+        <div class="sidebar-group" ng-if="vm.user.role === 'ADMIN'">
             <div class="sidebar-group-title">
                 <strong>Admin</strong>
             </div>
             <a ui-sref="admin.users" class="sidebar-group-item" tooltip="User Management" tooltip-placement="right"
-               ng-class="{'active':isState('admin.users')}">
+               ng-class="{'active':vm.isState('admin.users')}">
                 <div class="sidebar-group-item-icon">
                     <i class="fa fa-fw fa-users"></i>
                 </div>
@@ -50,12 +48,12 @@
             </a>
         </div>
 
-        <div class="sidebar-group" ng-if="user && !project">
+        <div class="sidebar-group" ng-if="vm.user && !vm.project">
             <div class="sidebar-group-title">
                 <strong>Projects</strong>
             </div>
             <a ui-sref="projects" class="sidebar-group-item" tooltip="Projects" tooltip-placement="right"
-               ng-class="{'active':isState('projects')}">
+               ng-class="{'active':vm.isState('projects')}">
                 <div class="sidebar-group-item-icon">
                     <i class="fa fa-fw fa-briefcase"></i>
                 </div>
@@ -63,52 +61,53 @@
             </a>
         </div>
 
-        <div ng-if="project && user">
+        <div ng-if="vm.project && vm.user">
             <div class="sidebar-group">
                 <div class="sidebar-group-title">
-                    <strong ng-bind="project.name"></strong>
+                    <strong ng-bind="vm.project.name"></strong>
                 </div>
-                <a ui-sref="dashboard" class="sidebar-group-item" ng-class="{'active':isState('dashboard')}"
+                <a ui-sref="dashboard" class="sidebar-group-item" ng-class="{'active':vm.isState('dashboard')}"
                    tooltip="Dashboard" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-dashboard"></i>
                     </div>
                     <div class="sidebar-group-item-label">Dashboard</div>
                 </a>
-                <a ui-sref="files" class="sidebar-group-item" ng-class="{'active':isState('files')}"
+                <a ui-sref="files" class="sidebar-group-item" ng-class="{'active':vm.isState('files')}"
                    tooltip="Files" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-file"></i>
                     </div>
                     <div class="sidebar-group-item-label">Files</div>
                 </a>
-                <a class="sidebar-group-item" ng-click="closeProject()"
+                <a class="sidebar-group-item" ng-click="vm.closeProject()"
                    tooltip="Close Project" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-sign-out"></i>
                     </div>
-                    <div class="sidebar-group-item-label">Close {{project.name}}</div>
+                    <div class="sidebar-group-item-label">Close {{vm.project.name}}</div>
                 </a>
             </div>
 
             <div class="sidebar-group">
                 <div class="sidebar-group-title">Symbols</div>
                 <a ui-sref="symbols" class="sidebar-group-item"
-                   ng-class="{'active':isState('symbols', 'symbols.actions', 'symbols.history')}"
+                   ng-class="{'active':vm.isState('symbols', 'symbols.actions', 'symbols.history')}"
                    tooltip="Manage Symbols" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-list-alt"></i>
                     </div>
                     <div class="sidebar-group-item-label">Manage</div>
                 </a>
-                <a ui-sref="symbols.trash" class="sidebar-group-item" ng-class="{'active':isState('symbols.trash')}"
+                <a ui-sref="symbols.trash" class="sidebar-group-item" ng-class="{'active':vm.isState('symbols.trash')}"
                    tooltip="Symbols Trash" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-trash"></i>
                     </div>
                     <div class="sidebar-group-item-label">Trash</div>
                 </a>
-                <a ui-sref="symbols.import" class="sidebar-group-item" ng-class="{'active':isState('symbols.import')}"
+                <a ui-sref="symbols.import" class="sidebar-group-item"
+                   ng-class="{'active':vm.isState('symbols.import')}"
                    tooltip="Symbols Import" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-upload"></i>
@@ -119,7 +118,8 @@
 
             <div class="sidebar-group">
                 <div class="sidebar-group-title">Learning</div>
-                <a ui-sref="learn.setup" class="sidebar-group-item" ng-class="{'active':isState('learn.setup', 'learn.start')}"
+                <a ui-sref="learn.setup" class="sidebar-group-item"
+                   ng-class="{'active':vm.isState('learn.setup', 'learn.start')}"
                    tooltip="Learn Setup" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-play"></i>
@@ -127,7 +127,7 @@
                     <div class="sidebar-group-item-label">Setup</div>
                 </a>
                 <a ui-sref="learn.results" class="sidebar-group-item"
-                   ng-class="{'active':isState('learn.results', 'learn.results.compare')}"
+                   ng-class="{'active':vm.isState('learn.results', 'learn.results.compare')}"
                    tooltip="Learn Results" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-sitemap"></i>
@@ -135,14 +135,14 @@
                     <div class="sidebar-group-item-label">Results</div>
                 </a>
                 <a ui-sref="statistics" class="sidebar-group-item"
-                   ng-class="{'active':isState('statistics', 'statistics.compare')}"
+                   ng-class="{'active':vm.isState('statistics', 'statistics.compare')}"
                    tooltip="Statistics" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-bar-chart"></i>
                     </div>
                     <div class="sidebar-group-item-label">Statistics</div>
                 </a>
-                <a ui-sref="counters" class="sidebar-group-item" ng-class="{'active':isState('counters')}"
+                <a ui-sref="counters" class="sidebar-group-item" ng-class="{'active':vm.isState('counters')}"
                    tooltip="Manage Counters" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-list-ol"></i>

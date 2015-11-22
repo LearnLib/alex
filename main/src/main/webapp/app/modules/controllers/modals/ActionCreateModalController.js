@@ -31,12 +31,6 @@ class ActionCreateModalController {
          */
         this.symbols = [];
 
-        /**
-         * A map where actions can save temporary key value pairs
-         * @type {{}}
-         */
-        this.map = {};
-
         // get all symbols
         SymbolResource.getAll(project.id).then(symbols => {
             this.symbols = symbols;
@@ -61,7 +55,6 @@ class ActionCreateModalController {
     createActionAndContinue() {
         this.EventBus.emit(events.ACTION_CREATED, {action: this.action});
         this.action = null;
-        this.map = {};
     }
 
     /** Closes the modal dialog without passing any data */

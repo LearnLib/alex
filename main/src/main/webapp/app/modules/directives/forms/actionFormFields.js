@@ -4,40 +4,39 @@
  * Attribute 'action' should contain the action object
  * Attribute 'symbols' should contain the list of symbols so that they are available by the action
  *
- * Use: <action-form-fields action="..."></action-form-fields>
- * @returns {{scope: {action: string}, template: string, link: link}}
+ * Use: <action-form-fields action="..." symbols="..."></action-form-fields>
+ * @returns {{scope: {action: string}, template: string}}
  */
 function actionFormFields() {
     return {
         scope: {
             action: '=',
-            symbols: '=',
-            map: '='
+            symbols: '='
         },
+        controller: ['$scope', ($scope) => {
+            $scope.map = {};
+
+            $scope.getActionTemplate = function () {
+                return 'views/actions/' + $scope.action.type + '.html';
+            }
+        }],
         template: `
-                <div ng-include="getActionTemplate()"></div>
-                <div ng-if="action !== null">
-                    <hr>
-                    <p>
-                        <a href="" ng-click="advancedOptions = !advancedOptions"><i class="fa fa-gear fa-fw"></i> Advanced Options</a>
-                    </p>
-                    <div collapse="!advancedOptions">
-                        <div class="checkbox">
-                            <label><input type="checkbox" ng-model="action.negated"> Negate </label>
-                        </div>
-                        <div class="checkbox">
-                            <label><input type="checkbox" ng-model="action.ignoreFailure"> Ignore Failure </label>
-                        </div>
+            <div ng-include="getActionTemplate()"></div>
+            <div ng-if="action !== null">
+                <hr>
+                <p>
+                    <a href="" ng-click="advancedOptions = !advancedOptions"><i class="fa fa-gear fa-fw"></i> Advanced Options</a>
+                </p>
+                <div collapse="!advancedOptions">
+                    <div class="checkbox">
+                        <label><input type="checkbox" ng-model="action.negated"> Negate </label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" ng-model="action.ignoreFailure"> Ignore Failure </label>
                     </div>
                 </div>
-            `,
-        link: link
-    };
-
-    function link(scope) {
-        scope.getActionTemplate = function () {
-            return 'views/actions/' + scope.action.type + '.html';
-        }
+            </div>
+        `
     }
 }
 

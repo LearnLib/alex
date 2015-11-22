@@ -1,55 +1,77 @@
 import {events} from '../../constants';
+import {UserFormModel} from '../../entities/User';
 
+/** The component controller for the user login form */
 // @ngInject
-function userLoginForm($state, $window, UserResource, jwtHelper, ToastService, SessionService, UserFormModel,
-                       EventBus) {
-    return {
-        scope: true,
-        template: `
-                <form ng-submit="login()">
-                    <div class="form-group">
-                        <label>Email</label>
-                            <input type="text" class="form-control" placeholder="Email address" autofocus
-                                   ng-model="user.email">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" class="form-control" placeholder="Password" ng-model="user.password">
-                    </div>
-                    <button class="btn btn-sm btn-block btn-primary">Login</button>
-                </form>
-            `,
-        link: link
-    };
+class UserLoginForm {
 
-    function link(scope) {
-        scope.user = new UserFormModel();
+    /**
+     * Constructor
+     * @param $state
+     * @param UserResource
+     * @param jwtHelper
+     * @param ToastService
+     * @param SessionService
+     * @param EventBus
+     */
+    constructor($state, UserResource, jwtHelper, ToastService, SessionService, EventBus) {
+        this.$state = $state;
+        this.UserResource = UserResource;
+        this.jwtHelper = jwtHelper;
+        this.ToastService = ToastService;
+        this.SessionService = SessionService;
+        this.EventBus = EventBus;
 
-        scope.login = function () {
-            if (scope.user.email && scope.user.password) {
-                UserResource.login(scope.user)
-                    .then(response => {
-                        ToastService.info('You have logged in!');
+        /**
+         * The user that wants to login
+         * @type {UserFormModel}
+         */
+        this.user = new UserFormModel();
+    }
 
-                        const token = response.data.token;
-                        const tokenPayload = jwtHelper.decodeToken(token);
-                        const user = {
-                            id: tokenPayload.userId,
-                            role: tokenPayload.userRole
-                        };
+    login() {
+        if (this.user.email && this.user.password) {
+            this.UserResource.login(this.user)
+                .then(response => {
+                    this.ToastService.info('You have logged in!');
 
-                        $window.sessionStorage.setItem('jwt', token);
-                        SessionService.user.save(user);
+                    // decode the token and create a user from it
+                    const token = response.data.token;
+                    const tokenPayload = this.jwtHelper.decodeToken(token);
+                    const user = {
+                        id: tokenPayload.userId,
+                        role: tokenPayload.userRole
+                    };
 
-                        EventBus.emit(events.USER_LOGGED_IN, {user: user});
-                        $state.go('projects');
-                    })
-                    .catch(() => {
-                        ToastService.danger('Login failed');
-                    })
-            }
+                    // save the user in the session
+                    this.SessionService.user.save(user, token);
+
+                    this.EventBus.emit(events.USER_LOGGED_IN, {user: user});
+                    this.$state.go('projects');
+                })
+                .catch(() => {
+                    this.ToastService.danger('Login failed');
+                })
         }
     }
 }
+
+const userLoginForm = {
+    controller: UserLoginForm,
+    controllerAs: 'vm',
+    template: `
+        <form ng-submit="vm.login()">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" class="form-control" placeholder="Email address" autofocus ng-model="vm.user.email">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" placeholder="Password" ng-model="vm.user.password">
+            </div>
+            <button class="btn btn-sm btn-block btn-primary">Login</button>
+        </form>
+    `
+};
 
 export default userLoginForm;

@@ -56,8 +56,8 @@ angular
     .module(moduleName, [])
     .directive('actionBar', actionBar)
     .directive('actionFormFields', actionFormFields)
-    .directive('checkbox', checkbox)
-    .directive('checkboxMultiple', checkboxMultiple)
+    .component('checkbox', checkbox)
+    .component('checkboxMultiple', checkboxMultiple)
     .directive('discriminationTree', discriminationTree)
     .directive('downloadAsJson', downloadAsJson)
     .directive('downloadTableAsCsv', downloadTableAsCsv)
@@ -80,13 +80,13 @@ angular
     .component('projectCreateForm', projectCreateForm)
     .directive('projectList', projectList)
     .directive('responsiveIframe', responsiveIframe)
-    .directive('sidebar', sidebar)
+    .component('sidebar', sidebar)
     .directive('symbolGroupList', symbolGroupList)
     .directive('symbolGroupListItem', symbolGroupListItem)
     .directive('symbolList', symbolList)
     .directive('symbolListItem', symbolListItem)
     .directive('userEditForm', userEditForm)
-    .directive('userLoginForm', userLoginForm)
+    .component('userLoginForm', userLoginForm)
     .component('userRegisterForm', userRegisterForm)
     .component('viewHeader', viewHeader)
 
@@ -106,11 +106,11 @@ angular
     .directive('variablesCountersOccurrenceModalHandle', variablesCountersOccurrenceModalHandle)
 
     // widgets
-    .directive('widget', widget)
+    .component('widget', widget)
     .directive('counterexamplesWidget', counterexamplesWidget)
     .directive('learnResumeSettingsWidget', learnResumeSettingsWidget)
     .directive('learnerStatusWidget', learnerStatusWidget)
-    .directive('latestLearnResultWidget', latestLearnResultWidget)
+    .component('latestLearnResultWidget', latestLearnResultWidget)
     .directive('projectDetailsWidget', projectDetailsWidget);
 
 export const directives = moduleName;

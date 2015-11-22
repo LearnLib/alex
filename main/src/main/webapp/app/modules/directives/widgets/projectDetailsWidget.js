@@ -1,6 +1,7 @@
 import {events} from '../../constants';
 
 const template = `
+    <widget title="Project details">
         <table class="table table-condensed">
             <tbody>
             <tr>
@@ -28,7 +29,8 @@ const template = `
         <button class="btn btn-default btn-xs" project-settings-modal-handle project="project">
             <i class="fa fa-fw fa-edit"></i> Edit project
         </button>
-    `;
+    </widget>
+`;
 
 /**
  * The directive for the dashboard widget that displays information about the current project.
