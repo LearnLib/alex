@@ -14,7 +14,7 @@ class ConfirmDialogController {
          * The text to display
          * @type {string}
          */
-        this.text = modalData.text;
+        this.text = modalData.text || null;
     }
 
     /** Close the modal dialog */

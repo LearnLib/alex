@@ -9,8 +9,9 @@ class AdminUsersController {
      * @param $scope
      * @param UserResource
      * @param EventBus
+     * @param ToastService
      */
-    constructor($scope, UserResource, EventBus) {
+    constructor($scope, UserResource, EventBus, ToastService) {
 
         /**
          * All registered users
@@ -19,9 +20,13 @@ class AdminUsersController {
         this.users = [];
 
         // fetch all users from the server
-        UserResource.getAll().then(users => {
-            this.users = users;
-        });
+        UserResource.getAll()
+            .then(users => {
+                this.users = users;
+            })
+            .catch(response => {
+                ToastService.danger(`Loading users failed! ${response.data.message}`);
+            });
 
         // listen on user updated event
         EventBus.on(events.USER_UPDATED, (evt, data) => {

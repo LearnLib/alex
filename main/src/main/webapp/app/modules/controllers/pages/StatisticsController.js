@@ -84,6 +84,10 @@ class StatisticsController {
         });
     }
 
+    /**
+     * Exports the statistics and some other attributes from a given learn result into csv
+     * @param {LearnResult} result
+     */
     exportAsCSV(result) {
         this.LearnResultResource.getComplete(this.project.id, result.testNo).then(results => {
             this.LearnerResultDownloadService.init();
@@ -92,6 +96,7 @@ class StatisticsController {
         })
     }
 
+    /** Exports selected learn results into a csv file */
     exportSelectedAsCSV() {
         if (this.selectedResults.length > 0) {
             this.LearnResultResource.getManyComplete(this.project.id, this.selectedResults.map(r => r.testNo))
