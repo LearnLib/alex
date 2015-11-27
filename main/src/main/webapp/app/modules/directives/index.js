@@ -78,14 +78,14 @@ angular
     .component('loadScreen', loadScreen)
     .directive('observationTable', observationTable)
     .component('projectCreateForm', projectCreateForm)
-    .directive('projectList', projectList)
+    .component('projectList', projectList)
     .directive('responsiveIframe', responsiveIframe)
     .component('sidebar', sidebar)
     .directive('symbolGroupList', symbolGroupList)
     .directive('symbolGroupListItem', symbolGroupListItem)
     .directive('symbolList', symbolList)
     .directive('symbolListItem', symbolListItem)
-    .directive('userEditForm', userEditForm)
+    .component('userEditForm', userEditForm)
     .component('userLoginForm', userLoginForm)
     .component('userRegisterForm', userRegisterForm)
     .component('viewHeader', viewHeader)
@@ -107,10 +107,10 @@ angular
 
     // widgets
     .component('widget', widget)
-    .directive('counterexamplesWidget', counterexamplesWidget)
-    .directive('learnResumeSettingsWidget', learnResumeSettingsWidget)
-    .directive('learnerStatusWidget', learnerStatusWidget)
+    .component('counterexamplesWidget', counterexamplesWidget)
+    .component('learnResumeSettingsWidget', learnResumeSettingsWidget)
+    .component('learnerStatusWidget', learnerStatusWidget)
     .component('latestLearnResultWidget', latestLearnResultWidget)
-    .directive('projectDetailsWidget', projectDetailsWidget);
+    .component('projectDetailsWidget', projectDetailsWidget);
 
 export const directives = moduleName;

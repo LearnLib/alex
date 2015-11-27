@@ -28,31 +28,27 @@
             </table>
         </div>
 
-        <div ng-if="!vm.active && vm.results.length > 0">
+        <div class="panel-sidebar" ng-class="{'show': vm.showSidebar}" ng-if="!vm.active && vm.results.length > 0">
+            <learn-resume-settings-widget learn-configuration="_.last(vm.results).configuration">
+            </learn-resume-settings-widget>
 
-            <div class="panel-sidebar" ng-class="{'show': vm.showSidebar}">
-                <div widget title="Configuration">
-                    <div learn-resume-settings-widget learn-configuration="_.last(vm.results).configuration"></div>
-                </div>
+            <counterexamples-widget
+                    ng-if="_.last(vm.results).configuration.eqOracle.type === 'sample'"
+                    counterexamples="_.last(vm.results).configuration.eqOracle.counterExamples"
+                    learn-result="_.last(vm.results)">
+            </counterexamples-widget>
+        </div>
 
-                <div widget title="Counterexamples"
-                     ng-if="_.last(vm.results).configuration.eqOracle.type === 'sample'">
-                    <div counterexamples-widget
-                         counterexamples="_.last(vm.results).configuration.eqOracle.counterExamples"
-                         learn-result="_.last(vm.results)"></div>
-                </div>
+        <div learn-result-panel results="vm.results" ng-if="vm.results.length > 0 && !vm.active">
+            <div class="btn-group btn-group-sm learn-result-panel-resume-button">
+                <button class="btn btn-success" ng-click="vm.resumeLearning()">Resume</button>
+                <button class="btn btn-success" ng-click="vm.toggleSidebar()">
+                    <i class="fa fa-fw" ng-class="vm.showSidebar ? 'fa-close' : 'fa-gear'"></i>
+                </button>
             </div>
-
-            <div learn-result-panel results="vm.results">
-                <div class="btn-group btn-group-sm learn-result-panel-resume-button">
-                    <button class="btn btn-success" ng-click="vm.resumeLearning()">Resume</button>
-                    <button class="btn btn-success" ng-click="vm.toggleSidebar()">
-                        <i class="fa fa-fw" ng-class="vm.showSidebar ? 'fa-close' : 'fa-gear'"></i>
-                    </button>
-                </div>
-            </div>
-
         </div>
 
     </div>
+
+</div>
 </div>
