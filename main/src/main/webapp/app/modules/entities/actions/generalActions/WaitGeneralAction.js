@@ -1,17 +1,15 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Wait for a certain amount of time before executing the next action */
 class WaitGeneralAction extends Action {
-    static get type() {
-        return 'wait';
-    }
 
     /**
      * Constructor
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(WaitGeneralAction.type, obj);
+        super(actionType.GENERAL_WAIT, obj);
 
         /**
          * The time to wait in milliseconds

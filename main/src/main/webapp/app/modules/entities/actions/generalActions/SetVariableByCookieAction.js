@@ -1,17 +1,15 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Sets a variable to a specific value and implicitly initializes it if it has not been created before */
 class SetVariableByCookieAction extends Action {
-    static get type() {
-        return 'setVariableByCookie';
-    }
 
     /**
      * Constructor
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(SetVariableByCookieAction.type, obj);
+        super(actionType.GENERAL_SET_VARIABLE_BY_COOKIE, obj);
 
         /**
          * The name of the variable

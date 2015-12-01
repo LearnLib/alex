@@ -1,10 +1,8 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Submits a form. Can also be applied to an input element of a form */
 class SubmitWebAction extends Action {
-    static get type() {
-        return 'web_submit';
-    }
 
     /**
      * Constructor
@@ -12,7 +10,7 @@ class SubmitWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(SubmitWebAction.type, obj);
+        super(actionType.WEB_SUBMIT, obj);
 
         /**
          * The CSS selector of an element

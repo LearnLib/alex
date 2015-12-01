@@ -1,10 +1,8 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Searches for an element with a specific selector in the HTML document */
 class CheckForNodeWebAction extends Action {
-    static get type() {
-        return 'web_checkForNode';
-    }
 
     /**
      * Constructor
@@ -12,7 +10,7 @@ class CheckForNodeWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckForNodeWebAction.type, obj, obj);
+        super(actionType.WEB_CHECK_NODE, obj);
 
         /**
          * The selector of the node to search

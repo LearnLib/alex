@@ -1,17 +1,15 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Extracts the text content value of an element and saves it value in a variable */
 class SetVariableByJsonAttributeGeneralAction extends Action {
-    static get type() {
-        return 'setVariableByJSON';
-    }
 
     /**
      * Constructor
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(SetVariableByJsonAttributeGeneralAction.type, obj);
+        super(actionType.GENERAL_SET_VARIABLE_BY_JSON, obj);
 
         /**
          * The name of the variable

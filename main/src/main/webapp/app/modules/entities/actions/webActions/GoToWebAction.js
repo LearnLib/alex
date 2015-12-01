@@ -1,10 +1,8 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Opens a URL */
 class GoToWebAction extends Action {
-    static get type() {
-        return 'web_goto';
-    }
 
     /**
      * Constructor
@@ -12,7 +10,7 @@ class GoToWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(GoToWebAction.type, obj);
+        super(actionType.WEB_GO_TO, obj);
 
         /**
          * The url that is called

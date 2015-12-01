@@ -1,17 +1,15 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Executes another symbol before continuing with other actions */
 class ExecuteSymbolGeneralAction extends Action {
-    static get type() {
-        return 'executeSymbol';
-    }
 
     /**
      * Constructor
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(ExecuteSymbolGeneralAction.type, obj);
+        super(actionType.GENERAL_EXECUTE_SYMBOL, obj);
 
         /**
          * idRevisionPair

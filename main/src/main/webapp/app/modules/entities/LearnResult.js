@@ -76,14 +76,6 @@ class LearnResult {
         this.statistics.startTime = Math.ceil(this.statistics.startTime / 1000000);
         this.statistics.duration = Math.ceil(this.statistics.duration / 1000000);
     }
-
-    /**
-     * Indicates if an error has been recorded during the step
-     * @returns {boolean}
-     */
-    hasError() {
-        return angular.isDefined(this.error);
-    }
 }
 
 export default LearnResult;

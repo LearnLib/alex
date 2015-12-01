@@ -1,17 +1,15 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Sets a variable to a specific value and implicitly initializes it if it has not been created before */
 class IncrementCounterGeneralAction extends Action {
-    static get type() {
-        return 'incrementCounter';
-    }
 
     /**
      * Constructor
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(IncrementCounterGeneralAction.type, obj);
+        super(actionType.GENERAL_INCREMENT_COUNTER, obj);
 
         /**
          * The name of the counter

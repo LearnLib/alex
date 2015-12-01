@@ -1,17 +1,15 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Action to compare the value of a counter to another integer value */
 class AssertCounterAction extends Action {
-    static get type() {
-        return 'assertCounter';
-    }
 
     /**
      * Constructor
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(AssertCounterAction.type, obj);
+        super(actionType.GENERAL_ASSERT_COUNTER, obj);
 
         /**
          * The name of the counter

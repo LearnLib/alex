@@ -1,10 +1,8 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Remove all inputs from an element */
 class ClearWebAction extends Action {
-    static get type() {
-        return 'web_clear';
-    }
 
     /**
      * Constructor
@@ -12,7 +10,7 @@ class ClearWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(ClearWebAction.type, obj);
+        super(actionType.WEB_CLEAR, obj);
 
         /**
          * The CSS selector of an element

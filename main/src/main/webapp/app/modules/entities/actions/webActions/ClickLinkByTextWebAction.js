@@ -1,10 +1,8 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Clicks on a link with a specific text value */
 class ClickLinkByTextWebAction extends Action {
-    static get type() {
-        return 'web_clickLinkByText';
-    }
 
     /**
      * Constructor
@@ -12,7 +10,7 @@ class ClickLinkByTextWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(ClickLinkByTextWebAction.type, obj);
+        super(actionType.WEB_CLICK_LINK_BY_TEXT, obj);
 
         /**
          * The text of the link

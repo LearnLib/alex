@@ -53,7 +53,7 @@ class CountersController {
                 _.remove(this.counters, {name: counter.name});
             })
             .catch(response => {
-                ToastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + response.data.message);
+                this.ToastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + response.data.message);
             })
     }
 
@@ -70,7 +70,7 @@ class CountersController {
                     })
                 })
                 .catch(response => {
-                    ToastService.danger('<p><strong>Deleting counters failed</strong></p>' + response.data.message);
+                    this.ToastService.danger('<p><strong>Deleting counters failed</strong></p>' + response.data.message);
                 })
         }
     }

@@ -1,10 +1,8 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Selects an entry from a select box */
 class SelectWebAction extends Action {
-    static get type() {
-        return 'web_select';
-    }
 
     /**
      * Constructor
@@ -12,7 +10,7 @@ class SelectWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(SelectWebAction.type, obj);
+        super(actionType.WEB_SELECT, obj);
 
         /**
          * The CSS selector of an select element

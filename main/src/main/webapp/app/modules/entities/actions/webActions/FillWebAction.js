@@ -1,10 +1,8 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Fills an input element with a value */
 class FillWebAction extends Action {
-    static get type() {
-        return 'web_fill';
-    }
 
     /**
      * Constructor
@@ -12,7 +10,7 @@ class FillWebAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(FillWebAction.type, obj);
+        super(actionType.WEB_FILL, obj);
 
         /**
          * The CSS selector of an element

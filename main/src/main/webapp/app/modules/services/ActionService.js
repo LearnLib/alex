@@ -45,25 +45,25 @@ class ActionService {
         switch (data.type) {
 
             // web actions
-            case SelectWebAction.type:
+            case actionType.WEB_SELECT:
                 return new SelectWebAction(data);
-            case SubmitWebAction.type:
+            case actionType.WEB_SUBMIT:
                 return new SubmitWebAction(data);
-            case GoToWebAction.type:
+            case actionType.WEB_GO_TO:
                 return new GoToWebAction(data);
-            case FillWebAction.type:
+            case actionType.WEB_FILL:
                 return new FillWebAction(data);
-            case ClickWebAction.type:
+            case actionType.WEB_CLICK:
                 return new ClickWebAction(data);
-            case ClickLinkByTextWebAction.type:
+            case actionType.WEB_CLICK_LINK_BY_TEXT:
                 return new ClickLinkByTextWebAction(data);
-            case ClearWebAction.type:
+            case actionType.WEB_CLEAR:
                 return new ClearWebAction(data);
-            case CheckPageTitleAction.type:
+            case actionType.WEB_CHECK_PAGE_TITLE:
                 return new CheckPageTitleAction(data);
-            case CheckForTextWebAction.type:
+            case actionType.WEB_CHECK_TEXT:
                 return new CheckForTextWebAction(data);
-            case CheckForNodeWebAction.type:
+            case actionType.WEB_CHECK_NODE:
                 return new CheckForNodeWebAction(data);
 
             // rest actions
@@ -83,25 +83,25 @@ class ActionService {
                 return new CheckStatusRestAction(data);
 
             // general actions
-            case ExecuteSymbolGeneralAction.type:
+            case actionType.GENERAL_EXECUTE_SYMBOL:
                 return new ExecuteSymbolGeneralAction(data);
-            case AssertCounterAction.type:
+            case actionType.GENERAL_ASSERT_COUNTER:
                 return new AssertCounterAction(data);
-            case AssertVariableAction.type:
+            case actionType.GENERAL_ASSERT_VARIABLE:
                 return new AssertVariableAction(data);
-            case IncrementCounterGeneralAction.type:
+            case actionType.GENERAL_INCREMENT_COUNTER:
                 return new IncrementCounterGeneralAction(data);
-            case SetCounterGeneralAction.type:
+            case actionType.GENERAL_SET_COUNTER:
                 return new SetCounterGeneralAction(data);
-            case SetVariableByCookieAction.type:
+            case actionType.GENERAL_SET_VARIABLE_BY_COOKIE:
                 return new SetVariableByCookieAction(data);
-            case SetVariableByJsonAttributeGeneralAction.type:
+            case actionType.GENERAL_SET_VARIABLE_BY_JSON:
                 return new SetVariableByJsonAttributeGeneralAction(data);
-            case SetVariableByNodeGeneralAction.type:
+            case actionType.GENERAL_SET_VARIABLE_BY_HTML:
                 return new SetVariableByNodeGeneralAction(data);
-            case SetVariableGeneralAction.type:
+            case actionType.GENERAL_SET_VARIABLE:
                 return new SetVariableGeneralAction(data);
-            case WaitGeneralAction.type:
+            case actionType.GENERAL_WAIT:
                 return new WaitGeneralAction(data);
         }
     };

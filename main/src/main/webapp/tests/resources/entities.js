@@ -59,3 +59,7 @@ ENTITIES.learnConfigurations = [
         comment: null
     }
 ];
+
+ENTITIES.learnResults = [
+    {}
+];

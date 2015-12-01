@@ -1,17 +1,15 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Searches for a piece of text or a regular expression in the HTML document */
 class CheckPageTitleAction extends Action {
-    static get type() {
-        return 'web_checkPageTitle';
-    }
 
     /**
      * Constructor
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(CheckPageTitleAction.type, obj);
+        super(actionType.WEB_CHECK_PAGE_TITLE, obj);
 
         /**
          * The page title to look for or the regexp to match the title against

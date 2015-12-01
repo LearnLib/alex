@@ -1,17 +1,15 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Action to check if the value of a variable equals or matches a specific string value */
 class AssertVariableAction extends Action {
-    static get type() {
-        return 'assertVariable';
-    }
 
     /**
      * Constructor
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(AssertVariableAction.type, obj);
+        super(actionType.GENERAL_ASSERT_VARIABLE, obj);
 
         /**
          * The name of the variable

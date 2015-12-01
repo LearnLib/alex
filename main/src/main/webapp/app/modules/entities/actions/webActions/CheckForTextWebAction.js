@@ -1,17 +1,15 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Searches for a piece of text or a regular expression in the HTML document */
 class CheckForTextWebAction extends Action {
-    static get type() {
-        return 'web_checkForText';
-    }
 
     /**
      * Constructor
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(CheckForTextWebAction.type, obj);
+        super(actionType.WEB_CHECK_TEXT, obj);
 
         /**
          * The piece of text to look for
