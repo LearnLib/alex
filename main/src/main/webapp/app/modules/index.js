@@ -41,4 +41,5 @@ angular
     .constant('webBrowser', constant.webBrowser)
     .constant('eqOracleType', constant.eqOracleType)
     .constant('events', constant.events)
+    .constant('actionType', constant.actionType)
     .constant('chartMode', constant.chartMode);

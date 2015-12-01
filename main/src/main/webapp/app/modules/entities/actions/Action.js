@@ -34,15 +34,6 @@ class Action {
     }
 
     /**
-     * Manually set a property
-     * @param {string} key
-     * @param {any} value
-     */
-    set(key, value) {
-        this[key] = value;
-    }
-
-    /**
      * Get a string representation of the action
      * @returns {string}
      */

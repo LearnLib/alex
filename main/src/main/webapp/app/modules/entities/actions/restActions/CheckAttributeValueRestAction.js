@@ -1,13 +1,11 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /**
  * Checks if a property of a JSON object in a HTTP response body has a specific value or matches a regular
  * expression
  */
 class CheckAttributeValueRestAction extends Action {
-    static get type() {
-        return 'rest_checkAttributeValue';
-    }
 
     /**
      * Constructor
@@ -15,7 +13,7 @@ class CheckAttributeValueRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckAttributeValueRestAction.type, obj);
+        super(actionType.REST_CHECK_ATTRIBUTE_VALUE, obj);
 
         /**
          * The JSON property

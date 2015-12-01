@@ -61,4 +61,16 @@ const chartMode = {
     COMPLETE: 'complete'
 };
 
-export {learnAlgorithm, webBrowser, eqOracleType, events, chartMode};
+const actionType = {
+
+    // rest actions
+    REST_CALL: 'rest_call',
+    REST_CHECK_ATTRIBUTE_EXISTS: 'rest_checkAttributeExists',
+    REST_CHECK_ATTRIBUTE_TYPE: 'rest_checkAttributeType',
+    REST_CHECK_ATTRIBUTE_VALUE: 'rest_checkAttributeValue',
+    REST_CHECK_HEADER_FIELD: 'rest_checkHeaderField',
+    REST_CHECK_FOR_TEXT: 'rest_checkForText',
+    REST_CHECK_STATUS: 'rest_checkStatus'
+};
+
+export {learnAlgorithm, webBrowser, eqOracleType, events, chartMode, actionType};

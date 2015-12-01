@@ -1,10 +1,9 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
+
 
 /** Checks if a property of the JSON of a HTTP response has a specific type */
 class CheckAttributeTypeRestAction extends Action {
-    static get type() {
-        return 'rest_checkAttributeType';
-    }
 
     /**
      * Constructor
@@ -12,7 +11,7 @@ class CheckAttributeTypeRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckAttributeTypeRestAction.type, obj);
+        super(actionType.REST_CHECK_ATTRIBUTE_TYPE, obj);
 
         /**
          * The JSON property

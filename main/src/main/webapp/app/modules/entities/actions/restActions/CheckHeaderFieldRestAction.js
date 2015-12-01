@@ -1,10 +1,8 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Checks a value in the header fields of an HTTP response */
 class CheckHeaderFieldRestAction extends Action {
-    static get type() {
-        return 'rest_checkHeaderField';
-    }
 
     /**
      * Constructor
@@ -12,7 +10,7 @@ class CheckHeaderFieldRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckHeaderFieldRestAction.type, obj);
+        super(actionType.REST_CHECK_HEADER_FIELD, obj);
 
         /**
          * The key of the header field

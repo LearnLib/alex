@@ -1,10 +1,8 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Searches for a string value in the body of an HTTP response */
 class CheckHTTPBodyTextRestAction extends Action {
-    static get type() {
-        return 'rest_checkForText';
-    }
 
     /**
      * Constructor
@@ -12,7 +10,7 @@ class CheckHTTPBodyTextRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckHTTPBodyTextRestAction.type, obj);
+        super(actionType.REST_CHECK_FOR_TEXT, obj);
 
         /**
          * The string that is searched for

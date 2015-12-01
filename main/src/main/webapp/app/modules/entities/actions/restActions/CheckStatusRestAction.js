@@ -1,4 +1,5 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /** Checks for the status code (e.g. 404) in an HTTP response */
 class CheckStatusRestAction extends Action {

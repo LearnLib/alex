@@ -1,13 +1,11 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /**
  * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.
  * E.g. object.attribute.anotherAttribute
  */
 class CallRestAction extends Action {
-    static get type() {
-        return 'rest_call';
-    }
 
     /**
      * Constructor
@@ -15,7 +13,7 @@ class CallRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CallRestAction.type, obj);
+        super(actionType.REST_CALL, obj);
 
         /**
          * The HTTP method in {GET,POST,PUT,DELETE}

@@ -1,3 +1,5 @@
+import {actionType} from '../constants';
+
 // web actions
 import SelectWebAction from '../entities/actions/webActions/SelectWebAction';
 import SubmitWebAction from '../entities/actions/webActions/SubmitWebAction';
@@ -65,19 +67,19 @@ class ActionService {
                 return new CheckForNodeWebAction(data);
 
             // rest actions
-            case CallRestAction.type:
+            case actionType.REST_CALL:
                 return new CallRestAction(data);
-            case CheckAttributeExistsRestAction.type:
+            case actionType.REST_CHECK_ATTRIBUTE_EXISTS:
                 return new CheckAttributeExistsRestAction(data);
-            case CheckAttributeTypeRestAction.type:
+            case actionType.REST_CHECK_ATTRIBUTE_TYPE:
                 return new CheckAttributeTypeRestAction(data);
-            case CheckAttributeValueRestAction.type:
+            case actionType.REST_CHECK_ATTRIBUTE_VALUE:
                 return new CheckAttributeValueRestAction(data);
-            case CheckHeaderFieldRestAction.type:
+            case actionType.REST_CHECK_HEADER_FIELD:
                 return new CheckHeaderFieldRestAction(data);
-            case CheckHTTPBodyTextRestAction.type:
+            case actionType.REST_CHECK_FOR_TEXT:
                 return new CheckHTTPBodyTextRestAction(data);
-            case CheckStatusRestAction.type:
+            case actionType.REST_CHECK_STATUS:
                 return new CheckStatusRestAction(data);
 
             // general actions

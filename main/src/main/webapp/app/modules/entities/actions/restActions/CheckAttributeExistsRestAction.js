@@ -1,13 +1,11 @@
 import Action from '../Action';
+import {actionType} from '../../../constants';
 
 /**
  * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.
  * E.g. object.attribute.anotherAttribute
  */
 class CheckAttributeExistsRestAction extends Action {
-    static get type() {
-        return 'rest_checkAttributeExists';
-    }
 
     /**
      * Constructor
@@ -15,7 +13,7 @@ class CheckAttributeExistsRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckAttributeExistsRestAction.type, obj);
+        super(actionType.REST_CHECK_ATTRIBUTE_EXISTS, obj);
 
         /**
          * The JSON property
