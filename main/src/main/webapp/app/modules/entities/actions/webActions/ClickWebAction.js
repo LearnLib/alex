@@ -25,7 +25,7 @@ class ClickWebAction extends Action {
      */
     toString() {
         return `Click on "${this.node}"`;
-    };
+    }
 }
 
 export default ClickWebAction;

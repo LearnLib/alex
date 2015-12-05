@@ -30,7 +30,7 @@ class UserRegisterFrom {
                 })
                 .catch(response => {
                     this.ToastService.danger(`Registration failed. ${response.data.message}`);
-                })
+                });
         } else {
             this.ToastService.info('Make sure your inputs are valid.');
         }

@@ -2,17 +2,10 @@ import {learnAlgorithm, eqOracleType, webBrowser} from '../constants';
 
 /**
  * The filter to format a EQ type constant to something more readable
- *
- * @returns {filter}
+ * @returns {Function}
  */
 function formatEqOracle() {
-    return filter;
-
-    /**
-     * @param {string} type - The eq oracle type
-     * @returns {string}
-     */
-    function filter(type) {
+    return type => {
         switch (type) {
             case eqOracleType.RANDOM:
                 return 'Random Word';
@@ -25,7 +18,7 @@ function formatEqOracle() {
             default:
                 return type;
         }
-    }
+    };
 }
 
 
@@ -47,22 +40,16 @@ function formatWebBrowser() {
             default:
                 return browser;
         }
-    }
+    };
 }
 
 
 /**
  * The filter to format a learn algorithm name to something more readable
- * @returns {filter}
+ * @returns {Function}
  */
 function formatAlgorithm() {
-    return filter;
-
-    /**
-     * @param {string} name - the name of a learn algorithm
-     * @returns {string}
-     */
-    function filter(name) {
+    return name => {
         switch (name) {
             case learnAlgorithm.LSTAR:
                 return 'L*';
@@ -75,22 +62,16 @@ function formatAlgorithm() {
             default:
                 return name;
         }
-    }
+    };
 }
 
 /**
  * The filter takes a number representing milliseconds and formats it to [h] [min] s
- * @returns {filter}
+ * @returns {Function}
  */
 function formatMilliseconds() {
-    return filter;
-
-    /**
-     * @param ms - The number in ms to format
-     * @returns {string}
-     */
-    function filter(ms) {
-        var hours, minutes, seconds;
+    return ms => {
+        let hours, minutes, seconds;
 
         if (ms >= 3600000) {
             hours = Math.floor(ms / 3600000);
@@ -104,7 +85,7 @@ function formatMilliseconds() {
         } else {
             return Math.floor(ms / 1000) + 's';
         }
-    }
+    };
 }
 
 export {formatAlgorithm, formatEqOracle, formatMilliseconds, formatWebBrowser};

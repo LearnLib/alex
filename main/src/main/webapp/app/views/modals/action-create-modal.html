@@ -71,15 +71,15 @@
                     Please select an action type
                 </div>
 
-                <action-form-fields action="vm.action" symbols="vm.symbols" ng-if="vm.action !== null">
-                </action-form-fields>
+                <action-create-edit-form action="vm.action" symbols="vm.symbols" ng-if="vm.action !== null">
+                </action-create-edit-form>
 
             </div>
         </div>
     </div>
 
     <div class="modal-footer">
-        <a href class="btn btn-info btn-sm" ng-click="vm.createActionAndContinue()">Create and Continue</a>
+        <a href="" class="btn btn-info btn-sm" ng-click="vm.createActionAndContinue()">Create and Continue</a>
         <button class="btn btn-primary btn-sm" type="submit">Create</button>
     </div>
 

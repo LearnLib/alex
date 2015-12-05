@@ -35,7 +35,7 @@ class CheckHTTPBodyTextRestAction extends Action {
         } else {
             return 'Search in the response body for "' + this.value + '"';
         }
-    };
+    }
 }
 
 export default CheckHTTPBodyTextRestAction;

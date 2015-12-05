@@ -104,7 +104,7 @@ class ActionService {
             case actionType.GENERAL_WAIT:
                 return new WaitGeneralAction(data);
         }
-    };
+    }
 
     /**
      * Creates a new action from a given type

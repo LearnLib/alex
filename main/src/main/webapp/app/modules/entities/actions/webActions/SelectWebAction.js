@@ -37,7 +37,7 @@ class SelectWebAction extends Action {
      */
     toString() {
         return 'Select value "' + this.value + '" from select input "' + this.node + '"';
-    };
+    }
 }
 
 export default SelectWebAction;

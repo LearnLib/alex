@@ -14,12 +14,12 @@ function responsiveIframe($window) {
     };
 
     function link(scope, el) {
-        var parent = el.parent()[0];
+        const parent = el.parent()[0];
 
         $window.addEventListener('resize', fitToParent);
 
         scope.$on('$destroy', () => {
-            $window.removeEventListener('resize', fitToParent)
+            $window.removeEventListener('resize', fitToParent);
         });
 
         /**

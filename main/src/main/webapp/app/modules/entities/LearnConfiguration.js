@@ -71,7 +71,7 @@ class LearnConfiguration {
         return {
             eqOracle: this.eqOracle,
             maxAmountOfStepsToLearn: this.maxAmountOfStepsToLearn
-        }
+        };
     }
 }
 

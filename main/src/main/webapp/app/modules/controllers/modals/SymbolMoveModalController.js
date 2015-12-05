@@ -49,7 +49,7 @@ class SymbolMoveModalController {
         // fetch all symbolGroups
         SymbolGroupResource.getAll(project.id).then(groups => {
             this.groups = groups;
-        })
+        });
     }
 
     /**
@@ -60,7 +60,7 @@ class SymbolMoveModalController {
         if (this.selectedGroup !== null) {
 
             const symbolsToMove = this.symbols.map(s => new Symbol(s));
-            symbolsToMove.forEach(s => {s.group = this.selectedGroup.id});
+            symbolsToMove.forEach(s => {s.group = this.selectedGroup.id;});
 
             this.SymbolResource.moveMany(symbolsToMove, this.selectedGroup)
                 .success(() => {
@@ -73,7 +73,7 @@ class SymbolMoveModalController {
                 })
                 .catch(response => {
                     this.ToastService.danger('<p><strong>Moving symbols failed</strong></p>' + response.data.message);
-                })
+                });
         }
     }
 

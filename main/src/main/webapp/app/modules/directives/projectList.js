@@ -50,8 +50,8 @@ class ProjectList {
                     })
                     .catch(response => {
                         this.ToastService.danger(`The project could not be deleted. ${response.data.message}`);
-                    })
-            })
+                    });
+            });
     }
 }
 

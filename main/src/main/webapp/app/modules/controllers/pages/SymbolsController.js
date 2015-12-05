@@ -110,7 +110,7 @@ class SymbolsController {
      * @param {Symbol} symbol - The symbol that should be added
      */
     addSymbol(symbol) {
-        this.findGroupFromSymbol(symbol).symbols.push(symbol)
+        this.findGroupFromSymbol(symbol).symbols.push(symbol);
     }
 
     /**
@@ -123,7 +123,7 @@ class SymbolsController {
         symbols.forEach(symbol => {
             const group = this.findGroupFromSymbol(symbol);
             _.remove(group.symbols, {id: symbol.id});
-        })
+        });
     }
 
     /**
@@ -150,7 +150,7 @@ class SymbolsController {
                 group.symbols[i].group = symbol.group;
                 group.symbols[i].revision = symbol.revision;
             }
-        })
+        });
     }
 
     /**
@@ -168,7 +168,7 @@ class SymbolsController {
             g.symbols.splice(i, 1);
             symbol.group = group.id;
             toGroup.symbols.push(symbol);
-        })
+        });
     }
 
     /**
@@ -184,7 +184,7 @@ class SymbolsController {
             })
             .catch(response => {
                 this.ToastService.danger('<p><strong>Deleting symbol failed</strong></p>' + response.data.message);
-            })
+            });
     }
 
     /**
@@ -198,7 +198,7 @@ class SymbolsController {
             })
             .catch(response => {
                 this.ToastService.danger('<p><strong>Deleting symbols failed</strong></p>' + response.data.message);
-            })
+            });
     }
 
     /**
@@ -254,7 +254,7 @@ class SymbolsController {
                             if (s.id === action.symbolToExecute.id) {
                                 action.symbolToExecute.id = i + 1;
                             }
-                        })
+                        });
                     }
                 });
             });
@@ -263,10 +263,10 @@ class SymbolsController {
             // and download them
             const symbolsToExport = symbols.map(s => s.getExportableSymbol());
             this.FileDownloadService.downloadJson(symbolsToExport).then(() => {
-                this.ToastService.success('Symbols exported')
+                this.ToastService.success('Symbols exported');
             });
         } else {
-            this.ToastService.info('Select symbols you want to export')
+            this.ToastService.info('Select symbols you want to export');
         }
     }
 }

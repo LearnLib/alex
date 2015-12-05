@@ -89,7 +89,7 @@ class Symbol extends SymbolFormModel {
         return {
             id: this.id,
             revision: this.revision
-        }
+        };
     }
 
     /**
@@ -101,8 +101,8 @@ class Symbol extends SymbolFormModel {
             name: this.name,
             abbreviation: this.abbreviation,
             actions: this.actions
-        }
+        };
     }
 }
 
-export {SymbolFormModel, Symbol}
+export {SymbolFormModel, Symbol};

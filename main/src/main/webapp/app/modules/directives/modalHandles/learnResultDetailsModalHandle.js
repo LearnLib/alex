@@ -26,10 +26,10 @@ function learnResultDetailsModalHandle($modal) {
                 controllerAs: 'vm',
                 resolve: {
                     modalData: function () {
-                        return {result: scope.result}
+                        return {result: scope.result};
                     }
                 }
-            })
+            });
         });
     }
 }

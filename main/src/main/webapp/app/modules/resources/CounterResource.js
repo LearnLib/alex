@@ -33,7 +33,7 @@ class CounterResource {
      * @returns angular promise object of the request
      */
     remove(projectId, counter) {
-        return this.$http.delete(`/rest/projects/${projectId}/counters/${counter.name}`)
+        return this.$http.delete(`/rest/projects/${projectId}/counters/${counter.name}`);
     }
 
     /**

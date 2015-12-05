@@ -25,7 +25,7 @@ class ClearWebAction extends Action {
      */
     toString() {
         return `Clear input "${this.node}"`;
-    };
+    }
 }
 
 export default ClearWebAction;

@@ -97,7 +97,7 @@ class StatisticsCompareController {
         this.LearnResultResource.getFinal(this.project.id, testNo)
             .then(result => {
                 this.chartData = this.LearnerResultChartService.createDataSingleFinal(result);
-            })
+            });
     }
 
     /**
@@ -107,7 +107,7 @@ class StatisticsCompareController {
         this.LearnResultResource.getComplete(this.project.id, testNo)
             .then(results => {
                 this.chartData = this.LearnerResultChartService.createDataSingleComplete(results);
-            })
+            });
     }
 
     /**
@@ -119,7 +119,7 @@ class StatisticsCompareController {
             // get all results and filter because there is still no other api endpoint
             const resultsFromTestNos = results.filter(r => testNos.indexOf(r.testNo) > -1);
             this.chartData = this.LearnerResultChartService.createDataMultipleFinal(resultsFromTestNos);
-        })
+        });
     }
 
     /**
@@ -128,7 +128,7 @@ class StatisticsCompareController {
     createChartMultipleComplete(testNos) {
         this.LearnResultResource.getManyComplete(this.project.id, testNos).then(resultsList => {
             this.chartData = this.LearnerResultChartService.createDataMultipleComplete(resultsList);
-        })
+        });
     }
 
     switchToFinal() {

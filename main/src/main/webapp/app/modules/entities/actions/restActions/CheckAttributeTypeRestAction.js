@@ -32,7 +32,7 @@ class CheckAttributeTypeRestAction extends Action {
      */
     toString() {
         return 'Check the JSON attribute "' + this.attribute + '" is type of "' + this.jsonType + '"';
-    };
+    }
 }
 
 export default CheckAttributeTypeRestAction;

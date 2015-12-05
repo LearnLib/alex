@@ -44,7 +44,7 @@ class CheckAttributeValueRestAction extends Action {
         } else {
             return 'Check JSON attribute "' + this.attribute + '" to equal "' + this.value + '"';
         }
-    };
+    }
 }
 
 export default CheckAttributeValueRestAction;

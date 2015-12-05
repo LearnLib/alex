@@ -28,7 +28,7 @@ class CheckStatusRestAction extends Action {
      */
     toString() {
         return 'Check HTTP response status to be "' + this.status + '"';
-    };
+    }
 }
 
 export default CheckStatusRestAction;

@@ -32,8 +32,8 @@ class ProjectCreateForm {
                 this.project = new ProjectFormModel();
             })
             .catch(response => {
-                this.ToastService.danger('<p><strong>Creation of project failed</strong></p>' + response.data.message)
-            })
+                this.ToastService.danger('<p><strong>Creation of project failed</strong></p>' + response.data.message);
+            });
     }
 }
 

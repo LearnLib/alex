@@ -53,23 +53,23 @@ function downloadTableAsCsv(FileDownloadService) {
          * @returns {string} - The table as CSV string
          */
         function createCSV(table) {
-            var head = table.querySelectorAll('thead th');
-            var rows = table.querySelectorAll('tbody tr');
-            var csv = '';
+            const head = table.querySelectorAll('thead th');
+            const rows = table.querySelectorAll('tbody tr');
+            let csv = '';
 
             // add entries from table head
             if (head.length > 0) {
-                for (var i = 0; i < head.length; i++) {
+                for (let i = 0; i < head.length; i++) {
                     csv += head[i].textContent.replace(',', ' ') + (i === head.length - 1 ? '\n' : ',');
                 }
             }
 
             // add entries from table row
             if (rows.length > 0) {
-                for (i = 0; i < rows.length; i++) {
+                for (let i = 0; i < rows.length; i++) {
                     var tds = rows[i].querySelectorAll('td');
                     if (tds.length > 0) {
-                        for (var j = 0; j < tds.length; j++) {
+                        for (let j = 0; j < tds.length; j++) {
                             csv += tds[j].textContent.replace(',', ' ') + (j === tds.length - 1 ? '\n' : ',');
                         }
                     }

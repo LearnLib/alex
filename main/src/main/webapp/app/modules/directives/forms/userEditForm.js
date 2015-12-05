@@ -56,7 +56,7 @@ class UserEditForm {
                 })
                 .catch(response => {
                     this.ToastService.danger('The email could not be changed. ' + response.data.message);
-                })
+                });
         }
     }
 
@@ -80,7 +80,7 @@ class UserEditForm {
             })
             .catch(response => {
                 this.ToastService.danger('There has been an error. ' + response.data.message);
-            })
+            });
     }
 
     /** Deletes the user, removes the jwt on success and redirects to the index page */
@@ -97,8 +97,8 @@ class UserEditForm {
                     })
                     .catch(response => {
                         this. ToastService.danger("The profile could not be deleted. " + response.data.message);
-                    })
-            })
+                    });
+            });
     }
 }
 

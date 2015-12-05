@@ -53,8 +53,8 @@ class SymbolsTrashController {
                 _.remove(this.symbols, {id: symbol.id});
             })
             .catch(response => {
-                ToastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + response.data.message);
-            })
+                this.ToastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + response.data.message);
+            });
     }
 
     /** Recovers all symbols that were selected and calls $scope.recoverSymbol for each one */
@@ -64,13 +64,13 @@ class SymbolsTrashController {
                 .success(() => {
                     this.ToastService.success('Symbols recovered');
                     this.selectedSymbols.forEach(symbol => {
-                        _.remove(this.symbols, {id: symbol.id})
+                        _.remove(this.symbols, {id: symbol.id});
                     });
                     this.selectedSymbols = [];
                 })
                 .catch(response => {
-                    ToastService.danger('<p><strong>Error recovering symbols!</strong></p>' + response.data.message);
-                })
+                    this.ToastService.danger('<p><strong>Error recovering symbols!</strong></p>' + response.data.message);
+                });
         }
     }
 }

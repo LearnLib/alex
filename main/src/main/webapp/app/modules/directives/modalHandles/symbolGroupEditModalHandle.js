@@ -29,10 +29,10 @@ function symbolGroupEditModalHandle($modal) {
                 controllerAs: 'vm',
                 resolve: {
                     modalData: function () {
-                        return {group: new SymbolGroup(scope.group)}
+                        return {group: new SymbolGroup(scope.group)};
                     }
                 }
-            })
+            });
         });
     }
 }

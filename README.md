@@ -3,7 +3,7 @@ Automata Learning Experience (ALEX)
 
 Getting Started
 ---------------
-To build ALEX [Java][], [Maven][], [Node.JS][nodejs] and the [Grunt CLI][grunt] must be installed.
+To build ALEX [Java][], [Maven][], [Node.JS][nodejs], [Bower][bower] and the [Grunt CLI][grunt] must be installed.
 If all this tools are available, the fastest and easiest way to get started is to run the following commands:
 
     # the next line must only be done once!
@@ -70,3 +70,4 @@ Maintainers
 [maven]:  https://maven.apache.org
 [nodejs]: https://nodejs.org
 [grunt]:  http://gruntjs.com
+[bower]:  http://bower.io

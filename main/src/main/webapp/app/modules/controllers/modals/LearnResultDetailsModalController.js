@@ -31,7 +31,7 @@ class LearnResultDetailsModalController {
                     this.tabs.push({
                         heading: 'Cumulated',
                         result: res
-                    })
+                    });
                 });
         } else {
             this.tabs[0].heading = 'Cumulated';

@@ -26,7 +26,7 @@ class UserSettingsController {
             })
             .catch(response => {
                 ToastService.danger(`Loading the user failed. ${response.data.message}`);
-            })
+            });
     }
 }
 

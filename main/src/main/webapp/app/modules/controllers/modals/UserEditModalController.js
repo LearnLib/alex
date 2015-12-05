@@ -54,12 +54,12 @@ class UserEditModalController {
             .then(() => {
                 this.EventBus.emit(events.USER_UPDATED, {user: this.user});
                 this.ToastService.success('User updated successfully');
-                this.$modalInstance.dismiss()
+                this.$modalInstance.dismiss();
             })
             .catch(response => {
                 this.error = response.data.message;
-            })
-    };
+            });
+    }
 
     /** Deletes a user */
     deleteUser() {
@@ -75,9 +75,9 @@ class UserEditModalController {
                     })
                     .catch(response => {
                         this.error = response.data.message;
-                    })
-            })
-    };
+                    });
+            });
+    }
 
     /** Closes the modal window */
     close() {

@@ -26,7 +26,7 @@ function hypothesisLayoutSettingsModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            var modal = $modal.open({
+            const modal = $modal.open({
                 templateUrl: 'views/modals/hypothesis-layout-settings-modal.html',
                 controller: 'HypothesisLayoutSettingsController',
                 controllerAs: 'vm',
@@ -34,14 +34,14 @@ function hypothesisLayoutSettingsModalHandle($modal) {
                     modalData: function () {
                         return {
                             layoutSettings: angular.copy(scope.layoutSettings)
-                        }
+                        };
                     }
                 }
             });
 
             modal.result.then(layoutSettings => {
                 scope.onUpdate()(layoutSettings);
-            })
+            });
         });
     }
 }

@@ -43,7 +43,7 @@ class StatisticsController {
             })
             .catch(response => {
                 this.ToastService.danger(`The results could not be loaded. ${response.data.message}`);
-            })
+            });
     }
 
     /** Gathers the testNos of selected results and redirects to the compare view */
@@ -93,7 +93,7 @@ class StatisticsController {
             this.LearnerResultDownloadService.init();
             results.forEach(r => this.LearnerResultDownloadService.addResult(r));
             this.LearnerResultDownloadService.download();
-        })
+        });
     }
 
     /** Exports selected learn results into a csv file */
@@ -109,7 +109,7 @@ class StatisticsController {
                         this.LearnerResultDownloadService.addEmptyLine();
                     });
                     this.LearnerResultDownloadService.download();
-                })
+                });
         }
     }
 }

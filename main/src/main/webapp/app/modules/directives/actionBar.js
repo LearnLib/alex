@@ -12,10 +12,10 @@ function actionBar($window) {
     return {
         transclude: true,
         template: `
-                <div class="action-bar" layout-toggle-element>
-                    <div class="alx-container-fluid" ng-transclude></div>
-                </div>
-            `,
+            <div class="action-bar" layout-toggle-element>
+                <div class="alx-container-fluid" ng-transclude></div>
+            </div>
+        `,
         link: link
     };
 

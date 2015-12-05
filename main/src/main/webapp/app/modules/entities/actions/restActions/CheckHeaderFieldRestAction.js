@@ -41,7 +41,7 @@ class CheckHeaderFieldRestAction extends Action {
         } else {
             return 'Check HTTP header field "' + this.key + '" to equal "' + this.value + '"';
         }
-    };
+    }
 }
 
 export default CheckHeaderFieldRestAction;

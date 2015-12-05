@@ -19,11 +19,11 @@ function dropdownHover() {
      * @param ctrl - the ui.bootstrap dropdown controller
      */
     function link(scope, el, attrs, ctrl) {
-        el.on('mouseenter', function () {
-            scope.$apply(function () {
+        el.on('mouseenter', () => {
+            scope.$apply(() => {
                 ctrl.toggle(true);
-            })
-        })
+            });
+        });
     }
 }
 

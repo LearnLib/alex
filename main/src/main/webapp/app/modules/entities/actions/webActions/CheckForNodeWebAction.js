@@ -25,7 +25,7 @@ class CheckForNodeWebAction extends Action {
      */
     toString() {
         return 'Search for element "' + this.value + '"';
-    };
+    }
 }
 
 export default CheckForNodeWebAction;

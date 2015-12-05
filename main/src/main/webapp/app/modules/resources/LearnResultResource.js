@@ -49,7 +49,7 @@ class LearnResultResource {
             .then(response => {
                 response.data.shift();
                 return response.data.map(r => new LearnResult(r));
-            })
+            });
     }
 
     /**
@@ -65,7 +65,7 @@ class LearnResultResource {
                 if (response.data.length > 0) {
                     if (!angular.isArray(response.data[0])) {
                         response.data.shift();
-                        return [response.data.map(r => new LearnResult(r))]
+                        return [response.data.map(r => new LearnResult(r))];
                     } else {
                         return response.data.map(resultList => {
                             resultList.shift(); // remove the cumulated results at the beginning
@@ -75,7 +75,7 @@ class LearnResultResource {
                 } else {
                     return [[]];
                 }
-            })
+            });
     }
 
     /**
@@ -92,7 +92,7 @@ class LearnResultResource {
             testNos = results.testNo;
             projectId = results.project;
         }
-        return this.$http.delete(`/rest/projects/${projectId}/results/${testNos}`, {})
+        return this.$http.delete(`/rest/projects/${projectId}/results/${testNos}`, {});
     }
 }
 

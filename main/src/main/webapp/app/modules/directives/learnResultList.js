@@ -6,7 +6,7 @@ function learnResultList() {
     return {
         transclude: true,
         template: '<div class="learn-result-list" ng-transclude></div>'
-    }
+    };
 }
 
 /**
@@ -51,7 +51,7 @@ function learnResultListItem() {
                 </div>
             </div>
             `
-    }
+    };
 }
 
 export {learnResultList, learnResultListItem};

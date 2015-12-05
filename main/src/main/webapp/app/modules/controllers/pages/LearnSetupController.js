@@ -76,7 +76,7 @@ class LearnSetupController {
                         this.$state.go('learn.start');
                     } else {
                         this.ToastService.danger('There is already running a test from another project.');
-                        this.$state.go('project')
+                        this.$state.go('project');
                     }
                 } else {
 
@@ -91,7 +91,7 @@ class LearnSetupController {
                     LearnResultResource.getAllFinal(this.project.id)
                         .then(learnResults => {
                             this.learnResults = learnResults;
-                        })
+                        });
                 }
             });
 
@@ -121,7 +121,7 @@ class LearnSetupController {
 
                 // add selected symbols and the reset symbol to the learn config
                 this.selectedSymbols.forEach(symbol => {
-                    this.learnConfiguration.addSymbol(symbol)
+                    this.learnConfiguration.addSymbol(symbol);
                 });
                 this.learnConfiguration.setResetSymbol(this.resetSymbol);
 
@@ -157,8 +157,8 @@ class LearnSetupController {
                 if (symbol.id === config.resetSymbol.id) {
                     this.resetSymbol = symbol;
                 }
-            })
-        })
+            });
+        });
     }
 }
 

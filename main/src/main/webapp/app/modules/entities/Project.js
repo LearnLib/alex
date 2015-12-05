@@ -11,7 +11,7 @@ class ProjectFormModel {
     constructor(name = '', baseUrl = '', description = null) {
         this.name = name;
         this.baseUrl = baseUrl;
-        this.description = description
+        this.description = description;
     }
 }
 

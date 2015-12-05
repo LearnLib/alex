@@ -28,7 +28,7 @@ class CheckAttributeExistsRestAction extends Action {
      */
     toString() {
         return 'Check if the JSON of a HTTP response has attribute "' + this.attribute + '"';
-    };
+    }
 }
 
 export default CheckAttributeExistsRestAction;

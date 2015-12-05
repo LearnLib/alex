@@ -25,7 +25,7 @@ class ClickLinkByTextWebAction extends Action {
      */
     toString() {
         return `Click on link with text "${this.value}"`;
-    };
+    }
 }
 
 export default ClickLinkByTextWebAction;

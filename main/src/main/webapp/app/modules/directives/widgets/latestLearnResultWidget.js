@@ -29,7 +29,7 @@ class LatestLearnResultWidget {
             if (results.length > 0) {
                 this.result = results[results.length - 1];
             }
-        })
+        });
     }
 }
 

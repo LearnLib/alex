@@ -12,7 +12,7 @@ class Occurrence {
         this.group = group.name;
         this.symbol = symbol.name;
         this.action = actionPos;
-        this.name = counterOrVariableName.substring(3, counterOrVariableName.length - 2)
+        this.name = counterOrVariableName.substring(3, counterOrVariableName.length - 2);
     }
 }
 
@@ -95,18 +95,18 @@ class VariablesCountersOccurrenceModalController {
                                 if (foundCounters !== null) {
                                     foundCounters.forEach(counter => {
                                         occurrences.counters.push(new Occurrence(group, symbol, i, counter));
-                                    })
+                                    });
                                 }
                                 if (foundVariables !== null) {
                                     foundVariables.forEach(variable => {
                                         occurrences.variables.push(new Occurrence(group, symbol, i, variable));
-                                    })
+                                    });
                                 }
                             }
                         }
-                    })
+                    });
                 }
-            })
+            });
         });
 
         return occurrences;

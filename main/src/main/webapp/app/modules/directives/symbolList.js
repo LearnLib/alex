@@ -2,7 +2,7 @@ function symbolList() {
     return {
         transclude: true,
         template: '<div class="symbol-list" ng-transclude></div>'
-    }
+    };
 }
 
 function symbolListItem() {
@@ -17,7 +17,7 @@ function symbolListItem() {
             scope.isSelectable = angular.isDefined(attrs.selectionModel) ? true : false;
             scope.showActionsLink = angular.isDefined(attrs.showActionsLink) ? true : false;
         }
-    }
+    };
 }
 
 export {symbolList, symbolListItem};

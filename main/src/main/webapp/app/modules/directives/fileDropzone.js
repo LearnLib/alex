@@ -25,7 +25,7 @@ function fileDropzone(EventBus) {
             scope.$apply(() => {
                 EventBus.emit(events.FILE_LOADED, {
                     file: e.target.result
-                })
+                });
             });
         };
 

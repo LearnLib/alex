@@ -76,7 +76,7 @@ class SymbolCreateModalController {
             })
             .catch(response => {
                 this.error = response.data.message;
-            })
+            });
     }
 
     /**
@@ -86,7 +86,7 @@ class SymbolCreateModalController {
     createSymbol() {
         this.createSymbolAndContinue().then(() => {
             this.$modalInstance.dismiss();
-        })
+        });
     }
 
     /**

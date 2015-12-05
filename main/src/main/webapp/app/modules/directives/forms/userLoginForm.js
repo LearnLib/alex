@@ -51,7 +51,7 @@ class UserLoginForm {
                 })
                 .catch(() => {
                     this.ToastService.danger('Login failed');
-                })
+                });
         }
     }
 }

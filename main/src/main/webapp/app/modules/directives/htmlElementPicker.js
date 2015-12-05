@@ -27,9 +27,9 @@ function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
     function link(scope, el) {
 
         // The HTML picker element that is dynamically appended and removed to/from the pages DOM tree
-        var picker;
+        let picker;
 
-        el.on('click', function () {
+        el.on('click', () => {
 
             // create a new element picker under the current scope and append to the body
             picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
@@ -37,7 +37,7 @@ function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
 
             // open the picker
             htmlElementPickerInstance.open()
-                .then(function (data) {
+                .then(data => {
 
                     // copy the selected XPath and .textContent value to the scopes models
                     if (angular.isDefined(scope.selectorModel)) {
@@ -49,10 +49,10 @@ function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
                 })
 
                 // remove the picker from the dom on close
-                .finally(function () {
+                .finally(() => {
                     picker.remove();
-                })
-        })
+                });
+        });
     }
 }
 
@@ -66,10 +66,10 @@ function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
 function htmlElementPickerInstance($q) {
 
     // the promise
-    var deferred;
+    let deferred;
 
     // the url was called at the last opening
-    var lastUrl = null;
+    let lastUrl = null;
 
     return {
         close: close,
@@ -85,7 +85,7 @@ function htmlElementPickerInstance($q) {
      */
     function close(data) {
         if (angular.isDefined(data)) {
-            deferred.resolve(data)
+            deferred.resolve(data);
         } else {
             deferred.reject();
         }
@@ -207,11 +207,11 @@ function htmlElementPickerWindow($window, SessionService, htmlElementPickerInsta
          * @returns {boolean}
          */
         function handleMouseMove(e) {
-            if (lastTarget == e.target) {
+            if (lastTarget === e.target) {
                 return false;
             } else {
-                if (lastTarget != null) {
-                    lastTarget.style.outline = '0px'
+                if (lastTarget !== null) {
+                    lastTarget.style.outline = '0px';
                 }
                 lastTarget = e.target;
             }
@@ -285,13 +285,13 @@ function htmlElementPickerWindow($window, SessionService, htmlElementPickerInsta
                                 if (_this.getAttribute('href') !== '' && _this.getAttribute('href')[0] !== '#') {
                                     scope.$apply(function () {
                                         scope.url = decodeURIComponent(_this.getAttribute('href'))
-                                            .replace(proxyUrl + scope.project.baseUrl + '/', '')
-                                    })
+                                            .replace(proxyUrl + scope.project.baseUrl + '/', '');
+                                    });
                                 }
                             }
                         }
-                    )
-            }
+                    );
+            };
         };
 
         /**

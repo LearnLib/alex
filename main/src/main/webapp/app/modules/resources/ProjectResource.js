@@ -49,7 +49,7 @@ class ProjectResource {
      * @returns {*}
      */
     remove(project) {
-        return this.$http.delete(`/rest/projects/${project.id}`)
+        return this.$http.delete(`/rest/projects/${project.id}`);
     }
 }
 

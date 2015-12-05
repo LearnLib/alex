@@ -27,7 +27,7 @@ function symbolMoveModalHandle($modal) {
                 controllerAs: 'vm',
                 resolve: {
                     modalData: function () {
-                        return {symbols: scope.symbols.map(s => new Symbol(s))}
+                        return {symbols: scope.symbols.map(s => new Symbol(s))};
                     }
                 }
             });

@@ -54,7 +54,7 @@ class LearnerStatusWidget {
     abort() {
         this.LearnerResource.stop().then(() => {
             this.ToastService.info('The Learner stops with the next hypothesis');
-        })
+        });
     }
 }
 

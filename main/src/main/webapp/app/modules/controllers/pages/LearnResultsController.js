@@ -57,9 +57,9 @@ class LearnResultsController {
                         _.remove(this.results, {testNo: result.testNo});
                     })
                     .catch(response => {
-                        ToastService.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
+                        this.ToastService.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
                     });
-            })
+            });
     }
 
     /**
@@ -73,13 +73,13 @@ class LearnResultsController {
                         .then(() => {
                             this.ToastService.success('Learn results deleted');
                             this.selectedResults.forEach(result => {
-                                _.remove(this.results, {testNo: result.testNo})
-                            })
+                                _.remove(this.results, {testNo: result.testNo});
+                            });
                         })
                         .catch(response => {
                             this.ToastService.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
                         });
-                })
+                });
         } else {
             this.ToastService.info('You have to select a least one result');
         }
@@ -91,7 +91,7 @@ class LearnResultsController {
     openSelectedResults() {
         if (this.selectedResults.length > 0) {
             const testNos = _.pluck(this.selectedResults, 'testNo');
-            this.$state.go('learn.results.compare', {testNos: testNos.join(',')})
+            this.$state.go('learn.results.compare', {testNos: testNos.join(',')});
         }
     }
 }

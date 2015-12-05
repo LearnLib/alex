@@ -34,7 +34,7 @@ class CheckPageTitleAction extends Action {
         } else {
             return 'Check if the page title equals "' + this.title + '"';
         }
-    };
+    }
 }
 
 export default CheckPageTitleAction;

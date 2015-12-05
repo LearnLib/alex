@@ -87,7 +87,7 @@ class SymbolsImportController {
                                 if (action.type === 'executeSymbol') {
                                     action.symbolToExecute.id += maxId;
                                 }
-                            })
+                            });
                         }
                     });
 
@@ -95,12 +95,12 @@ class SymbolsImportController {
                         .then(createdSymbols => {
                             this.ToastService.success('Symbols uploaded');
                             createdSymbols.forEach(symbol => {
-                                _.remove(this.symbols, {name: symbol.name})
-                            })
+                                _.remove(this.symbols, {name: symbol.name});
+                            });
                         })
                         .catch(response => {
-                            this.ToastService.danger('<p><strong>Symbol upload failed</strong></p>' + response.data.message)
-                        })
+                            this.ToastService.danger('<p><strong>Symbol upload failed</strong></p>' + response.data.message);
+                        });
                 });
         }
     }

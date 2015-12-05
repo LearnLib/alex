@@ -31,7 +31,7 @@ class FillWebAction extends Action {
      */
     toString() {
         return `Fill input "${this.node}" with "${this.value}"`;
-    };
+    }
 }
 
 export default FillWebAction;

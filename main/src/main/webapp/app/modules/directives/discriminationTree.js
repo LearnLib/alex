@@ -1,4 +1,4 @@
-import {_} from 'lodash';
+import _ from 'lodash';
 import {graphlib, dagre, render as Renderer} from 'dagre-d3';
 
 import {d3} from '../libraries';
@@ -77,7 +77,7 @@ function discriminationTree($window) {
 
                 // add node if not exists
                 if (!_.find(nodes, node.discriminator)) {
-                    nodes.push(node.discriminator)
+                    nodes.push(node.discriminator);
                 }
 
                 if (parent !== null) {
@@ -88,7 +88,7 @@ function discriminationTree($window) {
                     });
                 }
 
-                _.forEach(node.children, function (child) {
+                node.children.forEach(child => {
                     if (child.data) {
                         nodes.push(child.data);
                         edges.push({
@@ -99,11 +99,9 @@ function discriminationTree($window) {
                     }
                 });
 
-                _.forEach(node.children, function (child) {
-                    if (child.discriminator) {
-                        createGraphData(child, node);
-                    }
-                })
+                node.children.forEach(child => {
+                    if (child.discriminator) createGraphData(child, node);
+                });
             }
 
             createGraphData(dt, null);
@@ -111,7 +109,7 @@ function discriminationTree($window) {
             return {
                 nodes: nodes,
                 edges: edges
-            }
+            };
         }
 
         /**

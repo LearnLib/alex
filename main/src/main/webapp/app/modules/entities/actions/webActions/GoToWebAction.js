@@ -25,7 +25,7 @@ class GoToWebAction extends Action {
      */
     toString() {
         return `Open URL "${this.url}"`;
-    };
+    }
 }
 
 export default GoToWebAction;

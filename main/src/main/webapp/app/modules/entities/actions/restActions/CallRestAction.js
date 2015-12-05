@@ -75,7 +75,7 @@ class CallRestAction extends Action {
      */
     addHeader(key, value) {
         this.headers[key] = value;
-    };
+    }
 
     /**
      * Removes a header field entry
@@ -86,7 +86,7 @@ class CallRestAction extends Action {
         if (angular.isDefined(this.headers[key])) {
             delete this.headers[key];
         }
-    };
+    }
 
     /**
      * A string presentation of the actions
@@ -94,7 +94,7 @@ class CallRestAction extends Action {
      */
     toString() {
         return 'Make a ' + this.method + ' request to "' + this.url + '"';
-    };
+    }
 }
 
 export default CallRestAction;

@@ -49,8 +49,8 @@ class SymbolGroupEditModalController {
             })
             .catch(response => {
                 this.errorMsg = response.data.message;
-            })
-    };
+            });
+    }
 
     /** Deletes the symbol group under edit and closes the modal dialog on success */
     deleteGroup() {
@@ -66,8 +66,8 @@ class SymbolGroupEditModalController {
             })
             .catch(response => {
                 this.errorMsg = response.data.message;
-            })
-    };
+            });
+    }
 
     /** Closes the modal dialog */
     close() {

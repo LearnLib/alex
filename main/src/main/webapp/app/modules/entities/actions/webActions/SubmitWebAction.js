@@ -25,7 +25,7 @@ class SubmitWebAction extends Action {
      */
     toString() {
         return `Submit form "${this.node}"`;
-    };
+    }
 }
 
 export default SubmitWebAction;

@@ -99,7 +99,7 @@ class SymbolResource {
     moveMany(symbols, group) {
         const ids = symbols.map(s => s.id).join(',');
         const project = symbols[0].project;
-        return this.$http.put(`/rest/projects/${project}/symbols/batch/${ids}/moveTo/${group.id}`, {})
+        return this.$http.put(`/rest/projects/${project}/symbols/batch/${ids}/moveTo/${group.id}`, {});
     }
 
     /**
@@ -120,7 +120,7 @@ class SymbolResource {
      * @returns {*}
      */
     remove(symbol) {
-        return this.$http.post(`/rest/projects/${symbol.project}/symbols/${symbol.id}/hide`, {})
+        return this.$http.post(`/rest/projects/${symbol.project}/symbols/${symbol.id}/hide`, {});
     }
 
     /**
@@ -132,7 +132,7 @@ class SymbolResource {
     removeMany(symbols) {
         const ids = symbols.map(s => s.id).join(',');
         const project = symbols[0].project;
-        return this.$http.post(`/rest/projects/${project}/symbols/batch/${ids}/hide`, {})
+        return this.$http.post(`/rest/projects/${project}/symbols/batch/${ids}/hide`, {});
     }
 
     /**
@@ -142,7 +142,7 @@ class SymbolResource {
      * @returns {*}
      */
     recover(symbol) {
-        return this.$http.post(`/rest/projects/${symbol.project}/symbols/${symbol.id}/show`, {})
+        return this.$http.post(`/rest/projects/${symbol.project}/symbols/${symbol.id}/show`, {});
     }
 
     /**
@@ -154,7 +154,7 @@ class SymbolResource {
     recoverMany(symbols) {
         const ids = symbols.map(s => s.id).join(',');
         const project = symbols[0].project;
-        return this.$http.post(`/rest/projects/${project}/symbols/batch/${ids}/show`, {})
+        return this.$http.post(`/rest/projects/${project}/symbols/batch/${ids}/show`, {});
     }
 }
 

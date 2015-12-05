@@ -47,7 +47,7 @@ class FileDownloadService {
         return this.PromptService.prompt('Enter a name for the ' + fileExtension + ' file.', {
             regexp: /^[a-zA-Z0-9\.\-,_]+$/,
             errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
-        })
+        });
     }
 
     /**
@@ -60,7 +60,7 @@ class FileDownloadService {
             .then(filename => {
                 const href = 'data:text/json;charset=utf-8,' + encodeURIComponent(angular.toJson(jsonObject));
                 this.download(filename, 'json', href);
-            })
+            });
     }
 
     /**
@@ -73,7 +73,7 @@ class FileDownloadService {
             .then(filename => {
                 const href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
                 this.download(filename, 'csv', href);
-            })
+            });
     }
 
     /**
@@ -113,7 +113,7 @@ class FileDownloadService {
                 const href = 'data:image/svg+xml;base64,\n' + window.btoa(svgString);
 
                 this.download(filename, 'svg', href);
-            })
+            });
     }
 }
 

@@ -31,8 +31,8 @@ function userEditModalHandle($modal) {
                         return {user: new User(scope.user)};
                     }
                 }
-            })
-        })
+            });
+        });
     }
 }
 

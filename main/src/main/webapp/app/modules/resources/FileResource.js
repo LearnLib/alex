@@ -19,7 +19,7 @@ class FileResource {
      */
     getAll(projectId) {
         return this.$http.get(`/rest/projects/${projectId}/files`)
-            .then(response => response.data)
+            .then(response => response.data);
     }
 
     /**

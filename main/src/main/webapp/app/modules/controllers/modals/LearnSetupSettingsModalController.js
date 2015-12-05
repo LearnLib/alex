@@ -51,7 +51,7 @@ class LearnSetupSettingsModalController {
 
     /** Sets the Eq Oracle of the learn configuration depending on the selected value */
     setEqOracle() {
-        this.learnConfiguration.eqOracle = this.EqOracleService.createFromType(this.selectedEqOracle)
+        this.learnConfiguration.eqOracle = this.EqOracleService.createFromType(this.selectedEqOracle);
     }
 
     /** Close the modal dialog and pass the edited learn configuration instance. */

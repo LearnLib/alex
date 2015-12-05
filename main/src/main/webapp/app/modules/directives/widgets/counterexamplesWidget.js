@@ -49,7 +49,7 @@ class CounterexamplesWidget {
             this.counterExample.push({
                 input: data.input,
                 output: data.output
-            })
+            });
         }, $scope);
     }
 
@@ -81,7 +81,7 @@ class CounterexamplesWidget {
             })
             .catch(() => {
                 this.ToastService.danger('The word is not a counterexample');
-            })
+            });
     }
 
     /**
@@ -130,7 +130,7 @@ class CounterexamplesWidget {
                     } else {
                         deferred.reject();
                     }
-                })
+                });
         };
 
         // fetch symbols only once and cache them

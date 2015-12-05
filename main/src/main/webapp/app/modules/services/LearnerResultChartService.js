@@ -33,7 +33,7 @@ class LearnerResultChartService {
             axes: {
                 x: {
                     labelFunction: (l) => {
-                        if (l % 1 == 0 && l >= 1 && l <= intermediateResults.length) {
+                        if (l % 1 === 0 && l >= 1 && l <= intermediateResults.length) {
                             return 'Step ' + l;
                         }
                     }
@@ -123,7 +123,7 @@ class LearnerResultChartService {
             context: results,
             options: options,
             data: data
-        }
+        };
     }
 
     createDataMultipleComplete(resultList) {
@@ -141,7 +141,7 @@ class LearnerResultChartService {
             axes: {
                 x: {
                     labelFunction: (l) => {
-                        if (l % 1 == 0 && l >= 1 && l <= maxSteps) {
+                        if (l % 1 === 0 && l >= 1 && l <= maxSteps) {
                             return 'Step ' + l;
                         }
                     }
@@ -184,7 +184,7 @@ class LearnerResultChartService {
                 color: colors[i % colors.length],
                 label: 'Test' + results[0].testNo,
                 type: "area"
-            })
+            });
         });
 
         props.forEach(prop => {
@@ -204,14 +204,14 @@ class LearnerResultChartService {
                     r['val_' + j] = val;
                 });
                 data[prop].push(r);
-            })
+            });
         });
 
         return {
             context: resultList,
             options: options,
             data: data
-        }
+        };
     }
 }
 

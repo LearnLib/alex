@@ -62,7 +62,7 @@ class SymbolsActionsController {
         this.sortableOptions = {
             animation: 150,
             onUpdate: () => {
-                this.hasChanged = true
+                this.hasChanged = true;
             }
         };
 
@@ -93,7 +93,7 @@ class SymbolsActionsController {
                     .then(() => {
                         offHandler();
                         $state.go(toState);
-                    })
+                    });
             }
         });
 
@@ -166,7 +166,7 @@ class SymbolsActionsController {
             })
             .catch(response => {
                 this.ToastService.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
-            })
+            });
     }
 
     /**
@@ -199,7 +199,7 @@ class SymbolsActionsController {
         if (actions !== null) {
             actions = actions.map(a => this.ActionService.create(a));
             actions.forEach(action => {
-                this.addAction(action)
+                this.addAction(action);
             });
             this.ToastService.info(actions.length + 'action[s] pasted from clipboard');
             this.hasChanged = true;

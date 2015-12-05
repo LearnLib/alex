@@ -49,7 +49,7 @@ class LearnResultsCompareController {
             this.LearnResultResource.getAllFinal(this.project.id).then(results => {
                 this.results = results;
                 this.loadComplete($stateParams.testNos);
-            })
+            });
         }
     }
 
@@ -72,7 +72,7 @@ class LearnResultsCompareController {
             })
             .catch(response => {
                 this.ErrorService.setErrorMessage(response.data.message);
-            })
+            });
     }
 
     /**
@@ -89,7 +89,7 @@ class LearnResultsCompareController {
      * Adds a new empty panel
      */
     addPanel() {
-        this.panels.push(null)
+        this.panels.push(null);
     }
 
     /**

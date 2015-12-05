@@ -41,7 +41,7 @@ class SymbolsHistoryController {
             })
             .catch(() => {
                 ErrorService.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + '" could not be found');
-            })
+            });
     }
 
     /**
@@ -64,8 +64,8 @@ class SymbolsHistoryController {
                 this.latestRevision = updatedSymbol;
             })
             .catch(response => {
-                ToastService.danger('<p><strong>Update to revision failed</strong></p>' + response.data.message);
-            })
+                this.ToastService.danger('<p><strong>Update to revision failed</strong></p>' + response.data.message);
+            });
     }
 }
 

@@ -60,7 +60,7 @@ class UserResource {
      */
     getAll() {
         return this.$http.get('/rest/users')
-            .then(response => response.data.map(u => new User(u)))
+            .then(response => response.data.map(u => new User(u)));
     }
 
     /**
@@ -101,7 +101,7 @@ class UserResource {
      */
     update(user) {
         return this.$http.put(`/rest/users/${user.id}`, user)
-            .then(response => new User(response.data))
+            .then(response => new User(response.data));
     }
 }
 

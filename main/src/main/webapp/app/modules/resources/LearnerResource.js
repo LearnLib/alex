@@ -67,7 +67,7 @@ class LearnerResource {
      */
     isActive() {
         return this.$http.get('/rest/learner/active')
-            .then(response => response.data)
+            .then(response => response.data);
     }
 
     /**
@@ -82,7 +82,7 @@ class LearnerResource {
         return this.$http.post(`/rest/learner/outputs/${projectId}`, {
             resetSymbol: resetSymbol,
             symbols: symbols
-        }).then(response => response.data)
+        }).then(response => response.data);
     }
 }
 

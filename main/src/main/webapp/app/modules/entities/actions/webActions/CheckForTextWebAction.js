@@ -34,7 +34,7 @@ class CheckForTextWebAction extends Action {
         } else {
             return 'Search for "' + this.value + '" in the document';
         }
-    };
+    }
 }
 
 export default CheckForTextWebAction;

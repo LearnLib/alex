@@ -21,7 +21,7 @@ import {symbolList, symbolListItem} from './symbolList';
 import viewHeader from './viewHeader';
 
 // forms
-import actionFormFields from './forms/actionFormFields';
+import actionCreateEditForm from './forms/actionCreateEditForm';
 import projectCreateForm from './forms/projectCreateForm';
 import userEditForm from './forms/userEditForm';
 import userLoginForm from './forms/userLoginForm';
@@ -55,7 +55,7 @@ const moduleName = 'ALEX.directives';
 angular
     .module(moduleName, [])
     .directive('actionBar', actionBar)
-    .directive('actionFormFields', actionFormFields)
+    .component('actionCreateEditForm', actionCreateEditForm)
     .component('checkbox', checkbox)
     .component('checkboxMultiple', checkboxMultiple)
     .directive('discriminationTree', discriminationTree)

@@ -186,7 +186,7 @@ function config($stateProvider, $urlRouterProvider) {
             url: '/files',
             templateUrl: 'views/pages/files.html',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
-        })
+        });
 }
 
 /**

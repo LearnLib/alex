@@ -64,8 +64,8 @@ class SymbolEditModalController {
             })
             .catch(response => {
                 this.errorMsg = response.data.message;
-            })
-    };
+            });
+    }
 
     /** Close the modal dialog */
     close() {

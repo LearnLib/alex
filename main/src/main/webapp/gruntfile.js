@@ -179,6 +179,17 @@ module.exports = function (grunt) {
                 unit: {
                     configFile: 'tests/karma.conf.unit.js'
                 }
+            },
+
+            jshint: {
+                dist: {
+                    src: ['app/modules/**/*.js']
+                },
+                options: {
+                    'esnext': true,
+                    'laxbreak' : true,
+                    '-W053': true
+                }
             }
         });
 
@@ -193,6 +204,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-ng-annotate');
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
     grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify:app']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);

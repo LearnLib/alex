@@ -46,13 +46,13 @@ class ProjectSettingsModalController {
             })
             .catch(response => {
                 this.error = response.data.message;
-            })
-    };
+            });
+    }
 
     /** Closes the modal window */
     close () {
         this.$modalInstance.dismiss();
-    };
+    }
 }
 
 export default ProjectSettingsModalController;

@@ -59,7 +59,7 @@ class LearnStartController {
          * The amount of executed MQs in the active learn process
          * @type {number}
          */
-        this.mqsUsed;
+        this.mqsUsed = null;
 
         /**
          * The time it took to learn
@@ -126,14 +126,14 @@ class LearnStartController {
             })
             .catch(response => {
                 this.ToastService.danger('<p><strong>Resume learning failed!</strong></p>' + response.data.message);
-            })
+            });
     }
 
     /** Tell the learner to stop learning at the next possible time, when the next hypothesis is generated */
     abort() {
         if (this.active) {
             this.ToastService.info('The learner will stop with the next hypothesis');
-            this.LearnerResource.stop()
+            this.LearnerResource.stop();
         }
     }
 

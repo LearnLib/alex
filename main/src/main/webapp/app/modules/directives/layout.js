@@ -14,7 +14,7 @@ function layout() {
 
         this.isCollapsed = function () {
             return $scope.collapsed;
-        }
+        };
     }
 }
 
@@ -30,7 +30,7 @@ function layoutToggleElement() {
                 }
             });
         }
-    }
+    };
 }
 
 function layoutToggleButton() {
@@ -41,9 +41,9 @@ function layoutToggleButton() {
                 scope.$apply(function () {
                     ctrl.toggleCollapsed();
                 });
-            })
+            });
         }
-    }
+    };
 }
 
 export {layout, layoutToggleElement, layoutToggleButton};

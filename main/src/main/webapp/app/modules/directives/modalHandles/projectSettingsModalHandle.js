@@ -26,7 +26,7 @@ function projectSettingsModalHandle($modal, LearnerResource, ToastService) {
                             controllerAs: 'vm',
                             resolve: {
                                 modalData: function () {
-                                    return {project: new Project(scope.project)}
+                                    return {project: new Project(scope.project)};
                                 }
                             }
                         });

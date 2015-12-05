@@ -19,7 +19,7 @@ class ErrorController {
         if (message !== null) {
             this.errorMessage = message;
         } else {
-            $state.go('home')
+            $state.go('home');
         }
     }
 }

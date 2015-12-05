@@ -2,9 +2,9 @@ function symbolGroupList() {
     return {
         transclude: true,
         template: `
-                <div class="symbol-group-list" ng-transclude></div>
-            `
-    }
+            <div class="symbol-group-list" ng-transclude></div>
+        `
+    };
 }
 
 function symbolGroupListItem() {
@@ -39,7 +39,7 @@ function symbolGroupListItem() {
         link: function (scope, el, attrs) {
             scope.editable = attrs.editable === 'true';
         }
-    }
+    };
 }
 
 export {symbolGroupList, symbolGroupListItem};

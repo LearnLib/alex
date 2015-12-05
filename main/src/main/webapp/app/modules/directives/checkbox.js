@@ -1,3 +1,5 @@
+const PROPERTY_NAME = '_selected';
+
 /**
  * The controller of the checkbox
  * Use: <checkbox model="..."></checkbox> where
@@ -8,7 +10,7 @@ class Checkbox {
     /** select the item given via the model attribute */
     toggleSelectItem() {
         if (this.model) {
-            this.model['_selected'] = !this.model['_selected'];
+            this.model[PROPERTY_NAME] = !this.model[PROPERTY_NAME];
         }
     }
 }
@@ -50,10 +52,10 @@ class CheckboxMultiple {
         this.checked = !this.checked;
 
         if (this.model) {
-            this.model.forEach(item => item['_selected'] = this.checked);
+            this.model.forEach(item => item[PROPERTY_NAME] = this.checked);
         } else if (this.modelFn) {
             const items = this.modelFn();
-            items.forEach(item => item['_selected'] = this.checked);
+            items.forEach(item => item[PROPERTY_NAME] = this.checked);
         }
     }
 }

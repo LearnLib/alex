@@ -51,8 +51,8 @@ class FilesController {
                 this.files = files;
             })
             .catch(response => {
-                ToastService.danger(`Fetching all files failed! ${response.data.message}`);
-            })
+                this.ToastService.danger(`Fetching all files failed! ${response.data.message}`);
+            });
     }
 
     /**
@@ -65,8 +65,8 @@ class FilesController {
                 this.ToastService.success('File "' + file.name + '" has been deleted');
                 const i = this.files.find(f => f.name === file.name);
                 if (i > -1) this.files.splice(i, 1);
-            })
-    };
+            });
+    }
 
     /** Upload all chosen files piece by piece and add successfully deleted files to the list */
     upload() {
@@ -90,7 +90,7 @@ class FilesController {
                     error = true;
                     this.filesToUpload.shift();
                     next();
-                })
+                });
             } else {
                 if (this.files.length === countFiles) {
                     this.ToastService.danger('<strong>Upload failed</strong><p>No file could be uploaded</p>');
@@ -110,7 +110,7 @@ class FilesController {
     /** Batch delete selected files */
     deleteSelectedFiles() {
         this.selectedFiles.forEach(file => {
-            this.deleteFile(file)
+            this.deleteFile(file);
         });
     }
 }

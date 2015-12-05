@@ -111,7 +111,7 @@ function hypothesis($window, EventBus) {
                     lineInterpolate: 'basis',
                     style: styles.edge,
                     labelStyle: styles.edgeLabel
-                }
+                };
             }
 
             // add nodes to the graph
@@ -123,7 +123,7 @@ function hypothesis($window, EventBus) {
                     width: 25,
                     labelStyle: styles.nodeLabel,
                     style: node === scope.result.hypothesis.initNode ? styles.initNode : styles.node
-                })
+                });
             }
 
             // another format of a graph for merged multi edges
@@ -170,7 +170,7 @@ function hypothesis($window, EventBus) {
             // on export otherwise <.<
             _.forEach(el.find('svg')[0].querySelectorAll('.edgePath'), function (edgePath) {
                 edgePath.insertBefore(edgePath.childNodes[1], edgePath.firstChild);
-            })
+            });
         }
 
         function handleEvents() {
@@ -184,7 +184,7 @@ function hypothesis($window, EventBus) {
                         EventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {
                             input: label[0],
                             output: label[1]
-                        })
+                        });
                     });
                 });
             }
@@ -194,8 +194,7 @@ function hypothesis($window, EventBus) {
                 .scaleExtent([0.1, 10])
                 .translate([(_svgContainer.clientWidth - _graph.graph().width) / 2, 100])
                 .on("zoom", () => {
-                    _svgGroup.attr('transform', 'translate(' + zoom.translate()
-                        + ')' + ' scale(' + zoom.scale() + ')');
+                    _svgGroup.attr('transform', `translate(${zoom.translate()}) scale(${zoom.scale()})`);
                 });
 
             zoom(_svg);
