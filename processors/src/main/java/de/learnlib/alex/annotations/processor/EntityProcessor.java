@@ -57,7 +57,6 @@ public class EntityProcessor extends AbstractProcessor {
 
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,
                                                      "creating source file: " + jfo.toUri());
-            System.out.println("creating source file: " + jfo.toUri());
 
             Writer writer = jfo.openWriter();
             template.process(root, writer);
