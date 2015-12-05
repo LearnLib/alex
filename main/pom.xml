@@ -178,6 +178,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jul</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-jcl</artifactId>
             <version>${log4j.version}</version>
         </dependency>
@@ -248,53 +253,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.4.0</version>
-                <executions>
-                    <execution>
-                        <id>npm-install</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>npm</executable>
-                            <workingDirectory>src/main/webapp</workingDirectory>
-                            <arguments>
-                                <argument>install</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>grunt</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>grunt</executable>
-                            <workingDirectory>src/main/webapp</workingDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>grunt-css</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>grunt</executable>
-                            <arguments>
-                                <argument>build-css</argument>
-                            </arguments>
-                            <workingDirectory>src/main/webapp</workingDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${javadoc-plugin.version}</version>
@@ -336,6 +294,12 @@
                     <scanIntervalSeconds>60</scanIntervalSeconds> <!-- reload every minute -->
                     <stopPort>8082</stopPort>
                     <stopKey>stop</stopKey>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>java.util.logging.manager</name>
+                            <value>org.apache.logging.log4j.jul.LogManager</value>
+                        </systemProperty>
+                    </systemProperties>
                 </configuration>
                 <executions>
                     <execution>
@@ -369,6 +333,10 @@
                             <name>alex.dbpath</name>
                             <value>mem:integration-test-db</value>
                         </property>
+                        <property>
+                            <name>java.util.logging.manager</name>
+                            <value>org.apache.logging.log4j.jul.LogManager</value>
+                        </property>
                     </systemProperties>
                 </configuration>
             </plugin>
@@ -382,6 +350,10 @@
                         <property>
                             <name>alex.dbpath</name>
                             <value>mem:integration-test-db</value>
+                        </property>
+                        <property>
+                            <name>java.util.logging.manager</name>
+                            <value>org.apache.logging.log4j.jul.LogManager</value>
                         </property>
                     </systemProperties>
                 </configuration>
@@ -445,6 +417,33 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.4.0</version>
+                        <executions>
+                            <execution>
+                                <id>grunt</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>grunt</executable>
+                                    <arguments>
+                                        <argument>build-html</argument>
+                                        <argument>build-css</argument>
+                                        <argument>build-js</argument>
+                                    </arguments>
+                                    <workingDirectory>src/main/webapp</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
             <!--===== reports ======-->
             <reporting>
                 <plugins>
@@ -486,7 +485,7 @@
         </profile>
 
         <profile>
-            <id>bootstrap-npm</id>
+            <id>bootstrap</id>
             <activation>
                 <file>
                     <missing>src/main/webapp/node_modules</missing>
@@ -510,6 +509,17 @@
                                     <arguments>
                                         <argument>install</argument>
                                     </arguments>
+                                    <workingDirectory>src/main/webapp</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>grunt</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>grunt</executable>
                                     <workingDirectory>src/main/webapp</workingDirectory>
                                 </configuration>
                             </execution>

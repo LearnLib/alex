@@ -10,6 +10,7 @@
         <Logger name="com.gargoylesoftware.htmlunit" level="warn"/>
         <Logger name="hsqldb.db" level="warn"/>
         <Logger name="org.hibernate" level="warn"/>
+		<Logger name="org.glassfish" level="info"/>
 
         <!-- Change the level of the following 2 Loggers to 'all' to get an inside view of Hibernates work,
              or to 'off' to keep the output clean. -->
