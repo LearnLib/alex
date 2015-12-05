@@ -18,12 +18,14 @@ public class LearnerStatus {
 
     @JsonIgnore
     private final User user;
+    
+    private final boolean active;
 
-    /**
-     * The learn process to observe.
-     */
-    @JsonIgnore
-    private final Learner learner;
+    private final Long projectId;
+
+    private final Long testNo;
+
+    private final LearnerStatusStatistics statistics;
 
     /**
      * Statistics Class for the learner status.
@@ -31,9 +33,9 @@ public class LearnerStatus {
     @JsonPropertyOrder(alphabetic = true)
     private class LearnerStatusStatistics {
 
-        private Date startDate;
+        private final Date startDate;
 
-        private Long mqsUsed;
+        private final Long mqsUsed;
 
         public LearnerStatusStatistics(Date startDate, Long mqsUsed) {
             this.startDate = startDate;
@@ -56,8 +58,23 @@ public class LearnerStatus {
      * @param learner The learner to get the information from.
      */
     public LearnerStatus(User user, Learner learner) {
+//        LogManager.getLogger("server").trace("Create new LearnerStatus for user" + user);
         this.user = user;
-        this.learner = learner;
+        this.active = learner.isActive(user);
+
+        if (active) {
+            // because there is an active thread, this will return not null
+            LearnerResult result = learner.getResult(user);
+
+            this.projectId = result.getProjectId();
+            this.testNo = result.getTestNo();
+            this.statistics = new LearnerStatusStatistics(learner.getStartDate(user), learner.getMQsUsed(user));
+        } else {
+            // if not active, those fields should not be included in the final JSON -> set them to null
+            this.projectId = null;
+            this.testNo = null;
+            this.statistics = null;
+        }
     }
 
     public User getUser() {
@@ -65,23 +82,12 @@ public class LearnerStatus {
     }
 
     /**
-     * Get the learner which is observed.
-     *
-     * @return The current learner.
-     */
-    @JsonIgnore
-    public Learner getLearner() {
-        return learner;
-    }
-
-    /**
      * Is the learn process active?
      *
      * @return true if the learn process is active; false otherwise
      */
-    @JsonProperty
     public boolean isActive() {
-        return learner.isActive(user);
+        return active;
     }
 
     /**
@@ -92,15 +98,7 @@ public class LearnerStatus {
      */
     @JsonProperty("project")
     public Long getProjectId() {
-        if (isActive()) {
-            LearnerResult result = learner.getResult(user);
-            if (result == null) {
-                return 0L;
-            }
-            return result.getProjectId();
-        } else {
-            return null;
-        }
+        return projectId;
     }
 
     /**
@@ -109,25 +107,11 @@ public class LearnerStatus {
      *
      * @return The active test no in the project.
      */
-    @JsonProperty
     public Long getTestNo() {
-        if (isActive()) {
-            LearnerResult result = learner.getResult(user);
-            if (result == null) {
-                return 0L;
-            }
-            return result.getTestNo();
-        } else {
-            return null;
-        }
+        return testNo;
     }
 
-    @JsonProperty
     public LearnerStatusStatistics getStatistics() {
-        if (!learner.isActive(user)) {
-            return null;
-        } else {
-            return new LearnerStatusStatistics(learner.getStartDate(user), learner.getMQsUsed(user));
-        }
+        return statistics;
     }
 }

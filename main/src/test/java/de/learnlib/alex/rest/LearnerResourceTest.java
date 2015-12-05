@@ -12,6 +12,7 @@ import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.User;
@@ -104,6 +105,9 @@ public class LearnerResourceTest extends JerseyTest {
         given(learner.getStartDate(user)).willReturn(new Date(0));
         given(learner.isActive(user)).willReturn(true);
         given(learner.getResult(user)).willReturn(result);
+
+        LearnerStatus learnerStatus = new LearnerStatus(user, learner);
+        given(learner.getStatus(user)).willReturn(learnerStatus);
     }
 
     @Test
@@ -205,6 +209,8 @@ public class LearnerResourceTest extends JerseyTest {
     public void shouldNotStopIfTheLearningIsNotActive() {
         given(learner.isActive(user)).willReturn(false);
         given(learner.getResult(user)).willReturn(null);
+        LearnerStatus learnerStatus = new LearnerStatus(user, learner);
+        given(learner.getStatus(user)).willReturn(learnerStatus);
 
         Response response = target("/learner/stop").request().post(Entity.json(""));
 
@@ -226,6 +232,8 @@ public class LearnerResourceTest extends JerseyTest {
     @Test
     public void shouldReturnTheRightActiveInformationIfNoLearningProcessIsActive() {
         given(learner.isActive(user)).willReturn(false);
+        LearnerStatus learnerStatus = new LearnerStatus(user, learner);
+        given(learner.getStatus(user)).willReturn(learnerStatus);
 
         Response response = target("/learner/active").request().get();
 

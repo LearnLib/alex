@@ -3,6 +3,7 @@ package de.learnlib.alex.core.learner;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
+import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.User;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -48,12 +50,12 @@ public class Learner {
     /**
      * The last thread of an user, if one exists.
      */
-    private HashMap<User, LearnerThread> userThreads;
+    private final Map<User, LearnerThread> userThreads;
 
     /**
      * The current learning activeThreads. Could be empty.
      */
-    private HashMap<User, LearnerThread> activeThreads;
+    private final Map<User, LearnerThread> activeThreads;
 
     /**
      * Constructor which only set the thread factory.
@@ -230,13 +232,18 @@ public class Learner {
         }
 
         // if an 'active' thread existed, but it is actually finished -> clean up activeThread map & return false
-        if (!learnerThread.isActive()) {
+        if (learnerThread.isFinished()) {
             activeThreads.remove(user);
             return  false;
         }
 
         // otherwise an active thread exists -> return true
         return true;
+    }
+
+    public LearnerStatus getStatus(User user) {
+        LearnerStatus status = new LearnerStatus(user, this);
+        return status;
     }
 
     /**

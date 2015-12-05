@@ -89,7 +89,6 @@ public class LearnerResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResource.start(" + projectId + ", " + configuration +  ") for user " + user + ".");
 
-        LearnerStatus status = new LearnerStatus(user, learner);
         try {
             Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
 
@@ -104,9 +103,11 @@ public class LearnerResource {
             configuration.setSymbols(symbols);
 
             learner.start(user, project, configuration);
+            LearnerStatus status = learner.getStatus(user);
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
             LOGGER.info("tried to start the learning again.");
+            LearnerStatus status = learner.getStatus(user);
             return Response.status(Status.NOT_MODIFIED).entity(status).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.BAD_REQUEST, e);
@@ -140,7 +141,6 @@ public class LearnerResource {
         LOGGER.trace("LearnerResource.resume(" + projectId + ", " + testRunNo + ", " + configuration +  ") "
                      + "for user " + user + ".");
 
-        LearnerStatus status = new LearnerStatus(user, learner);
         try {
             projectDAO.getByID(user.getId(), projectId); // check if project exists
 
@@ -151,13 +151,16 @@ public class LearnerResource {
 
             if (lastResult.getProjectId() != projectId || lastResult.getTestNo() != testRunNo) {
                 LOGGER.info("could not resume the learner of another project or with an wrong test run.");
+                LearnerStatus status = learner.getStatus(user);
                 return Response.status(Status.NOT_MODIFIED).entity(status).build();
             }
 
             learner.resume(user, configuration);
+            LearnerStatus status = learner.getStatus(user);
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
             LOGGER.info("tried to restart the learning while the learner is running.");
+            LearnerStatus status = learner.getStatus(user);
             return Response.status(Status.NOT_MODIFIED).entity(status).build();
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.resume", Status.BAD_REQUEST, e);
@@ -183,12 +186,12 @@ public class LearnerResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResource.stop() for user " + user + ".");
 
-        LearnerStatus status = new LearnerStatus(user, learner);
         if (learner.isActive(user)) {
             learner.stop(user); // Hammer Time
         } else {
             LOGGER.info("tried to stop the learning again.");
         }
+        LearnerStatus status = learner.getStatus(user);
         return Response.ok(status).build();
     }
 
@@ -206,7 +209,7 @@ public class LearnerResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResource.isActive() for user " + user + ".");
 
-        LearnerStatus status = new LearnerStatus(user, learner);
+        LearnerStatus status = learner.getStatus(user);
         return Response.ok(status).build();
     }
 

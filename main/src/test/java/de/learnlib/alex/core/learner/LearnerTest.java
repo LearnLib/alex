@@ -70,7 +70,7 @@ public class LearnerTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldOnlyStartTheThreadOnce() {
-        given(thread.isActive()).willReturn(true);
+        given(thread.isFinished()).willReturn(false);
         learner.start(user, project, learnerConfiguration);
 
         learner.start(user, project, learnerConfiguration); // should fail

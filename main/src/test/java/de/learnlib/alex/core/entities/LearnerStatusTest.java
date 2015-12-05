@@ -12,6 +12,7 @@ import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LearnerStatusTest {
@@ -25,8 +26,9 @@ public class LearnerStatusTest {
     @Test
     public void shouldCreateTheCorrectJSONIfActive() throws JsonProcessingException {
         given(learner.isActive(user)).willReturn(true);
-        given(learner.getResult(user)).willReturn(null);
+        given(learner.getResult(user)).willReturn(mock(LearnerResult.class));
         given(learner.getStartDate(user)).willReturn(new Date(0));
+        given(learner.getMQsUsed(user)).willReturn(0L);
         String expectedJSON = "{\"active\":true,\"project\":0,\"statistics\":"
                                 + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":0}";
 

@@ -44,7 +44,7 @@ public class LearnerThread extends Thread {
     /**
      * Is the thread still running?
      */
-    private boolean active;
+    private boolean finished;
 
     /**
      * Mapper to match the Alphabet to the right symbols.
@@ -105,7 +105,7 @@ public class LearnerThread extends Thread {
      */
     public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result,
                          ConnectorContextHandler context) {
-        this.active = false;
+        this.finished = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
 
@@ -140,7 +140,7 @@ public class LearnerThread extends Thread {
      */
     public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, SULCache<String, String> existingSUL,
                          MealyLearner<String, String> learner, Symbol... symbols) {
-        this.active = false;
+        this.finished = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
 
@@ -168,8 +168,8 @@ public class LearnerThread extends Thread {
      *
      * @return true, if the Thread is still active; false otherwise.
      */
-    public boolean isActive() {
-        return active;
+    public boolean isFinished() {
+        return finished;
     }
 
     /**
@@ -210,7 +210,6 @@ public class LearnerThread extends Thread {
 
     @Override
     public void run() {
-        active = true;
         LOGGER.trace("LearnThread.run() - enter");
 
         try {
@@ -227,7 +226,7 @@ public class LearnerThread extends Thread {
         }
 
         LOGGER.trace("LearnThread.run() - exit");
-        active = false;
+        finished = true;
     }
 
     /**
