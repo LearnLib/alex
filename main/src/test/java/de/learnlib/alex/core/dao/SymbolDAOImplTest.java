@@ -401,7 +401,8 @@ public class SymbolDAOImplTest {
     public void shouldGetAllVisibleSymbols() throws NotFoundException {
         symbols = createTestSymbolLists();
 
-        List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(user, project.getId(), SymbolVisibilityLevel.VISIBLE);
+        List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(user, project.getId(),
+                                                                        SymbolVisibilityLevel.VISIBLE);
 
         assertEquals(symbols.size() - 1, symbolsFromDB.size()); // -1: hidden
         for (Symbol x : symbols) {
@@ -418,7 +419,8 @@ public class SymbolDAOImplTest {
     public void shouldGetAllSymbolsIncludingHiddenOnes() throws NotFoundException {
         symbols = createTestSymbolLists();
 
-        List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(user, project.getId(), SymbolVisibilityLevel.ALL);
+        List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(user, project.getId(),
+                                                                        SymbolVisibilityLevel.ALL);
 
         assertEquals(symbols.size(), symbolsFromDB.size());
         for (Symbol x : symbols) {

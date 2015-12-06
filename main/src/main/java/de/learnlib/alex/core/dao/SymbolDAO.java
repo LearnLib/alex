@@ -16,11 +16,11 @@ public interface SymbolDAO {
 
     /**
      * Save the given symbol.
-     * 
+     *
      * @param symbol
-     *            The symbol to save.
+     *         The symbol to save.
      * @throws ValidationException
-     *             When the symbol was not valid.
+     *         When the symbol was not valid.
      */
     void create(Symbol symbol) throws ValidationException;
 
@@ -28,17 +28,18 @@ public interface SymbolDAO {
      * Save the given symbols.
      *
      * @param symbols
-     *            The symbols to save.
+     *         The symbols to save.
      * @throws ValidationException
-     *             When one the symbols was not valid.
-     *             In this case all symbols are reverted and not saved.
+     *         When one the symbols was not valid.
+     *         In this case all symbols are reverted and not saved.
      */
     void create(List<Symbol> symbols) throws ValidationException;
 
     /**
      * Get a list of specific symbols of a project.
      *
-     * @param user The owner of the symbols
+     * @param user
+     *         The owner of the symbols
      * @param projectId
      *         The project the symbols should belong to.
      * @param idRevPairs
@@ -50,40 +51,76 @@ public interface SymbolDAO {
     List<Symbol> getAll(User user, Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException;
 
     /**
-     * Get all symbols of a project.
+     * Get all symbols of a Project.
      *
-     * @param user The user of the symbol
+     * @param user
+     *         The user of the Symbols.
      * @param projectID
-     *         The project the symbols should belong to.
+     *         The project the Symbols should belong to.
      * @param visibilityLevel
      *         Include symbols that are currently marked as hidden?
-     * @return A list of symbols belonging to the project.
+     * @return A list of symbols belonging to the Project. Can be empty.
+     * @throws NotFoundException
+     *         If the User or Project could not be found.
      */
     List<Symbol> getAllWithLatestRevision(User user, Long projectID, SymbolVisibilityLevel visibilityLevel)
             throws NotFoundException;
 
+    /**
+     * Get a List of Symbols that are within a specific Group within a Project.
+     *
+     * @param user
+     *         The user of the Symbols.
+     * @param projectId
+     *         The Project of the Symbols.
+     * @param groupId
+     *         The Group of the Symbols.
+     * @return A List of Symbols belonging to the Group. Can be empty.
+     * @throws NotFoundException
+     *         If the User, Project or Group could not be found.
+     */
     List<Symbol> getAllWithLatestRevision(User user, Long projectId, Long groupId)
             throws NotFoundException;
 
-    List<Symbol> getAllWithLatestRevision(User user, Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel)
+    /**
+     * Get a List of Symbols that are withing a specific Group within a Project and have a specific visibility level.
+     *
+     * @param user
+     *         The user of the Symbols.
+     * @param projectId
+     *         The Project the Symbols.
+     * @param groupId
+     *         The Group of the Symbols.
+     * @param visibilityLevel
+     *         Only look for Symbols with the given visibility level.
+     * @return A List of Symbols belonging to the Group with the given VisibilityLevel. Can be empty.
+     * @throws NotFoundException
+     *         If the User, Project or Group could not be found.
+     */
+    List<Symbol> getAllWithLatestRevision(User user, Long projectId,
+                                          Long groupId, SymbolVisibilityLevel visibilityLevel)
             throws NotFoundException;
 
     /**
      * Get a list of symbols by their ids. Fetch only the latest revision of each.
      *
-     * @param user The owner of the symbol
+     * @param user
+     *         The owner of the symbol
      * @param projectId
      *         The project the symbols should belong to.
      * @param ids
      *         The ids of the symbols you want to get.
      * @return A list of symbols. Can be empty.
+     * @throws NotFoundException
+     *         If no Symbol was found.
      */
     List<Symbol> getByIdsWithLatestRevision(User user, Long projectId, Long... ids) throws NotFoundException;
 
     /**
      * Get a list of symbols by their ids. Fetch only the latest revision of each.
      *
-     * @param user The owner of the symbol
+     * @param user
+     *         The owner of the symbol
      * @param projectId
      *         The project the symbols should belong to.
      * @param visibilityLevel
@@ -91,22 +128,42 @@ public interface SymbolDAO {
      * @param ids
      *         The ids of the symbols you want to get.
      * @return A list of symbols. Can be empty.
+     * @throws NotFoundException
+     *         If no Symbol was found.
      */
-    List<Symbol> getByIdsWithLatestRevision(User user, Long projectId, SymbolVisibilityLevel visibilityLevel, Long... ids)
+    List<Symbol> getByIdsWithLatestRevision(User user, Long projectId,
+                                            SymbolVisibilityLevel visibilityLevel, Long... ids)
             throws NotFoundException;
 
+    /**
+     * Get a Symbol by the user, project and a Pair of an ID and a revision.
+     *
+     * @param user
+     *         The owner of the Symbol.
+     * @param projectId
+     *         The ID of the project the symbol belongs to.
+     * @param idRevisionPair
+     *         The ID and the Revision of the Symbol in the project.
+     * @return The Symbol.
+     * @throws NotFoundException
+     *         If the Symbol could not be found.
+     */
     Symbol get(User user, Long projectId, IdRevisionPair idRevisionPair) throws NotFoundException;
 
     /**
      * Get a specific symbol by its identifying parameters.
-     * 
+     *
+     * @param user
+     *         The owner of the Symbol.
      * @param projectId
-     *            The ID of the project the symbol belongs to.
+     *         The ID of the project the symbol belongs to.
      * @param id
-     *            The ID of the symbol itself in the project.
+     *         The ID of the symbol itself in the project.
      * @param revision
-     *            The wanted revision of the symbol.
+     *         The wanted revision of the symbol.
      * @return The Symbol or null.
+     * @throws NotFoundException
+     *         If the Symbol was not found.
      */
     Symbol get(User user, Long projectId, Long id, Long revision) throws NotFoundException;
 
@@ -114,14 +171,31 @@ public interface SymbolDAO {
      * Get a specific symbol by its identifying parameters and the last
      * revision.
      *
+     * @param user
+     *         The owner of the Symbol.
      * @param projectId
-     *            The ID of the project the symbol belongs to.
+     *         The ID of the project the symbol belongs to.
      * @param id
-     *            The ID of the symbol itself in the project.
+     *         The ID of the symbol itself in the project.
      * @return The Symbol or null.
+     * @throws NotFoundException
+     *         If teh Symbols was not found.
      */
     Symbol getWithLatestRevision(User user, Long projectId, Long id) throws NotFoundException;
 
+    /**
+     * Get all Revisions of one Symbol.
+     *
+     * @param user
+     *         The owner of the Symbol.
+     * @param projectId
+     *         The Project the Symbol belongs to.
+     * @param id
+     *         The ID of the Symbol within the Project.
+     * @return A List of all Revision. Sorted with the earliest in the beginning.
+     * @throws NotFoundException
+     *         If the Symbol could not be found.
+     */
     List<Symbol> getWithAllRevisions(User user, Long projectId, Long id) throws NotFoundException;
 
     /**
@@ -152,33 +226,58 @@ public interface SymbolDAO {
      */
     void update(List<Symbol> symbols) throws IllegalArgumentException, NotFoundException, ValidationException;
 
+    /**
+     * Move a Symbol to a new Group.
+     * This does not increase the revision of the Symbol.
+     *
+     * @param symbol
+     *         The Symbol to move.
+     * @param newGroupId
+     *         The new Group.
+     * @throws NotFoundException
+     *         If the Symbol or the Group could not be found.
+     */
     void move(Symbol symbol, Long newGroupId) throws NotFoundException;
 
+    /**
+     * Moves a List of Symbols ot a new Group.
+     * This does not increase the revision of any Symbol.
+     * If one Symbol failed to be move, no Symbol will be moved.
+     *
+     * @param symbols
+     *         The Symbol to move.
+     * @param newGroupId
+     *         The new Group.
+     * @throws NotFoundException
+     *         If at least one of the Symbols or if the Group could not be found.
+     */
     void move(List<Symbol> symbols, Long newGroupId) throws NotFoundException;
 
     /**
      * Mark a symbol as hidden.
      *
      * @param userId
-     *              The ID of the user the symbols belongs to.
+     *         The ID of the user the symbols belongs to.
      * @param projectId
-     *            The ID of the project the symbol belongs to.
+     *         The ID of the project the symbol belongs to.
      * @param ids
-     *            The IDs of the symbols to hide.
+     *         The IDs of the symbols to hide.
      * @throws NotFoundException
-     *             When the Symbol was not found.
+     *         When the Symbol was not found.
      */
     void hide(Long userId, Long projectId, Long... ids) throws NotFoundException;
 
     /**
      * Revive a symbol from the hidden state.
      *
+     * @param userId
+     *         The ID of the user the symbols belongs to.
      * @param projectId
-     *            The ID of the project the symbol belongs to.
+     *         The ID of the project the symbol belongs to.
      * @param ids
-     *            The ID of the symbols to show.
+     *         The ID of the symbols to show.
      * @throws NotFoundException
-     *             When the Symbol was not found.
+     *         When the Symbol was not found.
      */
     void show(Long userId, Long projectId, Long... ids) throws NotFoundException;
 

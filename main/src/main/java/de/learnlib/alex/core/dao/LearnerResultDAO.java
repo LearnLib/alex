@@ -69,6 +69,8 @@ public interface LearnerResultDAO {
     /**
      * Get a the last / final LearnerResult of one test run.
      *
+     * @param userId
+     *         The user id of the LearnerResult.
      * @param projectId
      *         The project id if the test run.
      * @param testRunNo
@@ -83,7 +85,7 @@ public interface LearnerResultDAO {
      * Get the latest LearnerResult of a given test run as JSON data, e.g. the final result.
      *
      * @param userId
-     *         The user id of the LearnerResult
+     *         The user id of the LearnerResult.
      * @param projectId
      *         The project id of the test run.
      * @param testNo

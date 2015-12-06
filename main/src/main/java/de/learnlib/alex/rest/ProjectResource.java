@@ -101,7 +101,7 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.getAll(" + embed+ ") for user " + user + ".");
+        LOGGER.trace("ProjectResource.getAll(" + embed + ") for user " + user + ".");
 
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {

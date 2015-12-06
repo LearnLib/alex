@@ -64,7 +64,8 @@ public interface ProjectDAO {
 
     /**
      * Get a list of all the projects.
-     *
+     * @param user
+     *         The user of the project.
      * @param embedFields
      *         The fields to include in returned project. By default no additional data will be fetched from the DB.
      * @return All projects in a list.

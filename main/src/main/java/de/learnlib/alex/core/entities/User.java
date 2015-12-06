@@ -19,96 +19,268 @@ import java.util.Set;
 
 /**
  * The model for a user.
- * TODO: remove password and salt from json responses
  */
 @Entity
 public class User implements Serializable {
 
-    // auto generated id for saving it into the db
+    /** Auto generated id for saving it into the db. */
     private static final long serialVersionUID = -3567360676364330143L;
 
-    // the number of iterations to perform to create a secure hash
+    /** the number of iterations to perform to create a secure hash. */
     private static final int HASH_ITERATIONS = 2048;
 
-    /**
-     * The unique id of the user.
-     */
+    /** The unique id of the user. */
     @Id
     @GeneratedValue
     private Long id;
 
-    /**
-     * The email address of the user he uses to login.
-     */
+    /** The email address of the user he uses to login. */
     @NotNull
     @Column(unique = true)
     private String email;
 
-    /**
-     * The hash of the users password.
-     */
+    /** * The hash of the users password. */
     @NotNull
     private String password;
 
-    /**
-     * The salt that is used to hash the password.
-     */
+    /** The salt that is used to hash the password. */
     private String salt;
 
-    /**
-     * The role of the user.
-     */
+    /** The role of the user. */
     private UserRole role;
 
+    /** The projects of the user. */
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<Project> projects;
 
+    /** The SymbolGroups in all Projects of the user. */
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<SymbolGroup> symbolGroups;
 
+    /** All Symbols in all Projects / Groups of the user. */
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<Symbol> symbols;
 
+    /** All Actions in all Symbol of the user. */
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<SymbolAction> actions;
 
+    /** All Counters in all Projects of the user. */
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<Counter> counters;
 
+    /** All LearnResults in all Projects of the user. */
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     private Set<LearnerResult> learnerResults;
 
+    /**
+     * Default constructor that gives the user the role of "registered".
+     */
     public User() {
         role = UserRole.REGISTERED;
     }
 
+    /**
+     * Constructor that sets a specific ID and gives the user the role of "registered".
+     *
+     * @param id
+     *         The ID of the User.
+     */
     public User(Long id) {
         role = UserRole.REGISTERED;
         this.id = id;
     }
 
+    /**
+     * @return The ID of the User in the DB.
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id The new ID of the User in the DB.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return The current EMail of the User.
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param email The new EMail of the User.
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return The current Role of the User.
+     */
+    public UserRole getRole() {
+        return role;
+    }
+
+    /**
+     * @param role The new Role of the User.
+     */
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    /**
+     * @return The hashed password of the User.
+     */
+    @JsonIgnore
+    @JsonProperty("password")
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password The new (already hashed) password of the User.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @param password The new password of the User as plain text.
+     */
     @JsonIgnore
     public void setEncryptedPassword(String password) {
         this.salt = new SecureRandomNumberGenerator().nextBytes().toBase64();
         this.password = new Sha512Hash(password, this.salt, HASH_ITERATIONS).toBase64();
     }
 
+    /**
+     * Checks if the given password equals the password of the user.
+     *
+     * @param password
+     *         The password to check.
+     * @return True, if both passwords matched, false otherwise.
+     */
     @JsonIgnore
     public boolean isValidPassword(String password) {
         String hashedPassword = new Sha512Hash(password, this.salt, HASH_ITERATIONS).toBase64();
         return hashedPassword.equals(this.password);
+    }
+
+    /**
+     * @return The current salt to ahs the password of the user.
+     */
+    @JsonIgnore
+    @JsonProperty("salt")
+    public String getSalt() {
+        return salt;
+    }
+
+    /**
+     * @param salt The new Salt to hash the password of the user.
+     */
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    /**
+     * @return All Projects owned by the User.
+     */
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    /**
+     * @param projects The new set of the Projects owned by the User.
+     */
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
+
+    /**
+     * @return All Groups owned by the User.
+     */
+    public Set<SymbolGroup> getSymbolGroups() {
+        return symbolGroups;
+    }
+
+    /**
+     * @param symbolGroups The new set of the Groups owned by the User.
+     */
+    public void setSymbolGroups(Set<SymbolGroup> symbolGroups) {
+        this.symbolGroups = symbolGroups;
+    }
+
+    /**
+     * @return All Symbols owned by the User.
+     */
+    public Set<Symbol> getSymbols() {
+        return symbols;
+    }
+
+    /**
+     * @param symbols The new set of the Symbols owned by the User.
+     */
+    public void setSymbols(Set<Symbol> symbols) {
+        this.symbols = symbols;
+    }
+
+    /**
+     * @return All Actions owned by the User.
+     */
+    public Set<SymbolAction> getActions() {
+        return actions;
+    }
+
+    /**
+     * @param actions The new set of Actions owned by the User.
+     */
+    public void setActions(Set<SymbolAction> actions) {
+        this.actions = actions;
+    }
+
+    /**
+     * @return All Counters owned by the User.
+     */
+    public Set<Counter> getCounters() {
+        return counters;
+    }
+
+    /**
+     * @param counters The new set of Counters owned by the user.
+     */
+    public void setCounters(Set<Counter> counters) {
+        this.counters = counters;
+    }
+
+    /**
+     * @return All LearnerResults owned by the user.
+     */
+    public Set<LearnerResult> getLearnerResults() {
+        return learnerResults;
+    }
+
+    /**
+     * @param learnerResults The new set of LearnerResults owned by the User.
+     */
+    public void setLearnerResults(Set<LearnerResult> learnerResults) {
+        this.learnerResults = learnerResults;
     }
 
     //CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber|NeedBraces - auto generated by IntelliJ IDEA
@@ -124,102 +296,7 @@ public class User implements Serializable {
     public int hashCode() {
         return Objects.hash(id);
     }
-
     //CHECKSTYLE.ON: AvoidInlineConditionals|MagicNumber|NeedBraces
-
-    // auto generated getter & setter
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    @JsonIgnore
-    @JsonProperty("password")
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @JsonIgnore
-    @JsonProperty("salt")
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
-    public Set<Project> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(Set<Project> projects) {
-        this.projects = projects;
-    }
-
-    public Set<SymbolGroup> getSymbolGroups() {
-        return symbolGroups;
-    }
-
-    public void setSymbolGroups(Set<SymbolGroup> symbolGroups) {
-        this.symbolGroups = symbolGroups;
-    }
-
-    public Set<Symbol> getSymbols() {
-        return symbols;
-    }
-
-    public void setSymbols(Set<Symbol> symbols) {
-        this.symbols = symbols;
-    }
-
-    public Set<SymbolAction> getActions() {
-        return actions;
-    }
-
-    public void setActions(Set<SymbolAction> actions) {
-        this.actions = actions;
-    }
-
-    public Set<Counter> getCounters() {
-        return counters;
-    }
-
-    public void setCounters(Set<Counter> counters) {
-        this.counters = counters;
-    }
-
-    public Set<LearnerResult> getLearnerResults() {
-        return learnerResults;
-    }
-
-    public void setLearnerResults(Set<LearnerResult> learnerResults) {
-        this.learnerResults = learnerResults;
-    }
 
     @Override
     public String toString() {

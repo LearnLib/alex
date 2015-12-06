@@ -57,6 +57,7 @@ public class LearnerResource {
     @Inject
     private SymbolDAO symbolDAO;
 
+    /** The {@link LearnerResultDAO} to use. */
     @Inject
     private LearnerResultDAO learnerResultDAO;
 

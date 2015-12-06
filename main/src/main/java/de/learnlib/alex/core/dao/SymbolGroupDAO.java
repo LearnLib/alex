@@ -68,6 +68,7 @@ public interface SymbolGroupDAO {
      * @throws NotFoundException
      *         If no project with the given id was found.
      */
+    // TODO: most of the others methods use a User object. So, should this method be changed to use objects as well?
     List<SymbolGroup> getAll(long userId, long projectId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**

@@ -153,7 +153,8 @@ public class CounterResourceTest extends JerseyTest {
     @Test
     public void shouldReturn404WhenDeleteInvalidCounters() throws NotFoundException {
         String path = "/projects/" + PROJECT_TEST_ID + "/counters/batch/" + COUNTER_NAME + "," + COUNTER_NAME + "2";
-        willThrow(NotFoundException.class).given(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
+        willThrow(NotFoundException.class).given(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID,
+                                                                    COUNTER_NAME, COUNTER_NAME + "2");
 
         Response response = target(path).request().delete();
 

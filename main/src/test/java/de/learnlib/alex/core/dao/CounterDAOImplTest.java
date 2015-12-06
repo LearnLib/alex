@@ -163,13 +163,11 @@ public class CounterDAOImplTest {
 
         counterDAO.delete(user.getId(), project.getId(), counter.getName());
 
-        Counter resultCounter = null;
         try {
-            resultCounter = counterDAO.get(user.getId(), project.getId(), counter.getName());
+            counterDAO.get(user.getId(), project.getId(), counter.getName());
             fail("Counter was not completely removed.");
         } catch (NotFoundException e) {
             // success
-            assertEquals(null, resultCounter);
         }
     }
 

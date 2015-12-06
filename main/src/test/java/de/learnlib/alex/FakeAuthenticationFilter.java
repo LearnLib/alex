@@ -45,14 +45,14 @@ public class FakeAuthenticationFilter implements ContainerRequestFilter {
     /**
      * Custom Security context that allows to save a user instance in the context.
      */
-    private class AuthContext implements SecurityContext {
+    private static class AuthContext implements SecurityContext {
 
         private User user;
 
         /**
          * @param user The user that should be available in the context
          */
-        public AuthContext(User user) {
+        AuthContext(User user) {
             this.user = user;
         }
 
@@ -82,7 +82,6 @@ public class FakeAuthenticationFilter implements ContainerRequestFilter {
 
         @Override
         public boolean isSecure() {
-            // TODO: set this to true when ssl enabled
             return false;
         }
 

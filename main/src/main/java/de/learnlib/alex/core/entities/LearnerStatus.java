@@ -16,37 +16,54 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerStatus {
 
+    /** The user that 'owns' the LearningThread and Status. */
     @JsonIgnore
     private final User user;
-    
+
+    /** Is the Learner active? */
     private final boolean active;
 
+    /** The ID of the Project this test status belongs to. */
     private final Long projectId;
 
+    /** The current test no. */
     private final Long testNo;
 
+    /** The statistics of the learner. */
     private final LearnerStatusStatistics statistics;
 
     /**
      * Statistics Class for the learner status.
      */
     @JsonPropertyOrder(alphabetic = true)
-    private class LearnerStatusStatistics {
+    public static class LearnerStatusStatistics {
 
+        /** When the learning started. */
         private final Date startDate;
 
+        /** How many MQ where issued. */
         private final Long mqsUsed;
 
+        /**
+         * @param startDate When the learning was started.
+         * @param mqsUsed How many MQ where issued during the learning.
+         */
         public LearnerStatusStatistics(Date startDate, Long mqsUsed) {
             this.startDate = startDate;
             this.mqsUsed = mqsUsed;
         }
 
+        /**
+         * @return When the learning was started.
+         */
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
         public Date getStartDate() {
             return startDate;
         }
 
+        /**
+         * @return How many MQ where issued during the learning.
+         */
         public Long getMqsUsed() {
             return mqsUsed;
         }
@@ -111,6 +128,12 @@ public class LearnerStatus {
         return testNo;
     }
 
+    /**
+     * Additional Statistics of the learn process.
+     * Only included if the learner is active.
+     *
+     * @return Additional statistics, e.g. the start date.
+     */
     public LearnerStatusStatistics getStatistics() {
         return statistics;
     }

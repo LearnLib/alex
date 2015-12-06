@@ -149,7 +149,17 @@ public class SymbolDAOImpl implements SymbolDAO {
         return result;
     }
 
-    List<Symbol> getAll(Session session, User user, Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException {
+    /**
+     * Like {@link #getAll(User, Long, List)}, but use a given Hibernate session.
+     * @param session The session to use.
+     * @param user The owner of the Symbols.
+     * @param projectId The project the symbols should belong to.
+     * @param idRevPairs A list of pairs of an ID and revisions to specify the expected symbols.
+     * @return A list of symbols matching the project and list of IDs and revisions.
+     * @throws NotFoundException If the project or one of the symbols could not be found.
+     */
+    List<Symbol> getAll(Session session, User user, Long projectId, List<IdRevisionPair> idRevPairs)
+            throws NotFoundException {
         // no DB interaction if no symbols are requested
         if (idRevPairs.isEmpty()) {
             return new LinkedList<>();
@@ -189,13 +199,15 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    public List<Symbol> getAllWithLatestRevision(User user, Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel)
+    public List<Symbol> getAllWithLatestRevision(User user, Long projectId,
+                                                 Long groupId, SymbolVisibilityLevel visibilityLevel)
             throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        List<IdRevisionPair> idRevPairs = getIdRevisionPairs(session, user.getId(), projectId, groupId, visibilityLevel);
+        List<IdRevisionPair> idRevPairs = getIdRevisionPairs(session, user.getId(), projectId,
+                                                             groupId, visibilityLevel);
 
         HibernateUtil.commitTransaction();
 
@@ -205,11 +217,27 @@ public class SymbolDAOImpl implements SymbolDAO {
         return getAll(user, projectId, idRevPairs);
     }
 
-    List<IdRevisionPair> getIdRevisionPairs(Session session,
-                                            Long userId,
-                                            Long projectId,
-                                            Long groupId,
-                                        SymbolVisibilityLevel visibilityLevel) throws NotFoundException {
+    /**
+     * Get a List of IdRevisionPairs that describes all Symbols within a specific group,
+     * using the given Hibernate session.
+     *
+     * @param session
+     *         The Session to use.
+     * @param userId
+     *         The owner of the Symbols.
+     * @param projectId
+     *         The Project that the Symbols are part of.
+     * @param groupId
+     *         The Group in which the Symbols are in.
+     * @param visibilityLevel
+     *         The visibility level of the Symbols.
+     * @return A List of IdRevisionPairs to represent the Symbols within a group.
+     * @throws NotFoundException
+     *         If the group could not be found.
+     */
+    List<IdRevisionPair> getIdRevisionPairs(Session session, Long userId, Long projectId,
+                                            Long groupId, SymbolVisibilityLevel visibilityLevel)
+            throws NotFoundException {
         SymbolGroup group = (SymbolGroup) session.createCriteria(SymbolGroup.class)
                                                     .add(Restrictions.eq("user.id", userId))
                                                     .add(Restrictions.eq("project.id", projectId))
@@ -217,7 +245,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                     .uniqueResult();
 
         if (group == null) {
-            throw new NotFoundException("Could not find the group the id " + groupId
+            throw new NotFoundException("Could not find the group with the id " + groupId
                                                 + " in the project " + projectId + ". ");
         }
 
@@ -259,6 +287,24 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
+    /**
+     * Get a list of Symbols, like {@link #getByIdsWithLatestRevision(User, Long, SymbolVisibilityLevel, Long...)},
+     * but use a given Hibernate session.
+     *
+     * @param session
+     *         The session to use.
+     * @param user
+     *         The owner of the Symbols.
+     * @param projectId
+     *         The Project the Symbols are part of.
+     * @param visibilityLevel
+     *         The visibility level to check.
+     * @param ids
+     *         The IDs of the Symbols to fetch.
+     * @return The List of Symbols fulfilling all the above criteria.
+     * @throws NotFoundException
+     *         If no symbol was found.
+     */
     public List<Symbol> getByIdsWithLatestRevision(Session session, User user, Long projectId,
                                                    SymbolVisibilityLevel visibilityLevel, Long... ids)
             throws NotFoundException {
@@ -639,7 +685,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         return idRevPairs;
     }
 
-    private List<Symbol> getSymbols(Session session, Long userId, Long projectId, Long symbolId) throws NotFoundException {
+    private List<Symbol> getSymbols(Session session, Long userId, Long projectId, Long symbolId)
+            throws NotFoundException {
         @SuppressWarnings("should return a list of Symbols")
         List<Symbol> symbols = session.createCriteria(Symbol.class)
                                         .add(Restrictions.eq("user.id", userId))
@@ -735,6 +782,12 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
+    /**
+     * Use Hibernate to populate all fields of a Symbol, including all references to other entities.
+     *
+     * @param symbol
+     *         The Symbol to populate.
+     */
     public static void loadLazyRelations(Symbol symbol) {
         Hibernate.initialize(symbol.getUser());
         Hibernate.initialize(symbol.getGroup());

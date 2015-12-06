@@ -108,14 +108,14 @@ public class ExecuteSymbolAction extends SymbolAction {
     public ExecuteResult execute(ConnectorManager connector) {
         if (symbolToExecute == null) {
             LOGGER.info("No other Symbol to execute was set "
-                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated +").");
+                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
             return getFailedOutput();
         }
 
         ExecuteResult symbolResult = symbolToExecute.execute(connector);
-        LOGGER.info("Executed other Symbol <"+ symbolToExecute.getId() + ":" + + symbolToExecute.getRevision() + "> "
+        LOGGER.info("Executed other Symbol <" + symbolToExecute.getId() + ":" + symbolToExecute.getRevision() + "> "
                     + " with the result of '" + symbolResult + "' "
-                    + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated +").");
+                    + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
 
         if (symbolResult == ExecuteResult.OK) {
             return getSuccessOutput();

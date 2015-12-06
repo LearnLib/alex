@@ -31,6 +31,9 @@ import org.jose4j.lang.JoseException;
  */
 public class ALEXApplication extends ResourceConfig {
 
+    /** The number of bits used by the JWK lib. */
+    public static final int JWK_STRENGTH_IN_BITS = 2048;
+
     /** The E-Mail for the default admin, i.e. the admin that will be auto created if no other admin exists. */
     public static final String DEFAULT_ADMIN_EMAIL = "admin@alex.example";
 
@@ -68,7 +71,7 @@ public class ALEXApplication extends ResourceConfig {
         try {
 
             // create private public RSA key for signing JWTs
-            RsaKeyHolder.setKey(RsaJwkGenerator.generateJwk(2048));
+            RsaKeyHolder.setKey(RsaJwkGenerator.generateJwk(JWK_STRENGTH_IN_BITS));
 
             UserDAO userDAO = new UserDAOImpl();
 

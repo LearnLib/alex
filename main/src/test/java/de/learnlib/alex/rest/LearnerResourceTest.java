@@ -96,7 +96,8 @@ public class LearnerResourceTest extends JerseyTest {
         super.setUp();
         given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
         Symbol resetSymbol = mock(Symbol.class);
-        given(symbolDAO.get(user, PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L))).willReturn(resetSymbol);
+        given(symbolDAO.get(user, PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L)))
+                .willReturn(resetSymbol);
 
         LearnerResult result = mock(LearnerResult.class);
         given(result.getUserId()).willReturn(USER_TEST_ID);
@@ -190,7 +191,9 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
+                                    + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
+                                + "\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).resume(any(User.class), any(LearnerConfiguration.class));
     }
@@ -200,7 +203,9 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/stop").request().post(Entity.json(""));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
+                                    + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
+                                + "\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).stop(user);
     }
@@ -225,7 +230,9 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/active").request().get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
+                                        + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
+                                + "\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
     }
 

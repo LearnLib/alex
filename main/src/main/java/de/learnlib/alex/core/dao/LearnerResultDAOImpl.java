@@ -139,7 +139,8 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         }
     }
 
-    private List<String> getAllAsJSON(Session session, Long userId, Long projectId, Long testNo) throws NotFoundException {
+    private List<String> getAllAsJSON(Session session, Long userId, Long projectId, Long testNo)
+            throws NotFoundException {
         if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }

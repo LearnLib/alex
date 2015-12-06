@@ -3,6 +3,8 @@ package de.learnlib.alex.actions.RESTSymbolActions;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -17,6 +19,9 @@ public class CheckStatusAction extends RESTSymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = -4444604521120530087L;
+
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /** The status code to check. */
     private int status;
@@ -42,7 +47,11 @@ public class CheckStatusAction extends RESTSymbolAction {
 
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
-        if (status == target.getStatus()) {
+        int returnedStatus = target.getStatus();
+        LOGGER.info("check if the returned status code '" + returnedStatus + " is equal to '" + status + "' "
+                    + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+
+        if (this.status == returnedStatus) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();

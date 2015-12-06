@@ -77,14 +77,14 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     /**
      * Custom Security context that allows to save a user instance in the context.
      */
-    private class AuthContext implements SecurityContext {
+    private static class AuthContext implements SecurityContext {
 
         private User user;
 
         /**
          * @param user The user that should be available in the context
          */
-        public AuthContext(User user) {
+        AuthContext(User user) {
             this.user = user;
         }
 
@@ -105,11 +105,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
          */
         @Override
         public boolean isUserInRole(String role) {
-            if (user.getRole() == UserRole.ADMIN) {
-                return true;
-            } else {
-                return UserRole.valueOf(role) == user.getRole();
-            }
+            return UserRole.valueOf(role) == user.getRole() || user.getRole() == UserRole.ADMIN;
         }
 
         @Override

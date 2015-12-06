@@ -55,7 +55,9 @@ public class ClickActionTest {
 
     @Test
     public void testJSONWithLongNode() throws IOException {
-        c.setNode("#superlong > css trace .with-absolute ~no_meaning .at-all > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890");
+        c.setNode("#superlong > css trace .with-absolute ~no_meaning .at-all > .1234567890 > .1234567890 > .1234567890"
+                          + " > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890"
+                          + " > .1234567890 > .1234567890 > .1234567890");
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(c);
         ClickAction c2 = mapper.readValue(json, ClickAction.class);

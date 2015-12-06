@@ -33,7 +33,7 @@ public enum ExecuteResult {
      * @param failedActionNumber
      *         Number to indicate the failed action . Must be null when OK.
      */
-    public void setFailedActionNumber(Integer failedActionNumber) {
+    void setFailedActionNumber(Integer failedActionNumber) {
         this.failedActionNumber = failedActionNumber;
     }
 

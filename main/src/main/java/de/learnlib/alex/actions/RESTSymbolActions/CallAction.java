@@ -1,6 +1,5 @@
 package de.learnlib.alex.actions.RESTSymbolActions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
@@ -14,7 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Cookie;
-import java.beans.Transient;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -77,6 +75,9 @@ public class CallAction extends RESTSymbolAction {
     @Column(columnDefinition = "CLOB")
     private String data;
 
+    /**
+     * Default constructor that just initializes the internal data structures.
+     */
     public CallAction() {
         this.headers = new HashMap<>();
         this.cookies = new HashMap<>();
@@ -225,7 +226,9 @@ public class CallAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         try {
-            LOGGER.info("do REST request '"+ method + " " + url + "'.");
+            LOGGER.info("Do REST request '" + method + " " + url + "' "
+                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+
             doRequest(target);
             return getSuccessOutput();
         } catch (Exception e) {

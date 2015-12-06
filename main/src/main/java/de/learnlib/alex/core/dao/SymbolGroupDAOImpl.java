@@ -63,7 +63,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    public List<SymbolGroup> getAll(long userId, long projectId, EmbeddableFields... embedFields) throws NotFoundException {
+    public List<SymbolGroup> getAll(long userId, long projectId, EmbeddableFields... embedFields)
+            throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();

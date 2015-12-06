@@ -95,10 +95,12 @@ public class WebSymbolTest {
     @Test
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
-                    + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"node\":null},"
-                    + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"value\":\"F[oO0]+\","
-                        + "\"regexp\":true},"
-                    + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"duration\":" + ONE_SECOND + "}"
+                    + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
+                            + "\"node\":null},"
+                    + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
+                        + "\"value\":\"F[oO0]+\",\"regexp\":true},"
+                    + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
+                        + "\"duration\":" + ONE_SECOND + "}"
                 + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":0,\"revision\":null,\"user\":0}";
         symbol.setProject(null);
 
@@ -116,10 +118,10 @@ public class WebSymbolTest {
     @Test
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
-                                    + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                                        + "\"node\":null},"
-                                    + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                                        + "\"value\":\"F[oO0]+\",\"regexp\":true},"
+                                    + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,"
+                                        + "\"ignoreFailure\":false,\"node\":null},"
+                                    + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,"
+                                        + "\"ignoreFailure\":false,\"value\":\"F[oO0]+\",\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
                                         + "\"duration\":" + ONE_SECOND + "}"
                                 + "],\"group\":2,\"hidden\":false,\"id\":null,\"name\":\"WebSymbol\",\"project\":1,"

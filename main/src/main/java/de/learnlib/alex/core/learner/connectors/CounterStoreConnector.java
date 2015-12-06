@@ -45,21 +45,15 @@ public class CounterStoreConnector implements Connector {
     }
 
     public void set(Long userId, Long projectId, String name, Integer value) {
-        Counter counter;
         try {
-            counter = counterDAO.get(userId, projectId, name);
+            Counter counter = counterDAO.get(userId, projectId, name);
             counter.setValue(value);
             counterDAO.update(counter);
         } catch (NotFoundException e) {
-            counter = createCounter(userId, projectId, name, value);
+            createCounter(userId, projectId, name, value);
         }
         LOGGER.debug("Set the counter '" + name + "' in the project <" + projectId + "> "
                      + "of user <" + userId + "> to '" + value + "'.");
-    }
-
-    public void reset(Long projectId, String name) {
-        // TODO: is this method even used?
-        //set(projectId, name, 0);
     }
 
     public void increment(Long userId, Long projectId, String name) {

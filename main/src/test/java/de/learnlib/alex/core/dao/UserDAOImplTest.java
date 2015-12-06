@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 public class UserDAOImplTest {
 
     private static final String ADMIN_MAIL = "UserDAOImplTest@alex-tests.example";
+    private static final int TEST_USER_COUNT = 3;
 
     private static UserDAO userDAO;
 
@@ -91,7 +92,7 @@ public class UserDAOImplTest {
     @Test
     public void shouldGetAllUsers() {
         List<User> users = new ArrayList<>();
-        for (int i = 0; i  < 3; i++) {
+        for (int i = 0; i  < TEST_USER_COUNT; i++) {
             User u = new User();
             u.setEmail("user-" + String.valueOf(i) + "@mail.de");
             u.setEncryptedPassword("test");
@@ -109,14 +110,14 @@ public class UserDAOImplTest {
 
     @Test
     public void shouldOnlyGetAllAdmins() {
-        for (int i = 0; i  < 3; i++) {
+        for (int i = 0; i  < TEST_USER_COUNT; i++) {
             User u = new User();
             u.setEmail("test" + i + "@mail.de");
             u.setEncryptedPassword("test");
             userDAO.create(u);
         }
         List<User> admins = new ArrayList<>();
-        for (int i = 0; i  < 3; i++) {
+        for (int i = 0; i  < TEST_USER_COUNT; i++) {
             User u = new User();
             u.setEmail("admin" + i + "@mail.de");
             u.setRole(UserRole.ADMIN);
@@ -137,14 +138,14 @@ public class UserDAOImplTest {
     @Test
     public void shouldGetAllRegisteredUsers() {
         List<User> registered = new ArrayList<>();
-        for (int i = 0; i  < 3; i++) {
+        for (int i = 0; i  < TEST_USER_COUNT; i++) {
             User u = new User();
             u.setEmail("test" + i + "@mail.de");
             u.setEncryptedPassword("test");
             userDAO.create(u);
             registered.add(u);
         }
-        for (int i = 0; i  < 3; i++) {
+        for (int i = 0; i  < TEST_USER_COUNT; i++) {
             User u = new User();
             u.setEmail("admin" + i + "@mail.de");
             u.setRole(UserRole.ADMIN);

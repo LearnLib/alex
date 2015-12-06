@@ -146,7 +146,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
         List<SymbolGroup> groups = new LinkedList<>();
         groups.add(group1);
         groups.add(group2);
-        given(symbolGroupDAO.getAll(user.getId(), PROJECT_TEST_ID)).willReturn(groups); // TODO: should user not user.getId()
+        given(symbolGroupDAO.getAll(user.getId(), PROJECT_TEST_ID)).willReturn(groups);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups")
                             .request().get();

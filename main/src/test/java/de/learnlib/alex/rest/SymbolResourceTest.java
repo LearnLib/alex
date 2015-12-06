@@ -319,7 +319,8 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404WhenSymbolNotFound() throws NotFoundException {
-        given(symbolDAO.getWithLatestRevision(user, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willThrow(NotFoundException.class);
+        given(symbolDAO.getWithLatestRevision(user, PROJECT_TEST_ID, SYMBOL_TEST_ID))
+                .willThrow(NotFoundException.class);
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID).request().get();
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
@@ -464,7 +465,8 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatMovingASymbolThatDoesNotExistsIsHandedProperly() throws NotFoundException {
-        given(symbolDAO.getWithLatestRevision(user, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willThrow(NotFoundException.class);
+        given(symbolDAO.getWithLatestRevision(user, PROJECT_TEST_ID, SYMBOL_TEST_ID))
+                .willThrow(NotFoundException.class);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/moveTo/" + group.getId();
         Response response = target(path).request().put(Entity.json(""));

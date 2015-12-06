@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
  */
 public class Learner {
 
+    /** How many concurrent threads the system can handle. */
     private static final int MAX_CONCURRENT_THREADS = 1;
 
     /**
@@ -128,9 +129,14 @@ public class Learner {
     /**
      * Resuming a learning process by activating a LearningThread.
      *
-     * @param newConfiguration The configuration to use for the next learning steps.
-     * @throws IllegalArgumentException If the new configuration has errors.
-     * @throws IllegalStateException    If a learning process is already active.
+     * @param user
+     *         The user thats wants to restart his latest thread.
+     * @param newConfiguration
+     *         The configuration to use for the next learning steps.
+     * @throws IllegalArgumentException
+     *         If the new configuration has errors.
+     * @throws IllegalStateException
+     *         If a learning process is already active.
      */
     public void resume(User user, LearnerResumeConfiguration newConfiguration)
             throws IllegalArgumentException, IllegalStateException {
@@ -164,8 +170,12 @@ public class Learner {
     /**
      * If the new configuration is base on manual counterexamples, these samples must be checked.
      *
-     * @param newConfiguration The new configuration.
-     * @throws IllegalArgumentException If the new configuration is based on manual counterexamples and at least one of them is wrong.
+     * @param user
+     *         The user to validate the counterexample for.
+     * @param newConfiguration
+     *         The new configuration.
+     * @throws IllegalArgumentException
+     *         If the new configuration is based on manual counterexamples and at least one of them is wrong.
      */
     private void validateCounterExample(User user, LearnerResumeConfiguration newConfiguration)
             throws IllegalArgumentException {
@@ -209,6 +219,9 @@ public class Learner {
 
     /**
      * Ends the learning process after the current step.
+     *
+     * @param user
+     *         The user that wants to stop his active thread.
      */
     public void stop(User user) {
         LearnerThread learnerThread = activeThreads.get(user);
@@ -221,6 +234,8 @@ public class Learner {
     /**
      * Method to check if a learning process is still active or if it has finished.
      *
+     * @param user
+     *         The user to check for active threads.
      * @return true if the learning process is active, false otherwise.
      */
     public boolean isActive(User user) {
@@ -241,6 +256,13 @@ public class Learner {
         return true;
     }
 
+    /**
+     * Get the status of the Learner as immutable object.
+     *
+     * @param user
+     *         The user that wants a LearnerStatus object for his (active) thread.
+     * @return A snapshot of the Learner status.
+     */
     public LearnerStatus getStatus(User user) {
         LearnerStatus status = new LearnerStatus(user, this);
         return status;
@@ -250,6 +272,8 @@ public class Learner {
      * Get the current result of the learning process.
      * This must not be a valid step of a test run!
      *
+     * @param user
+     *         The user that wants to see his result.
      * @return The current result of the LearnerThread.
      */
     public LearnerResult getResult(User user) {
@@ -265,6 +289,8 @@ public class Learner {
     /**
      * Get the number of executed MQs in the current learn process.
      *
+     * @param user
+     *         The User that wants to his MQs used.
      * @return null if the learnThread has not been started or the number of executed MQs in the current learn process
      */
     public Long getMQsUsed(User user) {
@@ -281,6 +307,8 @@ public class Learner {
     /**
      * Get the date and time when the learner started learning.
      *
+     * @param user
+     *         The user that wants to see his latest start date.
      * @return The date and time when the learner started learning.
      */
     public Date getStartDate(User user) {

@@ -38,7 +38,7 @@ public class SetVariableByJSONAttributeAction extends SetVariableAction {
         if (valueInTheBody == null) {
             LOGGER.info("Could not set the variable '" + name + "' to the value of the "
                         + "JSON attribute '" + value + "' in the body '" + body + "' "
-                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated +").");
+                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
             return getFailedOutput();
         }
 

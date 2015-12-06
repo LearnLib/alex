@@ -92,7 +92,6 @@ public class AssertCounterAction extends SymbolAction {
     }
 
     // auto generated getter & setter
-
     public String getName() {
         return name;
     }

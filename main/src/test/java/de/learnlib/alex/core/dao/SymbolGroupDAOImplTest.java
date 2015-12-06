@@ -126,18 +126,17 @@ public class SymbolGroupDAOImplTest {
             groups.add(newGroup);
         }
 
-        List<SymbolGroup> groupsInDB = symbolGroupDAO.getAll(user.getId(), project.getId()); // TODO: should use just user
+        List<SymbolGroup> groupsInDB = symbolGroupDAO.getAll(user.getId(), project.getId());
         assertEquals(groups.size() + 1, groupsInDB.size()); // +1: default group
     }
 
     @Test
     public void shouldThrowAnExceptionIfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
-        symbolGroupDAO.getAll(user.getId(), -1L); // TODO: should use just user
+        symbolGroupDAO.getAll(user.getId(), -1L);
     }
 
     @Test
     public void shouldGetTheRightGroup() throws NotFoundException {
-        List<SymbolGroup> groups = new LinkedList<>();
         for (int i = 1; i <= AMOUNT_OF_GROUPS; i++) {
             SymbolGroup newGroup = new SymbolGroup();
             newGroup.setName("Group " + i);
@@ -148,8 +147,6 @@ public class SymbolGroupDAOImplTest {
 
             assertEquals(project, newGroup.getProject());
             assertTrue(newGroup.getId() > 0);
-
-            groups.add(newGroup);
         }
 
         SymbolGroup groupInDB = symbolGroupDAO.get(user, project.getId(), 1L);

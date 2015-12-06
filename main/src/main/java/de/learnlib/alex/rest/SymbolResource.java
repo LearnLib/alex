@@ -95,7 +95,8 @@ public class SymbolResource {
                 symbol.setUser(user);
                 symbolDAO.create(symbol);
 
-                String symbolURL = uri.getBaseUri() + "projects/" + symbol.getProjectId() + "/symbols/" + symbol.getId();
+                String symbolURL = uri.getBaseUri() + "projects/" + symbol.getProjectId()
+                                        + "/symbols/" + symbol.getId();
                 return Response.status(Status.CREATED).header("Location", symbolURL).entity(symbol).build();
             } else {
                 throw new UnauthorizedException("The user may not create a symbol in this project");

@@ -38,6 +38,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** to be serializable. */
     private static final long serialVersionUID = 7987585761829495962L;
 
+    /** The maximum lenght of the abbreviation. */
+    public static final int MAX_ABBREVIATION_LENGTH = 15;
+
     /** Use the learner logger. */
     private static final Logger LOGGER = LogManager.getLogger("learner");
 
@@ -75,7 +78,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * An abbreviation for the symbol.
      * @requiredField
      */
-    @Size(min = 1, max = 15)
+    @Size(min = 1, max = MAX_ABBREVIATION_LENGTH)
     private String abbreviation;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

@@ -19,6 +19,9 @@ public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy {
     /** The maximal depth to explore, i.e. minimal length of words to test. */
     private int maxDepth;
 
+    /**
+     * Default constructor.
+     */
     public WMethodEQOracleProxy() {
         this.maxDepth = 1;
     }
