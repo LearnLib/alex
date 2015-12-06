@@ -20,6 +20,7 @@ function actionCreateModalHandle($modal) {
         el.on('click', () => {
             $modal.open({
                 templateUrl: 'views/modals/action-create-modal.html',
+                size: 'lg',
                 controller: 'ActionCreateModalController',
                 controllerAs: 'vm'
             });

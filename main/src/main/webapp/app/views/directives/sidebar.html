@@ -4,9 +4,9 @@
         <a href="#home" class="sidebar-header-button logo-button">
             <img src="app/images/favicon.png" height="18" width="18"> <strong>LEX</strong>
         </a>
-        <a href class="sidebar-header-button toggle-button" layout-toggle-button ng-click="vm.toggleCollapse()"
-           tooltip="{{collapsed ? 'Show Sidebar' : 'Hide Sidebar'}}" tooltip-placement="right">
-            <i class="fa" ng-class="collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+        <a href="" class="sidebar-header-button toggle-button" layout-toggle-button ng-click="vm.toggleCollapse()"
+           tooltip="{{vm.collapsed ? 'Show Sidebar' : 'Hide Sidebar'}}" tooltip-placement="right">
+            <i class="fa" ng-class="vm.collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
         </a>
         <a ui-sref="about" class="sidebar-header-button about-button"
            tooltip="About ALEX" tooltip-placement="left">
