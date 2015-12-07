@@ -184,7 +184,6 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
         if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
-            group.getSymbols();
             group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
         } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
             try {

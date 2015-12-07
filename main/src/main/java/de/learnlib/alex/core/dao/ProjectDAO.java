@@ -29,6 +29,9 @@ public interface ProjectDAO {
         /** Flag to embed test results. */
         TEST_RESULTS,
 
+        /** FLag to embed counters. */
+        COUNTERS,
+
         /** Flag to embed everything. */
         ALL;
 

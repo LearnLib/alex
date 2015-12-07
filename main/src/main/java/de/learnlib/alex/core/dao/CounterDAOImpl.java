@@ -21,8 +21,7 @@ public class CounterDAOImpl implements CounterDAO {
         HibernateUtil.beginTransaction();
         Session session = HibernateUtil.getSession();
         try {
-            Project project = (Project) session.load(Project.class, counter.getProjectId());
-            project.getId();
+            Project project = session.load(Project.class, counter.getProjectId());
             counter.setProject(project);
 
             session.save(counter);

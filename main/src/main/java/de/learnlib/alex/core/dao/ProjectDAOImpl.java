@@ -8,6 +8,7 @@ import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
@@ -125,7 +126,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         HibernateUtil.beginTransaction();
 
         // get the Project
-        Project result = (Project) session.get(Project.class, projectId);
+        Project result = session.get(Project.class, projectId);
 
         // load lazy relations
         if (result != null) {
@@ -164,7 +165,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         HibernateUtil.beginTransaction();
 
         try {
-            Project projectInDB = (Project) session.load(Project.class, project.getId());
+            Project projectInDB = session.load(Project.class, project.getId());
 
             // apply changes
             projectInDB.setName(project.getName());
@@ -221,7 +222,7 @@ public class ProjectDAOImpl implements ProjectDAO {
             }
 
             if (fieldsToLoad.contains(EmbeddableFields.DEFAULT_GROUP)) {
-                project.getDefaultGroup();
+                Hibernate.initialize(project.getDefaultGroup());
                 if (project.getDefaultGroup() != null) {
                     project.getDefaultGroup().getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
                 }
@@ -236,9 +237,15 @@ public class ProjectDAOImpl implements ProjectDAO {
             }
 
             if (fieldsToLoad.contains(EmbeddableFields.TEST_RESULTS)) {
-                project.getTestResults();
+                Hibernate.initialize(project.getTestResults());
             } else {
                 project.setTestResults(null);
+            }
+
+            if (fieldsToLoad.contains(EmbeddableFields.COUNTERS)) {
+                Hibernate.initialize(project.getCounters());
+            } else {
+                project.setCounters(null);
             }
         } else {
             project.setGroups(null);
@@ -255,6 +262,7 @@ public class ProjectDAOImpl implements ProjectDAO {
             fieldsToLoad.add(EmbeddableFields.DEFAULT_GROUP);
             fieldsToLoad.add(EmbeddableFields.SYMBOLS);
             fieldsToLoad.add(EmbeddableFields.TEST_RESULTS);
+            fieldsToLoad.add(EmbeddableFields.COUNTERS);
         } else {
             Collections.addAll(fieldsToLoad, embedFields);
         }

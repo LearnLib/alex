@@ -91,7 +91,7 @@ public class ProjectResource {
      *
      * @param embed
      *         By default no related objects are included in the projects. However you can ask to include them with
-     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group' & 'test_results'.
+     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
      *         You can request multiple by just put a ',' between them.
      * @return All projects in a list.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Project>
@@ -121,7 +121,7 @@ public class ProjectResource {
      *            The ID of the project.
      * @param embed
      *         By default no related objects are included in the project. However you can ask to include them with
-     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group' & 'test_results'.
+     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
      *         You can request multiple by just put a ',' between them.
      * @return The project or an error message.
      * @responseType de.learnlib.alex.core.entities.Project
