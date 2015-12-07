@@ -28,7 +28,7 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -103,7 +103,7 @@ public class LearnerResourceTest extends JerseyTest {
         given(result.getUserId()).willReturn(USER_TEST_ID);
         given(result.getProjectId()).willReturn(PROJECT_TEST_ID);
         given(result.getTestNo()).willReturn(TEST_NO);
-        given(learner.getStartDate(user)).willReturn(new Date(0));
+        given(learner.getStartDate(user)).willReturn(ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00"));
         given(learner.isActive(user)).willReturn(true);
         given(learner.getResult(user)).willReturn(result);
 

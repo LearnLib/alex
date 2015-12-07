@@ -9,7 +9,7 @@ import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -22,7 +22,7 @@ public class LearnerResultTest {
     private static final Long PROJECT_ID = 3L;
     private static final Long ID = 3L;
     private static final Long STEP_NO = 3L;
-    private static final Date TEST_DATE = new Date(0);
+    private static final ZonedDateTime TEST_DATE = ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00");
     private static final long TEST_DURATION = 9001;
     private static final int EQS_USED = 123;
     private static final String EXPECTED_JSON = "{\"configuration\":{"

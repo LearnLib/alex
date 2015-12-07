@@ -1,6 +1,5 @@
 package de.learnlib.alex.core.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,7 +26,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,6 +48,13 @@ public class LearnerResult implements Serializable {
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("server");
 
+    /** Standard DateTimeFormatter that will create a nice ISO 8160 string with milliseconds and a time zone. */
+    public static final DateTimeFormatter DATE_TIME_FORMATTER
+                                                        = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+
+    /** A ZonedDateTime object based at the unix time 0. */
+    public static final ZonedDateTime UNIX_TIME_START = ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00");
+
     /**
      * Embeddable statistics object to hold all the statistics together.
      */
@@ -62,8 +69,8 @@ public class LearnerResult implements Serializable {
          * Date and Time when the learning step was started.
          * The format is conform with the ISO 8601 (JavaScript-Style).
          */
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
-        private Date startDate;
+        @JsonIgnore
+        private ZonedDateTime startDate;
 
         /**
          * The 'time' the test started in nanoseconds.
@@ -89,7 +96,7 @@ public class LearnerResult implements Serializable {
          * Default constructor.
          */
         public Statistics() {
-            this.startDate = new Date(0);
+            this.startDate = UNIX_TIME_START;
             this.startTime = 0;
             this.duration  = 0;
         }
@@ -118,7 +125,8 @@ public class LearnerResult implements Serializable {
          *
          * @return The date
          */
-        public Date getStartDate() {
+        @JsonIgnore
+        public ZonedDateTime getStartDate() {
             return startDate;
         }
 
@@ -128,8 +136,26 @@ public class LearnerResult implements Serializable {
          * @param startDate
          *          The date object
          */
-        public void setStartDate(Date startDate) {
+        @JsonIgnore
+        public void setStartDate(ZonedDateTime startDate) {
             this.startDate = startDate;
+        }
+
+        /**
+         * @return When the learning was started as nice ISO 8160 string, including milliseconds and zone.
+         */
+        @Transient
+        @JsonProperty("startDate")
+        public String getStartDateAsString() {
+            return startDate.format(DATE_TIME_FORMATTER);
+        }
+
+        /**
+         * @param dateAsString The point in time when the learning was started.
+         */
+        @JsonProperty("startDate")
+        public void setStartDateByString(String dateAsString) {
+            this.startDate = ZonedDateTime.parse(dateAsString);
         }
 
         /**

@@ -1,13 +1,12 @@
 package de.learnlib.alex.core.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.learner.Learner;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 /**
  * Class to provide information about the current learn process.
@@ -39,7 +38,7 @@ public class LearnerStatus {
     public static class LearnerStatusStatistics {
 
         /** When the learning started. */
-        private final Date startDate;
+        private final ZonedDateTime startDate;
 
         /** How many MQ where issued. */
         private final Long mqsUsed;
@@ -48,7 +47,7 @@ public class LearnerStatus {
          * @param startDate When the learning was started.
          * @param mqsUsed How many MQ where issued during the learning.
          */
-        public LearnerStatusStatistics(Date startDate, Long mqsUsed) {
+        public LearnerStatusStatistics(ZonedDateTime startDate, Long mqsUsed) {
             this.startDate = startDate;
             this.mqsUsed = mqsUsed;
         }
@@ -56,9 +55,17 @@ public class LearnerStatus {
         /**
          * @return When the learning was started.
          */
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
-        public Date getStartDate() {
+        @JsonIgnore
+        public ZonedDateTime getStartDate() {
             return startDate;
+        }
+
+        /**
+         * @return When the learning was started as nice ISO 8160 string, including milliseconds and zone.
+         */
+        @JsonProperty("startDate")
+        public String getStartDateAsString() {
+            return startDate.format(LearnerResult.DATE_TIME_FORMATTER);
         }
 
         /**

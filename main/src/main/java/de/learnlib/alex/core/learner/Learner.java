@@ -15,8 +15,8 @@ import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.oracles.ResetCounterSUL;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -311,7 +311,7 @@ public class Learner {
      *         The user that wants to see his latest start date.
      * @return The date and time when the learner started learning.
      */
-    public Date getStartDate(User user) {
+    public ZonedDateTime getStartDate(User user) {
         LearnerThread learnerThread = userThreads.get(user);
 
         if (learnerThread == null) {

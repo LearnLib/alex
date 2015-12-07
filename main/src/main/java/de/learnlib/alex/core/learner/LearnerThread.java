@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -264,7 +264,7 @@ public class LearnerThread extends Thread {
     private void learnOneStep() throws NotFoundException {
         LOGGER.trace("LearnerThread.learnOneStep()");
         LearnerResult.Statistics statistics = result.getStatistics();
-        statistics.setStartDate(new Date());
+        statistics.setStartDate(ZonedDateTime.now());
         statistics.setStartTime(System.nanoTime());
         statistics.setDuration(0L);
         statistics.setEqsUsed(0L);
