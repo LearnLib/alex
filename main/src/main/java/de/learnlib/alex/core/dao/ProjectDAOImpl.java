@@ -252,6 +252,7 @@ public class ProjectDAOImpl implements ProjectDAO {
             project.setDefaultGroup(null);
             project.setSymbols(null);
             project.setTestResults(null);
+            project.setCounters(null);
         }
     }
 
