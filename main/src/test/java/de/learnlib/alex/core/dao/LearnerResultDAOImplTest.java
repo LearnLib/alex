@@ -1,5 +1,6 @@
 package de.learnlib.alex.core.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
@@ -84,11 +85,10 @@ public class LearnerResultDAOImplTest {
         assertTrue(learnerResult.getTestNo() > 0);
         assertTrue(learnerResult.getStepNo() == 0);
 
-        String jsonFromDB = learnerResultDAO.getAsJSON(user.getId(), project.getId(), learnerResult.getTestNo(),
+        LearnerResult resultFromDB = learnerResultDAO.get(user.getId(), project.getId(), learnerResult.getTestNo(),
                                                        learnerResult.getStepNo());
-        String expectedJSON = generateExpectedJSON(learnerResult);
 
-        assertEquals(expectedJSON, jsonFromDB);
+        assertEquality(learnerResult, resultFromDB);
     }
 
     @Test
@@ -99,20 +99,18 @@ public class LearnerResultDAOImplTest {
         learnerResultDAO.create(result2);
 
         /* check learnerResult 1 */
-        String expectedJSON = generateExpectedJSON(learnerResult);
         assertTrue(learnerResult.getTestNo() > 0);
         assertTrue(learnerResult.getStepNo() == 0L);
-        String jsonFromDB = learnerResultDAO.getAsJSON(user.getId(), project.getId(), learnerResult.getTestNo(),
-                                                        learnerResult.getStepNo());
-        assertEquals(expectedJSON, jsonFromDB);
+        LearnerResult resultFromDB = learnerResultDAO.get(user.getId(), project.getId(), learnerResult.getTestNo(),
+                                                          learnerResult.getStepNo());
+        assertEquality(learnerResult, resultFromDB);
 
         /* check learnerResult 2 */
-        expectedJSON = generateExpectedJSON(result2);
         assertTrue(result2.getTestNo() > 0);
         assertTrue(result2.getStepNo() == 0);
-        jsonFromDB = learnerResultDAO.getAsJSON(user.getId(), project.getId(),
-                                                result2.getTestNo(), result2.getStepNo());
-        assertEquals(expectedJSON, jsonFromDB);
+        resultFromDB = learnerResultDAO.get(user.getId(), project.getId(),
+                                            result2.getTestNo(), result2.getStepNo());
+        assertEquality(result2, resultFromDB);
 
         /* check relations */
         assertFalse(learnerResult.getTestNo().equals(result2.getTestNo()));
@@ -140,69 +138,49 @@ public class LearnerResultDAOImplTest {
     }
 
     @Test
-    public void shouldGetAllFinalResults() throws NotFoundException {
-        List<LearnerResult> results = createLearnerResultsList();
-        List<String> resultsInDBAsJSON = learnerResultDAO.getAllAsJSON(user.getId(), project.getId());
+    public void shouldGetAllFinalResults() throws NotFoundException, JsonProcessingException {
+        List<LearnerResult> expectedResults = createLearnerResultsList();
+        List<LearnerResult> resultsFromDB   = learnerResultDAO.getAll(user.getId(), project.getId());
 
-        assertEquals(results.size(), resultsInDBAsJSON.size());
-        for (int i = 0; i < results.size(); i++) {
-            LearnerResult expectedResult = results.get(i);
+        assertEquals(expectedResults.size(), resultsFromDB.size());
+        for (int i = 0; i < expectedResults.size(); i++) {
+            LearnerResult expectedResult = expectedResults.get(i);
             expectedResult.setStepNo(0L);
-            String expectedJSON = expectedResult.getJSON();
-            String actualJSON   = resultsInDBAsJSON.get(i);
+            LearnerResult resultFromDB = resultsFromDB.get(i);
 
-            assertEquals(expectedJSON, actualJSON);
+            assertEquality(expectedResult, resultFromDB);
         }
     }
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingAllFinalResultsThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.getAllAsJSON(user.getId(), -1L); // should fail
+        learnerResultDAO.getAll(user.getId(), -1L); // should fail
     }
 
     @Test
     public void shouldGetAllResultsOfOneRun() throws NotFoundException {
-        LearnerResult result = createLearnerResultsList().get(RESULTS_AMOUNT - 1);
-        List<String> resultsInDBAsJSON = learnerResultDAO.getAllAsJSON(user.getId(), project.getId(),
-                                                                       result.getTestNo());
+        LearnerResult expectedResult = createLearnerResultsList().get(RESULTS_AMOUNT - 1);
+        List<LearnerResult> resultsFromDB = learnerResultDAO.getAll(user.getId(), project.getId(),
+                                                                    expectedResult.getTestNo());
 
-        assertEquals(RESULTS_AMOUNT, resultsInDBAsJSON.size());
-        for (int i = 0; i < resultsInDBAsJSON.size(); i++) {
-            String expectedJSON = "{\"configuration\":{"
-                                        + "\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\",\"comment\":\"\","
-                                        + "\"eqOracle\":{\"type\":\"random_word\","
-                                            + "\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1}"
-                                        + ",\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]},"
-                                    + "\"counterExample\":\"\",\"hypothesis\":{"
-                                        + "\"nodes\":[0,1],\"initNode\":0,\"edges\":["
-                                            + "{\"from\":0,\"input\":\"0\",\"to\":0,\"output\":\"OK\"},"
-                                            + "{\"from\":0,\"input\":\"1\",\"to\":1,\"output\":\"OK\"},"
-                                            + "{\"from\":1,\"input\":\"0\",\"to\":1,\"output\":\"OK\"},"
-                                            + "{\"from\":1,\"input\":\"1\",\"to\":0,\"output\":\"OK\"}"
-                                        + "]},"
-                                    + "\"project\":" + project.getId() + ",\"sigma\":[\"0\",\"1\"],"
-                                    + "\"statistics\":{"
-                                        + "\"duration\":0,\"eqsUsed\":0,\"mqsUsed\":0,"
-                                        + "\"startDate\":\"1970-01-01T00:00:00.000+00:00\","
-                                        + "\"symbolsUsed\":0"
-                                    + "},"
-                                    + "\"stepNo\":" + i + ",\"testNo\":" + result.getTestNo() + ","
-                                    + "\"user\":" + user.getId() + "}";
-            String resultAsJSON = resultsInDBAsJSON.get(i);
+        assertEquals(RESULTS_AMOUNT, resultsFromDB.size());
+        for (int i = 0; i < resultsFromDB.size(); i++) {
+            expectedResult.setStepNo((long) i);
+            LearnerResult resultFromDB = resultsFromDB.get(i);
 
-            assertEquals(expectedJSON, resultAsJSON);
+            assertEquality(expectedResult, resultFromDB);
         }
     }
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingAllResultsThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.getAllAsJSON(-1L, learnerResult.getTestNo()); // should fail
+        learnerResultDAO.getAll(-1L, learnerResult.getTestNo()); // should fail
     }
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingAllResultsThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.getAllAsJSON(project.getId(), -1L); // should fail
+        learnerResultDAO.getAll(project.getId(), -1L); // should fail
     }
 
     @Test
@@ -229,64 +207,34 @@ public class LearnerResultDAOImplTest {
     }
 
     @Test
-    public void shouldGetOneFinalResultAsJSON() throws NotFoundException {
+    public void shouldGetOneResult() throws NotFoundException, JsonProcessingException {
         learnerResultDAO.create(learnerResult);
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             learnerResultDAO.update(learnerResult);
         }
+        learnerResult.setStepNo(2L);
 
-        String jsonInDB = learnerResultDAO.getAsJSON(user.getId(), project.getId(), learnerResult.getTestNo());
-        learnerResult.setStepNo(0L);
-        assertEquals(learnerResult.getJSON(), jsonInDB);
+        LearnerResult resultFromDB = learnerResultDAO.get(user.getId(), project.getId(),
+                                                          learnerResult.getTestNo(), RESULTS_AMOUNT / 2L);
+
+        assertEquality(learnerResult, resultFromDB);
     }
 
     @Test(expected = NotFoundException.class)
-    public void ensureThatGettingOneFinalResultAsJSONThrowsAnExceptionIfTheProjectIdIsInvalid()
-            throws NotFoundException {
+    public void ensureThatGettingOneResultThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.getAsJSON(user.getId(), -1L, learnerResult.getTestNo()); // should fail
+        learnerResultDAO.get(-1L, learnerResult.getTestNo(), 0L); // should fail
     }
 
     @Test(expected = NotFoundException.class)
-    public void ensureThatGettingOneFinalResultAsJSONThrowsAnExceptionIfTheResultIdIsInvalid()
-            throws NotFoundException {
-        learnerResultDAO.getAsJSON(user.getId(), project.getId(), -1L); // should fail
+    public void ensureThatGettingOneResultThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
+        learnerResultDAO.get(project.getId(), -1L, 0L); // should fail
     }
 
-    @Test
-    public void shouldGetOneResultAsJSON() throws NotFoundException {
-        String middleResult = "";
+    @Test(expected = NotFoundException.class)
+    public void ensureThatGettingOneResultThrowsAnExceptionIfTheStepNoIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
-        for (int i = 0; i < RESULTS_AMOUNT; i++) {
-            if (i == (RESULTS_AMOUNT / 2) - 1) {
-                learnerResult.setStepNo(2L);
-                middleResult = learnerResult.getJSON();
-                learnerResult.setStepNo(1L);
-            }
-
-            learnerResultDAO.update(learnerResult);
-        }
-
-        String jsonInDB = learnerResultDAO.getAsJSON(user.getId(), project.getId(),
-                                                     learnerResult.getTestNo(), RESULTS_AMOUNT / 2L);
-        assertEquals(middleResult, jsonInDB);
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
-        learnerResultDAO.getAsJSON(-1L, learnerResult.getTestNo(), 0L); // should fail
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.getAsJSON(project.getId(), -1L, 0L); // should fail
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void ensureThatGettingOneResultAsJSONThrowsAnExceptionIfTheStepNoIsInvalid() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
-        learnerResultDAO.getAsJSON(project.getId(), learnerResult.getTestNo(), -1L); // should fail
+        learnerResultDAO.get(project.getId(), learnerResult.getTestNo(), -1L); // should fail
     }
 
     @Test
@@ -340,11 +288,11 @@ public class LearnerResultDAOImplTest {
         HibernateUtil.beginTransaction();
 
         Long resultCounter = (Long) session.createCriteria(LearnerResult.class)
-                .add(Restrictions.eq("user.id", user.getId()))
-                .add(Restrictions.eq("project.id", project.getId()))
-                .add(Restrictions.in("testNo", ids))
-                .setProjection(Projections.rowCount())
-                .uniqueResult();
+                                            .add(Restrictions.eq("user.id", user.getId()))
+                                            .add(Restrictions.eq("project.id", project.getId()))
+                                            .add(Restrictions.in("testNo", ids))
+                                            .setProjection(Projections.rowCount())
+                                            .uniqueResult();
 
         HibernateUtil.commitTransaction();
 
@@ -393,25 +341,13 @@ public class LearnerResultDAOImplTest {
         result.createHypothesisFrom(hypothesis);
     }
 
-    private String generateExpectedJSON(LearnerResult result) {
-        return "{\"configuration\":{\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\",\"comment\":\"\","
-                    + "\"eqOracle\":{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,\"maxNoOfTests\":1},"
-                    + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]},"
-                + "\"counterExample\":\"\",\"hypothesis\":{"
-                    + "\"nodes\":[0,1],\"initNode\":0,\"edges\":["
-                    + "{\"from\":0,\"input\":\"0\",\"to\":0,\"output\":\"OK\"},"
-                    + "{\"from\":0,\"input\":\"1\",\"to\":1,\"output\":\"OK\"},"
-                    + "{\"from\":1,\"input\":\"0\",\"to\":1,\"output\":\"OK\"},"
-                    + "{\"from\":1,\"input\":\"1\",\"to\":0,\"output\":\"OK\"}"
-                + "]},"
-                + "\"project\":" + result.getProjectId() + ",\"sigma\":[\"0\",\"1\"],"
-                + "\"statistics\":{"
-                    + "\"duration\":0,\"eqsUsed\":0,\"mqsUsed\":0,"
-                    + "\"startDate\":\"1970-01-01T00:00:00.000+00:00\","
-                    + "\"symbolsUsed\":0"
-                + "},"
-                + "\"stepNo\":" + result.getStepNo() + ",\"testNo\":" + result.getTestNo() + ","
-                + "\"user\":" + user.getId() + "}";
+    private void assertEquality(LearnerResult lr1, LearnerResult lr2) {
+        assertTrue(lr1.equals(lr2));
+        assertEquals(lr1.getSigma(), lr2.getSigma());
+        // TODO: assertEquals(lr1.getHypothesis(), lr2.getHypothesis());
+        assertEquals(lr1.getCounterExample(), lr2.getCounterExample());
+        // TODO: assertEquals(lr1.getStatistics(), lr2.getStatistics());
+        // TODO: assertEquals(lr1.getConfiguration(), lr2.getConfiguration());
     }
 
     private List<LearnerResult> createLearnerResultsList() throws NotFoundException {

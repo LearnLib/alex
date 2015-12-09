@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.oracles.DefaultQuery;
@@ -17,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -250,13 +253,6 @@ public class LearnerResult implements Serializable {
     /** The step no. within a test run which lead to the result. */
     private Long stepNo;
 
-    /** Buffer for the JSON which represents the result. */
-    private String json;
-
-    /** Internal helper field to determine if the json needs to be recalculated. */
-    @JsonIgnore
-    private boolean jsonChanged;
-
     /** The LearnerConfiguration which was used to create the result. */
     private LearnerConfiguration configuration;
 
@@ -287,7 +283,6 @@ public class LearnerResult implements Serializable {
      */
     public LearnerResult() {
         this.configuration = new LearnerConfiguration();
-        this.jsonChanged = true;
         this.statistics = new Statistics();
     }
 
@@ -311,7 +306,6 @@ public class LearnerResult implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
-        this.jsonChanged = true;
     }
 
     /**
@@ -334,7 +328,6 @@ public class LearnerResult implements Serializable {
      */
     public void setProject(Project project) {
         this.project = project;
-        this.jsonChanged = true;
     }
 
     /**
@@ -361,12 +354,10 @@ public class LearnerResult implements Serializable {
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
         this.project = new Project(projectId);
-        this.jsonChanged = true;
     }
 
     public void setUser(User user) {
         this.user = user;
-        this.jsonChanged = true;
     }
 
     @NaturalId
@@ -389,7 +380,6 @@ public class LearnerResult implements Serializable {
     @JsonProperty("user")
     public void setUserId(Long userId) {
         user = new User(userId);
-        jsonChanged = true;
     }
 
     /**
@@ -411,7 +401,6 @@ public class LearnerResult implements Serializable {
      */
     public void setTestNo(Long testNo) {
         this.testNo = testNo;
-        this.jsonChanged = true;
     }
 
     /**
@@ -433,7 +422,6 @@ public class LearnerResult implements Serializable {
      */
     public void setStepNo(Long stepNo) {
         this.stepNo = stepNo;
-        this.jsonChanged = true;
     }
 
     /**
@@ -442,7 +430,7 @@ public class LearnerResult implements Serializable {
      * @return The LearnerConfiguration used during the learning which lead to the result.
      */
     @JsonProperty("configuration")
-    @Transient
+    @Embedded
     public LearnerConfiguration getConfiguration() {
         return configuration;
     }
@@ -456,7 +444,6 @@ public class LearnerResult implements Serializable {
     @JsonProperty("configuration")
     public void setConfiguration(LearnerConfiguration configuration) {
         this.configuration = configuration;
-        this.jsonChanged = true;
     }
 
     /**
@@ -477,7 +464,6 @@ public class LearnerResult implements Serializable {
      */
     public void setStatistics(Statistics statistics) {
         this.statistics = statistics;
-        this.jsonChanged = true;
     }
 
     /**
@@ -497,10 +483,19 @@ public class LearnerResult implements Serializable {
      * @param sigma
      *         The new Alphabet.
      */
+    @Transient
     @JsonIgnore
     public void setSigma(Alphabet<String> sigma) {
         this.sigma = sigma;
-        this.jsonChanged = true;
+    }
+
+    @Column(name = "sigma")
+    @ElementCollection(targetClass = String.class)
+    @JsonIgnore
+    public List<String> getAlphabet() {
+        List<String> result = new LinkedList<>();
+        sigma.forEach(result::add);
+        return result;
     }
 
     /**
@@ -509,13 +504,11 @@ public class LearnerResult implements Serializable {
      * @param sigmaAsList
      *         The Alphabet encoded as List of String.
      */
+    @Column(name = "sigma")
     @JsonProperty("sigma")
-    public void createSigmaFrom(List<String> sigmaAsList) {
+    public void setAlphabet(List<String> sigmaAsList) {
         this.sigma = new SimpleAlphabet<>();
-
         this.sigma.addAll(sigmaAsList);
-
-        this.jsonChanged = true;
     }
 
     /**
@@ -538,7 +531,29 @@ public class LearnerResult implements Serializable {
     @JsonProperty("hypothesis")
     public void setHypothesis(CompactMealyMachineProxy hypothesis) {
         this.hypothesis = hypothesis;
-        this.jsonChanged = true;
+    }
+
+    @Column(name = "hypothesis")
+    @JsonIgnore
+    public String getHypothesisDB() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(hypothesis);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    @Column(name = "hypothesis")
+    @JsonIgnore
+    public void setHypothesisDB(String hypothesisString) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            this.hypothesis = mapper.readValue(hypothesisString, CompactMealyMachineProxy.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -549,7 +564,6 @@ public class LearnerResult implements Serializable {
      */
     public void createHypothesisFrom(MealyMachine<?, String, ?, String> mealyMachine) {
         this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, sigma);
-        this.jsonChanged = true;
     }
 
     /**
@@ -557,11 +571,46 @@ public class LearnerResult implements Serializable {
      *
      * @return The latest counterexample or null.
      */
-    @JsonIgnore
     @Transient
+    @JsonIgnore
     public DefaultQuery<String, Word<String>> getCounterExample() {
         return counterExample;
     }
+
+    /**
+     * Set the latest counterexample new.
+     *
+     * @param counterExample
+     *         The new counterexample.
+     */
+    @Transient
+    public void setCounterExample(DefaultQuery<String, Word<String>> counterExample) {
+        this.counterExample = counterExample;
+    }
+
+    @Column(name = "counterExample")
+    @JsonIgnore
+    public String getCounterExampleForDB() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(counterExample);
+        } catch (JsonProcessingException e) {
+            return "";
+        }
+    }
+
+    @Column(name = "counterExample")
+    @JsonIgnore
+    public void setCounterExampleForDB(String counterExampleString) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            this.counterExample = mapper.readValue(counterExampleString,
+                                                   new TypeReference<DefaultQuery<String, Word<String>>>() { } );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Get the latest counterexample as string.
@@ -578,16 +627,6 @@ public class LearnerResult implements Serializable {
         }
     }
 
-    /**
-     * Set the latest counterexample new.
-     *
-     * @param counterExample
-     *         The new counterexample.
-     */
-    public void setCounterExample(DefaultQuery<String, Word<String>> counterExample) {
-        this.counterExample = counterExample;
-        this.jsonChanged = true;
-    }
 
     /**
      * Get more (internal) information about the algorithm used during the learning.
@@ -607,7 +646,6 @@ public class LearnerResult implements Serializable {
      */
     public void setAlgorithmInformation(String algorithmInformation) {
         this.algorithmInformation = algorithmInformation;
-        this.jsonChanged = true;
     }
 
     /**
@@ -616,7 +654,6 @@ public class LearnerResult implements Serializable {
      * @return The current error text (can be null).
      */
     @JsonProperty("errorText")
-    @Column(columnDefinition = "CLOB")
     public String getErrorText() {
         return errorText;
     }
@@ -656,95 +693,26 @@ public class LearnerResult implements Serializable {
      */
     public void setErrorText(String errorText) {
         this.errorText = errorText;
-        this.jsonChanged = true;
     }
 
-    /**
-     * Get the result as JSON.
-     * This method buffers the generated JSON.
-     *
-     * @return The result encoded as JSON data.
-     */
-    @Column(columnDefinition = "CLOB")
-    @JsonIgnore
-    public String getJSON() {
-        if (jsonChanged) {
-            this.json = generateJSON();
-            this.jsonChanged = false;
-        }
-
-        return json;
-    }
-
-    /**
-     * Generate the JSON of this object.
-     *
-     * @return This Object encoded as JSON.
-     */
-    private String generateJSON() {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            json = objectMapper.writeValueAsString(this);
-            return json;
-        } catch (JsonProcessingException e) {
-            LOGGER.warn("could not generate the JSON for the result '" + this.toString() + "'.", e);
-            return "{}";
-        }
-    }
-
-    /**
-     * Set the result via JSON. This method will not only remember the JSON as String but will also parse the JSON and
-     * set all other field according to the JSON data!
-     *
-     * @param newJSON
-     *         The new result encoded in JSON data.
-     */
-    @JsonIgnore
-    public void setJSON(String newJSON) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            LearnerResult newResult = objectMapper.readValue(newJSON, LearnerResult.class);
-            setProject(newResult.getProject());
-            setTestNo(newResult.getTestNo());
-            setStepNo(newResult.getStepNo());
-            setUser(newResult.getUser());
-            setStatistics(newResult.statistics);
-            setConfiguration(newResult.getConfiguration());
-            setSigma(newResult.getSigma());
-            setHypothesis(newResult.getHypothesis());
-            setCounterExample(newResult.getCounterExample());
-            setAlgorithmInformation(newResult.getAlgorithmInformation());
-
-            this.json = newJSON;
-            this.jsonChanged = false;
-        } catch (IOException e) {
-            LOGGER.info("could not read the JSON '" + newJSON + "' for a LearnerResult.", e);
-        }
-    }
-
-    //CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber|NeedBraces - auto generated by IntelliJ IDEA
+    //CHECKSTYLE.OFF: NeedBraces|OperatorWrap - auto generated by IntelliJ IDEA
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        LearnerResult result = (LearnerResult) o;
-
-        if (!Objects.equals(stepNo, result.stepNo)) return false;
-        if (!Objects.equals(testNo, result.testNo)) return false;
-        if (project != null ? !project.equals(result.project) : result.project != null) return false;
-
-        return true;
+        LearnerResult that = (LearnerResult) o;
+        return Objects.equals(user, that.user) &&
+                Objects.equals(project, that.project) &&
+                Objects.equals(testNo, that.testNo) &&
+                Objects.equals(stepNo, that.stepNo);
     }
 
     @Override
     public int hashCode() {
-        int result = project != null ? project.hashCode() : 0;
-        result = 31 * result + (int) (testNo ^ (testNo >>> 32));
-        result = 31 * result + (int) (stepNo ^ (stepNo >>> 32));
-        return result;
+        return Objects.hash(user, project, testNo, stepNo);
     }
-    //CHECKSTYLE.ON: AvoidInlineConditionals|MagicNumber|NeedBraces
+
+    //CHECKSTYLE.ON: NeedBraces|OperatorWrap
 
     @Override
     public String toString() {

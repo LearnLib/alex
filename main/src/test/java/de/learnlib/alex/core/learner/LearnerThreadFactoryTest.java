@@ -13,8 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.BDDMockito.given;
@@ -47,7 +47,7 @@ public class LearnerThreadFactoryTest {
         given(project.getBaseUrl()).willReturn("http://localhost/");
         given(learnerConfiguration.getAlgorithm()).willReturn(LearnAlgorithms.DHC);
 
-        List<Symbol> symbols = new LinkedList<>();
+        Set<Symbol> symbols = new HashSet<>();
         Symbol symbol = mock(Symbol.class);
         symbols.add(symbol);
         given(learnerConfiguration.getSymbols()).willReturn(symbols);

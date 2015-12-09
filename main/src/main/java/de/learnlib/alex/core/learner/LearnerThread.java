@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests.
@@ -159,7 +160,7 @@ public class LearnerThread extends Thread {
     }
 
     private Symbol[] readSymbolArray() {
-        List<Symbol> symbols = result.getConfiguration().getSymbols();
+        Set<Symbol> symbols = result.getConfiguration().getSymbols();
         return symbols.toArray(new Symbol[symbols.size()]);
     }
 

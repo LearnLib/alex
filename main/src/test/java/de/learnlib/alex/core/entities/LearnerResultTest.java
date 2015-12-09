@@ -8,7 +8,6 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.Test;
 
-import java.lang.reflect.Method;
 import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
@@ -103,16 +102,16 @@ public class LearnerResultTest {
                             + "\"startDate\": \"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0}"
                         + "}";
 
-        LearnerResult resultFromJSON = new LearnerResult();
-        Method method = LearnerResult.class.getDeclaredMethod("setJSON", String.class);
-        method.setAccessible(true);
-        method.invoke(resultFromJSON, json);
+        ObjectMapper objectMapper = new ObjectMapper();
+        LearnerResult resultFromJSON = objectMapper.readValue(json, LearnerResult.class);
 
+//
+//        LearnerResult resultFromJSON = new LearnerResult();
         LearnerResult.Statistics statistics = new LearnerResult.Statistics();
         statistics.setEqsUsed(EQS_USED);
         statistics.setStartDate(TEST_DATE);
         statistics.setDuration(TEST_DURATION);
-
+//
         assertEquals(PROJECT_ID, resultFromJSON.getProjectId());
         assertEquals(ID, resultFromJSON.getTestNo());
         assertEquals(STEP_NO, resultFromJSON.getStepNo());

@@ -34,8 +34,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * REST API to manage the learning.
@@ -100,7 +102,7 @@ public class LearnerResource {
                 throw new NotFoundException("Could not find the reset symbol!", e);
             }
 
-            List<Symbol> symbols = symbolDAO.getAll(user, projectId, configuration.getSymbolsAsIdRevisionPairs());
+            Set<Symbol> symbols = new HashSet<>(symbolDAO.getAll(user, projectId, new LinkedList<>(configuration.getSymbolsAsIdRevisionPairs()))); // TODO: remove new HashMap -> getAll should return a Set
             configuration.setSymbols(symbols);
 
             learner.start(user, project, configuration);

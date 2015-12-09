@@ -1,6 +1,7 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
+import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.UserPrincipal;
@@ -59,7 +60,7 @@ public class LearnerResultResource {
         LOGGER.trace("LearnerResultResource.getAllFinalResults(" + projectId + ") for user " + user + ".");
 
         try {
-            List<String> resultsAsJSON = learnerResultDAO.getAllAsJSON(user.getId(), projectId);
+            List<LearnerResult> resultsAsJSON = learnerResultDAO.getAll(user.getId(), projectId);
             return ResponseHelper.renderStringList(resultsAsJSON, Response.Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllFinalResults",
@@ -89,10 +90,10 @@ public class LearnerResultResource {
 
         try {
             if (testNos.size() == 1) {
-                List<String> result = learnerResultDAO.getAllAsJSON(user.getId(), projectId, testNos.get(0));
+                List<LearnerResult> result = learnerResultDAO.getAll(user.getId(), projectId, testNos.get(0));
                 return ResponseHelper.renderStringList(result, Response.Status.OK);
             } else {
-                List<List<String>> result = learnerResultDAO.getAllAsJson(user.getId(), projectId, testNos);
+                List<List<LearnerResult>> result = learnerResultDAO.getAll(user.getId(), projectId, testNos);
                 return ResponseHelper.renderStringList(result, Response.Status.OK);
             }
         } catch (NotFoundException e) {
@@ -122,7 +123,7 @@ public class LearnerResultResource {
                      + "for user " + user + ".");
 
         try {
-            String json = learnerResultDAO.getAsJSON(user.getId(), projectId, testNo);
+            LearnerResult json = learnerResultDAO.get(user.getId(), projectId, testNo);
             return Response.ok(json).build();
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getOneFinalResult",
