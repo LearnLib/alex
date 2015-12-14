@@ -8,7 +8,6 @@ import dropdownHover from './dropdownHover';
 import fileDropzone from './fileDropzone';
 import {htmlElementPicker, htmlElementPickerInstance, htmlElementPickerWindow} from './htmlElementPicker';
 import hypothesis from './hypothesis';
-import {layout, layoutToggleElement, layoutToggleButton} from './layout';
 import {learnResultList, learnResultListItem} from './learnResultList';
 import {learnResultPanel, learnResultComparePanel} from './learnResultPanel';
 import loadScreen from './loadScreen';
@@ -68,9 +67,6 @@ angular
     .directive('htmlElementPickerWindow', htmlElementPickerWindow)
     .factory('htmlElementPickerInstance', htmlElementPickerInstance)
     .directive('hypothesis', hypothesis)
-    .directive('layout', layout)
-    .directive('layoutToggleElement', layoutToggleElement)
-    .directive('layoutToggleButton', layoutToggleButton)
     .directive('learnResultList', learnResultList)
     .directive('learnResultListItem', learnResultListItem)
     .directive('learnResultPanel', learnResultPanel)

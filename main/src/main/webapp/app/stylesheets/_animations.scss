@@ -1,0 +1,52 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0.0
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1.0
+  }
+  to {
+    opacity: 0.0
+  }
+}
+
+@keyframes toastSlideIn {
+  from {
+    margin-bottom: -200px;
+  }
+}
+
+@keyframes toastSlideOut {
+  to {
+    margin-bottom: -200px;
+  }
+}
+
+.animate-view {
+  &.ng-enter, &.ng-leave {
+    @include position(absolute, 0, 0, 0, 0);
+    overflow: hidden;
+  }
+
+  &.ng-enter {
+    animation: fadeIn .3s both ease-in;
+    z-index: 8888;
+  }
+
+  &.ng-leave {
+    animation: fadeOut .15s both ease-in;
+    z-index: 9999;
+  }
+}
+
+.animate-toast {
+  &.ng-enter {
+    animation: toastSlideIn .35s both ease-in;
+  }
+  &.ng-leave {
+    animation: toastSlideOut .35s both ease-in;
+  }
+}

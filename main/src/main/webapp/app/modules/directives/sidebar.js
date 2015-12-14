@@ -7,13 +7,15 @@ class Sidebar {
     /**
      * Constructor
      * @param $scope
+     * @param $document
      * @param $state
      * @param SessionService
      * @param EventBus
      */
-    constructor($scope, $state, SessionService, EventBus) {
+    constructor($scope, $document, $state, SessionService, EventBus) {
         this.$state = $state;
         this.SessionService = SessionService;
+        this.$document = $document;
 
         /**
          * The project that is stored in the session
@@ -62,6 +64,12 @@ class Sidebar {
     /** Toggles the collapsed state **/
     toggleCollapse() {
         this.collapsed = !this.collapsed;
+        const body = this.$document[0].body;
+        if (this.collapsed) {
+            body.classList.add('layout-collapsed');
+        } else {
+            body.classList.remove('layout-collapsed');
+        }
     }
 
     /**

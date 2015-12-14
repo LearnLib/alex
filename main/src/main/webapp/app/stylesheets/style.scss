@@ -5,6 +5,7 @@
 @import "hypothesis";
 @import "html-element-picker";
 @import "sidebar";
+@import "animations";
 
 *, *:after, *:before {
   box-sizing: border-box;
@@ -12,9 +13,19 @@
 
 body {
   overflow-x: hidden;
+
   &.layout-collapsed {
-    #load-screen, .ng-toast {
+
+    #load-screen,
+    .ng-toast {
       left: $sidebar-width-collapsed;
+    }
+
+    .view,
+    .action-bar.fixed,
+    .learn-results-compare-wrapper,
+    .learn-start-wrapper {
+      margin-left: $sidebar-width-collapsed;
     }
   }
 
@@ -53,11 +64,6 @@ body {
 
 .view {
   margin-left: $sidebar-width;
-
-  &.layout-collapsed {
-    margin-left: $sidebar-width-collapsed;
-  }
-
   min-width: 320px;
   transition: margin 200ms;
 }
@@ -111,10 +117,6 @@ body {
     @include position(fixed, 0, 0, null, 0);
     margin-left: $sidebar-width;
     z-index: 1010; // that is 10 higher than the drop down menus in the view
-
-    &.layout-collapsed {
-      margin-left: $sidebar-width-collapsed;
-    }
   }
 
   .alx-checkbox {
@@ -167,61 +169,6 @@ body {
   }
 }
 
-/* Animations
-============================================================================= */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0.0
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1.0
-  }
-  to {
-    opacity: 0.0
-  }
-}
-
-@keyframes toastSlideIn {
-  from {
-    margin-bottom: -200px;
-  }
-}
-
-@keyframes toastSlideOut {
-  to {
-    margin-bottom: -200px;
-  }
-}
-
-.animate-view {
-  &.ng-enter, &.ng-leave {
-    @include position(absolute, 0, 0, 0, 0);
-    overflow: hidden;
-  }
-
-  &.ng-enter {
-    animation: fadeIn .3s both ease-in;
-    z-index: 8888;
-  }
-
-  &.ng-leave {
-    animation: fadeOut .15s both ease-in;
-    z-index: 9999;
-  }
-}
-
-.animate-toast {
-  &.ng-enter {
-    animation: toastSlideIn .35s both ease-in;
-  }
-  &.ng-leave {
-    animation: toastSlideOut .35s both ease-in;
-  }
-}
 
 /* Libraries
 ============================================================================== */
@@ -560,10 +507,6 @@ body {
   @include position(absolute, 0, 0, 0, $sidebar-width);
   transition: left .2s;
 
-  &.layout-collapsed {
-    left: $sidebar-width-collapsed;
-  }
-
   .learn-result-compare-panel {
     @include position(absolute, 0, null, 0, null)
   }
@@ -616,10 +559,6 @@ body {
 .learn-start-wrapper {
   @include position(absolute, 0, 0, 0, $sidebar-width);
   transition: left .2s;
-
-  &.layout-collapsed {
-    left: $sidebar-width-collapsed;
-  }
 }
 
 .learn-loading-indicator {
