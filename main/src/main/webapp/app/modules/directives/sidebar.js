@@ -21,13 +21,13 @@ class Sidebar {
          * The project that is stored in the session
          * @type {Project|null}
          */
-        this.project = this.SessionService.project.get();
+        this.project = this.SessionService.getProject();
 
         /**
          * The user that is in the session
          * @type {User|null}
          */
-        this.user = this.SessionService.user.get();
+        this.user = this.SessionService.getUser();
 
         /**
          * Indicator for the collapsed state
@@ -48,15 +48,15 @@ class Sidebar {
 
     /** Removes the project object from the session and redirect to the start page */
     closeProject() {
-        this.SessionService.project.remove();
+        this.SessionService.removeProject();
         this.project = null;
         this.$state.go('projects');
     }
 
     /** Remove project & user from the session */
     logout() {
-        this.SessionService.project.remove();
-        this.SessionService.user.remove();
+        this.SessionService.removeProject();
+        this.SessionService.removeUser();
         this.user = null;
         this.$state.go('home');
     }

@@ -18,7 +18,7 @@ class LearnSetupController {
          * The project that is in the session
          * @type {Project}
          */
-        this.project = SessionService.project.get();
+        this.project = SessionService.getProject();
 
         /**
          * All symbol groups that belong the the sessions project

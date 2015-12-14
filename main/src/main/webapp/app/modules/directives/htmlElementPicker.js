@@ -1,3 +1,9 @@
+// the promise that is used to communicate between the picker and the handle
+let deferred = null;
+
+// the url that was opened until the picker got closed
+let lastUrl = null;
+
 /**
  * The directive that creates a new HTML element picker. Can only be used as an attribute and attaches a click
  * event to the source element that opens the picker. On first start, it loads the page that is defined in the
@@ -8,13 +14,13 @@
  *
  * Use: '<button html-element-picker model="..." text="...">Click Me!</button>'
  *
- * @param $document - angular document wrapper
- * @param $compile - angular $compile service
- * @param htmlElementPickerInstance - Holds the promise and methods for opening and closing the picker
+ * @param $document
+ * @param $compile
+ * @param $q
  * @returns {{restrict: string, scope: {selectorModel: string}, link: Function}}
  */
 // @ngInject
-function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
+function htmlElementPicker($document, $compile, $q) {
     return {
         restrict: 'A',
         scope: {
@@ -35,8 +41,8 @@ function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
             picker = $compile('<html-element-picker-window></html-element-picker-window>')(scope);
             $document.find('body').prepend(picker);
 
-            // open the picker
-            htmlElementPickerInstance.open()
+            deferred = $q.defer();
+            deferred.promise
                 .then(data => {
 
                     // copy the selected XPath and .textContent value to the scopes models
@@ -47,66 +53,10 @@ function htmlElementPicker($document, $compile, htmlElementPickerInstance) {
                         scope.textModel = data.textContent;
                     }
                 })
-
-                // remove the picker from the dom on close
                 .finally(() => {
                     picker.remove();
                 });
         });
-    }
-}
-
-/**
- * The instance for the HTML element picker that holds the promise offers methods to persist the last opened url as
- * well as opening and closing the HTML element picker
- *
- * @returns {{close: Function, open: Function, setUrl: Function, getUrl: Function}}
- */
-// @ngInject
-function htmlElementPickerInstance($q) {
-
-    // the promise
-    let deferred;
-
-    // the url was called at the last opening
-    let lastUrl = null;
-
-    return {
-        close: close,
-        open: open,
-        setUrl: setUrl,
-        getUrl: getUrl
-    };
-
-    /**
-     * Resolves the promise with selected data or cancels the promise of no data is defined
-     *
-     * @param {Object} data - The object that should contain an XPath and a .textContent value
-     */
-    function close(data) {
-        if (angular.isDefined(data)) {
-            deferred.resolve(data);
-        } else {
-            deferred.reject();
-        }
-    }
-
-    /**
-     * Creates the promise that is used to pass data between the directive and the picker
-     *
-     * @returns {d.promise|promise|qFactory.Deferred.promise|p.ready.promise|fd.g.promise}
-     */
-    function open() {
-        deferred = $q.defer();
-        return deferred.promise;
-    }
-
-    function setUrl(url) {
-        lastUrl = url;
-    }
-
-    function getUrl() {
-        return lastUrl;
     }
 }
 
@@ -118,11 +68,10 @@ function htmlElementPickerInstance($q) {
  *
  * @param $window - angular window wrapper
  * @param SessionService - The SessionService
- * @param htmlElementPickerInstance - @see{@link htmlElementPickerInstance}
  * @returns {{scope: {}, templateUrl: string, link: link}}
  */
 // @ngInject
-function htmlElementPickerWindow($window, SessionService, htmlElementPickerInstance) {
+function htmlElementPickerWindow($window, SessionService) {
     return {
         restrict: 'E',
         scope: {},
@@ -265,10 +214,10 @@ function htmlElementPickerWindow($window, SessionService, htmlElementPickerInsta
 
         // load project, create proxy address and load the last url in the iframe
         function init() {
-            scope.project = SessionService.project.get();
+            scope.project = SessionService.getProject();
             proxyUrl = $window.location.origin + '/rest/proxy?url=';
 
-            scope.url = htmlElementPickerInstance.getUrl();
+            scope.url = lastUrl;
             scope.loadUrl();
         }
 
@@ -315,13 +264,12 @@ function htmlElementPickerWindow($window, SessionService, htmlElementPickerInsta
             scope.isSelectable = !scope.isSelectable;
         };
 
-
         /**
          * Makes the web element picker invisible and fires the close event
          */
         scope.close = function () {
-            htmlElementPickerInstance.setUrl(scope.url);
-            htmlElementPickerInstance.close();
+            lastUrl = scope.url;
+            deferred.reject();
         };
 
         /**
@@ -329,8 +277,8 @@ function htmlElementPickerWindow($window, SessionService, htmlElementPickerInsta
          * selected. If no selector is defined, then it just closes the picker
          */
         scope.ok = function () {
-            htmlElementPickerInstance.setUrl(scope.url);
-            htmlElementPickerInstance.close({
+            lastUrl = scope.url;
+            deferred.resolve({
                 xPath: scope.selector,
                 textContent: scope.textContent
             });
@@ -340,4 +288,4 @@ function htmlElementPickerWindow($window, SessionService, htmlElementPickerInsta
     }
 }
 
-export {htmlElementPicker, htmlElementPickerWindow, htmlElementPickerInstance};
+export {htmlElementPicker, htmlElementPickerWindow};

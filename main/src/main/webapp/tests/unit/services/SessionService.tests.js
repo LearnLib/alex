@@ -28,7 +28,7 @@ describe('SessionService', () => {
         EventBus.on('project:opened', (evt, data) => {
             expect(data.project.id).toEqual(project.id);
         });
-        SessionService.project.save(project);
+        SessionService.saveProject(project);
         expect(sessionStorage.getItem('project')).toBeDefined();
     });
 
@@ -37,42 +37,42 @@ describe('SessionService', () => {
         EventBus.on('user:loggedIn', (evt, data) => {
             expect(data.user.id).toEqual(user.id);
         });
-        SessionService.user.save(user);
+        SessionService.saveUser(user);
         expect(sessionStorage.getItem('user')).toBeDefined();
     });
 
     it('should get the instance of the project', () => {
-        SessionService.project.save(project);
-        const p = SessionService.project.get();
+        SessionService.saveProject(project);
+        const p = SessionService.getProject();
         expect(p instanceof Project).toBeTruthy();
         expect(p.id).toEqual(project.id);
     });
 
     it('should get the instance of the user', () => {
-        SessionService.user.save(user);
-        const u = SessionService.user.get();
+        SessionService.saveUser(user);
+        const u = SessionService.getUser();
         expect(u instanceof User).toBeTruthy();
         expect(u.id).toEqual(user.id);
     });
 
     it('should remove the project in the session', () => {
-        SessionService.project.save(project);
-        SessionService.project.remove();
+        SessionService.saveProject(project);
+        SessionService.removeProject();
         expect(sessionStorage.getItem('project')).toBeNull();
     });
 
     it('should remove the user in the session', () => {
-        SessionService.user.save(project);
-        SessionService.user.remove();
+        SessionService.saveUser(user);
+        SessionService.removeUser();
         expect(sessionStorage.getItem('user')).toBeNull();
         expect(sessionStorage.getItem('jwt')).toBeNull();
     });
 
     it('should return null if no project is in the session', () => {
-        expect(SessionService.project.get()).toBeNull();
+        expect(SessionService.getProject()).toBeNull();
     });
 
     it('should return null if no user is in the session', () => {
-        expect(SessionService.user.get()).toBeNull();
+        expect(SessionService.getUser()).toBeNull();
     });
 });

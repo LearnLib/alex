@@ -19,7 +19,7 @@ class ActionEditModalController {
         this.EventBus = EventBus;
 
         // the project in the session
-        const project = SessionService.project.get();
+        const project = SessionService.getProject();
 
         /**
          * The copy of the action that should be edited

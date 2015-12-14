@@ -22,7 +22,7 @@ class SymbolsTrashController {
          * The project that is in the session
          * @type {Project}
          */
-        this.project = SessionService.project.get();
+        this.project = SessionService.getProject();
 
         /**
          * The list of deleted symbols

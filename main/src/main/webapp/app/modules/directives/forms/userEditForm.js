@@ -50,9 +50,9 @@ class UserEditForm {
                     this.ToastService.success('The email has been changed');
 
                     // update the jwt correspondingly
-                    const user = this.SessionService.user.get();
+                    const user = this.SessionService.getUser();
                     user.email = this.email;
-                    this.SessionService.user.save(user);
+                    this.SessionService.saveUser(user);
                 })
                 .catch(response => {
                     this.ToastService.danger('The email could not be changed. ' + response.data.message);
@@ -92,7 +92,7 @@ class UserEditForm {
                         this.ToastService.success("The profile has been deleted");
 
                         // remove the users jwt so that he cannot do anything after being deleted
-                        this.SessionService.user.remove();
+                        this.SessionService.removeUser();
                         this.$state.go('home');
                     })
                     .catch(response => {

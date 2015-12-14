@@ -26,11 +26,11 @@ describe('projectDetailsWidget', () => {
         events = _events_;
 
         project = new Project(ENTITIES.projects[0]);
-        SessionService.project.save(project);
+        SessionService.saveProject(project);
     }));
 
     afterEach(() => {
-        SessionService.project.remove();
+        SessionService.removeProject();
     });
 
     function render() {

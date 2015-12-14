@@ -24,7 +24,7 @@ class SymbolCreateModalController {
          * The project that is in the session
          * @type {Project}
          */
-        this.project = SessionService.project.get();
+        this.project = SessionService.getProject();
 
         /**
          * The model of the symbol that will be created

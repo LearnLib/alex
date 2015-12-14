@@ -19,7 +19,7 @@ class SymbolsHistoryController {
         this.ToastService = ToastService;
 
         // The project in the session
-        const project = SessionService.project.get();
+        const project = SessionService.getProject();
 
         /**
          * All revisions of a symbol

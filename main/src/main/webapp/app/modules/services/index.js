@@ -22,7 +22,7 @@ angular
     .service('FileDownloadService', FileDownloadService)
     .service('LearnerResultChartService', LearnerResultChartService)
     .service('PromptService', PromptService)
-    .factory('SessionService', SessionService)
+    .service('SessionService', SessionService)
     .service('ToastService', ToastService)
     .service('LearnerResultDownloadService', LearnerResultDownloadService);
 

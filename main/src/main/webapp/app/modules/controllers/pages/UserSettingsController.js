@@ -11,7 +11,7 @@ class UserSettingsController {
     constructor(UserResource, SessionService, ToastService) {
 
         // the user from the jwt
-        const user = SessionService.user.get();
+        const user = SessionService.getUser();
 
         /**
          * The user to edit

@@ -44,14 +44,14 @@ describe('projectList', () => {
         render();
         $rootScope.$digest();
 
-        spyOn(SessionService.project, 'save').and.callThrough();
+        spyOn(SessionService, 'saveProject').and.callThrough();
         spyOn(EventBus, 'emit').and.callThrough();
         spyOn($state, 'go').and.callThrough();
 
         let project = controller.projects[0];
         controller.openProject(project);
 
-        expect(SessionService.project.save).toHaveBeenCalled();
+        expect(SessionService.saveProject).toHaveBeenCalled();
         expect(EventBus.emit).toHaveBeenCalled();
         expect($state.go).toHaveBeenCalledWith('dashboard');
     });

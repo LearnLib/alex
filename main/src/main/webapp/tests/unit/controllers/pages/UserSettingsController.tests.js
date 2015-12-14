@@ -21,7 +21,7 @@ describe('UserSettingsController', () => {
         User = _User_;
 
         user = ENTITIES.users[0];
-        SessionService.user.save(user);
+        SessionService.saveUser(user);
     }));
 
     function createController() {

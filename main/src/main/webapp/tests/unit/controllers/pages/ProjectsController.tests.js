@@ -28,7 +28,7 @@ describe('ProjectsController', () => {
         ToastService = _ToastService_;
         events = _events_;
 
-        SessionService.user.save(ENTITIES.users[0]);
+        SessionService.saveUser(ENTITIES.users[0]);
         deferred = $q.defer();
 
         $state.go('projects');
@@ -61,7 +61,7 @@ describe('ProjectsController', () => {
     });
 
     it('should redirect to the project dashboard if there is a project in the session storage', () => {
-        SessionService.project.save(ENTITIES.projects[0]);
+        SessionService.saveProject(ENTITIES.projects[0]);
         createController();
         scope.$digest();
         expect($state.current.name).toEqual('dashboard')
