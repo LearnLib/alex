@@ -49,7 +49,7 @@ describe('HomeController', () => {
     });
 
     it('should stay home if a project is open but no user is logged in', () => {
-        SessionService.project.save(project);
+        SessionService.saveProject(project);
         createController();
 
         $state.go('home');
@@ -61,7 +61,7 @@ describe('HomeController', () => {
     });
 
     it('should redirect to the project list if a user is logged in but no project is open', () => {
-        SessionService.user.save(user);
+        SessionService.saveUser(user);
         createController();
 
         $state.go('home');
@@ -73,8 +73,8 @@ describe('HomeController', () => {
     });
 
     it('should redirect to the project dashboard if a user is logged in and a project is open', () => {
-        SessionService.user.save(user);
-        SessionService.project.save(project);
+        SessionService.saveUser(user);
+        SessionService.saveProject(project);
         createController();
 
         $state.go('home');

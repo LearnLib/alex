@@ -18,7 +18,7 @@ import {learnAlgorithm} from '../constants';
  * @returns {{scope: {results: string}, transclude: boolean, templateUrl: string, controller: *[]}}
  */
 // @ngInject
-function learnResultPanel() {
+function learnResultPanel(FileDownloadService) {
     return {
         scope: {
             results: '=',
@@ -96,6 +96,13 @@ function learnResultPanel() {
                 default:
                     break;
             }
+        };
+
+        /**
+         * Downloads the visible hypothesis as json
+         */
+        scope.exportHypothesisAsJson = function() {
+            FileDownloadService.downloadJson(scope.results[scope.pointer].hypothesis);
         };
 
         /**

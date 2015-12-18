@@ -22,7 +22,7 @@ class ProjectDetailsWidget {
          * The project in sessionStorage
          * @type {Project}
          */
-        this.project = SessionService.project.get();
+        this.project = SessionService.getProject();
 
         /**
          * The number of symbol groups of the project
@@ -58,7 +58,7 @@ class ProjectDetailsWidget {
         // listen on project update event
         EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
             this.project = data.project;
-            SessionService.project.save(data.project);
+            SessionService.saveProject(data.project);
         }, $scope);
     }
 }

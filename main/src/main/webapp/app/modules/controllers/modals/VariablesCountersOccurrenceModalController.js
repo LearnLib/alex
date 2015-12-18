@@ -40,7 +40,7 @@ class VariablesCountersOccurrenceModalController {
         this.$modalInstance = $modalInstance;
 
         //the project that is in the session
-        const project = SessionService.project.get();
+        const project = SessionService.getProject();
 
         /**
          * The occurrences of all variables and counter that where found.

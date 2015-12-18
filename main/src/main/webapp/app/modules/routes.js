@@ -200,8 +200,8 @@ function run($rootScope, $state, SessionService, ToastService) {
 
     function stateChangeStart(event, toState) {
         if (toState.data) {
-            const user = SessionService.user.get();
-            const project = SessionService.project.get();
+            const user = SessionService.getUser();
+            const project = SessionService.getProject();
 
             if ((toState.data.roles && (user === null
                 || toState.data.roles.indexOf(user.role) === -1))

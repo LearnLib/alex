@@ -31,7 +31,7 @@ class ProjectList {
      * @param {Project} project - The project to work on
      */
     openProject(project) {
-        this.SessionService.project.save(project);
+        this.SessionService.saveProject(project);
         this.EventBus.emit(events.PROJECT_OPENED, {project: project});
         this.$state.go('dashboard');
     }

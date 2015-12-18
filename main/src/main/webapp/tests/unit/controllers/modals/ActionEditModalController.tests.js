@@ -31,11 +31,11 @@ describe('ActionEditModalController', () => {
             action: {}
         };
 
-        SessionService.project.save(project);
+        SessionService.saveProject(project);
     }));
 
     afterEach(() => {
-        SessionService.project.remove();
+        SessionService.removeProject();
     });
 
     function createController() {

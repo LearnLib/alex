@@ -44,7 +44,7 @@ class UserLoginForm {
                     };
 
                     // save the user in the session
-                    this.SessionService.user.save(user, token);
+                    this.SessionService.saveUser(user, token);
 
                     this.EventBus.emit(events.USER_LOGGED_IN, {user: user});
                     this.$state.go('projects');

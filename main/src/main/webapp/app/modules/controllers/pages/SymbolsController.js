@@ -29,7 +29,7 @@ class SymbolsController {
          * The project that is saved in the session
          * @type {Project}
          */
-        this.project = SessionService.project.get();
+        this.project = SessionService.getProject();
 
         /**
          * indicates if symbol groups are displayed collapsed

@@ -37,7 +37,7 @@ describe('SymbolGroupCreateModalController', () => {
         };
 
         project = new Project(ENTITIES.projects[0]);
-        SessionService.project.save(project);
+        SessionService.saveProject(project);
         deferred = _$q_.defer();
     }));
 

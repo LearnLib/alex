@@ -17,7 +17,7 @@ class ActionCreateModalController {
         this.ActionService = ActionService;
         this.EventBus = EventBus;
 
-        const project = SessionService.project.get();
+        const project = SessionService.getProject();
 
         /**
          * The model for the new action

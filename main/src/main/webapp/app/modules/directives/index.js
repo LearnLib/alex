@@ -1,14 +1,13 @@
+import alex from './alex';
 import actionBar from './actionBar';
 import {checkbox, checkboxMultiple} from './checkbox';
 import discriminationTree from './discriminationTree';
-import downloadAsJson from './downloadAsJson';
 import downloadSvg from './downloadSvg';
 import downloadTableAsCsv from './downloadTableAsCsv';
 import dropdownHover from './dropdownHover';
 import fileDropzone from './fileDropzone';
-import {htmlElementPicker, htmlElementPickerInstance, htmlElementPickerWindow} from './htmlElementPicker';
+import {htmlElementPicker, htmlElementPickerWindow} from './htmlElementPicker';
 import hypothesis from './hypothesis';
-import {layout, layoutToggleElement, layoutToggleButton} from './layout';
 import {learnResultList, learnResultListItem} from './learnResultList';
 import {learnResultPanel, learnResultComparePanel} from './learnResultPanel';
 import loadScreen from './loadScreen';
@@ -54,23 +53,19 @@ const moduleName = 'ALEX.directives';
 
 angular
     .module(moduleName, [])
+    .component('alex', alex)
     .directive('actionBar', actionBar)
     .component('actionCreateEditForm', actionCreateEditForm)
     .component('checkbox', checkbox)
     .component('checkboxMultiple', checkboxMultiple)
     .directive('discriminationTree', discriminationTree)
-    .directive('downloadAsJson', downloadAsJson)
     .directive('downloadTableAsCsv', downloadTableAsCsv)
     .directive('downloadSvg', downloadSvg)
     .directive('dropdownHover', dropdownHover)
     .directive('fileDropzone', fileDropzone)
     .directive('htmlElementPicker', htmlElementPicker)
     .directive('htmlElementPickerWindow', htmlElementPickerWindow)
-    .factory('htmlElementPickerInstance', htmlElementPickerInstance)
     .directive('hypothesis', hypothesis)
-    .directive('layout', layout)
-    .directive('layoutToggleElement', layoutToggleElement)
-    .directive('layoutToggleButton', layoutToggleButton)
     .directive('learnResultList', learnResultList)
     .directive('learnResultListItem', learnResultListItem)
     .directive('learnResultPanel', learnResultPanel)

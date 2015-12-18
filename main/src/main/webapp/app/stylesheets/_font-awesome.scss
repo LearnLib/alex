@@ -1,4 +1,4 @@
-$fa-font-path: "./fonts" !default;
+$fa-font-path: "../node_modules/font-awesome/fonts" !default;
 
 @import "../../node_modules/font-awesome/scss/variables";
 @import "../../node_modules/font-awesome/scss/mixins";
@@ -6,9 +6,9 @@ $fa-font-path: "./fonts" !default;
 @import "../../node_modules/font-awesome/scss/core";
 @import "../../node_modules/font-awesome/scss/larger";
 @import "../../node_modules/font-awesome/scss/fixed-width";
-@import "../../node_modules/font-awesome/scss/list";
-@import "../../node_modules/font-awesome/scss/bordered-pulled";
+// @import "../../node_modules/font-awesome/scss/list";
+// @import "../../node_modules/font-awesome/scss/bordered-pulled";
 @import "../../node_modules/font-awesome/scss/animated";
-@import "../../node_modules/font-awesome/scss/rotated-flipped";
-@import "../../node_modules/font-awesome/scss/stacked";
+// @import "../../node_modules/font-awesome/scss/rotated-flipped";
+// @import "../../node_modules/font-awesome/scss/stacked";
 @import "../../node_modules/font-awesome/scss/icons";

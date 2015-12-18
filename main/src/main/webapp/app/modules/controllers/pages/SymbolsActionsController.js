@@ -35,7 +35,7 @@ class SymbolsActionsController {
          * The project that is stored in the session
          * @type {Project}
          */
-        this.project = SessionService.project.get();
+        this.project = SessionService.getProject();
 
         /**
          * The symbol whose actions are managed

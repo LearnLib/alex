@@ -26,7 +26,7 @@ class SymbolMoveModalController {
         this.ToastService = ToastService;
         this.EventBus = EventBus;
 
-        const project = SessionService.project.get();
+        const project = SessionService.getProject();
 
         /**
          * The list of symbols that should be moved

@@ -23,7 +23,7 @@ class LearnResultsController {
          * The project that is in the session
          * @type {Project}
          */
-        this.project = SessionService.project.get();
+        this.project = SessionService.getProject();
 
         /**
          * All final test results of a project

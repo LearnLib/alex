@@ -8,8 +8,8 @@ class HomeController {
      * @param SessionService
      */
     constructor($state, SessionService) {
-        this.user = SessionService.user.get();
-        this.project = SessionService.project.get();
+        this.user = SessionService.getUser();
+        this.project = SessionService.getProject();
 
         if (this.user !== null) {
             if (this.project !== null) {

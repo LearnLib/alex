@@ -4,17 +4,18 @@
  * the dimensions of the element will be updated.
  *
  * @param $window
- * @returns {{restrict: string, link: link}}
+ * @returns {{link: link, template: string}}
  */
 // @ngInject
 function responsiveIframe($window) {
     return {
-        restrict: 'A',
-        link: link
+        link: link,
+        template: '<iframe></iframe>'
     };
 
     function link(scope, el) {
-        const parent = el.parent()[0];
+        const parent = el[0].parentNode;
+        const iframe = el.find('iframe');
 
         $window.addEventListener('resize', fitToParent);
 
@@ -26,8 +27,8 @@ function responsiveIframe($window) {
          * Set the element to the dimensions of its parent
          */
         function fitToParent() {
-            el[0].setAttribute('width', parent.offsetWidth);
-            el[0].setAttribute('height', parent.offsetHeight);
+            iframe[0].setAttribute('width', parent.offsetWidth);
+            iframe[0].setAttribute('height', parent.offsetHeight);
         }
 
         fitToParent();

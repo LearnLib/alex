@@ -22,7 +22,7 @@ class LatestLearnResultWidget {
          * The project that is in the session
          * @type {Project}
          */
-        this.project = SessionService.project.get();
+        this.project = SessionService.getProject();
 
         // get the latest learn result
         LearnResultResource.getAllFinal(this.project.id).then(results => {

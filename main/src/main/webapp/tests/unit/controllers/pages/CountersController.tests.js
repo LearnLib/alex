@@ -15,11 +15,11 @@ describe('CountersController', () => {
         Project = $injector.get('Project');
 
         project = new Project(ENTITIES.projects[0]);
-        SessionService.project.save(project);
+        SessionService.saveProject(project);
     }));
 
     afterEach(() => {
-        SessionService.project.remove();
+        SessionService.removeProject();
     });
 
     function createController() {
@@ -42,11 +42,11 @@ describe('CountersController', () => {
     it('should initialize the controller correctly and load all counters', () => {
         const deferred = $q.defer();
         const counters = ENTITIES.counters;
-        spyOn(SessionService.project, 'get').and.callThrough();
+        spyOn(SessionService, 'getProject').and.callThrough();
         spyOn(CounterResource, 'getAll').and.returnValue(deferred.promise);
         createController();
 
-        expect(SessionService.project.get).toHaveBeenCalled();
+        expect(SessionService.getProject).toHaveBeenCalled();
         expect(CountersController.project).toEqual(project);
         expect(CountersController.counters).toEqual([]);
         expect(CountersController.selectedCounters).toEqual([]);

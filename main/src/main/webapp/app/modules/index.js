@@ -43,3 +43,5 @@ angular
     .constant('events', constant.events)
     .constant('actionType', constant.actionType)
     .constant('chartMode', constant.chartMode);
+
+angular.bootstrap(document, ['ALEX']);

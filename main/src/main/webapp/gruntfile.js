@@ -104,7 +104,7 @@ module.exports = function (grunt) {
                 },
                 dist: {
                     files: {
-                        'app/stylesheets/style.css': 'app/stylesheets/style.scss'
+                        'app/style.css': 'app/stylesheets/style.scss'
                     }
                 }
             },
@@ -114,23 +114,9 @@ module.exports = function (grunt) {
                     files: {
                         'app/style.min.css': [
                             'node_modules/ng-toast/dist/ngToast.min.css',
-                            'app/stylesheets/style.css'
+                            'app/style.css'
                         ]
                     }
-                }
-            },
-
-            copy: {
-                fonts: {
-                    files: [
-                        {
-                            expand: true,
-                            flatten: true,
-                            src: ['node_modules/font-awesome/fonts/**'],
-                            dest: 'app/fonts',
-                            filter: 'isFile'
-                        }
-                    ]
                 }
             },
 
@@ -145,7 +131,7 @@ module.exports = function (grunt) {
                     ]
                 },
                 dist: {
-                    src: 'app/stylesheets/style.css'
+                    src: 'app/style.css'
                 }
             },
 
@@ -200,14 +186,13 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-ng-annotate');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
 
     grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify:app']);
-    grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);
+    grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'build-css']);
     grunt.registerTask('test', ['karma:unit']);

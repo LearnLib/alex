@@ -1,26 +1,19 @@
 <!DOCTYPE html>
-<html ng-app="ALEX">
+<html>
 <head>
     <link href="app/style.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="app/images/favicon.png">
 
-    <script src="app/libs.min.js"></script>
-    <script src="app/alex.templates.js"></script>
-    <!--<script src="app/alex.min.js"></script>-->
-    <script src="app/alex.js"></script>
-
     <title>ALEX - Automata Learning Experience</title>
     <meta charset="UTF-8">
 </head>
-<body layout layout-toggle-element>
+<body>
 
-<load-screen></load-screen>
+<alex></alex>
 
-<toast></toast>
-
-<sidebar></sidebar>
-
-<div ui-view class="view animate-view" layout-toggle-element></div>
+<script src="app/libs.min.js"></script>
+<script src="app/alex.templates.js"></script>
+<script src="app/alex.js"></script>
 
 </body>
 </html>
