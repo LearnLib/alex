@@ -2,6 +2,7 @@ package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.CompleteExplorationEQOracleProxy;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
@@ -76,7 +77,7 @@ public class LearnerResultTest {
         result.setTestNo(ID);
         result.setStepNo(STEP_NO);
         result.setStatistics(statistics);
-        result.setSigma(sigma);
+        result.setSigma(AlphabetProxy.createFrom(sigma));
         result.createHypothesisFrom(hypothesis);
         result.setUser(user);
 

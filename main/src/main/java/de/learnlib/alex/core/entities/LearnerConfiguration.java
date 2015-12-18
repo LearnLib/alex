@@ -54,6 +54,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     private LearnAlgorithms algorithm;
 
+    /** The browser to use during the learn process. */
     private WebSiteConnector.WebBrowser browser;
 
     /** A shot comment to describe the learn set up. */

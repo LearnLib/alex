@@ -1,9 +1,17 @@
 package de.learnlib.alex.core.entities.learnlibproxies;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Transient;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,10 +25,14 @@ import java.util.Map;
  *
  * @see net.automatalib.automata.transout.impl.compact.CompactMealy
  */
+@Embeddable
 public class CompactMealyMachineProxy implements Serializable {
 
     /** to be serializable. */
     private static final long serialVersionUID = -5155147869595906457L;
+
+    /** Create one static ObjectMapper to (de-)serialize the Proxy for the DB. */
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /** The states of the machine. */
     private List<Integer> nodes;
@@ -91,6 +103,7 @@ public class CompactMealyMachineProxy implements Serializable {
      *
      * @return The stats of the mealy machine.
      */
+    @Transient
     public List<Integer> getNodes() {
         return nodes;
     }
@@ -103,6 +116,38 @@ public class CompactMealyMachineProxy implements Serializable {
      */
     public void setNodes(List<Integer> nodes) {
         this.nodes = nodes;
+    }
+
+    /**
+     * Getter method to interact with the DB, because the Java standard serialization doesn't work.
+     *
+     * @return The Nodes of the machine as JSON string.
+     */
+    @Column(name = "nodes")
+    @JsonIgnore
+    public String getNodesDB() {
+        try {
+            return OBJECT_MAPPER.writeValueAsString(nodes);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    /**
+     * Setter method to interact with the DB, because the Java standard deserialization doesn't work.
+     *
+     * @param nodesAsString
+     *         The Nodes of the machine as JSON string.
+     */
+    @JsonIgnore
+    public void setNodesDB(String nodesAsString) {
+        try {
+            CollectionType valueType = OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, Integer.class);
+            this.nodes = OBJECT_MAPPER.readValue(nodesAsString, valueType);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -129,6 +174,7 @@ public class CompactMealyMachineProxy implements Serializable {
      *
      * @return The transition of the mealy machine as List of MealyTransitionProxies.
      */
+    @Transient
     public List<CompactMealyTransitionProxy> getEdges() {
         return edges;
     }
@@ -141,6 +187,40 @@ public class CompactMealyMachineProxy implements Serializable {
      */
     public void setEdges(List<CompactMealyTransitionProxy> edges) {
         this.edges = edges;
+    }
+
+    /**
+     * Getter method to interact with the DB, because the Java standard serialization doesn't work.
+     *
+     * @return The Edges of the machine as JSON string.
+     */
+    @Column(name = "edges", columnDefinition = "CLOB")
+    @JsonIgnore
+    public String getEdgesDB() {
+        try {
+            return OBJECT_MAPPER.writeValueAsString(edges);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    /**
+     * Setter method to interact with the DB, because the Java standard deserialization doesn't work.
+     *
+     * @param edgesAsString
+     *         The Edges of the machine as JSON string.
+     */
+    @JsonIgnore
+    public void setEdgesDB(String edgesAsString) {
+        try {
+            CollectionType valueType = OBJECT_MAPPER.getTypeFactory()
+                                                   .constructCollectionType(List.class,
+                                                                            CompactMealyTransitionProxy.class);
+            this.edges = OBJECT_MAPPER.readValue(edgesAsString, valueType);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -4,21 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
-import de.learnlib.oracles.DefaultQuery;
+import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
 import net.automatalib.automata.transout.MealyMachine;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.Word;
-import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -26,12 +20,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
-import java.io.IOException;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -260,13 +251,13 @@ public class LearnerResult implements Serializable {
     private Statistics statistics;
 
     /** The Alphabet used while learning. */
-    private Alphabet<String> sigma;
+    private AlphabetProxy sigma;
 
     /** The hypothesis of the result. */
     private CompactMealyMachineProxy hypothesis;
 
     /** The last found counterexample. */
-    private DefaultQuery<String, Word<String>> counterExample;
+    private DefaultQueryProxy counterExample;
 
     /** This is an optional property and can contain things like the internal data structure. */
     private String algorithmInformation;
@@ -471,9 +462,8 @@ public class LearnerResult implements Serializable {
      *
      * @return The Alphabet of the learning process & the hypothesis.
      */
-    @Transient
     @JsonProperty("sigma")
-    public Alphabet<String> getSigma() {
+    public AlphabetProxy getSigma() {
         return sigma;
     }
 
@@ -483,32 +473,9 @@ public class LearnerResult implements Serializable {
      * @param sigma
      *         The new Alphabet.
      */
-    @Transient
     @JsonIgnore
-    public void setSigma(Alphabet<String> sigma) {
+    public void setSigma(AlphabetProxy sigma) {
         this.sigma = sigma;
-    }
-
-    @Column(name = "sigma")
-    @ElementCollection(targetClass = String.class)
-    @JsonIgnore
-    public List<String> getAlphabet() {
-        List<String> result = new LinkedList<>();
-        sigma.forEach(result::add);
-        return result;
-    }
-
-    /**
-     * Create and set the Alphabet used during learning and used in the hypotheses through a List of String.
-     *
-     * @param sigmaAsList
-     *         The Alphabet encoded as List of String.
-     */
-    @Column(name = "sigma")
-    @JsonProperty("sigma")
-    public void setAlphabet(List<String> sigmaAsList) {
-        this.sigma = new SimpleAlphabet<>();
-        this.sigma.addAll(sigmaAsList);
     }
 
     /**
@@ -516,7 +483,7 @@ public class LearnerResult implements Serializable {
      *
      * @return The hypothesis (as proxy) of the result.
      */
-    @Transient
+    @Embedded
     @JsonProperty("hypothesis")
     public CompactMealyMachineProxy getHypothesis() {
         return hypothesis;
@@ -533,37 +500,16 @@ public class LearnerResult implements Serializable {
         this.hypothesis = hypothesis;
     }
 
-    @Column(name = "hypothesis")
-    @JsonIgnore
-    public String getHypothesisDB() {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(hypothesis);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    @Column(name = "hypothesis")
-    @JsonIgnore
-    public void setHypothesisDB(String hypothesisString) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            this.hypothesis = mapper.readValue(hypothesisString, CompactMealyMachineProxy.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Set a new hypothesis (as proxy) for the result based on a MealyMachine from the LearnLib.
      *
      * @param mealyMachine
      *         The new hypothesis as MealyMachine from the LearnLib.
      */
+    @Transient
+    @JsonIgnore
     public void createHypothesisFrom(MealyMachine<?, String, ?, String> mealyMachine) {
-        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, sigma);
+        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, sigma.createAlphabet());
     }
 
     /**
@@ -571,9 +517,10 @@ public class LearnerResult implements Serializable {
      *
      * @return The latest counterexample or null.
      */
-    @Transient
+//    @Column
+    @Embedded
     @JsonIgnore
-    public DefaultQuery<String, Word<String>> getCounterExample() {
+    public DefaultQueryProxy getCounterExample() {
         return counterExample;
     }
 
@@ -583,42 +530,17 @@ public class LearnerResult implements Serializable {
      * @param counterExample
      *         The new counterexample.
      */
-    @Transient
-    public void setCounterExample(DefaultQuery<String, Word<String>> counterExample) {
+    public void setCounterExample(DefaultQueryProxy counterExample) {
         this.counterExample = counterExample;
     }
-
-    @Column(name = "counterExample")
-    @JsonIgnore
-    public String getCounterExampleForDB() {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(counterExample);
-        } catch (JsonProcessingException e) {
-            return "";
-        }
-    }
-
-    @Column(name = "counterExample")
-    @JsonIgnore
-    public void setCounterExampleForDB(String counterExampleString) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            this.counterExample = mapper.readValue(counterExampleString,
-                                                   new TypeReference<DefaultQuery<String, Word<String>>>() { } );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     /**
      * Get the latest counterexample as string.
      *
      * @return The last counterexample or an empty string.
      */
-    @JsonProperty("counterExample")
     @Transient
+    @JsonProperty("counterExample")
     public String getCounterExampleAsString() {
         if (counterExample == null) {
             return "";
@@ -626,7 +548,6 @@ public class LearnerResult implements Serializable {
             return counterExample.toString();
         }
     }
-
 
     /**
      * Get more (internal) information about the algorithm used during the learning.
@@ -653,6 +574,7 @@ public class LearnerResult implements Serializable {
      *
      * @return The current error text (can be null).
      */
+    @Column
     @JsonProperty("errorText")
     public String getErrorText() {
         return errorText;
@@ -663,8 +585,8 @@ public class LearnerResult implements Serializable {
      *
      * @return true if the result represents a failed learning process; null otherwise.
      */
-    @JsonProperty("error")
     @Transient
+    @JsonProperty("error")
     public Boolean isError() {
         if (errorText == null) {
             return null; // null instead of false, so that it will not appear in the JSON
@@ -674,7 +596,7 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * Does nothing but prevents {@link #setJSON(String)} from throwing an error when the learner has an error that
+     * Does nothing but prevents the JSON deserializer from throwing an error when the learner has an error that
      * results in the reset symbol and the symbols not being fetched.
      *
      * @param error - dummy
@@ -711,13 +633,12 @@ public class LearnerResult implements Serializable {
     public int hashCode() {
         return Objects.hash(user, project, testNo, stepNo);
     }
-
     //CHECKSTYLE.ON: NeedBraces|OperatorWrap
 
     @Override
     public String toString() {
-        return "[LearnerResult " + id + "] " + getProjectId() + " / " + testNo + " / " + stepNo + ": "
-                + sigma + ", " + hypothesis;
+        return "[LearnerResult " + id + "] " + getUserId() + " / " +  getProjectId() + " / " + testNo + " / "
+                + stepNo + ": " + sigma + ", " + hypothesis;
     }
 
 }

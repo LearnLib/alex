@@ -14,6 +14,7 @@ import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 import net.automatalib.words.Alphabet;
@@ -26,10 +27,12 @@ import org.mockito.MockitoAnnotations;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
@@ -100,10 +103,11 @@ public class LearnerResultResourceTest extends JerseyTest {
             sigma.add("1");
 
             LearnerResult learnerResult = new LearnerResult();
+            learnerResult.setUser(user);
             learnerResult.setProject(project);
             learnerResult.setTestNo(i);
             learnerResult.setStepNo(0L);
-            learnerResult.setSigma(sigma);
+            learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
 
             results.add(learnerResult);
         }
@@ -113,7 +117,8 @@ public class LearnerResultResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
 
-        assertEquals(results.toString(), response.readEntity(String.class));
+        List<LearnerResult> resultsInResponse = response.readEntity(new GenericType<List<LearnerResult>>() { });
+        assertArrayEquals(results.toArray(), resultsInResponse.toArray());
     }
 
     @Test
@@ -133,10 +138,11 @@ public class LearnerResultResourceTest extends JerseyTest {
             sigma.add("1");
 
             LearnerResult learnerResult = new LearnerResult();
+            learnerResult.setUser(user);
             learnerResult.setProject(project);
             learnerResult.setTestNo(RESULT_ID);
             learnerResult.setStepNo(i);
-            learnerResult.setSigma(sigma);
+            learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
 
             results.add(learnerResult);
         }
@@ -147,7 +153,8 @@ public class LearnerResultResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
 
-        assertEquals(results.toString(), response.readEntity(String.class));
+        List<LearnerResult> resultsInResponse = response.readEntity(new GenericType<List<LearnerResult>>() { });
+        assertArrayEquals(results.toArray(), resultsInResponse.toArray());
     }
 
     @Test
@@ -176,7 +183,7 @@ public class LearnerResultResourceTest extends JerseyTest {
                 learnerResult.setProject(project);
                 learnerResult.setTestNo(RESULT_ID + i);
                 learnerResult.setStepNo(j);
-                learnerResult.setSigma(sigma);
+                learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
 
                 tmpList.add(learnerResult);
             }
@@ -212,7 +219,7 @@ public class LearnerResultResourceTest extends JerseyTest {
         learnerResult.setProject(project);
         learnerResult.setTestNo(RESULT_ID);
         learnerResult.setStepNo(0L);
-        learnerResult.setSigma(sigma);
+        learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
 
         given(learnerResultDAO.get(USER_TEST_ID, PROJECT_ID, RESULT_ID)).willReturn(learnerResult);
 

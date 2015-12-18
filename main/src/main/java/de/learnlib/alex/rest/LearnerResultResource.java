@@ -60,8 +60,8 @@ public class LearnerResultResource {
         LOGGER.trace("LearnerResultResource.getAllFinalResults(" + projectId + ") for user " + user + ".");
 
         try {
-            List<LearnerResult> resultsAsJSON = learnerResultDAO.getAll(user.getId(), projectId);
-            return ResponseHelper.renderStringList(resultsAsJSON, Response.Status.OK);
+            List<LearnerResult> results = learnerResultDAO.getAll(user.getId(), projectId);
+            return ResponseHelper.renderList(results, Response.Status.OK);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllFinalResults",
                                                                 Response.Status.NOT_FOUND, e);
@@ -91,10 +91,10 @@ public class LearnerResultResource {
         try {
             if (testNos.size() == 1) {
                 List<LearnerResult> result = learnerResultDAO.getAll(user.getId(), projectId, testNos.get(0));
-                return ResponseHelper.renderStringList(result, Response.Status.OK);
+                return ResponseHelper.renderList(result, Response.Status.OK);
             } else {
                 List<List<LearnerResult>> result = learnerResultDAO.getAll(user.getId(), projectId, testNos);
-                return ResponseHelper.renderStringList(result, Response.Status.OK);
+                return ResponseHelper.renderList(result, Response.Status.OK);
             }
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
