@@ -517,7 +517,6 @@ public class LearnerResult implements Serializable {
      *
      * @return The latest counterexample or null.
      */
-//    @Column
     @Embedded
     @JsonIgnore
     public DefaultQueryProxy getCounterExample() {

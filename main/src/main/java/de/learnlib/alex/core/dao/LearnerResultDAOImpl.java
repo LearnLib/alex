@@ -6,6 +6,7 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -93,6 +94,8 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                                                 .addOrder(Order.asc("testNo"))
                                                 .list();
 
+        results.forEach(r -> Hibernate.initialize(r.getConfiguration().getSymbols()));
+
         // done
         HibernateUtil.commitTransaction();
         return results;
@@ -156,6 +159,8 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         if (results.isEmpty()) {
             throw new NotFoundException("No result with the test no. " + testNo + " for user " + userId + "was found.");
         }
+
+        results.forEach(r -> Hibernate.initialize(r.getConfiguration().getSymbols()));
 
         // done
         return results;
@@ -299,6 +304,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                                                         .add(Restrictions.eq("testNo", testNo))
                                                         .add(Restrictions.eq("stepNo", stepNo))
                                                         .uniqueResult();
+
+        Hibernate.initialize(result.getConfiguration().getSymbols());
+
         return result;
     }
 

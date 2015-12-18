@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import org.hibernate.Hibernate;
 
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
@@ -77,6 +79,13 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     @Transient
     @JsonProperty("symbols")
     public Set<IdRevisionPair> getSymbolsAsIdRevisionPairs() {
+        if (symbolsAsIdRevisionPairs == null || symbolsAsIdRevisionPairs.isEmpty()) {
+            symbolsAsIdRevisionPairs = new HashSet<>();
+            if (symbols != null) {
+                symbols.stream().map(Symbol::getIdRevisionPair).forEach(p -> symbolsAsIdRevisionPairs.add(p));
+            }
+        }
+
         return symbolsAsIdRevisionPairs;
     }
 
@@ -86,6 +95,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * @param symbolsAsIdRevisionPairs
      *         The List of IdRevisionPairs to refer to symbols that must be used during the learning.
      */
+    @JsonProperty("symbols")
     public void setSymbolsAsIdRevisionPairs(Set<IdRevisionPair> symbolsAsIdRevisionPairs) {
         this.symbolsAsIdRevisionPairs = symbolsAsIdRevisionPairs;
     }
@@ -95,6 +105,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return The list of Symbols.
      */
+//    @ManyToMany(fetch = FetchType.EAGER)
     @ManyToMany
     @JsonIgnore
     public Set<Symbol> getSymbols() {
@@ -119,6 +130,10 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     @Transient
     @JsonProperty("resetSymbol")
     public IdRevisionPair getResetSymbolAsIdRevisionPair() {
+        if (resetSymbolAsIdRevisionPair == null && resetSymbol != null) {
+            resetSymbolAsIdRevisionPair = resetSymbol.getIdRevisionPair();
+        }
+
         return resetSymbolAsIdRevisionPair;
     }
 
@@ -149,6 +164,12 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     public void setResetSymbol(Symbol resetSymbol) {
         this.resetSymbol = resetSymbol;
+
+        if (resetSymbol == null) {
+            this.resetSymbolAsIdRevisionPair = null;
+        } else {
+            this.resetSymbolAsIdRevisionPair = resetSymbol.getIdRevisionPair();
+        }
     }
 
     /**
