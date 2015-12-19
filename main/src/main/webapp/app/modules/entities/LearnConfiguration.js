@@ -45,6 +45,12 @@ class LearnConfiguration {
          * @type {string|null}
          */
         this.comment = obj.comment || null;
+
+        /**
+         * The browser to use.
+         * @type {string|null}
+         */
+        this.browser = obj.browser || webBrowser.HTMLUNITDRIVER;
     }
 
     /**
