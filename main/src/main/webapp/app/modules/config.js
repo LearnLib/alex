@@ -33,18 +33,6 @@ function config(ngToastProvider, selectionModelOptionsProvider, jwtInterceptorPr
     $httpProvider.interceptors.push('jwtInterceptor');
 }
 
-/**
- * Make lodash available for usage in templates
- * @param $rootScope
- */
-// @ngInject
-function run($rootScope) {
-
-    // make lodash available for use in templates
-    $rootScope._ = _;
-}
-
 export const configuration = {
-    config: config,
-    run: run
+    config: config
 };

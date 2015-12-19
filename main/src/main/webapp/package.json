@@ -29,7 +29,7 @@
     "angular-ui-router": "^0.2.15",
     "bootstrap-sass": "^3.3.6",
     "d3": "^3.5.9",
-    "dagre-d3": "^0.4.10",
+    "dagre-d3": "^0.4.11",
     "font-awesome": "^4.4.0",
     "install": "^0.3.0",
     "line-chart": "n3-charts/line-chart",

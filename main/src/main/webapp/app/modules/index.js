@@ -35,7 +35,6 @@ angular
     ])
     .config(configuration.config)
     .config(routes.config)
-    .run(configuration.run)
     .run(routes.run)
     .constant('learnAlgorithm', constant.learnAlgorithm)
     .constant('webBrowser', constant.webBrowser)

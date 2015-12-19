@@ -29,13 +29,13 @@
         </div>
 
         <div class="panel-sidebar" ng-class="{'show': vm.showSidebar}" ng-if="!vm.active && vm.results.length > 0">
-            <learn-resume-settings-widget learn-configuration="_.last(vm.results).configuration">
+            <learn-resume-settings-widget learn-configuration="vm.results[vm.results.length - 1].configuration">
             </learn-resume-settings-widget>
 
             <counterexamples-widget
-                    ng-if="_.last(vm.results).configuration.eqOracle.type === 'sample'"
-                    counterexamples="_.last(vm.results).configuration.eqOracle.counterExamples"
-                    learn-result="_.last(vm.results)">
+                    ng-if="vm.results[vm.results.length - 1].configuration.eqOracle.type === 'sample'"
+                    counterexamples="vm.results[vm.results.length - 1].configuration.eqOracle.counterExamples"
+                    learn-result="vm.results[vm.results.length - 1]">
             </counterexamples-widget>
         </div>
 
