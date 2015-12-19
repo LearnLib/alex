@@ -5,6 +5,8 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.LearnAlgorithms;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
+import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -29,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests.
@@ -112,7 +115,7 @@ public class LearnerThread extends Thread {
         Symbol[] symbolsArray = readSymbolArray(); // use the symbols in the result to create the symbol array.
         this.symbolMapper = new SymbolMapper(symbolsArray);
         this.sigma = symbolMapper.getAlphabet();
-        this.result.setSigma(sigma);
+        this.result.setSigma(AlphabetProxy.createFrom(sigma));
 
         ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult, ConnectorManager> ceiSUL;
         ceiSUL = new ContextExecutableInputSUL<>(context);
@@ -146,7 +149,7 @@ public class LearnerThread extends Thread {
 
         this.symbolMapper = new SymbolMapper(symbols);
         this.sigma = symbolMapper.getAlphabet();
-        result.setSigma(sigma);
+        result.setSigma(AlphabetProxy.createFrom(sigma));
 
         this.cachedSUL = existingSUL;
         resetCounterSUL = new ResetCounterSUL<>("reset counter", this.cachedSUL);
@@ -159,7 +162,7 @@ public class LearnerThread extends Thread {
     }
 
     private Symbol[] readSymbolArray() {
-        List<Symbol> symbols = result.getConfiguration().getSymbols();
+        Set<Symbol> symbols = result.getConfiguration().getSymbols();
         return symbols.toArray(new Symbol[symbols.size()]);
     }
 
@@ -309,12 +312,16 @@ public class LearnerThread extends Thread {
 
         // remember
         result.getStatistics().setEqsUsed(result.getStatistics().getEqsUsed() + 1);
-        result.setCounterExample(newCounterExample);
+        if (newCounterExample == null) {
+            result.setCounterExample(null);
+        } else {
+            result.setCounterExample(DefaultQueryProxy.createFrom(newCounterExample));
+        }
         LOGGER.info("The new counter example is '" + newCounterExample + "'.");
     }
 
     private void refineHypothesis() {
-        learner.refineHypothesis(result.getCounterExample());
+        learner.refineHypothesis(result.getCounterExample().createDefaultProxy());
         result.createHypothesisFrom(learner.getHypothesisModel());
     }
 

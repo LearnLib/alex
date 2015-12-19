@@ -143,12 +143,7 @@ public class WebSymbolLearnerIT {
         // results
         path = "/learner/status";
         response = client.target(BASE_LEARNER_URL + path).request().get();
-        LearnerResult result = new LearnerResult();
-        String resultAsJSON = response.readEntity(String.class);
-        System.out.println("----------------------");
-        System.out.println(resultAsJSON);
-        System.out.println("----------------------");
-        result.setJSON(resultAsJSON);
+        LearnerResult result = response.readEntity(LearnerResult.class);
 
         Word<String> separatingWord = testHelper.getSeparatingWord(result.getHypothesis(), testAlphabet, "web");
         assertTrue("The hypothesis is not correct: " + separatingWord, separatingWord == null);
@@ -183,9 +178,7 @@ public class WebSymbolLearnerIT {
         // results
         path = "/learner/status";
         response = client.target(BASE_LEARNER_URL + path).request().get();
-        LearnerResult result = new LearnerResult();
-        String resultAsJSON = response.readEntity(String.class);
-        result.setJSON(resultAsJSON);
+        LearnerResult result = response.readEntity(LearnerResult.class);
 
         Word<String> separatingWord = testHelper.getSeparatingWord(result.getHypothesis(), testAlphabet, "web");
         assertTrue("The hypothesis is not correct: " + separatingWord, separatingWord == null);
@@ -224,9 +217,7 @@ public class WebSymbolLearnerIT {
         // results
         path = "/learner/status";
         response = client.target(BASE_LEARNER_URL + path).request().get();
-        LearnerResult result = new LearnerResult();
-        String resultAsJSON = response.readEntity(String.class);
-        result.setJSON(resultAsJSON);
+        LearnerResult result = response.readEntity(LearnerResult.class);
 
         Word<String> separatingWord = testHelper.getSeparatingWord(result.getHypothesis(), testAlphabet, "web");
         assertTrue("The hypothesis is not correct: " + separatingWord, separatingWord == null);

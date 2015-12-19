@@ -131,10 +131,7 @@ public class MixedLearnerIT extends JerseyTest {
         // results
         path = "/learner/status";
         response = client.target(BASE_LEARNER_URL + path).request().get();
-        LearnerResult result = new LearnerResult();
-        String resultAsJSON = response.readEntity(String.class);
-        System.out.println("result as JSON" + resultAsJSON);
-        result.setJSON(resultAsJSON);
+        LearnerResult result = response.readEntity(LearnerResult.class);
     }
 
 }

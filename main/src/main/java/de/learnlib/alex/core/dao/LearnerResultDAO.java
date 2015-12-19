@@ -23,21 +23,21 @@ public interface LearnerResultDAO {
     void create(LearnerResult learnerResult) throws ValidationException;
 
     /**
-     * Get a list of JSON data containing all the LearnerResults, that are the latest of any test run for a given
+     * Get a list of all the LearnerResults, that are the latest of any test run for a given
      * Project. This LearnerResult are most likely the final results of each test run.
      *
      * @param userId
      *         The user of the LearnerResult
      * @param projectId
      *         The project id of the test run.
-     * @return A list of LearnerResults as JSON data.
+     * @return A list of LearnerResults.
      * @throws NotFoundException
      *         If the project id was invalid.
      */
-    List<String> getAllAsJSON(Long userId, Long projectId) throws NotFoundException;
+    List<LearnerResult> getAll(Long userId, Long projectId) throws NotFoundException;
 
     /**
-     * Get a list of JSON data containing all the steps of a given TestRun for a given Project.
+     * Get a list of all the steps of a given TestRun for a given Project.
      *
      * @param userId
      *         The user of the LearnerResult
@@ -45,11 +45,11 @@ public interface LearnerResultDAO {
      *         The project id if the test run.
      * @param testNo
      *         The test no. of the test run.
-     * @return A list of LearnerResults as JSON data.
+     * @return A list of LearnerResults.
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    List<String> getAllAsJSON(Long userId, Long projectId, Long testNo) throws NotFoundException;
+    List<LearnerResult> getAll(Long userId, Long projectId, Long testNo) throws NotFoundException;
 
     /**
      * Get a list of lists of JSON data containing all the steps of a given TestRun for a given Project.
@@ -64,7 +64,7 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    List<List<String>> getAllAsJson(Long userId, Long projectId, List<Long> testNos) throws NotFoundException;
+    List<List<LearnerResult>> getAll(Long userId, Long projectId, List<Long> testNos) throws NotFoundException;
 
     /**
      * Get a the last / final LearnerResult of one test run.
@@ -82,22 +82,7 @@ public interface LearnerResultDAO {
     LearnerResult get(Long userId, Long projectId, Long testRunNo) throws NotFoundException;
 
     /**
-     * Get the latest LearnerResult of a given test run as JSON data, e.g. the final result.
-     *
-     * @param userId
-     *         The user id of the LearnerResult.
-     * @param projectId
-     *         The project id of the test run.
-     * @param testNo
-     *         The test no. of the test run.
-     * @return The latest LearnerResult, i.e. the one with the highest step no., for the given test run.
-     * @throws NotFoundException
-     *         If the project id or test no. was invalid.
-     */
-    String getAsJSON(Long userId, Long projectId, Long testNo) throws NotFoundException;
-
-    /**
-     * Get a specific LearnerResult as JSON data.
+     * Get a specific LearnerResult.
      *
      * @param userId
      *         The user id of the LearnerResult
@@ -107,11 +92,11 @@ public interface LearnerResultDAO {
      *         The test non. of the test run / LearnerResult.
      * @param stepNo
      *         The step no. of the test run / LearnerResult.
-     * @return The LearnerResult as JSON data.
+     * @return The LearnerResult.
      * @throws NotFoundException
      *         If the project id, test no. or step no. was invalid.
      */
-    String getAsJSON(Long userId, Long projectId, Long testNo, Long stepNo) throws NotFoundException;
+    LearnerResult get(Long userId, Long projectId, Long testNo, Long stepNo) throws NotFoundException;
 
     /**
      * Update a given LearnResult. Update means here, to save a new LearnerResult with an increased step no.

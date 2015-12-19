@@ -4,17 +4,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import org.hibernate.Hibernate;
 
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity to hold the information and parameters to configure a learn process.
  */
 @JsonPropertyOrder(alphabetic = true)
+@Embeddable
 public class LearnerConfiguration extends LearnerResumeConfiguration implements Serializable {
 
     /** to be serializable. */
@@ -24,54 +30,43 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * Link to the Symbols that are used during the learning.
      * @requiredField
      */
-    @Transient
-    @JsonProperty("symbols")
-    private List<IdRevisionPair> symbolsAsIdRevisionPairs;
+    private Set<IdRevisionPair> symbolsAsIdRevisionPairs;
 
     /**
      * The actual list of Symbols used during the learning.
      * Only used internally.
      */
-    @Transient
-    @JsonIgnore
-    private List<Symbol> symbols;
+    private Set<Symbol> symbols;
 
     /**
      * Link to the Symbols that should be used as a reset Symbol.
      * @requiredField
      */
-    @Transient
-    @JsonProperty("resetSymbol")
     private IdRevisionPair resetSymbolAsIdRevisionPair;
 
     /**
      * The actual Symbols that should be used as a reset Symbol.
      * Only used internally.
      */
-    @Transient
-    @JsonIgnore
     private Symbol resetSymbol;
 
     /**
      * The algorithm to be used during the learning.
      * @requiredField
      */
-    @Transient
     private LearnAlgorithms algorithm;
 
-    @Transient
+    /** The browser to use during the learn process. */
     private WebSiteConnector.WebBrowser browser;
 
     /** A shot comment to describe the learn set up. */
-    @Size(max = 255)
     private String comment;
 
     /**
      * Default constructor.
      */
     public LearnerConfiguration() {
-        super();
-        this.symbolsAsIdRevisionPairs = new LinkedList<>();
+        this.symbolsAsIdRevisionPairs = new HashSet<>();
         this.algorithm = LearnAlgorithms.TTT;
         this.comment = "";
     }
@@ -81,7 +76,16 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return A List of IdRevisionPair referring to symbols that must be used during the learning.
      */
-    public List<IdRevisionPair> getSymbolsAsIdRevisionPairs() {
+    @Transient
+    @JsonProperty("symbols")
+    public Set<IdRevisionPair> getSymbolsAsIdRevisionPairs() {
+        if (symbolsAsIdRevisionPairs == null || symbolsAsIdRevisionPairs.isEmpty()) {
+            symbolsAsIdRevisionPairs = new HashSet<>();
+            if (symbols != null) {
+                symbols.stream().map(Symbol::getIdRevisionPair).forEach(p -> symbolsAsIdRevisionPairs.add(p));
+            }
+        }
+
         return symbolsAsIdRevisionPairs;
     }
 
@@ -91,7 +95,8 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * @param symbolsAsIdRevisionPairs
      *         The List of IdRevisionPairs to refer to symbols that must be used during the learning.
      */
-    public void setSymbolsAsIdRevisionPairs(List<IdRevisionPair> symbolsAsIdRevisionPairs) {
+    @JsonProperty("symbols")
+    public void setSymbolsAsIdRevisionPairs(Set<IdRevisionPair> symbolsAsIdRevisionPairs) {
         this.symbolsAsIdRevisionPairs = symbolsAsIdRevisionPairs;
     }
 
@@ -100,7 +105,10 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return The list of Symbols.
      */
-    public List<Symbol> getSymbols() {
+//    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
+    @JsonIgnore
+    public Set<Symbol> getSymbols() {
         return symbols;
     }
 
@@ -110,7 +118,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * @param symbols
      *         The new list of Symbols.
      */
-    public void setSymbols(List<Symbol> symbols) {
+    public void setSymbols(Set<Symbol> symbols) {
         this.symbols = symbols;
     }
 
@@ -119,7 +127,13 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return The link to the reset symbol.
      */
+    @Transient
+    @JsonProperty("resetSymbol")
     public IdRevisionPair getResetSymbolAsIdRevisionPair() {
+        if (resetSymbolAsIdRevisionPair == null && resetSymbol != null) {
+            resetSymbolAsIdRevisionPair = resetSymbol.getIdRevisionPair();
+        }
+
         return resetSymbolAsIdRevisionPair;
     }
 
@@ -138,6 +152,8 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return The reset symbol.
      */
+    @ManyToOne
+    @JsonIgnore
     public Symbol getResetSymbol() {
         return resetSymbol;
     }
@@ -148,6 +164,12 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     public void setResetSymbol(Symbol resetSymbol) {
         this.resetSymbol = resetSymbol;
+
+        if (resetSymbol == null) {
+            this.resetSymbolAsIdRevisionPair = null;
+        } else {
+            this.resetSymbolAsIdRevisionPair = resetSymbol.getIdRevisionPair();
+        }
     }
 
     /**
@@ -155,7 +177,6 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return The selected LearnerAlgorithm.
      */
-    @Transient
     public LearnAlgorithms getAlgorithm() {
         return algorithm;
     }
@@ -187,6 +208,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return The current comment.
      */
+    @Size(max = 255)
     public String getComment() {
         return comment;
     }

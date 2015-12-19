@@ -32,22 +32,4 @@ public final class ResponseHelper {
                        .build();
     }
 
-    /**
-     * Create a Response for a List that includes the "X-Total-Count" header.
-     * This method will call toString() on all list elements before they are returned in the Response.
-     *
-     * @param list
-     *         The list to include in the Response.
-     *         The Elements of the list will be "rendered" using the toString method.
-     * @param status
-     *         The status of the Response.
-     * @return The corresponding Response.
-     */
-    public static Response renderStringList(List<?> list, Response.Status status) {
-        return Response.status(status)
-                       .header("X-Total-Count", list.size())
-                       .entity(list.toString())
-                       .build();
-    }
-
 }

@@ -6,10 +6,10 @@ const learnAlgorithm = {
 };
 
 const webBrowser = {
-    FIREFOX: 'FIREFOX',
-    CHROME: 'CHROME',
-    IE: 'IE',
-    HTMLUNITDRIVER: 'HTMLUNITDRIVER'
+    FIREFOX: 'firefox',
+    CHROME: 'chrome',
+    IE: 'ie',
+    HTMLUNITDRIVER: 'htmlunitdriver'
 };
 
 const eqOracleType = {

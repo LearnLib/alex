@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -64,7 +65,8 @@ public class LearnerConfigurationTest {
         assertEquals(WebSiteConnector.WebBrowser.FIREFOX, configuration.getBrowser());
         assertTrue(configuration.getEqOracle() instanceof CompleteExplorationEQOracleProxy);
         assertEquals(2, configuration.getSymbolsAsIdRevisionPairs().size());
-        assertEquals(Long.valueOf(1L), configuration.getSymbolsAsIdRevisionPairs().get(0).getId());
-        assertEquals(Long.valueOf(1L), configuration.getSymbolsAsIdRevisionPairs().get(0).getRevision());
+        LinkedList<IdRevisionPair> idRevisionPairs = new LinkedList<>(configuration.getSymbolsAsIdRevisionPairs());
+        assertEquals(Long.valueOf(1L), idRevisionPairs.get(0).getId());
+        assertEquals(Long.valueOf(1L), idRevisionPairs.get(0).getRevision());
     }
 }
