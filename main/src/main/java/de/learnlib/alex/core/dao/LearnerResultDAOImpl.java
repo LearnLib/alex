@@ -305,7 +305,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                                                         .add(Restrictions.eq("stepNo", stepNo))
                                                         .uniqueResult();
 
-        Hibernate.initialize(result.getConfiguration().getSymbols());
+        if (result != null) {
+            Hibernate.initialize(result.getConfiguration().getSymbols());
+        }
 
         return result;
     }

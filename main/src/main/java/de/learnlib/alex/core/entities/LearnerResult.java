@@ -544,7 +544,7 @@ public class LearnerResult implements Serializable {
         if (counterExample == null) {
             return "";
         } else {
-            return counterExample.toString();
+            return counterExample.createDefaultProxy().toString();
         }
     }
 

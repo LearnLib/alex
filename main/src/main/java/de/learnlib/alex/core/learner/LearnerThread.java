@@ -321,7 +321,7 @@ public class LearnerThread extends Thread {
     }
 
     private void refineHypothesis() {
-        learner.refineHypothesis(DefaultQueryProxy.createDefaultProxy(result.getCounterExample()));
+        learner.refineHypothesis(result.getCounterExample().createDefaultProxy());
         result.createHypothesisFrom(learner.getHypothesisModel());
     }
 
