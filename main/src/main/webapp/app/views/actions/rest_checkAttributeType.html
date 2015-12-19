@@ -5,10 +5,10 @@
 
 <div class="form-group">
     <input class="form-control" type="text" placeholder="json attribute, e.g. myobj.attr[1].obj"
-           ng-model="action.attribute">
+           ng-model="vm.action.attribute">
 </div>
 <div class="form-group">
-    <select class="form-control" ng-model="action.jsonType"
+    <select class="form-control" ng-model="vm.action.jsonType"
             ng-options="t as t for t in ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']">
         <option value="" disabled>Choose a JavaScript type</option>
     </select>

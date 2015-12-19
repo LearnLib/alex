@@ -7,12 +7,12 @@
 
 <div class="form-group">
     <label class="control-label">CSS selector</label>
-    <input class="form-control" type="text" placeholder="CSS selector" ng-model="action.node">
+    <input class="form-control" type="text" placeholder="CSS selector" ng-model="vm.action.node">
 </div>
 <div class="form-group">
     <label class="control-label">The value to fill the element with</label>
-    <input class="form-control" type="text" placeholder="value" ng-model="action.value">
+    <input class="form-control" type="text" placeholder="value" ng-model="vm.action.value">
 </div>
-<a class="btn btn-default btn-sm" html-element-picker model="action.node" text="action.value">
+<a class="btn btn-default btn-sm" html-element-picker model="vm.action.node" text="vm.action.value">
     <i class="fa fa-magic fa-fw"></i>&nbsp; Element Picker
 </a>

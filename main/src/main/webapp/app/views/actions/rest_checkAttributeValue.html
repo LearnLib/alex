@@ -5,14 +5,14 @@
 
 <div class="form-group">
     <input class="form-control" type="text" placeholder="json attribute, e.g. myobj.attr[1].obj"
-           ng-model="action.attribute">
+           ng-model="vm.action.attribute">
 </div>
 <div class="form-group">
     <input class="form-control" type="text" placeholder="the attribute value"
-           ng-model="action.value">
+           ng-model="vm.action.value">
 </div>
 <div class="checkbox">
     <label>
-        <input type="checkbox" ng-model="action.regexp"> is regular expression
+        <input type="checkbox" ng-model="vm.action.regexp"> is regular expression
     </label>
 </div>

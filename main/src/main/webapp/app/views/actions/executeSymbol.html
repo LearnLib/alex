@@ -4,15 +4,15 @@
 </p>
 <hr>
 
-<div class="form-group" ng-if="action.getModel().name">
+<div class="form-group" ng-if="vm.action.getModel().name">
     <div class="panel panel-default">
         <div class="panel-body clearfix" style="padding: 5px 10px;">
             <a href="" class="btn btn-default btn-sm pull-right" tooltip="Update to latest revision"
-               tooltip-placement="left" ng-click="action.updateRevision(symbols)">
+               tooltip-placement="left" ng-click="vm.action.updateRevision(symbols)">
                 <i class="fa fa-refresh"></i>
             </a>
-            <strong ng-bind="action.getModel().name"></strong> <br>
-            <em class="text-muted">Revision <span ng-bind="action.symbolToExecute.revision"></span></em>
+            <strong ng-bind="vm.action.getModel().name"></strong> <br>
+            <em class="text-muted">Revision <span ng-bind="vm.action.symbolToExecute.revision"></span></em>
         </div>
     </div>
     <hr>
@@ -23,17 +23,17 @@
         <div class="form-group">
             <label>Choose a symbol</label>
             <input class="form-control" list="symbolsList" type="text" placeholder="The name of the symbol"
-                   ng-model="map.name" ng-change="action.setSymbol(map.name, symbols)">
+                   ng-model="vm.map.name" ng-change="vm.action.setSymbol(vm.map.name, vm.symbols)">
             <datalist id="symbolsList">
-                <option ng-repeat="symbol in symbols" value="{{symbol.name}}"></option>
+                <option ng-repeat="symbol in vm.symbols" value="{{symbol.name}}"></option>
             </datalist>
         </div>
     </div>
     <div class="col-xs-4">
-        <div class="form-group" ng-if="map.name">
+        <div class="form-group" ng-if="vm.map.name">
             <label>Rev.</label>
-            <input class="form-control" type="number" min="1" ng-model="action.symbolToExecute.revision"
-                   max="{{action.getModel().maxRevision}}">
+            <input class="form-control" type="number" min="1" ng-model="vm.action.symbolToExecute.revision"
+                   max="{{vm.action.getModel().maxRevision}}">
         </div>
     </div>
 </div>
