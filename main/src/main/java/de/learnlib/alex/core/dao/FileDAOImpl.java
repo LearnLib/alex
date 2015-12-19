@@ -121,7 +121,7 @@ public class FileDAOImpl implements FileDAO {
 
         if (!uploadDirectory.exists() || !uploadDirectory.isDirectory()) {
             try {
-                uploadDirectory.mkdir();
+                uploadDirectory.mkdirs();
             } catch (SecurityException e) {
                 throw new NotFoundException("Could not find the project directory you are looking for.");
             }

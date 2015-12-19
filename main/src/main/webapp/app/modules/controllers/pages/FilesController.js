@@ -51,7 +51,9 @@ class FilesController {
                 this.files = files;
             })
             .catch(response => {
-                this.ToastService.danger(`Fetching all files failed! ${response.data.message}`);
+                if (response.status !== 404) {
+                    this.ToastService.danger(`Fetching all files failed! ${response.data.message}`);
+                }
             });
     }
 
@@ -60,10 +62,11 @@ class FilesController {
      * @param {string} file - The name of the file to delete
      */
     deleteFile(file) {
-        this.FileResource.delete(this.project.id, file)
+        this.FileResource.remove(this.project.id, file)
             .then(() => {
                 this.ToastService.success('File "' + file.name + '" has been deleted');
-                const i = this.files.find(f => f.name === file.name);
+
+                const i = this.files.findIndex(f => f.name === file.name);
                 if (i > -1) this.files.splice(i, 1);
             });
     }

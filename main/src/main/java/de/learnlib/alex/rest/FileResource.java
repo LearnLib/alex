@@ -48,7 +48,6 @@ public class FileResource {
     private FileDAO fileDAO;
 
     @POST
-    @Path("/")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadFile(@PathParam("project_id") Long projectId,
@@ -78,7 +77,6 @@ public class FileResource {
     }
 
     @GET
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllFiles(@PathParam("project_id") Long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
@@ -107,6 +105,4 @@ public class FileResource {
             return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", Response.Status.NOT_FOUND, e);
         }
     }
-
-
 }

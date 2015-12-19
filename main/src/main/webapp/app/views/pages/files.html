@@ -34,7 +34,7 @@
 
             <hr>
 
-            <div class="file-list">
+            <div class="file-list" ng-if="vm.files.length > 0">
                 <div class="file-list-item"
                      ng-repeat="file in vm.files"
                      selection-model
@@ -51,6 +51,10 @@
                     </div>
 
                 </div>
+            </div>
+
+            <div class="alert alert-info" ng-if="vm.files.length === 0">
+                There are no uploaded files
             </div>
 
         </div>
