@@ -19,8 +19,9 @@ class CounterexamplesWidget {
      * @param SymbolResource
      * @param $q
      * @param EventBus
+     * @param dragulaService
      */
-    constructor($scope, LearnerResource, ToastService, SymbolResource, $q, EventBus) {
+    constructor($scope, LearnerResource, ToastService, SymbolResource, $q, EventBus, dragulaService) {
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
         this.SymbolResource = SymbolResource;
@@ -51,6 +52,10 @@ class CounterexamplesWidget {
                 output: data.output
             });
         }, $scope);
+
+        dragulaService.options($scope, 'ceList', {
+            removeOnSpill: false
+        });
     }
 
     /** Updates the model of the result */
@@ -135,11 +140,15 @@ class CounterexamplesWidget {
 
         // fetch symbols only once and cache them
         if (this.symbols.length === 0) {
-            this.SymbolResource.getManyByIdRevisionPairs(this.learnResult.project,
-                this.learnResult.configuration.symbols).then(symbols => {
+            //this.SymbolResource.getManyByIdRevisionPairs(this.learnResult.project,
+            //    this.learnResult.configuration.symbols).then(symbols => {
+            //    this.symbols = symbols;
+            //    test();
+            //});
+            this.SymbolResource.getAll(this.learnResult.project).then(symbols => {
                 this.symbols = symbols;
                 test();
-            });
+            })
         } else {
             test();
         }
@@ -161,7 +170,7 @@ const counterexamplesWidget = {
                 <p class="text-muted">
                     <em>Click on the labels of the hypothesis to create a counterexample.</em>
                 </p>
-                <div class="list-group list-group-condensed" ng-sortable="{animation:150}">
+                <div class="list-group list-group-condensed" dragula='"ceList"' dragula-model="vm.counterExample">
                     <div class="list-group-item counterexample-list-item" ng-repeat="io in vm.counterExample">
                         <i class="fa fa-fw fa-close pull-right" ng-click="vm.removeInputOutputAt($index)"></i>
                         <span class="label label-primary">{{io.input}}</span>
@@ -176,7 +185,7 @@ const counterexamplesWidget = {
                 </div>
             </form>
             <ul class="list-group">
-                <li class="list-group-item" ng-repeat="ce in vm.tmpCounterExamples">
+                <li class="list-group-item" ng-repeat="ce in vm.tmpCounterExamples track by $index">
                     <span class="pull-right" ng-click="vm.removeCounterExampleAt($index)">
                         <i class="fa fa-trash"></i>
                     </span>

@@ -64,46 +64,43 @@
                 <i class="fa fa-fw fa-info"></i> There are unsaved changes made to the symbol
             </div>
 
-            <div ng-if="vm.symbol.actions">
-                <div class="action-list" ng-sortable="sortableOptions">
-                    <div class="action-list-item"
-                         ng-class="action.disabled ? 'disabled' : ''"
-                         ng-repeat="action in vm.symbol.actions"
-                         selection-model
-                         selection-model-selected-items="vm.selectedActions">
+            <div class="action-list" dragula='"actionList"' dragula-model="vm.symbol.actions"
+                 ng-if="vm.symbol.actions.length > 0">
+                <div class="action-list-item" ng-repeat="action in vm.symbol.actions" selection-model
+                     selection-model-selected-items="vm.selectedActions">
 
-                        <checkbox selection-model-ignore class="pull-left" model="action"></checkbox>
+                    <checkbox selection-model-ignore class="pull-left" model="action"></checkbox>
 
-                        <div class="action-list-item-content">
+                    <div class="action-list-item-content">
 
-                            <div class="btn-group btn-group-sm pull-right" dropdown dropdown-hover>
-                                <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
-                                    <i class="fa fa-bars"></i>
-                                </button>
-                                <ul class="dropdown-menu pull-left" role="menu">
-                                    <li>
-                                        <a href="" action-edit-modal-handle action="action">
-                                            <i class="fa fa-edit fa-fw"></i> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="" ng-click="vm.deleteActions([action])">
-                                            <i class="fa fa-trash fa-fw"></i> Delete
-                                        </a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li>
-                                        <a href="" ng-click="vm.cutActions([action])">
-                                            <i class="fa fa-cut fa-fw"></i> Cut
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="" ng-click="vm.copyActions([action])">
-                                            <i class="fa fa-copy fa-fw"></i> Copy
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                        <div class="btn-group btn-group-sm pull-right" dropdown dropdown-hover>
+                            <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <ul class="dropdown-menu pull-left" role="menu">
+                                <li>
+                                    <a href="" action-edit-modal-handle action="action">
+                                        <i class="fa fa-edit fa-fw"></i> Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" ng-click="vm.deleteActions([action])">
+                                        <i class="fa fa-trash fa-fw"></i> Delete
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="" ng-click="vm.cutActions([action])">
+                                        <i class="fa fa-cut fa-fw"></i> Cut
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" ng-click="vm.copyActions([action])">
+                                        <i class="fa fa-copy fa-fw"></i> Copy
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
 
                             <span class="btn btn-sm pull-right" ng-click="vm.toggleDisableAction(action)"
                                   selection-model-ignore>
@@ -115,22 +112,20 @@
                                 </span>
                             </span>
 
-                            <span class="action-description" ng-bind="action.toString()"></span>
+                        <span class="action-description" ng-bind="action.toString()"></span>
 
-                            <div>
-                                <label class="label label-info" ng-show="action.negated">Negate</label>
-                                <label class="label label-danger" ng-show="action.ignoreFailure">Ignore Failure</label>
-                            </div>
-
+                        <div>
+                            <label class="label label-info" ng-show="action.negated">Negate</label>
+                            <label class="label label-danger" ng-show="action.ignoreFailure">Ignore Failure</label>
                         </div>
+
                     </div>
                 </div>
-            </div>
 
-            <div class="alert alert-info" ng-if="vm.symbol.actions.length === 0">
-                You haven't created any actions for this symbol yet.
-            </div>
+                <div class="alert alert-info" ng-if="vm.symbol.actions.length === 0">
+                    You haven't created any actions for this symbol yet.
+                </div>
 
+            </div>
         </div>
     </div>
-</div>

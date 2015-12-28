@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import {graphlib, dagre, render as Renderer} from 'dagre-d3';
+import d3 from 'd3/d3';
 
 import {events} from '../constants';
-import {d3} from '../libraries';
 
 /**
  * The directive that is used to display hypotheses.

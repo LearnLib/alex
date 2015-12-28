@@ -8,17 +8,12 @@ module.exports = function (grunt) {
         'node_modules/angular-animate/angular-animate.js',
         'node_modules/angular-bootstrap/ui-bootstrap.js',
         'node_modules/angular-bootstrap/ui-bootstrap-tpls.js',
-        'node_modules/angular-jwt/dist/angular-jwt.js',
         'node_modules/angular-sanitize/angular-sanitize.js',
         'node_modules/angular-ui-ace/src/ui-ace.js',
         'node_modules/angular-ui-router/release/angular-ui-router.js',
-        'node_modules/d3/d3.js',
         'node_modules/line-chart/build/line-chart.js',
-        'node_modules/ng-file-upload/dist/ng-file-upload.js',
         'node_modules/ng-toast/dist/ngToast.js',
-        'node_modules/selection-model/dist/selection-model.js',
-        'node_modules/sortablejs/Sortable.js',
-        'node_modules/sortablejs/ng-sortable.js'
+        'node_modules/selection-model/dist/selection-model.js'
     ];
 
     grunt
@@ -114,6 +109,7 @@ module.exports = function (grunt) {
                     files: {
                         'app/style.min.css': [
                             'node_modules/ng-toast/dist/ngToast.min.css',
+                            'node_modules/angular-dragula/dist/dragula.min.css',
                             'app/style.css'
                         ]
                     }
@@ -123,7 +119,6 @@ module.exports = function (grunt) {
             postcss: {
                 options: {
                     map: false,
-
                     processors: [
                         require('autoprefixer-core')({
                             browsers: 'last 2 versions'

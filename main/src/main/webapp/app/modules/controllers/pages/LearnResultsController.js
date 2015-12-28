@@ -18,6 +18,7 @@ class LearnResultsController {
         this.$state = $state;
         this.PromptService = PromptService;
         this.ToastService = ToastService;
+        this.LearnResultResource = LearnResultResource;
 
         /**
          * The project that is in the session
@@ -38,7 +39,7 @@ class LearnResultsController {
         this.selectedResults = [];
 
         // get all final test results
-        LearnResultResource.getAllFinal(this.project.id).then(results => {
+        this.LearnResultResource.getAllFinal(this.project.id).then(results => {
             this.results = results;
         });
     }

@@ -22,9 +22,10 @@ class SymbolsActionsController {
      * @param $state
      * @param PromptService
      * @param EventBus
+     * @param dragulaService
      */
     constructor($scope, $stateParams, SymbolResource, SessionService, ToastService, ErrorService,
-                ActionService, ClipboardService, $state, PromptService, EventBus, $rootScope) {
+                ActionService, ClipboardService, $state, PromptService, EventBus, dragulaService) {
 
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
@@ -55,17 +56,6 @@ class SymbolsActionsController {
          */
         this.hasChanged = false;
 
-        /**
-         * Options for ng-sortable directive from Sortable lib
-         * @type {{animation: number, onUpdate: Function}}
-         */
-        this.sortableOptions = {
-            animation: 150,
-            onUpdate: () => {
-                this.hasChanged = true;
-            }
-        };
-
         // load all actions from the symbol
         // redirect to an error page when the symbol from the url id cannot be found
         this.SymbolResource.get(this.project.id, $stateParams.symbolId)
@@ -78,7 +68,6 @@ class SymbolsActionsController {
 
                 // add symbol to scope and create a copy in order to revert changes
                 this.symbol = symbol;
-                this.symbolCopy = new Symbol(symbol);
             })
             .catch(() => {
                 ErrorService.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + "' could not be found");
@@ -106,6 +95,15 @@ class SymbolsActionsController {
         EventBus.on(events.ACTION_UPDATED, (evt, data) => {
             this.updateAction(data.action);
         }, $scope);
+
+        // dragula
+        dragulaService.options($scope, 'actionList', {
+            removeOnSpill: false
+        });
+
+        $scope.$on('actionList.drop-model', () => {
+            this.hasChanged = true;
+        });
     }
 
     /**

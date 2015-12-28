@@ -1,3 +1,7 @@
+import angularDragula from 'angular-dragula';
+import ngFileUpload from 'ng-file-upload';
+import angularJwt from 'angular-jwt'
+
 import {configuration} from './config';
 import {routes} from './routes';
 import * as constant from './constants';
@@ -20,9 +24,9 @@ angular
         'ngToast',
         'n3-line-chart',
         'selectionModel',
-        'ng-sortable',
-        'ngFileUpload',
-        'angular-jwt',
+        angularJwt,
+        ngFileUpload,
+        angularDragula(angular),
 
         // application specific modules
         'ALEX.templates',

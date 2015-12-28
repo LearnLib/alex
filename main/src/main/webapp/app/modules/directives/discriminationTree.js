@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import {graphlib, dagre, render as Renderer} from 'dagre-d3';
-
-import {d3} from '../libraries';
+import d3 from 'd3/d3';
 
 /**
  * The directive for displaying a discrimination tree in an svg element. Can be used as an attribute or an element.

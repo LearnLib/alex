@@ -23,6 +23,7 @@
     "angular": "^1.5.0-rc.0",
     "angular-animate": "^1.5.0-rc.0",
     "angular-bootstrap": "^0.12.2",
+    "angular-dragula": "^1.1.9",
     "angular-jwt": "0.0.9",
     "angular-sanitize": "^1.5.0-rc.0",
     "angular-ui-ace": "^0.2.3",
@@ -37,8 +38,7 @@
     "ng-file-upload": "^10.0.2",
     "ng-toast": "^1.5.6",
     "npm": "^3.4.0",
-    "selection-model": "^0.10.0",
-    "sortablejs": "rubaxa/Sortable"
+    "selection-model": "^0.10.0"
   },
   "devDependencies": {
     "angular-mocks": "^1.5.0-rc.0",
