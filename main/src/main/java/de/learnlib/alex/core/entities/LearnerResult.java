@@ -463,6 +463,7 @@ public class LearnerResult implements Serializable {
      * @return The Alphabet of the learning process & the hypothesis.
      */
     @JsonProperty("sigma")
+    @Column(name = "sigma", columnDefinition = "BLOB")
     public AlphabetProxy getSigma() {
         return sigma;
     }

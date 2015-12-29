@@ -16,7 +16,8 @@ describe('LearnConfiguration', () => {
             eqOracle: {type: 'random_word', minLength: 1, maxLength: 10, maxNoOfTests: 20},
             algorithm: 'TTT',
             resetSymbol: null,
-            comment: null
+            comment: null,
+            browser: 'htmlunitdriver'
         };
 
         expect(angular.toJson(config)).toEqual(angular.toJson(expectedConfig));
