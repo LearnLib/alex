@@ -67,7 +67,8 @@
             <div class="action-list" dragula='"actionList"' dragula-model="vm.symbol.actions"
                  ng-if="vm.symbol.actions.length > 0">
                 <div class="action-list-item" ng-repeat="action in vm.symbol.actions" selection-model
-                     selection-model-selected-items="vm.selectedActions">
+                     selection-model-selected-items="vm.selectedActions"
+                     ng-class="{'disabled': action.disabled}">
 
                     <checkbox selection-model-ignore class="pull-left" model="action"></checkbox>
 

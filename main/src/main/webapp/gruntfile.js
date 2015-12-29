@@ -11,7 +11,7 @@ module.exports = function (grunt) {
         'node_modules/angular-sanitize/angular-sanitize.js',
         'node_modules/angular-ui-ace/src/ui-ace.js',
         'node_modules/angular-ui-router/release/angular-ui-router.js',
-        'node_modules/line-chart/build/line-chart.js',
+        'node_modules/n3-charts/build/LineChart.js',
         'node_modules/ng-toast/dist/ngToast.js',
         'node_modules/selection-model/dist/selection-model.js'
     ];
@@ -21,9 +21,6 @@ module.exports = function (grunt) {
             pkg: grunt.file.readJSON('package.json'),
 
             uglify: {
-                options: {
-                    banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-                },
                 app: {
                     files: {
                         './app/alex.min.js': ['./app/alex.js']
@@ -109,6 +106,7 @@ module.exports = function (grunt) {
                     files: {
                         'app/style.min.css': [
                             'node_modules/ng-toast/dist/ngToast.min.css',
+                            'node_modules/n3-charts/build/LineChart.css',
                             'node_modules/angular-dragula/dist/dragula.min.css',
                             'app/style.css'
                         ]
@@ -120,7 +118,7 @@ module.exports = function (grunt) {
                 options: {
                     map: false,
                     processors: [
-                        require('autoprefixer-core')({
+                        require('autoprefixer')({
                             browsers: 'last 2 versions'
                         })
                     ]

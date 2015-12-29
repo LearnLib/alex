@@ -1,6 +1,7 @@
 import angularDragula from 'angular-dragula';
 import ngFileUpload from 'ng-file-upload';
-import angularJwt from 'angular-jwt'
+import angularJwt from 'angular-jwt';
+import d3 from 'd3/d3';
 
 import {configuration} from './config';
 import {routes} from './routes';
@@ -46,5 +47,7 @@ angular
     .constant('events', constant.events)
     .constant('actionType', constant.actionType)
     .constant('chartMode', constant.chartMode);
+
+window.d3 = d3;
 
 angular.bootstrap(document, ['ALEX']);
