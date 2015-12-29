@@ -81,7 +81,7 @@ class CounterexamplesWidget {
                 for (let i = 0; i < counterexample.length; i++) {
                     this.counterExample[i].output = counterexample[i];
                 }
-                this.tmpCounterExamples.push(this.counterExample);
+                this.tmpCounterExamples.push(angular.copy(this.counterExample));
                 this.renewCounterexamples();
             })
             .catch(() => {
@@ -140,11 +140,6 @@ class CounterexamplesWidget {
 
         // fetch symbols only once and cache them
         if (this.symbols.length === 0) {
-            //this.SymbolResource.getManyByIdRevisionPairs(this.learnResult.project,
-            //    this.learnResult.configuration.symbols).then(symbols => {
-            //    this.symbols = symbols;
-            //    test();
-            //});
             this.SymbolResource.getAll(this.learnResult.project).then(symbols => {
                 this.symbols = symbols;
                 test();
