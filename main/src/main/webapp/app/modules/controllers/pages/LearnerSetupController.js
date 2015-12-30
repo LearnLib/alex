@@ -6,7 +6,7 @@ import LearnConfiguration from '../../entities/LearnConfiguration';
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
  */
 // @ngInject
-class LearnSetupController {
+class LearnerSetupController {
     constructor($scope, $state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
                 EventBus) {
 
@@ -73,7 +73,7 @@ class LearnSetupController {
                 if (data.active) {
                     if (data.project == this.project.id) {
                         this.ToastService.info('There is currently running a learn process.');
-                        this.$state.go('learn.start');
+                        this.$state.go('learnerStart');
                     } else {
                         this.ToastService.danger('There is already running a test from another project.');
                         this.$state.go('project');
@@ -129,7 +129,7 @@ class LearnSetupController {
                 this.LearnerResource.start(this.project.id, this.learnConfiguration)
                     .success(() => {
                         this.ToastService.success('Learn process started successfully.');
-                        this.$state.go('learn.start');
+                        this.$state.go('learnerStart');
                     })
                     .catch(response => {
                         this.ToastService.danger('<p><strong>Start learning failed</strong></p>' + response.data.message);
@@ -162,4 +162,4 @@ class LearnSetupController {
     }
 }
 
-export default LearnSetupController;
+export default LearnerSetupController;

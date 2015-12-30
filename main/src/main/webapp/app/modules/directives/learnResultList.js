@@ -33,10 +33,10 @@ function learnResultListItem() {
                         <div class="pull-right" ng-transclude></div>
                         <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
                         <strong>
-                            <a ui-sref="learn.results.compare({testNos: [result.testNo]})" ng-if="linkTo === 'hypothesis'">
+                            <a ui-sref="resultsCompare({testNos: [result.testNo]})" ng-if="linkTo === 'hypothesis'">
                                 Test No <span ng-bind="result.testNo"></span>
                             </a>
-                            <a ui-sref="statistics.compare({testNos: [result.testNo], mode: 'cumulated'})" ng-if="linkTo === 'statistics'">
+                            <a ui-sref="statisticsCompare({testNos: [result.testNo], mode: 'cumulated'})" ng-if="linkTo === 'statistics'">
                                 Test No <span ng-bind="result.testNo"></span>
                             </a>
                         </strong>,

@@ -64,7 +64,7 @@ describe('ProjectsController', () => {
         SessionService.saveProject(ENTITIES.projects[0]);
         createController();
         scope.$digest();
-        expect($state.current.name).toEqual('dashboard')
+        expect($state.current.name).toEqual('projectsDashboard')
     });
 
     it('should load projects from the resource', () => {

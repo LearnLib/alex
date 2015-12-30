@@ -4,7 +4,7 @@ import _ from 'lodash';
  * The controller for listing all final test results.
  */
 // @ngInject
-class LearnResultsController {
+class ResultsController {
 
     /**
      * Constructor
@@ -92,9 +92,9 @@ class LearnResultsController {
     openSelectedResults() {
         if (this.selectedResults.length > 0) {
             const testNos = _.pluck(this.selectedResults, 'testNo');
-            this.$state.go('learn.results.compare', {testNos: testNos.join(',')});
+            this.$state.go('resultsCompare', {testNos: testNos.join(',')});
         }
     }
 }
 
-export default LearnResultsController;
+export default ResultsController;

@@ -133,7 +133,7 @@ class StatisticsCompareController {
 
     switchToFinal() {
         if (this.selectedChartMode === chartMode.COMPLETE) {
-            this.$state.go('statistics.compare', {
+            this.$state.go('statisticsCompare', {
                 testNos: this.testNos.join(','),
                 mode: chartMode.CUMULATED
             });
@@ -144,7 +144,7 @@ class StatisticsCompareController {
 
     switchToComplete() {
         if (this.selectedChartMode === chartMode.CUMULATED) {
-            this.$state.go('statistics.compare', {
+            this.$state.go('statisticsCompare', {
                 testNos: this.testNos.join(','),
                 mode: chartMode.COMPLETE
             });

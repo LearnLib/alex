@@ -33,7 +33,7 @@ class ProjectList {
     openProject(project) {
         this.SessionService.saveProject(project);
         this.EventBus.emit(events.PROJECT_OPENED, {project: project});
-        this.$state.go('dashboard');
+        this.$state.go('projectsDashboard');
     }
 
     /**

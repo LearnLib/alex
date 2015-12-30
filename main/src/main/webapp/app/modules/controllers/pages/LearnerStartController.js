@@ -6,7 +6,7 @@ import LearnConfiguration from '../../entities/LearnConfiguration';
  * in the intermediate steps.
  */
 // @ngInject
-class LearnStartController {
+class LearnerStartController {
 
     /**
      * Constructor
@@ -143,4 +143,4 @@ class LearnStartController {
     }
 }
 
-export default LearnStartController;
+export default LearnerStartController;

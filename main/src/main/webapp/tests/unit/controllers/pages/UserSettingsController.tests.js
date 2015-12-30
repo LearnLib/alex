@@ -1,4 +1,4 @@
-describe('UserSettingsController', () => {
+describe('UsersSettingsController', () => {
     let scope;
     let $q;
     let $controller;
@@ -6,7 +6,7 @@ describe('UserSettingsController', () => {
     let SessionService;
     let ToastService;
     let User;
-    let UserSettingsController;
+    let UsersSettingsController;
 
     let user;
 
@@ -25,7 +25,7 @@ describe('UserSettingsController', () => {
     }));
 
     function createController() {
-        UserSettingsController = $controller('UserSettingsController', {
+        UsersSettingsController = $controller('UsersSettingsController', {
             UserResource: UserResource,
             SessionService: SessionService,
             ToastService: ToastService
@@ -34,7 +34,7 @@ describe('UserSettingsController', () => {
 
     it('should initialize the controller with a null user', () => {
         createController();
-        expect(UserSettingsController.user).toBeNull();
+        expect(UsersSettingsController.user).toBeNull();
     });
 
     it('should get the project from the server and save it', () => {
@@ -45,7 +45,7 @@ describe('UserSettingsController', () => {
         scope.$digest();
 
         expect(UserResource.get).toHaveBeenCalledWith(user.id);
-        expect(UserSettingsController.user instanceof User).toBeTruthy();
+        expect(UsersSettingsController.user instanceof User).toBeTruthy();
     });
 
     it('should display a toast danger message if the user could not be fetched from the server', () => {
@@ -58,6 +58,6 @@ describe('UserSettingsController', () => {
 
         expect(UserResource.get).toHaveBeenCalledWith(user.id);
         expect(ToastService.danger).toHaveBeenCalled();
-        expect(UserSettingsController.user).toBeNull();
+        expect(UsersSettingsController.user).toBeNull();
     })
 });

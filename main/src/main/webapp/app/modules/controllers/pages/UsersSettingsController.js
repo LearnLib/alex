@@ -1,6 +1,6 @@
 /** The controller of the user settings page */
 // @ngInject
-class UserSettingsController {
+class UsersSettingsController {
 
     /**
      * Constructor
@@ -30,4 +30,4 @@ class UserSettingsController {
     }
 }
 
-export default UserSettingsController;
+export default UsersSettingsController;

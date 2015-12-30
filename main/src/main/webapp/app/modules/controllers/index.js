@@ -4,19 +4,19 @@ import CountersController from './pages/CountersController';
 import ErrorController from './pages/ErrorController';
 import FilesController from './pages/FilesController';
 import HomeController from './pages/HomeController';
-import LearnResultsCompareController from './pages/LearnResultsCompareController';
-import LearnResultsController from './pages/LearnResultsController';
+import ResultsCompareController from './pages/ResultsCompareController';
+import ResultsController from './pages/ResultsController';
 import StatisticsController from './pages/StatisticsController';
 import StatisticsCompareController from './pages/StatisticsCompareController';
-import LearnSetupController from './pages/LearnSetupController';
-import LearnStartController from './pages/LearnStartController';
+import LearnerSetupController from './pages/LearnerSetupController';
+import LearnerStartController from './pages/LearnerStartController';
 import ProjectsController from './pages/ProjectsController';
 import SymbolsActionsController from './pages/SymbolsActionsController';
 import SymbolsController from './pages/SymbolsController';
 import SymbolsHistoryController from './pages/SymbolsHistoryController';
 import SymbolsImportController from './pages/SymbolsImportController';
 import SymbolsTrashController from './pages/SymbolsTrashController';
-import UserSettingsController from './pages/UserSettingsController';
+import UsersSettingsController from './pages/UsersSettingsController';
 
 // modal controllers
 import ActionCreateModalController from './modals/ActionCreateModalController';
@@ -46,19 +46,19 @@ angular
     .controller('ErrorController', ErrorController)
     .controller('FilesController', FilesController)
     .controller('HomeController', HomeController)
-    .controller('LearnResultsCompareController', LearnResultsCompareController)
-    .controller('LearnResultsController', LearnResultsController)
+    .controller('ResultsCompareController', ResultsCompareController)
+    .controller('ResultsController', ResultsController)
     .controller('StatisticsController', StatisticsController)
     .controller('StatisticsCompareController', StatisticsCompareController)
-    .controller('LearnSetupController', LearnSetupController)
-    .controller('LearnStartController', LearnStartController)
+    .controller('LearnerSetupController', LearnerSetupController)
+    .controller('LearnerStartController', LearnerStartController)
     .controller('ProjectsController', ProjectsController)
     .controller('SymbolsActionsController', SymbolsActionsController)
     .controller('SymbolsController', SymbolsController)
     .controller('SymbolsHistoryController', SymbolsHistoryController)
     .controller('SymbolsImportController', SymbolsImportController)
     .controller('SymbolsTrashController', SymbolsTrashController)
-    .controller('UserSettingsController', UserSettingsController)
+    .controller('UsersSettingsController', UsersSettingsController)
 
     // modal windows
     .controller('ActionCreateModalController', ActionCreateModalController)

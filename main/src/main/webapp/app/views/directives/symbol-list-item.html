@@ -9,7 +9,7 @@
 
         [<span ng-bind="symbol.abbreviation"></span>]<br>
 
-        <a ui-sref="symbols.actions({symbolId:symbol.id})" ng-if="symbol.id && !symbol.hidden">
+        <a ui-sref="symbolsActions({symbolId:symbol.id})" ng-if="symbol.id && !symbol.hidden">
             <span ng-bind="symbol.countEnabledActions()"></span> Actions &nbsp;<i class="fa fa-edit"></i>
         </a>
 
@@ -27,7 +27,7 @@
                     <button class="btn btn-xs btn-default pull-right" ng-click="symbol._collapsed = !symbol._collapsed">
                         <i class="fa fa-close"></i>
                     </button>
-                    <a class="btn btn-xs btn-default" ui-sref="symbols.actions({symbolId:symbol.id})"
+                    <a class="btn btn-xs btn-default" ui-sref="symbolsActions({symbolId:symbol.id})"
                        ng-if="symbol.id">
                         Edit Actions
                     </a>

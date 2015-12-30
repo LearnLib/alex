@@ -26,7 +26,7 @@ class ProjectsController {
 
         // go to the dashboard if there is a project in the session
         if (SessionService.getProject() !== null) {
-            $state.go('dashboard');
+            $state.go('projectsDashboard');
             return;
         }
 

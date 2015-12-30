@@ -50,7 +50,7 @@ class StatisticsController {
     createChartSelectedFinalResults() {
         if (this.selectedResults.length > 0) {
             const testNos = this.selectedResults.map(r => r.testNo).join(',');
-            this.$state.go('statistics.compare', {
+            this.$state.go('statisticsCompare', {
                 testNos: testNos,
                 mode: chartMode.CUMULATED
             });
@@ -61,7 +61,7 @@ class StatisticsController {
     createChartSelectedCompleteResults() {
         if (this.selectedResults.length > 0) {
             const testNos = this.selectedResults.map(r => r.testNo).join(',');
-            this.$state.go('statistics.compare', {
+            this.$state.go('statisticsCompare', {
                 testNos: testNos,
                 mode: chartMode.COMPLETE
             });
@@ -70,7 +70,7 @@ class StatisticsController {
 
     /** Redirects to the compare view */
     createChartCompleteResult(result) {
-        this.$state.go('statistics.compare', {
+        this.$state.go('statisticsCompare', {
             testNos: result.testNo,
             mode: chartMode.COMPLETE
         });
@@ -78,7 +78,7 @@ class StatisticsController {
 
     /** Redirects to the compare view */
     createChartFinalResult(result) {
-        this.$state.go('statistics.compare', {
+        this.$state.go('statisticsCompare', {
             testNos: result.testNo,
             mode: chartMode.CUMULATED
         });

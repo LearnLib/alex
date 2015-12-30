@@ -13,7 +13,7 @@ class HomeController {
 
         if (this.user !== null) {
             if (this.project !== null) {
-                $state.go('dashboard');
+                $state.go('projectsDashboard');
             } else {
                 $state.go('projects');
             }

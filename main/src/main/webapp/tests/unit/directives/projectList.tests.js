@@ -53,7 +53,7 @@ describe('projectList', () => {
 
         expect(SessionService.saveProject).toHaveBeenCalled();
         expect(EventBus.emit).toHaveBeenCalled();
-        expect($state.go).toHaveBeenCalledWith('dashboard');
+        expect($state.go).toHaveBeenCalledWith('projectsDashboard');
     });
 
     it('should delete a project after confirming', () => {

@@ -48,10 +48,10 @@ const latestLearnResultWidget = {
                     <strong ng-bind="::(vm.result.configuration.eqOracle.type | formatEqOracle)"></strong> and the
                     <strong ng-bind="::(vm.result.configuration.algorithm | formatAlgorithm)"></strong> algorithm.
                 </p>
-                <a class="btn btn-xs btn-default" ui-sref="learn.results.compare({testNos: [vm.result.testNo]})">
+                <a class="btn btn-xs btn-default" ui-sref="resultsCompare({testNos: [vm.result.testNo]})">
                     <i class="fa fa-fw fa-eye"></i> View hypothesis
                 </a>
-                <a class="btn btn-xs btn-default" ui-sref="statistics.compare({testNos: [vm.result.testNo], mode: 'cumulated'})">
+                <a class="btn btn-xs btn-default" ui-sref="statisticsCompare({testNos: [vm.result.testNo], mode: 'cumulated'})">
                     <i class="fa fa-fw fa-bar-chart-o"></i> View statistics
                 </a>
             </div>

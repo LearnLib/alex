@@ -1,4 +1,4 @@
-<div ng-controller="LearnResultsController as vm">
+<div ng-controller="ResultsController as vm">
     <view-header title="Learn Results"></view-header>
 
     <action-bar>
@@ -37,7 +37,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a ui-sref="learn.results.compare({testNos: [result.testNo]})">
+                                <a ui-sref="resultsCompare({testNos: [result.testNo]})">
                                     <i class="fa fa-code-fork fa-fw"></i> Hypotheses
                                 </a>
                             </li>

@@ -82,6 +82,6 @@ describe('HomeController', () => {
 
         expect(HomeController.user).toEqual(user);
         expect(HomeController.project).toEqual(project);
-        expect($state.go).toHaveBeenCalledWith('dashboard');
+        expect($state.go).toHaveBeenCalledWith('projectsDashboard');
     });
 });
