@@ -1,5 +1,5 @@
-describe('ProjectsController', () => {
-    let ProjectsController;
+describe('ProjectsViewComponent', () => {
+    let controller;
     let $state;
     let $q;
     let SessionService;
@@ -10,23 +10,27 @@ describe('ProjectsController', () => {
     let EventBus;
     let ToastService;
     let events;
+    let $compile;
+    let $rootScope;
 
     let deferred;
 
     beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, $rootScope, _$state_, _SessionService_, _Project_, _ProjectResource_, _EventBus_,
-                       _ToastService_, _$q_, _events_) => {
+    beforeEach(inject((_$controller_, _$rootScope_, _$state_, _SessionService_, _Project_, _ProjectResource_, _EventBus_,
+                       _ToastService_, _$q_, _events_, _$compile_) => {
 
         $state = _$state_;
         $q = _$q_;
         SessionService = _SessionService_;
-        scope = $rootScope.$new();
+        scope = _$rootScope_.$new();
         Project = _Project_;
         ProjectResource = _ProjectResource_;
         $controller = _$controller_;
         EventBus = _EventBus_;
         ToastService = _ToastService_;
         events = _events_;
+        $rootScope = _$rootScope_;
+        $compile = _$compile_;
 
         SessionService.saveUser(ENTITIES.users[0]);
         deferred = $q.defer();
@@ -36,14 +40,10 @@ describe('ProjectsController', () => {
     }));
 
     function createController() {
-        ProjectsController = $controller('ProjectsController', {
-            $scope: scope,
-            $state: $state,
-            SessionService: SessionService,
-            ProjectResource: ProjectResource,
-            EventBus: EventBus,
-            ToastService: ToastService
-        });
+        const element = angular.element("<projects-view></projects-view>");
+        const renderedElement = $compile(element)($rootScope);
+        $rootScope.$digest();
+        controller = element.controller('projectsView');
     }
 
     afterEach(() => {
@@ -56,7 +56,7 @@ describe('ProjectsController', () => {
 
         createController();
         scope.$digest();
-        expect(ProjectsController.projects.length).toEqual(0);
+        expect(controller.projects.length).toEqual(0);
         expect($state.current.name).toEqual('projects');
     });
 
@@ -74,8 +74,8 @@ describe('ProjectsController', () => {
         deferred.resolve(ENTITIES.projects.map(p => new Project(p)));
 
         scope.$digest();
-        expect(ProjectsController.projects.length).toEqual(3);
-        ProjectsController.projects.forEach(p => expect(p instanceof Project));
+        expect(controller.projects.length).toEqual(3);
+        controller.projects.forEach(p => expect(p instanceof Project));
         expect(ProjectResource.getAll).toHaveBeenCalled();
     });
 
@@ -87,7 +87,7 @@ describe('ProjectsController', () => {
         deferred.reject({data: {message: null}});
 
         scope.$digest();
-        expect(ProjectsController.projects.length).toEqual(0);
+        expect(controller.projects.length).toEqual(0);
         expect(ProjectResource.getAll).toHaveBeenCalled();
         expect(ToastService.danger).toHaveBeenCalled();
     });
@@ -102,25 +102,25 @@ describe('ProjectsController', () => {
 
     it('should add a project to the list on project:created event', () => {
         prepare();
-        const pre = ProjectsController.projects.length;
+        const pre = controller.projects.length;
         EventBus.emit(events.PROJECT_CREATED, {project: new Project({id: 5})});
-        expect(ProjectsController.projects.length).toEqual(pre + 1);
-        expect(ProjectsController.projects[pre].id).toEqual(5);
+        expect(controller.projects.length).toEqual(pre + 1);
+        expect(controller.projects[pre].id).toEqual(5);
     });
 
     it('should remove a project from the list on project:deleted event', () => {
         prepare();
-        const pre = ProjectsController.projects.length;
+        const pre = controller.projects.length;
         EventBus.emit(events.PROJECT_DELETED, {project: new Project({id: 1})});
-        expect(ProjectsController.projects.length).toEqual(pre - 1);
-        expect(ProjectsController.projects.find(p => p.id === 1)).toBeUndefined();
+        expect(controller.projects.length).toEqual(pre - 1);
+        expect(controller.projects.find(p => p.id === 1)).toBeUndefined();
     });
 
     it('should update a project from the list on project:updated event', () => {
         prepare();
-        const pre = ProjectsController.projects.length;
+        const pre = controller.projects.length;
         EventBus.emit(events.PROJECT_UPDATED, {project: new Project({id: 1, name: 'updatedName'})});
-        expect(ProjectsController.projects.length).toEqual(pre);
-        expect(ProjectsController.projects.find(p => p.id === 1).name).toEqual('updatedName');
+        expect(controller.projects.length).toEqual(pre);
+        expect(controller.projects.find(p => p.id === 1).name).toEqual('updatedName');
     })
 });

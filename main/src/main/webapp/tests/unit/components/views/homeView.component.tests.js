@@ -1,23 +1,27 @@
-describe('HomeController', () => {
-    let HomeController;
+describe('HomeViewComponent', () => {
+    let controller;
     let $state;
     let SessionService;
     let scope;
     let Project;
     let User;
     let $controller;
+    let $compile;
+    let $rootScope;
 
     let project;
     let user;
 
     beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, $rootScope, _$state_, _SessionService_, _Project_, _User_) => {
+    beforeEach(inject((_$controller_, _$rootScope_, _$compile_, _$state_, _SessionService_, _Project_, _User_) => {
         $state = _$state_;
         SessionService = _SessionService_;
-        scope = $rootScope.$new();
+        scope = _$rootScope_.$new();
         Project = _Project_;
         User = _User_;
         $controller = _$controller_;
+        $compile = _$compile_;
+        $rootScope = _$rootScope_
 
         project = new Project(ENTITIES.projects[0]);
         user = new User(ENTITIES.users[0]);
@@ -26,10 +30,10 @@ describe('HomeController', () => {
     }));
 
     function createController() {
-        HomeController = $controller('HomeController', {
-            $state: $state,
-            SessionService: SessionService
-        });
+        const element = angular.element("<home-view></home-view>");
+        const renderedElement = $compile(element)($rootScope);
+        $rootScope.$digest();
+        controller = element.controller('homeView');
     }
 
     afterEach(() => {
@@ -43,8 +47,8 @@ describe('HomeController', () => {
         $state.go('home');
         scope.$digest();
 
-        expect(HomeController.user).toBeNull();
-        expect(HomeController.project).toBeNull();
+        expect(controller.user).toBeNull();
+        expect(controller.project).toBeNull();
         expect($state.current.name).toEqual('home');
     });
 
@@ -55,8 +59,8 @@ describe('HomeController', () => {
         $state.go('home');
         scope.$digest();
 
-        expect(HomeController.user).toBeNull();
-        expect(HomeController.project).toEqual(project);
+        expect(controller.user).toBeNull();
+        expect(controller.project).toEqual(project);
         expect($state.current.name).toEqual('home');
     });
 
@@ -67,8 +71,8 @@ describe('HomeController', () => {
         $state.go('home');
         scope.$digest();
 
-        expect(HomeController.user).toEqual(user);
-        expect(HomeController.project).toBeNull();
+        expect(controller.user).toEqual(user);
+        expect(controller.project).toBeNull();
         expect($state.go).toHaveBeenCalledWith('projects');
     });
 
@@ -80,8 +84,8 @@ describe('HomeController', () => {
         $state.go('home');
         scope.$digest();
 
-        expect(HomeController.user).toEqual(user);
-        expect(HomeController.project).toEqual(project);
+        expect(controller.user).toEqual(user);
+        expect(controller.project).toEqual(project);
         expect($state.go).toHaveBeenCalledWith('projectsDashboard');
     });
 });

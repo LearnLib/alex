@@ -56,7 +56,8 @@ ENTITIES.learnConfigurations = [
         eqOracle: {type: 'random_word', minLength: 2, maxLength: 5, maxNoOfTests: 10},
         algorithm: 'TTT',
         resetSymbol: {id: 1, revision: 1},
-        comment: null
+        comment: null,
+        browser: 'htmlunitdriver'
     }
 ];
 

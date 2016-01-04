@@ -1,20 +1,24 @@
-describe('UsersSettingsController', () => {
+describe('UsersSettingsViewComponent', () => {
     let scope;
     let $q;
+    let $rootScope;
+    let $compile;
     let $controller;
     let UserResource;
     let SessionService;
     let ToastService;
     let User;
-    let UsersSettingsController;
+    let controller;
 
     let user;
 
     beforeEach(module('ALEX'));
-    beforeEach(inject((_$rootScope_, _$q_, _$controller_, _UserResource_, _SessionService_, _ToastService_, _User_) => {
+    beforeEach(inject((_$rootScope_, _$compile_, _$q_, _$controller_, _UserResource_, _SessionService_, _ToastService_, _User_) => {
         scope = _$rootScope_.$new();
         $q = _$q_;
         $controller = _$controller_;
+        $compile = _$compile_;
+        $rootScope = _$rootScope_;
         UserResource = _UserResource_;
         SessionService = _SessionService_;
         ToastService = _ToastService_;
@@ -25,17 +29,11 @@ describe('UsersSettingsController', () => {
     }));
 
     function createController() {
-        UsersSettingsController = $controller('UsersSettingsController', {
-            UserResource: UserResource,
-            SessionService: SessionService,
-            ToastService: ToastService
-        });
+        const element = angular.element("<users-settings-view></users-settings-view>");
+        const renderedElement = $compile(element)($rootScope);
+        $rootScope.$digest();
+        controller = element.controller('usersSettingsView');
     }
-
-    it('should initialize the controller with a null user', () => {
-        createController();
-        expect(UsersSettingsController.user).toBeNull();
-    });
 
     it('should get the project from the server and save it', () => {
         let deferred = $q.defer();
@@ -45,7 +43,7 @@ describe('UsersSettingsController', () => {
         scope.$digest();
 
         expect(UserResource.get).toHaveBeenCalledWith(user.id);
-        expect(UsersSettingsController.user instanceof User).toBeTruthy();
+        expect(controller.user instanceof User).toBeTruthy();
     });
 
     it('should display a toast danger message if the user could not be fetched from the server', () => {
@@ -58,6 +56,6 @@ describe('UsersSettingsController', () => {
 
         expect(UserResource.get).toHaveBeenCalledWith(user.id);
         expect(ToastService.danger).toHaveBeenCalled();
-        expect(UsersSettingsController.user).toBeNull();
+        expect(controller.user).toBeNull();
     })
 });

@@ -4,7 +4,7 @@ import _ from 'lodash';
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
  */
 // @ngInject
-class CountersController {
+class CountersViewComponent {
 
     /**
      * Constructor
@@ -60,7 +60,7 @@ class CountersController {
     /**
      * Delete all selected counters from the server and on success from scope
      */
-    deleteSelectedCounters () {
+    deleteSelectedCounters() {
         if (this.selectedCounters.length > 0) {
             this.CounterResource.removeMany(this.project.id, this.selectedCounters)
                 .then(() => {
@@ -76,4 +76,8 @@ class CountersController {
     }
 }
 
-export default CountersController;
+export const countersViewComponent = {
+    controller: CountersViewComponent,
+    controllerAs: 'vm',
+    templateUrl: 'views/pages/counters.html'
+};

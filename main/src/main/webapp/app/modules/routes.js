@@ -10,100 +10,100 @@ function config($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('home', {
             url: '/home',
-            templateUrl: 'views/pages/home.html'
+            template: '<home-view></home-view>'
         })
         .state('usersSettings', {
             url: '/users/settings',
-            templateUrl: 'views/pages/users-settings.html',
+            template: '<users-settings-view></users-settings-view>',
             data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('projects', {
             url: '/projects',
-            templateUrl: 'views/pages/projects.html',
+            template: '<projects-view></projects-view>',
             data: {roles: ['REGISTERED', 'ADMIN']}
         })
         .state('projectsDashboard', {
             url: '/projects/dashboard',
-            templateUrl: 'views/pages/projects-dashboard.html',
+            template: '<projects-dashboard-view></projects-dashboard-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('counters', {
             url: '/counters',
-            templateUrl: 'views/pages/counters.html',
+            template: '<counters-view></counters-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('symbols', {
             url: '/symbols',
-            templateUrl: 'views/pages/symbols.html',
+            template: '<symbols-view></symbols-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('symbolsTrash', {
             url: '/symbols/trash',
-            templateUrl: 'views/pages/symbols-trash.html',
+            template: '<symbols-trash-view></symbols-trash-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('symbolsHistory', {
             url: '/symbols/{symbolId:int}/history',
-            templateUrl: 'views/pages/symbols-history.html',
+            template: '<symbols-history-view></symbols-history-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('symbolsActions', {
             url: '/symbols/{symbolId:int}/actions',
-            templateUrl: 'views/pages/symbols-actions.html',
+            template: '<symbols-actions-view></symbols-actions-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('symbolsImport', {
             url: '/symbols/import',
-            templateUrl: 'views/pages/symbols-import.html',
+            template: '<symbols-import-view></symbols-import-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('learnerSetup', {
             url: '/learner/setup',
-            templateUrl: 'views/pages/learner-setup.html',
+            template: '<learner-setup-view></learner-setup-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('learnerStart', {
             url: '/learner/start',
-            templateUrl: 'views/pages/learner-start.html',
+            template: '<learner-start-view></learner-start-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('results', {
             url: '/results',
-            templateUrl: 'views/pages/results.html',
+            template: '<results-view></results-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('resultsCompare', {
             url: '/results/:testNos/compare',
-            templateUrl: 'views/pages/results-compare.html',
+            template: '<results-compare-view></results-compare-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('statistics', {
             url: '/statistics',
-            templateUrl: 'views/pages/statistics.html',
+            template: '<statistics-view></statistics-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('statisticsCompare', {
             url: '/statistics/{testNos:string}/compare/{mode:string}',
-            templateUrl: 'views/pages/statistics-compare.html',
+            template: '<statistics-compare-view></statistics-compare-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         })
         .state('adminUsers', {
             url: '/admin/users',
-            templateUrl: 'views/pages/admin-users.html',
+            template: '<admin-users-view></admin-users-view>',
             data: {requiresProject: false, roles: ['ADMIN']}
         })
         .state('about', {
             url: '/about',
-            templateUrl: 'views/pages/about.html',
+            template: '<about-view></about-view>',
             data: {}
         })
         .state('error', {
             url: '/error',
-            templateUrl: 'views/pages/error.html'
+            template: '<error-view></error-view>'
         })
         .state('files', {
             url: '/files',
-            templateUrl: 'views/pages/files.html',
+            template: '<files-view></files-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
         });
 }

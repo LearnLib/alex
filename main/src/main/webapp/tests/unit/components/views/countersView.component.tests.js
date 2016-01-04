@@ -1,12 +1,15 @@
 describe('CountersController', () => {
-    let $controller, $q, $rootScope, CountersController, SessionService, CounterResource, ToastService, Counter, Project;
+    let $controller, $q, $rootScope, SessionService, CounterResource, ToastService, Counter, Project, $compile;
+
     let project;
+    let controller;
 
     beforeEach(module('ALEX'));
 
     beforeEach(inject(($injector) => {
         $controller = $injector.get('$controller');
         $rootScope = $injector.get('$rootScope');
+        $compile = $injector.get('$compile');
         $q = $injector.get('$q');
         SessionService = $injector.get('SessionService');
         CounterResource = $injector.get('CounterResource');
@@ -23,11 +26,10 @@ describe('CountersController', () => {
     });
 
     function createController() {
-        CountersController = $controller('CountersController', {
-            SessionService: SessionService,
-            CounterResource: CounterResource,
-            ToastService: ToastService
-        });
+        const element = angular.element("<counters-view></counters-view>");
+        const renderedElement = $compile(element)($rootScope);
+        $rootScope.$digest();
+        controller = element.controller('countersView');
     }
 
     function init() {
@@ -47,56 +49,56 @@ describe('CountersController', () => {
         createController();
 
         expect(SessionService.getProject).toHaveBeenCalled();
-        expect(CountersController.project).toEqual(project);
-        expect(CountersController.counters).toEqual([]);
-        expect(CountersController.selectedCounters).toEqual([]);
+        expect(controller.project).toEqual(project);
+        expect(controller.counters).toEqual([]);
+        expect(controller.selectedCounters).toEqual([]);
 
         deferred.resolve(counters);
         $rootScope.$digest();
 
-        expect(CountersController.counters).toEqual(counters);
+        expect(controller.counters).toEqual(counters);
     });
 
     it('should delete a single counter from the server and from the list', () => {
         const deferred = $q.defer();
-        const counter = CountersController.counters[0];
-        const pre = CountersController.counters.length;
+        const counter = controller.counters[0];
+        const pre = controller.counters.length;
         spyOn(CounterResource, 'remove').and.returnValue(deferred.promise);
         spyOn(ToastService, 'success').and.callThrough();
         init();
 
-        CountersController.deleteCounter(counter);
+        controller.deleteCounter(counter);
         deferred.resolve({});
         $rootScope.$digest();
 
         expect(CounterResource.remove).toHaveBeenCalledWith(project.id, counter);
         expect(ToastService.success).toHaveBeenCalled();
-        expect(CountersController.counters.length).toBe(pre - 1);
-        expect(CountersController.counters.find(c => c.name === counter.name)).toBeUndefined();
+        expect(controller.counters.length).toBe(pre - 1);
+        expect(controller.counters.find(c => c.name === counter.name)).toBeUndefined();
     });
 
     it('should display a message if the counters could not be fetched', () => {
         const deferred = $q.defer();
-        const counter = CountersController.counters[0];
-        const pre = CountersController.counters.length;
+        const counter = controller.counters[0];
+        const pre = controller.counters.length;
         spyOn(CounterResource, 'remove').and.returnValue(deferred.promise);
         spyOn(ToastService, 'danger').and.callThrough();
         init();
 
-        CountersController.deleteCounter(counter);
+        controller.deleteCounter(counter);
         deferred.reject({data: {message: null}});
         $rootScope.$digest();
 
         expect(CounterResource.remove).toHaveBeenCalledWith(project.id, counter);
         expect(ToastService.danger).toHaveBeenCalled();
-        expect(CountersController.counters.length).toBe(pre);
-        expect(CountersController.counters.find(c => c.name === counter.name)).toEqual(counter);
+        expect(controller.counters.length).toBe(pre);
+        expect(controller.counters.find(c => c.name === counter.name)).toEqual(counter);
     });
 
     it('should not delete counters if there are no selected ones', () => {
         spyOn(CounterResource, 'removeMany').and.callThrough();
         init();
-        CountersController.deleteSelectedCounters();
+        controller.deleteSelectedCounters();
         expect(CounterResource.removeMany).not.toHaveBeenCalled();
     });
 
@@ -130,15 +132,15 @@ describe('CountersController', () => {
 
         init();
         const selectedCounters = [ENTITIES.counters[0], ENTITIES.counters[1]];
-        CountersController.selectedCounters = selectedCounters;
+        controller.selectedCounters = selectedCounters;
 
-        CountersController.deleteSelectedCounters();
+        controller.deleteSelectedCounters();
         deferred.reject({data: {message: null}});
         $rootScope.$digest();
 
         expect(ToastService.danger).toHaveBeenCalled();
         selectedCounters.forEach(c => {
-            expect(CountersController.counters.findIndex(c2 => c2.name === c.name)).not.toBe(-1);
+            expect(controller.counters.findIndex(c2 => c2.name === c.name)).not.toBe(-1);
         })
     });
 });

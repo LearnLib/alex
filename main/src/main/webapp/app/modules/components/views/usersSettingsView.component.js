@@ -1,6 +1,6 @@
 /** The controller of the user settings page */
 // @ngInject
-class UsersSettingsController {
+class UsersSettingsViewComponent {
 
     /**
      * Constructor
@@ -30,4 +30,8 @@ class UsersSettingsController {
     }
 }
 
-export default UsersSettingsController;
+export const usersSettingsViewComponent = {
+    controller: UsersSettingsViewComponent,
+    controllerAs: 'vm',
+    templateUrl: 'views/pages/users-settings.html'
+};

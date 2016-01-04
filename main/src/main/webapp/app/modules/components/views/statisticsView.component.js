@@ -2,7 +2,7 @@ import {chartMode} from '../../constants';
 
 /** The controller for the statistics page. */
 // @ngInject
-class StatisticsController {
+class StatisticsViewComponent {
 
     /**
      * Constructor
@@ -114,4 +114,8 @@ class StatisticsController {
     }
 }
 
-export default StatisticsController;
+export const statisticsViewComponent = {
+    controller: StatisticsViewComponent,
+    controllerAs: 'vm',
+    templateUrl: 'views/pages/statistics.html'
+};

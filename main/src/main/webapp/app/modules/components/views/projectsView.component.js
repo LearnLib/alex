@@ -5,7 +5,7 @@ import {events} from '../../constants';
  * The controller that shows the page to manage projects
  */
 // @ngInject
-class ProjectsController {
+class ProjectsViewComponent {
 
     /**
      * Constructor
@@ -58,4 +58,8 @@ class ProjectsController {
     }
 }
 
-export default ProjectsController;
+export const projectsViewComponent = {
+    controller: ProjectsViewComponent,
+    controllerAs: 'vm',
+    templateUrl: 'views/pages/projects.html'
+};

@@ -6,7 +6,7 @@ import {Symbol} from '../../entities/Symbol';
  * The controller that handles the import of symbols from a *.json file.
  */
 // @ngInject
-class SymbolsImportController {
+class SymbolsImportViewComponent {
 
     /**
      * Constructor
@@ -138,4 +138,8 @@ class SymbolsImportController {
     }
 }
 
-export default SymbolsImportController;
+export const symbolsImportViewComponent = {
+    controller: SymbolsImportViewComponent,
+    controllerAs: 'vm',
+    templateUrl: 'views/pages/symbols-import.html'
+};

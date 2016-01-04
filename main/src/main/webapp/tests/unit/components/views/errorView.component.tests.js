@@ -1,25 +1,29 @@
-describe('ErrorController', () => {
+describe('ErrorViewComponent', () => {
     let $controller;
+    let $compile;
+    let $rootScope;
     let scope;
     let $state;
     let ErrorService;
-    let ErrorController;
+    let controller;
 
     beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, _$rootScope_, _$state_, _ErrorService_) => {
+    beforeEach(inject((_$controller_, _$compile_ ,_$rootScope_, _$state_, _ErrorService_) => {
         $state = _$state_;
         scope = _$rootScope_.$new();
         $controller = _$controller_;
         ErrorService = _ErrorService_;
+        $compile = _$compile_;
+        $rootScope = _$rootScope_;
 
         spyOn($state, 'go').and.callThrough();
     }));
 
     function createController() {
-        ErrorController = $controller('ErrorController', {
-            $state: $state,
-            ErrorService: ErrorService
-        });
+        const element = angular.element("<error-view></error-view>");
+        const renderedElement = $compile(element)($rootScope);
+        $rootScope.$digest();
+        controller = element.controller('errorView');
     }
 
     it('should display an error if there is a message', () => {
@@ -31,12 +35,12 @@ describe('ErrorController', () => {
         scope.$digest();
 
         expect($state.current.name).toEqual('error');
-        expect(ErrorController.errorMessage).toEqual(message);
+        expect(controller.errorMessage).toEqual(message);
     });
 
     it('should redirect to home if there is no message to display', () => {
         createController();
-        expect(ErrorController.errorMessage).toBeNull();
+        expect(controller.errorMessage).toBeNull();
         $state.go('error');
         scope.$digest();
 

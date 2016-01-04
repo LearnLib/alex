@@ -6,7 +6,7 @@ import {Symbol} from '../../entities/Symbol';
  * The controller that handles CRUD operations on symbols and symbol groups.
  */
 // @ngInject
-class SymbolsController {
+class SymbolsViewComponent {
 
     /**
      * Constructor
@@ -271,4 +271,8 @@ class SymbolsController {
     }
 }
 
-export default SymbolsController;
+export const symbolsViewComponent = {
+    controller: SymbolsViewComponent,
+    controllerAs: 'vm',
+    templateUrl: 'views/pages/symbols.html'
+};

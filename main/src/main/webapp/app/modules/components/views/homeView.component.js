@@ -1,6 +1,6 @@
 /** The controller of the index page. */
 // @ngInject
-class HomeController {
+class HomeViewComponent {
 
     /**
      * Constructor
@@ -21,4 +21,8 @@ class HomeController {
     }
 }
 
-export default HomeController;
+export const homeViewComponent = {
+    controller: HomeViewComponent,
+    controllerAs: 'vm',
+    templateUrl: 'views/pages/home.html'
+};

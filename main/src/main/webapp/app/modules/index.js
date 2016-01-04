@@ -13,6 +13,7 @@ import {entities} from './entities/index';
 import {filters} from './filters/index';
 import {resources} from './resources/index';
 import {services} from './services/index';
+import {components} from './components/index';
 
 angular
     .module('ALEX', [
@@ -32,6 +33,7 @@ angular
         // application specific modules
         'ALEX.templates',
         controllers,
+        components,
         directives,
         entities,
         filters,
