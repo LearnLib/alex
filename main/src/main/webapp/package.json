@@ -1,12 +1,15 @@
 {
   "name": "ALEX",
   "version": "1.0.0",
-  "description": "An Interface for Active Automata Learning",
+  "description": "An interface for Active Automata Learning",
   "repository": {
     "type": "git",
     "url": "ssh://git@projekte.itmc.tu-dortmund.de/informatik-ls5/bachelorarbeiten/alex.git"
   },
-  "licence": "MIT",
+  "licence": {
+    "type": "Apache-2.0",
+    "url": "http://www.apache.org/licenses/LICENSE-2.0"
+  },
   "contributors": [
     {
       "name": "Alexander Bainczyk",
