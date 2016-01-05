@@ -31,6 +31,10 @@ body {
     .learn-start-wrapper {
       margin-left: $sidebar-width-collapsed;
     }
+
+    .learn-results-compare-wrapper {
+      left: 0;
+    }
   }
 
   &.has-fixed-action-bar {
