@@ -106,12 +106,12 @@ public class ProjectDAOImpl implements ProjectDAO {
         // get the Projects
         @SuppressWarnings("unchecked") // it should be a list of Projects
         List<Project> result = session.createCriteria(Project.class)
-                .add(Restrictions.eq("user", user))
-                .list();
+                                      .add(Restrictions.eq("user", user))
+                                      .list();
 
         // load lazy relations
         for (Project p : result) {
-            initLazyRelations(p, embedFields);
+            initLazyRelations(p, session, embedFields);
         }
 
         // done
@@ -130,7 +130,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
         // load lazy relations
         if (result != null) {
-            initLazyRelations(result, embedFields);
+            initLazyRelations(result, session, embedFields);
         }
 
         // done
@@ -149,9 +149,9 @@ public class ProjectDAOImpl implements ProjectDAO {
         HibernateUtil.beginTransaction();
 
         Project result = (Project) session.createCriteria(Project.class)
-                .add(Restrictions.eq("user.id", userId))
-                .add(Restrictions.eq("name", projectName))
-                .uniqueResult();
+                                          .add(Restrictions.eq("user.id", userId))
+                                          .add(Restrictions.eq("name", projectName))
+                                          .uniqueResult();
 
         HibernateUtil.commitTransaction();
 
@@ -207,11 +207,12 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     /**
      * Load objects that are connected with a project over a 'lazy' relation ship.
-     *
      * @param project
      *         The project which needs the 'lazy' objects.
+     * @param session
+     *
      */
-    private void initLazyRelations(Project project, EmbeddableFields... embedFields) {
+    private void initLazyRelations(Project project, Session session, EmbeddableFields... embedFields) {
         if (embedFields != null && embedFields.length > 0) {
             Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
@@ -222,10 +223,7 @@ public class ProjectDAOImpl implements ProjectDAO {
             }
 
             if (fieldsToLoad.contains(EmbeddableFields.DEFAULT_GROUP)) {
-                Hibernate.initialize(project.getDefaultGroup());
-                if (project.getDefaultGroup() != null) {
-                    project.getDefaultGroup().getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
-                }
+                project.getDefaultGroup().getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
             } else {
                 project.setDefaultGroup(null);
             }
@@ -254,6 +252,9 @@ public class ProjectDAOImpl implements ProjectDAO {
             project.setTestResults(null);
             project.setCounters(null);
         }
+
+        // make sure that the "changes" of the project are never actually send to the db.
+        session.evict(project);
     }
 
     private Set<EmbeddableFields> fieldsArrayToHashSet(EmbeddableFields[] embedFields) {
@@ -281,9 +282,9 @@ public class ProjectDAOImpl implements ProjectDAO {
         Session session = HibernateUtil.getSession();
 
         Long projectCount = (Long) session.createCriteria(Project.class)
-                                            .add(Restrictions.eq("id", projectId))
-                                            .setProjection(Projections.rowCount())
-                                            .uniqueResult();
+                                          .add(Restrictions.eq("id", projectId))
+                                          .setProjection(Projections.rowCount())
+                                          .uniqueResult();
 
         return projectCount == 0;
     }

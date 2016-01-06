@@ -76,25 +76,6 @@ public class SymbolGroup implements Serializable {
         this.symbols = new HashSet<>();
     }
 
-    /**
-     * Get the related/ 'parent' project of the group.
-     *
-     * @return The project the group is a part of.
-     */
-    public Project getProject() {
-        return project;
-    }
-
-    /**
-     * Set a new project for the group.
-     *
-     * @param project
-     *         The new project.
-     */
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
     @JsonIgnore
     public void setUser(User user) {
         this.user = user;
@@ -117,6 +98,25 @@ public class SymbolGroup implements Serializable {
     @JsonProperty("user")
     public void setUserId(Long userId) {
         user = new User(userId);
+    }
+
+    /**
+     * Get the related/ 'parent' project of the group.
+     *
+     * @return The project the group is a part of.
+     */
+    public Project getProject() {
+        return project;
+    }
+
+    /**
+     * Set a new project for the group.
+     *
+     * @param project
+     *         The new project.
+     */
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     /**
