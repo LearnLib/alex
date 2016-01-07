@@ -7,7 +7,7 @@ import {Symbol} from '../../entities/Symbol';
  * manages has to be defined in the url by its id.
  */
 // @ngInject
-class SymbolsActionsViewComponent {
+class SymbolsActionsView {
 
     /**
      * Constructor
@@ -215,8 +215,8 @@ class SymbolsActionsViewComponent {
     }
 }
 
-export const symbolsActionsViewComponent = {
-    controller: SymbolsActionsViewComponent,
+export const symbolsActionsView = {
+    controller: SymbolsActionsView,
     controllerAs: 'vm',
     templateUrl: 'views/pages/symbols-actions.html'
 };

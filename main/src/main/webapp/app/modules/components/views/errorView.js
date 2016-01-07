@@ -1,6 +1,6 @@
 /** The controller of the error page */
 // @ngInject
-class ErrorViewComponent {
+class ErrorView {
 
     /**
      * Constructor
@@ -24,8 +24,8 @@ class ErrorViewComponent {
     }
 }
 
-export const errorViewComponent = {
-    controller: ErrorViewComponent,
+export const errorView = {
+    controller: ErrorView,
     controllerAs: 'vm',
     template: `
         <div class="alx-container">

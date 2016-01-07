@@ -6,7 +6,7 @@ import {Symbol} from '../../entities/Symbol';
  * of these symbols. By default, recovered symbols will be moved in the default group with the id 0.
  */
 // @ngInject
-class SymbolsTrashViewComponent {
+class SymbolsTrashView {
 
     /**
      * Constructor
@@ -75,8 +75,8 @@ class SymbolsTrashViewComponent {
     }
 }
 
-export const symbolsTrashViewComponent = {
-    controller: SymbolsTrashViewComponent,
+export const symbolsTrashView = {
+    controller: SymbolsTrashView,
     controllerAs: 'vm',
     templateUrl: 'views/pages/symbols-trash.html'
 };

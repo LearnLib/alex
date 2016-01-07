@@ -4,7 +4,7 @@ import _ from 'lodash';
  * The controller for listing all final test results.
  */
 // @ngInject
-class ResultsViewComponent {
+class ResultsView {
 
     /**
      * Constructor
@@ -97,8 +97,8 @@ class ResultsViewComponent {
     }
 }
 
-export const resultsViewComponent = {
-    controller: ResultsViewComponent,
+export const resultsView = {
+    controller: ResultsView,
     controllerAs: 'vm',
     templateUrl: 'views/pages/results.html'
 };

@@ -2,7 +2,7 @@
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
  */
 // @ngInject
-class ResultsCompareViewComponent {
+class ResultsCompareView {
 
     /**
      * Constructor
@@ -102,8 +102,8 @@ class ResultsCompareViewComponent {
     }
 }
 
-export const resultsCompareViewComponent = {
-    controller: ResultsCompareViewComponent,
+export const resultsCompareView = {
+    controller: ResultsCompareView,
     controllerAs: 'vm',
     templateUrl: 'views/pages/results-compare.html'
 };

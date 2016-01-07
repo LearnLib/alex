@@ -4,7 +4,7 @@ import {Symbol} from '../../entities/Symbol';
  * The controller for the page where the revision history if a symbol is listed and old revisions can be restored
  */
 // @ngInject
-class SymbolsHistoryViewComponent {
+class SymbolsHistoryView {
 
     /**
      * Constructor
@@ -69,8 +69,8 @@ class SymbolsHistoryViewComponent {
     }
 }
 
-export const symbolsHistoryViewComponent = {
-    controller: SymbolsHistoryViewComponent,
+export const symbolsHistoryView = {
+    controller: SymbolsHistoryView,
     controllerAs: 'vm',
     templateUrl: 'views/pages/symbols-history.html'
 };

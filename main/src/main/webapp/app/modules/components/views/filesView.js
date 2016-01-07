@@ -1,6 +1,6 @@
 /** The controller of the files page */
 // @ngInject
-class FilesViewComponent {
+class FilesView {
 
     /**
      * Constructor
@@ -118,8 +118,8 @@ class FilesViewComponent {
     }
 }
 
-export const filesViewComponent = {
-    controller: FilesViewComponent,
+export const filesView = {
+    controller: FilesView,
     controllerAs: 'vm',
     templateUrl: 'views/pages/files.html'
 };

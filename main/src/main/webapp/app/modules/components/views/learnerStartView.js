@@ -6,7 +6,7 @@ import LearnConfiguration from '../../entities/LearnConfiguration';
  * in the intermediate steps.
  */
 // @ngInject
-class LearnerStartViewComponent {
+class LearnerStartView {
 
     /**
      * Constructor
@@ -143,8 +143,8 @@ class LearnerStartViewComponent {
     }
 }
 
-export const learnerStartViewComponent = {
-    controller: LearnerStartViewComponent,
+export const learnerStartView = {
+    controller: LearnerStartView,
     controllerAs: 'vm',
     templateUrl: 'views/pages/learner-start.html'
 };

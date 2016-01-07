@@ -1,49 +1,97 @@
-import {aboutViewComponent} from './views/aboutView.component';
-import {adminUsersViewComponent} from './views/adminUsersView.component';
-import {countersViewComponent} from './views/countersView.component';
-import {errorViewComponent} from './views/errorView.component';
-import {filesViewComponent} from './views/filesView.component';
-import {homeViewComponent} from './views/homeView.component';
-import {learnerSetupViewComponent} from './views/learnerSetupView.component';
-import {learnerStartViewComponent} from './views/learnerStartView.component';
-import {projectsViewComponent} from './views/projectsView.component';
-import {projectsDashboardViewComponent} from './views/projectsDashboardView.component';
-import {resultsCompareViewComponent} from './views/resultsCompareView.component';
-import {resultsViewComponent} from './views/resultsView.component';
-import {statisticsCompareViewComponent} from './views/statisticsCompareView.component';
-import {statisticsViewComponent} from './views/statisticsView.component';
-import {symbolsActionsViewComponent} from './views/symbolsActionsView.component';
-import {symbolsViewComponent} from './views/symbolsView.component';
-import {symbolsHistoryViewComponent} from './views/symbolsHistoryView.component';
-import {symbolsImportViewComponent} from './views/symbolsImportView.component';
-import {symbolsTrashViewComponent} from './views/symbolsTrashView.component';
-import {usersSettingsViewComponent} from './views/usersSettingsView.component';
+// views
+import {aboutView} from './views/aboutView';
+import {adminUsersView} from './views/adminUsersView';
+import {countersView} from './views/countersView';
+import {errorView} from './views/errorView';
+import {filesView} from './views/filesView';
+import {homeView} from './views/homeView';
+import {learnerSetupView} from './views/learnerSetupView';
+import {learnerStartView} from './views/learnerStartView';
+import {projectsView} from './views/projectsView';
+import {projectsDashboardView} from './views/projectsDashboardView';
+import {resultsCompareView} from './views/resultsCompareView';
+import {resultsView} from './views/resultsView';
+import {statisticsCompareView} from './views/statisticsCompareView';
+import {statisticsView} from './views/statisticsView';
+import {symbolsActionsView} from './views/symbolsActionsView';
+import {symbolsView} from './views/symbolsView';
+import {symbolsHistoryView} from './views/symbolsHistoryView';
+import {symbolsImportView} from './views/symbolsImportView';
+import {symbolsTrashView} from './views/symbolsTrashView';
+import {usersSettingsView} from './views/usersSettingsView';
+
+// forms
+import actionCreateEditForm from './forms/actionCreateEditForm';
+import projectCreateForm from './forms/projectCreateForm';
+import userEditForm from './forms/userEditForm';
+import userLoginForm from './forms/userLoginForm';
+import userRegisterForm from './forms/userRegisterForm';
+
+// widgets
+import widget from './widgets/widget';
+import projectDetailsWidget from './widgets/projectDetailsWidget';
+import learnResumeSettingsWidget from './widgets/learnResumeSettingsWidget';
+import learnerStatusWidget from './widgets/learnerStatusWidget';
+import latestLearnResultWidget from './widgets/latestLearnResultWidget';
+import counterexamplesWidget from './widgets/counterexamplesWidget';
+
+// misc
+import alex from './alex';
+import {checkbox, checkboxMultiple} from './checkbox';
+import loadScreen from './loadScreen';
+import projectList from './projectList';
+import sidebar from './sidebar';
+import viewHeader from './viewHeader';
 
 const moduleName = 'ALEX.components';
 
 angular
     .module(moduleName, [])
 
-    // view components
-    .component('aboutView', aboutViewComponent)
-    .component('adminUsersView', adminUsersViewComponent)
-    .component('countersView', countersViewComponent)
-    .component('errorView', errorViewComponent)
-    .component('filesView', filesViewComponent)
-    .component('homeView', homeViewComponent)
-    .component('learnerSetupView', learnerSetupViewComponent)
-    .component('learnerStartView', learnerStartViewComponent)
-    .component('projectsView', projectsViewComponent)
-    .component('projectsDashboardView', projectsDashboardViewComponent)
-    .component('resultsCompareView', resultsCompareViewComponent)
-    .component('resultsView', resultsViewComponent)
-    .component('statisticsCompareView', statisticsCompareViewComponent)
-    .component('statisticsView', statisticsViewComponent)
-    .component('symbolsActionsView', symbolsActionsViewComponent)
-    .component('symbolsView', symbolsViewComponent)
-    .component('symbolsHistoryView', symbolsHistoryViewComponent)
-    .component('symbolsImportView', symbolsImportViewComponent)
-    .component('symbolsTrashView', symbolsTrashViewComponent)
-    .component('usersSettingsView', usersSettingsViewComponent);
+    // views
+    .component('aboutView', aboutView)
+    .component('adminUsersView', adminUsersView)
+    .component('countersView', countersView)
+    .component('errorView', errorView)
+    .component('filesView', filesView)
+    .component('homeView', homeView)
+    .component('learnerSetupView', learnerSetupView)
+    .component('learnerStartView', learnerStartView)
+    .component('projectsView', projectsView)
+    .component('projectsDashboardView', projectsDashboardView)
+    .component('resultsCompareView', resultsCompareView)
+    .component('resultsView', resultsView)
+    .component('statisticsCompareView', statisticsCompareView)
+    .component('statisticsView', statisticsView)
+    .component('symbolsActionsView', symbolsActionsView)
+    .component('symbolsView', symbolsView)
+    .component('symbolsHistoryView', symbolsHistoryView)
+    .component('symbolsImportView', symbolsImportView)
+    .component('symbolsTrashView', symbolsTrashView)
+    .component('usersSettingsView', usersSettingsView)
+
+    // forms
+    .component('actionCreateEditForm', actionCreateEditForm)
+    .component('projectCreateForm', projectCreateForm)
+    .component('userEditForm', userEditForm)
+    .component('userLoginForm', userLoginForm)
+    .component('userRegisterForm', userRegisterForm)
+
+    // widgets
+    .component('widget', widget)
+    .component('counterexamplesWidget', counterexamplesWidget)
+    .component('learnResumeSettingsWidget', learnResumeSettingsWidget)
+    .component('learnerStatusWidget', learnerStatusWidget)
+    .component('latestLearnResultWidget', latestLearnResultWidget)
+    .component('projectDetailsWidget', projectDetailsWidget)
+
+    // misc
+    .component('alex', alex)
+    .component('checkbox', checkbox)
+    .component('checkboxMultiple', checkboxMultiple)
+    .component('loadScreen', loadScreen)
+    .component('projectList', projectList)
+    .component('sidebar', sidebar)
+    .component('viewHeader', viewHeader);
 
 export const components = moduleName;

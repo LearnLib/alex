@@ -2,7 +2,7 @@ import {events} from '../../constants';
 
 /** The controller for the admin users page */
 // @ngInject
-class AdminUsersViewComponent {
+class AdminUsersView {
 
     /**
      * Constructor
@@ -43,8 +43,8 @@ class AdminUsersViewComponent {
     }
 }
 
-export const adminUsersViewComponent = {
-    controller: AdminUsersViewComponent,
+export const adminUsersView = {
+    controller: AdminUsersView,
     controllerAs: 'vm',
     templateUrl: 'views/pages/admin-users.html'
 };

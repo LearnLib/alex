@@ -4,7 +4,7 @@ import {chartMode} from '../../constants';
  * The controller for the learn statistics page.
  */
 // @ngInject
-class StatisticsCompareViewComponent {
+class StatisticsCompareView {
 
     /**
      * Constructor
@@ -163,8 +163,8 @@ class StatisticsCompareViewComponent {
     }
 }
 
-export const statisticsCompareViewComponent = {
-    controller: StatisticsCompareViewComponent,
+export const statisticsCompareView = {
+    controller: StatisticsCompareView,
     controllerAs: 'vm',
     templateUrl: 'views/pages/statistics-compare.html'
 };

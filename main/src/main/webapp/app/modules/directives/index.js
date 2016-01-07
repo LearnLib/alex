@@ -1,6 +1,4 @@
-import alex from './alex';
 import actionBar from './actionBar';
-import {checkbox, checkboxMultiple} from './checkbox';
 import discriminationTree from './discriminationTree';
 import downloadSvg from './downloadSvg';
 import downloadTableAsCsv from './downloadTableAsCsv';
@@ -10,21 +8,10 @@ import {htmlElementPicker, htmlElementPickerWindow} from './htmlElementPicker';
 import hypothesis from './hypothesis';
 import {learnResultList, learnResultListItem} from './learnResultList';
 import {learnResultPanel, learnResultComparePanel} from './learnResultPanel';
-import loadScreen from './loadScreen';
 import observationTable from './observationTable';
-import projectList from './projectList';
 import responsiveIframe from './responsiveIframe';
-import sidebar from './sidebar';
 import {symbolGroupList, symbolGroupListItem} from './symbolGroupList';
 import {symbolList, symbolListItem} from './symbolList';
-import viewHeader from './viewHeader';
-
-// forms
-import actionCreateEditForm from './forms/actionCreateEditForm';
-import projectCreateForm from './forms/projectCreateForm';
-import userEditForm from './forms/userEditForm';
-import userLoginForm from './forms/userLoginForm';
-import userRegisterForm from './forms/userRegisterForm';
 
 // modal handles
 import actionCreateModalHandle from './modalHandles/actionCreateModalHandle';
@@ -41,23 +28,11 @@ import symbolMoveModalHandle from './modalHandles/symbolMoveModalHandle';
 import userEditModalHandle from './modalHandles/userEditModalHandle';
 import variablesCountersOccurrenceModalHandle from './modalHandles/variablesCountersOccurrenceModalHandle';
 
-// widgets
-import widget from './widgets/widget';
-import projectDetailsWidget from './widgets/projectDetailsWidget';
-import learnResumeSettingsWidget from './widgets/learnResumeSettingsWidget';
-import learnerStatusWidget from './widgets/learnerStatusWidget';
-import latestLearnResultWidget from './widgets/latestLearnResultWidget';
-import counterexamplesWidget from './widgets/counterexamplesWidget';
-
 const moduleName = 'ALEX.directives';
 
 angular
     .module(moduleName, [])
-    .component('alex', alex)
     .directive('actionBar', actionBar)
-    .component('actionCreateEditForm', actionCreateEditForm)
-    .component('checkbox', checkbox)
-    .component('checkboxMultiple', checkboxMultiple)
     .directive('discriminationTree', discriminationTree)
     .directive('downloadTableAsCsv', downloadTableAsCsv)
     .directive('downloadSvg', downloadSvg)
@@ -70,20 +45,12 @@ angular
     .directive('learnResultListItem', learnResultListItem)
     .directive('learnResultPanel', learnResultPanel)
     .directive('learnResultComparePanel', learnResultComparePanel)
-    .component('loadScreen', loadScreen)
     .directive('observationTable', observationTable)
-    .component('projectCreateForm', projectCreateForm)
-    .component('projectList', projectList)
     .directive('responsiveIframe', responsiveIframe)
-    .component('sidebar', sidebar)
     .directive('symbolGroupList', symbolGroupList)
     .directive('symbolGroupListItem', symbolGroupListItem)
     .directive('symbolList', symbolList)
     .directive('symbolListItem', symbolListItem)
-    .component('userEditForm', userEditForm)
-    .component('userLoginForm', userLoginForm)
-    .component('userRegisterForm', userRegisterForm)
-    .component('viewHeader', viewHeader)
 
     // modal handles
     .directive('actionCreateModalHandle', actionCreateModalHandle)
@@ -98,14 +65,6 @@ angular
     .directive('symbolGroupEditModalHandle', symbolGroupEditModalHandle)
     .directive('symbolMoveModalHandle', symbolMoveModalHandle)
     .directive('userEditModalHandle', userEditModalHandle)
-    .directive('variablesCountersOccurrenceModalHandle', variablesCountersOccurrenceModalHandle)
-
-    // widgets
-    .component('widget', widget)
-    .component('counterexamplesWidget', counterexamplesWidget)
-    .component('learnResumeSettingsWidget', learnResumeSettingsWidget)
-    .component('learnerStatusWidget', learnerStatusWidget)
-    .component('latestLearnResultWidget', latestLearnResultWidget)
-    .component('projectDetailsWidget', projectDetailsWidget);
+    .directive('variablesCountersOccurrenceModalHandle', variablesCountersOccurrenceModalHandle);
 
 export const directives = moduleName;
