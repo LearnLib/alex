@@ -29,9 +29,9 @@
     <div class="view-body has-sub-nav">
         <div class="alx-container-fluid">
 
-            <div file-dropzone class="alert alert-info" ng-if="vm.symbols.length === 0">
+            <file-dropzone ng-if="vm.symbols.length === 0">
                 Drag and drop *.json file here or click to upload
-            </div>
+            </file-dropzone>
 
             <symbol-list>
                 <symbol-list-item ng-repeat="symbol in vm.symbols" symbol="symbol"

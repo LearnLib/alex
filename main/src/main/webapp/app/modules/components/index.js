@@ -37,7 +37,9 @@ import counterexamplesWidget from './widgets/counterexamplesWidget';
 
 // misc
 import alex from './alex';
+import {actionBar} from './actionBar';
 import {checkbox, checkboxMultiple} from './checkbox';
+import {fileDropzone} from './fileDropzone';
 import loadScreen from './loadScreen';
 import projectList from './projectList';
 import sidebar from './sidebar';
@@ -87,8 +89,10 @@ angular
 
     // misc
     .component('alex', alex)
+    .component('actionBar', actionBar)
     .component('checkbox', checkbox)
     .component('checkboxMultiple', checkboxMultiple)
+    .component('fileDropzone', fileDropzone)
     .component('loadScreen', loadScreen)
     .component('projectList', projectList)
     .component('sidebar', sidebar)

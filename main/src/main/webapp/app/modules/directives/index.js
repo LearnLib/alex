@@ -1,9 +1,7 @@
-import actionBar from './actionBar';
 import discriminationTree from './discriminationTree';
 import downloadSvg from './downloadSvg';
 import downloadTableAsCsv from './downloadTableAsCsv';
 import dropdownHover from './dropdownHover';
-import fileDropzone from './fileDropzone';
 import {htmlElementPicker, htmlElementPickerWindow} from './htmlElementPicker';
 import hypothesis from './hypothesis';
 import {learnResultList, learnResultListItem} from './learnResultList';
@@ -32,12 +30,10 @@ const moduleName = 'ALEX.directives';
 
 angular
     .module(moduleName, [])
-    .directive('actionBar', actionBar)
     .directive('discriminationTree', discriminationTree)
     .directive('downloadTableAsCsv', downloadTableAsCsv)
     .directive('downloadSvg', downloadSvg)
     .directive('dropdownHover', dropdownHover)
-    .directive('fileDropzone', fileDropzone)
     .directive('htmlElementPicker', htmlElementPicker)
     .directive('htmlElementPickerWindow', htmlElementPickerWindow)
     .directive('hypothesis', hypothesis)
