@@ -12,7 +12,6 @@ import SymbolGroupCreateModalController from './modals/SymbolGroupCreateModalCon
 import SymbolGroupEditModalController from './modals/SymbolGroupEditModalController';
 import SymbolMoveModalController from './modals/SymbolMoveModalController';
 import UserEditModalController from './modals/UserEditModalController';
-import VariablesCountersOccurrenceModalController from './modals/VariablesCountersOccurrenceModalController';
 
 const moduleName = 'ALEX.controllers';
 
@@ -34,6 +33,5 @@ angular
     .controller('SymbolGroupEditModalController', SymbolGroupEditModalController)
     .controller('SymbolMoveModalController', SymbolMoveModalController)
     .controller('UserEditModalController', UserEditModalController)
-    .controller('VariablesCountersOccurrenceModalController', VariablesCountersOccurrenceModalController);
 
 export const controllers = moduleName;

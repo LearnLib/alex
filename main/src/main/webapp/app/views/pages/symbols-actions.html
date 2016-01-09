@@ -49,15 +49,10 @@
             </ul>
         </div>
 
-        <div class="pull-right">
-            <button class="btn btn-default btn-sm" variables-counters-occurrence-modal-handle>
-                Occurrences
-            </button>
-            <button class="btn btn-success btn-sm" ng-class="{'disabled' : !vm.hasChanged}"
-                    ng-click="vm.saveChanges()">
-                Save
-            </button>
-        </div>
+        <button class="btn btn-success btn-sm pull-right" ng-class="{'disabled' : !vm.hasChanged}"
+                ng-click="vm.saveChanges()">
+            Save
+        </button>
     </action-bar>
 
     <div class="view-body has-sub-nav">

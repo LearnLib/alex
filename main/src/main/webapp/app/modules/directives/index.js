@@ -24,7 +24,6 @@ import symbolGroupCreateModalHandle from './modalHandles/symbolGroupCreateModalH
 import symbolGroupEditModalHandle from './modalHandles/symbolGroupEditModalHandle';
 import symbolMoveModalHandle from './modalHandles/symbolMoveModalHandle';
 import userEditModalHandle from './modalHandles/userEditModalHandle';
-import variablesCountersOccurrenceModalHandle from './modalHandles/variablesCountersOccurrenceModalHandle';
 
 const moduleName = 'ALEX.directives';
 
@@ -60,7 +59,6 @@ angular
     .directive('symbolGroupCreateModalHandle', symbolGroupCreateModalHandle)
     .directive('symbolGroupEditModalHandle', symbolGroupEditModalHandle)
     .directive('symbolMoveModalHandle', symbolMoveModalHandle)
-    .directive('userEditModalHandle', userEditModalHandle)
-    .directive('variablesCountersOccurrenceModalHandle', variablesCountersOccurrenceModalHandle);
+    .directive('userEditModalHandle', userEditModalHandle);
 
 export const directives = moduleName;
