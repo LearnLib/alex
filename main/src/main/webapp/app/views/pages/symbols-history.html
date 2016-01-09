@@ -1,5 +1,5 @@
 <div id="view-symbols-history">
-    <view-header title="History of Symbol {{vm.latestRevision.name}}">
+    <view-header ng-if="vm.latestRevision" title="History of symbol: {{vm.latestRevision.name}}">
         <a ui-sref="symbols" class="btn btn-sm btn-default btn-icon"
            tooltip="Back to symbols" tooltip-placement="right">
             <i class="fa fa-reply"></i>
@@ -9,7 +9,7 @@
     <div class="view-body">
         <div class="alx-container-fluid">
 
-            <symbol-list>
+            <symbol-list ng-if="vm.revisions.length">
                 <symbol-list-item symbol="vm.latestRevision">
                     <span class="label label-primary">Latest</span>
                 </symbol-list-item>
@@ -25,7 +25,7 @@
 
             <br>
 
-            <div class="alert alert-info" ng-show="vm.revisions.length === 0">
+            <div class="alert alert-info" ng-if="vm.revisions.length === 0">
                 There are no older versions of this symbol that could be restored.
             </div>
 

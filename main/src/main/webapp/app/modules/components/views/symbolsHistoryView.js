@@ -60,7 +60,7 @@ class SymbolsHistoryView {
         this.SymbolResource.update(symbol)
             .then(updatedSymbol => {
                 this.ToastService.success('Updated symbol to revision <strong>' + revision.revision + '</strong>');
-                this.revisions.unshift($scope.latestRevision);
+                this.revisions.unshift(this.latestRevision);
                 this.latestRevision = updatedSymbol;
             })
             .catch(response => {

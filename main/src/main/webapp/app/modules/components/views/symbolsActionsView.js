@@ -98,7 +98,8 @@ class SymbolsActionsView {
 
         // dragula
         dragulaService.options($scope, 'actionList', {
-            removeOnSpill: false
+            removeOnSpill: false,
+            mirrorContainer: document.createElement('div')
         });
 
         $scope.$on('actionList.drop-model', () => {

@@ -68,15 +68,37 @@
                      selection-model-selected-items="vm.selectedActions"
                      ng-class="{'disabled': action.disabled}">
 
-                    <checkbox selection-model-ignore class="pull-left" model="action"></checkbox>
+                    <div class="flex-item">
+                        <checkbox selection-model-ignore model="action"></checkbox>
+                    </div>
 
-                    <div class="action-list-item-content">
+                    <div class="flex-item">
+                        <div class="action-description" ng-bind="action.toString()"></div>
+                        <div>
+                            <label class="label label-info" ng-show="action.negated">Negate</label>
+                            <label class="label label-danger" ng-show="action.ignoreFailure">Ignore Failure</label>
+                        </div>
+                    </div>
 
-                        <div class="btn-group btn-group-sm pull-right" dropdown dropdown-hover>
+                    <div class="flex-item">
+                        <span class="btn btn-sm"
+                              ng-click="vm.toggleDisableAction(action)"
+                              selection-model-ignore>
+                                <span ng-show="!action.disabled" tooltip-placement="left" tooltip="Disable">
+                                    <i class="fa fa-toggle-on fa-fw text-success"></i>
+                                </span>
+                                <span ng-show="action.disabled" tooltip-placement="left" tooltip="Enable">
+                                    <i class="fa fa-toggle-off fa-fw text-danger"></i>
+                                </span>
+                        </span>
+                    </div>
+
+                    <div class="flex-item">
+                        <div class="btn-group btn-group-sm" dropdown dropdown-hover>
                             <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
                                 <i class="fa fa-bars"></i>
                             </button>
-                            <ul class="dropdown-menu pull-left" role="menu">
+                            <ul class="dropdown-menu pull-right" role="menu">
                                 <li>
                                     <a href="" action-edit-modal-handle action="action">
                                         <i class="fa fa-edit fa-fw"></i> Edit
@@ -100,31 +122,14 @@
                                 </li>
                             </ul>
                         </div>
-
-                            <span class="btn btn-sm pull-right" ng-click="vm.toggleDisableAction(action)"
-                                  selection-model-ignore>
-                                <span ng-show="!action.disabled" tooltip-placement="bottom" tooltip="Disable">
-                                    <i class="fa fa-toggle-on fa-fw text-success"></i>
-                                </span>
-                                <span ng-show="action.disabled" tooltip-placement="bottom" tooltip="Enable">
-                                    <i class="fa fa-toggle-off fa-fw text-danger"></i>
-                                </span>
-                            </span>
-
-                        <span class="action-description" ng-bind="action.toString()"></span>
-
-                        <div>
-                            <label class="label label-info" ng-show="action.negated">Negate</label>
-                            <label class="label label-danger" ng-show="action.ignoreFailure">Ignore Failure</label>
-                        </div>
-
                     </div>
                 </div>
-
-                <div class="alert alert-info" ng-if="vm.symbol.actions.length === 0">
-                    You haven't created any actions for this symbol yet.
-                </div>
-
             </div>
+
+            <div class="alert alert-info" ng-if="vm.symbol.actions.length === 0">
+                You haven't created any actions for this symbol yet.
+            </div>
+
         </div>
     </div>
+</div>

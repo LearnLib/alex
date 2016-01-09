@@ -1,6 +1,6 @@
 <div class="symbol-list-item" ng-class="{'selectable': isSelectable}">
 
-    <checkbox selection-model-ignore model="symbol" class="pull-left"></checkbox>
+    <checkbox selection-model-ignore model="symbol" class="pull-left" ng-if="isSelectable"></checkbox>
 
     <div class="symbol-list-item-content">
         <div class="pull-right" ng-transclude></div>
@@ -17,14 +17,14 @@
             <span ng-bind="symbol.countEnabledActions()"></span> Actions
         </span>
 
-        <a href="" ng-click="symbol._collapsed = !symbol._collapsed" selection-model-ignore>
-            <i class="fa fa-fw" ng-class="symbol._collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
+        <a href="" ng-click="collapsed = !collapsed" selection-model-ignore>
+            <i class="fa fa-fw" ng-class="collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
         </a>
 
-        <div collapse="!symbol._collapsed">
+        <div collapse="!collapsed">
             <div class="panel panel-default" style="margin-top: 5px;">
                 <div class="panel-heading clearfix">
-                    <button class="btn btn-xs btn-default pull-right" ng-click="symbol._collapsed = !symbol._collapsed">
+                    <button class="btn btn-xs btn-icon pull-right" ng-click="collapsed = !collapsed">
                         <i class="fa fa-close"></i>
                     </button>
                     <a class="btn btn-xs btn-default" ui-sref="symbolsActions({symbolId:symbol.id})"

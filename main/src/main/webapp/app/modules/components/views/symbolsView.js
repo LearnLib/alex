@@ -32,12 +32,6 @@ class SymbolsView {
         this.project = SessionService.getProject();
 
         /**
-         * indicates if symbol groups are displayed collapsed
-         * @type {boolean}
-         */
-        this.groupsCollapsed = false;
-
-        /**
          * The model for selected symbols
          * @type {Symbol[]}
          */
@@ -220,16 +214,6 @@ class SymbolsView {
     deleteGroup(group) {
         this.removeSymbols(group.symbols);
         _.remove(this.groups, {id: group.id});
-    }
-
-    /**
-     * Collapses all groups or expands them
-     */
-    toggleCollapseAllGroups() {
-        this.groupsCollapsed = !this.groupsCollapsed;
-        this.groups.forEach(group => {
-            group._collapsed = !group._collapsed;
-        });
     }
 
     /**
