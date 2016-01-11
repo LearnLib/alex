@@ -27,10 +27,20 @@ function config(ngToastProvider, selectionModelOptionsProvider, jwtInterceptorPr
     });
 
     // pass the jwt with each request to the server
-    jwtInterceptorProvider.tokenGetter = ['$window', function ($window) {
+    jwtInterceptorProvider.tokenGetter = ['$window', $window => {
         return $window.sessionStorage.getItem('jwt');
     }];
     $httpProvider.interceptors.push('jwtInterceptor');
+
+    // request the permission to send notifications only once
+    if (("Notification" in window) && Notification.permission !== 'denied') {
+        Notification.requestPermission(permission => {
+            if (permission === "default") {
+                const notification = new Notification("The cake is a lie!");
+                setTimeout(notification.close.bind(notification), 3000);
+            }
+        });
+    }
 }
 
 export const configuration = {

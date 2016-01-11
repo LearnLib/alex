@@ -90,6 +90,12 @@ class LearnerStartView {
                             } else {
                                 this.LearnResultResource.getComplete(this.project.id, result.testNo).then(results => {
                                     this.results = results;
+
+                                    // notify the user that the learning process has finished
+                                    if (("Notification" in window) && Notification.permission === 'granted') {
+                                        const notification = new Notification("ALEX has finished learning your application!");
+                                        setTimeout(notification.close.bind(notification), 5000);
+                                    }
                                 });
                             }
                         });
