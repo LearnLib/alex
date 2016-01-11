@@ -39,6 +39,7 @@ import SetVariableByCookieAction from './actions/generalActions/SetVariableByCoo
 import SetVariableByJsonAttributeGeneralAction from './actions/generalActions/SetVariableByJsonAttributeGeneralAction';
 import SetVariableByNodeGeneralAction from './actions/generalActions/SetVariableByNodeGeneralAction';
 import SetVariableGeneralAction from './actions/generalActions/SetVariableGeneralAction';
+import SetVariableByNodeAttributeGeneralAction from './actions/generalActions/SetVariableByNodeAttributeGeneralAction';
 import WaitGeneralAction from './actions/generalActions/WaitGeneralAction';
 
 const moduleName = 'ALEX.entities';

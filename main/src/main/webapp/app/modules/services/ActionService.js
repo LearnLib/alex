@@ -30,6 +30,7 @@ import SetCounterGeneralAction from '../entities/actions/generalActions/SetCount
 import SetVariableByCookieAction from '../entities/actions/generalActions/SetVariableByCookieAction';
 import SetVariableByJsonAttributeGeneralAction from '../entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
 import SetVariableByNodeGeneralAction from '../entities/actions/generalActions/SetVariableByNodeGeneralAction';
+import SetVariableByNodeAttributeGeneralAction from '../entities/actions/generalActions/SetVariableByNodeAttributeGeneralAction';
 import SetVariableGeneralAction from '../entities/actions/generalActions/SetVariableGeneralAction';
 import WaitGeneralAction from '../entities/actions/generalActions/WaitGeneralAction';
 
@@ -101,6 +102,8 @@ class ActionService {
                 return new SetVariableByNodeGeneralAction(data);
             case actionType.GENERAL_SET_VARIABLE:
                 return new SetVariableGeneralAction(data);
+            case actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE:
+                return new SetVariableByNodeAttributeGeneralAction(data);
             case actionType.GENERAL_WAIT:
                 return new WaitGeneralAction(data);
         }

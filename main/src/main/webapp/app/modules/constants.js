@@ -93,6 +93,7 @@ const actionType = {
     GENERAL_SET_VARIABLE_BY_COOKIE: 'setVariableByCookie',
     GENERAL_SET_VARIABLE_BY_JSON: 'setVariableByJSON',
     GENERAL_SET_VARIABLE_BY_HTML: 'setVariableByHTML',
+    GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE: 'setVariableByNodeAttribute',
     GENERAL_SET_VARIABLE: 'setVariable',
     GENERAL_WAIT: 'wait'
 };
