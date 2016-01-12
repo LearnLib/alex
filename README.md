@@ -1,6 +1,6 @@
-<div style="text-align: center">
-![ALEX Logo](assets/images/logo.png)
-</div>
+<p align="center">
+    <img src="assets/images/logo.png" style="max-width:100%;">
+</p>
 
 # ALEX
 
