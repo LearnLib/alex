@@ -108,7 +108,6 @@
         <surefire-report.version>2.19</surefire-report.version>
         <war-plugin.version>2.6</war-plugin.version>
 
-        <reports-plugin.version>2.8.1</reports-plugin.version>
         <checkstyle.version>2.17</checkstyle.version>
         <cobertura.version>2.7</cobertura.version>
         <findbugs.version>3.0.2</findbugs.version>
@@ -154,58 +153,7 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.4</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>lt.velykis.maven.skins</groupId>
-                        <artifactId>reflow-velocity-tools</artifactId>
-                        <version>1.1.1</version>
-                    </dependency>
-                    <!-- Reflow skin requires Velocity >= 1.7  -->
-                    <dependency>
-                        <groupId>org.apache.velocity</groupId>
-                        <artifactId>velocity</artifactId>
-                        <version>1.7</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>stage</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>stage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
-
-    <!--===== reports ======-->
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${reports-plugin.version}</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>summary</report>
-                            <report>project-team</report>
-                            <report>modules</report>
-                            <report>dependencies</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
 
     <!--===== distribution management ======-->
     <distributionManagement>
@@ -216,124 +164,9 @@
     </distributionManagement>
 
     <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <!--===== reports ======-->
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-project-info-reports-plugin</artifactId>
-                        <version>${reports-plugin.version}</version>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>scm</report>
-                                    <report>issue-tracking</report>
-                                    <report>dependency-convergence</report>
-                                    <report>dependency-management</report>
-                                    <report>plugin-management</report>
-                                    <report>plugins</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                        <configuration>
-                            <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-                        </configuration>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>versions-maven-plugin</artifactId>
-                        <version>${versions-plugin.version}</version>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>dependency-updates-report</report>
-                                    <report>plugin-updates-report</report>
-                                    <report>property-updates-report</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
-
-                    <!-- javadoc -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${javadoc-plugin.version}</version>
-                        <configuration>
-                            <!-- UML -->
-                            <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-                            <docletArtifact>
-                                <groupId>org.umlgraph</groupId>
-                                <artifactId>umlgraph</artifactId>
-                                <version>${javadoc-umlgraph.version}</version>
-                            </docletArtifact>
-                            <additionalparam>
-                                -all -hide java.* -collapsible -inferdep -collpackages java.util.*
-                            </additionalparam>
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                        </configuration>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>javadoc</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
-
-                    <!-- checkstyle -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>${checkstyle.version}</version>
-                        <configuration>
-                            <configLocation>src/site/resources/checkstyle.xml</configLocation>
-                            <suppressionsLocation>src/site/resources/checkstyle-suppressions.xml</suppressionsLocation>
-                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        </configuration>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>checkstyle</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
-
-                    <!-- PMD -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-pmd-plugin</artifactId>
-                        <version>${pmd.version}</version>
-                        <configuration>
-                            <minimumTokens>75</minimumTokens>
-                        </configuration>
-                    </plugin>
-
-                    <!-- Findbugs -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>${findbugs.version}</version>
-                        <configuration>
-                            <effort>Max</effort>
-                            <threshold>Medium</threshold>
-                            <includeTests>true</includeTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
-        </profile>
 
         <profile>
             <id>release</id>
-            <!--===== reports ======-->
             <build>
                 <plugins>
                     <plugin>
@@ -358,7 +191,6 @@
             <properties>
                 <isDeploy>true</isDeploy>
             </properties>
-            <!--===== reports ======-->
             <build>
                 <plugins>
                     <plugin>
