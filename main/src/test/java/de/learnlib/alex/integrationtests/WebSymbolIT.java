@@ -21,6 +21,7 @@ import de.learnlib.alex.core.entities.ProjectTest;
 import de.learnlib.alex.core.entities.Symbol;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -37,6 +38,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class WebSymbolIT {
 
     private static final String BASE_URL = "http://localhost:8080/rest";

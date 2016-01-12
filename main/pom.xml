@@ -292,7 +292,7 @@
                     <systemProperties>
                         <property>
                             <name>alex.dbpath</name>
-                            <value>mem:integration-test-db</value>
+                            <value>mem:test-db</value>
                         </property>
                         <property>
                             <name>java.util.logging.manager</name>

@@ -27,6 +27,7 @@ import net.automatalib.util.automata.equivalence.DeterministicEquivalenceTest;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import net.automatalib.words.impl.SimpleAlphabet;
+import org.junit.Ignore;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -41,6 +42,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+@Ignore
 public class LearnerTestHelper {
 
     private static final int TIME_TO_WAIT_BETWEEN_POLLS = 2000; // two seconds

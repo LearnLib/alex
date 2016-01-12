@@ -26,6 +26,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -37,6 +38,7 @@ import javax.ws.rs.core.Response;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class RESTSymbolLearnerIT extends JerseyTest {
 
     private static final int MAX_TIME_TO_WAIT_FOR_LEARNER = 180000; // three minutes !!
