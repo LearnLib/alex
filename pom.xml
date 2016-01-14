@@ -74,7 +74,7 @@
     </organization>
 
     <scm>
-        <developerConnection>scm:ssh://git@projekte.itmc.tu-dortmund.de/informatik-ls5/bachelorarbeiten/alex.git</developerConnection>
+        <developerConnection>https://github.com/LearnLib/alex.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
     <issueManagement>
