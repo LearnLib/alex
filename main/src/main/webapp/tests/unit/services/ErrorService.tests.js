@@ -3,8 +3,8 @@ describe('ErrorService', () => {
     let scope;
     let $state;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$rootScope_, _$state_, _ErrorService_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$rootScope_, _$state_, _ErrorService_) => {
         ErrorService = _ErrorService_;
         scope = _$rootScope_.$new();
         $state = _$state_;

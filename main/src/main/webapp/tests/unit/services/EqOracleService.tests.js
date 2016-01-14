@@ -1,20 +1,11 @@
+import {RandomEqOracle, CompleteEqOracle, WMethodEqOracle, SampleEqOracle} from '../../../app/modules/entities/EqOracle';
+import {eqOracleType} from '../../../app/modules/constants';
+
 describe('EqOracleService', () => {
-    let eqOracleType;
-    let RandomEqOracle;
-    let CompleteEqOracle;
-    let SampleEqOracle;
-    let WMethodEqOracle;
     let EqOracleService;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_eqOracleType_, _RandomEqOracle_, _CompleteEqOracle_, _SampleEqOracle_, _WMethodEqOracle_,
-                       _EqOracleService_) => {
-
-        eqOracleType = _eqOracleType_;
-        RandomEqOracle = _RandomEqOracle_;
-        CompleteEqOracle = _CompleteEqOracle_;
-        SampleEqOracle = _SampleEqOracle_;
-        WMethodEqOracle = _WMethodEqOracle_;
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_EqOracleService_) => {
         EqOracleService = _EqOracleService_;
     }));
 

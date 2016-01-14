@@ -1,28 +1,27 @@
+import {Project} from '../../../../app/modules/entities/Project';
+import {events} from '../../../../app/modules/constants';
+
 describe('ProjectSettingsModalController', () => {
     let ProjectSettingsModalController;
     let ProjectResource;
     let $controller;
     let EventBus;
     let ToastService;
-    let events;
     let scope;
-    let Project;
 
     let project;
     let modalInstance;
     let deferred;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, $rootScope, _Project_, _ProjectResource_, _EventBus_,
-                       _ToastService_, _events_, _$q_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$controller_, $rootScope, _ProjectResource_, _EventBus_,
+                       _ToastService_, _$q_) => {
 
         scope = $rootScope.$new();
         ProjectResource = _ProjectResource_;
         $controller = _$controller_;
         EventBus = _EventBus_;
         ToastService = _ToastService_;
-        events = _events_;
-        Project = _Project_;
 
         modalInstance = {
             close: jasmine.createSpy('modalInstance.close'),

@@ -1,14 +1,9 @@
-describe('SetVariableByCookieAction', () => {
-    let Action;
-    let SetVariableByCookieAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import SetVariableByCookieAction from '../../../../../app/modules/entities/actions/generalActions/SetVariableByCookieAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        SetVariableByCookieAction = $injector.get('SetVariableByCookieAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('SetVariableByCookieAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new SetVariableByCookieAction({});

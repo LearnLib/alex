@@ -1,16 +1,16 @@
+import Counter from '../../../app/modules/entities/Counter';
+
 describe('CounterResource', () => {
     let $http;
     let $httpBackend;
     let CounterResource;
-    let Counter;
 
     let project;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$http_, _CounterResource_, _Counter_, _$httpBackend_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$http_, _CounterResource_, _$httpBackend_) => {
         $http = _$http_;
         CounterResource = _CounterResource_;
-        Counter = _Counter_;
         $httpBackend = _$httpBackend_;
 
         project = ENTITIES.projects[0];

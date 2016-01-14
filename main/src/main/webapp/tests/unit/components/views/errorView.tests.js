@@ -7,8 +7,8 @@ describe('ErrorViewComponent', () => {
     let ErrorService;
     let controller;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, _$compile_ ,_$rootScope_, _$state_, _ErrorService_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$controller_, _$compile_ ,_$rootScope_, _$state_, _ErrorService_) => {
         $state = _$state_;
         scope = _$rootScope_.$new();
         $controller = _$controller_;

@@ -1,7 +1,7 @@
 describe('userEditForm', () => {
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(() => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject(() => {
 
     }));
 

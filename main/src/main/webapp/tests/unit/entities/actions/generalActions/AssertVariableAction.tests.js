@@ -1,14 +1,9 @@
-describe('AssertVariableAction', () => {
-    let Action;
-    let AssertVariableAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import AssertVariableAction from '../../../../../app/modules/entities/actions/generalActions/AssertVariableAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        AssertVariableAction = $injector.get('AssertVariableAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('AssertVariableAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new AssertVariableAction({});

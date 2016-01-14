@@ -1,14 +1,9 @@
-describe('SetVariableByNodeGeneralAction', () => {
-    let Action;
-    let SetVariableByNodeGeneralAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import SetVariableByNodeGeneralAction from '../../../../../app/modules/entities/actions/generalActions/SetVariableByNodeGeneralAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        SetVariableByNodeGeneralAction = $injector.get('SetVariableByNodeGeneralAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('SetVariableByNodeGeneralAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new SetVariableByNodeGeneralAction({});

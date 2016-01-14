@@ -1,12 +1,12 @@
+import {User, UserFormModel} from '../../../app/modules/entities/User';
+
 describe('UserResource', () => {
-    let UserResource, User, UserFormModel, $http, $q, $httpBackend;
+    let UserResource, $http, $q, $httpBackend;
     let user;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject(($injector) => {
         UserResource = $injector.get('UserResource');
-        User = $injector.get('User');
-        UserFormModel = $injector.get('UserFormModel');
         $http = $injector.get('$http');
         $q = $injector.get('$q');
         $httpBackend = $injector.get('$httpBackend');

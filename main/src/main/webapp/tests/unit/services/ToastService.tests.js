@@ -3,8 +3,8 @@ describe('ToastService', () => {
     let scope;
     let ngToast;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$rootScope_, _ToastService_, _ngToast_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$rootScope_, _ToastService_, _ngToast_) => {
         ToastService = _ToastService_;
         scope = _$rootScope_.$new();
         ngToast = _ngToast_;

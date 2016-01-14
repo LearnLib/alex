@@ -1,3 +1,7 @@
+import {Project} from '../../../../app/modules/entities/Project';
+import {SymbolGroupFormModel} from '../../../../app/modules/entities/SymbolGroup';
+import {events} from '../../../../app/modules/constants';
+
 describe('SymbolGroupCreateModalController', () => {
     let SymbolGroupCreateModalController;
     let SessionService;
@@ -5,18 +9,15 @@ describe('SymbolGroupCreateModalController', () => {
     let $controller;
     let EventBus;
     let ToastService;
-    let events;
     let scope;
-    let Project;
-    let SymbolGroupFormModel;
 
     let project;
     let modalInstance;
     let deferred;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, $rootScope, _SessionService_, _Project_, _SymbolGroupResource_, _EventBus_,
-                       _ToastService_, _events_, _SymbolGroupFormModel_, _$q_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$controller_, $rootScope, _SessionService_, _SymbolGroupResource_, _EventBus_,
+                       _ToastService_, _$q_) => {
 
         SessionService = _SessionService_;
         scope = $rootScope.$new();
@@ -24,9 +25,6 @@ describe('SymbolGroupCreateModalController', () => {
         $controller = _$controller_;
         EventBus = _EventBus_;
         ToastService = _ToastService_;
-        events = _events_;
-        Project = _Project_;
-        SymbolGroupFormModel = _SymbolGroupFormModel_;
 
         modalInstance = {
             close: jasmine.createSpy('modalInstance.close'),

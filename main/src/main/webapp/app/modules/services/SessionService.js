@@ -28,18 +28,6 @@ class SessionService {
 
     constructor(EventBus) {
         this.EventBus = EventBus;
-        //
-        //this.project = {
-        //    get: this.getProject,
-        //    save: this.saveProject,
-        //    remove: this.removeProject
-        //};
-        //
-        //this.user = {
-        //    get: this.getUser,
-        //    save: this.saveUser,
-        //    remove: this.removeUser
-        //};
     }
 
     /**

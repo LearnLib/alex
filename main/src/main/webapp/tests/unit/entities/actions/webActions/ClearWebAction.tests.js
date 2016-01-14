@@ -1,14 +1,9 @@
-describe('ClearWebAction', () => {
-    let Action;
-    let ClearWebAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import ClearWebAction from '../../../../../app/modules/entities/actions/webActions/ClearWebAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        ClearWebAction = $injector.get('ClearWebAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('ClearWebAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new ClearWebAction({});

@@ -1,11 +1,8 @@
-describe('LearnConfiguration', () => {
-    let LearnConfiguration, Symbol;
+import {Symbol} from '../../../app/modules/entities/Symbol';
+import LearnConfiguration from '../../../app/modules/entities/LearnConfiguration';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        LearnConfiguration = $injector.get('LearnConfiguration');
-        Symbol = $injector.get('Symbol');
-    }));
+describe('LearnConfiguration', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should correctly create a default config', () => {
 

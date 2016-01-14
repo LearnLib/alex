@@ -1,58 +1,44 @@
+// web actions
+import SelectWebAction from '../../../app/modules/entities/actions/webActions/SelectWebAction';
+import SubmitWebAction from '../../../app/modules/entities/actions/webActions/SubmitWebAction';
+import GoToWebAction from '../../../app/modules/entities/actions/webActions/GoToWebAction';
+import FillWebAction from '../../../app/modules/entities/actions/webActions/FillWebAction';
+import ClickWebAction from '../../../app/modules/entities/actions/webActions/ClickWebAction';
+import ClickLinkByTextWebAction from '../../../app/modules/entities/actions/webActions/ClickLinkByTextWebAction';
+import ClearWebAction from '../../../app/modules/entities/actions/webActions/ClearWebAction';
+import CheckPageTitleAction from '../../../app/modules/entities/actions/webActions/CheckPageTitleAction';
+import CheckForTextWebAction from '../../../app/modules/entities/actions/webActions/CheckForTextWebAction';
+import CheckForNodeWebAction from '../../../app/modules/entities/actions/webActions/CheckForNodeWebAction';
+
+// rest actions
+import CallRestAction from '../../../app/modules/entities/actions/restActions/CallRestAction';
+import CheckAttributeExistsRestAction from '../../../app/modules/entities/actions/restActions/CheckAttributeExistsRestAction';
+import CheckAttributeTypeRestAction from '../../../app/modules/entities/actions/restActions/CheckAttributeTypeRestAction';
+import CheckAttributeValueRestAction from '../../../app/modules/entities/actions/restActions/CheckAttributeValueRestAction';
+import CheckHeaderFieldRestAction from '../../../app/modules/entities/actions/restActions/CheckHeaderFieldRestAction';
+import CheckHTTPBodyTextRestAction from '../../../app/modules/entities/actions/restActions/CheckHTTPBodyTextRestAction';
+import CheckStatusRestAction from '../../../app/modules/entities/actions/restActions/CheckStatusRestAction';
+
+// general actions
+import ExecuteSymbolGeneralAction from '../../../app/modules/entities/actions/generalActions/ExecuteSymbolGeneralAction';
+import AssertCounterAction from '../../../app/modules/entities/actions/generalActions/AssertCounterAction';
+import AssertVariableAction from '../../../app/modules/entities/actions/generalActions/AssertVariableAction';
+import IncrementCounterGeneralAction from '../../../app/modules/entities/actions/generalActions/IncrementCounterGeneralAction';
+import SetCounterGeneralAction from '../../../app/modules/entities/actions/generalActions/SetCounterGeneralAction';
+import SetVariableByCookieAction from '../../../app/modules/entities/actions/generalActions/SetVariableByCookieAction';
+import SetVariableByJsonAttributeGeneralAction from '../../../app/modules/entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
+import SetVariableByNodeGeneralAction from '../../../app/modules/entities/actions/generalActions/SetVariableByNodeGeneralAction';
+import SetVariableGeneralAction from '../../../app/modules/entities/actions/generalActions/SetVariableGeneralAction';
+import WaitGeneralAction from '../../../app/modules/entities/actions/generalActions/WaitGeneralAction';
+
 describe('ActionService', () => {
     let ActionService;
 
-    // web actions
-    let CheckForNodeWebAction, CheckForTextWebAction, CheckPageTitleAction, ClearWebAction, ClickLinkByTextWebAction,
-        ClickWebAction, FillWebAction, GoToWebAction, SelectWebAction, SubmitWebAction;
-
-    // rest actions
-    let CallRestAction, CheckAttributeExistsRestAction, CheckAttributeTypeRestAction, CheckAttributeValueRestAction,
-        CheckHeaderFieldRestAction, CheckHTTPBodyTextRestAction, CheckStatusRestAction;
-
-    // general actions
-    let AssertCounterAction, AssertVariableAction, ExecuteSymbolGeneralAction, IncrementCounterGeneralAction,
-        SetCounterGeneralAction, SetVariableByCookieAction, SetVariableByJsonAttributeGeneralAction,
-        SetVariableByNodeGeneralAction, SetVariableGeneralAction, WaitGeneralAction;
-
     let actionType;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject($injector => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject($injector => {
         ActionService = $injector.get('ActionService');
-
-        // web actions
-        CheckForNodeWebAction = $injector.get('CheckForNodeWebAction');
-        CheckForTextWebAction = $injector.get('CheckForTextWebAction');
-        CheckPageTitleAction = $injector.get('CheckPageTitleAction');
-        ClearWebAction = $injector.get('ClearWebAction');
-        ClickLinkByTextWebAction = $injector.get('ClickLinkByTextWebAction');
-        ClickWebAction = $injector.get('ClickWebAction');
-        FillWebAction = $injector.get('FillWebAction');
-        GoToWebAction = $injector.get('GoToWebAction');
-        SelectWebAction = $injector.get('SelectWebAction');
-        SubmitWebAction = $injector.get('SubmitWebAction');
-
-        // rest actions
-        CallRestAction = $injector.get('CallRestAction');
-        CheckAttributeExistsRestAction = $injector.get('CheckAttributeExistsRestAction');
-        CheckAttributeTypeRestAction = $injector.get('CheckAttributeTypeRestAction');
-        CheckAttributeValueRestAction = $injector.get('CheckAttributeValueRestAction');
-        CheckHeaderFieldRestAction = $injector.get('CheckHeaderFieldRestAction');
-        CheckHTTPBodyTextRestAction = $injector.get('CheckHTTPBodyTextRestAction');
-        CheckStatusRestAction = $injector.get('CheckStatusRestAction');
-
-        // general actions
-        AssertCounterAction = $injector.get('AssertCounterAction');
-        AssertVariableAction = $injector.get('AssertVariableAction');
-        ExecuteSymbolGeneralAction = $injector.get('ExecuteSymbolGeneralAction');
-        IncrementCounterGeneralAction = $injector.get('IncrementCounterGeneralAction');
-        SetCounterGeneralAction = $injector.get('SetCounterGeneralAction');
-        SetVariableByCookieAction = $injector.get('SetVariableByCookieAction');
-        SetVariableByJsonAttributeGeneralAction = $injector.get('SetVariableByJsonAttributeGeneralAction');
-        SetVariableByNodeGeneralAction = $injector.get('SetVariableByNodeGeneralAction');
-        SetVariableGeneralAction = $injector.get('SetVariableGeneralAction');
-        WaitGeneralAction = $injector.get('WaitGeneralAction');
-
         actionType = $injector.get('actionType');
     }));
 

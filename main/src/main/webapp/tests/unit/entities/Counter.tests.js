@@ -1,10 +1,7 @@
-describe('Counter', () => {
-    let Counter;
+import Counter from '../../../app/modules/entities/Counter';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_Counter_) => {
-        Counter = _Counter_;
-    }));
+describe('Counter', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should correctly create a counter from given data', () => {
         const c = ENTITIES.counters[0];

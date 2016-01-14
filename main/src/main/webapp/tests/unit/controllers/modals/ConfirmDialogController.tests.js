@@ -4,8 +4,8 @@ describe('ConfirmDialogController', () => {
     let ConfirmDialogController;
     let modalInstance;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, _$rootScope_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$controller_, _$rootScope_) => {
         scope = _$rootScope_.$new();
         $controller = _$controller_;
 

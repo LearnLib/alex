@@ -1,3 +1,6 @@
+import {User} from '../../../../app/modules/entities/User';
+import {events} from '../../../../app/modules/constants';
+
 describe('AdminUsersViewComponent', () => {
     let $controller;
     let $rootScope;
@@ -5,23 +8,19 @@ describe('AdminUsersViewComponent', () => {
     let scope;
     let UserResource;
     let EventBus;
-    let events;
-    let User;
 
     let users;
     let deferred;
     let controller;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, _$compile_, _$rootScope_, _UserResource_, _EventBus_, _events_, _User_, _$q_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$controller_, _$compile_, _$rootScope_, _UserResource_, _EventBus_, _$q_) => {
         scope = _$rootScope_.$new();
         $controller = _$controller_;
         $rootScope = _$rootScope_;
         $compile = _$compile_;
         UserResource = _UserResource_;
         EventBus = _EventBus_;
-        events = _events_;
-        User = _User_;
 
         users = ENTITIES.users.map(u => new User(u));
         deferred = _$q_.defer();

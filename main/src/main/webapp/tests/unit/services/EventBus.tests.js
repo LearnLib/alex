@@ -5,8 +5,8 @@ describe('EventBus', () => {
     let $rootScope;
     let scope;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$rootScope_, _EventBus_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$rootScope_, _EventBus_) => {
         EventBus = _EventBus_;
         $rootScope = _$rootScope_;
         scope = _$rootScope_.$new();

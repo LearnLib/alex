@@ -1,14 +1,9 @@
-describe('SetVariableByJsonAttributeGeneralAction', () => {
-    let Action;
-    let SetVariableByJsonAttributeGeneralAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import SetVariableByJsonAttributeGeneralAction from '../../../../../app/modules/entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        SetVariableByJsonAttributeGeneralAction = $injector.get('SetVariableByJsonAttributeGeneralAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('SetVariableByJsonAttributeGeneralAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new SetVariableByJsonAttributeGeneralAction({});

@@ -1,15 +1,15 @@
+import {Symbol, SymbolFormModel} from '../../../app/modules/entities/Symbol';
+
 describe('SymbolResource', () => {
     let $http, $httpBackend;
-    let SymbolResource, Symbol,SymbolFormModel;
+    let SymbolResource;
     let project;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject(($injector) => {
         $http = $injector.get('$http');
         $httpBackend = $injector.get('$httpBackend');
         SymbolResource = $injector.get('SymbolResource');
-        Symbol = $injector.get('Symbol');
-        SymbolFormModel = $injector.get('SymbolFormModel');
 
         project = ENTITIES.projects[0];
     }));

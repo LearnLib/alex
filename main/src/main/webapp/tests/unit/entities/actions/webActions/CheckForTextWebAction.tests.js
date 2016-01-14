@@ -1,14 +1,9 @@
-describe('CheckForTextWebAction', () => {
-    let Action;
-    let CheckForTextWebAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import CheckForTextWebAction from '../../../../../app/modules/entities/actions/webActions/CheckForTextWebAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        CheckForTextWebAction = $injector.get('CheckForTextWebAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('CheckForTextWebAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new CheckForTextWebAction({});

@@ -1,20 +1,18 @@
+import {SymbolGroup, SymbolGroupFormModel} from '../../../app/modules/entities/SymbolGroup';
+
 describe('SymbolGroupResource', () => {
     let $http;
     let $httpBackend;
     let SymbolGroupResource;
-    let SymbolGroup;
-    let SymbolGroupFormModel;
 
     let uri;
     let project;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$http_, _SymbolGroupResource_, _$httpBackend_, _SymbolGroup_, _SymbolGroupFormModel_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$http_, _SymbolGroupResource_, _$httpBackend_) => {
         $http = _$http_;
         SymbolGroupResource = _SymbolGroupResource_;
         $httpBackend = _$httpBackend_;
-        SymbolGroup = _SymbolGroup_;
-        SymbolGroupFormModel = _SymbolGroupFormModel_;
 
         project = ENTITIES.projects[0];
         uri = `/rest/projects/${project.id}/groups`;

@@ -1,14 +1,8 @@
-describe('EqOracle', () => {
-    let RandomEqOracle, CompleteEqOracle, SampleEqOracle, WMethodEqOracle, eqOracleType;
+import {RandomEqOracle, CompleteEqOracle, WMethodEqOracle, SampleEqOracle} from '../../../app/modules/entities/EqOracle';
+import {eqOracleType} from '../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        RandomEqOracle = $injector.get('RandomEqOracle');
-        CompleteEqOracle = $injector.get('CompleteEqOracle');
-        SampleEqOracle = $injector.get('SampleEqOracle');
-        WMethodEqOracle = $injector.get('WMethodEqOracle');
-        eqOracleType = $injector.get('eqOracleType');
-    }));
+describe('EqOracle', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should correctly create a random eq oracle', () => {
 

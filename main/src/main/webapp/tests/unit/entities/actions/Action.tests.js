@@ -1,11 +1,9 @@
+import Action from '../../../../app/modules/entities/actions/Action';
+
 describe('Action', () => {
-    let Action;
     const type = 'someType';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        Action = $injector.get('Action');
-    }));
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should correctly create a default action and have a default toString method', () => {
         const action = new Action(type, {});

@@ -1,10 +1,7 @@
-describe('ProjectFormModel', () => {
-    let ProjectFormModel;
+import {Project, ProjectFormModel} from '../../../app/modules/entities/Project';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_ProjectFormModel_) => {
-        ProjectFormModel = _ProjectFormModel_;
-    }));
+describe('ProjectFormModel', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should correctly create a new ProjectFormModel', () => {
         let project = new ProjectFormModel();
@@ -24,12 +21,7 @@ describe('ProjectFormModel', () => {
 });
 
 describe('Project', () => {
-    let Project;
-
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_Project_) => {
-        Project = _Project_;
-    }));
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should correctly create a new Project from given data', () => {
         const p = ENTITIES.projects[0];

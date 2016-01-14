@@ -1,14 +1,9 @@
-describe('CheckForNodeWebAction', () => {
-    let Action;
-    let CheckForNodeWebAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import CheckForNodeWebAction from '../../../../../app/modules/entities/actions/webActions/CheckForNodeWebAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        CheckForNodeWebAction = $injector.get('CheckForNodeWebAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('CheckForNodeWebAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new CheckForNodeWebAction({});

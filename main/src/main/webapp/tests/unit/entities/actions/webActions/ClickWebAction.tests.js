@@ -1,14 +1,9 @@
-describe('ClickWebAction', () => {
-    let Action;
-    let ClickWebAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import ClickWebAction from '../../../../../app/modules/entities/actions/webActions/ClickWebAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        ClickWebAction = $injector.get('ClickWebAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('ClickWebAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new ClickWebAction({});

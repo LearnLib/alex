@@ -1,17 +1,15 @@
+import {Project, ProjectFormModel} from '../../../app/modules/entities/Project';
+
 describe('ProjectResource', () => {
     let $http;
     let $httpBackend;
     let ProjectResource;
-    let Project;
-    let ProjectFormModel;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$http_, _ProjectResource_, _Project_, _ProjectFormModel_, _$httpBackend_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$http_, _ProjectResource_, _$httpBackend_) => {
         $http = _$http_;
         ProjectResource = _ProjectResource_;
-        Project = _Project_;
         $httpBackend = _$httpBackend_;
-        ProjectFormModel = _ProjectFormModel_;
     }));
 
     it('should correctly initialize the resource', () => {

@@ -25,7 +25,6 @@ import * as constant from './constants';
 
 import {controllers} from './controllers/index';
 import {directives} from './directives/index';
-import {entities} from './entities/index';
 import {filters} from './filters/index';
 import {resources} from './resources/index';
 import {services} from './services/index';
@@ -51,7 +50,6 @@ angular
         controllers,
         components,
         directives,
-        entities,
         filters,
         resources,
         services

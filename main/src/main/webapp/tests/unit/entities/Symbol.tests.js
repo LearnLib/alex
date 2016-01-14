@@ -1,10 +1,8 @@
-describe('SymbolFormModel', () => {
-    let SymbolFormModel;
+import {Symbol, SymbolFormModel} from '../../../app/modules/entities/Symbol';
+import Action from '../../../app/modules/entities/actions/Action';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        SymbolFormModel = $injector.get('SymbolFormModel');
-    }));
+describe('SymbolFormModel', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should correctly create a new SymbolFormModel', () => {
         const expected = {
@@ -21,16 +19,13 @@ describe('SymbolFormModel', () => {
 
 
 describe('Symbol', () => {
-    let Symbol, Action;
     let ActionService;
     let symbol;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        Symbol = $injector.get('Symbol');
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject(($injector) => {
         ActionService = $injector.get('ActionService');
         symbol = new Symbol(ENTITIES.symbols[0]);
-        Action = $injector.get('Action');
     }));
 
     it('should count all enabled actions', () => {

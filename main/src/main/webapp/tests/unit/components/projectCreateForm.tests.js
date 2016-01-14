@@ -1,29 +1,26 @@
+import {Project, ProjectFormModel} from '../../../app/modules/entities/Project';
+import {events} from '../../../app/modules/constants';
+
 describe('projectCreateForm', () => {
     let $rootScope;
     let $compile;
-    let ProjectFormModel;
     let renderedElement;
     let controller;
     let ProjectResource;
     let EventBus;
-    let events;
     let ToastService;
     let $q;
-    let Project;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$rootScope_, _$compile_, _ProjectFormModel_, _ProjectResource_, _EventBus_, _events_,
-                       _ToastService_, _$q_, _Project_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$rootScope_, _$compile_, _ProjectResource_, _EventBus_,
+                       _ToastService_, _$q_) => {
 
         $rootScope = _$rootScope_;
         $compile = _$compile_;
-        ProjectFormModel = _ProjectFormModel_;
         ProjectResource = _ProjectResource_;
         EventBus = _EventBus_;
-        events = _events_;
         ToastService = _ToastService_;
         $q = _$q_;
-        Project = _Project_;
 
         const element = angular.element("<project-create-form></project-create-form>");
         renderedElement = $compile(element)($rootScope);

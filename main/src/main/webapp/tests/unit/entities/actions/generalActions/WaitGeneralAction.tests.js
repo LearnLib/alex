@@ -1,14 +1,9 @@
-describe('WaitGeneralAction', () => {
-    let Action;
-    let WaitGeneralAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import WaitGeneralAction from '../../../../../app/modules/entities/actions/generalActions/WaitGeneralAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        WaitGeneralAction = $injector.get('WaitGeneralAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('WaitGeneralAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new WaitGeneralAction({});

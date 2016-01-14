@@ -1,14 +1,9 @@
-describe('CheckPageTitleAction', () => {
-    let Action;
-    let CheckPageTitleAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import CheckPageTitleAction from '../../../../../app/modules/entities/actions/webActions/CheckPageTitleAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        CheckPageTitleAction = $injector.get('CheckPageTitleAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('CheckPageTitleAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new CheckPageTitleAction({});

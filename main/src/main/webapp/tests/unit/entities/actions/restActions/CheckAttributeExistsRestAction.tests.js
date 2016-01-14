@@ -1,14 +1,9 @@
-describe('CheckAttributeExistsRestAction', () => {
-    let Action;
-    let CheckAttributeExistsRestAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import CheckAttributeExistsRestAction from '../../../../../app/modules/entities/actions/restActions/CheckAttributeExistsRestAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        CheckAttributeExistsRestAction = $injector.get('CheckAttributeExistsRestAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('CheckAttributeExistsRestAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new CheckAttributeExistsRestAction({});

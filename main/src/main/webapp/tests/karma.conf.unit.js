@@ -25,16 +25,8 @@ module.exports = function (config) {
         // pre-process matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            './unit/**/*.js' : ['babel'],
+            './unit/**/*.js': ['browserify'],
             '../app/modules/**/*.js': ['browserify']
-        },
-
-        // babel preprocessor that converts es6 to es5
-        babelPreprocessor: {
-            options: {
-                presets: ['es2015'],
-                sourceMap: false
-            }
         },
 
         // es6 module bundler and es6 to es5 preprocessor

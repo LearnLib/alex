@@ -1,34 +1,33 @@
+import {Project} from '../../../../app/modules/entities/Project';
+import {events} from '../../../../app/modules/constants';
+
 describe('ProjectsViewComponent', () => {
     let controller;
     let $state;
     let $q;
     let SessionService;
     let scope;
-    let Project;
     let ProjectResource;
     let $controller;
     let EventBus;
     let ToastService;
-    let events;
     let $compile;
     let $rootScope;
 
     let deferred;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, _$rootScope_, _$state_, _SessionService_, _Project_, _ProjectResource_, _EventBus_,
-                       _ToastService_, _$q_, _events_, _$compile_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$controller_, _$rootScope_, _$state_, _SessionService_, _ProjectResource_, _EventBus_,
+                       _ToastService_, _$q_, _$compile_) => {
 
         $state = _$state_;
         $q = _$q_;
         SessionService = _SessionService_;
         scope = _$rootScope_.$new();
-        Project = _Project_;
         ProjectResource = _ProjectResource_;
         $controller = _$controller_;
         EventBus = _EventBus_;
         ToastService = _ToastService_;
-        events = _events_;
         $rootScope = _$rootScope_;
         $compile = _$compile_;
 

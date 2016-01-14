@@ -2,8 +2,8 @@ describe('ClipboardService', () => {
     let ClipboardService;
     const item = {test: 'test'};
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(_ClipboardService_ => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject(_ClipboardService_ => {
         ClipboardService = _ClipboardService_;
     }));
 

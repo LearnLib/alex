@@ -1,14 +1,9 @@
-describe('SetCounterGeneralAction', () => {
-    let Action;
-    let SetCounterGeneralAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import SetCounterGeneralAction from '../../../../../app/modules/entities/actions/generalActions/SetCounterGeneralAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        SetCounterGeneralAction = $injector.get('SetCounterGeneralAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('SetCounterGeneralAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new SetCounterGeneralAction({});

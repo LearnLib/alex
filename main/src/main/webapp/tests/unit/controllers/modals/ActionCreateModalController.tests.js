@@ -1,23 +1,22 @@
+import {Project} from '../../../../app/modules/entities/Project';
+import {actionType, events} from '../../../../app/modules/constants';
+
 describe('ActionCreateModalController', () => {
     let $controller, $rootScope, $q;
-    let SessionService, Project, ActionCreateModalController, ActionService, SymbolResource, EventBus, events,
-        actionType;
+    let SessionService, ActionCreateModalController, ActionService, SymbolResource, EventBus;
     let project;
     let modalInstance;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject(($injector) => {
         $controller = $injector.get('$controller');
         $rootScope = $injector.get('$rootScope');
         $q = $injector.get('$q');
 
         SessionService = $injector.get('SessionService');
-        Project = $injector.get('Project');
         ActionService = $injector.get('ActionService');
         SymbolResource = $injector.get('SymbolResource');
         EventBus = $injector.get('EventBus');
-        events = $injector.get('events');
-        actionType = $injector.get('actionType');
 
         project = new Project(ENTITIES.projects[0]);
 

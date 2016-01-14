@@ -1,18 +1,17 @@
+import {Project} from '../../../app/modules/entities/Project';
+import {User} from '../../../app/modules/entities/User';
+
 describe('SessionService', () => {
     let EventBus;
     let SessionService;
-    let Project;
-    let User;
 
     let project;
     let user;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_EventBus_, _SessionService_, _User_, _Project_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_EventBus_, _SessionService_) => {
         EventBus = _EventBus_;
         SessionService = _SessionService_;
-        User = _User_;
-        Project = _Project_;
 
         project = new Project({id: 1});
         user = new User({id: 1});

@@ -3,8 +3,8 @@ describe('widget', () => {
     let $compile;
     let renderedElement;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$rootScope_, _$compile_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$rootScope_, _$compile_) => {
         $rootScope = _$rootScope_;
         $compile = _$compile_;
     }));

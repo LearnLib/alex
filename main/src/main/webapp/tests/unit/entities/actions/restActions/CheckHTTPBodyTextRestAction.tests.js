@@ -1,14 +1,9 @@
-describe('CheckHTTPBodyTextRestAction', () => {
-    let Action;
-    let CheckHTTPBodyTextRestAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import CheckHTTPBodyTextRestAction from '../../../../../app/modules/entities/actions/restActions/CheckHTTPBodyTextRestAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        CheckHTTPBodyTextRestAction = $injector.get('CheckHTTPBodyTextRestAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('CheckHTTPBodyTextRestAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new CheckHTTPBodyTextRestAction({});

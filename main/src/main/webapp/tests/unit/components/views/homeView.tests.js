@@ -1,10 +1,11 @@
+import {Project} from '../../../../app/modules/entities/Project';
+import {User} from '../../../../app/modules/entities/User';
+
 describe('HomeViewComponent', () => {
     let controller;
     let $state;
     let SessionService;
     let scope;
-    let Project;
-    let User;
     let $controller;
     let $compile;
     let $rootScope;
@@ -12,13 +13,11 @@ describe('HomeViewComponent', () => {
     let project;
     let user;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, _$rootScope_, _$compile_, _$state_, _SessionService_, _Project_, _User_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$controller_, _$rootScope_, _$compile_, _$state_, _SessionService_) => {
         $state = _$state_;
         SessionService = _SessionService_;
         scope = _$rootScope_.$new();
-        Project = _Project_;
-        User = _User_;
         $controller = _$controller_;
         $compile = _$compile_;
         $rootScope = _$rootScope_

@@ -1,14 +1,9 @@
-describe('ClickLinkByTextWebAction', () => {
-    let Action;
-    let ClickLinkByTextWebAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import ClickLinkByTextWebAction from '../../../../../app/modules/entities/actions/webActions/ClickLinkByTextWebAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        ClickLinkByTextWebAction = $injector.get('ClickLinkByTextWebAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('ClickLinkByTextWebAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new ClickLinkByTextWebAction({});

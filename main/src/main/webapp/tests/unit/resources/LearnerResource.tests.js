@@ -7,8 +7,8 @@ describe('LearnerResource', () => {
     let project;
     let config;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject(($injector) => {
 
         $http = $injector.get('$http');
         $httpBackend = $injector.get('$httpBackend');

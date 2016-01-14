@@ -1,14 +1,9 @@
-describe('CallRestAction', () => {
-    let Action;
-    let CallRestAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import CallRestAction from '../../../../../app/modules/entities/actions/restActions/CallRestAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        CallRestAction = $injector.get('CallRestAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('CallRestAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new CallRestAction({});

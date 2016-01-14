@@ -1,7 +1,7 @@
 describe('LearnResult', () => {
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject(($injector) => {
 
     }))
 });

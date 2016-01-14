@@ -1,14 +1,9 @@
-describe('CheckHeaderFieldRestAction', () => {
-    let Action;
-    let CheckHeaderFieldRestAction;
-    let actionType;
+import Action from '../../../../../app/modules/entities/actions/Action';
+import CheckHeaderFieldRestAction from '../../../../../app/modules/entities/actions/restActions/CheckHeaderFieldRestAction';
+import {actionType} from '../../../../../app/modules/constants';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
-        CheckHeaderFieldRestAction = $injector.get('CheckHeaderFieldRestAction');
-        Action = $injector.get('Action');
-        actionType = $injector.get('actionType');
-    }));
+describe('CheckHeaderFieldRestAction', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should extend the default action and should implement a toString method', () => {
         const action = new CheckHeaderFieldRestAction({});

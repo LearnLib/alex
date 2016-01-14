@@ -1,28 +1,27 @@
+import {SymbolGroup} from '../../../../app/modules/entities/SymbolGroup';
+import {events} from '../../../../app/modules/constants';
+
 describe('SymbolGroupEditModalController', () => {
     let SymbolGroupEditModalController;
     let SymbolGroupResource;
     let $controller;
     let EventBus;
     let ToastService;
-    let events;
     let scope;
-    let SymbolGroup;
 
     let modalInstance;
     let deferred;
     let group;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$controller_, $rootScope, _SymbolGroupResource_, _EventBus_,
-                       _ToastService_, _events_, _$q_, _SymbolGroup_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$controller_, $rootScope, _SymbolGroupResource_, _EventBus_,
+                       _ToastService_, _$q_) => {
 
         scope = $rootScope.$new();
         SymbolGroupResource = _SymbolGroupResource_;
         $controller = _$controller_;
         EventBus = _EventBus_;
         ToastService = _ToastService_;
-        events = _events_;
-        SymbolGroup = _SymbolGroup_;
 
         modalInstance = {
             close: jasmine.createSpy('modalInstance.close'),

@@ -4,7 +4,7 @@
   "description": "An interface for Active Automata Learning",
   "repository": {
     "type": "git",
-    "url": "ssh://git@projekte.itmc.tu-dortmund.de/informatik-ls5/bachelorarbeiten/alex.git"
+    "url": "https://github.com/LearnLib/alex.git"
   },
   "licence": {
     "type": "Apache-2.0",
@@ -62,7 +62,6 @@
     "grunt-postcss": "^0.7.1",
     "grunt-sass": "^1.1.0",
     "karma": "^0.13.15",
-    "karma-babel-preprocessor": "^6.0.1",
     "karma-browserify": "^4.4.2",
     "karma-chrome-launcher": "^0.2.1",
     "karma-coverage": "^0.5.3",

@@ -7,8 +7,8 @@ describe('FileResource', () => {
     let files;
     let uri;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$http_, _FileResource_, _$httpBackend_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$http_, _FileResource_, _$httpBackend_) => {
         $http = _$http_;
         FileResource = _FileResource_;
         $httpBackend = _$httpBackend_;

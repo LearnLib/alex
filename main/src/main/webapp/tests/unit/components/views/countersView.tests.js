@@ -1,12 +1,15 @@
+import Counter from '../../../../app/modules/entities/Counter';
+import {Project} from '../../../../app/modules/entities/Project';
+
 describe('CountersController', () => {
-    let $controller, $q, $rootScope, SessionService, CounterResource, ToastService, Counter, Project, $compile;
+    let $controller, $q, $rootScope, SessionService, CounterResource, ToastService, $compile;
 
     let project;
     let controller;
 
-    beforeEach(module('ALEX'));
+    beforeEach(angular.mock.module('ALEX'));
 
-    beforeEach(inject(($injector) => {
+    beforeEach(angular.mock.inject(($injector) => {
         $controller = $injector.get('$controller');
         $rootScope = $injector.get('$rootScope');
         $compile = $injector.get('$compile');
@@ -14,8 +17,6 @@ describe('CountersController', () => {
         SessionService = $injector.get('SessionService');
         CounterResource = $injector.get('CounterResource');
         ToastService = $injector.get('ToastService');
-        Counter = $injector.get('Counter');
-        Project = $injector.get('Project');
 
         project = new Project(ENTITIES.projects[0]);
         SessionService.saveProject(project);

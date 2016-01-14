@@ -1,10 +1,8 @@
-describe('SymbolGroupFormModel', () => {
-    let SymbolGroupFormModel;
+import {SymbolGroup, SymbolGroupFormModel} from '../../../app/modules/entities/SymbolGroup';
+import {Symbol} from '../../../app/modules/entities/Symbol';
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_SymbolGroupFormModel_) => {
-        SymbolGroupFormModel = _SymbolGroupFormModel_;
-    }));
+describe('SymbolGroupFormModel', () => {
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should correctly create a new SymbolGroupFormModel', () => {
         let group = new SymbolGroupFormModel();
@@ -18,14 +16,7 @@ describe('SymbolGroupFormModel', () => {
 });
 
 describe('SymbolGroup', () => {
-    let SymbolGroup;
-    let Symbol;
-
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_SymbolGroup_, _Symbol_) => {
-        SymbolGroup = _SymbolGroup_;
-        Symbol = _Symbol_;
-    }));
+    beforeEach(angular.mock.module('ALEX'));
 
     it('should correctly create a new SymbolGroup from given data', () => {
         const g = ENTITIES.groups[0];

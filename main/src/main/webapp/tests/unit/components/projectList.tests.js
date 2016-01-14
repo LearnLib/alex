@@ -1,10 +1,13 @@
+import {Project} from '../../../app/modules/entities/Project';
+import {events} from '../../../app/modules/constants';
+
 describe('projectList', () => {
-    let $state, ProjectResource, ToastService, SessionService, PromptService, EventBus, events, Project, $q;
+    let $state, ProjectResource, ToastService, SessionService, PromptService, EventBus, $q;
     let $rootScope, $compile, renderedElement, controller;
     let projects;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject(($injector) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject(($injector) => {
         $state = $injector.get('$state');
         $q = $injector.get('$q');
         ProjectResource = $injector.get('ProjectResource');
@@ -12,8 +15,6 @@ describe('projectList', () => {
         SessionService = $injector.get('SessionService');
         PromptService = $injector.get('PromptService');
         EventBus = $injector.get('EventBus');
-        events = $injector.get('events');
-        Project = $injector.get('Project');
 
         $rootScope = $injector.get('$rootScope');
         $compile = $injector.get('$compile');

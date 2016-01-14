@@ -166,7 +166,7 @@ module.exports = function (grunt) {
                 },
                 options: {
                     'esnext': true,
-                    'laxbreak' : true,
+                    'laxbreak': true,
                     '-W053': true
                 }
             }

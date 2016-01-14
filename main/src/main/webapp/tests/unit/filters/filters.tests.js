@@ -2,8 +2,8 @@ describe('formatEqOracle', () => {
     let $filter;
     let eqOracleType;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$filter_, _eqOracleType_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$filter_, _eqOracleType_) => {
         $filter = _$filter_;
         eqOracleType = _eqOracleType_;
     }));
@@ -34,8 +34,8 @@ describe('formatWebBrowser', () => {
     let $filter;
     let webBrowser;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$filter_, _webBrowser_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$filter_, _webBrowser_) => {
         $filter = _$filter_;
         webBrowser = _webBrowser_;
     }));
@@ -66,8 +66,8 @@ describe('formatAlgorithm', () => {
     let $filter;
     let learnAlgorithm;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$filter_, _learnAlgorithm_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$filter_, _learnAlgorithm_) => {
         $filter = _$filter_;
         learnAlgorithm = _learnAlgorithm_;
     }));
@@ -96,8 +96,8 @@ describe('formatAlgorithm', () => {
 describe('formatMilliseconds', () => {
     let $filter;
 
-    beforeEach(module('ALEX'));
-    beforeEach(inject((_$filter_) => {
+    beforeEach(angular.mock.module('ALEX'));
+    beforeEach(angular.mock.inject((_$filter_) => {
         $filter = _$filter_;
     }));
 
