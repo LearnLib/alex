@@ -76,14 +76,29 @@ const userLoginForm = {
     controller: UserLoginForm,
     controllerAs: 'vm',
     template: `
-        <form ng-submit="vm.login()">
+        <form name="vm.form" ng-submit="vm.login()">
             <div class="form-group">
                 <label>Email</label>
-                <input type="text" class="form-control" placeholder="Email address" autofocus ng-model="vm.user.email">
+                <input type="email" class="form-control" name="mail" placeholder="Email address" autofocus required ng-model="vm.user.email">
+
+                <div class="help-block" ng-messages="vm.form.mail.$error" ng-if="vm.form.mail.$touched">
+                    <div class="alert alert-danger alert-condensed" ng-message="required">
+                        The email is required
+                    </div>
+                    <div class="alert alert-danger alert-condensed" ng-message="email">
+                        You have to enter a valid email address
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" class="form-control" placeholder="Password" ng-model="vm.user.password">
+                <input type="password" class="form-control" name="password" placeholder="Password" required ng-minlength="1" ng-model="vm.user.password">
+
+                <div class="help-block" ng-messages="vm.form.password.$error" ng-if="vm.form.password.$touched">
+                    <div class="alert alert-danger alert-condensed" ng-message="required">
+                        The password is required
+                    </div>
+                </div>
             </div>
             <button class="btn btn-sm btn-block btn-primary">Login</button>
         </form>

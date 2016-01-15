@@ -89,6 +89,10 @@ class SymbolCreateModalController {
                 this.ToastService.success(`Created symbol "${symbol.name}"`);
                 this.EventBus.emit(events.SYMBOL_CREATED, {symbol: symbol});
                 this.symbol = new SymbolFormModel();
+
+                // set the form to its original state
+                this.form.$setPristine();
+                this.form.$setUntouched();
             })
             .catch(response => {
                 this.error = response.data.message;

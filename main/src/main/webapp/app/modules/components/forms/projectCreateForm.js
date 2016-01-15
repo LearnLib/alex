@@ -46,6 +46,10 @@ class ProjectCreateForm {
                 this.ToastService.success(`Project "${createdProject.name}" created`);
                 this.EventBus.emit(events.PROJECT_CREATED, {project: createdProject});
                 this.project = new ProjectFormModel();
+
+                // set the form to its original state
+                this.form.$setPristine();
+                this.form.$setUntouched();
             })
             .catch(response => {
                 this.ToastService.danger('<p><strong>Creation of project failed</strong></p>' + response.data.message);

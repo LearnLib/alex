@@ -59,6 +59,10 @@ class ProjectSettingsModalController {
                 this.ToastService.success('Project updated');
                 this.EventBus.emit(events.PROJECT_UPDATED, {project: updatedProject});
                 this.$modalInstance.dismiss();
+
+                // set the form to its original state
+                this.form.$setPristine();
+                this.form.$setUntouched();
             })
             .catch(response => {
                 this.error = response.data.message;

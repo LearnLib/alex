@@ -28,6 +28,7 @@
     "angular-bootstrap": "^0.12.2",
     "angular-dragula": "^1.1.9",
     "angular-jwt": "0.0.9",
+    "angular-messages": "^1.5.0-rc.0",
     "angular-sanitize": "^1.5.0-rc.0",
     "angular-ui-ace": "^0.2.3",
     "angular-ui-router": "^0.2.15",

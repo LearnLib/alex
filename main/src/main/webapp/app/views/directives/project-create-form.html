@@ -1,60 +1,70 @@
-<form id="project-create-form" name="create_form" role="form" ng-submit="vm.createProject()">
+<form name="vm.form" ng-submit="vm.createProject()">
 
-    <!-- Name -->
     <div class="form-group">
         <label class="control-label">Name*</label>
 
-        <p class="text-muted">The name of your project</p>
-        <input name="name" type="text" class="form-control" id="project-name"
-               placeholder="Enter a name for the project" ng-model="vm.project.name" ng-required="true">
-    </div>
-    <div class="alert alert-danger alert-condensed"
-         ng-show="create_form.name.$dirty && create_form.name.$invalid">
-        <small ng-show="create_form.name.$error.required">Name must not be empty.</small>
-    </div>
-    <!-- Name -->
+        <input type="text"
+               class="form-control"
+               name="name"
+               placeholder="Enter a name for the project"
+               ng-model="vm.project.name"
+               required>
 
-    <!-- Base Url -->
+        <div class="help-block" ng-messages="vm.form.name.$error" ng-if="vm.form.name.$touched">
+            <div class="alert alert-danger alert-condensed" ng-message="required">
+                The name is required
+            </div>
+        </div>
+    </div>
+
     <div class="form-group">
         <label class="control-label">Url*</label>
 
-        <p class="text-muted">The url of your website</p>
-        <input name="url" class="form-control" type="text" id="project-url"
-               placeholder="Enter the url of the project" ng-model="vm.project.baseUrl" ng-required="true"
+        <input class="form-control"
+               type="text"
+               name="url"
+               placeholder="Enter the url of the project"
+               ng-model="vm.project.baseUrl"
+               required
                ng-pattern="/^(http://|https://).{1,}/">
-    </div>
-    <div class="alert alert-danger alert-condensed"
-         ng-show="create_form.url.$dirty && create_form.url.$invalid">
-        <small ng-show="create_form.url.$error.required">
-            Url must not be empty.
-        </small>
-        <small ng-show="create_form.url.$error.pattern">
-            The url has to start with http(s):// and have a host name
-        </small>
-    </div>
-    <!-- /Base Url -->
 
-    <!-- Description -->
+        <div class="help-block" ng-messages="vm.form.url.$error" ng-if="vm.form.url.$touched">
+            <div class="alert alert-danger alert-condensed" ng-message="required">
+                The url is required
+            </div>
+            <div class="alert alert-danger alert-condensed" ng-message="pattern">
+                The url has to start with <em>http[s]://</em>
+            </div>
+        </div>
+    </div>
+
     <div class="form-group">
         <label class="control-label">Description</label>
+        <textarea ng-model="vm.project.description"
+                  name="description"
+                  placeholder="Enter the description for the project"
+                  class="form-control"
+                  ng-maxlength="250"
+                  rows="3">
+        </textarea>
 
-        <p class="text-muted">
-            If you want you can describe your new project with a few words
-        </p>
-            <textarea name="description" ng-model="vm.project.description" id="project-description"
-                      placeholder="Enter the description for the project"
-                      class="form-control" rows="3"></textarea>
+        <div class="help-block" ng-messages="vm.form.description.$error" ng-if="vm.form.description.$touched">
+            <div class="alert alert-danger alert-condensed" ng-message="maxlength">
+                The description may not contain more than 250 characters
+            </div>
+        </div>
     </div>
-    <!-- /Description -->
 
     <div class="form-group">
-        <button type="submit" class="btn btn-sm btn-primary">Create Project</button>
+        <button type="submit"
+                class="btn btn-sm btn-primary">
+            Create Project
+        </button>
     </div>
 
-    <hr />
+    <hr>
 
     <div class="text-muted">
         <em>* These fields are required</em>
     </div>
-
 </form>

@@ -35,6 +35,7 @@ angular
 
         // modules from external libraries
         'ngAnimate',
+        'ngMessages',
         'ui.bootstrap',
         'ui.ace',
         'ui.router',

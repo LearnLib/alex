@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
-
 /**
  * Configure some third party libraries and set the http interceptor to send the jwt with each request
  * @param ngToastProvider
