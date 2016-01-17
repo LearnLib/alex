@@ -361,9 +361,10 @@ public class SymbolResource {
 
         if (!Objects.equals(id, symbol.getId())
                 || !Objects.equals(projectId, symbol.getProjectId())
-                || !symbol.getUser().equals(user)) {
+                || (symbol.getUserId() != 0L && !user.equals(symbol.getUser()))) {
             return  Response.status(Status.BAD_REQUEST).build();
         }
+        symbol.setUser(user);
 
         try {
             symbolDAO.update(symbol);

@@ -23,10 +23,18 @@ import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.dao.SymbolGroupDAO;
 import de.learnlib.alex.core.dao.UserDAO;
+import de.learnlib.alex.core.dao.UserDAOImpl;
+import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.security.AuthenticationFilter;
+import de.learnlib.alex.security.RsaKeyHolder;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.jose4j.jwk.RsaJwkGenerator;
+import org.jose4j.lang.JoseException;
 
 public class ALEXTestApplication extends ResourceConfig {
 
@@ -42,8 +50,8 @@ public class ALEXTestApplication extends ResourceConfig {
         super(classes);
 
         register(MultiPartFeature.class);
-
-        register(FakeAuthenticationFilter.class);
+        register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
+        register(AuthenticationFilter.class);
 
         // register some classes/ objects for IoC.
         register(new AbstractBinder() {
@@ -59,6 +67,15 @@ public class ALEXTestApplication extends ResourceConfig {
                 bind(learnerResultDAO).to(LearnerResultDAO.class);
             }
         });
+
+        try {
+
+            // create private public RSA key for signing JWTs
+            RsaKeyHolder.setKey(RsaJwkGenerator.generateJwk(ALEXApplication.JWK_STRENGTH_IN_BITS));
+        } catch (JoseException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
 
     }
 

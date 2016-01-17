@@ -87,11 +87,16 @@ public class ProjectResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("ProjectResource.create(" + project + ") for user " + user + ".");
 
+        // make sure that if an user for a project is given, it the correct user id.
+        if (project.getUser() != null && !user.equals(project.getUser())) {
+            throw new ValidationException("The given user id does not belong to the current user!");
+        }
+
         project.setUser(user);
 
         try {
             if (projectDAO.getByName(user.getId(), project.getName()) != null) {
-                throw new ValidationException("There is already a project with that name");
+                throw new ValidationException("There is already a project with that name!");
             }
 
             projectDAO.create(project);
@@ -195,7 +200,7 @@ public class ProjectResource {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             try {
-                if (user.equals(project.getUser())) {
+                if (project.getUser() == null || user.equals(project.getUser())) {
                     Project p = projectDAO.getByName(user.getId(), project.getName());
                     if (p != null && !p.equals(project)) {
                         throw new ValidationException("There is already a project with that name");

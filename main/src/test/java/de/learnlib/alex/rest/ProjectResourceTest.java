@@ -17,7 +17,6 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.ALEXTestApplication;
-import de.learnlib.alex.FakeAuthenticationFilter;
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
@@ -28,9 +27,12 @@ import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.utils.UserHelper;
 import org.glassfish.jersey.test.JerseyTest;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -52,7 +54,7 @@ import static org.mockito.Mockito.verify;
 
 public class ProjectResourceTest extends JerseyTest {
 
-    private static final Long USER_TEST_ID = FakeAuthenticationFilter.FAKE_USER_ID;
+    private static final Long USER_TEST_ID = 1L;
     private static final Long PROJECT_TEST_ID = 1L;
 
     @Mock
@@ -79,7 +81,10 @@ public class ProjectResourceTest extends JerseyTest {
     @Mock
     private Learner learner;
 
+    @Mock
     private User user;
+
+    private String token;
     private Project project;
 
     @Override
@@ -90,9 +95,9 @@ public class ProjectResourceTest extends JerseyTest {
         symbol.setName("Project Resource Test Symbol");
         symbol.setAbbreviation("prts");
 
-        user = new User();
-        user.setId(USER_TEST_ID);
+        UserHelper.initFakeAdmin(user);
         given(userDAO.getById(user.getId())).willReturn(user);
+        given(userDAO.getByEmail(user.getEmail())).willReturn(user);
 
         project = new Project();
         project.setUser(user);
@@ -107,7 +112,14 @@ public class ProjectResourceTest extends JerseyTest {
         }
 
         return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
-                                             learnerResultDAO, fileDAO, learner, ProjectResource.class);
+                                             learnerResultDAO, fileDAO, learner,
+                                             UserResource.class, ProjectResource.class);
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        token = UserHelper.login(client(), "http://localhost:9998");
     }
 
     @Test
@@ -116,7 +128,7 @@ public class ProjectResourceTest extends JerseyTest {
                         + "\"name\": \"" + project.getName() + "\","
                         + "\"baseUrl\": \"" + project.getBaseUrl() + "\","
                         + "\"description\": \"" + project.getDescription() + "\"}";
-        Response response = target("/projects").request().post(Entity.json(json));
+        Response response = target("/projects").request().header("Authorization", token).post(Entity.json(json));
 
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
         assertEquals("http://localhost:9998/projects/1", response.getHeaderString("Location"));
@@ -127,7 +139,7 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldReturn400IfProjectCouldNotBeCreated() {
         willThrow(new ValidationException("Test Message")).given(projectDAO).create(project);
 
-        Response response = target("/projects").request().post(Entity.json(project));
+        Response response = target("/projects").request().header("Authorization", token).post(Entity.json(project));
 
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
@@ -141,7 +153,7 @@ public class ProjectResourceTest extends JerseyTest {
 
         willThrow(new ValidationException("Test Message")).given(projectDAO).create(project);
 
-        Response response = target("/projects").request().post(Entity.json(project));
+        Response response = target("/projects").request().header("Authorization", token).post(Entity.json(project));
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
@@ -151,7 +163,7 @@ public class ProjectResourceTest extends JerseyTest {
         projects.add(project);
         given(projectDAO.getAll(user)).willReturn(projects);
 
-        Response response = target("/projects").request().get();
+        Response response = target("/projects").request().header("Authorization", token).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertEquals("1", response.getHeaderString("X-Total-Count"));
@@ -165,7 +177,8 @@ public class ProjectResourceTest extends JerseyTest {
         given(projectDAO.getAll(user, ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS))
                 .willReturn(projects);
 
-        Response response = target("/projects").queryParam("embed", "symbols,test_results").request().get();
+        Response response = target("/projects").queryParam("embed", "symbols,test_results").request()
+                                .header("Authorization", token).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertEquals("1", response.getHeaderString("X-Total-Count"));
@@ -174,7 +187,7 @@ public class ProjectResourceTest extends JerseyTest {
 
     @Test
     public void shouldGetTheRightProjectWithoutEmbeddedFields() throws NotFoundException {
-        Response response = target("/projects/" + PROJECT_TEST_ID).request().get();
+        Response response = target("/projects/" + PROJECT_TEST_ID).request().header("Authorization", token).get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
         verify(projectDAO).getByID(USER_TEST_ID, PROJECT_TEST_ID);
@@ -188,7 +201,7 @@ public class ProjectResourceTest extends JerseyTest {
                                  ProjectDAO.EmbeddableFields.TEST_RESULTS))
                 .willReturn(project);
         Response response = target("/projects/" + PROJECT_TEST_ID).queryParam("embed", "symbols,test_results")
-                                .request().get();
+                                .request().header("Authorization", token).get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
         verify(projectDAO).getByID(USER_TEST_ID,
@@ -201,7 +214,7 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldReturn404WhenProjectNotFound() throws NotFoundException {
         given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
-        Response response = target("/projects/" + PROJECT_TEST_ID).request().get();
+        Response response = target("/projects/" + PROJECT_TEST_ID).request().header("Authorization", token).get();
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
         verify(projectDAO).getByID(USER_TEST_ID, PROJECT_TEST_ID);
@@ -212,11 +225,11 @@ public class ProjectResourceTest extends JerseyTest {
         String json = "{\"id\": " + project.getId() + ","
                         + "\"name\": \"" + project.getName() + "\","
                         + "\"baseUrl\": \"" + project.getBaseUrl() + "\","
-                        + "\"description\": \"" + project.getDescription() + "\","
-                        + "\"user\": \"" + project.getUserId() + "\"}";
+                        + "\"description\": \"" + project.getDescription() + "\"}";
 
-        target("/project").request().post(Entity.json(project));
-        Response response = target("/projects/" + project.getId()).request().put(Entity.json(json));
+        target("/project").request().header("Authorization", token).post(Entity.json(project));
+        Response response = target("/projects/" + project.getId()).request().header("Authorization", token)
+                                .put(Entity.json(json));
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         verify(projectDAO).update(project);
@@ -239,7 +252,8 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldFailIfIdInUrlAndObjectAreDifferent() throws NotFoundException {
         project.setName("Test Project - Update Diff");
         target("/project").request().post(Entity.json(project));
-        Response response = target("/projects/" + (project.getId() + 1)).request().put(Entity.json(project));
+        Response response = target("/projects/" + (project.getId() + 1)).request().header("Authorization", token)
+                                .put(Entity.json(project));
 
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         verify(projectDAO, never()).update(project);
@@ -250,7 +264,8 @@ public class ProjectResourceTest extends JerseyTest {
         project.setName("Test Project - Invalid Test");
 
         willThrow(new ValidationException()).given(projectDAO).update(project);
-        Response response = target("/projects/" + project.getId()).request().put(Entity.json(project));
+        Response response = target("/projects/" + project.getId()).request().header("Authorization", token)
+                                .put(Entity.json(project));
 
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
@@ -259,7 +274,7 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldDeleteTheRightProject() throws NotFoundException {
         target("/project").request().post(Entity.json(project));
 
-        Response response = target("/projects/" + project.getId()).request().delete();
+        Response response = target("/projects/" + project.getId()).request().header("Authorization", token).delete();
         assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
         verify(projectDAO).delete(USER_TEST_ID, project.getId());
@@ -268,7 +283,7 @@ public class ProjectResourceTest extends JerseyTest {
     @Test
     public void shouldReturn404OnDeleteWhenProjectNotFound() throws NotFoundException {
         willThrow(NotFoundException.class).given(projectDAO).delete(USER_TEST_ID, PROJECT_TEST_ID);
-        Response response = target("/projects/" + PROJECT_TEST_ID).request().delete();
+        Response response = target("/projects/" + PROJECT_TEST_ID).request().header("Authorization", token).delete();
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }

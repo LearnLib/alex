@@ -17,7 +17,6 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.ALEXTestApplication;
-import de.learnlib.alex.FakeAuthenticationFilter;
 import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.FileDAO;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
@@ -30,6 +29,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.utils.UserHelper;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,7 @@ import static org.mockito.Mockito.verify;
 
 public class CounterResourceTest extends JerseyTest {
 
-    private static final Long USER_TEST_ID = FakeAuthenticationFilter.FAKE_USER_ID;
+    private static final Long USER_TEST_ID = 1L;
     private static final long PROJECT_TEST_ID = 10;
     private static final String  COUNTER_NAME = "Counter";
     private static final Integer COUNTER_VALUE = 42;
@@ -82,20 +82,26 @@ public class CounterResourceTest extends JerseyTest {
     @Mock
     private Project project;
 
+    private String token;
     private Counter[] counters;
 
     @Override
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
-                                       learnerResultDAO, fileDAO, learner, CounterResource.class);
+        UserHelper.initFakeAdmin(user);
+        given(userDAO.getById(user.getId())).willReturn(user);
+        given(userDAO.getByEmail(user.getEmail())).willReturn(user);
+
+        return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO, learnerResultDAO,
+                                       fileDAO, learner,  UserResource.class, CounterResource.class);
     }
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        token = UserHelper.login(client(), "http://localhost:9998");
 
         given(user.getId()).willReturn(USER_TEST_ID);
         given(project.getId()).willReturn(PROJECT_TEST_ID);
@@ -117,7 +123,8 @@ public class CounterResourceTest extends JerseyTest {
     public void shouldGetAllCounters() throws NotFoundException {
         given(counterDAO.getAll(USER_TEST_ID, PROJECT_TEST_ID)).willReturn(Arrays.asList(counters));
 
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/counters").request().get();
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/counters").request()
+                                .header("Authorization", token).get();
         String json = response.readEntity(String.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -134,14 +141,16 @@ public class CounterResourceTest extends JerseyTest {
     public void shouldReturn404WhenAskingForAllCounterOfANotExistingProject() throws NotFoundException {
         given(counterDAO.getAll(USER_TEST_ID, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/counters").request().get();
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/counters").request()
+                                .header("Authorization", token).get();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void shouldDeleteAValidCounter() throws NotFoundException {
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/counters/" + COUNTER_NAME).request().delete();
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/counters/" + COUNTER_NAME).request()
+                                .header("Authorization", token).delete();
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         verify(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME);
@@ -151,7 +160,8 @@ public class CounterResourceTest extends JerseyTest {
     public void shouldReturn404WhenDeleteAnInvalidCounter() throws NotFoundException {
         willThrow(NotFoundException.class).given(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME);
 
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/counters/" + COUNTER_NAME).request().delete();
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/counters/" + COUNTER_NAME).request()
+                                .header("Authorization", token).delete();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
         verify(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME);
@@ -160,7 +170,7 @@ public class CounterResourceTest extends JerseyTest {
     @Test
     public void shouldDeleteValidCounters() throws NotFoundException {
         String path = "/projects/" + PROJECT_TEST_ID + "/counters/batch/" + COUNTER_NAME + "," + COUNTER_NAME + "2";
-        Response response = target(path).request().delete();
+        Response response = target(path).request().header("Authorization", token).delete();
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         verify(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
@@ -172,7 +182,7 @@ public class CounterResourceTest extends JerseyTest {
         willThrow(NotFoundException.class).given(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID,
                                                                     COUNTER_NAME, COUNTER_NAME + "2");
 
-        Response response = target(path).request().delete();
+        Response response = target(path).request().header("Authorization", token).delete();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
         verify(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
