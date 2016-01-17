@@ -33,6 +33,7 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.regex.Pattern;
 
 /**
  * Custom Request filter that is executed for each incoming request.
@@ -40,6 +41,9 @@ import java.security.Principal;
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
+
+    private static final Pattern PATTERN = Pattern.compile("bearer [a-z0-9-_]+\\.[a-z0-9-_]+\\.[a-z0-9-_]+",
+                                                           Pattern.CASE_INSENSITIVE);
 
     @Inject
     private UserDAO userDAO;
@@ -58,7 +62,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
             // get the jwt from Authorization Header and split at 'Bearer [token]'
             String jwt = requestContext.getHeaderString("Authorization");
-            if (jwt != null) {
+            if (jwt != null && PATTERN.matcher(jwt).matches()) {
                 jwt = jwt.split(" ")[1];
 
                 // check if the jwt is valid
