@@ -125,9 +125,7 @@ public class LearnerResource {
             LearnerStatus status = learner.getStatus(user);
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
-            LOGGER.info("tried to start the learning again.");
-            LearnerStatus status = learner.getStatus(user);
-            return Response.status(Status.NOT_MODIFIED).entity(status).build();
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.NOT_MODIFIED, e);
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {

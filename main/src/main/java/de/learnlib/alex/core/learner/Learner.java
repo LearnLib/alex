@@ -34,6 +34,7 @@ import de.learnlib.oracles.ResetCounterSUL;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +48,7 @@ import java.util.stream.Collectors;
 public class Learner {
 
     /** How many concurrent threads the system can handle. */
-    private static final int MAX_CONCURRENT_THREADS = 1;
+    private static final int MAX_CONCURRENT_THREADS = 2;
 
     /**
      * Factory to create a new ContextHandler.
@@ -107,19 +108,13 @@ public class Learner {
      * @param configuration
      *         The configuration to use for the learning process.
      * @throws IllegalArgumentException
-     *         If the configuration was invalid.
+     *         If the configuration was invalid or the user tried to start a second active learning thread.
      * @throws IllegalStateException
      *         If a learning process is already active.
      */
     public void start(User user, Project project, LearnerConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException {
-        if (isActive(user)) {
-            throw new IllegalStateException("You can only start the learning if no other learning is active");
-        }
-
-        if (activeThreads.size() >= MAX_CONCURRENT_THREADS) {
-            throw new IllegalStateException("Maximum amount of parallel threads reached.");
-        }
+        preStartCheck(user);
 
         // TODO: make it nicer than this instanceof stuff, because you have to somehow tell the eq oracle that the
         //       learner started and not resumed
@@ -156,9 +151,7 @@ public class Learner {
      */
     public void resume(User user, LearnerResumeConfiguration newConfiguration)
             throws IllegalArgumentException, IllegalStateException {
-        if (isActive(user)) {
-            throw new IllegalStateException("You can only restart the learning if no other learning is active");
-        }
+        preStartCheck(user);
 
         newConfiguration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
         validateCounterExample(user, newConfiguration);
@@ -166,6 +159,32 @@ public class Learner {
         LearnerThread previousThread = userThreads.get(user);
         LearnerThread learnThread = learnThreadFactory.updateThread(previousThread, newConfiguration);
         startThread(user, learnThread);
+    }
+
+    /**
+     * Check if a thread for the user can possibly started.
+     * This means that the user has no other active learning thread
+     * and the overall learning thread capacity is not reached.
+     *
+     * @param user
+     *         The user to check for.
+     * @throws IllegalStateException
+     *         If a new thread could not start.
+     */
+    private void preStartCheck(User user) {
+        if (isActive(user)) {
+            throw new IllegalStateException("Only one active learning is allowed per user, "
+                                            + "even for user" + user + "!");
+        }
+
+        // clean up active threads.
+        List<User> finishedThreadsByUser = new LinkedList<>();
+        activeThreads.entrySet().stream().filter(e -> e.getValue().isFinished()).forEach(e -> finishedThreadsByUser.add(e.getKey()));
+        finishedThreadsByUser.forEach(activeThreads::remove);
+
+        if (activeThreads.size() >= MAX_CONCURRENT_THREADS) {
+            throw new IllegalStateException("Maximum amount of parallel threads reached!");
+        }
     }
 
     /**
@@ -265,7 +284,7 @@ public class Learner {
         // if an 'active' thread existed, but it is actually finished -> clean up activeThread map & return false
         if (learnerThread.isFinished()) {
             activeThreads.remove(user);
-            return  false;
+            return false;
         }
 
         // otherwise an active thread exists -> return true
