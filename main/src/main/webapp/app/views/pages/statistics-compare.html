@@ -63,19 +63,22 @@
                     <hr>
                 </div>
 
-                <div class="row">
+                <div class="row" ng-if="vm.chartData.options">
                     <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
+
                         <widget title="#Membership Queries" id="chart-eqs">
-                            <linechart data="vm.chartData.data.mqs" options="vm.chartData.options"
-                                       height="450"></linechart>
+                            <div style="width: 100%; height: 450px">
+                                <linechart data="vm.chartData.data.mqs" options="vm.chartData.options"></linechart>
+                            </div>
                             <hr>
                             <button class="btn btn-xs btn-default pull-right" download-svg="#chart-eqs">
                                 <i class="fa fa-fw fa-download"></i> Download SVG
                             </button>
                         </widget>
                         <widget title="Duration (in ms)" id="chart-duration">
-                            <linechart data="vm.chartData.data.duration" options="vm.chartData.options"
-                                       height="450"></linechart>
+                            <div style="width: 100%; height: 450px">
+                                <linechart data="vm.chartData.data.duration" options="vm.chartData.options"></linechart>
+                            </div>
                             <hr>
                             <button class="btn btn-xs btn-default pull-right" download-svg="#chart-duration">
                                 <i class="fa fa-fw fa-download"></i> Download SVG
@@ -84,16 +87,18 @@
                     </div>
                     <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
                         <widget title="#Equivalence Queries" id="chart-mqs">
-                            <linechart data="vm.chartData.data.eqs" options="vm.chartData.options"
-                                       height="450"></linechart>
+                            <div style="width: 100%; height: 450px">
+                                <linechart data="vm.chartData.data.eqs" options="vm.chartData.options"></linechart>
+                            </div>
                             <hr>
                             <button class="btn btn-xs btn-default pull-right" download-svg="#chart-mqs">
                                 <i class="fa fa-fw fa-download"></i> Download SVG
                             </button>
                         </widget>
                         <widget title="|Sigma|" id="chart-sigma">
-                            <linechart data="vm.chartData.data.sigma" options="vm.chartData.options"
-                                       height="450"></linechart>
+                            <div style="width: 100%; height: 450px">
+                                <linechart data="vm.chartData.data.sigma" options="vm.chartData.options"></linechart>
+                            </div>
                             <hr>
                             <button class="btn btn-xs btn-default pull-right" download-svg="#chart-sigma">
                                 <i class="fa fa-fw fa-download"></i> Download SVG
@@ -102,8 +107,9 @@
                     </div>
                     <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
                         <widget title="#Symbol Calls" id="chart-symbols">
-                            <linechart data="vm.chartData.data.symbols" options="vm.chartData.options"
-                                       height="450"></linechart>
+                            <div style="width: 100%; height: 450px">
+                                <linechart data="vm.chartData.data.symbols" options="vm.chartData.options"></linechart>
+                            </div>
                             <hr>
                             <button class="btn btn-xs btn-default pull-right" download-svg="#chart-symbols">
                                 <i class="fa fa-fw fa-download"></i> Download SVG

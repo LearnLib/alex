@@ -38,42 +38,55 @@ class LearnerResultChartService {
      */
     createDataSingleComplete(intermediateResults) {
         const options = {
-            series: [
-                {
-                    y: "val_0",
-                    label: 'Test' + intermediateResults[0].testNo,
-                    color: "#4B6396",
-                    type: "area"
-                }
-            ],
+            margin: {
+                top: 20,
+                right: 50,
+                bottom: 20,
+                left: 50
+            },
+            grid: {
+                x: false,
+                y: true
+            },
+            series: [{
+                axis: 'y',
+                dataset: 'dataset',
+                key: 'y',
+                label: ' ',
+                color: "#4B6396",
+                type: ['dot', 'line', 'area'],
+                id: 'mySeries0'
+            }],
             axes: {
                 x: {
-                    labelFunction: (l) => {
+                    key: 'x',
+                    type: 'linear',
+                    tickFormat: (l) => {
                         if (l % 1 === 0 && l >= 1 && l <= intermediateResults.length) {
                             return 'Step ' + l;
                         }
                     }
                 },
                 y: {
-                    grid: true
+                    min: 0
                 }
             }
         };
 
         const data = {
-            eqs: [{x: 0, val_0: 0}],
-            mqs: [{x: 0, val_0: 0}],
-            symbols: [{x: 0, val_0: 0}],
-            sigma: [{x: 0, val_0: 0}],
-            duration: [{x: 0, val_0: 0}]
+            eqs: {dataset: []},
+            mqs: {dataset: []},
+            symbols: {dataset: []},
+            sigma: {dataset: []},
+            duration: {dataset: []}
         };
 
         intermediateResults.forEach((result, i) => {
-            data.eqs.push({x: i + 1, val_0: result.statistics.eqsUsed});
-            data.mqs.push({x: i + 1, val_0: result.statistics.mqsUsed});
-            data.symbols.push({x: i + 1, val_0: result.statistics.symbolsUsed});
-            data.sigma.push({x: i + 1, val_0: result.sigma.length});
-            data.duration.push({x: i + 1, val_0: result.statistics.duration});
+            data.eqs.dataset.push({x: i + 1, y: result.statistics.eqsUsed});
+            data.mqs.dataset.push({x: i + 1, y: result.statistics.mqsUsed});
+            data.symbols.dataset.push({x: i + 1, y: result.statistics.symbolsUsed});
+            data.sigma.dataset.push({x: i + 1, y: result.sigma.length});
+            data.duration.dataset.push({x: i + 1, y: result.statistics.duration});
         });
 
         return {
@@ -85,55 +98,64 @@ class LearnerResultChartService {
 
     createDataMultipleFinal(results) {
         const options = {
-            series: [
-                {
-                    y: "val_0",
-                    color: "#4B6396",
-                    type: "column",
-                    axis: "y",
-                    id: "series_0"
-                }
-            ],
-            stacks: [],
+            margin: {
+                top: 20,
+                right: 50,
+                bottom: 20,
+                left: 50
+            },
+            grid: {
+                x: false,
+                y: true
+            },
+            series: [{
+                axis: 'y',
+                dataset: 'dataset',
+                key: 'y',
+                label: ' ',
+                color: "#4B6396",
+                type: ['column'],
+                id: 'mySeries0'
+            }],
             axes: {
                 x: {
-                    type: "linear", key: "x"
+                    key: 'x',
+                    type: 'linear',
+                    tickFormat: (value) => {
+                        if (value % 1 === 0 && value >= 1 && value <= results.length) {
+                            return 'Test ' + results[value - 1].testNo;
+                        }
+                    }
                 },
                 y: {
-                    type: "linear", min: 0, grid: true
+                    min: 0
                 }
-            },
-            lineMode: "linear",
-            tension: 0.4,
-            tooltip: {mode: "scrubber"},
-            drawLegend: false,
-            drawDots: true,
-            columnsHGap: 15,
-            margin: {bottom: '24px'}
-        };
-
-        options.axes.x.labelFunction = (l) => {
-            if (l % 1 === 0 && l >= 1 && l <= results.length) {
-                return 'Test ' + results[l - 1].testNo;
             }
         };
 
         const data = {
-            eqs: [],
-            mqs: [],
-            symbols: [],
-            sigma: [],
-            duration: []
+            eqs: {dataset: [{x: 0, y: 0}]},
+            mqs: {dataset: [{x: 0, y: 0}]},
+            symbols: {dataset: [{x: 0, y: 0}]},
+            sigma: {dataset: [{x: 0, y: 0}]},
+            duration: {dataset: [{x: 0, y: 0}]}
         };
 
         results.forEach((result, i) => {
             let j = i + 1;
-            data.eqs.push({x: j, val_0: result.statistics.eqsUsed});
-            data.mqs.push({x: j, val_0: result.statistics.mqsUsed});
-            data.symbols.push({x: j, val_0: result.statistics.symbolsUsed});
-            data.sigma.push({x: j, val_0: result.sigma.length});
-            data.duration.push({x: j, val_0: result.statistics.duration});
+            data.eqs.dataset.push({x: j, y: result.statistics.eqsUsed});
+            data.mqs.dataset.push({x: j, y: result.statistics.mqsUsed});
+            data.symbols.dataset.push({x: j, y: result.statistics.symbolsUsed});
+            data.sigma.dataset.push({x: j, y: result.sigma.length});
+            data.duration.dataset.push({x: j, y: result.statistics.duration});
         });
+
+        const last = results.length + 1;
+        data.eqs.dataset.push({x: last, y: 0});
+        data.mqs.dataset.push({x: last, y: 0});
+        data.symbols.dataset.push({x: last, y: 0});
+        data.sigma.dataset.push({x: last, y: 0});
+        data.duration.dataset.push({x: last, y: 0});
 
         return {
             context: results,
@@ -153,23 +175,35 @@ class LearnerResultChartService {
         });
 
         const options = {
+            margin: {
+                top: 20,
+                right: 50,
+                bottom: 20,
+                left: 50
+            },
+            grid: {
+                x: false,
+                y: true
+            },
             series: [],
             axes: {
                 x: {
-                    labelFunction: (l) => {
+                    key: 'x',
+                    type: 'linear',
+                    tickFormat: (l) => {
                         if (l % 1 === 0 && l >= 1 && l <= maxSteps) {
                             return 'Step ' + l;
                         }
                     }
                 },
                 y: {
-                    grid: true
+                    min: 0
                 }
             }
         };
 
-        const data = {eqs: [], mqs: [], symbols: [], sigma: [], duration: []};
-        const values = {eqs: [], mqs: [], symbols: [], sigma: [], duration: []};
+        const data = {eqs: {dataset: []}, mqs: {dataset: []}, symbols: {dataset: []}, sigma: {dataset: []}, duration: {dataset: []}};
+        const values = {eqs: {dataset: []}, mqs: {dataset: []}, symbols: {dataset: []}, sigma: {dataset: []}, duration: {dataset: []}};
 
         resultList.forEach((results, i) => {
 
@@ -188,18 +222,21 @@ class LearnerResultChartService {
             while (sigma.length < maxSteps) sigma.push(0);
             while (duration.length < maxSteps) duration.push(0);
 
-            values.eqs.push(eqs);
-            values.mqs.push(mqs);
-            values.symbols.push(symbols);
-            values.sigma.push(sigma);
-            values.duration.push(duration);
+            values.eqs.dataset.push(eqs);
+            values.mqs.dataset.push(mqs);
+            values.symbols.dataset.push(symbols);
+            values.sigma.dataset.push(sigma);
+            values.duration.dataset.push(duration);
 
             // add options for specific area
             options.series.push({
-                y: "val_" + i,
-                color: colors[i % colors.length],
+                axis: 'y',
+                dataset: 'dataset',
+                key: 'y' + i,
                 label: 'Test' + results[0].testNo,
-                type: "area"
+                color: colors[i % colors.length],
+                type: ['dot', 'line', 'area'],
+                id: 'mySeries' + i
             });
         });
 
@@ -208,18 +245,18 @@ class LearnerResultChartService {
             // fill the data with initial zero values
             const set = {x: 0};
             for (let i = 0; i < resultList.length; i++) {
-                set['val_' + i] = 0;
+                set['y' + i] = 0;
             }
-            data[prop].push(set);
+            data[prop].dataset.push(set);
 
             // combine collected values and create chart data from it
-            const combinedValues = _.zip(...values[prop]);
+            const combinedValues = _.zip(...values[prop].dataset);
             combinedValues.forEach((value, i) => {
                 const r = {x: i + 1};
                 value.forEach((val, j) => {
-                    r['val_' + j] = val;
+                    r['y' + j] = val;
                 });
-                data[prop].push(r);
+                data[prop].dataset.push(r);
             });
         });
 
