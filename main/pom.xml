@@ -272,6 +272,12 @@
                         <configuration>
                             <useTestClasspath>true</useTestClasspath>
                             <scanIntervalSeconds>0</scanIntervalSeconds>
+                            <systemProperties>
+                                <systemProperty>
+                                    <name>alex.dbpath</name>
+                                    <value>mem:integration-test-db</value>
+                                </systemProperty>
+                            </systemProperties>
                         </configuration>
                     </execution>
                     <execution>
