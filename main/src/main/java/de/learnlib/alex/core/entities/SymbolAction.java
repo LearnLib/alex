@@ -30,17 +30,7 @@ import de.learnlib.alex.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.alex.actions.RESTSymbolActions.RESTSymbolAction;
 import de.learnlib.alex.actions.StoreSymbolActions.*;
 import de.learnlib.alex.actions.WaitAction;
-import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
-import de.learnlib.alex.actions.WebSymbolActions.CheckPageTitleAction;
-import de.learnlib.alex.actions.WebSymbolActions.CheckTextWebAction;
-import de.learnlib.alex.actions.WebSymbolActions.ClearAction;
-import de.learnlib.alex.actions.WebSymbolActions.ClickAction;
-import de.learnlib.alex.actions.WebSymbolActions.ClickLinkAction;
-import de.learnlib.alex.actions.WebSymbolActions.FillAction;
-import de.learnlib.alex.actions.WebSymbolActions.GotoAction;
-import de.learnlib.alex.actions.WebSymbolActions.SelectAction;
-import de.learnlib.alex.actions.WebSymbolActions.SubmitAction;
-import de.learnlib.alex.actions.WebSymbolActions.WebSymbolAction;
+import de.learnlib.alex.actions.WebSymbolActions.*;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.utils.SearchHelper;
 import org.hibernate.annotations.NaturalId;
@@ -94,6 +84,8 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
         @JsonSubTypes.Type(name = "web_select", value = SelectAction.class),
+        @JsonSubTypes.Type(name = "web_waitForTitle", value = WaitForTitleAction.class),
+        @JsonSubTypes.Type(name = "web_waitForNode", value = WaitForNodeAction.class),
         // REST Actions
         @JsonSubTypes.Type(name = "rest", value = RESTSymbolAction.class),
         @JsonSubTypes.Type(name = "rest_call", value = CallAction.class),

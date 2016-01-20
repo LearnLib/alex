@@ -90,6 +90,8 @@ const actionType = {
     WEB_GO_TO: 'web_goto',
     WEB_SELECT: 'web_select',
     WEB_SUBMIT: 'web_submit',
+    WAIT_FOR_NODE: 'web_waitForNode',
+    WAIT_FOR_TITLE: 'web_waitForTitle',
 
     // rest actions
     REST_CALL: 'rest_call',
@@ -111,7 +113,7 @@ const actionType = {
     GENERAL_SET_VARIABLE_BY_HTML: 'setVariableByHTML',
     GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE: 'setVariableByNodeAttribute',
     GENERAL_SET_VARIABLE: 'setVariable',
-    GENERAL_WAIT: 'wait'
+    WAIT: 'wait'
 };
 
 export {learnAlgorithm, webBrowser, eqOracleType, events, chartMode, actionType};

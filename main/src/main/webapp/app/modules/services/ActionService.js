@@ -27,6 +27,8 @@ import ClearWebAction from '../entities/actions/webActions/ClearWebAction';
 import CheckPageTitleAction from '../entities/actions/webActions/CheckPageTitleAction';
 import CheckForTextWebAction from '../entities/actions/webActions/CheckForTextWebAction';
 import CheckForNodeWebAction from '../entities/actions/webActions/CheckForNodeWebAction';
+import WaitForTitleAction from '../entities/actions/webActions/WaitForTitleAction';
+import WaitForNodeAction from '../entities/actions/webActions/WaitForNodeAction';
 
 // rest actions
 import CallRestAction from '../entities/actions/restActions/CallRestAction';
@@ -120,8 +122,12 @@ class ActionService {
                 return new SetVariableGeneralAction(data);
             case actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE:
                 return new SetVariableByNodeAttributeGeneralAction(data);
-            case actionType.GENERAL_WAIT:
+            case actionType.WAIT:
                 return new WaitGeneralAction(data);
+            case actionType.WAIT_FOR_TITLE:
+                return new WaitForTitleAction(data);
+            case actionType.WAIT_FOR_NODE:
+                return new WaitForNodeAction(data);
         }
     }
 

@@ -17,21 +17,36 @@
 import Action from '../Action';
 import {actionType} from '../../../constants';
 
-/** Wait for a certain amount of time before executing the next action */
-class WaitGeneralAction extends Action {
+/**
+ * Wait for the title of the page to have changed
+ **/
+class WaitForTitleAction extends Action {
 
     /**
      * Constructor
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
-        super(actionType.WAIT, obj);
+        super(actionType.WAIT_FOR_TITLE, obj);
 
         /**
-         * The time to wait in milliseconds
-         * @type {*|number}
+         * For what event should be waited
+         * Can be 'IS' or 'CONTAINS'
+         * @type {string}
          */
-        this.duration = obj.duration || 0;
+        this.waitCriterion = obj.waitCriterion || 'IS';
+
+        /**
+         * The value of the title
+         * @type {*|string}
+         */
+        this.value = obj.value || '';
+
+        /**
+         * The time to wait for the change at max
+         * @type {number}
+         */
+        this.maxWaitTime = obj.maxWaitTime || 10;
     }
 
     /**
@@ -39,8 +54,12 @@ class WaitGeneralAction extends Action {
      * @returns {string}
      */
     toString() {
-        return 'Wait for ' + this.duration + 'ms';
+        if (this.waitCriterion === 'IS') {
+            return `Wait until the title is "${this.value}" for a maximum of "${this.maxWaitTime}s"`;
+        } else {
+            return `Wait until the title contains "${this.value}" for a maximum of "${this.maxWaitTime}s"`;
+        }
     }
 }
 
-export default WaitGeneralAction;
+export default WaitForTitleAction;
