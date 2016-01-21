@@ -92,16 +92,16 @@ public class CounterResourceTest extends JerseyTest {
         UserHelper.initFakeAdmin(user);
         given(userDAO.getById(user.getId())).willReturn(user);
         given(userDAO.getByEmail(user.getEmail())).willReturn(user);
+        token = UserHelper.login(user);
 
         return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO, learnerResultDAO,
-                                       fileDAO, learner,  UserResource.class, CounterResource.class);
+                                       fileDAO, learner,  CounterResource.class);
     }
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        token = UserHelper.login(client(), "http://localhost:9998");
 
         given(user.getId()).willReturn(USER_TEST_ID);
         given(project.getId()).willReturn(PROJECT_TEST_ID);

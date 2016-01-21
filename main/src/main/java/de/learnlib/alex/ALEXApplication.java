@@ -34,21 +34,15 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.core.learner.LearnerThreadFactory;
-import de.learnlib.alex.security.RsaKeyHolder;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.jose4j.jwk.RsaJwkGenerator;
-import org.jose4j.lang.JoseException;
 
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
  */
 public class ALEXApplication extends ResourceConfig {
-
-    /** The number of bits used by the JWK lib. */
-    public static final int JWK_STRENGTH_IN_BITS = 2048;
 
     /** The E-Mail for the default admin, i.e. the admin that will be auto created if no other admin exists. */
     public static final String DEFAULT_ADMIN_EMAIL = "admin@alex.example";
@@ -84,25 +78,16 @@ public class ALEXApplication extends ResourceConfig {
             }
         });
 
-        try {
+        UserDAO userDAO = new UserDAOImpl();
 
-            // create private public RSA key for signing JWTs
-            RsaKeyHolder.setKey(RsaJwkGenerator.generateJwk(JWK_STRENGTH_IN_BITS));
+        // create an admin if none exists
+        if (userDAO.getAllByRole(UserRole.ADMIN).size() == 0) {
+            User admin = new User();
+            admin.setEmail(DEFAULT_ADMIN_EMAIL);
+            admin.setRole(UserRole.ADMIN);
+            admin.setEncryptedPassword(DEFAULT_ADMIN_PASSWORD);
 
-            UserDAO userDAO = new UserDAOImpl();
-
-            // create an admin if none exists
-            if (userDAO.getAllByRole(UserRole.ADMIN).size() == 0) {
-                User admin = new User();
-                admin.setEmail(DEFAULT_ADMIN_EMAIL);
-                admin.setRole(UserRole.ADMIN);
-                admin.setEncryptedPassword(DEFAULT_ADMIN_PASSWORD);
-
-                userDAO.create(admin);
-            }
-        } catch (JoseException e) {
-            e.printStackTrace();
-            System.exit(0);
+            userDAO.create(admin);
         }
     }
 

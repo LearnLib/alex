@@ -68,7 +68,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 // check if the jwt is valid
                 JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                         .setExpectedIssuer("ALEX")
-                        .setVerificationKey(RsaKeyHolder.getKey().getPublicKey())
+                        .setVerificationKey(JWTHelper.getKey().getPublicKey())
                         .build();
 
                 // get payload and get user id

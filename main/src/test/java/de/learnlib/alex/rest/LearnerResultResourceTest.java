@@ -32,6 +32,7 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.security.JWTHelper;
 import de.learnlib.alex.utils.UserHelper;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
@@ -99,15 +100,15 @@ public class LearnerResultResourceTest extends JerseyTest {
         UserHelper.initFakeAdmin(user);
         given(userDAO.getById(user.getId())).willReturn(user);
         given(userDAO.getByEmail(user.getEmail())).willReturn(user);
+        token = UserHelper.login(user);
 
         return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO, learnerResultDAO,
-                                       fileDAO, learner, UserResource.class, LearnerResultResource.class);
+                                       fileDAO, learner, LearnerResultResource.class);
     }
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        token = UserHelper.login(client(), "http://localhost:9998");
 
         project = new Project();
         project.setId(PROJECT_ID);

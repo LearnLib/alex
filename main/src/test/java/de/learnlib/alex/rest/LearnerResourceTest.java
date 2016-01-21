@@ -34,6 +34,7 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.security.JWTHelper;
 import de.learnlib.alex.utils.UserHelper;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
@@ -108,16 +109,16 @@ public class LearnerResourceTest extends JerseyTest {
         UserHelper.initFakeAdmin(user);
         given(userDAO.getById(user.getId())).willReturn(user);
         given(userDAO.getByEmail(user.getEmail())).willReturn(user);
+        token = UserHelper.login(user);
 
         return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO, learnerResultDAO,
-                                       fileDAO, learner, UserResource.class, LearnerResource.class);
+                                       fileDAO, learner, LearnerResource.class);
     }
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        token = UserHelper.login(client(), "http://localhost:9998");
 
         given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
         Symbol resetSymbol = mock(Symbol.class);
