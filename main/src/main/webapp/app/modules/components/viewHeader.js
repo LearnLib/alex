@@ -37,6 +37,7 @@ const viewHeader = {
     },
     controller: ViewHeader,
     controllerAs: 'vm',
+    transclude: true,
     template: `
         <div class="view-header">
             <div class="alx-container-fluid">

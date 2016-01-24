@@ -39,6 +39,7 @@ const widget = {
     bindings: {
         title: '@'
     },
+    transclude: true,
     template: `
       <div class="panel panel-default">
           <div class="panel-heading">
@@ -48,5 +49,6 @@ const widget = {
       </div>
    `
 };
+
 
 export default widget;

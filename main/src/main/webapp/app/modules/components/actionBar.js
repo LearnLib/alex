@@ -60,6 +60,7 @@ class ActionBar {
 
 export const actionBar = {
     controller: ActionBar,
+    transclude: true,
     template: `
         <div class="action-bar">
             <div class="alx-container-fluid" ng-transclude></div>
