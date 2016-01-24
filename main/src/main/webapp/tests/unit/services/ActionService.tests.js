@@ -9,6 +9,8 @@ import ClearWebAction from '../../../app/modules/entities/actions/webActions/Cle
 import CheckPageTitleAction from '../../../app/modules/entities/actions/webActions/CheckPageTitleAction';
 import CheckForTextWebAction from '../../../app/modules/entities/actions/webActions/CheckForTextWebAction';
 import CheckForNodeWebAction from '../../../app/modules/entities/actions/webActions/CheckForNodeWebAction';
+import WaitForNodeAction from '../../../app/modules/entities/actions/webActions/WaitForNodeAction';
+import WaitForTitleAction from '../../../app/modules/entities/actions/webActions/WaitForTitleAction';
 
 // rest actions
 import CallRestAction from '../../../app/modules/entities/actions/restActions/CallRestAction';
@@ -63,6 +65,10 @@ describe('ActionService', () => {
         expect(action instanceof SelectWebAction).toBe(true);
         action = ActionService.createFromType(actionType.WEB_SUBMIT);
         expect(action instanceof SubmitWebAction).toBe(true);
+        action = ActionService.createFromType(actionType.WAIT_FOR_NODE);
+        expect(action instanceof WaitForNodeAction).toBe(true);
+        action = ActionService.createFromType(actionType.WAIT_FOR_TITLE);
+        expect(action instanceof WaitForTitleAction).toBe(true);
     });
 
     it('should should correctly create rest actions from a given type', () => {
@@ -101,7 +107,7 @@ describe('ActionService', () => {
         expect(action instanceof SetVariableByNodeGeneralAction).toBe(true);
         action = ActionService.createFromType(actionType.GENERAL_SET_VARIABLE);
         expect(action instanceof SetVariableGeneralAction).toBe(true);
-        action = ActionService.createFromType(actionType.GENERAL_WAIT);
+        action = ActionService.createFromType(actionType.WAIT);
         expect(action instanceof WaitGeneralAction).toBe(true);
     })
 });
