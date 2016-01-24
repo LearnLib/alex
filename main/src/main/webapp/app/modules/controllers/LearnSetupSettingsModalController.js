@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {events, webBrowser, learnAlgorithm, eqOracleType} from '../../constants';
-import LearnConfiguration from '../../entities/LearnConfiguration';
+import {events, webBrowser, learnAlgorithm, eqOracleType} from '../constants';
+import LearnConfiguration from '../entities/LearnConfiguration';
 
 /**
  * The controller for the modal dialog where you can set the settings for an upcoming test run.

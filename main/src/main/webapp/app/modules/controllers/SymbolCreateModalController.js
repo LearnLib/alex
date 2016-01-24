@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-import {SymbolFormModel} from '../../entities/Symbol';
+import {events} from '../constants';
+import {SymbolFormModel} from '../entities/Symbol';
 
 /** The controller for the modal window to create a new symbol */
 // @ngInject

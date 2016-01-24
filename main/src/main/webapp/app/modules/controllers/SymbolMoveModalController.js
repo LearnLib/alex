@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-import {Symbol} from '../../entities/Symbol';
+import {events} from '../constants';
+import {Symbol} from '../entities/Symbol';
 
 /**
  * The controller that handles the moving of symbols into another group.

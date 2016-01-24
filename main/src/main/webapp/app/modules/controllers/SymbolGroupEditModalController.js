@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
+import {events} from '../constants';
 
 /**
  * The controller that handles the modal dialog for deleting and updating a symbol group. The modal data that is

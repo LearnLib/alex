@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
+import {events} from '../constants';
 
 /** The controller for the modal dialog that handles the editing of an action. */
 // @ngInject

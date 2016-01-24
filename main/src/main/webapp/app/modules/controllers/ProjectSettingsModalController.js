@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-import {Project} from '../../entities/Project';
+import {events} from '../constants';
+import {Project} from '../entities/Project';
 
 /**
  * The controller of the modal window for editing a project

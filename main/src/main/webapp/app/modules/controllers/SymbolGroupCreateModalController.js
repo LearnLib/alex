@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-import {SymbolGroupFormModel} from '../../entities/SymbolGroup';
+import {events} from '../constants';
+import {SymbolGroupFormModel} from '../entities/SymbolGroup';
 
 /** The controller for the modal dialog that handles the creation of a new symbol group. */
 // @ngInject
