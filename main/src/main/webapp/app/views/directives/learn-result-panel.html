@@ -4,7 +4,7 @@
         <!-- additional space for buttons -->
         <div class="pull-right" ng-transclude></div>
 
-        <div ng-if="!results[pointer].error">
+        <div ng-if="!result.steps[pointer].error">
 
             <!-- header for hypothesis -->
             <div ng-if="mode === modes.HYPOTHESIS">
@@ -16,7 +16,7 @@
                     </button>
                     <ul class="dropdown-menu pull-left" role="menu">
                         <li>
-                            <a href="" learn-result-details-modal-handle result="results[pointer]">
+                            <a href="" learn-result-details-modal-handle result="result" current="pointer">
                                 <i class="fa fa-info fa-fw"></i> Details
                             </a>
                         </li>
@@ -38,8 +38,11 @@
                     </ul>
                 </div>
 
-                <button class="btn btn-sm btn-default" ng-click="showInternalDataStructure()"
-                        ng-if="hasInternalDataStructure()">Data Structure
+                <button class="btn btn-sm btn-default"
+                        style="margin-left: 6px"
+                        ng-click="showInternalDataStructure()"
+                        ng-if="hasInternalDataStructure()">
+                    Data Structure
                 </button>
 
                 <!-- browser -->
@@ -51,7 +54,7 @@
                         <i class="fa fa-angle-left fa-fw"></i>
                     </button>
                     <button class="btn btn-default disabled">
-                        <span ng-bind="pointer + 1"></span>/<span ng-bind="results.length"></span>
+                        <span ng-bind="pointer + 1"></span>/<span ng-bind="result.steps.length"></span>
                     </button>
                     <button class="btn btn-default" ng-click="nextStep()">
                         <i class="fa fa-angle-right fa-fw"></i>
@@ -87,26 +90,25 @@
     <div class="learn-result-panel-body">
 
         <div ng-if="!results[pointer].error">
-            <!-- display hypothesis -->
-            <hypothesis id="hypothesis-{{index}}" result="results[pointer]" layout-settings="layoutSettings"
+            <hypothesis id="hypothesis-{{index}}" result="result.steps[pointer]" layout-settings="layoutSettings"
                         is-selectable="true" ng-if="mode === modes.HYPOTHESIS">
             </hypothesis>
 
-            <!-- display observation table -->
-            <observation-table id="observation-table-{{index}}" data="results[pointer].algorithmInformation"
+            <observation-table id="observation-table-{{index}}"
+                               data="result.steps[pointer].algorithmInformation"
                                ng-if="mode === modes.OBSERVATION_TABLE">
             </observation-table>
 
-            <!-- display discrimination tree -->
-            <discrimination-tree id="discrimination-tree-{{index}}" data="results[pointer].algorithmInformation"
+            <discrimination-tree id="discrimination-tree-{{index}}"
+                                 data="result.steps[pointer].algorithmInformation"
                                  ng-if="mode === modes.DISCRIMINATION_TREE">
             </discrimination-tree>
         </div>
 
-        <div class="alx-container" ng-if="results[pointer].error">
+        <div class="alx-container" ng-if="result.steps[pointer].error">
             <div class="alert alert-danger">
                 <p><strong>There has been an error while learning</strong></p>
-                <p ng-bind="results[pointer].errorText"></p>
+                <p ng-bind="result.steps[pointer].errorText"></p>
             </div>
         </div>
 

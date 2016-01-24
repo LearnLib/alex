@@ -62,7 +62,7 @@ function discriminationTree($window) {
                 var data = angular.fromJson(newValue);
                 var graph = createGraph(data);
                 var layoutedGraph = layout(graph);
-                render(layoutedGraph);
+                renderDT(layoutedGraph);
             }
         });
 
@@ -163,7 +163,7 @@ function discriminationTree($window) {
             });
 
             // layout
-            dagreD3.dagre.layout(_graph, {});
+            dagre.layout(_graph, {});
 
             return _graph;
         }
@@ -173,10 +173,10 @@ function discriminationTree($window) {
          *
          * @param {exports.Graph} graph - The graph with position information
          */
-        function render(graph) {
+        function renderDT(graph) {
 
             // render the graph
-            new dagreD3.render()(svgGroup, graph);
+            new Renderer()(svgGroup, graph);
 
             // position it in the center of the svg parent
             var xCenterOffset = (svgContainer.clientWidth - graph.graph().width) / 2;

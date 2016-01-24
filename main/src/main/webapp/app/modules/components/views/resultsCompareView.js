@@ -62,33 +62,18 @@ class ResultsCompareView {
         if (!$stateParams.testNos) {
             this.ErrorService.setErrorMessage("There are no test numbers defined in the URL");
         } else {
-            this.LearnResultResource.getAllFinal(this.project.id).then(results => {
-                this.results = results;
-                this.loadComplete($stateParams.testNos);
-            });
-        }
-    }
+            const testNos = $stateParams.testNos.split(',');
+            this.LearnResultResource.getAll(this.project.id)
+                .then(results => {
+                    this.results = results;
 
-    /**
-     * Loads a complete learn result set from a test number in the panel with a given index
-     *
-     * @param {String} testNos - The test numbers as concatenated string, separated by a ','
-     * @param {number} index - The index of the panel the complete learn result should be displayed in
-     */
-    loadComplete(testNos, index) {
-        this.LearnResultResource.getManyComplete(this.project.id, testNos)
-            .then(completeResults => {
-                completeResults.forEach(result => {
-                    if (angular.isUndefined(index)) {
-                        this.panels.push(result);
-                    } else {
-                        this.panels[index] = result;
-                    }
+                    this.results.forEach(result => {
+                        if (testNos.indexOf(String(result.testNo)) > -1) {
+                            this.panels.push(result);
+                        }
+                    })
                 });
-            })
-            .catch(response => {
-                this.ErrorService.setErrorMessage(response.data.message);
-            });
+        }
     }
 
     /**
@@ -98,7 +83,7 @@ class ResultsCompareView {
      * @param {number} index - The index of the panel the complete set should be displayed in
      */
     fillPanel(result, index) {
-        this.loadComplete(result.testNo + '', index);
+        this.panels[index] = result;
     }
 
     /**

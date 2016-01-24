@@ -29,7 +29,8 @@ function learnResultDetailsModalHandle($modal) {
     return {
         restrict: 'A',
         scope: {
-            result: '='
+            result: '=',
+            current: '='
         },
         link: link
     };
@@ -37,12 +38,15 @@ function learnResultDetailsModalHandle($modal) {
     function link(scope, el) {
         el.on('click', () => {
             $modal.open({
-                templateUrl: 'views/modals/learn-result-details-modal.html',
-                controller: 'LearnResultDetailsModalController',
+                templateUrl: 'LearnResultDetailsModalController',
+                controller: LearnResultDetailsModalController,
                 controllerAs: 'vm',
                 resolve: {
                     modalData: function () {
-                        return {result: scope.result};
+                        return {
+                            result: scope.result,
+                            current: scope.current
+                        };
                     }
                 }
             });

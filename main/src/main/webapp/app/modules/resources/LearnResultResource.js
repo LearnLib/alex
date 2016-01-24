@@ -36,7 +36,7 @@ class LearnResultResource {
      * @param {number} projectId - The id of the project whose final learn results should be fetched
      * @returns {*}
      */
-    getAllFinal(projectId) {
+    getAll(projectId) {
         return this.$http.get(`/rest/projects/${projectId}/results`)
             .then(response => response.data.map(r => new LearnResult(r)));
     }
@@ -48,49 +48,11 @@ class LearnResultResource {
      * @param {number} testNo - The number of the test run
      * @returns {*}
      */
-    getFinal(projectId, testNo) {
+    get(projectId, testNo) {
         return this.$http.get(`/rest/projects/${projectId}/results/${testNo}`)
-            .then(response => new LearnResult(response.data));
-    }
-
-    /**
-     * Get all steps of a test run
-     *
-     * @param {number} projectId - The id of the project of the test
-     * @param {number} testNo - The number of the test that should be completely fetched
-     * @returns {*}
-     */
-    getComplete(projectId, testNo) {
-        return this.$http.get(`/rest/projects/${projectId}/results/${testNo}/complete`)
             .then(response => {
-                response.data.shift();
-                return response.data.map(r => new LearnResult(r));
-            });
-    }
-
-    /**
-     * Gets all steps of multiple test runs
-     *
-     * @param {number} projectId - The id of the project
-     * @param {number[]} testNos - The list of test numbers to get all steps from
-     * @returns {*} [LearnResult[]]
-     */
-    getManyComplete(projectId, testNos) {
-        return this.$http.get(`/rest/projects/${projectId}/results/${testNos}/complete`)
-            .then(response => {
-                if (response.data.length > 0) {
-                    if (!angular.isArray(response.data[0])) {
-                        response.data.shift();
-                        return [response.data.map(r => new LearnResult(r))];
-                    } else {
-                        return response.data.map(resultList => {
-                            resultList.shift(); // remove the cumulated results at the beginning
-                            return resultList.map(result => new LearnResult(result));
-                        });
-                    }
-                } else {
-                    return [[]];
-                }
+                console.log(response)
+                return new LearnResult(response.data)
             });
     }
 

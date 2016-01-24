@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import _ from 'lodash';
 import {eqOracleType} from '../../constants';
 
 /**
@@ -47,18 +48,18 @@ class LearnResumeSettingsWidget {
          * The selected eq oracle type from the select box
          * @type {string}
          */
-        this.selectedEqOracle = this.learnConfiguration.eqOracle.type;
+        this.selectedEqOracle = this.configuration.eqOracle.type;
     }
 
     /** Creates a new eq oracle object from the selected type and assigns it to the configuration */
     setEqOracle() {
-        this.learnConfiguration.eqOracle = this.EqOracleService.createFromType(this.selectedEqOracle);
+        this.configuration.eqOracle = this.EqOracleService.createFromType(this.selectedEqOracle);
     }
 }
 
 const learnResumeSettingsWidget = {
     bindings: {
-        learnConfiguration: '='
+        configuration: '='
     },
     controller: LearnResumeSettingsWidget,
     controllerAs: 'vm',

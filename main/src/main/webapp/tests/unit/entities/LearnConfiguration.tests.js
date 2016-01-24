@@ -47,14 +47,4 @@ describe('LearnConfiguration', () => {
         config.setResetSymbol(symbol);
         expect(config.resetSymbol).toEqual(symbol.getIdRevisionPair())
     });
-
-    it('should create a learn resume config from the config', () => {
-        const config = new LearnConfiguration();
-        const resumeConfig = {
-            eqOracle: config.eqOracle,
-            maxAmountOfStepsToLearn: config.maxAmountOfStepsToLearn
-        };
-
-        expect(config.getLearnResumeConfiguration()).toEqual(resumeConfig);
-    });
 });

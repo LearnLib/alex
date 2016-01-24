@@ -84,17 +84,6 @@ class LearnConfiguration {
     setResetSymbol(symbol) {
         this.resetSymbol = symbol.getIdRevisionPair();
     }
-
-    /**
-     * Get the configuration as required to resume a learn process
-     * @returns {{eqOracle: (*|RandomEqOracle), maxAmountOfStepsToLearn: number}}
-     */
-    getLearnResumeConfiguration() {
-        return {
-            eqOracle: this.eqOracle,
-            maxAmountOfStepsToLearn: this.maxAmountOfStepsToLearn
-        };
-    }
 }
 
 export default LearnConfiguration;

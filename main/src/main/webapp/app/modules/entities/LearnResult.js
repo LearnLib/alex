@@ -28,10 +28,16 @@ class LearnResult {
     constructor(obj) {
 
         /**
-         * The learnConfiguration
-         * @type {LearnConfiguration|*}
+         * The algorithm that is used
+         * @type {string}
          */
-        this.configuration = new LearnConfiguration(obj.configuration);
+        this.algorithm = obj.algorithm;
+
+        /**
+         * The browser that is used
+         * @type {string}
+         */
+        this.browser = obj.browser;
 
         /**
          * The hypothesis
@@ -46,16 +52,31 @@ class LearnResult {
         this.project = obj.project;
 
         /**
+         * The id revision pair of the reset symbol
+         */
+        this.resetSymbol = obj.resetSymbol;
+
+        /**
          * The alphabet the process has been learned with
          * @type {{id:number,revision:number}[]}
          */
         this.sigma = obj.sigma;
 
         /**
-         * The n in n-th hypothesis
-         * @type {number}
+         * The cumulated statistics
          */
-        this.stepNo = obj.stepNo;
+        this.statistics = obj.statistics;
+
+        /**
+         * The steps of the learn process
+         * @type {Array}
+         */
+        this.steps = obj.steps;
+
+        /**
+         * Sigma
+         */
+        this.symbols = obj.symbols;
 
         /**
          * The test number
@@ -64,33 +85,22 @@ class LearnResult {
         this.testNo = obj.testNo;
 
         /**
-         * The internal data structure of the used algorithm.
-         * Not available for DHC
-         * @type {string}
+         * The id of the user
+         * @type {number}
          */
-        this.algorithmInformation = obj.algorithmInformation;
-
-        /**
-         * The statistics of the process
-         * @type {object}
-         */
-        this.statistics = obj.statistics;
-
-        /**
-         * If there has been an error
-         * @type {boolean}
-         */
-        this.error = obj.error;
-
-        /**
-         * The error message why the process failed
-         * @type {string}
-         */
-        this.errorText = obj.errorText;
+        this.user = obj.user;
 
         // convert ns to ms
-        this.statistics.startTime = Math.ceil(this.statistics.startTime / 1000000);
         this.statistics.duration = Math.ceil(this.statistics.duration / 1000000);
+        this.steps.forEach(step => step.duration = step.duration / 1000000)
+    }
+
+    getConfiguration() {
+        return {
+            algorith: this.algorithm,
+            browser: this.browser,
+            eqOracle: this.steps[this.steps.length - 1].eqOracle
+        }
     }
 }
 

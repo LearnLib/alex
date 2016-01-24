@@ -28,30 +28,30 @@ class LearnResultDetailsModalController {
      * Constructor
      * @param $modalInstance
      * @param modalData
-     * @param LearnResultResource
      */
-    constructor($modalInstance, modalData, LearnResultResource) {
+    constructor($modalInstance, modalData) {
         this.$modalInstance = $modalInstance;
+
+        /**
+         * The result to display information from
+         * @type {LearnResult[]}
+         */
+        this.result = modalData.result;
+
+        /**
+         * The index of the current step
+         * @type {number}
+         */
+        this.current = modalData.current;
 
         /**
          * The data of the tabs that are displayed
          * @type {*[]}
          */
         this.tabs = [
-            {heading: 'Current', result: modalData.result}
+            {heading: 'Current', result: this.result.steps[this.current]},
+            {heading: 'Cumulated', result: this.result}
         ];
-
-        if (modalData.result.stepNo > 0) {
-            LearnResultResource.getFinal(modalData.result.project, modalData.result.testNo)
-                .then(res => {
-                    this.tabs.push({
-                        heading: 'Cumulated',
-                        result: res
-                    });
-                });
-        } else {
-            this.tabs[0].heading = 'Cumulated';
-        }
     }
 
     /** Close the modal window  */

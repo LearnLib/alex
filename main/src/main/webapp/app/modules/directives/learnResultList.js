@@ -56,14 +56,13 @@ function learnResultListItem() {
                                 Test No <span ng-bind="result.testNo"></span>
                             </a>
                         </strong>,
-                        [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
+                        [<span ng-bind="(result.algorithm|formatAlgorithm)"></span>]
                         <div class="text-muted">
                         <em>
                             Started: <span ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
                         </em>
                     </div>
-                    <div class="comment text-muted" ng-show="result.configuration.comment"  ng-bind="result.configuration.comment">
-                    </div>
+                    <div class="comment text-muted" ng-if="result.comment" ng-bind="result.comment"></div>
                 </div>
             </div>
             `

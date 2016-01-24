@@ -110,7 +110,7 @@ class StatisticsCompareView {
      * @param {number} testNo
      */
     createChartSingleFinal(testNo) {
-        this.LearnResultResource.getFinal(this.project.id, testNo)
+        this.LearnResultResource.get(this.project.id, testNo)
             .then(result => {
                 this.chartData = this.LearnerResultChartService.createDataSingleFinal(result);
             });
@@ -120,9 +120,9 @@ class StatisticsCompareView {
      * @param {number} testNo
      */
     createChartSingleComplete(testNo) {
-        this.LearnResultResource.getComplete(this.project.id, testNo)
-            .then(results => {
-                this.chartData = this.LearnerResultChartService.createDataSingleComplete(results);
+        this.LearnResultResource.get(this.project.id, testNo)
+            .then(result => {
+                this.chartData = this.LearnerResultChartService.createDataSingleComplete(result);
             });
     }
 
@@ -130,7 +130,7 @@ class StatisticsCompareView {
      * @param {number[]} testNos
      */
     createChartMultipleFinal(testNos) {
-        this.LearnResultResource.getAllFinal(this.project.id).then(results => {
+        this.LearnResultResource.getAll(this.project.id).then(results => {
 
             // get all results and filter because there is still no other api endpoint
             const resultsFromTestNos = results.filter(r => testNos.indexOf(r.testNo) > -1);

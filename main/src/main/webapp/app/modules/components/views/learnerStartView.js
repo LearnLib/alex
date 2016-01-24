@@ -57,7 +57,7 @@ class LearnerStartView {
          * The complete learn result until the most recent learned one
          * @type {LearnResult[]}
          */
-        this.results = [];
+        this.result = null;
 
         /**
          * Indicates if polling the server for a test result is still active
@@ -83,6 +83,8 @@ class LearnerStartView {
          */
         this.duration = 0;
 
+        this.resumeConfig = null;
+
         // stop polling when you leave the page
         $scope.$on("$destroy", () => {
             this.$interval.cancel(this.interval);
@@ -104,15 +106,19 @@ class LearnerStartView {
                             if (result.error) {
                                 this.ErrorService.setErrorMessage(result.errorText);
                             } else {
-                                this.LearnResultResource.getComplete(this.project.id, result.testNo).then(results => {
-                                    this.results = results;
+                                this.result = result;
 
-                                    // notify the user that the learning process has finished
-                                    if (("Notification" in window) && Notification.permission === 'granted') {
-                                        const notification = new Notification("ALEX has finished learning your application!");
-                                        setTimeout(notification.close.bind(notification), 5000);
-                                    }
-                                });
+                                const lastStep = _.last(this.result.steps);
+                                this.resumeConfig = {
+                                    eqOracle: lastStep.eqOracle,
+                                    maxAmountOfStepsToLearn: lastStep.stepsToLearn
+                                };
+                            }
+
+                            // notify the user that the learning process has finished
+                            if (("Notification" in window) && Notification.permission === 'granted') {
+                                const notification = new Notification("ALEX has finished learning your application!");
+                                setTimeout(notification.close.bind(notification), 5000);
                             }
                         });
                         this.$interval.cancel(this.interval);
@@ -139,10 +145,9 @@ class LearnerStartView {
 
     /** Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample' */
     resumeLearning() {
-        const lastResult = this.results[this.results.length - 1];
-        const config = new LearnConfiguration(lastResult.configuration).getLearnResumeConfiguration();
+        const lastStep = this.result.steps[this.result.steps.length - 1];
 
-        this.LearnerResource.resume(this.project.id, lastResult.testNo, config)
+        this.LearnerResource.resume(this.project.id, this.result.testNo, config)
             .then(() => {
                 this.poll();
             })

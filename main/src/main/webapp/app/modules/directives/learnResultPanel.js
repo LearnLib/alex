@@ -37,7 +37,7 @@ import {learnAlgorithm} from '../constants';
 function learnResultPanel(FileDownloadService) {
     return {
         scope: {
-            results: '=',
+            result: '=',
             index: '@'
         },
         replace: true,
@@ -82,12 +82,12 @@ function learnResultPanel(FileDownloadService) {
          * The index of the step from the results that should be shown
          * @type {number}
          */
-        scope.pointer = scope.results.length - 1;
+        scope.pointer = scope.result.steps.length - 1;
 
         // adjust the pointer to show the latest result when learning with sample eq oracle
-        scope.$watch('results', function (results) {
-            scope.pointer = results.length - 1;
-        });
+        //scope.$watch('result', function (result) {
+        //    scope.pointer = result.steps.length - 1;
+        //});
 
         /**
          * Checks if the property 'algorithmInformation' is define which holds the internal data structure
@@ -95,14 +95,14 @@ function learnResultPanel(FileDownloadService) {
          * @returns {boolean|*}
          */
         scope.hasInternalDataStructure = function () {
-            return scope.results[scope.pointer].configuration.algorithm !== learnAlgorithm.TTT;
+            return scope.result.algorithm !== learnAlgorithm.TTT;
         };
 
         /**
          * Switches the mode to the one to display the internal data structure
          */
         scope.showInternalDataStructure = function () {
-            switch (scope.results[scope.pointer].configuration.algorithm) {
+            switch (scope.result.algorithm) {
                 case learnAlgorithm.LSTAR:
                     scope.mode = scope.modes.OBSERVATION_TABLE;
                     break;
@@ -118,7 +118,7 @@ function learnResultPanel(FileDownloadService) {
          * Downloads the visible hypothesis as json
          */
         scope.exportHypothesisAsJson = function() {
-            FileDownloadService.downloadJson(scope.results[scope.pointer].hypothesis);
+            FileDownloadService.downloadJson(scope.result.steps[scope.pointer].hypothesis);
         };
 
         /**
@@ -159,7 +159,7 @@ function learnResultPanel(FileDownloadService) {
          * Shows the next result of the test process or the first if the last one is displayed
          */
         scope.nextStep = function () {
-            if (scope.pointer + 1 > scope.results.length - 1) {
+            if (scope.pointer + 1 > scope.result.steps.length - 1) {
                 scope.firstStep();
             } else {
                 scope.pointer++;
@@ -170,7 +170,7 @@ function learnResultPanel(FileDownloadService) {
          * Shows the last result of the test process
          */
         scope.lastStep = function () {
-            scope.pointer = scope.results.length - 1;
+            scope.pointer = scope.result.steps.length - 1;
         };
     }
 }

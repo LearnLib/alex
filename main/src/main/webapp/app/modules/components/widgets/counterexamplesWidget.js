@@ -134,10 +134,10 @@ class CounterexamplesWidget {
                 }
             }
 
-            const resetSymbol = this.learnResult.configuration.resetSymbol;
+            const resetSymbol = this.result.resetSymbol;
 
             // actually test the counterexample
-            this.LearnerResource.isCounterexample(this.learnResult.project, resetSymbol, testSymbols)
+            this.LearnerResource.isCounterexample(this.result.project, resetSymbol, testSymbols)
                 .then(ce => {
                     let ceFound = false;
                     for (let i = 0; i < ce.length; i++) {
@@ -156,7 +156,7 @@ class CounterexamplesWidget {
 
         // fetch symbols only once and cache them
         if (this.symbols.length === 0) {
-            this.SymbolResource.getAll(this.learnResult.project).then(symbols => {
+            this.SymbolResource.getAll(this.result.project).then(symbols => {
                 this.symbols = symbols;
                 test();
             })
@@ -171,7 +171,7 @@ class CounterexamplesWidget {
 const counterexamplesWidget = {
     bindings: {
         counterexamples: '=',
-        learnResult: '='
+        result: '='
     },
     controller: CounterexamplesWidget,
     controllerAs: 'vm',

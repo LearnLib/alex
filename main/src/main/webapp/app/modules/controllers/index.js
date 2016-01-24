@@ -48,6 +48,6 @@ angular
     .controller('SymbolGroupCreateModalController', SymbolGroupCreateModalController)
     .controller('SymbolGroupEditModalController', SymbolGroupEditModalController)
     .controller('SymbolMoveModalController', SymbolMoveModalController)
-    .controller('UserEditModalController', UserEditModalController)
+    .controller('UserEditModalController', UserEditModalController);
 
 export const controllers = moduleName;

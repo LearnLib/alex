@@ -11,6 +11,31 @@
 
 <div class="modal-body">
 
+    <table class="table table-condensed">
+        <tr class="active">
+            <td colspan="2"><strong>About This Test</strong></td>
+        </tr>
+        <tr>
+            <td>nth Test</td>
+            <td ng-bind="vm.result.testNo"></td>
+        </tr>
+        <tr>
+            <td>|Sigma|</td>
+            <td ng-bind="vm.result.sigma.length"></td>
+        </tr>
+        <tr>
+            <td>Algorithm</td>
+            <td ng-bind="(vm.result.algorithm | formatAlgorithm)"></td>
+        </tr>
+        <tr>
+            <td>Web Driver</td>
+            <td ng-bind="(vm.result.browser|formatWebBrowser)"></td>
+        </tr>
+    </table>
+
+    <h3>Statistics</h3>
+    <hr>
+
     <tabset justified="true">
         <tab ng-repeat="tab in vm.tabs" heading="{{tab.heading}}">
 
@@ -21,42 +46,27 @@
 
             <table class="table table-condensed">
 
-                <tr class="active">
-                    <td colspan="2"><strong>About This Test</strong></td>
-                </tr>
                 <tr>
-                    <td>nth Test</td>
-                    <td ng-bind="tab.result.testNo"></td>
-                </tr>
-                <tr ng-hide="tab.result.stepNo === 0">
                     <td>nth Step</td>
                     <td ng-bind="tab.result.stepNo"></td>
                 </tr>
+
                 <tr>
                     <td>Started</td>
                     <td ng-bind="(tab.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></td>
                 </tr>
 
-                <tr class="active">
+                <tr class="active" ng-if="tab.result.eqOracle">
                     <td colspan="2"><strong>Configuration</strong></td>
                 </tr>
-                <tr>
-                    <td>Algorithm</td>
-                    <td ng-bind="(tab.result.configuration.algorithm | formatAlgorithm)"></td>
-                </tr>
-                <tr ng-hide="tab.result.stepNo === 0">
+                <tr ng-if="tab.result.eqOracle">
                     <td>EQ Oracle</td>
-                    <td ng-bind="(tab.result.configuration.eqOracle.type | formatEqOracle)"></td>
+                    <td ng-bind="(tab.result.eqOracle.type | formatEqOracle)"></td>
                 </tr>
-                <tr ng-hide="tab.result.stepNo === 0">
+                <tr ng-if="tab.result.eqOracle">
                     <td>Steps to Learn</td>
-                    <td ng-bind="tab.result.configuration.maxAmountOfStepsToLearn"></td>
+                    <td ng-bind="tab.result.stepsToLearn"></td>
                 </tr>
-                <tr>
-                    <td>Web Driver</td>
-                    <td ng-bind="(tab.result.configuration.browser|formatWebBrowser)"></td>
-                </tr>
-
 
                 <tr class="active">
                     <td colspan="2"><strong>Numbers</strong></td>
@@ -76,10 +86,6 @@
                 <tr>
                     <td>#Symbol Calls</td>
                     <td ng-bind="tab.result.statistics.symbolsUsed"></td>
-                </tr>
-                <tr>
-                    <td>|Sigma|</td>
-                    <td ng-bind="tab.result.sigma.length"></td>
                 </tr>
 
             </table>

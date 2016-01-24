@@ -66,7 +66,7 @@ class ProjectDetailsWidget {
                 this.numberOfSymbols = counter;
             });
 
-        LearnResultResource.getAllFinal(this.project.id)
+        LearnResultResource.getAll(this.project.id)
             .then(results => {
                 this.numberOfTests = results.length;
             });

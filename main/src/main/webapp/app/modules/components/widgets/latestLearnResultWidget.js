@@ -41,7 +41,7 @@ class LatestLearnResultWidget {
         this.project = SessionService.getProject();
 
         // get the latest learn result
-        LearnResultResource.getAllFinal(this.project.id).then(results => {
+        LearnResultResource.getAll(this.project.id).then(results => {
             if (results.length > 0) {
                 this.result = results[results.length - 1];
             }

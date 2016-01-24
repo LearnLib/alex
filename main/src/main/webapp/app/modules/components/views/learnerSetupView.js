@@ -104,7 +104,7 @@ class LearnerSetupView {
                         });
 
                     // load learn results so that their configuration can be reused
-                    LearnResultResource.getAllFinal(this.project.id)
+                    LearnResultResource.getAll(this.project.id)
                         .then(learnResults => {
                             this.learnResults = learnResults;
                         });
@@ -161,16 +161,15 @@ class LearnerSetupView {
      * @param {LearnResult} result
      */
     reuseConfigurationFromResult(result) {
-        const config = result.configuration;
-        this.learnConfiguration.algorithm = config.algorithm;
-        this.learnConfiguration.eqOracle = config.eqOracle;
-        this.learnConfiguration.maxAmountOfStepsToLearn = config.maxAmountOfStepsToLearn;
+        this.learnConfiguration.algorithm = result.algorithm;
+        this.learnConfiguration.eqOracle = result.steps[0].eqOracle;
+        this.learnConfiguration.maxAmountOfStepsToLearn = result.stepsToLearn;
 
-        const ids = config.symbols.map(s => s.id);
+        const ids = result.symbols.map(s => s.id);
         this.groups.forEach(group => {
             group.symbols.forEach(symbol => {
                 symbol._selected = ids.indexOf(symbol.id) > -1;
-                if (symbol.id === config.resetSymbol.id) {
+                if (symbol.id === result.resetSymbol.id) {
                     this.resetSymbol = symbol;
                 }
             });

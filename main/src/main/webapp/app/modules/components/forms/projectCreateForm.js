@@ -60,7 +60,7 @@ class ProjectCreateForm {
 const projectCreateForm = {
     controller: ProjectCreateForm,
     controllerAs: 'vm',
-    templateUrl: 'views/directives/project-create-form.html'
+    templateUrl: 'views/components/project-create-form.html'
 };
 
 export default projectCreateForm;

@@ -72,7 +72,10 @@ class LearnerResource {
      */
     getStatus() {
         return this.$http.get('/rest/learner/status')
-            .then(response => new LearnResult(response.data))
+            .then(response => {
+                console.log(response)
+                return new LearnResult(response.data)
+            })
             .catch(() => null);
     }
 

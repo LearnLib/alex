@@ -55,7 +55,7 @@ class ResultsView {
         this.selectedResults = [];
 
         // get all final test results
-        this.LearnResultResource.getAllFinal(this.project.id).then(results => {
+        this.LearnResultResource.getAll(this.project.id).then(results => {
             this.results = results;
         });
     }

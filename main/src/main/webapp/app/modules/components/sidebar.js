@@ -106,7 +106,7 @@ class Sidebar {
 const sidebar = {
     controller: Sidebar,
     controllerAs: 'vm',
-    templateUrl: 'views/directives/sidebar.html'
+    templateUrl: 'views/components/sidebar.html'
 };
 
 export default sidebar;

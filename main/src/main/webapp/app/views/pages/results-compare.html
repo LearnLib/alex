@@ -4,14 +4,12 @@
         <div class="learn-result-compare-panel" learn-result-compare-panel
              ng-repeat="result in vm.panels" index="{{$index}}" from="{{vm.panels.length}}">
 
-            <!-- display the learn result -->
-            <learn-result-panel results="result" index="{{$index}}" ng-if="result">
+            <learn-result-panel result="result" index="{{$index}}" ng-if="result">
                 <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
                     <i class="fa fa-close"></i>
                 </button>
             </learn-result-panel>
 
-            <!-- display the list of results -->
             <div class="learn-result-panel" ng-if="!result">
                 <div class="learn-result-panel-header">
                     <button class="btn btn-sm btn-danger learn-result-panel-close-button pull-right"
@@ -31,7 +29,7 @@
                                 <strong>Test No
                                     <span ng-bind="result.testNo"></span>
                                 </strong>,
-                                [<span ng-bind="(result.configuration.algorithm|formatAlgorithm)"></span>]
+                                [<span ng-bind="(result.algorithm|formatAlgorithm)"></span>]
 
                                 <br>
 

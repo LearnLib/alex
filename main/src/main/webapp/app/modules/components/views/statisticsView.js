@@ -53,7 +53,7 @@ class StatisticsView {
         this.selectedResults = [];
 
         // get all final learn results of the project
-        this.LearnResultResource.getAllFinal(this.project.id)
+        this.LearnResultResource.getAll(this.project.id)
             .then(results => {
                 this.results = results;
             })
