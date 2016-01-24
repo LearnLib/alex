@@ -108,6 +108,7 @@ class FileDropzone {
 
 export const fileDropzone = {
     controller: FileDropzone,
+    transclude: true,
     template: `
         <div class="alert alert-info" ng-transclude></div>
     `
