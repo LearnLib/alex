@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import ActionCreateModalController from './modals/ActionCreateModalController';
-import ActionEditModalController from './modals/ActionEditModalController';
-import ConfirmDialogController from './modals/ConfirmDialogController';
-import HypothesisLayoutSettingsController from './modals/HypothesisLayoutSettingsController';
-import LearnResultDetailsModalController from './modals/LearnResultDetailsModalController';
-import LearnSetupSettingsModalController from './modals/LearnSetupSettingsModalController';
-import ProjectSettingsModalController from './modals/ProjectSettingsModalController';
-import PromptDialogController from './modals/PromptDialogController';
-import SymbolCreateModalController from './modals/SymbolCreateModalController';
-import SymbolEditModalController from './modals/SymbolEditModalController';
-import SymbolGroupCreateModalController from './modals/SymbolGroupCreateModalController';
-import SymbolGroupEditModalController from './modals/SymbolGroupEditModalController';
-import SymbolMoveModalController from './modals/SymbolMoveModalController';
-import UserEditModalController from './modals/UserEditModalController';
+import ActionCreateModalController from './ActionCreateModalController';
+import ActionEditModalController from './ActionEditModalController';
+import ConfirmDialogController from './ConfirmDialogController';
+import HypothesisLayoutSettingsController from './HypothesisLayoutSettingsController';
+import LearnResultDetailsModalController from './LearnResultDetailsModalController';
+import LearnSetupSettingsModalController from './LearnSetupSettingsModalController';
+import ProjectSettingsModalController from './ProjectSettingsModalController';
+import PromptDialogController from './PromptDialogController';
+import SymbolCreateModalController from './SymbolCreateModalController';
+import SymbolEditModalController from './SymbolEditModalController';
+import SymbolGroupCreateModalController from './SymbolGroupCreateModalController';
+import SymbolGroupEditModalController from './SymbolGroupEditModalController';
+import SymbolMoveModalController from './SymbolMoveModalController';
+import UserEditModalController from './UserEditModalController';
 
 const moduleName = 'ALEX.controllers';
 
