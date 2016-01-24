@@ -23,6 +23,7 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -32,7 +33,7 @@ import java.util.Random;
  * @see de.learnlib.eqtests.basic.RandomWordsEQOracle.MealyRandomWordsEQOracle
  */
 @JsonTypeName("random_word")
-public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProxy {
+public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
 
     /** The seed to use for the RNG. */
     public static final int RANDOM_SEED = 42;

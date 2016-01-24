@@ -16,19 +16,24 @@
 
 package de.learnlib.alex.core.entities;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
-import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.CompleteExplorationEQOracleProxy;
+import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -37,35 +42,12 @@ public class LearnerResultTest {
     private static final Long USER_ID = 3L;
     private static final Long PROJECT_ID = 3L;
     private static final Long ID = 3L;
-    private static final Long STEP_NO = 3L;
     private static final ZonedDateTime TEST_DATE = ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00");
     private static final long TEST_DURATION = 9001;
     private static final int EQS_USED = 123;
-    private static final String EXPECTED_JSON = "{\"configuration\":{"
-                                                    + "\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\","
-                                                    + "\"comment\":\"\",\"eqOracle\":"
-                                                        + "{\"type\":\"random_word\",\"minLength\":1,\"maxLength\":1,"
-                                                        + "\"maxNoOfTests\":1},"
-                                                    + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,"
-                                                    + "\"symbols\":[]},"
-                                                + "\"counterExample\":\"\",\"hypothesis\":{"
-                                                    + "\"nodes\":[0,1],\"initNode\":0,\"edges\":["
-                                                        + "{\"from\":0,\"input\":\"0\",\"to\":0,\"output\":\"OK\"},"
-                                                        + "{\"from\":0,\"input\":\"1\",\"to\":1,\"output\":\"OK\"},"
-                                                        + "{\"from\":1,\"input\":\"0\",\"to\":1,\"output\":\"OK\"},"
-                                                        + "{\"from\":1,\"input\":\"1\",\"to\":0,\"output\":\"OK\"}"
-                                                + "]},"
-                                                + "\"project\":" + PROJECT_ID + ",\"sigma\":[\"0\",\"1\"],"
-                                                + "\"statistics\":{"
-                                                    + "\"duration\":" + TEST_DURATION + ",\"eqsUsed\":0,\"mqsUsed\":0,"
-                                                    + "\"startDate\":\"1970-01-01T00:00:00.000+00:00\","
-                                                    + "\"symbolsUsed\":0"
-                                                + "},"
-                                                + "\"stepNo\":" + STEP_NO + ",\"testNo\":" + ID + ",\"user\":"
-                                                    + USER_ID + "}";
 
     @Test
-    public void shouldCreateTheCorrectJSON() throws JsonProcessingException {
+    public void shouldCreateTheCorrectJSON() throws IOException {
         Alphabet<String> sigma = new SimpleAlphabet<>();
         sigma.add("0");
         sigma.add("1");
@@ -82,64 +64,48 @@ public class LearnerResultTest {
         Project project = mock(Project.class);
         given(project.getId()).willReturn(PROJECT_ID);
 
-        LearnerResult.Statistics statistics = new LearnerResult.Statistics();
+        Statistics statistics = new Statistics();
         statistics.setStartDate(TEST_DATE);
         statistics.setDuration(TEST_DURATION);
 
         User user = new User(USER_ID);
 
         LearnerResult result = new LearnerResult();
+        result.setUser(user);
         result.setProject(project);
         result.setTestNo(ID);
-        result.setStepNo(STEP_NO);
-        result.setStatistics(statistics);
+        result.setAlgorithm(LearnAlgorithms.TTT);
         result.setSigma(AlphabetProxy.createFrom(sigma));
         result.createHypothesisFrom(hypothesis);
-        result.setUser(user);
+        result.setStatistics(statistics);
+
+        LearnerResultStep firstStep = new LearnerResultStep();
+        firstStep.setUser(user);
+        firstStep.setProject(project);
+        firstStep.setResult(result);
+        firstStep.setStepNo(0L);
+        firstStep.setEqOracle(new MealyRandomWordsEQOracleProxy(1, 5, 10));
+        firstStep.createHypothesisFrom(hypothesis);
+        firstStep.setStatistics(statistics);
+        result.getSteps().add(firstStep);
 
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(result);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        String json = mapper.writeValueAsString(result) + "\n";
 
-        assertEquals(EXPECTED_JSON, json);
+        assertEquals(getExpectedJson(), json);
     }
 
-    @Test
-    public void shouldReadAndParseJSONCorrectly() throws Exception {
-        String json = "{\"configuration\":{"
-                            + "\"algorithm\":\"DHC\", \"eqOracle\": {\"type\": \"complete\"},"
-                            + "\"maxAmountOfStepsToLearn\":0,\"symbols\":[]},"
-                        + "\"hypothesis\": {"
-                            + "\"nodes\": [0, 1], \"edges\": ["
-                                + "{\"from\": 0, \"input\": 1, \"to\": 0, \"output\": \"OK\"},"
-                                + "{\"from\": 0, \"input\": 2, \"to\": 1, \"output\": \"OK\"}"
-                        + "]},"
-                        + "\"testNo\":" + ID + ",\"project\":" + PROJECT_ID + ","
-                        + "\"sigma\":[\"0\",\"1\"],\"stepNo\":" + STEP_NO + ", \"statistics\": {"
-                            + "\"eqsUsed\":" + EQS_USED + ", \"duration\": " + TEST_DURATION + ", \"mqsUsed\":0,"
-                            + "\"startDate\": \"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":0}"
-                        + "}";
+    private String getExpectedJson() throws IOException {
+        // read the symbols from a file
+        String url = System.getProperty("user.dir") + "/src/test/resources/core/entities/LearnerResultTestData.json";
+        Path path = Paths.get(url);
+        List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
+        StringBuilder stringBuffer = new StringBuilder();
+        lines.stream().map(l -> l + "\n").forEach(stringBuffer::append);
+        String json = stringBuffer.toString();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        LearnerResult resultFromJSON = objectMapper.readValue(json, LearnerResult.class);
-
-//
-//        LearnerResult resultFromJSON = new LearnerResult();
-        LearnerResult.Statistics statistics = new LearnerResult.Statistics();
-        statistics.setEqsUsed(EQS_USED);
-        statistics.setStartDate(TEST_DATE);
-        statistics.setDuration(TEST_DURATION);
-//
-        assertEquals(PROJECT_ID, resultFromJSON.getProjectId());
-        assertEquals(ID, resultFromJSON.getTestNo());
-        assertEquals(STEP_NO, resultFromJSON.getStepNo());
-        assertEquals(statistics.getDuration(), resultFromJSON.getStatistics().getDuration());
-        assertEquals(statistics.getStartTime(), resultFromJSON.getStatistics().getStartTime());
-        assertEquals(statistics.getEqsUsed(), resultFromJSON.getStatistics().getEqsUsed());
-        assertEquals(LearnAlgorithms.DHC, resultFromJSON.getConfiguration().getAlgorithm());
-        assertTrue(resultFromJSON.getConfiguration().getEqOracle() instanceof CompleteExplorationEQOracleProxy);
-        assertEquals(2, resultFromJSON.getSigma().size());
-        assertEquals(2, resultFromJSON.getHypothesis().getNodes().size());
-        assertEquals(2, resultFromJSON.getHypothesis().getEdges().size());
+        return json;
     }
 
 }

@@ -24,6 +24,9 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+
 /**
  * Base class for Proxies around a the different EquivalenceOracles from the LearnLib.
  * The Proxy is needed to make it easier to (de-)serialize the EQ oracles into/ from JSON.
@@ -37,7 +40,10 @@ import net.automatalib.words.Word;
     @JsonSubTypes.Type(name = "sample", value = SampleEQOracleProxy.class),
     @JsonSubTypes.Type(name = "wmethod", value = WMethodEQOracleProxy.class)
 })
-public abstract class AbstractEquivalenceOracleProxy {
+public abstract class AbstractEquivalenceOracleProxy implements Serializable {
+
+    /** to be serializable. */
+    private static final long serialVersionUID = 6270462192160289890L;
 
     /**
      * Check if the parameter of the proxy are valid, i.e. it is possible to create a functional EQ oracle out of the

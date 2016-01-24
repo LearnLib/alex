@@ -100,7 +100,7 @@ public class AlexIT {
         String url = BASE_URL + "/learner/start/" + projectId;
         String json = "{\"algorithm\":\"TTT\", \"browser\":\"htmlunitdriver\", \"eqOracle\": "
                             + "{\"type\": \"random_word\", \"minLength\": 1, \"maxLength\": 20, \"maxNoOfTests\" : 40},"
-                        + "\"maxAmountOfStepsToLearn\": 0,"
+                        + "\"maxAmountOfStepsToLearn\": -1,"
                         + "\"resetSymbol\": {\"id\": 1, \"revision\": 1},"
                         + "\"symbols\":["
                             + "{\"id\":  3, \"revision\": 1},"

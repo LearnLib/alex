@@ -34,7 +34,6 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.alex.security.JWTHelper;
 import de.learnlib.alex.utils.UserHelper;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
@@ -165,27 +164,13 @@ public class LearnerResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldNotStartALearningProcessIfTheResetSymbolDoesNotExist() throws NotFoundException {
-        given(symbolDAO.get(user, PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L)))
-                .willThrow(NotFoundException.class);
+    public void shouldReturn404IfTheLearnerCouldNotFindASymbol() throws NotFoundException {
+        willThrow(NotFoundException.class).given(learner).start(eq(user), eq(project), any(LearnerConfiguration.class));
 
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().header("Authorization", token)
                                 .post(Entity.json(START_JSON));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).start(any(User.class), any(Project.class), any(LearnerConfiguration.class));
-    }
-
-    @Test
-    public void shouldNotStartALearningProcessIfASymbolDoesNotExist() throws NotFoundException {
-        given(symbolDAO.getAll(eq(user), eq(PROJECT_TEST_ID), any(List.class)))
-                .willThrow(NotFoundException.class);
-
-        Response response = target("/learner/start/" + PROJECT_TEST_ID).request().header("Authorization", token)
-                                .post(Entity.json(START_JSON));
-
-        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).start(any(User.class), any(Project.class), any(LearnerConfiguration.class));
     }
 
     @Test
@@ -202,7 +187,7 @@ public class LearnerResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldNotStartALearningProcessTwice() {
+    public void shouldNotStartALearningProcessTwice() throws NotFoundException {
         willThrow(IllegalStateException.class).given(learner).start(any(User.class),
                                                                     any(Project.class),
                                                                     any(LearnerConfiguration.class));
@@ -214,7 +199,7 @@ public class LearnerResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldResumeIfPossible() {
+    public void shouldResumeIfPossible() throws NotFoundException {
         target("/learner/start/" + PROJECT_TEST_ID).request().header("Authorization", token)
                 .post(Entity.json(START_JSON));
 

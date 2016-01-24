@@ -24,6 +24,7 @@ import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -35,7 +36,10 @@ import java.util.stream.Stream;
  * @see de.learnlib.eqtests.basic.SampleSetEQOracle
  */
 @JsonTypeName("sample")
-public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
+public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
+
+    /** to be serializable. */
+    private static final long serialVersionUID = -110995671060498443L;
 
     /**
      * Construct to hold a pair of an input and output string.

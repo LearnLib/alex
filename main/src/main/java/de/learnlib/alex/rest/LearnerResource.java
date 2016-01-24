@@ -50,10 +50,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * REST API to manage the learning.
@@ -109,17 +107,15 @@ public class LearnerResource {
         LOGGER.trace("LearnerResource.start(" + projectId + ", " + configuration +  ") for user " + user + ".");
 
         try {
-            Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
-
-            try {
-                Symbol resetSymbol = symbolDAO.get(user, projectId, configuration.getResetSymbolAsIdRevisionPair());
-                configuration.setResetSymbol(resetSymbol);
-            } catch (NotFoundException e) { // Extra exception to emphasize that this is the reset symbol.
-                throw new NotFoundException("Could not find the reset symbol!", e);
+            if (
+                (configuration.getUserId() != null && !user.equals(configuration.getUserId())) ||
+                (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))
+            ) {
+                throw new IllegalArgumentException("If an user or a project is provided in the configuration, "
+                                                           + "they must match the parameters in the path!");
             }
 
-            Set<Symbol> symbols = new HashSet<>(symbolDAO.getAll(user, projectId, new LinkedList<>(configuration.getSymbolsAsIdRevisionPairs()))); // TODO: remove new HashMap -> getAll should return a Set
-            configuration.setSymbols(symbols);
+            Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
 
             learner.start(user, project, configuration);
             LearnerStatus status = learner.getStatus(user);

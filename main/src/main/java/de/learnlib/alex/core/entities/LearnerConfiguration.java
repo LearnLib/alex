@@ -16,17 +16,10 @@
 
 package de.learnlib.alex.core.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
-import org.hibernate.Hibernate;
 
-import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -36,11 +29,16 @@ import java.util.Set;
  * Entity to hold the information and parameters to configure a learn process.
  */
 @JsonPropertyOrder(alphabetic = true)
-@Embeddable
 public class LearnerConfiguration extends LearnerResumeConfiguration implements Serializable {
 
     /** to be serializable. */
     private static final long serialVersionUID = -5130245647384793948L;
+
+    /** The ID of the user related to the configuration. */
+    private Long userId;
+
+    /** The ID of the project related to the configuration. */
+    private Long projectId;
 
     /**
      * Link to the Symbols that are used during the learning.
@@ -49,22 +47,10 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     private Set<IdRevisionPair> symbolsAsIdRevisionPairs;
 
     /**
-     * The actual list of Symbols used during the learning.
-     * Only used internally.
-     */
-    private Set<Symbol> symbols;
-
-    /**
      * Link to the Symbols that should be used as a reset Symbol.
      * @requiredField
      */
     private IdRevisionPair resetSymbolAsIdRevisionPair;
-
-    /**
-     * The actual Symbols that should be used as a reset Symbol.
-     * Only used internally.
-     */
-    private Symbol resetSymbol;
 
     /**
      * The algorithm to be used during the learning.
@@ -88,18 +74,44 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     }
 
     /**
+     * @return The ID of the user related to the configuration.
+     */
+    @JsonProperty("user")
+    public Long getUserId() {
+        return userId;
+    }
+
+    /**
+     * @param userId The new ID of the user related to the configuration.
+     */
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    /**
+     * @return The ID of the project related to the configuration.
+     */
+    @JsonProperty("project")
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    /**
+     * @param projectId The new ID of the project related to the configuration.
+     */
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
+
+    /**
      * Get a List of IdRevisionPairs that describes the symbols to be used during the learning process.
      *
      * @return A List of IdRevisionPair referring to symbols that must be used during the learning.
      */
-    @Transient
     @JsonProperty("symbols")
     public Set<IdRevisionPair> getSymbolsAsIdRevisionPairs() {
         if (symbolsAsIdRevisionPairs == null || symbolsAsIdRevisionPairs.isEmpty()) {
             symbolsAsIdRevisionPairs = new HashSet<>();
-            if (symbols != null) {
-                symbols.stream().map(Symbol::getIdRevisionPair).forEach(p -> symbolsAsIdRevisionPairs.add(p));
-            }
         }
 
         return symbolsAsIdRevisionPairs;
@@ -117,39 +129,12 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     }
 
     /**
-     * Get the list of Symbols that must be used for the learning process.
-     *
-     * @return The list of Symbols.
-     */
-//    @ManyToMany(fetch = FetchType.EAGER)
-    @ManyToMany
-    @JsonIgnore
-    public Set<Symbol> getSymbols() {
-        return symbols;
-    }
-
-    /**
-     * Set a list of symbols to be used for the learning process.
-     *
-     * @param symbols
-     *         The new list of Symbols.
-     */
-    public void setSymbols(Set<Symbol> symbols) {
-        this.symbols = symbols;
-    }
-
-    /**
      * Get the IdRevisionPair of the reset symbol.
      *
      * @return The link to the reset symbol.
      */
-    @Transient
     @JsonProperty("resetSymbol")
     public IdRevisionPair getResetSymbolAsIdRevisionPair() {
-        if (resetSymbolAsIdRevisionPair == null && resetSymbol != null) {
-            resetSymbolAsIdRevisionPair = resetSymbol.getIdRevisionPair();
-        }
-
         return resetSymbolAsIdRevisionPair;
     }
 
@@ -161,31 +146,6 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     public void setResetSymbolAsIdRevisionPair(IdRevisionPair resetSymbolAsIdRevisionPair) {
         this.resetSymbolAsIdRevisionPair = resetSymbolAsIdRevisionPair;
-    }
-
-    /**
-     * Get the actual reset symbol.
-     *
-     * @return The reset symbol.
-     */
-    @ManyToOne
-    @JsonIgnore
-    public Symbol getResetSymbol() {
-        return resetSymbol;
-    }
-
-    /**
-     * Set the reset symbol. This updates not the IdRevisionPair of the reset symbol.
-     * @param resetSymbol The new reset symbol.
-     */
-    public void setResetSymbol(Symbol resetSymbol) {
-        this.resetSymbol = resetSymbol;
-
-        if (resetSymbol == null) {
-            this.resetSymbolAsIdRevisionPair = null;
-        } else {
-            this.resetSymbolAsIdRevisionPair = resetSymbol.getIdRevisionPair();
-        }
     }
 
     /**
@@ -240,14 +200,4 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         this.comment = comment;
     }
 
-    /**
-     * Update the configuration based on the different parameters in the ResumeConfiguration.
-     *
-     * @param configuration
-     *         Resume Configuration that specifies the new parameters for this Configuration
-     */
-    public void updateConfiguration(LearnerResumeConfiguration configuration) {
-        this.maxAmountOfStepsToLearn = configuration.maxAmountOfStepsToLearn;
-        this.eqOracle = configuration.eqOracle;
-    }
 }

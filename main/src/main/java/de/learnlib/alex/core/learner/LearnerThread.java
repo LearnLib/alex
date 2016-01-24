@@ -20,6 +20,8 @@ import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.LearnAlgorithms;
 import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.LearnerResultStep;
+import de.learnlib.alex.core.entities.Statistics;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
@@ -101,6 +103,11 @@ public class LearnerThread extends Thread {
     private final LearnerResult result;
 
     /**
+     * The current step of the learn result.
+     */
+    private LearnerResultStep currentStep;
+
+    /**
      * The learner to use during the learning.
      */
     private final MealyLearner<String, String> learner;
@@ -118,15 +125,18 @@ public class LearnerThread extends Thread {
     /**
      * Constructor to set the LearnerThread up.
      *
-     * @param learnerResultDAO The DAO to persists the results.
-     * @param result           The result to update, including the proper configuration.
-     * @param context          The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
+     * @param learnerResultDAO
+     *         The DAO to persists the results.
+     * @param result
+     *         The result to update, including the proper configuration.
+     * @param context
+     *         The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
      */
-    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result,
-                         ConnectorContextHandler context) {
+    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, ConnectorContextHandler context) {
         this.finished = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
+        this.currentStep = result.getSteps().get(result.getSteps().size() - 1); // get the latest step
 
         Symbol[] symbolsArray = readSymbolArray(); // use the symbols in the result to create the symbol array.
         this.symbolMapper = new SymbolMapper(symbolsArray);
@@ -143,7 +153,7 @@ public class LearnerThread extends Thread {
 
         this.mqOracle = new SULOracle<>(sul);
 
-        LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
+        LearnAlgorithms algorithm = result.getAlgorithm();
         this.learner = algorithm.createLearner(sigma, mqOracle);
     }
 
@@ -162,6 +172,7 @@ public class LearnerThread extends Thread {
         this.finished = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
+        this.currentStep = result.getSteps().get(result.getSteps().size() - 1); // get the latest step
 
         this.symbolMapper = new SymbolMapper(symbols);
         this.sigma = symbolMapper.getAlphabet();
@@ -178,7 +189,7 @@ public class LearnerThread extends Thread {
     }
 
     private Symbol[] readSymbolArray() {
-        Set<Symbol> symbols = result.getConfiguration().getSymbols();
+        Set<Symbol> symbols = result.getSymbols();
         return symbols.toArray(new Symbol[symbols.size()]);
     }
 
@@ -235,12 +246,12 @@ public class LearnerThread extends Thread {
             learn();
         } catch (Exception e) {
             LOGGER.warn("Something in the LearnerThread went wrong:", e);
-            result.setErrorText(e.getMessage());
+            currentStep.setErrorText(e.getMessage());
             try {
-                learnerResultDAO.update(result);
+                learnerResultDAO.saveStep(result, currentStep);
             } catch (NotFoundException nfe) {
                 LOGGER.log(Level.FATAL, "Something in the LearnerThread went wrong and the result could not be saved!",
-                        e);
+                           e);
             }
         }
 
@@ -258,37 +269,21 @@ public class LearnerThread extends Thread {
     }
 
     private void learn() throws NotFoundException {
-        long maxStepNo = calculateCurrentStepNo() + result.getConfiguration().getMaxAmountOfStepsToLearn();
-
         do {
             learnOneStep();
-        } while (continueLearning(maxStepNo));
+        } while (continueLearning());
     }
 
-    private long calculateCurrentStepNo() {
-        if (result.getStepNo() == null) {
-            return 0L;
-        } else {
-            return result.getStepNo();
-        }
-    }
-
-    private boolean continueLearning(long maxStepNo) {
-        int maxAmountOfStepsToLearn = result.getConfiguration().getMaxAmountOfStepsToLearn();
-        return result.getCounterExample() != null
-                && (maxAmountOfStepsToLearn == 0 || result.getStepNo() < maxStepNo)
+    private boolean continueLearning() {
+        return currentStep.getCounterExample() != null
+                && (currentStep.getStepsToLearn() > 0 || currentStep.getStepsToLearn() == -1)
                 && !Thread.interrupted();
     }
 
     private void learnOneStep() throws NotFoundException {
         LOGGER.trace("LearnerThread.learnOneStep()");
-        LearnerResult.Statistics statistics = result.getStatistics();
-        statistics.setStartDate(ZonedDateTime.now());
-        statistics.setStartTime(System.nanoTime());
-        statistics.setDuration(0L);
-        statistics.setEqsUsed(0L);
 
-        if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
+        if (result.getStatistics().getDuration() == 0L) {
             learnFirstStep();
         } else {
             learnSuccessiveStep();
@@ -299,22 +294,34 @@ public class LearnerThread extends Thread {
 
     private void learnFirstStep() {
         LOGGER.trace("LearnerThread.learnFirstStep()");
-        learnerResultDAO.create(result);
+        Statistics statistics = currentStep.getStatistics();
+        statistics.setStartDate(ZonedDateTime.now());
+        statistics.setStartTime(System.nanoTime());
+        statistics.setDuration(0L);
+        statistics.setEqsUsed(0L);
+        result.getStatistics().setStartDate(statistics.getStartDate());
         learner.startLearning();
         result.createHypothesisFrom(learner.getHypothesisModel());
         findAndRememberCounterExample();
     }
 
-    private void learnSuccessiveStep() {
+    private void learnSuccessiveStep() throws NotFoundException {
+        currentStep = learnerResultDAO.createStep(result);
+        Statistics statistics = currentStep.getStatistics();
+        statistics.setStartDate(ZonedDateTime.now());
+        statistics.setStartTime(System.nanoTime());
+        statistics.setDuration(0L);
+        statistics.setEqsUsed(0L);
+
         // if the previous step didn't yield any counter example, try again
         // (maybe more luck this time or configuration has changed)
-        if (result.getCounterExample() == null) {
+        if (currentStep.getCounterExample() == null) {
             findAndRememberCounterExample();
         }
 
         // if a there is a counter example refine the hypothesis
-        if (result.getCounterExample() != null) {
-            refineHypothesis();
+        if (currentStep.getCounterExample() != null) {
+            learner.refineHypothesis(currentStep.getCounterExample().createDefaultProxy());
             findAndRememberCounterExample();
         }
     }
@@ -322,50 +329,49 @@ public class LearnerThread extends Thread {
     private void findAndRememberCounterExample() {
         // find
         EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
-        eqOracle = result.getConfiguration().getEqOracle().createEqOracle(mqOracle);
+        eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle);
         DefaultQuery<String, Word<String>> newCounterExample;
         newCounterExample = eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
 
         // remember
-        result.getStatistics().setEqsUsed(result.getStatistics().getEqsUsed() + 1);
+        currentStep.getStatistics().setEqsUsed(currentStep.getStatistics().getEqsUsed() + 1);
         if (newCounterExample == null) {
-            result.setCounterExample(null);
+            currentStep.setCounterExample(null);
         } else {
-            result.setCounterExample(DefaultQueryProxy.createFrom(newCounterExample));
+            currentStep.setCounterExample(DefaultQueryProxy.createFrom(newCounterExample));
         }
         LOGGER.info("The new counter example is '" + newCounterExample + "'.");
     }
 
-    private void refineHypothesis() {
-        learner.refineHypothesis(result.getCounterExample().createDefaultProxy());
-        result.createHypothesisFrom(learner.getHypothesisModel());
-    }
-
     private void rememberMetaData() throws NotFoundException {
         // statistics
-        LearnerResult.Statistics statistics = result.getStatistics();
+        Statistics statistics = currentStep.getStatistics();
 
         long startTime = statistics.getStartTime();
         long currentTime = System.nanoTime();
+
+        currentStep.createHypothesisFrom(learner.getHypothesisModel());
 
         statistics.setDuration(currentTime - startTime);
         LOGGER.debug("Duration of the learning: " + statistics.getDuration() + " "
                      + "(start: " + startTime + ", end: " + currentTime + ").");
 
-        statistics.setMqsUsed(Math.abs(resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed()));
-        statistics.setSymbolsUsed(Math.abs(symbolCounterSUL.getStatisticalData().getCount() - statistics.getSymbolsUsed()));
+        long mqUsedDiff = resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed();
+        statistics.setMqsUsed(Math.abs(mqUsedDiff));
+        long symbolUsedDiff = symbolCounterSUL.getStatisticalData().getCount() - statistics.getSymbolsUsed();
+        statistics.setSymbolsUsed(Math.abs(symbolUsedDiff));
 
         // algorithm information
-        LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
+        LearnAlgorithms algorithm = result.getAlgorithm();
         String algorithmInformation;
         try {
             algorithmInformation = algorithm.getInternalData(learner);
         } catch (IllegalStateException e) { // algorithm has no internal data to show
             algorithmInformation = "";
         }
-        result.setAlgorithmInformation(algorithmInformation);
+        currentStep.setAlgorithmInformation(algorithmInformation);
 
         // done
-        learnerResultDAO.update(result);
+        learnerResultDAO.saveStep(result, currentStep);
     }
 }

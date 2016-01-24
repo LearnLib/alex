@@ -6,10 +6,10 @@ import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.utils.CSSUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -57,6 +57,7 @@ public class WaitForNodeAction extends WebSymbolAction {
      * The css selector of the element.
      */
     @NotBlank
+    @Column(columnDefinition = "CLOB")
     private String node;
 
     /**

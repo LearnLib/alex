@@ -81,7 +81,7 @@ public class LearnerStatus {
          */
         @JsonProperty("startDate")
         public String getStartDateAsString() {
-            return startDate.format(LearnerResult.DATE_TIME_FORMATTER);
+            return startDate.format(Statistics.DATE_TIME_FORMATTER);
         }
 
         /**

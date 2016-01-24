@@ -39,7 +39,8 @@ public class LearnerConfigurationTest {
         String expectedJSON = "{\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\",\"comment\":\"\",\"eqOracle\":"
                                     + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"maxNoOfTests\":1},"
-                                + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]}";
+                                + "\"maxAmountOfStepsToLearn\":0,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
+                                + "\"user\":null}";
 
         LearnerConfiguration configuration = new LearnerConfiguration();
 
@@ -54,7 +55,8 @@ public class LearnerConfigurationTest {
         String expectedJSON = "{\"algorithm\":\"DHC\",\"browser\":\"htmlunitdriver\",\"comment\":\"test\",\"eqOracle\":"
                                 + "{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ","
                                     + "\"maxDepth\":" + EQ_MAX_VALUE + "},"
-                                + "\"maxAmountOfStepsToLearn\":0,\"resetSymbol\":null,\"symbols\":[]}";
+                                + "\"maxAmountOfStepsToLearn\":0,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
+                                + "\"user\":null}";
 
         LearnerConfiguration configuration = new LearnerConfiguration();
         configuration.setAlgorithm(LearnAlgorithms.DHC);

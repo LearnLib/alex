@@ -106,10 +106,11 @@ public class LearnerResultResource {
 
         try {
             if (testNos.size() == 1) {
-                List<LearnerResult> result = learnerResultDAO.getAll(user.getId(), projectId, testNos.get(0));
+                List<LearnerResult> result = learnerResultDAO.get(user.getId(), projectId, testNos.get(0));
                 return ResponseHelper.renderList(result, Response.Status.OK);
             } else {
-                List<List<LearnerResult>> result = learnerResultDAO.getAll(user.getId(), projectId, testNos);
+                List<LearnerResult> result = learnerResultDAO.get(user.getId(), projectId,
+                                                                  testNos.toArray(new Long[testNos.size()]));
                 return ResponseHelper.renderList(result, Response.Status.OK);
             }
         } catch (NotFoundException e) {
@@ -119,7 +120,7 @@ public class LearnerResultResource {
     }
 
     /**
-     * Get the final / latest result of one test run.
+     * Get the summary of one test run.
      *
      * @param projectId
      *         The project of the test run.
@@ -139,7 +140,7 @@ public class LearnerResultResource {
                      + "for user " + user + ".");
 
         try {
-            LearnerResult json = learnerResultDAO.get(user.getId(), projectId, testNo);
+            LearnerResult json = learnerResultDAO.getSummaries(user.getId(), projectId, testNo).get(0);
             return Response.ok(json).build();
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getOneFinalResult",

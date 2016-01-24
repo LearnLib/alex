@@ -193,7 +193,7 @@
         "type": "rest_call",
         "method": "POST",
         "url": "/learner/start/{{$project}}",
-        "data": "{\"algorithm\": \"TTT\", \"eqOracle\": {\"type\": \"complete\", \"minDepth\": 1, \"maxDepth\": 3}, \"maxAmountOfStepsToLearn\": 0, \"resetSymbol\": {\"id\": 1, \"revision\": 1}, \"symbols\":[{\"id\":  2, \"revision\": 1}, {\"id\":  3, \"revision\": 1}, {\"id\":  4, \"revision\": 1}, {\"id\":  6, \"revision\": 1}]}",
+        "data": "{\"algorithm\": \"TTT\", \"eqOracle\": {\"type\": \"complete\", \"minDepth\": 1, \"maxDepth\": 3}, \"maxAmountOfStepsToLearn\": -1, \"resetSymbol\": {\"id\": 1, \"revision\": 1}, \"symbols\":[{\"id\":  2, \"revision\": 1}, {\"id\":  3, \"revision\": 1}, {\"id\":  4, \"revision\": 1}, {\"id\":  6, \"revision\": 1}]}",
         "headers": {
           "Authorization": "Bearer {{$token}}"
         }

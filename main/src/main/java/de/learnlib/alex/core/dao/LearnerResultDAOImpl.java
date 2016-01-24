@@ -17,7 +17,10 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.LearnerResultStep;
+import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.LearnerStatus;
+import de.learnlib.alex.core.entities.Statistics;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -32,7 +35,6 @@ import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -49,7 +51,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     /**
      * Set the learner instance to use.
-     * Only package visible, because normlly this instance will be injected, but for testing a manual setter is needed.
+     * Only package visible, because normally this instance will be injected, but for testing a manual setter is needed.
      *
      * @param learner The learner to use.
      */
@@ -62,10 +64,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         // new LearnerResults should have a project, not a test number not a step number
         if (learnerResult.getUser() == null
                 || learnerResult.getProject() == null
-                || learnerResult.getTestNo() != null
-                || learnerResult.getStepNo() != null) {
+                || learnerResult.getTestNo() != null) {
             throw new ValidationException(
-                "To create a LearnResult it must have a User and Project but must not have a test no. nor step no.");
+                "To create a LearnResult it must have a User and Project but must not have a test no.");
         }
 
         // start session
@@ -85,7 +86,6 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         learnerResult.setId(0L);
         learnerResult.setTestNo(nextTestNo);
-        learnerResult.setStepNo(0L);
 
         session.save(learnerResult);
         HibernateUtil.commitTransaction();
@@ -97,20 +97,21 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
-            throw new NotFoundException("The project with the id " + projectId + " was not found.");
-        }
-
         // fetch the LearnerResults of the project with the the highest step no.
         @SuppressWarnings("unchecked") // should return a list of LearnerResults
         List<LearnerResult> results = session.createCriteria(LearnerResult.class)
                                                 .add(Restrictions.eq("user.id", userId))
                                                 .add(Restrictions.eq("project.id", projectId))
-                                                .add(Restrictions.eq("stepNo", 0L))
                                                 .addOrder(Order.asc("testNo"))
                                                 .list();
 
-        results.forEach(r -> Hibernate.initialize(r.getConfiguration().getSymbols()));
+        if (results.isEmpty()) {
+            HibernateUtil.rollbackTransaction();
+            throw new NotFoundException("The project with the id " + projectId + " was not found.");
+        }
+        results.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
+        results.forEach(r -> Hibernate.initialize(r.getSteps()));
+        results.forEach(r -> Hibernate.initialize(r.getSymbols()));
 
         // done
         HibernateUtil.commitTransaction();
@@ -118,13 +119,16 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public List<LearnerResult> getAll(Long userId, Long projectId, Long testNo) throws NotFoundException {
+    public List<LearnerResult> get(Long userId, Long projectId, Long... testNos) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         try {
-            List<LearnerResult> result = getAll(session, userId, projectId, testNo);
+            List<LearnerResult> result = getAll(session, userId, projectId, testNos);
+            result.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
+            result.forEach(r -> Hibernate.initialize(r.getSteps()));
+            result.forEach(r -> Hibernate.initialize(r.getSymbols()));
 
             // done
             HibernateUtil.commitTransaction();
@@ -136,132 +140,123 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public List<List<LearnerResult>> getAll(Long userId, Long projectId, List<Long> testNos) throws NotFoundException {
+    public List<LearnerResult> getSummaries(Long userId, Long projectId, Long... testNos) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        List<List<LearnerResult>> result = new LinkedList<>();
-
         try {
-            for (Long testNo : testNos) {
-                List<LearnerResult> stepsOfOneTestRun = getAll(session, userId, projectId, testNo);
-                result.add(stepsOfOneTestRun);
-            }
+            List<LearnerResult> result = getAll(session, userId, projectId, testNos);
+            result.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
+            result.forEach(r -> Hibernate.initialize(r.getSymbols()));
+
             // done
             HibernateUtil.commitTransaction();
+            result.forEach(r -> r.setSteps(null));
             return result;
-        } catch (NotFoundException e) {
+        } catch (NoSuchElementException e) {
             HibernateUtil.rollbackTransaction();
             throw e;
         }
     }
 
-    private List<LearnerResult> getAll(Session session, Long userId, Long projectId, Long testNo)
+    private List<LearnerResult> getAll(Session session, Long userId, Long projectId, Long... testNos)
             throws NotFoundException {
-        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
-            throw new NotFoundException("The project with the id " + projectId + " was not found.");
-        }
-
-        // fetch the LearnerResults of the project with the the highest step no.
         @SuppressWarnings("unchecked") // should return a list of LearnerResults
         List<LearnerResult> results = session.createCriteria(LearnerResult.class)
                                                 .add(Restrictions.eq("user.id", userId))
                                                 .add(Restrictions.eq("project.id", projectId))
-                                                .add(Restrictions.eq("testNo", testNo))
-                                                .addOrder(Order.asc("stepNo"))
+                                                .add(Restrictions.in("testNo", testNos))
                                                 .list();
 
         if (results.isEmpty()) {
-            throw new NotFoundException("No result with the test no. " + testNo + " for user " + userId + "was found.");
+            throw new NotFoundException("No result with the test nos. " + testNos + " for user " + userId + "was found.");
         }
-
-        results.forEach(r -> Hibernate.initialize(r.getConfiguration().getSymbols()));
 
         // done
         return results;
     }
 
     @Override
-    public LearnerResult get(Long userId, Long projectId, Long testNo) throws NotFoundException {
+    public LearnerResultStep createStep(LearnerResult result)
+            throws NotFoundException, ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        LearnerResult result = get(session, userId, projectId, testNo);
+        LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
 
-        // done
+        LearnerResultStep newStep = new LearnerResultStep();
+        newStep.setUser(result.getUser());
+        newStep.setProject(result.getProject());
+        newStep.setResult(result);
+        newStep.setStepNo(latestStep.getStepNo() + 1);
+        newStep.setEqOracle(latestStep.getEqOracle());
+        if (latestStep.getStepsToLearn() > 0) {
+            newStep.setStepsToLearn(latestStep.getStepsToLearn() - 1);
+        } else {
+            newStep.setStepsToLearn(latestStep.getStepsToLearn());
+        }
+
+        result.getSteps().add(newStep);
+        session.save(newStep);
+        session.update(result);
+
         HibernateUtil.commitTransaction();
-        return result;
-    }
-
-    private LearnerResult get(Session session, Long userId, Long projectId, Long testNo) throws NotFoundException {
-        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
-            throw new NotFoundException("The project with the id " + projectId + " was not found.");
-        }
-
-        LearnerResult result = get(session, userId, projectId, testNo, 0L);
-
-        if (result == null) {
-            HibernateUtil.rollbackTransaction();
-            throw new NotFoundException("The results with the test no. " + testNo + " in the project " + projectId
-                                                     + " was not found.");
-        }
-        return result;
+        return newStep;
     }
 
     @Override
-    public LearnerResult get(Long userId, Long projectId, Long testNo, Long stepNo) throws NotFoundException {
+    public LearnerResultStep createStep(LearnerResult result, LearnerResumeConfiguration configuration)
+            throws NotFoundException, ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        if (ProjectDAOImpl.isProjectIdInvalid(projectId)) {
-            throw new NotFoundException("The project with the id " + projectId + " was not found.");
-        }
+        // create the new step
+        LearnerResultStep newStep = new LearnerResultStep();
+        newStep.setUser(result.getUser());
+        newStep.setProject(result.getProject());
+        newStep.setResult(result);
+        newStep.setStepNo((long) result.getSteps().size());
+        newStep.setEqOracle(configuration.getEqOracle());
+        newStep.setStepsToLearn(configuration.getMaxAmountOfStepsToLearn());
 
-        LearnerResult result = get(session, userId, projectId, testNo, stepNo);
+        result.getSteps().add(newStep);
+        session.save(newStep);
+        session.update(result);
 
-        if (result == null) {
-            throw new NotFoundException("The result with the test no. " + testNo
-                                             + " and the step no. " + stepNo  + "  was not found.");
-        }
-
-        // done
         HibernateUtil.commitTransaction();
-        return  result;
+        return newStep;
     }
 
     @Override
-    public void update(LearnerResult learnerResult) throws NotFoundException, ValidationException {
+    public void saveStep(LearnerResult result, LearnerResultStep step) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        learnerResult.setId(0L);
-        learnerResult.setStepNo(learnerResult.getStepNo() + 1);
-        session.save(learnerResult);
+        session.update(step);
 
-        updateSummary(session, learnerResult);
+        updateSummary(result, step);
+        session.update(result);
 
-        // done
         HibernateUtil.commitTransaction();
     }
 
-    private void updateSummary(Session session, LearnerResult result) throws NotFoundException {
-        LearnerResult summaryResult = get(session, result.getUserId(), result.getProjectId(), result.getTestNo());
-        summaryResult.setErrorText(result.getErrorText());
-        summaryResult.setHypothesis(result.getHypothesis());
+    private void updateSummary(LearnerResult result, LearnerResultStep step) {
+        assert step.getHypothesis() != null;
 
-        LearnerResult.Statistics summaryStatistics = summaryResult.getStatistics();
-        LearnerResult.Statistics newStatistics = result.getStatistics();
+        result.setHypothesis(step.getHypothesis());
+        result.setErrorText(step.getErrorText());
+
+        Statistics summaryStatistics = result.getStatistics();
+        Statistics newStatistics     = step.getStatistics();
 
         summaryStatistics.setDuration(summaryStatistics.getDuration() + newStatistics.getDuration());
         summaryStatistics.setMqsUsed(summaryStatistics.getMqsUsed() + newStatistics.getMqsUsed());
         summaryStatistics.setSymbolsUsed(summaryStatistics.getSymbolsUsed() + newStatistics.getSymbolsUsed());
         summaryStatistics.setEqsUsed(summaryStatistics.getEqsUsed() + newStatistics.getEqsUsed());
-
-        session.update(summaryResult);
     }
 
     @Override
@@ -311,21 +306,6 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                 }
             }
         }
-    }
-
-    private LearnerResult get(Session session, Long userId, Long projectId, Long testNo, Long stepNo) {
-        LearnerResult result = (LearnerResult) session.createCriteria(LearnerResult.class)
-                                                        .add(Restrictions.eq("user.id", userId))
-                                                        .add(Restrictions.eq("project.id", projectId))
-                                                        .add(Restrictions.eq("testNo", testNo))
-                                                        .add(Restrictions.eq("stepNo", stepNo))
-                                                        .uniqueResult();
-
-        if (result != null) {
-            Hibernate.initialize(result.getConfiguration().getSymbols());
-        }
-
-        return result;
     }
 
     private List<Long> getTestNumbersInDB(Session session, Long userId, Long projectId, Long... testNo) {
