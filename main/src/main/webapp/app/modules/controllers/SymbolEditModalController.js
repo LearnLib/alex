@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-import {Symbol} from '../../entities/Symbol';
+import {events} from '../constants';
+import {Symbol} from '../entities/Symbol';
 
 /**
  * Handles the behaviour of the modal to edit an existing symbol and updates the edited symbol on the server.
