@@ -23,7 +23,6 @@ import {configuration} from './config';
 import {routes} from './routes';
 import * as constant from './constants';
 
-import {controllers} from './controllers/index';
 import {directives} from './directives/index';
 import {filters} from './filters/index';
 import {resources} from './resources/index';
@@ -48,7 +47,6 @@ angular
 
         // application specific modules
         'ALEX.templates',
-        controllers,
         components,
         directives,
         filters,

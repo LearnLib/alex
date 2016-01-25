@@ -2,7 +2,7 @@
     <div class="learn-results-compare-wrapper">
 
         <div class="learn-result-compare-panel" learn-result-compare-panel
-             ng-repeat="result in vm.panels" index="{{$index}}" from="{{vm.panels.length}}">
+             ng-repeat="result in vm.panels track by $index" index="{{$index}}" from="{{vm.panels.length}}">
 
             <learn-result-panel result="result" index="{{$index}}" ng-if="result">
                 <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">

@@ -34,7 +34,7 @@ class LearnerResultDownloadService {
 
     /** Initialize the header of th csv */
     init() {
-        this.csv = 'Project,Test No,Start Time,Step No,Algorithm,Eq Oracle,|Sigma|,#MQs,#EQs,#Symbol Calls,Duration (ms)\n';
+        this.csv = 'Project;Test No;Start Time;Step No;Algorithm;Eq Oracle;|Sigma|;#MQs;#EQs;#Symbol Calls;Duration (ms)\n';
     }
 
     /**
@@ -42,17 +42,19 @@ class LearnerResultDownloadService {
      * @param {LearnResult} result
      */
     addResult(result) {
-        this.csv += result.project + ',';
-        this.csv += result.testNo + ',';
-        this.csv += '"' + result.statistics.startDate + '",';
-        this.csv += result.stepNo + ',';
-        this.csv += result.configuration.algorithm + ',';
-        this.csv += result.configuration.eqOracle.type + ',';
-        this.csv += result.configuration.symbols.length + ',';
-        this.csv += result.statistics.mqsUsed + ',';
-        this.csv += result.statistics.eqsUsed + ',';
-        this.csv += result.statistics.symbolsUsed + ',';
-        this.csv += result.statistics.duration + '\n';
+        result.steps.forEach(step => {
+            this.csv += result.project + ';';
+            this.csv += result.testNo + ';';
+            this.csv += '"' + step.statistics.startDate + '";';
+            this.csv += step.stepNo + ';';
+            this.csv += result.algorithm + ';';
+            this.csv += step.eqOracle.type + ';';
+            this.csv += result.symbols.length + ';';
+            this.csv += step.statistics.mqsUsed + ';';
+            this.csv += step.statistics.eqsUsed + ';';
+            this.csv += step.statistics.symbolsUsed + ';';
+            this.csv += step.statistics.duration + '\n';
+        });
     }
 
     /** Creates an empty row so that multiple test runs can be exported at once */

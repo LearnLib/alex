@@ -14,6 +14,60 @@
  * limitations under the License.
  */
 
+import {events} from '../../constants';
+
+/** The controller for the modal dialog that handles the editing of an action. */
+// @ngInject
+class ActionEditModalController {
+
+    /**
+     * Constructor
+     * @param $modalInstance
+     * @param modalData
+     * @param ActionService
+     * @param SymbolResource
+     * @param SessionService
+     * @param EventBus
+     */
+    constructor($modalInstance, modalData, ActionService, SymbolResource, SessionService, EventBus) {
+        this.$modalInstance = $modalInstance;
+        this.ActionService = ActionService;
+        this.EventBus = EventBus;
+
+        // the project in the session
+        const project = SessionService.getProject();
+
+        /**
+         * The copy of the action that should be edited
+         * @type {Object}
+         */
+        this.action = modalData.action;
+
+        /**
+         * The list of symbols
+         * @type {Array}
+         */
+        this.symbols = [];
+
+        // fetch all symbols so that symbols have access to it
+        SymbolResource.getAll(project.id).then(symbols => {
+            this.symbols = symbols;
+        });
+    }
+
+    /** Close the modal dialog and pass the updated action to the handle that called it */
+    updateAction() {
+        this.EventBus.emit(events.ACTION_UPDATED, {action: this.action});
+        this.$modalInstance.dismiss();
+    }
+
+    /** Close the modal dialog without passing any data */
+    closeModal() {
+        this.$modalInstance.dismiss();
+    }
+}
+
+
 /**
  * The directive that is used to handle the modal dialog for editing an action. Must be used as an attribute for the
  * attached element. It attaches a click event to the element that opens the modal dialog. Does NOT update the symbol
@@ -42,7 +96,7 @@ function actionEditModalHandle($modal, ActionService) {
         el.on('click', () => {
             $modal.open({
                 templateUrl: 'views/modals/action-edit-modal.html',
-                controller: 'ActionEditModalController',
+                controller: ActionEditModalController,
                 controllerAs: 'vm',
                 resolve: {
                     modalData: function () {

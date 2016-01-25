@@ -34,9 +34,9 @@ class LearnerResultChartService {
 
     /**
      *
-     * @param {LearnResult[]} intermediateResults
+     * @param {LearnResult} result
      */
-    createDataSingleComplete(intermediateResults) {
+    createDataSingleComplete(result) {
         const options = {
             margin: {
                 top: 20,
@@ -62,7 +62,7 @@ class LearnerResultChartService {
                     key: 'x',
                     type: 'linear',
                     tickFormat: (l) => {
-                        if (l % 1 === 0 && l >= 1 && l <= intermediateResults.length) {
+                        if (l % 1 === 0 && l >= 1 && l <= result.steps.length) {
                             return 'Step ' + l;
                         }
                     }
@@ -74,23 +74,23 @@ class LearnerResultChartService {
         };
 
         const data = {
-            eqs: {dataset: []},
-            mqs: {dataset: []},
-            symbols: {dataset: []},
-            sigma: {dataset: []},
-            duration: {dataset: []}
+            eqs: {dataset: [{x: 0, y: 0}]},
+            mqs: {dataset: [{x: 0, y: 0}]},
+            symbols: {dataset: [{x: 0, y: 0}]},
+            sigma: {dataset: [{x: 0, y: 0}]},
+            duration: {dataset: [{x: 0, y: 0}]}
         };
 
-        intermediateResults.forEach((result, i) => {
-            data.eqs.dataset.push({x: i + 1, y: result.statistics.eqsUsed});
-            data.mqs.dataset.push({x: i + 1, y: result.statistics.mqsUsed});
-            data.symbols.dataset.push({x: i + 1, y: result.statistics.symbolsUsed});
+        result.steps.forEach((step, i) => {
+            data.eqs.dataset.push({x: i + 1, y: step.statistics.eqsUsed});
+            data.mqs.dataset.push({x: i + 1, y: step.statistics.mqsUsed});
+            data.symbols.dataset.push({x: i + 1, y: step.statistics.symbolsUsed});
             data.sigma.dataset.push({x: i + 1, y: result.sigma.length});
-            data.duration.dataset.push({x: i + 1, y: result.statistics.duration});
+            data.duration.dataset.push({x: i + 1, y: step.statistics.duration});
         });
 
         return {
-            context: intermediateResults,
+            context: result,
             options: options,
             data: data
         };
@@ -164,14 +164,14 @@ class LearnerResultChartService {
         };
     }
 
-    createDataMultipleComplete(resultList) {
+    createDataMultipleComplete(results) {
         const colors = ['#4B6396', '#3BA3B8', '#3BB877', '#8ACF36', '#E8E835', '#F7821B', '#F74F1B', '#C01BF7'];
         const props = ['eqs', 'mqs', 'symbols', 'sigma', 'duration'];
 
         // find value from test results where #steps is max
         let maxSteps = 0;
-        resultList.forEach(results => {
-            maxSteps = results.length > maxSteps ? results.length : maxSteps;
+        results.forEach(result => {
+            maxSteps = result.steps.length > maxSteps ? result.steps.length : maxSteps;
         });
 
         const options = {
@@ -205,14 +205,14 @@ class LearnerResultChartService {
         const data = {eqs: {dataset: []}, mqs: {dataset: []}, symbols: {dataset: []}, sigma: {dataset: []}, duration: {dataset: []}};
         const values = {eqs: {dataset: []}, mqs: {dataset: []}, symbols: {dataset: []}, sigma: {dataset: []}, duration: {dataset: []}};
 
-        resultList.forEach((results, i) => {
+        results.forEach((result, i) => {
 
             // extract all values from the results
-            const eqs = results.map(r => r.statistics.eqsUsed);
-            const mqs = results.map(r => r.statistics.mqsUsed);
-            const symbols = results.map(r => r.statistics.symbolsUsed);
-            const sigma = results.map(r => r.sigma.length);
-            const duration = results.map(r => r.statistics.duration);
+            const eqs = result.steps.map(s => s.statistics.eqsUsed);
+            const mqs = result.steps.map(s => s.statistics.mqsUsed);
+            const symbols = result.steps.map(s => s.statistics.symbolsUsed);
+            const sigma = result.steps.map(s => result.sigma.length);
+            const duration = result.steps.map(s => s.statistics.duration);
 
             // fill all other values with zeroes in order to
             // reduce visual bugs
@@ -233,7 +233,7 @@ class LearnerResultChartService {
                 axis: 'y',
                 dataset: 'dataset',
                 key: 'y' + i,
-                label: 'Test' + results[0].testNo,
+                label: 'Test' + result.testNo,
                 color: colors[i % colors.length],
                 type: ['dot', 'line', 'area'],
                 id: 'mySeries' + i
@@ -244,7 +244,7 @@ class LearnerResultChartService {
 
             // fill the data with initial zero values
             const set = {x: 0};
-            for (let i = 0; i < resultList.length; i++) {
+            for (let i = 0; i < results.length; i++) {
                 set['y' + i] = 0;
             }
             data[prop].dataset.push(set);
@@ -261,7 +261,7 @@ class LearnerResultChartService {
         });
 
         return {
-            context: resultList,
+            context: results,
             options: options,
             data: data
         };

@@ -105,27 +105,20 @@ class StatisticsView {
      * @param {LearnResult} result
      */
     exportAsCSV(result) {
-        this.LearnResultResource.getComplete(this.project.id, result.testNo).then(results => {
-            this.LearnerResultDownloadService.init();
-            results.forEach(r => this.LearnerResultDownloadService.addResult(r));
-            this.LearnerResultDownloadService.download();
-        });
+        this.LearnerResultDownloadService.init();
+        this.LearnerResultDownloadService.addResult(result);
+        this.LearnerResultDownloadService.download();
     }
 
     /** Exports selected learn results into a csv file */
     exportSelectedAsCSV() {
         if (this.selectedResults.length > 0) {
-            this.LearnResultResource.getManyComplete(this.project.id, this.selectedResults.map(r => r.testNo))
-                .then(resultsList => {
-                    this.LearnerResultDownloadService.init();
-                    resultsList.forEach(results => {
-                        results.forEach(result => {
-                            this.LearnerResultDownloadService.addResult(result);
-                        });
-                        this.LearnerResultDownloadService.addEmptyLine();
-                    });
-                    this.LearnerResultDownloadService.download();
-                });
+            this.LearnerResultDownloadService.init();
+            this.selectedResults.forEach(result => {
+                this.LearnerResultDownloadService.addResult(result);
+                this.LearnerResultDownloadService.addEmptyLine();
+            });
+            this.LearnerResultDownloadService.download();
         }
     }
 }

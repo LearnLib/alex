@@ -142,8 +142,11 @@ class StatisticsCompareView {
      * @param {number[]} testNos
      */
     createChartMultipleComplete(testNos) {
-        this.LearnResultResource.getManyComplete(this.project.id, testNos).then(resultsList => {
-            this.chartData = this.LearnerResultChartService.createDataMultipleComplete(resultsList);
+        this.LearnResultResource.getAll(this.project.id).then(results => {
+
+            // get all results and filter because there is still no other api endpoint
+            const resultsFromTestNos = results.filter(r => testNos.indexOf(r.testNo) > -1);
+            this.chartData = this.LearnerResultChartService.createDataMultipleComplete(resultsFromTestNos);
         });
     }
 

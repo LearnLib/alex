@@ -14,6 +14,74 @@
  * limitations under the License.
  */
 
+/** The controller of the prompt dialog */
+// @ngInject
+class PromptDialogController {
+
+    /**
+     * Constructor
+     * @param $modalInstance
+     * @param modalData
+     */
+    constructor($modalInstance, modalData) {
+        this.$modalInstance = $modalInstance;
+
+        /** The model for the input field for the user input **/
+        this.userInput = null;
+
+        /** The text to be displayed **/
+        this.text = modalData.text;
+
+        /** The regex the user input has to match **/
+        this.inputPattern = modalData.regexp || '';
+
+        /** the message that is shown when the user input doesn't match the regex **/
+        this.errorMsg = modalData.errorMsg || 'Unknown validation error';
+    }
+
+    /** Close the modal dialog and pass the user input */
+    ok() {
+        this.$modalInstance.close(this.userInput);
+    }
+
+    /** Close the modal dialog */
+    close() {
+        this.$modalInstance.dismiss();
+    }
+}
+
+
+/** The controller that handles the confirm modal dialog. */
+// @ngInject
+class ConfirmDialogController {
+
+    /**
+     * Constructor
+     * @param $modalInstance
+     * @param modalData
+     */
+    constructor($modalInstance, modalData) {
+        this.$modalInstance = $modalInstance;
+
+        /**
+         * The text to display
+         * @type {string}
+         */
+        this.text = modalData.text || null;
+    }
+
+    /** Close the modal dialog */
+    ok() {
+        this.$modalInstance.close();
+    }
+
+    /** Close the modal dialog */
+    close() {
+        this.$modalInstance.dismiss();
+    }
+}
+
+
 /** The service for handling promt and confirm dialogs */
 // @ngInject
 class PromptService {
@@ -36,7 +104,7 @@ class PromptService {
     prompt(text, options) {
         return this.$modal.open({
             templateUrl: 'views/modals/prompt-dialog.html',
-            controller: 'PromptDialogController',
+            controller: PromptDialogController,
             controllerAs: 'vm',
             resolve: {
                 modalData: function () {
@@ -59,7 +127,7 @@ class PromptService {
     confirm(text) {
         return this.$modal.open({
             templateUrl: 'views/modals/confirm-dialog.html',
-            controller: 'ConfirmDialogController',
+            controller: ConfirmDialogController,
             controllerAs: 'vm',
             resolve: {
                 modalData: function () {

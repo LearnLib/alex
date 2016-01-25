@@ -147,7 +147,7 @@ class LearnerStartView {
     resumeLearning() {
         const lastStep = this.result.steps[this.result.steps.length - 1];
 
-        this.LearnerResource.resume(this.project.id, this.result.testNo, config)
+        this.LearnerResource.resume(this.project.id, this.result.testNo, this.resumeConfig)
             .then(() => {
                 this.poll();
             })

@@ -38,8 +38,8 @@
                 </div>
 
                 <div ng-if="vm.selectedChartMode === vm.chartMode.COMPLETE && vm.testNos.length === 1">
-                    <h3>Test <span ng-bind="vm.chartData.context[0].testNo"></span> (All Steps)</h3>
-                    <a href="" learn-result-details-modal-handle result="vm.chartData.context[0]">
+                    <h3>Test <span ng-bind="vm.chartData.context.testNo"></span> (All Steps)</h3>
+                    <a href="" learn-result-details-modal-handle result="vm.chartData.context">
                         <i class="fa fa-fw fa-info-circle"></i> Details
                     </a>
                     <hr>
@@ -56,8 +56,8 @@
 
                 <div ng-if="vm.selectedChartMode === vm.chartMode.COMPLETE && vm.testNos.length > 1">
                     <h3>Tests:
-                    <span ng-repeat="results in vm.chartData.context">
-                        <span ng-bind="results[0].testNo"></span>,&nbsp;
+                    <span ng-repeat="result in vm.chartData.context">
+                        <span ng-bind="result.testNo"></span>,&nbsp;
                     </span> (All Steps)
                     </h3>
                     <hr>

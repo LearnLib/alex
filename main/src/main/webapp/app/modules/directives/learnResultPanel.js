@@ -85,9 +85,9 @@ function learnResultPanel(FileDownloadService) {
         scope.pointer = scope.result.steps.length - 1;
 
         // adjust the pointer to show the latest result when learning with sample eq oracle
-        //scope.$watch('result', function (result) {
-        //    scope.pointer = result.steps.length - 1;
-        //});
+        scope.$watch('result', result => {
+            scope.pointer = result.steps.length - 1;
+        });
 
         /**
          * Checks if the property 'algorithmInformation' is define which holds the internal data structure

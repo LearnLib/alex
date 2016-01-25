@@ -44,7 +44,7 @@ class LearnerSetupView {
 
         /**
          * The learn results of previous learn processes
-         * @type {learnResult[]}
+         * @type {LearnResult[]}
          */
         this.learnResults = [];
 

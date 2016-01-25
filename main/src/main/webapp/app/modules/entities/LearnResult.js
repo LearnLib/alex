@@ -92,7 +92,10 @@ class LearnResult {
 
         // convert ns to ms
         this.statistics.duration = Math.ceil(this.statistics.duration / 1000000);
-        this.steps.forEach(step => step.duration = step.duration / 1000000)
+
+        if (this.steps) {
+            this.steps.forEach(step => step.statistics.duration = Math.ceil(step.statistics.duration / 1000000));
+        }
     }
 
     getConfiguration() {

@@ -28,18 +28,18 @@ import {symbolGroupList, symbolGroupListItem} from './symbolGroupList';
 import {symbolList, symbolListItem} from './symbolList';
 
 // modal handles
-import actionCreateModalHandle from './modalHandles/actionCreateModalHandle';
-import actionEditModalHandle from './modalHandles/actionEditModalHandle';
-import hypothesisLayoutSettingsModalHandle from './modalHandles/hypothesisLayoutSettingsModalHandle';
-import learnResultDetailsModalHandle from './modalHandles/learnResultDetailsModalHandle';
-import learnSetupSettingsModalHandle from './modalHandles/learnSetupSettingsModalHandle';
-import projectSettingsModalHandle from './modalHandles/projectSettingsModalHandle';
-import symbolCreateModalHandle from './modalHandles/symbolCreateModalHandle';
-import symbolEditModalHandle from './modalHandles/symbolEditModalHandle';
-import symbolGroupCreateModalHandle from './modalHandles/symbolGroupCreateModalHandle';
-import symbolGroupEditModalHandle from './modalHandles/symbolGroupEditModalHandle';
-import symbolMoveModalHandle from './modalHandles/symbolMoveModalHandle';
-import userEditModalHandle from './modalHandles/userEditModalHandle';
+import actionCreateModalHandle from './modals/actionCreateModalHandle';
+import actionEditModalHandle from './modals/actionEditModalHandle';
+import hypothesisLayoutSettingsModalHandle from './modals/hypothesisLayoutSettingsModalHandle';
+import learnResultDetailsModalHandle from './modals/learnResultDetailsModalHandle';
+import learnSetupSettingsModalHandle from './modals/learnSetupSettingsModalHandle';
+import projectSettingsModalHandle from './modals/projectSettingsModalHandle';
+import symbolCreateModalHandle from './modals/symbolCreateModalHandle';
+import symbolEditModalHandle from './modals/symbolEditModalHandle';
+import symbolGroupCreateModalHandle from './modals/symbolGroupCreateModalHandle';
+import symbolGroupEditModalHandle from './modals/symbolGroupEditModalHandle';
+import symbolMoveModalHandle from './modals/symbolMoveModalHandle';
+import userEditModalHandle from './modals/userEditModalHandle';
 
 const moduleName = 'ALEX.directives';
 

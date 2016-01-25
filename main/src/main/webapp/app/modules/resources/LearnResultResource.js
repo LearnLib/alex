@@ -37,7 +37,7 @@ class LearnResultResource {
      * @returns {*}
      */
     getAll(projectId) {
-        return this.$http.get(`/rest/projects/${projectId}/results`)
+        return this.$http.get(`/rest/projects/${projectId}/results?embed=steps`)
             .then(response => response.data.map(r => new LearnResult(r)));
     }
 
@@ -49,11 +49,8 @@ class LearnResultResource {
      * @returns {*}
      */
     get(projectId, testNo) {
-        return this.$http.get(`/rest/projects/${projectId}/results/${testNo}`)
-            .then(response => {
-                console.log(response)
-                return new LearnResult(response.data)
-            });
+        return this.$http.get(`/rest/projects/${projectId}/results/${testNo}?embed=steps`)
+            .then(response => new LearnResult(response.data));
     }
 
     /**

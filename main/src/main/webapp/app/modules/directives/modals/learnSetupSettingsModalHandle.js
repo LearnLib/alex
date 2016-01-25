@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {events, webBrowser, learnAlgorithm, eqOracleType} from '../constants';
-import LearnConfiguration from '../entities/LearnConfiguration';
+import LearnConfiguration from '../../entities/LearnConfiguration';
+import {events, webBrowser, learnAlgorithm, eqOracleType} from '../../constants';
 
 /**
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
@@ -85,4 +85,42 @@ class LearnSetupSettingsModalController {
     }
 }
 
-export default LearnSetupSettingsModalController;
+
+/**
+ * The directive that handles the opening of the modal dialog for manipulating a learn configuration. Can only be
+ * used as an attribute and attaches a click event to the source element that opens the modal.
+ *
+ * Attribute 'learnConfiguration' should be the model with a LearnConfiguration object instance.
+ *
+ * @param $modal - The ui.boostrap $modal service
+ * @returns {{restrict: string, scope: {learnConfiguration: string}, link: link}}
+ */
+// @ngInject
+function learnSetupSettingsModalHandle($modal) {
+    return {
+        restrict: 'A',
+        scope: {
+            learnConfiguration: '='
+        },
+        link: link
+    };
+
+    function link(scope, el) {
+        el.on('click', () => {
+            $modal.open({
+                templateUrl: 'views/modals/learn-setup-settings-modal.html',
+                controller: LearnSetupSettingsModalController,
+                controllerAs: 'vm',
+                resolve: {
+                    modalData: function () {
+                        return {
+                            learnConfiguration: new LearnConfiguration(scope.learnConfiguration)
+                        };
+                    }
+                }
+            });
+        });
+    }
+}
+
+export default learnSetupSettingsModalHandle;
