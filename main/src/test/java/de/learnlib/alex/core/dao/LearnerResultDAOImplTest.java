@@ -102,8 +102,8 @@ public class LearnerResultDAOImplTest {
 
         assertTrue(learnerResult.getTestNo() > 0);
 
-        LearnerResult resultFromDB = learnerResultDAO.get(user.getId(), project.getId(), learnerResult.getTestNo())
-                                        .get(0);
+        LearnerResult resultFromDB = learnerResultDAO.get(user.getId(), project.getId(),
+                                                          learnerResult.getTestNo(), true);
 
         assertEquality(learnerResult, resultFromDB);
     }
@@ -117,13 +117,13 @@ public class LearnerResultDAOImplTest {
 
         /* check learnerResult 1 */
         assertTrue(learnerResult.getTestNo() > 0);
-        LearnerResult resultFromDB = learnerResultDAO.get(user.getId(), project.getId(), learnerResult.getTestNo())
-                                        .get(0);
+        LearnerResult resultFromDB = learnerResultDAO.get(user.getId(), project.getId(),
+                                                          learnerResult.getTestNo(), true);
         assertEquality(learnerResult, resultFromDB);
 
         /* check learnerResult 2 */
         assertTrue(result2.getTestNo() > 0);
-        resultFromDB = learnerResultDAO.get(user.getId(), project.getId(), result2.getTestNo()).get(0);
+        resultFromDB = learnerResultDAO.get(user.getId(), project.getId(), result2.getTestNo(), true);
         assertEquality(result2, resultFromDB);
 
         /* check relations */
@@ -147,7 +147,7 @@ public class LearnerResultDAOImplTest {
     @Test
     public void shouldGetAllFinalResults() throws NotFoundException, JsonProcessingException {
         List<LearnerResult> expectedResults = createLearnerResultsList();
-        List<LearnerResult> resultsFromDB   = learnerResultDAO.getAll(user.getId(), project.getId());
+        List<LearnerResult> resultsFromDB   = learnerResultDAO.getAll(user.getId(), project.getId(), true);
 
         assertEquals(expectedResults.size(), resultsFromDB.size());
         for (int i = 0; i < expectedResults.size(); i++) {
@@ -160,7 +160,7 @@ public class LearnerResultDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingAllFinalResultsThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.getAll(user.getId(), -1L); // should fail
+        learnerResultDAO.getAll(user.getId(), -1L, true); // should fail
     }
 
 
@@ -184,12 +184,12 @@ public class LearnerResultDAOImplTest {
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingAllResultsThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.getAll(-1L, learnerResult.getTestNo()); // should fail
+        learnerResultDAO.getAll(-1L, learnerResult.getTestNo(), true); // should fail
     }
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingAllResultsThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.getAll(project.getId(), -1L); // should fail
+        learnerResultDAO.getAll(project.getId(), -1L, true); // should fail
     }
 
     @Test
@@ -197,27 +197,28 @@ public class LearnerResultDAOImplTest {
     public void shouldGetOneFinalResult() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
 
-        List<LearnerResult> resultInDB = learnerResultDAO.get(user.getId(), project.getId(), learnerResult.getTestNo());
+        List<LearnerResult> resultInDB = learnerResultDAO.getAll(user.getId(), project.getId(),
+                                                                 new Long[] { learnerResult.getTestNo() }, true);
         assertEquals(learnerResult, resultInDB);
     }
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingOneFinalResultThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.get(user.getId(), -1L, learnerResult.getTestNo()); // should fail
+        learnerResultDAO.get(user.getId(), -1L, learnerResult.getTestNo(), true); // should fail
     }
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingOneFinalResultThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.get(user.getId(), project.getId(), -1L); // should fail
+        learnerResultDAO.get(user.getId(), project.getId(), -1L, true); // should fail
     }
 
     @Test
     @Ignore
     public void shouldGetOneResult() throws NotFoundException, JsonProcessingException {
         learnerResultDAO.create(learnerResult);
-        List<LearnerResult> resultFromDB = learnerResultDAO.get(user.getId(), project.getId(),
-                                                                learnerResult.getTestNo());
+        List<LearnerResult> resultFromDB = learnerResultDAO.getAll(user.getId(), project.getId(),
+                                                                   new Long[] { learnerResult.getTestNo() }, true);
 
 //        assertEquality(learnerResult, resultFromDB);
     }
@@ -225,18 +226,18 @@ public class LearnerResultDAOImplTest {
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingOneResultThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.get(-1L, learnerResult.getTestNo(), 0L); // should fail
+        learnerResultDAO.get(-1L, learnerResult.getTestNo(), 0L, true); // should fail
     }
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingOneResultThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.get(project.getId(), -1L, 0L); // should fail
+        learnerResultDAO.get(project.getId(), -1L, 0L, true); // should fail
     }
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingOneResultThrowsAnExceptionIfTheStepNoIsInvalid() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
-        learnerResultDAO.get(project.getId(), learnerResult.getTestNo(), -1L); // should fail
+        learnerResultDAO.get(project.getId(), learnerResult.getTestNo(), -1L, true); // should fail
     }
 
     /*@Test

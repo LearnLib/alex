@@ -286,7 +286,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfStatusWasDeletedInTheDB() throws NotFoundException {
-        given(learnerResultDAO.get(USER_TEST_ID, PROJECT_TEST_ID, TEST_NO)).willThrow(NotFoundException.class);
+        given(learnerResultDAO.get(USER_TEST_ID, PROJECT_TEST_ID, TEST_NO, false)).willThrow(NotFoundException.class);
 
         Response response = target("/learner/status").request().header("Authorization", token).get();
 

@@ -92,7 +92,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public List<LearnerResult> getAll(Long userId, Long projectId) throws NotFoundException {
+    public List<LearnerResult> getAll(Long userId, Long projectId, boolean includeSteps) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -109,9 +109,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
             HibernateUtil.rollbackTransaction();
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
-        results.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
-        results.forEach(r -> Hibernate.initialize(r.getSteps()));
-        results.forEach(r -> Hibernate.initialize(r.getSymbols()));
+        initializeLazyRelations(session, results, includeSteps);
 
         // done
         HibernateUtil.commitTransaction();
@@ -119,16 +117,14 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public List<LearnerResult> get(Long userId, Long projectId, Long... testNos) throws NotFoundException {
+    public List<LearnerResult> getAll(Long userId, Long projectId, Long[] testNos, boolean includeSteps)
+            throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         try {
-            List<LearnerResult> result = getAll(session, userId, projectId, testNos);
-            result.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
-            result.forEach(r -> Hibernate.initialize(r.getSteps()));
-            result.forEach(r -> Hibernate.initialize(r.getSymbols()));
+            List<LearnerResult> result = getAll(session, userId, projectId, testNos, includeSteps);
 
             // done
             HibernateUtil.commitTransaction();
@@ -140,27 +136,25 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public List<LearnerResult> getSummaries(Long userId, Long projectId, Long... testNos) throws NotFoundException {
+    public LearnerResult get(Long userId, Long projectId, Long testNo, boolean includeSteps) throws NotFoundException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         try {
-            List<LearnerResult> result = getAll(session, userId, projectId, testNos);
-            result.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
-            result.forEach(r -> Hibernate.initialize(r.getSymbols()));
+            List<LearnerResult> result = getAll(session, userId, projectId, new Long[] { testNo }, includeSteps);
 
             // done
             HibernateUtil.commitTransaction();
-            result.forEach(r -> r.setSteps(null));
-            return result;
+            return result.get(0);
         } catch (NoSuchElementException e) {
             HibernateUtil.rollbackTransaction();
             throw e;
         }
     }
 
-    private List<LearnerResult> getAll(Session session, Long userId, Long projectId, Long... testNos)
+    private List<LearnerResult> getAll(Session session, Long userId, Long projectId,
+                                       Long[] testNos, boolean includeSteps)
             throws NotFoundException {
         @SuppressWarnings("unchecked") // should return a list of LearnerResults
         List<LearnerResult> results = session.createCriteria(LearnerResult.class)
@@ -172,9 +166,23 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         if (results.isEmpty()) {
             throw new NotFoundException("No result with the test nos. " + testNos + " for user " + userId + "was found.");
         }
+        initializeLazyRelations(session, results, includeSteps);
 
         // done
         return results;
+    }
+
+    private void initializeLazyRelations(Session session, List<LearnerResult> results, boolean includeSteps) {
+        results.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
+        results.forEach(r -> Hibernate.initialize(r.getSymbols()));
+        if (includeSteps) {
+            results.forEach(r -> Hibernate.initialize(r.getSteps()));
+        } else {
+            results.forEach(r -> {
+                session.evict(r);
+                r.setSteps(null);
+            });
+        }
     }
 
     @Override

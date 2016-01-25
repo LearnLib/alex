@@ -52,7 +52,7 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id was invalid.
      */
-    List<LearnerResult> getAll(Long userId, Long projectId) throws NotFoundException;
+    List<LearnerResult> getAll(Long userId, Long projectId, boolean includeSteps) throws NotFoundException;
 
     /**
      * Get a list of LearnResults for a given Project.
@@ -67,23 +67,10 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    List<LearnerResult> get(Long userId, Long projectId, Long... testNos) throws NotFoundException;
+    List<LearnerResult> getAll(Long userId, Long projectId, Long[] testNos, boolean includeSteps)
+            throws NotFoundException;
 
-    /**
-     * Get a the only the summary of a list of LearnerResult.
-     * Summary means that no steps will be included.
-     *
-     * @param userId
-     *         The user id of the LearnerResult.
-     * @param projectId
-     *         The project id if the test run.
-     * @param testNos
-     *         The test nos. of the LearnResults.
-     * @return The LearnerResult you are looking for, if it exists.
-     * @throws NotFoundException
-     *         If the project id or test no. was invalid.
-     */
-    List<LearnerResult> getSummaries(Long userId, Long projectId, Long... testNos) throws NotFoundException;
+    LearnerResult get(Long userId, Long projectId, Long testNos, boolean includeSteps) throws NotFoundException;
 
     LearnerResultStep createStep(LearnerResult result) throws NotFoundException, ValidationException;
 

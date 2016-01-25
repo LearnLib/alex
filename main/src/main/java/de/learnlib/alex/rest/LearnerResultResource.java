@@ -34,6 +34,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -64,20 +65,29 @@ public class LearnerResultResource {
      *
      * @param projectId
      *         The project of the test results.
+     * @param embed
+     *         By default no steps are included in the response. However you can ask to include them with
+     *         this parameter set to 'steps'.
      * @return A List of all final / lasts test results within one project.
      * @successResponse 200 OK
      * @responseType    java.util.List<de.learnlib.alex.core.entities.LearnerResult>
-     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllFinalResults(@PathParam("project_id") long projectId) {
+    public Response getAllFinalResults(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getAllFinalResults(" + projectId + ") for user " + user + ".");
 
         try {
-            List<LearnerResult> results = learnerResultDAO.getAll(user.getId(), projectId);
+            boolean includeSteps = parseEmbeddableFields(embed);
+
+            List<LearnerResult> results = learnerResultDAO.getAll(user.getId(), projectId, includeSteps);
             return ResponseHelper.renderList(results, Response.Status.OK);
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
+                                                               Response.Status.BAD_REQUEST,  e);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllFinalResults",
                                                                 Response.Status.NOT_FOUND, e);
@@ -91,59 +101,42 @@ public class LearnerResultResource {
      *         The project of the test runs.
      * @param testNos
      *         The number(s) of the test run(s).
+     * @param embed
+     *         By default no steps are included in the response. However you can ask to include them with
+     *         this parameter set to 'steps'.
      * @return A List of all step of possible multiple test runs.
      * @successResponse 200 OK
      * @responseType    java.util.List<de.learnlib.alex.core.entities.LearnerResult>
+     * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @GET
-    @Path("{test_nos}/complete")
+    @Path("{test_nos}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllSteps(@PathParam("project_id") Long projectId,
-                                @PathParam("test_nos") IdsList testNos) {
+                                @PathParam("test_nos") IdsList testNos,
+                                @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getAllSteps(" + projectId + ", " + testNos + ") for user " + user + ".");
 
         try {
+            boolean includeSteps = parseEmbeddableFields(embed);
+
             if (testNos.size() == 1) {
-                List<LearnerResult> result = learnerResultDAO.get(user.getId(), projectId, testNos.get(0));
-                return ResponseHelper.renderList(result, Response.Status.OK);
+                LearnerResult result = learnerResultDAO.get(user.getId(), projectId, testNos.get(0), includeSteps);
+                return Response.ok(result).build();
             } else {
-                List<LearnerResult> result = learnerResultDAO.get(user.getId(), projectId,
-                                                                  testNos.toArray(new Long[testNos.size()]));
+                List<LearnerResult> result = learnerResultDAO.getAll(user.getId(),
+                                                                     projectId,
+                                                                     testNos.toArray(new Long[testNos.size()]),
+                                                                     includeSteps);
                 return ResponseHelper.renderList(result, Response.Status.OK);
             }
+        } catch (IllegalArgumentException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
+                                                               Response.Status.BAD_REQUEST,  e);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
-                                                               Response.Status.NOT_FOUND,  e);
-        }
-    }
-
-    /**
-     * Get the summary of one test run.
-     *
-     * @param projectId
-     *         The project of the test run.
-     * @param testNo
-     *         The number of the test run.
-     * @return The final / latest result of one test run.
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.core.entities.LearnerResult
-     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     */
-    @GET
-    @Path("{test_no}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getOneFinalResult(@PathParam("project_id") long projectId, @PathParam("test_no") long testNo) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("LearnerResultResource.getOneFinalResult(" + projectId + ", " + testNo + ") "
-                     + "for user " + user + ".");
-
-        try {
-            LearnerResult json = learnerResultDAO.getSummaries(user.getId(), projectId, testNo).get(0);
-            return Response.ok(json).build();
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getOneFinalResult",
                                                                Response.Status.NOT_FOUND,  e);
         }
     }
@@ -180,6 +173,16 @@ public class LearnerResultResource {
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.deleteResultSet",
                                                                 Response.Status.BAD_REQUEST, e);
+        }
+    }
+
+    private boolean parseEmbeddableFields(String embed) throws IllegalArgumentException {
+        if (embed == null || embed.isEmpty()) {
+            return false;
+        } else if (embed.toLowerCase().equals("steps")) {
+            return true;
+        } else {
+            throw new IllegalArgumentException("Could not parse the embed value '" + embed + "'.");
         }
     }
 
