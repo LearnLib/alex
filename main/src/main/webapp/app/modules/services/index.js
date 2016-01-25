@@ -21,7 +21,7 @@ import EventBus from './EventBus';
 import EqOracleService from './EqOracleService';
 import FileDownloadService from './FileDownloadService';
 import LearnerResultChartService from './LearnerResultChartService';
-import PromptService from './PromptService';
+import {PromptService} from './PromptService';
 import SessionService from './SessionService';
 import ToastService from './ToastService';
 import LearnerResultDownloadService from './LearnerResultDownloadService';

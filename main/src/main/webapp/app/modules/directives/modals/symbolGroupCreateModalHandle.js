@@ -106,4 +106,4 @@ function symbolGroupCreateModalHandle($modal) {
     }
 }
 
-export default symbolGroupCreateModalHandle;
+export {SymbolGroupCreateModalController, symbolGroupCreateModalHandle};

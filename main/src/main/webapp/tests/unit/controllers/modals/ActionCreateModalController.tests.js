@@ -1,11 +1,13 @@
 import {Project} from '../../../../app/modules/entities/Project';
 import {actionType, events} from '../../../../app/modules/constants';
+import {ActionCreateModalController} from '../../../../app/modules/directives/modals/actionCreateModalHandle';
 
 describe('ActionCreateModalController', () => {
     let $controller, $rootScope, $q;
-    let SessionService, ActionCreateModalController, ActionService, SymbolResource, EventBus;
+    let SessionService, ActionService, SymbolResource, EventBus;
     let project;
     let modalInstance;
+    let controller;
 
     beforeEach(angular.mock.module('ALEX'));
     beforeEach(angular.mock.inject(($injector) => {
@@ -36,7 +38,7 @@ describe('ActionCreateModalController', () => {
     });
 
     function createController() {
-        ActionCreateModalController = $controller('ActionCreateModalController', {
+        controller = $controller(ActionCreateModalController, {
             $modalInstance: modalInstance,
             ActionService: ActionService,
             SymbolResource: SymbolResource,
@@ -55,13 +57,13 @@ describe('ActionCreateModalController', () => {
     it('should correctly instantiate the controller', () => {
         init();
 
-        expect(ActionCreateModalController.action).toBeNull();
-        expect(ActionCreateModalController.symbols).toEqual([]);
+        expect(controller.action).toBeNull();
+        expect(controller.symbols).toEqual([]);
 
         $rootScope.$digest();
 
         expect(SymbolResource.getAll).toHaveBeenCalledWith(project.id);
-        expect(ActionCreateModalController.symbols).toEqual(ENTITIES.symbols);
+        expect(controller.symbols).toEqual(ENTITIES.symbols);
     });
 
     it('should create a new action model on select', () => {
@@ -70,9 +72,9 @@ describe('ActionCreateModalController', () => {
 
         spyOn(ActionService, 'createFromType').and.callThrough();
         const type = actionType.WEB_CHECK_NODE;
-        ActionCreateModalController.selectNewActionType(type);
+        controller.selectNewActionType(type);
         expect(ActionService.createFromType).toHaveBeenCalledWith(type);
-        expect(ActionCreateModalController.action).not.toBeNull();
+        expect(controller.action).not.toBeNull();
     });
 
     it('should create a new action and close the modal window', () => {
@@ -81,7 +83,7 @@ describe('ActionCreateModalController', () => {
 
         spyOn(EventBus, 'emit').and.callThrough();
 
-        ActionCreateModalController.createAction();
+        controller.createAction();
 
         expect(modalInstance.dismiss).toHaveBeenCalled();
         expect(EventBus.emit).toHaveBeenCalled()
@@ -93,10 +95,10 @@ describe('ActionCreateModalController', () => {
 
         spyOn(EventBus, 'emit').and.callThrough();
 
-        ActionCreateModalController.createActionAndContinue();
+        controller.createActionAndContinue();
 
         expect(modalInstance.dismiss).not.toHaveBeenCalled();
-        expect(ActionCreateModalController.action).toBeNull();
+        expect(controller.action).toBeNull();
         expect(EventBus.emit).toHaveBeenCalled()
     });
 
@@ -104,7 +106,7 @@ describe('ActionCreateModalController', () => {
         init();
         $rootScope.$digest();
 
-        ActionCreateModalController.closeModal();
+        controller.closeModal();
         expect(modalInstance.dismiss).toHaveBeenCalled();
     })
 });

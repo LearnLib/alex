@@ -69,7 +69,7 @@ class LearnResult {
 
         /**
          * The steps of the learn process
-         * @type {Array}
+         * @type {{eqOracle:Object, stepNo:number, statistics:Object, hypothesis:Object}}
          */
         this.steps = obj.steps;
 

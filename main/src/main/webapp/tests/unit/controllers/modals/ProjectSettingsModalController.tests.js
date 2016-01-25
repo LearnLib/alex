@@ -1,14 +1,16 @@
 import {Project} from '../../../../app/modules/entities/Project';
 import {events} from '../../../../app/modules/constants';
+import {ProjectSettingsModalController} from '../../../../app/modules/directives/modals/projectSettingsModalHandle';
+
 
 describe('ProjectSettingsModalController', () => {
-    let ProjectSettingsModalController;
     let ProjectResource;
     let $controller;
     let EventBus;
     let ToastService;
     let scope;
 
+    let controller;
     let project;
     let modalInstance;
     let deferred;
@@ -40,7 +42,7 @@ describe('ProjectSettingsModalController', () => {
     });
 
     function createController() {
-        ProjectSettingsModalController = $controller('ProjectSettingsModalController', {
+        controller = $controller(ProjectSettingsModalController, {
             $modalInstance: modalInstance,
             modalData: {project: project},
             ProjectResource: ProjectResource,
@@ -51,13 +53,13 @@ describe('ProjectSettingsModalController', () => {
 
     it('should initialize the controller correctly', () => {
         createController();
-        expect(ProjectSettingsModalController.project).toEqual(project);
-        expect(ProjectSettingsModalController.error).toBeNull();
+        expect(controller.project).toEqual(project);
+        expect(controller.error).toBeNull();
     });
 
     it('should dismiss the modal window on close', () => {
         createController();
-        ProjectSettingsModalController.close();
+        controller.close();
         expect(modalInstance.dismiss).toHaveBeenCalled();
     });
 
@@ -69,14 +71,14 @@ describe('ProjectSettingsModalController', () => {
 
         deferred.resolve(project);
 
-        ProjectSettingsModalController.updateProject();
+        controller.updateProject();
         scope.$digest();
 
-        expect(ProjectResource.update).toHaveBeenCalledWith(ProjectSettingsModalController.project);
+        expect(ProjectResource.update).toHaveBeenCalledWith(controller.project);
         expect(ToastService.success).toHaveBeenCalled();
-        expect(EventBus.emit).toHaveBeenCalledWith(events.PROJECT_UPDATED, {project: ProjectSettingsModalController.project});
+        expect(EventBus.emit).toHaveBeenCalledWith(events.PROJECT_UPDATED, {project: controller.project});
         expect(modalInstance.dismiss).toHaveBeenCalled();
-        expect(ProjectSettingsModalController.error).toBeNull();
+        expect(controller.error).toBeNull();
     });
 
     it('should fail to update the project and display an error message', () => {
@@ -86,10 +88,10 @@ describe('ProjectSettingsModalController', () => {
         const message = 'failed';
         deferred.reject({data: {message: message}});
 
-        ProjectSettingsModalController.updateProject();
+        controller.updateProject();
         scope.$digest();
 
-        expect(ProjectResource.update).toHaveBeenCalledWith(ProjectSettingsModalController.project);
-        expect(ProjectSettingsModalController.error).toEqual(message);
+        expect(ProjectResource.update).toHaveBeenCalledWith(controller.project);
+        expect(controller.error).toEqual(message);
     });
 });

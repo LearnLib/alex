@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm} from '../constants';
+import {learnAlgorithm, events} from '../constants';
 
 /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation
@@ -34,7 +34,7 @@ import {learnAlgorithm} from '../constants';
  * @returns {{scope: {results: string}, transclude: boolean, templateUrl: string, controller: *[]}}
  */
 // @ngInject
-function learnResultPanel(FileDownloadService) {
+function learnResultPanel(FileDownloadService, EventBus) {
     return {
         scope: {
             result: '=',
@@ -49,10 +49,8 @@ function learnResultPanel(FileDownloadService) {
     function link(scope) {
 
         /**
-         * Enum for displayable modes.
-         * 0 := show hypothesis
-         * 1 := show internal data structure
-         * @type {{HYPOTHESIS: number, INTERNAL: number}}
+         * The enum for what is displayed in the panel
+         * @type {{HYPOTHESIS: number, OBSERVATION_TABLE: number, DISCRIMINATION_TREE: number}}
          */
         scope.modes = {
             HYPOTHESIS: 0,
@@ -89,6 +87,11 @@ function learnResultPanel(FileDownloadService) {
             scope.pointer = result.steps.length - 1;
         });
 
+        // wait for hypothesis layout settings to change
+        EventBus.on(events.HYPOTHESIS_LAYOUT_UPDATED, (evt, data) => {
+            scope.layoutSettings = data.settings;
+        }, scope);
+
         /**
          * Checks if the property 'algorithmInformation' is define which holds the internal data structure
          * for the algorithm of a learn result
@@ -117,17 +120,8 @@ function learnResultPanel(FileDownloadService) {
         /**
          * Downloads the visible hypothesis as json
          */
-        scope.exportHypothesisAsJson = function() {
+        scope.exportHypothesisAsJson = function () {
             FileDownloadService.downloadJson(scope.result.steps[scope.pointer].hypothesis);
-        };
-
-        /**
-         * Updates the layoutSettings
-         *
-         * @param ls {Object} - The layoutSettings object
-         */
-        scope.updateLayoutSettings = function (ls) {
-            scope.layoutSettings = ls;
         };
 
         /**

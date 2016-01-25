@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
+/**
+ * The main component that is the start point of the application.
+ * Should be used only once in the main index.html page.
+ *
+ * Usage: '<alex></alex>'
+ *
+ * @type {{template: *}}
+ */
 const alex = {
     template: `
         <div id="alex">

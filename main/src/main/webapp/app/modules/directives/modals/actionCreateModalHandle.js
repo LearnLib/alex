@@ -110,4 +110,4 @@ function actionCreateModalHandle($modal) {
     }
 }
 
-export default actionCreateModalHandle;
+export {ActionCreateModalController, actionCreateModalHandle};

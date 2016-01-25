@@ -1,7 +1,9 @@
+import {ConfirmDialogController} from '../../../../app/modules/services/PromptService';
+
 describe('ConfirmDialogController', () => {
     let $controller;
     let scope;
-    let ConfirmDialogController;
+    let controller;
     let modalInstance;
 
     beforeEach(angular.mock.module('ALEX'));
@@ -19,7 +21,7 @@ describe('ConfirmDialogController', () => {
     }));
 
     function createController(txt) {
-        ConfirmDialogController = $controller('ConfirmDialogController', {
+        controller = $controller(ConfirmDialogController, {
             $modalInstance: modalInstance,
             modalData: {text: txt}
         });
@@ -27,24 +29,24 @@ describe('ConfirmDialogController', () => {
 
     it('should initialize the controller correctly', () => {
         createController();
-        expect(ConfirmDialogController.$modalInstance).toEqual(modalInstance);
-        expect(ConfirmDialogController.text).toEqual(null);
+        expect(controller.$modalInstance).toEqual(modalInstance);
+        expect(controller.text).toEqual(null);
     });
 
     it('should display a message in the confirm dialog that is given via modalData params', () => {
         createController('testMessage');
-        expect(ConfirmDialogController.text).toEqual('testMessage')
+        expect(controller.text).toEqual('testMessage')
     });
 
     it('should close the modal dialog and resolve the modal promise',() => {
         createController();
-        ConfirmDialogController.ok();
+        controller.ok();
         expect(modalInstance.close).toHaveBeenCalled();
     });
 
     it('should close the modal dialog and reject the modal promise', () => {
         createController();
-        ConfirmDialogController.close();
+        controller.close();
         expect(modalInstance.dismiss).toHaveBeenCalled();
     });
 });

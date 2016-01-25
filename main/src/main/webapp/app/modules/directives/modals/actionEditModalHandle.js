@@ -116,4 +116,4 @@ function actionEditModalHandle($modal, ActionService) {
     }
 }
 
-export default actionEditModalHandle;
+export {ActionEditModalController, actionEditModalHandle};

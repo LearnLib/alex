@@ -28,16 +28,16 @@ import {symbolGroupList, symbolGroupListItem} from './symbolGroupList';
 import {symbolList, symbolListItem} from './symbolList';
 
 // modal handles
-import actionCreateModalHandle from './modals/actionCreateModalHandle';
-import actionEditModalHandle from './modals/actionEditModalHandle';
+import {actionCreateModalHandle} from './modals/actionCreateModalHandle';
+import {actionEditModalHandle} from './modals/actionEditModalHandle';
 import hypothesisLayoutSettingsModalHandle from './modals/hypothesisLayoutSettingsModalHandle';
 import learnResultDetailsModalHandle from './modals/learnResultDetailsModalHandle';
 import learnSetupSettingsModalHandle from './modals/learnSetupSettingsModalHandle';
-import projectSettingsModalHandle from './modals/projectSettingsModalHandle';
-import symbolCreateModalHandle from './modals/symbolCreateModalHandle';
+import {projectSettingsModalHandle} from './modals/projectSettingsModalHandle';
+import {symbolCreateModalHandle} from './modals/symbolCreateModalHandle';
 import symbolEditModalHandle from './modals/symbolEditModalHandle';
-import symbolGroupCreateModalHandle from './modals/symbolGroupCreateModalHandle';
-import symbolGroupEditModalHandle from './modals/symbolGroupEditModalHandle';
+import {symbolGroupCreateModalHandle} from './modals/symbolGroupCreateModalHandle';
+import {symbolGroupEditModalHandle} from './modals/symbolGroupEditModalHandle';
 import symbolMoveModalHandle from './modals/symbolMoveModalHandle';
 import userEditModalHandle from './modals/userEditModalHandle';
 

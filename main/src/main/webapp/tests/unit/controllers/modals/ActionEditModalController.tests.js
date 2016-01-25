@@ -1,10 +1,11 @@
 import {Project} from '../../../../app/modules/entities/Project';
 import {actionType, events} from '../../../../app/modules/constants';
+import {ActionEditModalController} from '../../../../app/modules/directives/modals/actionEditModalHandle';
 
 describe('ActionEditModalController', () => {
     let $controller, $rootScope, $q;
-    let SessionService, ActionEditModalController, ActionService, SymbolResource, EventBus;
-    let project, modalData, modalInstance;
+    let SessionService, ActionService, SymbolResource, EventBus;
+    let project, modalData, modalInstance, controller;
 
     beforeEach(angular.mock.module('ALEX'));
     beforeEach(angular.mock.inject(($injector) => {
@@ -39,7 +40,7 @@ describe('ActionEditModalController', () => {
     });
 
     function createController() {
-        ActionEditModalController = $controller('ActionEditModalController', {
+        controller = $controller(ActionEditModalController, {
             $modalInstance: modalInstance,
             modalData: modalData,
             ActionService: ActionService,
@@ -59,13 +60,13 @@ describe('ActionEditModalController', () => {
     it('should correctly instantiate the controller', () => {
         init();
 
-        expect(ActionEditModalController.action).toEqual(modalData.action);
-        expect(ActionEditModalController.symbols).toEqual([]);
+        expect(controller.action).toEqual(modalData.action);
+        expect(controller.symbols).toEqual([]);
 
         $rootScope.$digest();
 
         expect(SymbolResource.getAll).toHaveBeenCalledWith(project.id);
-        expect(ActionEditModalController.symbols).toEqual(ENTITIES.symbols);
+        expect(controller.symbols).toEqual(ENTITIES.symbols);
     });
 
     it('should update an action and close the modal window', () => {
@@ -74,7 +75,7 @@ describe('ActionEditModalController', () => {
 
         spyOn(EventBus, 'emit').and.callThrough();
 
-        ActionEditModalController.updateAction();
+        controller.updateAction();
 
         expect(modalInstance.dismiss).toHaveBeenCalled();
         expect(EventBus.emit).toHaveBeenCalled()
@@ -84,7 +85,7 @@ describe('ActionEditModalController', () => {
         init();
         $rootScope.$digest();
 
-        ActionEditModalController.closeModal();
+        controller.closeModal();
         expect(modalInstance.dismiss).toHaveBeenCalled();
     })
 });

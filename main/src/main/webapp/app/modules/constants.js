@@ -50,6 +50,7 @@ const events = {
 
     // hypothesis related events
     HYPOTHESIS_LABEL_SELECTED: 'hypothesis:labelSelected',
+    HYPOTHESIS_LAYOUT_UPDATED: 'hypothesis:layoutUpdated',
 
     // user related events
     USER_UPDATED: 'user:updated',

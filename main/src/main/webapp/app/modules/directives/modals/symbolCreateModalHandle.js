@@ -148,4 +148,4 @@ function symbolCreateModalHandle($modal) {
     }
 }
 
-export default symbolCreateModalHandle;
+export {SymbolCreateModalController, symbolCreateModalHandle};

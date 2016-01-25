@@ -138,4 +138,4 @@ class PromptService {
     }
 }
 
-export default PromptService;
+export {PromptDialogController, ConfirmDialogController, PromptService};

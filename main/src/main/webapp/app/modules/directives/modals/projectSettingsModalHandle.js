@@ -112,4 +112,4 @@ function projectSettingsModalHandle($modal, LearnerResource, ToastService) {
     }
 }
 
-export default projectSettingsModalHandle;
+export {ProjectSettingsModalController, projectSettingsModalHandle};

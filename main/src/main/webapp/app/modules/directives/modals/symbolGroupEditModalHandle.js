@@ -130,4 +130,4 @@ function symbolGroupEditModalHandle($modal) {
     }
 }
 
-export default symbolGroupEditModalHandle;
+export {SymbolGroupEditModalController, symbolGroupEditModalHandle};

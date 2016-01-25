@@ -1,9 +1,9 @@
 import {Project} from '../../../../app/modules/entities/Project';
 import {SymbolGroupFormModel} from '../../../../app/modules/entities/SymbolGroup';
 import {events} from '../../../../app/modules/constants';
+import {SymbolGroupCreateModalController} from '../../../../app/modules/directives/modals/symbolGroupCreateModalHandle';
 
 describe('SymbolGroupCreateModalController', () => {
-    let SymbolGroupCreateModalController;
     let SessionService;
     let SymbolGroupResource;
     let $controller;
@@ -11,6 +11,7 @@ describe('SymbolGroupCreateModalController', () => {
     let ToastService;
     let scope;
 
+    let controller;
     let project;
     let modalInstance;
     let deferred;
@@ -44,7 +45,7 @@ describe('SymbolGroupCreateModalController', () => {
     });
 
     function createController() {
-        SymbolGroupCreateModalController = $controller('SymbolGroupCreateModalController', {
+        controller = $controller(SymbolGroupCreateModalController, {
             $modalInstance: modalInstance,
             SessionService: SessionService,
             SymbolGroupResource: SymbolGroupResource,
@@ -55,14 +56,14 @@ describe('SymbolGroupCreateModalController', () => {
 
     it('should initialize the controller correctly', () => {
         createController();
-        expect(SymbolGroupCreateModalController.project).toEqual(project);
-        expect(SymbolGroupCreateModalController.group).toEqual(new SymbolGroupFormModel());
-        expect(SymbolGroupCreateModalController.errorMsg).toBeNull();
+        expect(controller.project).toEqual(project);
+        expect(controller.group).toEqual(new SymbolGroupFormModel());
+        expect(controller.errorMsg).toBeNull();
     });
 
     it('should dismiss the modal window on close', () => {
         createController();
-        SymbolGroupCreateModalController.close();
+        controller.close();
         expect(modalInstance.dismiss).toHaveBeenCalled();
     });
 
@@ -75,15 +76,15 @@ describe('SymbolGroupCreateModalController', () => {
         const group = new SymbolGroupFormModel(ENTITIES.groups[0]);
         deferred.resolve(ENTITIES.groups[0]);
 
-        SymbolGroupCreateModalController.group = group;
-        SymbolGroupCreateModalController.createGroup();
+        controller.group = group;
+        controller.createGroup();
         scope.$digest();
 
         expect(SymbolGroupResource.create).toHaveBeenCalledWith(project.id, group);
         expect(ToastService.success).toHaveBeenCalled();
         expect(EventBus.emit).toHaveBeenCalledWith(events.GROUP_CREATED, {group: ENTITIES.groups[0]});
         expect(modalInstance.dismiss).toHaveBeenCalled();
-        expect(SymbolGroupCreateModalController.errorMsg).toBeNull();
+        expect(controller.errorMsg).toBeNull();
     });
 
     it('should fail to create a new group and display an error message', () => {
@@ -94,11 +95,11 @@ describe('SymbolGroupCreateModalController', () => {
         const group = new SymbolGroupFormModel(ENTITIES.groups[0]);
         deferred.reject({data: {message: message}});
 
-        SymbolGroupCreateModalController.group = group;
-        SymbolGroupCreateModalController.createGroup();
+        controller.group = group;
+        controller.createGroup();
         scope.$digest();
 
         expect(SymbolGroupResource.create).toHaveBeenCalledWith(project.id, group);
-        expect(SymbolGroupCreateModalController.errorMsg).toEqual(message);
+        expect(controller.errorMsg).toEqual(message);
     });
 });

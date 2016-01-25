@@ -49,9 +49,14 @@ class LearnResultDetailsModalController {
          * @type {*[]}
          */
         this.tabs = [
-            {heading: 'Current', result: this.result.steps[this.current]},
             {heading: 'Cumulated', result: this.result}
         ];
+
+        // add a tab with details for the current step only if it is defined
+        // otherwise display the tab with the cumulated results only
+        if (typeof this.current !== 'undefined') {
+            this.tabs.unshift({heading: 'Current', result: this.result.steps[this.current]});
+        }
     }
 
     /** Close the modal window  */

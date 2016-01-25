@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {events} from '../../constants';
+
 /** The controller that handles the modal dialog for changing the layout settings of a hypothesis */
 // @ngInject
 class HypothesisLayoutSettingsController {
@@ -22,9 +24,11 @@ class HypothesisLayoutSettingsController {
      * Constructor
      * @param $modalInstance
      * @param modalData
+     * @param EventBus
      */
-    constructor($modalInstance, modalData) {
+    constructor($modalInstance, modalData, EventBus) {
         this.$modalInstance = $modalInstance;
+        this.EventBus = EventBus;
 
         /**
          * The default layout settings for a hypothesis
@@ -47,7 +51,8 @@ class HypothesisLayoutSettingsController {
 
     /** Closes the modal window and passes the updated layout settings */
     update() {
-        this.$modalInstance.close(this.layoutSettings);
+        this.EventBus.emit(events.HYPOTHESIS_LAYOUT_UPDATED, {settings: this.layoutSettings});
+        this.close();
     }
 
     /** Closes the modal window */
@@ -70,9 +75,8 @@ class HypothesisLayoutSettingsController {
  * contains the layoutSettings model.
  *
  * Attribute 'layoutSettings' {Object} should be the model that is passed to the hypothesis directive.
- * Attribute 'onUpdate' {function} should be a callback function with a single parameter for the settings
  *
- * Use: '<button hypothesis-layout-settings-modal-handle layout-settings="..." on-update="...">Click Me!</button>'
+ * Use: '<button hypothesis-layout-settings-modal-handle layout-settings="...">Click Me!</button>'
  *
  * @param $modal - The ui.boostrap $modal service
  * @returns {{restrict: string, scope: {layoutSettings: string}, link: link}}
@@ -82,15 +86,14 @@ function hypothesisLayoutSettingsModalHandle($modal) {
     return {
         restrict: 'A',
         scope: {
-            layoutSettings: '=',
-            onUpdate: '&'
+            layoutSettings: '='
         },
         link: link
     };
 
     function link(scope, el) {
         el.on('click', () => {
-            const modal = $modal.open({
+            $modal.open({
                 templateUrl: 'views/modals/hypothesis-layout-settings-modal.html',
                 controller: HypothesisLayoutSettingsController,
                 controllerAs: 'vm',
@@ -101,10 +104,6 @@ function hypothesisLayoutSettingsModalHandle($modal) {
                         };
                     }
                 }
-            });
-
-            modal.result.then(layoutSettings => {
-                scope.onUpdate()(layoutSettings);
             });
         });
     }
