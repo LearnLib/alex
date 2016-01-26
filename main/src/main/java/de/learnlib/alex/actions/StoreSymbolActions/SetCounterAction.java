@@ -35,6 +35,9 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("setCounter")
 public class SetCounterAction extends SymbolAction {
 
+    /** to be serializable. */
+    private static final long serialVersionUID = -6023597222318880440L;
+
     /** The name of the counter to set a new value to. */
     @NotBlank
     private String name;
@@ -43,18 +46,30 @@ public class SetCounterAction extends SymbolAction {
     @NotNull
     private Integer counterValue;
 
+    /**
+     * @return The name of the counter to set.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name The new name of the counter to set.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * @return The value to set the counter to.
+     */
     public Integer getValue() {
         return counterValue;
     }
 
+    /**
+     * @param value The new value to set the counter to.
+     */
     public void setValue(Integer value) {
         this.counterValue = value;
     }

@@ -102,16 +102,5 @@ public class SetCounterActionTest {
         verify(counters).set(USER_ID, PROJECT_ID, TEST_NAME, TEST_VALUE);
     }
 
-    @Test
-    public void shouldNotFailIfCounterIsNotDeclared() {
-        CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        ConnectorManager connector = mock(ConnectorManager.class);
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
-
-        ExecuteResult result = setAction.execute(connector);
-
-        assertEquals(ExecuteResult.OK, result);
-        verify(counters).set(USER_ID, PROJECT_ID, TEST_NAME, TEST_VALUE);
-    }
 
 }

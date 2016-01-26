@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.actions.StoreSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
@@ -24,6 +25,7 @@ import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -41,13 +43,37 @@ public class SetVariableByCookieAction extends SetVariableAction {
     /**
      * Enum to differentiate web & REST cookies.
      */
-    private enum CookieType {
+    public enum CookieType {
+
         /** Cookies from or to a web interface. */
         WEB,
 
         /** Cookies from or to an REST interface. */
-        REST
+        REST;
+
+        /**
+         * Parser function to handle the enum names case insensitive.
+         *
+         * @param name
+         *         The enum name.
+         * @return The corresponding CookieType.
+         * @throws IllegalArgumentException
+         *         If the name could not be parsed.
+         */
+        @JsonCreator
+        public static CookieType fromString(String name) throws IllegalArgumentException {
+            return CookieType.valueOf(name.toUpperCase());
+        }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+
     }
+
+    /** to be serializable. */
+    private static final long serialVersionUID = 5093001294341313128L;
 
     /**
      * The type of the cookie. Either by selenium cookie or from a http request.
@@ -56,12 +82,18 @@ public class SetVariableByCookieAction extends SetVariableAction {
      */
     private CookieType cookieType;
 
+    /**
+     * @return The type of the cookie.
+     */
     public CookieType getCookieType() {
         return cookieType;
     }
 
-    public void setCookieType(CookieType t) {
-        cookieType = t;
+    /**
+     * @param type The new type of the cookie.
+     */
+    public void setCookieType(CookieType type) {
+        cookieType = type;
     }
 
     @Override
@@ -71,25 +103,27 @@ public class SetVariableByCookieAction extends SetVariableAction {
         WebSiteConnector webSiteConnector = connector.getConnector(WebSiteConnector.class);
 
         try {
-            String value = null;
+            String cookieValue = null;
 
             if (cookieType == CookieType.WEB) {
-                Cookie cookie = webSiteConnector.getDriver().manage().getCookieNamed(value);
+                WebDriver driver = webSiteConnector.getDriver();
+                WebDriver.Options manage = driver.manage();
+                Cookie cookie = manage.getCookieNamed(value);
                 if (cookie != null) {
-                    value = cookie.getValue();
+                    cookieValue = cookie.getValue();
                 }
             } else if (cookieType == CookieType.REST) {
                 Map<String, NewCookie> cookies = webServiceConnector.getCookies();
                 javax.ws.rs.core.Cookie cookie = cookies.get(value);
                 if (cookie != null) {
-                    value = cookies.get(value).getValue();
+                    cookieValue = cookie.getValue();
                 }
             } else {
                 return getFailedOutput();
             }
 
-            if (value != null) {
-                storeConnector.set(name, value);
+            if (cookieValue != null) {
+                storeConnector.set(name, cookieValue);
                 return getSuccessOutput();
             } else {
                 return getFailedOutput();

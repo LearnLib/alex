@@ -1,0 +1,6 @@
+{
+  "type": "setVariableByCookie",
+  "name": "foobar",
+  "value": "cookie",
+  "cookieType": "web"
+}
