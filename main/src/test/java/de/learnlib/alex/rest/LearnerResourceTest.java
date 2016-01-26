@@ -27,6 +27,7 @@ import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
@@ -187,6 +188,28 @@ public class LearnerResourceTest extends JerseyTest {
     }
 
     @Test
+    public void shouldNotStartALearningProcessIfTheUserInTheConfigurationDoesntMatch() throws NotFoundException {
+        String json = "{\"user\": 100}";
+
+        Response response = target("/learner/start/" + PROJECT_TEST_ID).request().header("Authorization", token)
+                                .post(Entity.json(json));
+
+        verify(learner, never()).start(any(User.class), any(Project.class), any(LearnerConfiguration.class));
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldNotStartALearningProcessIfTheProjectInTheConfigurationDoesntMatch() throws NotFoundException {
+        String json = "{\"project\": 100}";
+
+        Response response = target("/learner/start/" + PROJECT_TEST_ID).request().header("Authorization", token)
+                                .post(Entity.json(json));
+
+        verify(learner, never()).start(any(User.class), any(Project.class), any(LearnerConfiguration.class));
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
     public void shouldNotStartALearningProcessTwice() throws NotFoundException {
         willThrow(IllegalStateException.class).given(learner).start(any(User.class),
                                                                     any(Project.class),
@@ -212,6 +235,66 @@ public class LearnerResourceTest extends JerseyTest {
                                 + "\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).resume(any(User.class), any(LearnerConfiguration.class));
+    }
+
+    @Test
+    public void shouldReturn404IfTheUserHasNoPreviousLearnResult() throws NotFoundException {
+        given(learner.getResult(user)).willReturn(null);
+
+        Response response = target("/learner/resume/" + PROJECT_TEST_ID + "/"  + TEST_NO).request()
+                                .header("Authorization", token).post(Entity.json(RESUME_JSON));
+
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        verify(learner, never()).resume(any(User.class), any(LearnerConfiguration.class));
+    }
+
+    @Test
+    public void shouldReturn400IfTheGivenProjectIdDoesNotMatchTheOldOne() throws NotFoundException {
+        Response response = target("/learner/resume/" + (PROJECT_TEST_ID + 1) + "/"  + TEST_NO).request()
+                                .header("Authorization", token).post(Entity.json(RESUME_JSON));
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        verify(learner, never()).resume(any(User.class), any(LearnerConfiguration.class));
+    }
+
+    @Test
+    public void shouldReturn400IfTheGivenTestNoDoesNotMatchTheOldOne() throws NotFoundException {
+        Response response = target("/learner/resume/" + PROJECT_TEST_ID + "/"  + (TEST_NO + 1)).request()
+                                .header("Authorization", token).post(Entity.json(RESUME_JSON));
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        verify(learner, never()).resume(any(User.class), any(LearnerConfiguration.class));
+    }
+
+    @Test
+    public void shouldReturn302IfTheUserHasAnActiveLearnProcess() throws NotFoundException {
+        willThrow(IllegalStateException.class).given(learner).resume(eq(user), any(LearnerResumeConfiguration.class));
+
+        Response response = target("/learner/resume/" + PROJECT_TEST_ID + "/"  + TEST_NO).request()
+                                .header("Authorization", token).post(Entity.json(RESUME_JSON));
+
+        assertEquals(Response.Status.NOT_MODIFIED.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldReturn404IfTheSymbolsOfTheLearnerAreGone() throws NotFoundException {
+        willThrow(NotFoundException.class).given(learner).resume(eq(user), any(LearnerResumeConfiguration.class));
+
+        Response response = target("/learner/resume/" + PROJECT_TEST_ID + "/"  + TEST_NO).request()
+                .header("Authorization", token).post(Entity.json(RESUME_JSON));
+
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldReturn404IfTheResumeConfigurationWasInvalid() throws NotFoundException {
+        willThrow(IllegalArgumentException.class)
+                .given(learner).resume(eq(user), any(LearnerResumeConfiguration.class));
+
+        Response response = target("/learner/resume/" + PROJECT_TEST_ID + "/"  + TEST_NO).request()
+                .header("Authorization", token).post(Entity.json(RESUME_JSON));
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
     @Test
@@ -386,13 +469,13 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfOutputShouldBeCreatedWithForNotExistingSymbols() throws NotFoundException {
-        given(symbolDAO.get(user, PROJECT_TEST_ID, new IdRevisionPair(2, 4))).willThrow(NotFoundException.class);
+        given(symbolDAO.get(user, PROJECT_TEST_ID, new IdRevisionPair(2, 2))).willThrow(NotFoundException.class);
 
         String json = "{\"resetSymbol\":"
                         + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
                     + "\"symbols\": ["
                         + "{\"id\": 1, \"revision\": 1},"
-                        + "{\"id\": 2, \"revision\": 4}"
+                        + "{\"id\": 2, \"revision\": 2}"
                     + "]}";
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", token)
                                 .post(Entity.json(json));

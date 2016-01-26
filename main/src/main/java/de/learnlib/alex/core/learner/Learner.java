@@ -269,6 +269,8 @@ public class Learner {
      *         The thread to start.
      */
     private void startThread(User user, LearnerThread learnThread) {
+        System.out.println("############################################");
+        System.out.println("start thead");
         Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
         userThreads.put(user, learnThread);
         activeThreads.put(user, learnThread);

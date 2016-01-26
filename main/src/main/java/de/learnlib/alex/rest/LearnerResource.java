@@ -95,8 +95,9 @@ public class LearnerResource {
      * @return The status of the current learn process.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.core.entities.LearnerStatus
-     * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   302 not modified `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   400 bad request  `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   404 not found    `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/start/{project_id}")
@@ -108,8 +109,8 @@ public class LearnerResource {
 
         try {
             if (
-                (configuration.getUserId() != null && !user.equals(configuration.getUserId())) ||
-                (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))
+                (configuration.getUserId() != null && !user.getId().equals(configuration.getUserId()))
+                    || (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))
             ) {
                 throw new IllegalArgumentException("If an user or a project is provided in the configuration, "
                                                            + "they must match the parameters in the path!");
@@ -143,6 +144,9 @@ public class LearnerResource {
      * @return The status of the current learn process.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.core.entities.LearnerStatus
+     * @errorResponse   302 not modified `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   400 bad request  `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   404 not found    `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/resume/{project_id}/{test_run}")
@@ -164,8 +168,8 @@ public class LearnerResource {
 
             if (lastResult.getProjectId() != projectId || lastResult.getTestNo() != testRunNo) {
                 LOGGER.info("could not resume the learner of another project or with an wrong test run.");
-                LearnerStatus status = learner.getStatus(user);
-                return Response.status(Status.NOT_MODIFIED).entity(status).build();
+                throw new IllegalArgumentException("The given project id or test no does not match "
+                                                           + "with the latest learn result!");
             }
 
             learner.resume(user, configuration);

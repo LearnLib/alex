@@ -61,6 +61,7 @@ public class LearnerResultResourceTest extends JerseyTest {
     private static final long PROJECT_ID = 1L;
     private static final long RESULT_ID = 10L;
     private static final int TEST_RESULT_AMOUNT = 10;
+    private static final Long[] TEST_NOS = new Long[] {1L, 2L, 42L};
 
     @Mock
     private UserDAO userDAO;
@@ -115,21 +116,8 @@ public class LearnerResultResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturnAllResultsOfOneProject() throws NotFoundException {
-        List<LearnerResult> results = new LinkedList<>();
-        for (long i = 0; i < TEST_RESULT_AMOUNT; i++) {
-            Alphabet<String> sigma = new SimpleAlphabet<>();
-            sigma.add("0");
-            sigma.add("1");
-
-            LearnerResult learnerResult = new LearnerResult();
-            learnerResult.setUser(user);
-            learnerResult.setProject(project);
-            learnerResult.setTestNo(i);
-            learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
-
-            results.add(learnerResult);
-        }
+    public void shouldReturnAllResultsOfOneProject() throws NotFoundException, JsonProcessingException {
+        List<LearnerResult> results = createTestLearnResults();
         given(learnerResultDAO.getAll(eq(user.getId()), eq(PROJECT_ID), anyBoolean())).willReturn(results);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").request()
@@ -137,141 +125,49 @@ public class LearnerResultResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
 
-        /*
-        List<LearnerResult> resultsInResponse = response.readEntity(new GenericType<List<LearnerResult>>() { });
-        resultsInResponse.forEach(r -> { if (r.getUserId() == 1L) { r.setUser(user); }});
-        assertArrayEquals(results.toArray(), resultsInResponse.toArray());
-        */
+        ObjectMapper mapper = new ObjectMapper();
+        String expectedJSON = mapper.writeValueAsString(results);
+        assertEquals(expectedJSON, response.readEntity(String.class));
+    }
+
+    @Test
+    public void ensureThatGettingAllResultsOfOneProjectHandlesAValidEmbedParameter() throws NotFoundException {
+        List<LearnerResult> results = createTestLearnResults();
+        given(learnerResultDAO.getAll(USER_TEST_ID, PROJECT_ID, true)).willReturn(results);
+
+        Response response = target("/projects/" + PROJECT_ID + "/results").queryParam("embed", "STEPS").request()
+                                .header("Authorization", token).get();
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
+    }
+
+    @Test
+    public void ensureThatGettingAllResultsOfOneProjectHandlesAnInvalidEmbedParameter() throws NotFoundException {
+        List<LearnerResult> results = createTestLearnResults();
+        given(learnerResultDAO.getAll(eq(user.getId()), eq(PROJECT_ID), anyBoolean())).willReturn(results);
+
+        Response response = target("/projects/" + PROJECT_ID + "/results").queryParam("embed", "INVALID").request()
+                                .header("Authorization", token).get();
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void ensureThatGettingAllResultsReturns404IfTheProjectIdIsInvalid() throws NotFoundException {
-        given(learnerResultDAO.getAll(eq(user.getId()), eq(PROJECT_ID), anyBoolean())).willThrow(NotFoundException.class);
+        given(learnerResultDAO.getAll(eq(user.getId()), eq(PROJECT_ID), anyBoolean()))
+                .willThrow(NotFoundException.class);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").request()
                                 .header("Authorization", token).get();
-        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
-        response = target("/projects/" + PROJECT_ID + "/results").queryParam("embed", "STEPS").request()
-                        .header("Authorization", token).get();
-        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-
-        response = target("/projects/" + PROJECT_ID + "/results").queryParam("embed", "").request()
-                        .header("Authorization", token).get();
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
-
-    /*@Test
-    public void shouldReturnAllResultSteps() throws NotFoundException, JsonProcessingException {
-        List<LearnerResult> results = new LinkedList<>();
-        for (long i = 0; i < TEST_RESULT_AMOUNT; i++) {
-            Alphabet<String> sigma = new SimpleAlphabet<>();
-            sigma.add("0");
-            sigma.add("1");
-
-            LearnerResult learnerResult = new LearnerResult();
-            learnerResult.setUser(user);
-            learnerResult.setProject(project);
-            learnerResult.setTestNo(RESULT_ID);
-            learnerResult.setStepNo(i);
-            learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
-
-            results.add(learnerResult);
-        }
-        given(learnerResultDAO.getAll(USER_TEST_ID, PROJECT_ID, RESULT_ID)).willReturn(results);
-
-        String path = "/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "/complete";
-        Response response = target(path).request().header("Authorization", token).get();
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
-
-        List<LearnerResult> resultsInResponse = response.readEntity(new GenericType<List<LearnerResult>>() { });
-        resultsInResponse.forEach(r -> { if (r.getUserId() == 1L) { r.setUser(user); }});
-        assertArrayEquals(results.toArray(), resultsInResponse.toArray());
-    }*/
-
-    /*@Test
-    public void ensureThatGettingAllResultsOfOneRunReturns404IfTheProjectIdIsInvalid() throws NotFoundException {
-        given(learnerResultDAO.getAll(USER_TEST_ID, PROJECT_ID, RESULT_ID)).willThrow(NotFoundException.class);
-
-        String path = "/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "/complete";
-        Response response = target(path).request().header("Authorization", token).get();
-
-        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-    }*/
-
-    /*@Test
-    public void shouldGetAllStepsOfMultipleTestRuns() throws NotFoundException, JsonProcessingException {
-        List<Long> ids = new LinkedList<>();
-        List<List<LearnerResult>> results = new LinkedList<>();
-        for (long i = 0; i < TEST_RESULT_AMOUNT; i++) {
-            List<LearnerResult> tmpList = new LinkedList<>();
-
-            for (Long j = 0L; j < TEST_RESULT_AMOUNT; j++) {
-                Alphabet<String> sigma = new SimpleAlphabet<>();
-                sigma.add("0");
-                sigma.add("1");
-
-                LearnerResult learnerResult = new LearnerResult();
-                learnerResult.setProject(project);
-                learnerResult.setTestNo(RESULT_ID + i);
-                learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
-
-                tmpList.add(learnerResult);
-            }
-            ids.add(RESULT_ID + i);
-            results.add(tmpList);
-        }
-        given(learnerResultDAO.getAll(user.getId(), PROJECT_ID, ids)).willReturn(results);
-
-        StringBuilder idsAsString = new StringBuilder();
-        for (Long id : ids) {
-            idsAsString.append(String.valueOf(id));
-            idsAsString.append(',');
-        }
-        idsAsString.setLength(idsAsString.length() - 1); // remove last ','
-
-        String path = "/projects/" + PROJECT_ID + "/results/" + idsAsString + "/complete";
-        Response response = target(path).request().header("Authorization", token).get();
-
-        String jsonInResponse = response.readEntity(String.class);
-        System.out.println(jsonInResponse);
-    }*/
 
     @Test
     public void shouldGetOneTestResult() throws NotFoundException, JsonProcessingException {
-        //ObjectMapper objectMapper = new ObjectMapper();
         // given
-        List<LearnerResult> results = new LinkedList<>();
-        for (long i = 0; i < TEST_RESULT_AMOUNT; i++) {
-            Alphabet<String> sigma = new SimpleAlphabet<>();
-            sigma.add("0");
-            sigma.add("1");
-
-            LearnerResult learnerResult = new LearnerResult();
-            learnerResult.setUser(user);
-            learnerResult.setProject(project);
-            learnerResult.setTestNo(i);
-            learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
-
-            results.add(learnerResult);
-        }
-        Long[] testNos = new Long[] {1L, 2L, 42L};
-        given(learnerResultDAO.getAll(eq(USER_TEST_ID), eq(PROJECT_ID), eq(testNos), anyBoolean())).willReturn(results);
-
-        // when
-        Response response = target("/projects/" + PROJECT_ID + "/results/1,2,42").request()
-                                .header("Authorization", token).get();
-
-        // then
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        //assertEquals(objectMapper.writeValueAsString(learnerResult), response.readEntity(String.class));
-    }
-
-    @Test
-    public void shouldGetManyResults() throws NotFoundException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        // given
         Alphabet<String> sigma = new SimpleAlphabet<>();
         sigma.add("0");
         sigma.add("1");
@@ -294,7 +190,61 @@ public class LearnerResultResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldDeleteAllStepsOfATestRun() throws NotFoundException {
+    public void shouldReturn404IfOneTestNoDoesNotExists() throws NotFoundException, JsonProcessingException {
+        given(learnerResultDAO.getAll(eq(USER_TEST_ID), eq(PROJECT_ID), eq(TEST_NOS), anyBoolean()))
+                .willThrow(NotFoundException.class);
+
+        Response response = target("/projects/" + PROJECT_ID + "/results/1,2,42").request()
+                                .header("Authorization", token).get();
+
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldGetManyResults() throws NotFoundException, JsonProcessingException {
+        // given
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<LearnerResult> results = createTestLearnResults();
+        given(learnerResultDAO.getAll(eq(USER_TEST_ID), eq(PROJECT_ID), eq(TEST_NOS), anyBoolean()))
+                .willReturn(results);
+
+        // when
+        Response response = target("/projects/" + PROJECT_ID + "/results/1,2,42").request()
+                .header("Authorization", token).get();
+
+        // then
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
+        assertEquals(objectMapper.writeValueAsString(results), response.readEntity(String.class));
+    }
+
+
+    @Test
+    public void ensureThatGettingSpecificResultsOfOneProjectHandlesAValidEmbedParameter() throws NotFoundException {
+        List<LearnerResult> results = createTestLearnResults();
+        given(learnerResultDAO.getAll(USER_TEST_ID, PROJECT_ID, TEST_NOS, true)).willReturn(results);
+
+        Response response = target("/projects/" + PROJECT_ID + "/results/1,2,42").queryParam("embed", "STEPS").request()
+                                .header("Authorization", token).get();
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
+    }
+
+    @Test
+    public void ensureThatGettingSpecificResultsOfOneProjectHandlesAnInvalidEmbedParameter() throws NotFoundException {
+        List<LearnerResult> results = createTestLearnResults();
+        given(learnerResultDAO.getAll(eq(USER_TEST_ID), eq(PROJECT_ID), eq(TEST_NOS), anyBoolean()))
+                .willReturn(results);
+
+        Response response = target("/projects/" + PROJECT_ID + "/results/1,2,42").queryParam("embed", "INVALID")
+                                .request().header("Authorization", token).get();
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldDeleteAOneTestRun() throws NotFoundException {
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID).request()
                                 .header("Authorization", token).delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
@@ -303,7 +253,7 @@ public class LearnerResultResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldDeleteMultipleTestResults() throws NotFoundException {
+    public void shouldDeleteMultipleLearnResults() throws NotFoundException {
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," + (RESULT_ID + 1))
                                 .request().header("Authorization", token).delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
@@ -357,4 +307,22 @@ public class LearnerResultResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
+
+    private List<LearnerResult> createTestLearnResults() {
+        List<LearnerResult> results = new LinkedList<>();
+        for (long i = 0; i < TEST_RESULT_AMOUNT; i++) {
+            Alphabet<String> sigma = new SimpleAlphabet<>();
+            sigma.add("0");
+            sigma.add("1");
+
+            LearnerResult learnerResult = new LearnerResult();
+            learnerResult.setUser(user);
+            learnerResult.setProject(project);
+            learnerResult.setTestNo(i);
+            learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
+
+            results.add(learnerResult);
+        } return results;
+    }
+
 }

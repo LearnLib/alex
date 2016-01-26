@@ -24,6 +24,8 @@ import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import net.automatalib.automata.transout.MealyMachine;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.Column;
@@ -230,6 +232,7 @@ public class LearnerResult implements Serializable {
      * @return Get the steps of the result.
      */
     @OneToMany(mappedBy = "result")
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
     @OrderBy("stepNo ASC")
     public List<LearnerResultStep> getSteps() {
         return steps;

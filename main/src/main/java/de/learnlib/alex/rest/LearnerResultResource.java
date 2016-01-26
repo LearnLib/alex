@@ -61,14 +61,14 @@ public class LearnerResultResource {
     private SecurityContext securityContext;
 
     /**
-     * Get all final / last results of each test run within one project.
+     * Get all learn results one project.
      *
      * @param projectId
-     *         The project of the test results.
+     *         The project of the learn results.
      * @param embed
      *         By default no steps are included in the response. However you can ask to include them with
      *         this parameter set to 'steps'.
-     * @return A List of all final / lasts test results within one project.
+     * @return A List of all learn results within one project.
      * @successResponse 200 OK
      * @responseType    java.util.List<de.learnlib.alex.core.entities.LearnerResult>
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -76,7 +76,7 @@ public class LearnerResultResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllFinalResults(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
+    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getAllFinalResults(" + projectId + ") for user " + user + ".");
 
@@ -95,12 +95,12 @@ public class LearnerResultResource {
     }
 
     /**
-     * Get all steps of test runs, i.e. all results that were generated during the run.
+     * Get one / a list of learn result(s).
      *
      * @param projectId
-     *         The project of the test runs.
+     *         The project of the learn result(s).
      * @param testNos
-     *         The number(s) of the test run(s).
+     *         The number(s) of the learn result(s).
      * @param embed
      *         By default no steps are included in the response. However you can ask to include them with
      *         this parameter set to 'steps'.
@@ -113,9 +113,9 @@ public class LearnerResultResource {
     @GET
     @Path("{test_nos}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllSteps(@PathParam("project_id") Long projectId,
-                                @PathParam("test_nos") IdsList testNos,
-                                @QueryParam("embed") String embed) {
+    public Response getAll(@PathParam("project_id") Long projectId,
+                           @PathParam("test_nos") IdsList testNos,
+                           @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getAllSteps(" + projectId + ", " + testNos + ") for user " + user + ".");
 
@@ -142,16 +142,16 @@ public class LearnerResultResource {
     }
 
     /**
-     * Delete all results of one test run.
+     * Delete one or more learn result(s).
      *
      * @param projectId
-     *         The project of the test run.
+     *         The project of the learn results.
      * @param testNumbers
-     *         The numbers of the results to delete as a comma (',') separated list.
+     *         The test numbers of the results to delete as a comma (',') separated list. E.g. 1,2,3
      * @return On success no content will be returned; an error message on failure.
      * @successResponse 204 OK & no content
-     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     *                  403 forbidden `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse   404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("{test_numbers}")
@@ -177,7 +177,8 @@ public class LearnerResultResource {
     }
 
     private boolean parseEmbeddableFields(String embed) throws IllegalArgumentException {
-        if (embed == null || embed.isEmpty()) {
+        if (embed == null
+                || embed.isEmpty()) {
             return false;
         } else if (embed.toLowerCase().equals("steps")) {
             return true;

@@ -41,13 +41,15 @@ public interface LearnerResultDAO {
     void create(LearnerResult learnerResult) throws ValidationException;
 
     /**
-     * Get a list of all the LearnerResults, that are the latest of any test run for a given
+     * Get a list of all the LearnerResults for a given
      * Project.
      *
      * @param userId
      *         The user of the LearnerResult
      * @param projectId
      *         The project id of the test run.
+     * @param includeSteps
+     *         Should all steps be included?
      * @return A list of LearnerResults.
      * @throws NotFoundException
      *         If the project id was invalid.
@@ -55,7 +57,7 @@ public interface LearnerResultDAO {
     List<LearnerResult> getAll(Long userId, Long projectId, boolean includeSteps) throws NotFoundException;
 
     /**
-     * Get a list of LearnResults for a given Project.
+     * Get a list of LearnResults with given testNos for a given Project.
      *
      * @param userId
      *         The user of the LearnerResult
@@ -63,6 +65,8 @@ public interface LearnerResultDAO {
      *         The project id if the test run.
      * @param testNos
      *         The list of test nos. of the LearnResults.
+     * @param includeSteps
+     *         Should all steps be included?
      * @return A list of LearnerResults.
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
@@ -70,11 +74,37 @@ public interface LearnerResultDAO {
     List<LearnerResult> getAll(Long userId, Long projectId, Long[] testNos, boolean includeSteps)
             throws NotFoundException;
 
+    /**
+     * Get a single LearnResult.
+     *
+     * @param userId
+     *         The user of the LearnerResult
+     * @param projectId
+     *         The project id if the test run.
+     * @param testNos
+     *         The list of test nos. of the LearnResults.
+     * @param includeSteps
+     *         Should all steps be included?
+     * @return The LearnResult you are looking for.
+     * @throws NotFoundException
+     *         If the given LearnerResult was invalid.
+     */
     LearnerResult get(Long userId, Long projectId, Long testNos, boolean includeSteps) throws NotFoundException;
 
-    LearnerResultStep createStep(LearnerResult result) throws NotFoundException, ValidationException;
+    /**
+     * Create a new step for a LearnResult based on the latest step within the result.
+     *
+     * @param result
+     *         The result that the new step will be added to.
+     * @return A new step.
+     * @throws ValidationException
+     *         If the requested result could not be found.
+     */
+    LearnerResultStep createStep(LearnerResult result) throws ValidationException;
 
     /**
+     * Create a new step for a LearnResult based on the given configuration.
+     *
      * @param result
      *         The result that the new step will be added to.
      * @param configuration
@@ -82,13 +112,21 @@ public interface LearnerResultDAO {
      * @return A new step.
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
-     * @throws NotFoundException
-     *         If the project id or test no. was invalid.
      */
     LearnerResultStep createStep(LearnerResult result, LearnerResumeConfiguration configuration)
-            throws NotFoundException, ValidationException;
+            throws ValidationException;
 
-    void saveStep(LearnerResult result, LearnerResultStep step) throws NotFoundException;
+    /**
+     * Save / Update a step.
+     *
+     * @param result
+     *         The result that the step is part of.
+     * @param step
+     *         The step the should be saved / updated.
+     * @throws ValidationException
+     *         If the given LearnerResult was invalid.
+     */
+    void saveStep(LearnerResult result, LearnerResultStep step) throws ValidationException;
 
     /**
      * Remove a complete test run of a project.

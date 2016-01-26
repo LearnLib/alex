@@ -142,7 +142,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         HibernateUtil.beginTransaction();
 
         try {
-            List<LearnerResult> result = getAll(session, userId, projectId, new Long[] { testNo }, includeSteps);
+            List<LearnerResult> result = getAll(session, userId, projectId, new Long[] {testNo}, includeSteps);
 
             // done
             HibernateUtil.commitTransaction();
@@ -163,8 +163,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                                                 .add(Restrictions.in("testNo", testNos))
                                                 .list();
 
-        if (results.isEmpty()) {
-            throw new NotFoundException("No result with the test nos. " + testNos + " for user " + userId + "was found.");
+        if (results.size() != testNos.length) {
+            throw new NotFoundException("Not all results with the test nos. " + Arrays.toString(testNos)
+                                                + " for the user " + userId + "were found.");
         }
         initializeLazyRelations(session, results, includeSteps);
 
@@ -187,7 +188,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     public LearnerResultStep createStep(LearnerResult result)
-            throws NotFoundException, ValidationException {
+            throws ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -216,7 +217,10 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     public LearnerResultStep createStep(LearnerResult result, LearnerResumeConfiguration configuration)
-            throws NotFoundException, ValidationException {
+            throws ValidationException {
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        System.out.println("Create step for " + result + " with the configuration " + configuration);
+
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -239,7 +243,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    public void saveStep(LearnerResult result, LearnerResultStep step) throws NotFoundException {
+    public void saveStep(LearnerResult result, LearnerResultStep step) throws ValidationException {
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
@@ -253,8 +257,6 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     private void updateSummary(LearnerResult result, LearnerResultStep step) {
-        assert step.getHypothesis() != null;
-
         result.setHypothesis(step.getHypothesis());
         result.setErrorText(step.getErrorText());
 
@@ -284,10 +286,10 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         @SuppressWarnings("unchecked") // should always return a list of LernerResults
         List<LearnerResult> results = session.createCriteria(LearnerResult.class)
-                .add(Restrictions.eq("user", user))
-                .add(Restrictions.eq("project.id", projectId))
-                .add(Restrictions.in("testNo", testNo))
-                .list();
+                                                .add(Restrictions.eq("user", user))
+                                                .add(Restrictions.eq("project.id", projectId))
+                                                .add(Restrictions.in("testNo", testNo))
+                                                .list();
 
         results.forEach(session::delete);
 

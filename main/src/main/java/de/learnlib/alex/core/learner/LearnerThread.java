@@ -43,7 +43,6 @@ import de.learnlib.oracles.SymbolCounterSUL;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -247,12 +246,7 @@ public class LearnerThread extends Thread {
         } catch (Exception e) {
             LOGGER.warn("Something in the LearnerThread went wrong:", e);
             currentStep.setErrorText(e.getMessage());
-            try {
-                learnerResultDAO.saveStep(result, currentStep);
-            } catch (NotFoundException nfe) {
-                LOGGER.log(Level.FATAL, "Something in the LearnerThread went wrong and the result could not be saved!",
-                           e);
-            }
+            learnerResultDAO.saveStep(result, currentStep);
         }
 
         LOGGER.trace("LearnThread.run() - exit");
@@ -306,12 +300,18 @@ public class LearnerThread extends Thread {
     }
 
     private void learnSuccessiveStep() throws NotFoundException {
-        currentStep = learnerResultDAO.createStep(result);
+        // If the learning is resumed, a new step with the new configuration, will already exists.
+        // Otherwise we have to create a new step based on the previous one.
+        if (currentStep.getStatistics().getDuration() > 0) {
+            currentStep = learnerResultDAO.createStep(result);
+        }
+
+        // set the start date and the start time:
+        // - The start date acts as timestamp and is public.
+        // - The start time is more accurate (nanoseconds) and will be only used internally to calculate the duration.
         Statistics statistics = currentStep.getStatistics();
         statistics.setStartDate(ZonedDateTime.now());
         statistics.setStartTime(System.nanoTime());
-        statistics.setDuration(0L);
-        statistics.setEqsUsed(0L);
 
         // if the previous step didn't yield any counter example, try again
         // (maybe more luck this time or configuration has changed)

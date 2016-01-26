@@ -44,7 +44,10 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
     /**
      * Construct to hold a pair of an input and output string.
      */
-    public static class InputOutputPair {
+    public static class InputOutputPair implements Serializable {
+
+        /** to be serializable. */
+        private static final long serialVersionUID = 2200629936714510637L;
 
         /** The input. */
         @NotBlank
