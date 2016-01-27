@@ -35,6 +35,9 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("assertVariable")
 public class AssertVariableAction extends SymbolAction {
 
+    /** to be serializable. */
+    private static final long serialVersionUID = 6363724455992504221L;
+
     /**
      * The name of the variable to assert.
      */
@@ -51,6 +54,48 @@ public class AssertVariableAction extends SymbolAction {
      * Whether the value of the variable is matched against a regular expression.
      */
     private boolean regexp;
+
+    /**
+     * @return The name of the variable to assert.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name The new name of the variable to assert.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return The value to check the variable against.
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * @param value The new vlue to check the variable against.
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    /**
+     * @return Treat the value as regexp?
+     */
+    public boolean isRegexp() {
+        return regexp;
+    }
+
+    /**
+     * @param regexp True, if the value is a regular expression; false otherwise.
+     */
+    public void setRegexp(boolean regexp) {
+        this.regexp = regexp;
+    }
 
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
@@ -72,29 +117,4 @@ public class AssertVariableAction extends SymbolAction {
         }
     }
 
-    // auto generated getter & setter
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public boolean isRegexp() {
-        return regexp;
-    }
-
-    public void setRegexp(boolean regexp) {
-        this.regexp = regexp;
-    }
 }

@@ -1,0 +1,6 @@
+{
+  "type": "setVariableByNodeAttribute",
+  "name": "variable",
+  "node": "node",
+  "attribute": "attribute"
+}

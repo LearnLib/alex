@@ -35,30 +35,75 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
- * Action to set a variable to the value of an attribute of an HTML node
+ * Action to set a variable to the value of an attribute of an HTML node.
  */
 @Entity
 @DiscriminatorValue("setVariableByNodeAttribute")
 @JsonTypeName("setVariableByNodeAttribute")
 public class SetVariableByNodeAttributeAction extends SymbolAction {
 
+    /** to be serializable. */
+    private static final long serialVersionUID = 8998187003156355834L;
+
     /** Use the learner logger. */
     @Transient
     @JsonIgnore
     private static final Logger LOGGER = LogManager.getLogger("learner");
 
-    /** The name of the variable */
+    /** The name of the variable. */
     @NotBlank
     protected String name;
 
-    /** The node to look for */
+    /** The node to look for. */
     @NotNull
     @Column(columnDefinition = "CLOB")
     protected String node;
 
-    /** The attribute name of the node to look for */
+    /** The attribute name of the node to look for. */
     @NotNull
     protected String attribute;
+
+    /**
+     * @return The name of the variable to set.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name The name of the new variable to set.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return The node to get the attribute from.
+     */
+    public String getNode() {
+        return node;
+    }
+
+    /**
+     * @param node The new identifier for the node to get the attribute from.
+     */
+    public void setNode(String node) {
+        this.node = node;
+    }
+
+    /**
+     * @return The identifier of the attribute to get the value from.
+     */
+    public String getAttribute() {
+        return attribute;
+    }
+
+    /**
+     * @param attribute The identifier of the new attribute to get the value from.
+     */
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
+    }
 
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
@@ -71,34 +116,10 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
 
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info("Could not set the variable '" + name + "' to the value of the attribute of the HTML node '" + node + "'.");
+            LOGGER.info("Could not set the variable '" + name + "' to the value of the attribute "
+                                + "of the HTML node '" + node + "'.");
             return getFailedOutput();
         }
     }
 
-    // auto generated getter & setter
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNode() {
-        return node;
-    }
-
-    public void setNode(String node) {
-        this.node = node;
-    }
-
-    public String getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
-    }
 }

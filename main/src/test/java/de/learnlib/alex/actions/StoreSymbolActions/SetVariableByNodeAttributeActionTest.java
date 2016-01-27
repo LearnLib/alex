@@ -41,61 +41,66 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class SetVariableByHTMLElementActionTest {
+public class SetVariableByNodeAttributeActionTest {
 
-    private static final String VARIABLE   = "variable";
-    private static final String NODE_NAME  = "foobar";
-    private static final String NODE_VALUE = "Hello World";
+    private static final String VARIABLE  = "variable";
+    private static final String NODE      = "node";
+    private static final String ATTRIBUTE_NAME  = "attribute";
+    private static final String ATTRIBUTE_VALUE = "foobar";
 
-    private SetVariableByHTMLElementAction setAction;
+    private SetVariableByNodeAttributeAction setAction;
 
     @Before
     public void setUp() {
-        setAction = new SetVariableByHTMLElementAction();
+        setAction = new SetVariableByNodeAttributeAction();
         setAction.setName(VARIABLE);
-        setAction.setValue(NODE_NAME);
+        setAction.setNode(NODE);
+        setAction.setAttribute(ATTRIBUTE_NAME);
     }
 
     @Test
     public void testJSON() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(setAction);
-        SetVariableByHTMLElementAction declareAction2 = mapper.readValue(json, SetVariableByHTMLElementAction.class);
+        SetVariableByNodeAttributeAction declareAction2;
+        declareAction2 = mapper.readValue(json, SetVariableByNodeAttributeAction.class);
 
         assertEquals(setAction.getName(), declareAction2.getName());
-        assertEquals(setAction.getValue(), declareAction2.getValue());
+        assertEquals(setAction.getNode(), declareAction2.getNode());
+        assertEquals(setAction.getAttribute(), declareAction2.getAttribute());
     }
 
     @Test
     public void testJSONFile() throws IOException, URISyntaxException {
         ObjectMapper mapper = new ObjectMapper();
 
-        URI uri = getClass().getResource("/actions/StoreSymbolActions/SetVariableByHTMLElementTestData.json").toURI();
+        URI uri = getClass().getResource("/actions/StoreSymbolActions/SetVariableByNodeAttributeTestData.json").toURI();
         File file = new File(uri);
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
-        assertTrue(obj instanceof SetVariableByHTMLElementAction);
-        SetVariableByHTMLElementAction objAsAction = (SetVariableByHTMLElementAction) obj;
+        assertTrue(obj instanceof SetVariableByNodeAttributeAction);
+        SetVariableByNodeAttributeAction objAsAction = (SetVariableByNodeAttributeAction) obj;
         assertEquals(VARIABLE, objAsAction.getName());
-        assertEquals(NODE_NAME, objAsAction.getValue());
+        assertEquals(NODE, objAsAction.getNode());
+        assertEquals(ATTRIBUTE_NAME, objAsAction.getAttribute());
     }
 
     @Test
-    public void shouldSetTheVariableIfTheNodeExists() {
+    public void shouldSetTheVariableIfTheNodeAndAttributeExists() {
         ConnectorManager connector = mock(ConnectorManager.class);
         VariableStoreConnector variables = mock(VariableStoreConnector.class);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
         WebElement element = mock(WebElement.class);
-        given(element.getText()).willReturn(NODE_VALUE);
+        given(element.getAttribute(ATTRIBUTE_NAME)).willReturn(ATTRIBUTE_VALUE);
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
-        given(webSiteConnector.getElement(NODE_NAME)).willReturn(element);
+        given(webSiteConnector.getElement(NODE)).willReturn(element);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
         ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(variables).set(VARIABLE, NODE_VALUE);
+        verify(variables).set(VARIABLE, ATTRIBUTE_VALUE);
     }
 
     @Test
@@ -105,7 +110,7 @@ public class SetVariableByHTMLElementActionTest {
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
-        given(webSiteConnector.getElement(NODE_NAME)).willThrow(NoSuchElementException.class);
+        given(webSiteConnector.getElement(NODE)).willThrow(NoSuchElementException.class);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
         ExecuteResult result = setAction.execute(connector);
