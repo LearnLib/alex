@@ -147,9 +147,9 @@
 
         <hr>
         <div class="form-group">
-            <label class="control-label">Max Amount of Steps to Learn (0:= never stop)</label>
-            <input name="max_steps" required min="0" ng-model="vm.learnConfiguration.maxAmountOfStepsToLearn"
-                   class="form-control" type="number" placeholder="0">
+            <label class="control-label">Max Amount of Steps to Learn (-1 := learn until no counter example can be found)</label>
+            <input name="max_steps" required min="-1" ng-model="vm.learnConfiguration.maxAmountOfStepsToLearn"
+                   class="form-control" type="number" placeholder="-1">
         </div>
 
         <div class="alert alert-danger alert-condensed"

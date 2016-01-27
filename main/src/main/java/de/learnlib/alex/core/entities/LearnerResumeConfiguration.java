@@ -33,8 +33,8 @@ public class LearnerResumeConfiguration {
     protected AbstractEquivalenceOracleProxy eqOracle;
 
     /** How many steps should the learner take before stopping the process.
-     * Must be greater or equal to 0.
-     * 0 := Do not stop until no counter example is found. */
+     * Must be greater or equal to -1, but not 0.
+     * -1 := Do not stop until no counter example is found. */
     protected int maxAmountOfStepsToLearn;
 
     /**
@@ -42,7 +42,7 @@ public class LearnerResumeConfiguration {
      */
     public LearnerResumeConfiguration() {
         this.eqOracle = new MealyRandomWordsEQOracleProxy();
-        this.maxAmountOfStepsToLearn = 0; // infinity
+        this.maxAmountOfStepsToLearn = -1; // infinity
     }
 
     /**
@@ -89,6 +89,12 @@ public class LearnerResumeConfiguration {
      *         If the configuration is invalid.
      */
     public void checkConfiguration() throws IllegalArgumentException {
+        if (maxAmountOfStepsToLearn < -1) {
+            throw new IllegalArgumentException("The MaxAmountOfStep property must not be less than -1.");
+        } else if (maxAmountOfStepsToLearn == 0) {
+            throw new IllegalArgumentException("The MaxAmountOfStep property must not be equal to 0.");
+        }
+
         if (eqOracle == null) {
             throw new IllegalArgumentException("Could not find an EQ oracle.");
         }

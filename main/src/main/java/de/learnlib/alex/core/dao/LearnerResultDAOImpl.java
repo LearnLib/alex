@@ -203,8 +203,12 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         newStep.setEqOracle(latestStep.getEqOracle());
         if (latestStep.getStepsToLearn() > 0) {
             newStep.setStepsToLearn(latestStep.getStepsToLearn() - 1);
+        } else if (latestStep.getStepsToLearn() == -1){
+            newStep.setStepsToLearn(-1);
         } else {
-            newStep.setStepsToLearn(latestStep.getStepsToLearn());
+            HibernateUtil.rollbackTransaction();
+            throw new IllegalStateException("The previous step has a step to learn of 0 "
+                                                    + "-> no new step can be crated!");
         }
 
         result.getSteps().add(newStep);
@@ -218,9 +222,6 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Override
     public LearnerResultStep createStep(LearnerResult result, LearnerResumeConfiguration configuration)
             throws ValidationException {
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        System.out.println("Create step for " + result + " with the configuration " + configuration);
-
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
