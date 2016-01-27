@@ -1,6 +1,6 @@
 {
   "type": "assertVariable",
-  "name": "foobar",
-  "value": "variable",
+  "name": "variable",
+  "value": "foobar",
   "regexp": true
 }

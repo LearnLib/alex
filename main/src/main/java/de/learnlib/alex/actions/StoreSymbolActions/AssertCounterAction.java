@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.actions.StoreSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
@@ -38,7 +39,7 @@ public class AssertCounterAction extends SymbolAction {
     /**
      * Assert types to mimic the different operators.
      */
-    private enum Operator {
+    public enum Operator {
         /** '<'. */
         LESS_THAN,
 
@@ -52,8 +53,31 @@ public class AssertCounterAction extends SymbolAction {
         GREATER_OR_EQUAL,
 
         /** '>'. */
-        GREATER_THAN
+        GREATER_THAN;
+
+        /**
+         * Parser function to handle the enum names case insensitive.
+         *
+         * @param name
+         *         The enum name.
+         * @return The corresponding CookieType.
+         * @throws IllegalArgumentException
+         *         If the name could not be parsed.
+         */
+        @JsonCreator
+        public static Operator fromString(String name) throws IllegalArgumentException {
+            return Operator.valueOf(name.toUpperCase());
+        }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+
     }
+
+    /** to be serializable. */
+    private static final long serialVersionUID = -8210218030257177422L;
 
     /**
      * The name of the variable to assert.
@@ -72,6 +96,48 @@ public class AssertCounterAction extends SymbolAction {
      */
     @NotNull
     private Operator operator;
+
+    /**
+     * @return The name of the counter that will be compared.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name The new name of the counter to compare.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return The value that the counter will be compared with.
+     */
+    public Integer getValue() {
+        return value;
+    }
+
+    /**
+     * @param value The new value to compare the counter with.
+     */
+    public void setValue(Integer value) {
+        this.value = value;
+    }
+
+    /**
+     * @return The current operator to compare the counter with the given value.
+     */
+    public Operator getOperator() {
+        return operator;
+    }
+
+    /**
+     * @param assertMethod Set the new operator to use to compare the counter with the given value.
+     */
+    public void setOperator(Operator assertMethod) {
+        this.operator = assertMethod;
+    }
 
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
@@ -107,28 +173,4 @@ public class AssertCounterAction extends SymbolAction {
         }
     }
 
-    // auto generated getter & setter
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getValue() {
-        return value;
-    }
-
-    public void setValue(Integer value) {
-        this.value = value;
-    }
-
-    public Operator getOperator() {
-        return operator;
-    }
-
-    public void setOperator(Operator assertMethod) {
-        this.operator = assertMethod;
-    }
 }

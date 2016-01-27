@@ -16,6 +16,101 @@
 
 package de.learnlib.alex.actions.StoreSymbolActions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
+@RunWith(MockitoJUnitRunner.class)
 public class AssertVariableActionTest {
-    // TODO: test me!
+
+    private static final String TEST_VALUE = "foobar";
+    private static final String TEST_NAME = "variable";
+
+    private AssertVariableAction assertAction;
+
+    @Before
+    public void setUp() {
+        assertAction = new AssertVariableAction();
+        assertAction.setName(TEST_NAME);
+        assertAction.setValue(TEST_VALUE);
+        assertAction.setRegexp(false);
+    }
+
+    @Test
+    public void testJSON() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(assertAction);
+        AssertVariableAction assertAction2 = (AssertVariableAction) mapper.readValue(json, SymbolAction.class);
+
+        assertEquals(assertAction.getName(), assertAction2.getName());
+        assertEquals(assertAction.getValue(), assertAction2.getValue());
+        assertEquals(assertAction.isRegexp(), assertAction2.isRegexp());
+    }
+
+    @Test
+    public void testJSONFile() throws IOException, URISyntaxException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        File file = new File(getClass().getResource("/actions/StoreSymbolActions/AssertVariableTestData.json").toURI());
+        SymbolAction obj = mapper.readValue(file, SymbolAction.class);
+
+        assertTrue(obj instanceof AssertVariableAction);
+        AssertVariableAction objAsAction = (AssertVariableAction) obj;
+        assertEquals(TEST_NAME, objAsAction.getName());
+        assertEquals(TEST_VALUE, objAsAction.getValue());
+        assertEquals(true, objAsAction.isRegexp());
+    }
+
+    @Test
+    public void ensureThatAssertingWithoutRegexWorks() {
+        VariableStoreConnector variables = mock(VariableStoreConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
+        given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
+
+        // OK
+        given(variables.get(TEST_NAME)).willReturn(TEST_VALUE);
+        ExecuteResult result = assertAction.execute(connector);
+        assertEquals(ExecuteResult.OK, result);
+
+        // not OK
+        given(variables.get(TEST_NAME)).willReturn(TEST_VALUE + " - invalid");
+        result = assertAction.execute(connector);
+        assertEquals(ExecuteResult.FAILED, result);
+    }
+
+
+    @Test
+    public void ensureThatAssertingWithRegexWorks() {
+        VariableStoreConnector variables = mock(VariableStoreConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
+        given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
+        assertAction.setRegexp(true);
+        assertAction.setValue("f[o]+bar");
+
+        // OK
+        given(variables.get(TEST_NAME)).willReturn(TEST_VALUE);
+        ExecuteResult result = assertAction.execute(connector);
+        assertEquals(ExecuteResult.OK, result);
+
+        // not OK
+        given(variables.get(TEST_NAME)).willReturn(TEST_VALUE + " - invalid");
+        result = assertAction.execute(connector);
+        assertEquals(ExecuteResult.FAILED, result);
+    }
+
 }

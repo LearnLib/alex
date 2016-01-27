@@ -16,6 +16,195 @@
 
 package de.learnlib.alex.actions.StoreSymbolActions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
+@RunWith(MockitoJUnitRunner.class)
 public class AssertCounterActionTest {
-    // TODO: test me!
+
+    private static final Long USER_ID = 3L;
+    private static final Long PROJECT_ID = 10L;
+    private static final String TEST_NAME = "counter";
+    private static final Integer TEST_VALUE = 42;
+
+    @Mock
+    private User user;
+
+    @Mock
+    private Project project;
+
+    private AssertCounterAction assertAction;
+
+    @Before
+    public void setUp() {
+        given(user.getId()).willReturn(USER_ID);
+        given(project.getId()).willReturn(PROJECT_ID);
+
+        assertAction = new AssertCounterAction();
+        assertAction.setUser(user);
+        assertAction.setProject(project);
+        assertAction.setName(TEST_NAME);
+        assertAction.setValue(TEST_VALUE);
+        assertAction.setOperator(AssertCounterAction.Operator.EQUAL);
+    }
+
+    @Test
+    public void testJSON() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(assertAction);
+        AssertCounterAction assertAction2 = (AssertCounterAction) mapper.readValue(json, SymbolAction.class);
+
+        assertEquals(assertAction.getName(), assertAction2.getName());
+        assertEquals(assertAction.getValue(), assertAction2.getValue());
+        assertEquals(assertAction.getOperator(), assertAction2.getOperator());
+    }
+
+    @Test
+    public void testJSONFile() throws IOException, URISyntaxException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        File file = new File(getClass().getResource("/actions/StoreSymbolActions/AssertCounterTestData.json").toURI());
+        SymbolAction obj = mapper.readValue(file, SymbolAction.class);
+
+        assertTrue(obj instanceof AssertCounterAction);
+        AssertCounterAction objAsAction = (AssertCounterAction) obj;
+        assertEquals(TEST_NAME, objAsAction.getName());
+        assertEquals(TEST_VALUE, objAsAction.getValue());
+        assertEquals(AssertCounterAction.Operator.EQUAL, objAsAction.getOperator());
+    }
+
+    @Test
+    public void ensureThatLessWorks() {
+        CounterStoreConnector counters = mock(CounterStoreConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
+        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        assertAction.setOperator(AssertCounterAction.Operator.LESS_THAN);
+
+        // <
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE - 1);
+        ExecuteResult result = assertAction.execute(connector);
+        assertEquals("LESS fails on <", ExecuteResult.OK, result);
+
+        // ==
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE);
+        result = assertAction.execute(connector);
+        assertEquals("LESS fails on ==", ExecuteResult.FAILED, result);
+
+        // >
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE + 1);
+        result = assertAction.execute(connector);
+        assertEquals("LESS fails on >", ExecuteResult.FAILED, result);
+    }
+
+    @Test
+    public void ensureThatLessOrEqualsWorks() {
+        CounterStoreConnector counters = mock(CounterStoreConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
+        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        assertAction.setOperator(AssertCounterAction.Operator.LESS_OR_EQUAL);
+
+        // <
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE - 1);
+        ExecuteResult result = assertAction.execute(connector);
+        assertEquals("LESS_OR_EQUAL fails on <", ExecuteResult.OK, result);
+
+        // ==
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE);
+        result = assertAction.execute(connector);
+        assertEquals("LESS_OR_EQUAL fails on ==", ExecuteResult.OK, result);
+
+        // >
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE + 1);
+        result = assertAction.execute(connector);
+        assertEquals("LESS_OR_EQUAL fails on >", ExecuteResult.FAILED, result);
+    }
+
+    @Test
+    public void ensureThatEqualsWorks() {
+        CounterStoreConnector counters = mock(CounterStoreConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
+        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        assertAction.setOperator(AssertCounterAction.Operator.EQUAL);
+
+        // <
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE - 1);
+        ExecuteResult result = assertAction.execute(connector);
+        assertEquals("EQUALS fails on <", ExecuteResult.FAILED, result);
+
+        // ==
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE);
+        result = assertAction.execute(connector);
+        assertEquals("EQUALS fails on ==", ExecuteResult.OK, result);
+
+        // >
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE + 1);
+        result = assertAction.execute(connector);
+        assertEquals("EQUALS fails on >", ExecuteResult.FAILED, result);
+    }
+
+    @Test
+    public void ensureThatGreaterOrEqualsWorks() {
+        CounterStoreConnector counters = mock(CounterStoreConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
+        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        assertAction.setOperator(AssertCounterAction.Operator.GREATER_OR_EQUAL);
+
+        // <
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE - 1);
+        ExecuteResult result = assertAction.execute(connector);
+        assertEquals("GREATER_OR_EQUAL fails on <", ExecuteResult.FAILED, result);
+
+        // ==
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE);
+        result = assertAction.execute(connector);
+        assertEquals("GREATER_OR_EQUAL fails on ==", ExecuteResult.OK, result);
+
+        // >
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE + 1);
+        result = assertAction.execute(connector);
+        assertEquals("GREATER_OR_EQUAL fails on >", ExecuteResult.OK, result);
+    }
+
+    @Test
+    public void ensureThatGreaterWorks() {
+        CounterStoreConnector counters = mock(CounterStoreConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
+        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        assertAction.setOperator(AssertCounterAction.Operator.GREATER_THAN);
+
+        // <
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE - 1);
+        ExecuteResult result = assertAction.execute(connector);
+        assertEquals("GREATER fails on <", ExecuteResult.FAILED, result);
+
+        // ==
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE);
+        result = assertAction.execute(connector);
+        assertEquals("GREATER fails on ==", ExecuteResult.FAILED, result);
+
+        // >
+        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE + 1);
+        result = assertAction.execute(connector);
+        assertEquals("GREATER fails on >", ExecuteResult.OK, result);
+    }
+
 }

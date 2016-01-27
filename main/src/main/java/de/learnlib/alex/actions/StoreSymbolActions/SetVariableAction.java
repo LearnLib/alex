@@ -35,6 +35,9 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("setVariable")
 public class SetVariableAction extends SymbolAction {
 
+    /** to be serializable. */
+    private static final long serialVersionUID = 1935478771410953466L;
+
     /** The name of the variable to set a new value to. */
     @NotBlank
     protected String name;
@@ -43,18 +46,30 @@ public class SetVariableAction extends SymbolAction {
     @NotNull
     protected String value;
 
+    /**
+     * @return The name of the variable to set.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name The new name of the variable to set.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * @return The value to set the variable to.
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * @param value The new value to set the variable to.
+     */
     public void setValue(String value) {
         this.value = value;
     }
