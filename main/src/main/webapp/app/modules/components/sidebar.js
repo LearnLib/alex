@@ -74,6 +74,7 @@ class Sidebar {
         this.SessionService.removeProject();
         this.SessionService.removeUser();
         this.user = null;
+        this.project = null;
         this.$state.go('home');
     }
 
