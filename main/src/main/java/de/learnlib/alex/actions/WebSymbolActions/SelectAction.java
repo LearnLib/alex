@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.actions.WebSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
@@ -39,15 +40,35 @@ public class SelectAction extends FillAction {
     /**
      * Enum to choose how to interact with the selection input.
      */
-    private enum SelectByType {
+    public enum SelectByType {
         /** Select by the value attribute. */
         VALUE,
 
         /** Select by the option text. */
         TEXT,
 
-        /** Selecct simply by using the index starting at 0. */
-        INDEX
+        /** Select simply by using the index starting at 0. */
+        INDEX;
+
+        /**
+         * Parser function to handle the enum names case insensitive.
+         *
+         * @param name
+         *         The enum name.
+         * @return The corresponding SelectByType.
+         * @throws IllegalArgumentException
+         *         If the name could not be parsed.
+         */
+        @JsonCreator
+        public static SelectByType fromString(String name) throws IllegalArgumentException {
+            return SelectByType.valueOf(name.toUpperCase());
+        }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+
     }
 
     /**
@@ -56,6 +77,20 @@ public class SelectAction extends FillAction {
      * @requiredField
      */
     private SelectByType selectBy;
+
+    /**
+     * @return How to do the selection of the node.
+     */
+    public SelectByType getSelectBy() {
+        return selectBy;
+    }
+
+    /**
+     * @param selectBy The new method to select the value in the node.
+     */
+    public void setSelectBy(SelectByType selectBy) {
+        this.selectBy = selectBy;
+    }
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
@@ -77,16 +112,9 @@ public class SelectAction extends FillAction {
                     break;
             }
             return getSuccessOutput();
-        } catch (NoSuchElementException | UnexpectedTagNameException e) {
+        } catch (NoSuchElementException | NumberFormatException | UnexpectedTagNameException e) {
             return getFailedOutput();
         }
     }
 
-    public SelectByType getSelectBy() {
-        return selectBy;
-    }
-
-    public void setSelectBy(SelectByType selectBy) {
-        this.selectBy = selectBy;
-    }
 }

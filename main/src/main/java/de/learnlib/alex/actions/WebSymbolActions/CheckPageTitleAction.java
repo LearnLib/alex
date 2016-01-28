@@ -45,14 +45,11 @@ public class CheckPageTitleAction extends WebSymbolAction {
      */
     private boolean regexp;
 
-    @Override
-    public ExecuteResult execute(WebSiteConnector connector) {
-        WebDriver driver = connector.getDriver();
-        if (SearchHelper.search(getTitleWithVariableValues(), driver.getTitle(), regexp)) {
-            return getSuccessOutput();
-        } else {
-            return getFailedOutput();
-        }
+    /**
+     * @return The title to search for (without replaced counters nor variables).
+     */
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -66,19 +63,35 @@ public class CheckPageTitleAction extends WebSymbolAction {
         return insertVariableValues(title);
     }
 
-    public String getTitle() {
-        return title;
-    }
-
+    /**
+     * @param title The new title to search for.
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * @return Is the title to search for a regexp?
+     */
     public boolean isRegexp() {
         return regexp;
     }
 
+    /**
+     * @param regexp True if the title is a regexp; False otherwise.
+     */
     public void setRegexp(boolean regexp) {
         this.regexp = regexp;
     }
+
+    @Override
+    public ExecuteResult execute(WebSiteConnector connector) {
+        WebDriver driver = connector.getDriver();
+        if (SearchHelper.search(getTitleWithVariableValues(), driver.getTitle(), regexp)) {
+            return getSuccessOutput();
+        } else {
+            return getFailedOutput();
+        }
+    }
+
 }
