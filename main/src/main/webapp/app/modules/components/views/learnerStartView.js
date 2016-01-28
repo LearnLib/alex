@@ -99,7 +99,7 @@ class LearnerStartView {
         this.interval = this.$interval(() => {
             this.LearnerResource.isActive()
                 .then(data => {
-                    if (data.mqsUsed) this.mqsUsed = data.mqsUsed;
+                    if (data.statistics) this.mqsUsed = data.statistics.mqsUsed;
 
                     if (!data.active) {
                         this.LearnerResource.getStatus().then(result => {
