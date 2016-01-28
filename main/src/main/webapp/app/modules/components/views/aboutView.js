@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/**
+ * The component for the about page.
+ * Usage: <about-view></about-view>.
+ */
 class AboutView {
 }
 

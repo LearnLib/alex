@@ -14,7 +14,25 @@
  * limitations under the License.
  */
 
-class ProjectsDashboardView {}
+/**
+ * The controller of the component for the project dashboard.
+ */
+// @ngInject
+class ProjectsDashboardView {
+
+    /**
+     * Constructor
+     * @param SessionService
+     */
+    constructor(SessionService) {
+
+        /**
+         * The project that is opened.
+         * @type {Project}
+         */
+        this.project = SessionService.getProject();
+    }
+}
 
 export const projectsDashboardView = {
     controller: ProjectsDashboardView,

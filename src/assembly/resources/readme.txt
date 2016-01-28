@@ -12,21 +12,15 @@
 
 					Automata Learning EXperience
 
+               --- https://github.com/LearnLib/alex ---
 
 
-License Info
-============
-The current version of ALEX is released in a small circle for test purposes only. The usage of this application 
-is only permitted within the limits of the lectures "Webtechnologien 2" and "Formale Methoden des Systementwurfs". 
-It is not allowed to publish, distribute or sell this application.
-
-
-Requirements
-============
+System Requirements
+===================
 
 * Windows (>= v8.1) /Linux (Ubuntu >= v12.04)
 * Java 8
-* Firefox (>= v36.0) or Chrome (>= v42.0.*) 
+* Firefox (>= v36.0), Chrome (>= v42.0.*) or Microsoft Edge
 
 
 Installation
@@ -35,11 +29,16 @@ Installation
 1. Make sure ALEX.war and ALEX.jar are in the same directory
 2. Execute the ALEX.jar file via console: java -jar ALEX.jar [-port=1234] // default is port 8000
 3. Go to http://localhost:8000
+4. The default account is "admin@alex.example" with the password "admin"
 
 
-Documentation
-=============
+Further Information
+===================
 
-The documentation lies in the "documentaion" directory that comes with ALEX.war and ALEX.jar. Open the index.html
-file under documentation/index.html in a web browser. The published screencasts of ALEX may also not be published
-or distributed.
+* To reset the application to its defaults, stop the current instance of ALEX and remove the target folder
+
+
+License & Copyright
+===================
+ALEX is open source and licensed under the Apache-2 license (http://www.apache.org/licenses/LICENSE-2.0).
+Copyright 2016 TU Dortmund

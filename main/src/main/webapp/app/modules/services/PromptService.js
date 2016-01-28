@@ -29,14 +29,11 @@ class PromptDialogController {
         /** The model for the input field for the user input **/
         this.userInput = null;
 
-        /** The text to be displayed **/
+        /** The text to display **/
         this.text = modalData.text;
 
         /** The regex the user input has to match **/
-        this.inputPattern = modalData.regexp || '';
-
-        /** the message that is shown when the user input doesn't match the regex **/
-        this.errorMsg = modalData.errorMsg || 'Unknown validation error';
+        this.inputPattern = /^[a-zA-Z0-9\.\-,_]+$/;
     }
 
     /** Close the modal dialog and pass the user input */
@@ -109,9 +106,7 @@ class PromptService {
             resolve: {
                 modalData: function () {
                     return {
-                        text: text,
-                        regexp: options.regexp,
-                        errorMsg: options.errorMsg
+                        text: text
                     };
                 }
             }

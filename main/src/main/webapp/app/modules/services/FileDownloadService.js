@@ -60,10 +60,7 @@ class FileDownloadService {
      * @private
      */
     prompt(fileExtension) {
-        return this.PromptService.prompt('Enter a name for the ' + fileExtension + ' file.', {
-            regexp: /^[a-zA-Z0-9\.\-,_]+$/,
-            errorMsg: 'The name may not be empty and only consist of letters, numbers and the symbols ",._-".'
-        });
+        return this.PromptService.prompt('Enter a name for the ' + fileExtension + ' file.');
     }
 
     /**
