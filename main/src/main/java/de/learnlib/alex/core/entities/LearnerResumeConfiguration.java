@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.core.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 
@@ -26,11 +27,47 @@ import javax.persistence.Transient;
  */
 public class LearnerResumeConfiguration {
 
+    /** The ID of the user related to the configuration. */
+    private Long userId;
+
+    /** The ID of the project related to the configuration. */
+    private Long projectId;
+
     /**
      * The type of EQ oracle to find a counter example.
      * @requiredField
      */
     protected AbstractEquivalenceOracleProxy eqOracle;
+
+    /**
+     * @return The ID of the user related to the configuration.
+     */
+    @JsonProperty("user")
+    public Long getUserId() {
+        return userId;
+    }
+
+    /**
+     * @param userId The new ID of the user related to the configuration.
+     */
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    /**
+     * @return The ID of the project related to the configuration.
+     */
+    @JsonProperty("project")
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    /**
+     * @param projectId The new ID of the project related to the configuration.
+     */
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
     /** How many steps should the learner take before stopping the process.
      * Must be greater or equal to -1, but not 0.

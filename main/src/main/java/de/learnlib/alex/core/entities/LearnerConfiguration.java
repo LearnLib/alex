@@ -34,12 +34,6 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     /** to be serializable. */
     private static final long serialVersionUID = -5130245647384793948L;
 
-    /** The ID of the user related to the configuration. */
-    private Long userId;
-
-    /** The ID of the project related to the configuration. */
-    private Long projectId;
-
     /**
      * Link to the Symbols that are used during the learning.
      * @requiredField
@@ -71,36 +65,6 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         this.symbolsAsIdRevisionPairs = new HashSet<>();
         this.algorithm = LearnAlgorithms.TTT;
         this.comment = "";
-    }
-
-    /**
-     * @return The ID of the user related to the configuration.
-     */
-    @JsonProperty("user")
-    public Long getUserId() {
-        return userId;
-    }
-
-    /**
-     * @param userId The new ID of the user related to the configuration.
-     */
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    /**
-     * @return The ID of the project related to the configuration.
-     */
-    @JsonProperty("project")
-    public Long getProjectId() {
-        return projectId;
-    }
-
-    /**
-     * @param projectId The new ID of the project related to the configuration.
-     */
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
     }
 
     /**
