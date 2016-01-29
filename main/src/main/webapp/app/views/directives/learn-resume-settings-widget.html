@@ -63,7 +63,8 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label">Steps to Learn (0 := never stop)</label>
-        <input ng-model="vm.configuration.maxAmountOfStepsToLearn" class="form-control" type="text" placeholder="0">
+        <label class="control-label">Steps to Learn (-1 := learn until no counter example can be found)</label>
+        <input ng-model="vm.configuration.maxAmountOfStepsToLearn" class="form-control"
+               type="number" required min="-1" placeholder="-1">
     </div>
 </widget>

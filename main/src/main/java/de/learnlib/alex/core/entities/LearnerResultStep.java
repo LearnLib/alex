@@ -33,6 +33,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -222,6 +223,7 @@ public class LearnerResultStep implements Serializable {
     /**
      * @return The max amount of steps to learn without user interaction.
      */
+    @Min(-1)
     public int getStepsToLearn() {
         return stepsToLearn;
     }

@@ -36,7 +36,7 @@ class LearnConfiguration {
          * The max amount of hypotheses to generate
          * @type {number}
          */
-        this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn || 0;
+        this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn || -1;
 
         /**
          * The EQ oracle to user

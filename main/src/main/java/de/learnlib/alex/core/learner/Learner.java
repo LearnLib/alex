@@ -198,7 +198,7 @@ public class Learner {
      * Resuming a learning process by activating a LearningThread.
      *
      * @param user
-     *         The user thats wants to restart his latest thread.
+     *         The user that wants to restart his latest thread.
      * @param newConfiguration
      *         The configuration to use for the next learning steps.
      * @throws IllegalArgumentException
@@ -269,8 +269,6 @@ public class Learner {
      *         The thread to start.
      */
     private void startThread(User user, LearnerThread learnThread) {
-        System.out.println("############################################");
-        System.out.println("start thead");
         Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
         userThreads.put(user, learnThread);
         activeThreads.put(user, learnThread);
