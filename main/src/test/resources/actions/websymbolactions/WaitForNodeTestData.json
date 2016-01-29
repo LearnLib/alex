@@ -1,0 +1,6 @@
+{
+    "type" : "web_waitForNode",
+    "node" : "#node",
+    "waitCriterion" : "added",
+    "maxWaitTime" : 60
+}

@@ -64,7 +64,7 @@ class SymbolsTrashView {
      */
     recoverSymbol(symbol) {
         this.SymbolResource.recover(symbol)
-            .success(() => {
+            .then(() => {
                 this.ToastService.success('Symbol ' + symbol.name + ' recovered');
                 _.remove(this.symbols, {id: symbol.id});
             })
@@ -77,7 +77,7 @@ class SymbolsTrashView {
     recoverSelectedSymbols() {
         if (this.selectedSymbols.length > 0) {
             this.SymbolResource.recoverMany(this.selectedSymbols)
-                .success(() => {
+                .then(() => {
                     this.ToastService.success('Symbols recovered');
                     this.selectedSymbols.forEach(symbol => {
                         _.remove(this.symbols, {id: symbol.id});

@@ -1,9 +1,13 @@
 package de.learnlib.alex.actions.WebSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.constraints.NotBlank;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -24,19 +28,42 @@ public class WaitForTitleAction extends WebSymbolAction {
      */
     private static final long serialVersionUID = -7416267361597106520L;
 
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
+
     /**
      * Enumeration to specify the wait criterion.
      */
     public enum WaitCriterion {
         /**
-         * If the title should be the value
+         * If the title should be the value.
          */
         IS,
 
         /**
-         * If the title should contain the value
+         * If the title should contain the value.
          */
-        CONTAINS
+        CONTAINS;
+
+
+        /**
+         * Parser function to handle the enum names case insensitive.
+         *
+         * @param name
+         *         The enum name.
+         * @return The corresponding WaitCriterion.
+         * @throws IllegalArgumentException
+         *         If the name could not be parsed.
+         */
+        @JsonCreator
+        public static WaitCriterion fromString(String name) throws IllegalArgumentException {
+            return WaitCriterion.valueOf(name.toUpperCase());
+        }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
     }
 
     /**
@@ -56,28 +83,6 @@ public class WaitForTitleAction extends WebSymbolAction {
      */
     @NotNull
     private long maxWaitTime;
-
-    @Override
-    protected ExecuteResult execute(WebSiteConnector connector) {
-        if (maxWaitTime < 0) {
-            return getFailedOutput();
-        }
-
-        WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
-
-        switch (waitCriterion) {
-            case IS:
-                wait.until(ExpectedConditions.titleIs(value));
-                break;
-            case CONTAINS:
-                wait.until(ExpectedConditions.titleContains(value));
-                break;
-            default:
-                return getFailedOutput();
-        }
-
-        return getSuccessOutput();
-    }
 
     /**
      * Get the value for the title.
@@ -132,4 +137,33 @@ public class WaitForTitleAction extends WebSymbolAction {
     public void setMaxWaitTime(long maxWaitTime) {
         this.maxWaitTime = maxWaitTime;
     }
+
+    @Override
+    protected ExecuteResult execute(WebSiteConnector connector) {
+        if (maxWaitTime < 0) {
+            return getFailedOutput();
+        }
+
+        WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
+
+        try {
+            switch (waitCriterion) {
+                case IS:
+                    wait.until(ExpectedConditions.titleIs(value));
+                    break;
+                case CONTAINS:
+                    wait.until(ExpectedConditions.titleContains(value));
+                    break;
+                default:
+                    return getFailedOutput();
+            }
+
+            return getSuccessOutput();
+        } catch (TimeoutException e) {
+            LOGGER.info("Waiting on the title '" + value + "' (criterion: '" + waitCriterion + "') timed out. "
+                                + "Last known title was '" + connector.getDriver().getTitle() + "'.");
+            return getFailedOutput();
+        }
+    }
+
 }

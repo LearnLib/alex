@@ -33,6 +33,7 @@ import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -79,11 +80,19 @@ public class GotoActionTest {
     }
 
     @Test
-    public void shouldReturnOKIfNodeCouldBeClicked() {
+    public void shouldReturnOKIfTheUrlCouldBeFound() {
         WebSiteConnector connector = mock(WebSiteConnector.class);
 
         assertEquals(ExecuteResult.OK, g.execute(connector));
         verify(connector).get(FAKE_URL);
+    }
+
+    @Test
+    public void shouldReturnFailedIfTheUrlCouldNotBeFound() {
+        WebSiteConnector connector = mock(WebSiteConnector.class);
+        willThrow(Exception.class).given(connector).get(FAKE_URL);
+
+        assertEquals(ExecuteResult.FAILED, g.execute(connector));
     }
 
 }

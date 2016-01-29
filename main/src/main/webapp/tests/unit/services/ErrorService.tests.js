@@ -10,6 +10,7 @@ describe('ErrorService', () => {
         $state = _$state_;
 
         spyOn($state, 'go').and.callThrough();
+        ErrorService.getErrorMessage(); // clear it in case some test have filled it
     }));
 
     it('should correctly initialize the service', () => {
