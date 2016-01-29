@@ -1,6 +1,6 @@
 <div class="modal-header">
 
-    <a class="btn btn-default btn-icon pull-right" ng-click="close()">
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.close()">
         <i class="fa fa-close fa-fw"></i>
     </a>
 
@@ -19,7 +19,6 @@
         <li class="list-group-item" ng-repeat="group in vm.groups"
             ng-class="{'active': vm.selectedGroup === group}"
             ng-click="vm.selectGroup(group)">
-            <span class="label label-default pull-right" ng-bind="group.symbols.length"></span>
             <span ng-bind="group.name"></span>
         </li>
     </ul>
