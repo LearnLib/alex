@@ -27,19 +27,21 @@ class SymbolsView {
     /**
      * Constructor
      * @param $scope
-     * @param SessionService
+     * @param {SessionService} SessionService
      * @param SymbolResource
      * @param SymbolGroupResource
      * @param ToastService
-     * @param FileDownloadService
+     * @param {DownloadService} DownloadService
      * @param EventBus
+     * @param {PromptService} PromptService
      */
-    constructor($scope, SessionService, SymbolResource, SymbolGroupResource, ToastService, FileDownloadService,
-                EventBus) {
+    constructor($scope, SessionService, SymbolResource, SymbolGroupResource, ToastService, DownloadService,
+                EventBus, PromptService) {
 
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
-        this.FileDownloadService = FileDownloadService;
+        this.DownloadService = DownloadService;
+        this.PromptService = PromptService;
 
         /**
          * The project that is saved in the session
@@ -262,9 +264,12 @@ class SymbolsView {
             // get a list of exportable symbols
             // and download them
             const symbolsToExport = symbols.map(s => s.getExportableSymbol());
-            this.FileDownloadService.downloadJson(symbolsToExport).then(() => {
-                this.ToastService.success('Symbols exported');
-            });
+
+            this.PromptService.prompt("Enter a name for the json file")
+                .then(filename => {
+                    this.DownloadService.downloadObject(symbolsToExport, filename);
+                    this.ToastService.success('Symbols exported');
+                })
         } else {
             this.ToastService.info('Select symbols you want to export');
         }

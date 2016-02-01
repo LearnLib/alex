@@ -27,7 +27,7 @@
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="" download-svg="#hypothesis-{{index}}">
+                            <a href="" ng-click="downloadSvg('#hypothesis-' + index)">
                                 <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
                             </a>
                             <a href="" ng-click="exportHypothesisAsJson()">
@@ -66,7 +66,7 @@
 
             <!-- header for observation table -->
             <div ng-if="mode === modes.OBSERVATION_TABLE">
-                <button class="btn btn-default btn-sm" download-table-as-csv="#observation-table-{{index}}">
+                <button class="btn btn-default btn-sm" ng-click="downloadObservationTable('#observation-table-' + index)">
                     Download CSV
                 </button>
                 <button class="btn btn-default btn-sm" ng-click="showHypothesis()">
@@ -76,7 +76,7 @@
 
             <!-- header for discrimination tree -->
             <div ng-if="mode === modes.DISCRIMINATION_TREE">
-                <button class="btn btn-default btn-sm" download-svg="#discrimination-tree-{{index}}">
+                <button class="btn btn-default btn-sm" ng-click="downloadSvg('#discrimination-tree-' + index)">
                     Download SVG
                 </button>
                 <button class="btn btn-default btn-sm" ng-click="showHypothesis()">

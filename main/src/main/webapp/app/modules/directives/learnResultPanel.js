@@ -17,6 +17,7 @@
 import {learnAlgorithm, events} from '../constants';
 
 /**
+ * /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation
  * table, if L* was used, or the Discrimination Tree from the corresponding algorithm.
  *
@@ -24,17 +25,20 @@ import {learnAlgorithm, events} from '../constants';
  * can for example be the list of all intermediate results of a complete test or multiple single results from
  * multiple tests.
  *
- * An additional attribute 'index' can be passed that markes the index of the panel in case there are multiple.
+ * An additional attribute 'index' can be passed that marks the index of the panel in case there are multiple.
  *
  * Content that is written inside the tag will be displayed a the top right corner beside the index browser. So
  * just add small texts or additional buttons in there.
  *
  * Use it like '<learn-result-panel results="..." index="..."> ... </learn-result-panel>'
  *
- * @returns {{scope: {results: string}, transclude: boolean, templateUrl: string, controller: *[]}}
+ * @param {DownloadService} DownloadService
+ * @param {EventBus} EventBus
+ * @param {PromptService} PromptService
+ * @returns {{scope: {result: string, index: string}, replace: boolean, transclude: boolean, templateUrl: string, controller: *[]}}
  */
 // @ngInject
-function learnResultPanel(FileDownloadService, EventBus) {
+function learnResultPanel(DownloadService, EventBus, PromptService) {
     return {
         scope: {
             result: '=',
@@ -121,7 +125,10 @@ function learnResultPanel(FileDownloadService, EventBus) {
          * Downloads the visible hypothesis as json
          */
         scope.exportHypothesisAsJson = function () {
-            FileDownloadService.downloadJson(scope.result.steps[scope.pointer].hypothesis);
+            PromptService.prompt("Enter a name for the json file")
+                .then(filename => {
+                    DownloadService.downloadObject(scope.result.steps[scope.pointer].hypothesis, filename);
+                });
         };
 
         /**
@@ -166,6 +173,28 @@ function learnResultPanel(FileDownloadService, EventBus) {
         scope.lastStep = function () {
             scope.pointer = scope.result.steps.length - 1;
         };
+
+        /**
+         * Downloads an observation table
+         * @param {string} selector - The selector of the observation table
+         */
+        scope.downloadObservationTable = function (selector) {
+            PromptService.prompt("Enter a name for the csv file")
+                .then(filename => {
+                    DownloadService.downloadTable(selector, filename);
+                })
+        };
+
+        /**
+         * Downloads the discrimination tree or the hypothesis
+         * @param {string} selector - The selector of the dt pr hypothesis
+         */
+        scope.downloadSvg = function (selector) {
+            PromptService.prompt("Enter a name for the svg file")
+                .then(filename => {
+                    DownloadService.downloadSvg(selector, true, filename);
+                })
+        }
     }
 }
 
@@ -180,9 +209,9 @@ function learnResultComparePanel() {
     };
 
     function link(scope, el) {
-        scope.$watch('from', function () {
-            var from = scope.from || 1;
-            var index = scope.index || 0;
+        scope.$watch('from', () => {
+            const from = scope.from || 1;
+            const index = scope.index || 0;
             el[0].style.width = (100 / from) + '%';
             el[0].style.left = ((100 / from) * (index)) + '%';
         });

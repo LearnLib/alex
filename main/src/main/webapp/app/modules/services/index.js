@@ -19,7 +19,7 @@ import ClipboardService from './ClipboardService';
 import ErrorService from './ErrorService';
 import EventBus from './EventBus';
 import EqOracleService from './EqOracleService';
-import FileDownloadService from './FileDownloadService';
+import {DownloadService} from './DownloadService';
 import LearnerResultChartService from './LearnerResultChartService';
 import {PromptService} from './PromptService';
 import SessionService from './SessionService';
@@ -35,7 +35,7 @@ angular
     .service('ErrorService', ErrorService)
     .service('EventBus', EventBus)
     .service('EqOracleService', EqOracleService)
-    .service('FileDownloadService', FileDownloadService)
+    .service('DownloadService', DownloadService)
     .service('LearnerResultChartService', LearnerResultChartService)
     .service('PromptService', PromptService)
     .service('SessionService', SessionService)

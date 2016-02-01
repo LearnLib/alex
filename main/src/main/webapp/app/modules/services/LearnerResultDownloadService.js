@@ -20,10 +20,10 @@ class LearnerResultDownloadService {
 
     /**
      * Constructor
-     * @param FileDownloadService
+     * @param {DownloadService} DownloadService
      */
-    constructor(FileDownloadService) {
-        this.FileDownloadService = FileDownloadService;
+    constructor(DownloadService) {
+        this.DownloadService = DownloadService;
 
         /**
          * The CSV data
@@ -64,7 +64,7 @@ class LearnerResultDownloadService {
 
     /** Downloads the csv */
     download() {
-        this.FileDownloadService.downloadCSV(this.csv);
+        this.DownloadService.downloadCsv(this.csv);
     }
 }
 

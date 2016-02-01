@@ -24,19 +24,25 @@ class StatisticsCompareView {
 
     /**
      * Constructor
-     * @param SessionService
-     * @param LearnResultResource
-     * @param LearnerResultChartService
-     * @param ToastService
+     * @param {SessionService} SessionService
+     * @param {LearnResultResource} LearnResultResource
+     * @param {LearnerResultChartService} LearnerResultChartService
+     * @param {ToastService} ToastService
      * @param $stateParams
      * @param $state
+     * @param {DownloadService} DownloadService
+     * @param {PromptService} PromptService
      */
-    constructor(SessionService, LearnResultResource, LearnerResultChartService, ToastService, $stateParams, $state) {
+    constructor(SessionService, LearnResultResource, LearnerResultChartService, ToastService, $stateParams, $state,
+                DownloadService, PromptService) {
+
         this.LearnResultResource = LearnResultResource;
         this.LearnerResultChartService = LearnerResultChartService;
         this.ToastService = ToastService;
         this.$stateParams = $stateParams;
         this.$state = $state;
+        this.DownloadService = DownloadService;
+        this.PromptService = PromptService;
 
         // make sure there is at least one test number given in the URL
         if (!$stateParams.testNos || $stateParams.testNos === '') {
@@ -179,6 +185,13 @@ class StatisticsCompareView {
         window.setTimeout(() => {
             window.dispatchEvent(new Event('resize'));
         }, 100);
+    }
+
+    downloadChart(selector) {
+        this.PromptService.prompt("Enter a name for the svg file")
+            .then(filename => {
+                this.DownloadService.downloadSvg(selector, false, filename);
+            })
     }
 }
 

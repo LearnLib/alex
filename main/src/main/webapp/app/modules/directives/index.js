@@ -15,8 +15,6 @@
  */
 
 import discriminationTree from './discriminationTree';
-import downloadSvg from './downloadSvg';
-import downloadTableAsCsv from './downloadTableAsCsv';
 import dropdownHover from './dropdownHover';
 import {htmlElementPicker, htmlElementPickerWindow} from './htmlElementPicker';
 import hypothesis from './hypothesis';
@@ -46,8 +44,6 @@ const moduleName = 'ALEX.directives';
 angular
     .module(moduleName, [])
     .directive('discriminationTree', discriminationTree)
-    .directive('downloadTableAsCsv', downloadTableAsCsv)
-    .directive('downloadSvg', downloadSvg)
     .directive('dropdownHover', dropdownHover)
     .directive('htmlElementPicker', htmlElementPicker)
     .directive('htmlElementPickerWindow', htmlElementPickerWindow)

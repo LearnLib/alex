@@ -95,10 +95,9 @@ class PromptService {
      * Opens the prompt dialog.
      *
      * @param {string} text - The text to display
-     * @param {{regexp: string, errorMsg: string}} options}
      * @return {*} - The modal result promise
      */
-    prompt(text, options) {
+    prompt(text) {
         return this.$modal.open({
             templateUrl: 'views/modals/prompt-dialog.html',
             controller: PromptDialogController,
