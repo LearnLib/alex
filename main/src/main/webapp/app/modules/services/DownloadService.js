@@ -18,7 +18,7 @@
  * The service that helps with downloading various kind of files.
  */
 // @ngInject
-export class DownloadService {
+class DownloadService {
 
     /**
      * Constructor
@@ -163,3 +163,5 @@ export class DownloadService {
         this.download(filename, 'svg', href);
     }
 }
+
+export {DownloadService};
