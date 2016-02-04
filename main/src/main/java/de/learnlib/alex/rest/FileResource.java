@@ -60,6 +60,7 @@ public class FileResource {
     @Context
     private SecurityContext securityContext;
 
+    /** The FileDAO to use. */
     @Inject
     private FileDAO fileDAO;
 

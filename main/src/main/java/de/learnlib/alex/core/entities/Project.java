@@ -69,6 +69,7 @@ public class Project implements Serializable {
     @NotBlank
     private String name;
 
+    /** The user that owns this project. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JsonIgnore
     private User user;

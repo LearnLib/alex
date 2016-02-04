@@ -24,7 +24,6 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
-import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**

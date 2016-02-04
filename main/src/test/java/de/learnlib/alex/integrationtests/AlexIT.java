@@ -2,7 +2,6 @@ package de.learnlib.alex.integrationtests;
 
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.ProjectTest;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,7 +9,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -84,7 +82,7 @@ public class AlexIT {
         lines.forEach(stringBuffer::append);
         String json = stringBuffer.toString();
         json = json.replaceAll("%%PROJECT_PATH%%",
-                               "file://" + System.getProperty("user.dir")+ "/src/test/resources/integrationtest");
+                               "file://" + System.getProperty("user.dir") + "/src/test/resources/integrationtest");
 
         System.out.println("Symbols:" + json);
 

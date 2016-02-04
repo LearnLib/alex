@@ -136,6 +136,7 @@ public class WebSiteConnector implements Connector {
     /** Use the learner logger. */
     private static final Logger LOGGER = LogManager.getLogger("leaner");
 
+    /** The browser to use. */
     private WebBrowser browser;
 
     /** A managed base url to use. */

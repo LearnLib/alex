@@ -34,7 +34,6 @@ import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.ResetCounterSUL;
 
 import java.time.ZonedDateTime;
@@ -74,6 +73,9 @@ public class Learner {
      */
     private ConnectorContextHandler contextHandler;
 
+    /** The factory to create the learner threads. */
+    private LearnerThreadFactory learnerThreadFactory;
+
     /**
      * The last thread of an user, if one exists.
      */
@@ -88,7 +90,7 @@ public class Learner {
      * This constructor creates a new SymbolDAO, LearnerResultDAO and ConnectorContextHandlerFactory for internal use.
      */
     public Learner() {
-        this(new ConnectorContextHandlerFactory());
+        this(new ConnectorContextHandlerFactory(), new LearnerThreadFactory());
     }
 
     /**
@@ -97,9 +99,11 @@ public class Learner {
      *
      * @param contextHandlerFactory
      *         The factory that will be used to create new context handler.
+     * @param learnerThreadFactory
+     *         The factory to create the learner threads.
      */
-    public Learner(ConnectorContextHandlerFactory contextHandlerFactory) {
-        this(new SymbolDAOImpl(), new LearnerResultDAOImpl(), contextHandlerFactory);
+    public Learner(ConnectorContextHandlerFactory contextHandlerFactory, LearnerThreadFactory learnerThreadFactory) {
+        this(new SymbolDAOImpl(), new LearnerResultDAOImpl(), contextHandlerFactory, learnerThreadFactory);
     }
 
     /**
@@ -111,12 +115,15 @@ public class Learner {
      *         The LearnerResultDAO to use.
      * @param contextHandlerFactory
      *         The factory that will be used to create new context handler.
+     * @param learnerThreadFactory
+     *         The factory to create the learner threads.
      */
     public Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
-                   ConnectorContextHandlerFactory contextHandlerFactory) {
+                   ConnectorContextHandlerFactory contextHandlerFactory, LearnerThreadFactory learnerThreadFactory) {
         this.symbolDAO = symbolDAO;
         this.learnerResultDAO = learnerResultDAO;
         this.contextHandlerFactory = contextHandlerFactory;
+        this.learnerThreadFactory = learnerThreadFactory;
         this.activeThreads = new HashMap<>();
         this.userThreads   = new HashMap<>();
     }
@@ -146,7 +153,7 @@ public class Learner {
         WebSiteConnector.WebBrowser browser = configuration.getBrowser();
         contextHandler = contextHandlerFactory.createContext(project, browser);
         contextHandler.setResetSymbol(learnerResult.getResetSymbol());
-        LearnerThread learnThread = new LearnerThread(learnerResultDAO, learnerResult, contextHandler);
+        LearnerThread learnThread = learnerThreadFactory.createThread(learnerResult, contextHandler);
         startThread(user, learnThread);
 
         // get the sul here once so that the timer doesn't get '0' for .getStatisticalData.getCount() after continuing
@@ -189,7 +196,7 @@ public class Learner {
         learnerResult.setComment(configuration.getComment());
         learnerResultDAO.create(learnerResult);
 
-       learnerResultDAO.createStep(learnerResult, configuration);
+        learnerResultDAO.createStep(learnerResult, configuration);
 
         return learnerResult;
     }
@@ -204,7 +211,7 @@ public class Learner {
      * @throws IllegalArgumentException
      *         If the new configuration has errors.
      * @throws IllegalStateException
-     *         If a learning process is already active.
+     *         If a learning process is already active or if now process to resume was found.
      * @throws NotFoundException
      *         If the symbols specified in the configuration could not be found.
      */
@@ -217,18 +224,16 @@ public class Learner {
 
         // get the previousThread and the LearnResult
         LearnerThread previousThread = userThreads.get(user);
+        if (previousThread == null) {
+            throw new IllegalStateException("No previous learn process to resume was found!");
+        }
+
         LearnerResult learnerResult = previousThread.getResult();
 
         // create the new step
         learnerResultDAO.createStep(learnerResult, newConfiguration);
 
-        // create new thread based on the previous one
-        List<? extends Symbol> symbolsList = previousThread.getSymbols();
-        Symbol[] symbols = symbolsList.toArray(new Symbol[symbolsList.size()]);
-        LearningAlgorithm.MealyLearner<String, String> learner = previousThread.getLearner();
-
-        LearnerThread learnThread = new LearnerThread(learnerResultDAO, learnerResult, previousThread.getCachedSUL(),
-                                                      learner, symbols);
+        LearnerThread learnThread = learnerThreadFactory.createThread(previousThread, learnerResult);
         startThread(user, learnThread);
     }
 

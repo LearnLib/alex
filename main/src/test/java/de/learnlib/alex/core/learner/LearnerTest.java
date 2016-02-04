@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -76,6 +77,12 @@ public class LearnerTest {
     @Mock
     private LearnerResultDAO learnerResultDAO;
 
+    @Mock
+    private LearnerThreadFactory learnerThreadFactory;
+
+    @Mock
+    private LearnerThread learnerThread;
+
     private Learner learner;
 
     @Before
@@ -84,12 +91,43 @@ public class LearnerTest {
         given(learnerConfiguration.getBrowser()).willReturn(WebSiteConnector.WebBrowser.HTMLUNITDRIVER);
         given(contextHandlerFactory.createContext(project, WebSiteConnector.WebBrowser.HTMLUNITDRIVER))
                 .willReturn(contextHandler);
+        given(learnerThreadFactory.createThread(any(LearnerResult.class), any(ConnectorContextHandler.class)))
+                .willReturn(learnerThread);
+        given(learnerThreadFactory.createThread(any(LearnerThread.class), any(LearnerResult.class)))
+                .willReturn(learnerThread);
 
-        learner = new Learner(symbolDAO, learnerResultDAO, contextHandlerFactory);
+        learner = new Learner(symbolDAO, learnerResultDAO, contextHandlerFactory, learnerThreadFactory);
+    }
+
+    @Test
+    public void shouldStartAThread() throws NotFoundException {
+        learner.start(user, project, learnerConfiguration);
+    }
+
+    @Test
+    @Ignore
+    public void shouldResumeAThread() throws NotFoundException {
+        learner.start(user, project, learnerConfiguration);
+        given(thread.isFinished()).willReturn(true);
+
+        learner.resume(user, learnerConfiguration);
+    }
+
+    @Test
+    public void shouldStopAThread() throws NotFoundException {
+        learner.stop(user);
+    }
+
+    @Test
+    public void shouldCorrectlyTestIfTheUserHasAnActiveThread() throws NotFoundException {
+        assertFalse(learner.isActive(user));
+
+        learner.start(user, project, learnerConfiguration);
+
+        assertTrue(learner.isActive(user));
     }
 
     @Test(expected = IllegalStateException.class)
-    @Ignore
     public void shouldOnlyStartTheThreadOnce() throws NotFoundException {
         given(symbolDAO.getAll(any(User.class), any(Long.class), any(List.class))).willReturn(new LinkedList<>());
         given(learnerResultDAO.createStep(any(LearnerResult.class), any(LearnerConfiguration.class)))

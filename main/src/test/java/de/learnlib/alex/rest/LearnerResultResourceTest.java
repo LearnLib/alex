@@ -44,7 +44,6 @@ import org.mockito.MockitoAnnotations;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
-
 import java.util.LinkedList;
 import java.util.List;
 

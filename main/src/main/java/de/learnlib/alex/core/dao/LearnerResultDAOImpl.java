@@ -203,7 +203,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         newStep.setEqOracle(latestStep.getEqOracle());
         if (latestStep.getStepsToLearn() > 0) {
             newStep.setStepsToLearn(latestStep.getStepsToLearn() - 1);
-        } else if (latestStep.getStepsToLearn() == -1){
+        } else if (latestStep.getStepsToLearn() == -1) {
             newStep.setStepsToLearn(-1);
         } else {
             HibernateUtil.rollbackTransaction();

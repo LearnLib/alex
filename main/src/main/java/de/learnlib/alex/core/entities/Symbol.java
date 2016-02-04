@@ -66,6 +66,12 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonIgnore
     private Long symbolId;
 
+    /** The User that owns the Symbol. */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "userId")
+    @JsonIgnore
+    private User user;
+
     /** The Project the Symbol belongs to. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
@@ -96,11 +102,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @Size(min = 1, max = MAX_ABBREVIATION_LENGTH)
     private String abbreviation;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "userId")
-    @JsonIgnore
-    private User user;
 
     /**
      * flag to mark a symbol as hidden.

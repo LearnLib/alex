@@ -8,7 +8,7 @@ import org.jose4j.lang.JoseException;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyString;
 
-public class UserHelper {
+public final class UserHelper {
 
     private UserHelper() {
     }

@@ -25,6 +25,7 @@ import de.learnlib.alex.exceptions.NotFoundException;
  */
 public class FileStoreConnector implements Connector {
 
+    /** The FileDAO to use. */
     private FileDAO fileDAO;
 
     public FileStoreConnector() {

@@ -23,9 +23,12 @@ import org.hibernate.validator.constraints.NotBlank;
  * Entity to describe an file which was uploaded.
  */
 public class UploadableFile {
+
+    /** The ID of the project the File belongs to. */
     @JsonProperty("project")
     private Long projectId;
 
+    /** The name of the file. */
     @NotBlank
     private String name;
 

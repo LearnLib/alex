@@ -53,6 +53,13 @@ public class SymbolGroup implements Serializable {
     @JsonIgnore
     private Long groupId;
 
+    /** The User that owns this SymbolGroup. */
+    @NaturalId
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "userId")
+    @JsonIgnore
+    private User user;
+
     /** The related project. */
     @NaturalId
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -64,12 +71,6 @@ public class SymbolGroup implements Serializable {
     @NaturalId
     @Column(nullable = false)
     private Long id;
-
-    @NaturalId
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "userId")
-    @JsonIgnore
-    private User user;
 
     /**
      * The name of the group.

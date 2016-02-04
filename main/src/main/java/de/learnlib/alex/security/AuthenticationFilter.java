@@ -42,9 +42,11 @@ import java.util.regex.Pattern;
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
 
+    /** The RegExp to describe a proper formatted 'Authorization' header field. */
     private static final Pattern PATTERN = Pattern.compile("bearer [a-z0-9-_]+\\.[a-z0-9-_]+\\.[a-z0-9-_]+",
                                                            Pattern.CASE_INSENSITIVE);
 
+    /** The UserDAO to use. */
     @Inject
     private UserDAO userDAO;
 
@@ -99,6 +101,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
      */
     private static class AuthContext implements SecurityContext {
 
+        /** The authenticated user or a new dummy one. */
         private User user;
 
         /**
