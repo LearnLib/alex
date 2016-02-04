@@ -30,56 +30,71 @@ public interface UserDAO {
 
     /**
      * Creates a new user
-     *.
-     * @param user The user to create
+     * .
+     *
+     * @param user
+     *         The user to create
      * @throws ValidationException
+     *         If the user could not be created because the object has invalid properties.
      */
     void create(User user) throws ValidationException;
 
     /**
      * Gets a list of all registered users.
      *
-     * @return The list of all users
+     * @return The list of all users. Can be empty.
      */
     List<User> getAll();
 
     /**
      * Gets a list of registered users with a specific role.
      *
-     * @param role The role of the user
-     * @return A list of all users with the given role
+     * @param role
+     *         The role of the user.
+     * @return A list of all users with the given role. Can be empty.
      */
     List<User> getAllByRole(UserRole role);
 
     /**
      * Gets a user by its email.
      *
-     * @param email The users email
-     * @return The user with the given email
+     * @param email
+     *         The users email
+     * @return The user with the given email.
+     * @throws NotFoundException
+     *         If ne User was found.
      */
-    User getByEmail(String email);
+    User getByEmail(String email) throws NotFoundException;
 
     /**
      * Gets a user by its id.
      *
-     * @param id The id of the user
-     * @return The user with the given id
-     */
-    User getById(Long id);
-
-    /**
-     * Deletes a user from the database. Admins can only be deleted if there is more than one available.
-     *
-     * @param id The id of the user to delete
+     * @param id
+     *         The id of the user
+     * @return The user with the given id.
      * @throws NotFoundException
+     *         If ne User was found.
      */
-    void delete(Long id) throws NotFoundException;
+    User getById(Long id) throws NotFoundException;
 
     /**
      * Updates a user.
      *
-     * @param user The user to update
+     * @param user
+     *         The user to update
      * @throws ValidationException
+     *         If the user could not be updated because the object has invalid properties.
      */
     void update(User user) throws ValidationException;
+
+    /**
+     * Deletes a user from the database. Admins can only be deleted if there is more than one available.
+     *
+     * @param id
+     *         The id of the user to delete
+     * @throws NotFoundException
+     *         If the user to delete was not found (and thus not deleted).
+     */
+    void delete(Long id) throws NotFoundException;
+
 }

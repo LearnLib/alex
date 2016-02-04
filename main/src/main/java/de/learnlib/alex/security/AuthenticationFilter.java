@@ -19,6 +19,7 @@ package de.learnlib.alex.security;
 import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
+import de.learnlib.alex.exceptions.NotFoundException;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
@@ -80,7 +81,11 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 Long id = (Long) claims.getClaimsMap().get("userId");
 
                 // get user from the db
-                user = userDAO.getById(id);
+                try {
+                    user = userDAO.getById(id);
+                } catch (NotFoundException e) {
+                    user = null;
+                }
             } else {
 
                 // create dummy guest user

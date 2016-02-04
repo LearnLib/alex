@@ -53,8 +53,8 @@ public class UserDAOImpl implements UserDAO {
 
         @SuppressWarnings("unchecked")
         List<User> users = session.createCriteria(User.class).list();
-        HibernateUtil.commitTransaction();
 
+        HibernateUtil.commitTransaction();
         return users;
     }
 
@@ -65,45 +65,69 @@ public class UserDAOImpl implements UserDAO {
 
         @SuppressWarnings("unchecked")
         List<User> users = session.createCriteria(User.class)
-                .add(Restrictions.eq("role", role))
-                .list();
+                                  .add(Restrictions.eq("role", role))
+                                  .list();
 
         HibernateUtil.commitTransaction();
         return users;
     }
 
     @Override
-    public User getByEmail(String email) {
+    public User getById(Long id) throws NotFoundException {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        User user = (User) session.createCriteria(User.class)
-                .add(Restrictions.eq("email", email))
-                .uniqueResult();
-        HibernateUtil.commitTransaction();
+        User user;
+        try {
+            user = get(session, id);
+        } catch (NotFoundException e) {
+            HibernateUtil.rollbackTransaction();
+            throw  e;
+        }
 
+        HibernateUtil.commitTransaction();
         return user;
     }
 
     @Override
-    public User getById(Long id) {
+    public User getByEmail(String email) throws NotFoundException {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        User user = (User) session.get(User.class, id);
-        HibernateUtil.commitTransaction();
+        User user = (User) session.createCriteria(User.class)
+                                  .add(Restrictions.eq("email", email))
+                                  .uniqueResult();
 
+        if (user == null) {
+            HibernateUtil.rollbackTransaction();
+            throw new NotFoundException("Could not find the user with the email '" + email + "'!");
+        }
+
+        HibernateUtil.commitTransaction();
         return user;
+    }
+
+    @Override
+    public void update(User user) throws ValidationException {
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        session.update(user);
+
+        HibernateUtil.commitTransaction();
     }
 
     @Override
     public void delete(Long id) throws NotFoundException {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
-        User user = (User) session.get(User.class, id);
 
-        if (user == null) {
-            throw new NotFoundException("There is no such user to delete");
+        User user;
+        try {
+            user = get(session, id);
+        } catch (NotFoundException e) {
+            HibernateUtil.rollbackTransaction();
+            throw  e;
         }
 
         // make sure there is at least one registered admin
@@ -111,8 +135,8 @@ public class UserDAOImpl implements UserDAO {
 
             @SuppressWarnings("unchecked")
             List<User> admins = session.createCriteria(User.class)
-                    .add(Restrictions.eq("role", UserRole.ADMIN))
-                    .list();
+                                       .add(Restrictions.eq("role", UserRole.ADMIN))
+                                       .list();
 
             if (admins.size() == 1) {
                 throw new NotFoundException("There has to be at least one admin left");
@@ -123,11 +147,14 @@ public class UserDAOImpl implements UserDAO {
         HibernateUtil.commitTransaction();
     }
 
-    @Override
-    public void update(User user) throws ValidationException {
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-        session.update(user);
-        HibernateUtil.commitTransaction();
+    private User get(Session session, Long id) throws NotFoundException {
+        User user = session.get(User.class, id);
+
+        if (user == null) {
+            throw new NotFoundException("Could not find the user with the ID '" + id + "'!");
+        }
+
+        return user;
     }
+
 }

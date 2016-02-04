@@ -30,6 +30,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class UserDAOImplTest {
 
@@ -40,13 +41,16 @@ public class UserDAOImplTest {
 
     private User admin;
 
+    private User user;
+
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws NotFoundException {
         userDAO = new UserDAOImpl();
 
-        User u = userDAO.getByEmail(ADMIN_MAIL);
-        if (u == null) {
-            u = new User();
+        try {
+            userDAO.getByEmail(ADMIN_MAIL);
+        } catch (NotFoundException e) {
+            User u = new User();
             u.setEmail(ADMIN_MAIL);
             u.setEncryptedPassword("alex");
             u.setRole(UserRole.ADMIN);
@@ -55,8 +59,12 @@ public class UserDAOImplTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws NotFoundException {
         admin = userDAO.getByEmail(ADMIN_MAIL);
+
+        user = new User();
+        user.setEmail("test@mail.de");
+        user.setEncryptedPassword("test");
     }
 
     @After
@@ -68,41 +76,37 @@ public class UserDAOImplTest {
             }
         }
 
-        assertEquals(userDAO.getAll().size(), 1);
+        assertEquals(1, userDAO.getAll().size());
     }
 
     @Test
-    public void shouldCreateAValidUser() {
-        User u = new User();
-        u.setEmail("test@mail.de");
-        u.setEncryptedPassword("test");
-        userDAO.create(u);
+    public void shouldCreateAValidUser() throws NotFoundException {
+        userDAO.create(user);
 
-        User userfromDB = userDAO.getByEmail("test@mail.de");
-        assertEquals(userfromDB, u);
-        assertEquals(UserRole.REGISTERED, userfromDB.getRole());
+        User userFromDB = userDAO.getByEmail("test@mail.de");
+        assertEquals(user, userFromDB);
+        assertEquals(UserRole.REGISTERED, userFromDB.getRole());
     }
 
     @Test(expected = ValidationException.class)
     public void shouldNotCreateAUserWithoutEmail() {
-        User u = new User();
-        u.setEncryptedPassword("test");
-        userDAO.create(u);
+        user.setEmail(null);
+
+        userDAO.create(user);
     }
 
     @Test(expected = ValidationException.class)
     public void shouldNotCreateAUserWithoutPassword() {
-        User u = new User();
-        u.setEmail("test@mail.de");
-        userDAO.create(u);
+        user.setPassword(null);
+
+        userDAO.create(user);
     }
 
     @Test(expected = ValidationException.class)
     public void shouldNotCreateAUserWithANonUniqueEmail() {
-        User u = new User();
-        u.setEmail("UserDAOImplTest@alex-tests.example");
-        u.setEncryptedPassword("test");
-        userDAO.create(u);
+        user.setEmail("UserDAOImplTest@alex-tests.example");
+
+        userDAO.create(user);
     }
 
     @Test
@@ -178,6 +182,45 @@ public class UserDAOImplTest {
     }
 
     @Test
+    public void shouldGetByID() throws NotFoundException {
+        userDAO.create(user);
+
+        User userFromDB = userDAO.getById(user.getId());
+        assertEquals(user, userFromDB);
+        assertEquals(UserRole.REGISTERED, userFromDB.getRole());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void shouldThrowAnExceptionIfTheUserCanNotBeFoundByID() throws NotFoundException {
+        userDAO.getById(Long.valueOf(TEST_USER_COUNT));
+    }
+
+    @Test
+    public void shouldGetByEmail() throws NotFoundException {
+        userDAO.create(user);
+
+        User userFromDB = userDAO.getByEmail(user.getEmail());
+        assertEquals(user, userFromDB);
+        assertEquals(UserRole.REGISTERED, userFromDB.getRole());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void shouldThrowAnExceptionIfTheUserCanNotBeFoundByEmail() throws NotFoundException {
+        userDAO.getByEmail(user.getEmail());
+    }
+
+    @Test
+    public void shouldUpdateUser() throws NotFoundException {
+        userDAO.create(user);
+
+        user.setEmail("new_email@alex.example");
+        userDAO.update(user);
+
+        User userFromDB = userDAO.getById(user.getId());
+        assertEquals(user, userFromDB);
+    }
+
+    @Test
     public void shouldDeleteARegisteredUser() throws NotFoundException {
         User u = new User();
         u.setEmail("test@mail.de");
@@ -185,7 +228,13 @@ public class UserDAOImplTest {
         userDAO.create(u);
 
         userDAO.delete(u.getId());
-        assertTrue(userDAO.getById(u.getId()) == null);
+
+        try {
+            userDAO.getById(u.getId());
+            fail();
+        } catch (NotFoundException e) {
+            // success
+        }
     }
 
     @Test

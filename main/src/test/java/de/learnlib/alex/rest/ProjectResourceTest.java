@@ -93,10 +93,15 @@ public class ProjectResourceTest extends JerseyTest {
         symbol.setName("Project Resource Test Symbol");
         symbol.setAbbreviation("prts");
 
-        UserHelper.initFakeAdmin(user);
-        given(userDAO.getById(user.getId())).willReturn(user);
-        given(userDAO.getByEmail(user.getEmail())).willReturn(user);
-        token = UserHelper.login(user);
+        try {
+            UserHelper.initFakeAdmin(user);
+            given(userDAO.getById(user.getId())).willReturn(user);
+            given(userDAO.getByEmail(user.getEmail())).willReturn(user);
+            token = UserHelper.login(user);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            fail();
+        }
 
         project = new Project();
         project.setUser(user);

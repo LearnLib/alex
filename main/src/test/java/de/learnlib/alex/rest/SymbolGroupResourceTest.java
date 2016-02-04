@@ -51,6 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Matchers.any;
@@ -111,9 +112,15 @@ public class SymbolGroupResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        UserHelper.initFakeAdmin(user);
-        given(userDAO.getById(user.getId())).willReturn(user);
-        given(userDAO.getByEmail(user.getEmail())).willReturn(user);
+        try {
+            UserHelper.initFakeAdmin(user);
+            given(userDAO.getById(user.getId())).willReturn(user);
+            given(userDAO.getByEmail(user.getEmail())).willReturn(user);
+            token = UserHelper.login(user);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            fail();
+        }
 
         return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
                                        learnerResultDAO, fileDAO, learner, SymbolGroupResource.class);
@@ -123,7 +130,6 @@ public class SymbolGroupResourceTest extends JerseyTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        token = UserHelper.login(user);
 
         project = new Project();
         project.setId(PROJECT_TEST_ID);

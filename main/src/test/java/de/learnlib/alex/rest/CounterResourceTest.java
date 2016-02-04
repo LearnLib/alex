@@ -41,6 +41,7 @@ import javax.ws.rs.core.Response;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
@@ -89,10 +90,15 @@ public class CounterResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        UserHelper.initFakeAdmin(user);
-        given(userDAO.getById(user.getId())).willReturn(user);
-        given(userDAO.getByEmail(user.getEmail())).willReturn(user);
-        token = UserHelper.login(user);
+        try {
+            UserHelper.initFakeAdmin(user);
+            given(userDAO.getById(user.getId())).willReturn(user);
+            given(userDAO.getByEmail(user.getEmail())).willReturn(user);
+            token = UserHelper.login(user);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            fail();
+        }
 
         return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO, learnerResultDAO,
                                        fileDAO, learner,  CounterResource.class);
