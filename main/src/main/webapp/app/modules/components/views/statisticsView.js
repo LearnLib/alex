@@ -22,11 +22,11 @@ class StatisticsView {
 
     /**
      * Constructor
-     * @param SessionService
-     * @param LearnResultResource
-     * @param ToastService
+     * @param {SessionService} SessionService
+     * @param {LearnResultResource} LearnResultResource
+     * @param {ToastService} ToastService
      * @param $state
-     * @param LearnerResultDownloadService
+     * @param {LearnerResultDownloadService} LearnerResultDownloadService
      */
     constructor(SessionService, LearnResultResource, ToastService, $state, LearnerResultDownloadService) {
         this.LearnResultResource = LearnResultResource;
@@ -105,20 +105,15 @@ class StatisticsView {
      * @param {LearnResult} result
      */
     exportAsCSV(result) {
-        this.LearnerResultDownloadService.init();
-        this.LearnerResultDownloadService.addResult(result);
-        this.LearnerResultDownloadService.download();
+        this.LearnerResultDownloadService.download([result]);
+        this.ToastService.success('The result has been exported.');
     }
 
     /** Exports selected learn results into a csv file */
     exportSelectedAsCSV() {
         if (this.selectedResults.length > 0) {
-            this.LearnerResultDownloadService.init();
-            this.selectedResults.forEach(result => {
-                this.LearnerResultDownloadService.addResult(result);
-                this.LearnerResultDownloadService.addEmptyLine();
-            });
-            this.LearnerResultDownloadService.download();
+            this.LearnerResultDownloadService.download(this.selectedResults);
+            this.ToastService.success('The results have been exported.');
         }
     }
 }

@@ -21,50 +21,41 @@ class LearnerResultDownloadService {
     /**
      * Constructor
      * @param {DownloadService} DownloadService
+     * @param {PromptService} PromptService
      */
-    constructor(DownloadService) {
+    constructor(DownloadService, PromptService) {
         this.DownloadService = DownloadService;
-
-        /**
-         * The CSV data
-         * @type {string}
-         */
-        this.csv = '';
-    }
-
-    /** Initialize the header of th csv */
-    init() {
-        this.csv = 'Project;Test No;Start Time;Step No;Algorithm;Eq Oracle;|Sigma|;#MQs;#EQs;#Symbol Calls;Duration (ms)\n';
+        this.PromptService = PromptService;
     }
 
     /**
-     * Adds a single learn result to the csv data
-     * @param {LearnResult} result
+     * Downloads learn results as csv
+     * @param {LearnResult[]} results
      */
-    addResult(result) {
-        result.steps.forEach(step => {
-            this.csv += result.project + ';';
-            this.csv += result.testNo + ';';
-            this.csv += '"' + step.statistics.startDate + '";';
-            this.csv += step.stepNo + ';';
-            this.csv += result.algorithm + ';';
-            this.csv += step.eqOracle.type + ';';
-            this.csv += result.symbols.length + ';';
-            this.csv += step.statistics.mqsUsed + ';';
-            this.csv += step.statistics.eqsUsed + ';';
-            this.csv += step.statistics.symbolsUsed + ';';
-            this.csv += step.statistics.duration + '\n';
+    download(results) {
+        let csv = 'Project;Test No;Start Time;Step No;Algorithm;Eq Oracle;|Sigma|;#MQs;#EQs;#Symbol Calls;Duration (ms)\n';
+
+        results.forEach(result => {
+            result.steps.forEach(step => {
+                this.csv += result.project + ';';
+                this.csv += result.testNo + ';';
+                this.csv += '"' + step.statistics.startDate + '";';
+                this.csv += step.stepNo + ';';
+                this.csv += result.algorithm + ';';
+                this.csv += step.eqOracle.type + ';';
+                this.csv += result.symbols.length + ';';
+                this.csv += step.statistics.mqsUsed + ';';
+                this.csv += step.statistics.eqsUsed + ';';
+                this.csv += step.statistics.symbolsUsed + ';';
+                this.csv += step.statistics.duration + '\n';
+            });
+            csv += '\n'; // separate multiple results by a new line
         });
-    }
 
-    /** Creates an empty row so that multiple test runs can be exported at once */
-    addEmptyLine() {
-        this.csv += '\n';
-    }
-
-    /** Downloads the csv */
-    download() {
-        this.DownloadService.downloadCsv(this.csv);
+        this.PromptService.prompt('Enter a name for the csv file')
+            .then(filename => {
+                this.DownloadService.downloadCsv(csv, filename);
+            });
     }
 }
 

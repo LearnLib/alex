@@ -32,8 +32,8 @@ function symbolListItem() {
         link: function (scope, el, attrs) {
             scope.collapsed = false;
 
-            scope.isSelectable = angular.isDefined(attrs.selectionModel) ? true : false;
-            scope.showActionsLink = angular.isDefined(attrs.showActionsLink) ? true : false;
+            scope.isSelectable = angular.isDefined(attrs.selectionModel);
+            scope.showActionsLink = angular.isDefined(attrs.showActionsLink);
         }
     };
 }

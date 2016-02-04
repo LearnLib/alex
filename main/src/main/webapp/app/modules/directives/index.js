@@ -21,7 +21,6 @@ import hypothesis from './hypothesis';
 import {learnResultList, learnResultListItem} from './learnResultList';
 import {learnResultPanel, learnResultComparePanel} from './learnResultPanel';
 import observationTable from './observationTable';
-import responsiveIframe from './responsiveIframe';
 import {symbolGroupList, symbolGroupListItem} from './symbolGroupList';
 import {symbolList, symbolListItem} from './symbolList';
 
@@ -53,7 +52,6 @@ angular
     .directive('learnResultPanel', learnResultPanel)
     .directive('learnResultComparePanel', learnResultComparePanel)
     .directive('observationTable', observationTable)
-    .directive('responsiveIframe', responsiveIframe)
     .directive('symbolGroupList', symbolGroupList)
     .directive('symbolGroupListItem', symbolGroupListItem)
     .directive('symbolList', symbolList)

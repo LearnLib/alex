@@ -9,7 +9,7 @@ describe('LearnConfiguration', () => {
         const config = new LearnConfiguration();
         const expectedConfig = {
             symbols: [],
-            maxAmountOfStepsToLearn: 0,
+            maxAmountOfStepsToLearn: -1,
             eqOracle: {type: 'random_word', minLength: 1, maxLength: 10, maxNoOfTests: 20},
             algorithm: 'TTT',
             resetSymbol: null,

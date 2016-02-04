@@ -35,13 +35,16 @@ class ActionBar {
         /** The document.body */
         this.body = angular.element(document.body);
 
-        /** The root element of the component **/
+        /** The root element of the component */
         this.rootEl = angular.element($element.children()[0]);
 
-        $window.addEventListener('scroll', this.handleResize.bind(this));
+        /** The scroll handler */
+        this.scrollHandler = this.handleResize.bind(this);
+
+        $window.addEventListener('scroll', this.scrollHandler, false);
 
         $scope.$on('$destroy', () => {
-            $window.removeEventListener('scroll', this.handleResize.bind(this));
+            $window.removeEventListener('scroll', this.scrollHandler, false);
             this.body.removeClass('has-fixed-action-bar');
         });
     }

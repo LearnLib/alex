@@ -60,6 +60,7 @@ import loadScreen from './loadScreen';
 import projectList from './projectList';
 import sidebar from './sidebar';
 import viewHeader from './viewHeader';
+import {responsiveIframe} from './responsiveIframe';
 
 const moduleName = 'ALEX.components';
 
@@ -112,6 +113,7 @@ angular
     .component('loadScreen', loadScreen)
     .component('projectList', projectList)
     .component('sidebar', sidebar)
+    .component('responsiveIframe', responsiveIframe)
     .component('viewHeader', viewHeader);
 
 export const components = moduleName;
