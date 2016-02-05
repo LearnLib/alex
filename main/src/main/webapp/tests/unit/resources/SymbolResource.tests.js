@@ -48,14 +48,6 @@ describe('SymbolResource', () => {
         })
     });
 
-    it('should get a list of symbols by given id revision pairs', () => {
-
-    });
-
-    it('should get all revisions of a symbol', () => {
-
-    });
-
     it('should create a new symbol', () => {
         spyOn($http, 'post').and.callThrough();
 
@@ -87,11 +79,67 @@ describe('SymbolResource', () => {
     });
 
     it('should move many symbols to another group', () => {
+        const ids = ENTITIES.symbols.map(s => s.id).join(',');
+        const projectId = ENTITIES.symbols[0].project;
+        const groupId = ENTITIES.symbols[0].group;
 
+        spyOn($http, 'put').and.callThrough();
+        const uri = `/rest/projects/${projectId}/symbols/batch/${ids}/moveTo/${groupId}`;
+        $httpBackend.whenPUT(uri).respond(200, {});
+        const promise = SymbolResource.moveMany(ENTITIES.symbols, {id: groupId});
+        $httpBackend.flush();
+
+        expect($http.put).toHaveBeenCalledWith(uri, {});
+        expect(promise.then).toBeDefined();
+    });
+
+    it('should get a list of symbols by given id revision pairs', () => {
+        const pairs = ENTITIES.symbols.map(s => new Symbol(s).getIdRevisionPair());
+        const concatenatedPairs = pairs.map(p => p.id + ':' + p.revision).join(',');
+        const projectId = ENTITIES.symbols[0].project;
+        const uri = `/rest/projects/${projectId}/symbols/batch/${concatenatedPairs}`;
+
+        spyOn($http, 'get').and.callThrough();
+        $httpBackend.whenGET(uri).respond(200, ENTITIES.symbols);
+        const promise = SymbolResource.getManyByIdRevisionPairs(projectId, pairs);
+        $httpBackend.flush();
+
+        expect($http.get).toHaveBeenCalledWith(uri);
+        promise.then(symbols => {
+            symbols.forEach(s => {
+                expect(s instanceof Symbol).toBe(true)
+            });
+        })
+    });
+
+    it('should get all revisions of a symbol', () => {
+        const symbol = ENTITIES.symbols[0];
+        const uri = `/rest/projects/${symbol.project}/symbols/${symbol.id}/complete`;
+        spyOn($http, 'get').and.callThrough();
+
+        $httpBackend.whenGET(uri).respond(200, ENTITIES.symbols);
+        const promise = SymbolResource.getRevisions(symbol.project, symbol.id);
+        $httpBackend.flush();
+
+        expect($http.get).toHaveBeenCalledWith(uri);
+        promise.then((symbols) => {
+            symbols.forEach(s => expect(s instanceof Symbol).toBe(true));
+        });
     });
 
     it('should update a single symbol', () => {
+        spyOn($http, 'put').and.callThrough();
+        const symbol = ENTITIES.symbols[0];
+        const uri = `/rest/projects/${symbol.project}/symbols/${symbol.id}`;
 
+        $httpBackend.whenPUT(uri).respond(200, symbol);
+        const promise = SymbolResource.update(symbol);
+        $httpBackend.flush();
+
+        expect($http.put).toHaveBeenCalledWith(uri, symbol);
+        promise.then((s) => {
+            expect(s instanceof Symbol).toBe(true)
+        })
     });
 
     it('should remove a single symbol', () => {

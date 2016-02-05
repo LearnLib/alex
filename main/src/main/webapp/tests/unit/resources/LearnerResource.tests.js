@@ -1,3 +1,5 @@
+import LearnResult from '../../../app/modules/entities/LearnResult';
+
 describe('LearnerResource', () => {
     const testNo = 1;
 
@@ -58,10 +60,6 @@ describe('LearnerResource', () => {
         expect(promise.then).toBeDefined();
     });
 
-    it('should get the current status of the learner', () => {
-        // TODO
-    });
-
     it('should check if the learner is active', () => {
         spyOn($http, 'get').and.callThrough();
         const uri = `/rest/learner/active`;
@@ -72,6 +70,34 @@ describe('LearnerResource', () => {
 
         expect($http.get).toHaveBeenCalledWith(uri);
         expect(promise.then).toBeDefined();
+    });
+
+    it('should get the current status of the learner', () => {
+        spyOn($http, 'get').and.callThrough();
+        const uri = `/rest/learner/status`;
+
+        $httpBackend.whenGET(uri).respond(200, ENTITIES.learnResults[0]);
+        const promise = LearnerResource.getStatus();
+        $httpBackend.flush();
+
+        expect($http.get).toHaveBeenCalledWith(uri);
+        promise.then(r => {
+            expect(r instanceof LearnResult);
+        })
+    });
+
+    it('should return null status if there is no learner status', () => {
+        spyOn($http, 'get').and.callThrough();
+        const uri = `/rest/learner/status`;
+
+        $httpBackend.whenGET(uri).respond(400, ENTITIES.learnResults[0]);
+        const promise = LearnerResource.getStatus();
+        $httpBackend.flush();
+
+        expect($http.get).toHaveBeenCalledWith(uri);
+        promise.then(r => {
+            expect(r).toBeNull();
+        })
     });
 
     it('should check if a given sequence is a counterexample', () => {

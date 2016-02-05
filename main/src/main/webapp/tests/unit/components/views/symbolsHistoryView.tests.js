@@ -43,7 +43,7 @@ describe('symbolsHistoryView', () => {
         controller = element.controller('symbolsHistoryView');
     }
 
-    it('should load revisions of a symbol on init and split of the most current on', () => {
+    it('should load revisions of a symbol on init and split of the most current one', () => {
         const deferred = $q.defer();
         spyOn(SymbolResource, 'getRevisions').and.returnValue(deferred.promise);
         deferred.resolve(symbols);
@@ -68,6 +68,7 @@ describe('symbolsHistoryView', () => {
 
         deferred.reject({data: {message: null}});
         createComponent();
+        $rootScope.$digest();
 
         expect(SymbolResource.getRevisions).toHaveBeenCalled();
         expect(ErrorService.setErrorMessage).toHaveBeenCalled();
@@ -82,6 +83,7 @@ describe('symbolsHistoryView', () => {
 
         d1.resolve(symbols);
         createComponent();
+        $rootScope.$digest();
 
         const latestRevision = controller.latestRevision;
         const revisions = controller.revisions;
@@ -105,6 +107,7 @@ describe('symbolsHistoryView', () => {
 
         d1.resolve(symbols);
         createComponent();
+        $rootScope.$digest();
 
         const latestRevision = controller.latestRevision;
         const revisions = controller.revisions;

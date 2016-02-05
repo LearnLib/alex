@@ -101,15 +101,29 @@ describe('UserResource', () => {
         expect(promise.then).toBeDefined();
     });
 
-    it('should update a user', () => {
-        const uri = `/rest/users/${user.id}`;
+    it('should promote a user', () => {
+        const uri = `/rest/users/${user.id}/promote`;
         spyOn($http, 'put').and.callThrough();
 
         $httpBackend.whenPUT(uri).respond(200, ENTITIES.users[1]);
-        const promise = UserResource.update(user);
+        const promise = UserResource.promote(user);
         $httpBackend.flush();
 
-        expect(UserResource.$http.put).toHaveBeenCalledWith(uri, user);
+        expect(UserResource.$http.put).toHaveBeenCalledWith(uri, {});
+        promise.then((u) => {
+            expect(u instanceof User);
+        })
+    });
+
+    it('should demote a user', () => {
+        const uri = `/rest/users/${user.id}/demote`;
+        spyOn($http, 'put').and.callThrough();
+
+        $httpBackend.whenPUT(uri).respond(200, ENTITIES.users[1]);
+        const promise = UserResource.demote(user);
+        $httpBackend.flush();
+
+        expect(UserResource.$http.put).toHaveBeenCalledWith(uri, {});
         promise.then((u) => {
             expect(u instanceof User);
         })
