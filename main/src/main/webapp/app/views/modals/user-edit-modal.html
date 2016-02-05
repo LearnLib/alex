@@ -9,10 +9,9 @@
 
 <div class="modal-body">
 
-    <h4>Email</h4>
+    <h4><strong>Email</strong></h4>
     <form name="vm.mailForm" ng-submit="vm.changeEmail()">
         <div class="form-group">
-            <label>Email</label>
             <input type="email" class="form-control" name="mail" ng-model="vm.email" placeholder="Enter an email address" required />
             <div class="help-block" ng-messages="vm.mailForm.mail.$error" ng-if="vm.mailForm.mail.$touched">
                 <div class="alert alert-danger alert-condensed" ng-message="required">
