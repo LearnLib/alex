@@ -40,7 +40,7 @@ class EventBus {
     /**
      * Emits an event on the rootScope
      * @param {string} eventName - The eventName
-     * @param {any} data - The data to pass
+     * @param {*} data - The data to pass
      */
     emit(eventName, data) {
         this.$rootScope.$emit(eventName, data);

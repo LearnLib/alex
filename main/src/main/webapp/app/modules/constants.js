@@ -35,6 +35,11 @@ const eqOracleType = {
     WMETHOD: 'wmethod'
 };
 
+const userRole = {
+    ADMIN: 'ADMIN',
+    REGISTERED: 'REGISTERED'
+};
+
 const events = {
 
     // project related events
@@ -117,4 +122,4 @@ const actionType = {
     WAIT: 'wait'
 };
 
-export {learnAlgorithm, webBrowser, eqOracleType, events, chartMode, actionType};
+export {learnAlgorithm, webBrowser, userRole, eqOracleType, events, chartMode, actionType};

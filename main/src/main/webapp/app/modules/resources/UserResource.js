@@ -110,13 +110,24 @@ class UserResource {
     }
 
     /**
-     * Updates a user. Should only be called by admins.
+     * Gives a registered user admin rights
      *
-     * @param {User} user - The user to update
-     * @returns {*} - A promise that contains the updated user
+     * @param {User} user - The user to promote
+     * @returns {*}
      */
-    update(user) {
-        return this.$http.put(`/rest/users/${user.id}`, user)
+    promote(user) {
+        return this.$http.put(`/rest/users/${user.id}/promote`, {})
+            .then(response => new User(response.data));
+    }
+
+    /**
+     * Takes the admin rights of a user
+     *
+     * @param {User} user - The user to demote
+     * @returns {*}
+     */
+    demote(user) {
+        return this.$http.put(`/rest/users/${user.id}/demote`, {})
             .then(response => new User(response.data));
     }
 }

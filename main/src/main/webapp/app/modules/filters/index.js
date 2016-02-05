@@ -23,6 +23,7 @@ angular
     .filter('formatEqOracle', filter.formatEqOracle)
     .filter('formatAlgorithm', filter.formatAlgorithm)
     .filter('formatMilliseconds', filter.formatMilliseconds)
+    .filter('formatUserRole', filter.formatUserRole)
     .filter('formatWebBrowser', filter.formatWebBrowser);
 
 export const filters = moduleName;

@@ -21,12 +21,12 @@
                     <tr ng-repeat="user in vm.users" ng-class="{'info': user.role === 'ADMIN'}">
                         <td ng-bind="user.id"></td>
                         <td ng-bind="user.email"></td>
-                        <td ng-bind="user.role"></td>
-                        <th>
+                        <td ng-bind="user.role | formatUserRole"></td>
+                        <td>
                             <button class="btn btn-icon btn-xs pull-right" user-edit-modal-handle user="user">
                                 <i class="fa fa-edit fa-fw"></i> Edit
                             </button>
-                        </th>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

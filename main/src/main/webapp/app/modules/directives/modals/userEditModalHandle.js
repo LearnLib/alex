@@ -15,39 +15,34 @@
  */
 
 import {User} from '../../entities/User';
-import {events} from '../../constants';
+import {events, userRole} from '../../constants';
 
 /**
  * The controller for the modal window that handles editing a user.
  * This should only be called by an admin.
- *
- * @param $scope
- * @param $modalInstance
- * @param modalData
- * @param UserResource
- * @param ToastService
- * @param PromptService
- * @param EventBus
- * @constructor
  */
 // @ngInject
 class UserEditModalController {
 
     /**
      * Constructor
+     * @param $state
      * @param $modalInstance
      * @param modalData
-     * @param UserResource
-     * @param ToastService
-     * @param PromptService
-     * @param EventBus
+     * @param {UserResource} UserResource
+     * @param {ToastService} ToastService
+     * @param {PromptService} PromptService
+     * @param {EventBus} EventBus
+     * @param {SessionService} SessionService
      */
-    constructor($modalInstance, modalData, UserResource, ToastService, PromptService, EventBus) {
+    constructor($state, $modalInstance, modalData, UserResource, ToastService, PromptService, EventBus, SessionService) {
+        this.$state = $state;
         this.$modalInstance = $modalInstance;
         this.UserResource = UserResource;
         this.ToastService = ToastService;
         this.PromptService = PromptService;
         this.EventBus = EventBus;
+        this.SessionService = SessionService;
 
         /**
          * The error message in case the update goes wrong
@@ -56,21 +51,27 @@ class UserEditModalController {
         this.error = null;
 
         /**
+         * The user role dictionary
+         * @type {object}
+         */
+        this.userRole = userRole;
+
+        /**
          * The user to edit
          * @type {User}
          */
         this.user = modalData.user;
     }
 
-
-    /** Updates the user on the server and closes the modal window on success */
-    updateUser() {
+    /**
+     * Gives a user admin rights.
+     */
+    promoteUser() {
         this.error = null;
-
-        this.UserResource.update(this.user)
-            .then(() => {
-                this.EventBus.emit(events.USER_UPDATED, {user: this.user});
-                this.ToastService.success('User updated successfully');
+        this.UserResource.promote(this.user)
+            .then((user) => {
+                this.EventBus.emit(events.USER_UPDATED, {user: user});
+                this.ToastService.success('The user now has admin rights.');
                 this.$modalInstance.dismiss();
             })
             .catch(response => {
@@ -78,10 +79,34 @@ class UserEditModalController {
             });
     }
 
-    /** Deletes a user */
+    /**
+     * Removes the admin rights of a user. If an admin removes his own rights
+     * he will be logged out automatically.
+     */
+    devoteUser() {
+        this.error = null;
+        this.UserResource.demote(this.user)
+            .then((user) => {
+                if (this.SessionService.getUser().id === this.user.id) {
+                    this.SessionService.removeProject();
+                    this.SessionService.removeUser();
+                    this.$state.go('home');
+                } else {
+                    this.EventBus.emit(events.USER_UPDATED, {user: user});
+                }
+                this.$modalInstance.dismiss();
+                this.ToastService.success('The user now has default user rights.');
+            })
+            .catch(response => {
+                this.error = response.data.message;
+            });
+    }
+
+    /**
+     * Deletes a user
+     */
     deleteUser() {
         this.error = null;
-
         this.PromptService.confirm('Do you want to delete this user permanently?')
             .then(() => {
                 this.UserResource.remove(this.user)
@@ -96,7 +121,9 @@ class UserEditModalController {
             });
     }
 
-    /** Closes the modal window */
+    /**
+     * Closes the modal window.
+     */
     close() {
         this.$modalInstance.dismiss();
     }

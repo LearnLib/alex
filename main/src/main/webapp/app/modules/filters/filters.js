@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm, eqOracleType, webBrowser} from '../constants';
+import {learnAlgorithm, eqOracleType, userRole, webBrowser} from '../constants';
 
 /**
  * The filter to format a EQ type constant to something more readable
@@ -35,6 +35,24 @@ function formatEqOracle() {
                 return type;
         }
     };
+}
+
+
+/**
+ * The filter to format a user role
+ * @returns {Function}
+ */
+function formatUserRole() {
+    return role => {
+        switch (role) {
+            case userRole.ADMIN:
+                return 'Admin';
+            case userRole.REGISTERED:
+                return 'Registered';
+            default:
+                return role;
+        }
+    }
 }
 
 
@@ -104,4 +122,4 @@ function formatMilliseconds() {
     };
 }
 
-export {formatAlgorithm, formatEqOracle, formatMilliseconds, formatWebBrowser};
+export {formatAlgorithm, formatEqOracle, formatMilliseconds, formatUserRole, formatWebBrowser};

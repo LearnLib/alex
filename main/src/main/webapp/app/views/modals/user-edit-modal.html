@@ -7,35 +7,41 @@
     <span class="text-muted">Edit an existing user</span>
 </div>
 
-<form ng-submit="vm.updateUser()" id="user-edit-form">
-    <div class="modal-body">
+<div class="modal-body">
 
-        <label>Role</label>
+    <h4><strong>Role</strong></h4>
 
-        <div class="radio">
-            <label>
-                <input type="radio" ng-model="vm.user.role" value="REGISTERED">
-                Registered
-            </label>
-        </div>
-        <div class="radio">
-            <label>
-                <input type="radio" ng-model="vm.user.role" value="ADMIN">
-                Admin
-            </label>
-        </div>
-
-        <div ng-if="vm.error !== null">
-            <hr/>
-            <div class="alert alert-condensed alert-danger">
-                <strong>Updating the user went wrong!</strong> <br/>
-                <span ng-bind="vm.error"></span>
-            </div>
-        </div>
+    <div ng-if="vm.user.role === vm.userRole.ADMIN">
+        <p class="text-muted">
+            <em>Note: if you take your own admin rights, you will be logged out automatically.</em>
+        </p>
+        <p>
+            <button class="btn btn-primary btn-sm" ng-click="vm.devoteUser()">
+                Remove admin rights
+            </button>
+        </p>
+    </div>
+    <div ng-if="vm.user.role === vm.userRole.REGISTERED" ng-click="vm.promoteUser()">
+        <button class="btn btn-primary btn-sm">
+            Give admin rights
+        </button>
     </div>
 
-    <div class="modal-footer">
-        <a href="" class="btn btn-default btn-sm" ng-click="vm.deleteUser()">Delete</a>
-        <button class="btn btn-primary btn-sm" type="submit">Update</button>
+    <hr>
+    <h4><strong>Account</strong></h4>
+    <button class="btn btn-danger btn-sm" ng-click="vm.deleteUser()">
+        Delete profile
+    </button>
+
+    <div ng-if="vm.error !== null">
+        <hr/>
+        <div class="alert alert-condensed alert-danger">
+            <strong>Updating the user went wrong!</strong> <br/>
+            <span ng-bind="vm.error"></span>
+        </div>
     </div>
-</form>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-default btn-sm" ng-click="vm.close()">Ok</button>
+</div>
