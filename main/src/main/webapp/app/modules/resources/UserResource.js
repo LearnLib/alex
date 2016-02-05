@@ -54,8 +54,9 @@ class UserResource {
      */
     changeEmail(user, email) {
         return this.$http.put(`/rest/users/${user.id}/email`, {
-            email: email
-        });
+                email: email
+            })
+            .then(response => new User(response.data));
     }
 
     /**

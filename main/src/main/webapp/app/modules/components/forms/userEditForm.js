@@ -140,10 +140,18 @@ const userEditForm = {
         <hr>
 
         <h3>Email</h3>
-        <form ng-submit="vm.changeEmail()">
+        <form name="vm.mailForm" ng-submit="vm.changeEmail()">
             <div class="form-group">
                 <label>Email</label>
-                <input class="form-control" type="text" ng-model="vm.email" placeholder="Enter an email address">
+                <input class="form-control" name="mail" type="email" ng-model="vm.email" placeholder="Enter an email address" required />
+            </div>
+            <div class="help-block" ng-messages="vm.mailForm.mail.$error" ng-if="vm.mailForm.mail.$touched">
+                <div class="alert alert-danger alert-condensed" ng-message="required">
+                    The email is required
+                </div>
+                <div class="alert alert-danger alert-condensed" ng-message="email">
+                    You have to enter a valid email address
+                </div>
             </div>
             <button class="btn btn-primary btn-sm">Change Email</button>
         </form>

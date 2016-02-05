@@ -61,6 +61,32 @@ class UserEditModalController {
          * @type {User}
          */
         this.user = modalData.user;
+
+        /**
+         * The model for the input of the users mail
+         * @type {string}
+         */
+        this.email = this.user.email;
+
+    }
+
+    /**
+     * Changes the EMail of an user.
+     */
+    changeEmail() {
+        this.error = null;
+        this.UserResource.changeEmail(this.user, this.email)
+            .then((user) => {
+                if (this.SessionService.getUser().id === this.user.id) {
+                    this.SessionService.saveUser(user);
+                }
+                this.EventBus.emit(events.USER_UPDATED, {user: user});
+                this.$modalInstance.dismiss();
+                this.ToastService.success('The email has been changed.');
+            })
+            .catch(response => {
+                this.error = response.data.message;
+            });
     }
 
     /**
@@ -83,7 +109,7 @@ class UserEditModalController {
      * Removes the admin rights of a user. If an admin removes his own rights
      * he will be logged out automatically.
      */
-    devoteUser() {
+    demoteUser() {
         this.error = null;
         this.UserResource.demote(this.user)
             .then((user) => {

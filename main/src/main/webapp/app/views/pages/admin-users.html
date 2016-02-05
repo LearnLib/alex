@@ -3,11 +3,10 @@
 
     <div class="view-body">
         <div class="alx-container">
-            <div class="row">
+            <div>
 
-                <h3>Registered Users</h3>
+                <h3>{{ vm.users.length}} Registered Users</h3>
                 <hr>
-
                 <table class="table">
                     <thead>
                     <tr>
@@ -18,10 +17,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="user in vm.users" ng-class="{'info': user.role === 'ADMIN'}">
+                    <tr ng-repeat="user in vm.users" ng-class="{'success': user.id === vm.user.id, 'info': user.role === 'ADMIN' && user.id !== vm.user.id}">
                         <td ng-bind="user.id"></td>
                         <td ng-bind="user.email"></td>
-                        <td ng-bind="user.role | formatUserRole"></td>
+                        <td ng-bind-html="user.role | formatUserRole"></td>
                         <td>
                             <button class="btn btn-icon btn-xs pull-right" user-edit-modal-handle user="user">
                                 <i class="fa fa-edit fa-fw"></i> Edit

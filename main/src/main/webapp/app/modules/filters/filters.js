@@ -46,9 +46,9 @@ function formatUserRole() {
     return role => {
         switch (role) {
             case userRole.ADMIN:
-                return 'Admin';
+                return '<span class="label label-danger">Administrator</span>';
             case userRole.REGISTERED:
-                return 'Registered';
+                return '<span class="label label-primary">Registered</span>';
             default:
                 return role;
         }

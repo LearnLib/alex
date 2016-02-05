@@ -9,14 +9,31 @@
 
 <div class="modal-body">
 
-    <h4><strong>Role</strong></h4>
+    <h4>Email</h4>
+    <form name="vm.mailForm" ng-submit="vm.changeEmail()">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="form-control" name="mail" ng-model="vm.email" placeholder="Enter an email address" required />
+            <div class="help-block" ng-messages="vm.mailForm.mail.$error" ng-if="vm.mailForm.mail.$touched">
+                <div class="alert alert-danger alert-condensed" ng-message="required">
+                    The email is required
+                </div>
+                <div class="alert alert-danger alert-condensed" ng-message="email">
+                    You have to enter a valid email address
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary btn-sm">Change Email</button>
+    </form>
 
+    <hr>
+    <h4><strong>Role</strong></h4>
     <div ng-if="vm.user.role === vm.userRole.ADMIN">
         <p class="text-muted">
             <em>Note: if you take your own admin rights, you will be logged out automatically.</em>
         </p>
         <p>
-            <button class="btn btn-primary btn-sm" ng-click="vm.devoteUser()">
+            <button class="btn btn-primary btn-sm" ng-click="vm.demoteUser()">
                 Remove admin rights
             </button>
         </p>
@@ -43,5 +60,5 @@
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-default btn-sm" ng-click="vm.close()">Ok</button>
+    <button class="btn btn-default btn-sm" ng-click="vm.close()">Close</button>
 </div>
