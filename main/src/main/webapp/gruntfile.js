@@ -9,7 +9,6 @@ module.exports = function (grunt) {
         'node_modules/angular-sanitize/angular-sanitize.js',
         'node_modules/angular-messages/angular-messages.js',
         'node_modules/angular-ui-ace/src/ui-ace.js',
-        'node_modules/angular-ui-router/release/angular-ui-router.js',
         'node_modules/n3-charts/build/LineChart.js',
         'node_modules/selection-model/dist/selection-model.js'
     ];

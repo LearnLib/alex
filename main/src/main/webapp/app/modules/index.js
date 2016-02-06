@@ -19,6 +19,7 @@ import ngFileUpload from 'ng-file-upload';
 import angularJwt from 'angular-jwt';
 import d3 from 'd3/d3';
 import uiBootstrap from 'angular-ui-bootstrap';
+import uiRouter from 'angular-ui-router';
 import toastr from 'angular-toastr';
 
 import {configuration} from './config';
@@ -38,8 +39,8 @@ angular
         'ngAnimate',
         'ngMessages',
         uiBootstrap,
+        uiRouter,
         'ui.ace',
-        'ui.router',
         'n3-line-chart',
         'selectionModel',
         toastr,

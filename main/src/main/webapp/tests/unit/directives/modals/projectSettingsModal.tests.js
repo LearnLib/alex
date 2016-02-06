@@ -4,26 +4,22 @@ import {ProjectSettingsModalController} from '../../../../app/modules/directives
 
 
 describe('ProjectSettingsModalController', () => {
-    let ProjectResource;
-    let $controller;
-    let EventBus;
-    let ToastService;
-    let scope;
+    let ProjectResource, LearnerResource, $controller, EventBus, ToastService, scope, $uibModal, $compile, $q;
 
-    let controller;
-    let project;
-    let modalInstance;
-    let deferred;
+    let controller, project, modalInstance, deferred, element;
 
     beforeEach(angular.mock.module('ALEX'));
-    beforeEach(angular.mock.inject((_$controller_, $rootScope, _ProjectResource_, _EventBus_,
-                       _ToastService_, _$q_) => {
+    beforeEach(angular.mock.inject(($injector) => {
 
-        scope = $rootScope.$new();
-        ProjectResource = _ProjectResource_;
-        $controller = _$controller_;
-        EventBus = _EventBus_;
-        ToastService = _ToastService_;
+        scope = $injector.get('$rootScope').$new();
+        ProjectResource = $injector.get('ProjectResource');
+        LearnerResource = $injector.get('LearnerResource');
+        $controller = $injector.get('$controller');
+        EventBus = $injector.get('EventBus');
+        ToastService = $injector.get('ToastService');
+        $uibModal = $injector.get('$uibModal');
+        $compile = $injector.get('$compile');
+        $q = $injector.get('$q');
 
         modalInstance = {
             close: jasmine.createSpy('modalInstance.close'),
@@ -34,7 +30,7 @@ describe('ProjectSettingsModalController', () => {
         };
 
         project = new Project(ENTITIES.projects[0]);
-        deferred = _$q_.defer();
+        deferred = $q.defer();
     }));
 
     afterEach(() => {
@@ -49,6 +45,25 @@ describe('ProjectSettingsModalController', () => {
             ToastService: ToastService,
             EventBus: EventBus
         });
+
+        $uibModal.open({
+            templateUrl: 'views/modals/project-settings-modal.html',
+            controller: () => controller,
+            controllerAs: 'vm',
+            resolve: {
+                modalData: function () {
+                    return {project: new Project(project)};
+                }
+            }
+        });
+
+        scope.$digest();
+    }
+
+    function createElement() {
+        element = angular.element("<button project-settings-modal-handle project='project'>asd</button>");
+        scope.project = project;
+        $compile(element)(scope);
     }
 
     it('should initialize the controller correctly', () => {
@@ -94,4 +109,34 @@ describe('ProjectSettingsModalController', () => {
         expect(ProjectResource.update).toHaveBeenCalledWith(controller.project);
         expect(controller.error).toEqual(message);
     });
+
+    it('should open the modal on click', () => {
+        spyOn($uibModal, 'open').and.callThrough();
+
+        const deferred = $q.defer();
+        spyOn(LearnerResource, 'isActive').and.returnValue(deferred.promise);
+        deferred.resolve({active: false});
+
+        createElement();
+        element[0].click();
+        scope.$digest();
+
+        expect(LearnerResource.isActive).toHaveBeenCalled();
+        expect($uibModal.open).toHaveBeenCalled();
+    });
+
+    it('should not open the modal if the learner is active', () => {
+        spyOn($uibModal, 'open').and.callThrough();
+
+        const deferred = $q.defer();
+        spyOn(LearnerResource, 'isActive').and.returnValue(deferred.promise);
+        deferred.resolve({active: true, project: project.id});
+
+        createElement();
+        element[0].click();
+        scope.$digest();
+
+        expect(LearnerResource.isActive).toHaveBeenCalled();
+        expect($uibModal.open).not.toHaveBeenCalled();
+    })
 });

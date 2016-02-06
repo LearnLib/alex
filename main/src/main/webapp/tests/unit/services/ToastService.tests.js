@@ -1,58 +1,42 @@
 describe('ToastService', () => {
     let ToastService;
     let scope;
-    let ngToast;
+    let toastr;
 
     beforeEach(angular.mock.module('ALEX'));
-    beforeEach(angular.mock.inject((_$rootScope_, _ToastService_, _ngToast_) => {
-        ToastService = _ToastService_;
-        scope = _$rootScope_.$new();
-        ngToast = _ngToast_;
-
-        spyOn(ngToast, 'create').and.callThrough();
+    beforeEach(angular.mock.inject(($injector) => {
+        ToastService = $injector.get('ToastService');
+        scope = $injector.get('$rootScope').$new();
+        toastr = $injector.get('toastr');
     }));
 
-    it('should correctly instantiate the ToastService', () => {
-        expect(ToastService.ngToast).toEqual(ngToast);
-    });
-
-    it('should create an arbitrary toast', () => {
-        ToastService.createToast('warning', 'message');
-        scope.$digest();
-        expect(ngToast.create).toHaveBeenCalledWith({
-            className: 'warning',
-            content: 'message',
-            dismissButton: true
-        });
-    });
-
     it('should create a success toast', () => {
+        spyOn(toastr, 'clear').and.callThrough();
+        spyOn(toastr, 'success').and.callThrough();
+
         ToastService.success('message');
         scope.$digest();
-        expect(ngToast.create).toHaveBeenCalledWith({
-            className: 'success',
-            content: 'message',
-            dismissButton: true
-        });
+        expect(toastr.clear).toHaveBeenCalled();
+        expect(toastr.success).toHaveBeenCalledWith('message');
     });
 
     it('should create a danger toast', () => {
+        spyOn(toastr, 'clear').and.callThrough();
+        spyOn(toastr, 'error').and.callThrough();
+
         ToastService.danger('message');
         scope.$digest();
-        expect(ngToast.create).toHaveBeenCalledWith({
-            className: 'danger',
-            content: 'message',
-            dismissButton: true
-        });
+        expect(toastr.clear).toHaveBeenCalled();
+        expect(toastr.error).toHaveBeenCalledWith('message');
     });
 
     it('should create am info toast', () => {
+        spyOn(toastr, 'clear').and.callThrough();
+        spyOn(toastr, 'info').and.callThrough();
+
         ToastService.info('message');
         scope.$digest();
-        expect(ngToast.create).toHaveBeenCalledWith({
-            className: 'info',
-            content: 'message',
-            dismissButton: true
-        });
+        expect(toastr.clear).toHaveBeenCalled();
+        expect(toastr.info).toHaveBeenCalledWith('message');
     })
 });

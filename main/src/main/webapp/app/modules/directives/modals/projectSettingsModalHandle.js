@@ -37,6 +37,9 @@ class ProjectSettingsModalController {
         this.ToastService = ToastService;
         this.EventBus = EventBus;
 
+        /** The form object */
+        this.form = null;
+
         /**
          * The project to edit
          * @type {Project}
