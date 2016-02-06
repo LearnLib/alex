@@ -27,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import javax.validation.ValidationException;
@@ -285,24 +284,6 @@ public class ProjectDAOImpl implements ProjectDAO {
             Collections.addAll(fieldsToLoad, embedFields);
         }
         return fieldsToLoad;
-    }
-
-    /**
-     * Checks if a project with the given project id exists.
-     *
-     * @param projectId
-     *         The project id to test.
-     * @return true if the a project exits, false otherwise.
-     */
-    public static boolean isProjectIdInvalid(long projectId) {
-        Session session = HibernateUtil.getSession();
-
-        Long projectCount = (Long) session.createCriteria(Project.class)
-                                          .add(Restrictions.eq("id", projectId))
-                                          .setProjection(Projections.rowCount())
-                                          .uniqueResult();
-
-        return projectCount == 0;
     }
 
 }
