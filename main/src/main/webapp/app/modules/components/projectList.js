@@ -80,11 +80,11 @@ const projectList = {
     template: `
         <div class="project-list">
             <div class="project-list-item" ng-if="vm.projects.length > 0" ng-repeat="project in vm.projects">
-                <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
-                    <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                <div class="btn-group btn-group-xs pull-right" uib-dropdown>
+                    <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle dropdown-hover>
                         <i class="fa fa-bars"></i>
                     </button>
-                    <ul class="dropdown-menu pull-left" role="menu">
+                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
                         <li>
                             <a href="" ng-click="vm.openProject(project)">
                                 <i class="fa fa-fw fa-external-link"></i> Open

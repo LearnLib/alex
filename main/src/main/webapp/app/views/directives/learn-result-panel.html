@@ -10,11 +10,11 @@
             <div ng-if="mode === modes.HYPOTHESIS">
 
                 <!-- menu -->
-                <div class="btn-group btn-group-sm" dropdown dropdown-hover>
-                    <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+                <div class="btn-group btn-group-sm" uib-dropdown>
+                    <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle dropdown-hover>
                         <i class="fa fa-bars"></i>
                     </button>
-                    <ul class="dropdown-menu pull-left" role="menu">
+                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
                         <li>
                             <a href="" learn-result-details-modal-handle result="result" current="pointer">
                                 <i class="fa fa-info fa-fw"></i> Details

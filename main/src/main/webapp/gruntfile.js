@@ -6,14 +6,11 @@ module.exports = function (grunt) {
         'node_modules/ace-builds/src/mode-json.js',
         'node_modules/angular/angular.js',
         'node_modules/angular-animate/angular-animate.js',
-        'node_modules/angular-bootstrap/ui-bootstrap.js',
-        'node_modules/angular-bootstrap/ui-bootstrap-tpls.js',
         'node_modules/angular-sanitize/angular-sanitize.js',
         'node_modules/angular-messages/angular-messages.js',
         'node_modules/angular-ui-ace/src/ui-ace.js',
         'node_modules/angular-ui-router/release/angular-ui-router.js',
         'node_modules/n3-charts/build/LineChart.js',
-        'node_modules/ng-toast/dist/ngToast.js',
         'node_modules/selection-model/dist/selection-model.js'
     ];
 
@@ -106,9 +103,9 @@ module.exports = function (grunt) {
                 target: {
                     files: {
                         'app/style.min.css': [
-                            'node_modules/ng-toast/dist/ngToast.min.css',
                             'node_modules/n3-charts/build/LineChart.css',
                             'node_modules/angular-dragula/dist/dragula.min.css',
+                            'node_modules/angular-toastr/dist/angular-toastr.min.css',
                             'app/style.css'
                         ]
                     }

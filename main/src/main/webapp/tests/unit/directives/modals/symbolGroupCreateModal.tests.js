@@ -46,7 +46,7 @@ describe('SymbolGroupCreateModalController', () => {
 
     function createController() {
         controller = $controller(SymbolGroupCreateModalController, {
-            $modalInstance: modalInstance,
+            $uibModalInstance: modalInstance,
             SessionService: SessionService,
             SymbolGroupResource: SymbolGroupResource,
             ToastService: ToastService,

@@ -39,7 +39,7 @@ describe('ActionCreateModalController', () => {
 
     function createController() {
         controller = $controller(ActionCreateModalController, {
-            $modalInstance: modalInstance,
+            $uibModalInstance: modalInstance,
             ActionService: ActionService,
             SymbolResource: SymbolResource,
             SessionService: SessionService,

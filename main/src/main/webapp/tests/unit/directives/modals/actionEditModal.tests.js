@@ -41,7 +41,7 @@ describe('ActionEditModalController', () => {
 
     function createController() {
         controller = $controller(ActionEditModalController, {
-            $modalInstance: modalInstance,
+            $uibModalInstance: modalInstance,
             modalData: modalData,
             ActionService: ActionService,
             SymbolResource: SymbolResource,

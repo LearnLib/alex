@@ -22,14 +22,14 @@ describe('ConfirmDialogController', () => {
 
     function createController(txt) {
         controller = $controller(ConfirmDialogController, {
-            $modalInstance: modalInstance,
+            $uibModalInstance: modalInstance,
             modalData: {text: txt}
         });
     }
 
     it('should initialize the controller correctly', () => {
         createController();
-        expect(controller.$modalInstance).toEqual(modalInstance);
+        expect(controller.$uibModalInstance).toEqual(modalInstance);
         expect(controller.text).toEqual(null);
     });
 

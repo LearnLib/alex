@@ -26,14 +26,14 @@ class LearnSetupSettingsModalController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      * @param ToastService
      * @param EventBus
      * @param EqOracleService
      */
-    constructor($modalInstance, modalData, ToastService, EventBus, EqOracleService) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, modalData, ToastService, EventBus, EqOracleService) {
+        this.$uibModalInstance = $uibModalInstance;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
         this.EqOracleService = EqOracleService;
@@ -76,12 +76,12 @@ class LearnSetupSettingsModalController {
         this.EventBus.emit(events.LEARN_CONFIG_UPDATED, {
             learnConfiguration: this.learnConfiguration
         });
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 
     /** Close the modal dialog. */
     close() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -92,11 +92,11 @@ class LearnSetupSettingsModalController {
  *
  * Attribute 'learnConfiguration' should be the model with a LearnConfiguration object instance.
  *
- * @param $modal - The ui.boostrap $modal service
+ * @param $uibModal - The ui.boostrap $modal service
  * @returns {{restrict: string, scope: {learnConfiguration: string}, link: link}}
  */
 // @ngInject
-function learnSetupSettingsModalHandle($modal) {
+function learnSetupSettingsModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -107,7 +107,7 @@ function learnSetupSettingsModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/learn-setup-settings-modal.html',
                 controller: LearnSetupSettingsModalController,
                 controllerAs: 'vm',

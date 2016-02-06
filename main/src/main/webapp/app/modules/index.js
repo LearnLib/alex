@@ -18,6 +18,8 @@ import angularDragula from 'angular-dragula';
 import ngFileUpload from 'ng-file-upload';
 import angularJwt from 'angular-jwt';
 import d3 from 'd3/d3';
+import uiBootstrap from 'angular-ui-bootstrap';
+import toastr from 'angular-toastr';
 
 import {configuration} from './config';
 import {routes} from './routes';
@@ -35,12 +37,12 @@ angular
         // modules from external libraries
         'ngAnimate',
         'ngMessages',
-        'ui.bootstrap',
+        uiBootstrap,
         'ui.ace',
         'ui.router',
-        'ngToast',
         'n3-line-chart',
         'selectionModel',
+        toastr,
         angularJwt,
         ngFileUpload,
         angularDragula(angular),

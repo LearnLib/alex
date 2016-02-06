@@ -26,11 +26,11 @@ class LearnResultDetailsModalController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      */
-    constructor($modalInstance, modalData) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, modalData) {
+        this.$uibModalInstance = $uibModalInstance;
 
         /**
          * The result to display information from
@@ -61,7 +61,7 @@ class LearnResultDetailsModalController {
 
     /** Close the modal window  */
     ok() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -73,11 +73,11 @@ class LearnResultDetailsModalController {
  *
  * Use it like this: '<button learn-result-details-modal-handle result="...">Click me!</button>'
  *
- * @param $modal - The modal service
+ * @param $uibModal - The modal service
  * @returns {{restrict: string, scope: {result: string}, link: link}}
  */
 // @ngInject
-function learnResultDetailsModalHandle($modal) {
+function learnResultDetailsModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -89,7 +89,7 @@ function learnResultDetailsModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/learn-result-details-modal.html',
                 controller: LearnResultDetailsModalController,
                 controllerAs: 'vm',

@@ -23,14 +23,14 @@ class SymbolGroupCreateModalController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param SessionService
      * @param SymbolGroupResource
      * @param ToastService
      * @param EventBus
      */
-    constructor($modalInstance, SessionService, SymbolGroupResource, ToastService, EventBus) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, SessionService, SymbolGroupResource, ToastService, EventBus) {
+        this.$uibModalInstance = $uibModalInstance;
         this.SymbolGroupResource = SymbolGroupResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
@@ -65,7 +65,7 @@ class SymbolGroupCreateModalController {
                 this.EventBus.emit(events.GROUP_CREATED, {
                     group: createdGroup
                 });
-                this.$modalInstance.dismiss();
+                this.$uibModalInstance.dismiss();
             })
             .catch(response => {
                 this.errorMsg = response.data.message;
@@ -74,7 +74,7 @@ class SymbolGroupCreateModalController {
 
     /** Close the modal. */
     close() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -85,11 +85,11 @@ class SymbolGroupCreateModalController {
  *
  * Use: '<button symbol-group-create-modal-handle>Click Me!</button>'
  *
- * @param $modal - The ui.bootstrap $modal service
+ * @param $uibModal - The ui.bootstrap $modal service
  * @returns {{restrict: string, link: link}}
  */
 // @ngInject
-function symbolGroupCreateModalHandle($modal) {
+function symbolGroupCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
         link: link
@@ -97,7 +97,7 @@ function symbolGroupCreateModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/symbol-group-create-modal.html',
                 controller: SymbolGroupCreateModalController,
                 controllerAs: 'vm'

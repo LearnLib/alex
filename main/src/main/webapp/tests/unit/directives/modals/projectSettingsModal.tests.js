@@ -43,7 +43,7 @@ describe('ProjectSettingsModalController', () => {
 
     function createController() {
         controller = $controller(ProjectSettingsModalController, {
-            $modalInstance: modalInstance,
+            $uibModalInstance: modalInstance,
             modalData: {project: project},
             ProjectResource: ProjectResource,
             ToastService: ToastService,

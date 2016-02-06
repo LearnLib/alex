@@ -14,29 +14,16 @@
  * limitations under the License.
  */
 
-/** A service that is used as a wrapper around the ngToast module. */
+/** A service that is used as a wrapper around the toastr module. */
 // @ngInject
 class ToastService {
 
     /**
      * Constructor
-     * @param ngToast - The ngToast service
+     * @param toastr - The toastr service
      */
-    constructor(ngToast) {
-        this.ngToast = ngToast;
-    }
-
-    /**
-     * Creates a toast message.
-     * @param {string} type - a bootstrap alert class type: 'success', 'error', 'info' etc.
-     * @param {string} message - The message to display
-     */
-    createToast(type, message) {
-        this.ngToast.create({
-            className: type,
-            content: message,
-            dismissButton: true
-        });
+    constructor(toastr) {
+        this.toastr = toastr;
     }
 
     /**
@@ -44,7 +31,8 @@ class ToastService {
      * @param {String} message - The message to display
      */
     success(message) {
-        this.createToast('success', message);
+        this.toastr.clear();
+        this.toastr.success(message);
     }
 
     /**
@@ -52,7 +40,8 @@ class ToastService {
      * @param {String} message - The message display
      */
     danger(message) {
-        this.createToast('danger', message);
+        this.toastr.clear();
+        this.toastr.error(message);
     }
 
     /**
@@ -60,7 +49,8 @@ class ToastService {
      * @param {String} message - The message to display
      */
     info(message) {
-        this.createToast('info', message);
+        this.toastr.clear();
+        this.toastr.info(message);
     }
 }
 

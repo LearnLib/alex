@@ -40,7 +40,7 @@ describe('SymbolGroupEditModalController', () => {
 
     function createController() {
         controller = $controller(SymbolGroupEditModalController, {
-            $modalInstance: modalInstance,
+            $uibModalInstance: modalInstance,
             modalData: {group: group},
             SymbolGroupResource: SymbolGroupResource,
             ToastService: ToastService,

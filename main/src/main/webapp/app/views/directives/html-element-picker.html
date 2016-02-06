@@ -6,7 +6,7 @@
                 <form ng-submit="loadUrl()">
                     <div class="form-group">
                         <div class="input-group">
-                            <div class="input-group-addon" tooltip-placement="right" tooltip="{{project.baseUrl}}">
+                            <div class="input-group-addon" tooltip-placement="right" uib-tooltip="{{project.baseUrl}}">
                                 ...
                             </div>
                             <input type="text" class="form-control" ng-model="url" placeholder="URL"/>
@@ -22,7 +22,7 @@
                 <div class="btn-group">
                     <button class="btn btn-default" ng-click="toggleSelection()"
                             tooltip-placement="right"
-                            tooltip="{{isSelectable ? 'Disable selection' : 'Enable selection'}}">
+                            uib-tooltip="{{isSelectable ? 'Disable selection' : 'Enable selection'}}">
                         <i class="fa fa-fw" ng-class="isSelectable ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
                     </button>
                 </div>

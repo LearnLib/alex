@@ -26,14 +26,14 @@ class SymbolGroupEditModalController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      * @param SymbolGroupResource
      * @param ToastService
      * @param EventBus
      */
-    constructor($modalInstance, modalData, SymbolGroupResource, ToastService, EventBus) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, modalData, SymbolGroupResource, ToastService, EventBus) {
+        this.$uibModalInstance = $uibModalInstance;
         this.SymbolGroupResource = SymbolGroupResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
@@ -62,7 +62,7 @@ class SymbolGroupEditModalController {
                 this.EventBus.emit(events.GROUP_UPDATED, {
                     group: updatedGroup
                 });
-                this.$modalInstance.dismiss();
+                this.$uibModalInstance.dismiss();
             })
             .catch(response => {
                 this.errorMsg = response.data.message;
@@ -79,7 +79,7 @@ class SymbolGroupEditModalController {
                 this.EventBus.emit(events.GROUP_DELETED, {
                     group: this.group
                 });
-                this.$modalInstance.dismiss();
+                this.$uibModalInstance.dismiss();
             })
             .catch(response => {
                 this.errorMsg = response.data.message;
@@ -88,7 +88,7 @@ class SymbolGroupEditModalController {
 
     /** Closes the modal dialog */
     close() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -101,11 +101,11 @@ class SymbolGroupEditModalController {
  *
  * Use: '<button symbol-group-edit-modal group="..." on-updated="..." on-deleted="...">Click Me!</button>'
  *
- * @param $modal - The ui.bootstrap $modal service
+ * @param $uibModal - The ui.bootstrap $modal service
  * @returns {{scope: {group: string}, link: link}}
  */
 // @ngInject
-function symbolGroupEditModalHandle($modal) {
+function symbolGroupEditModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -116,7 +116,7 @@ function symbolGroupEditModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/symbol-group-edit-modal.html',
                 controller: SymbolGroupEditModalController,
                 controllerAs: 'vm',

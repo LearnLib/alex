@@ -23,15 +23,15 @@ class SymbolCreateModalController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param SymbolResource
      * @param SymbolGroupResource
      * @param ToastService
      * @param SessionService
      * @param EventBus
      */
-    constructor($modalInstance, SymbolResource, SymbolGroupResource, ToastService, SessionService, EventBus) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, SymbolResource, SymbolGroupResource, ToastService, SessionService, EventBus) {
+        this.$uibModalInstance = $uibModalInstance;
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
@@ -105,7 +105,7 @@ class SymbolCreateModalController {
      */
     createSymbol() {
         this.createSymbolAndContinue().then(() => {
-            this.$modalInstance.dismiss();
+            this.$uibModalInstance.dismiss();
         });
     }
 
@@ -113,7 +113,7 @@ class SymbolCreateModalController {
      * Closes the modal dialog
      */
     close() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -126,11 +126,11 @@ class SymbolCreateModalController {
  * project and an attribute 'on-created' which expects a callback function from the directives parent controller.
  * The callback function should have one parameter that will be the newly created symbol.
  *
- * @param $modal - The $modal service
+ * @param $uibModal - The $modal service
  * @returns {{restrict: string, scope: {}, link: link}}
  */
 // @ngInject
-function symbolCreateModalHandle($modal) {
+function symbolCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {},
@@ -139,7 +139,7 @@ function symbolCreateModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/symbol-create-modal.html',
                 controller: SymbolCreateModalController,
                 controllerAs: 'vm'

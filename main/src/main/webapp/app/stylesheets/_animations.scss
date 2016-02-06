@@ -13,18 +13,6 @@
   }
 }
 
-@keyframes toastSlideIn {
-  from {
-    margin-bottom: -200px;
-  }
-}
-
-@keyframes toastSlideOut {
-  to {
-    margin-bottom: -200px;
-  }
-}
-
 .animate-view {
   &.ng-enter, &.ng-leave {
     @include position(absolute, 0, 0, 0, 0);
@@ -39,14 +27,5 @@
   &.ng-leave {
     animation: fadeOut .15s both ease-in;
     z-index: 9999;
-  }
-}
-
-.animate-toast {
-  &.ng-enter {
-    animation: toastSlideIn .35s both ease-in;
-  }
-  &.ng-leave {
-    animation: toastSlideOut .35s both ease-in;
   }
 }

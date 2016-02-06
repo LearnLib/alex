@@ -11,6 +11,23 @@
   box-sizing: border-box;
 }
 
+#toast-container {
+  margin-bottom: 40px;
+  left: $sidebar-width / 2;
+}
+
+.toast-success {
+  background-color: $brand-success;
+}
+
+.toast-info {
+  background-color: $brand-info;
+}
+
+.toast-error {
+  background-color: $brand-danger;
+}
+
 body {
   overflow-x: hidden;
 
@@ -20,9 +37,12 @@ body {
       left: 0;
     }
 
-    #load-screen,
-    .ng-toast {
+    #load-screen {
       left: $sidebar-width-collapsed;
+    }
+
+    #toast-container {
+      left: $sidebar-width-collapsed / 2
     }
 
     .view,
@@ -212,21 +232,6 @@ body {
 
 .as-sortable-hidden {
   display: none !important;
-}
-
-// ng-toast
-.ng-toast {
-  transition: left 200ms;
-  left: $sidebar-width;
-  width: auto;
-  right: 0;
-
-  .alert {
-    margin-bottom: 40px;
-    border-radius: 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-    width: 450px;
-  }
 }
 
 /* Bootstrap Extensions & Modifications

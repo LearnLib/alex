@@ -22,15 +22,15 @@ class ActionEditModalController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      * @param ActionService
      * @param SymbolResource
      * @param SessionService
      * @param EventBus
      */
-    constructor($modalInstance, modalData, ActionService, SymbolResource, SessionService, EventBus) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, modalData, ActionService, SymbolResource, SessionService, EventBus) {
+        this.$uibModalInstance = $uibModalInstance;
         this.ActionService = ActionService;
         this.EventBus = EventBus;
 
@@ -58,12 +58,12 @@ class ActionEditModalController {
     /** Close the modal dialog and pass the updated action to the handle that called it */
     updateAction() {
         this.EventBus.emit(events.ACTION_UPDATED, {action: this.action});
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 
     /** Close the modal dialog without passing any data */
     closeModal() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -78,12 +78,12 @@ class ActionEditModalController {
  *
  * Can be used like this: '<button action-edit-modal-handle action="...">Click Me!</button>'
  *
- * @param $modal - The modal service
+ * @param $uibModal - The modal service
  * @param ActionService - ActionService
  * @returns {{restrict: string, scope: {action: string}, link: link}}
  */
 // @ngInject
-function actionEditModalHandle($modal, ActionService) {
+function actionEditModalHandle($uibModal, ActionService) {
     return {
         restrict: 'A',
         scope: {
@@ -94,7 +94,7 @@ function actionEditModalHandle($modal, ActionService) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/action-edit-modal.html',
                 controller: ActionEditModalController,
                 controllerAs: 'vm',

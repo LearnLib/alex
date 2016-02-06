@@ -25,14 +25,14 @@ class ProjectSettingsModalController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      * @param ProjectResource
      * @param ToastService
      * @param EventBus
      */
-    constructor($modalInstance, modalData, ProjectResource, ToastService, EventBus) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, modalData, ProjectResource, ToastService, EventBus) {
+        this.$uibModalInstance = $uibModalInstance;
         this.ProjectResource = ProjectResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
@@ -58,7 +58,7 @@ class ProjectSettingsModalController {
             .then(updatedProject => {
                 this.ToastService.success('Project updated');
                 this.EventBus.emit(events.PROJECT_UPDATED, {project: updatedProject});
-                this.$modalInstance.dismiss();
+                this.$uibModalInstance.dismiss();
 
                 // set the form to its original state
                 this.form.$setPristine();
@@ -71,13 +71,13 @@ class ProjectSettingsModalController {
 
     /** Closes the modal window */
     close () {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
 
 // @ngInject
-function projectSettingsModalHandle($modal, LearnerResource, ToastService) {
+function projectSettingsModalHandle($uibModal, LearnerResource, ToastService) {
     return {
         restrict: 'A',
         scope: {
@@ -96,7 +96,7 @@ function projectSettingsModalHandle($modal, LearnerResource, ToastService) {
                     if (data.active && data.project === scope.project.id) {
                         ToastService.info('You cannot edit this project because a learning process is still active.');
                     } else {
-                        $modal.open({
+                        $uibModal.open({
                             templateUrl: 'views/modals/project-settings-modal.html',
                             controller: ProjectSettingsModalController,
                             controllerAs: 'vm',

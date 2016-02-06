@@ -20,11 +20,11 @@ class PromptDialogController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      */
-    constructor($modalInstance, modalData) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, modalData) {
+        this.$uibModalInstance = $uibModalInstance;
 
         /** The model for the input field for the user input **/
         this.userInput = null;
@@ -38,12 +38,12 @@ class PromptDialogController {
 
     /** Close the modal dialog and pass the user input */
     ok() {
-        this.$modalInstance.close(this.userInput);
+        this.$uibModalInstance.close(this.userInput);
     }
 
     /** Close the modal dialog */
     close() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -54,11 +54,11 @@ class ConfirmDialogController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      */
-    constructor($modalInstance, modalData) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, modalData) {
+        this.$uibModalInstance = $uibModalInstance;
 
         /**
          * The text to display
@@ -69,12 +69,12 @@ class ConfirmDialogController {
 
     /** Close the modal dialog */
     ok() {
-        this.$modalInstance.close();
+        this.$uibModalInstance.close();
     }
 
     /** Close the modal dialog */
     close() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -85,10 +85,10 @@ class PromptService {
 
     /**
      * Constructor
-     * @param $modal
+     * @param $uibModal
      */
-    constructor($modal) {
-        this.$modal = $modal;
+    constructor($uibModal) {
+        this.$uibModal = $uibModal;
     }
 
     /**
@@ -98,7 +98,7 @@ class PromptService {
      * @return {*} - The modal result promise
      */
     prompt(text) {
-        return this.$modal.open({
+        return this.$uibModal.open({
             templateUrl: 'views/modals/prompt-dialog.html',
             controller: PromptDialogController,
             controllerAs: 'vm',
@@ -119,7 +119,7 @@ class PromptService {
      * @returns {*} - The modal result promise
      */
     confirm(text) {
-        return this.$modal.open({
+        return this.$uibModal.open({
             templateUrl: 'views/modals/confirm-dialog.html',
             controller: ConfirmDialogController,
             controllerAs: 'vm',

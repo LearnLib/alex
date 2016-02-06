@@ -25,14 +25,14 @@ class SymbolEditModalController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      * @param SymbolResource
      * @param ToastService
      * @param EventBus
      */
-    constructor($modalInstance, modalData, SymbolResource, ToastService, EventBus) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, modalData, SymbolResource, ToastService, EventBus) {
+        this.$uibModalInstance = $uibModalInstance;
         this.modalData = modalData;
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
@@ -67,7 +67,7 @@ class SymbolEditModalController {
                 newSymbol: this.symbol,
                 oldSymbol: this.symbolCopy
             });
-            this.$modalInstance.dismiss();
+            this.$uibModalInstance.dismiss();
             return;
         }
 
@@ -76,7 +76,7 @@ class SymbolEditModalController {
             .then(updatedSymbol => {
                 this.ToastService.success('Symbol updated');
                 this.EventBus.emit(events.SYMBOL_UPDATED, {symbol: updatedSymbol});
-                this.$modalInstance.dismiss();
+                this.$uibModalInstance.dismiss();
             })
             .catch(response => {
                 this.errorMsg = response.data.message;
@@ -85,7 +85,7 @@ class SymbolEditModalController {
 
     /** Close the modal dialog */
     close() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -95,11 +95,11 @@ class SymbolEditModalController {
  *
  * Use it as an attribute like 'symbol-edit-modal-handle'
  *
- * @param $modal - The $modal service
+ * @param $uibModal - The $modal service
  * @returns {{restrict: string, scope: {symbol: string, updateOnServer: string}, link: link}}
  */
 // @ngInject
-function symbolEditModalHandle($modal) {
+function symbolEditModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -111,7 +111,7 @@ function symbolEditModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/symbol-edit-modal.html',
                 controller: SymbolEditModalController,
                 controllerAs: 'vm',

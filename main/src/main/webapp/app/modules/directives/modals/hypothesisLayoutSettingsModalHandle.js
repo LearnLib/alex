@@ -22,12 +22,12 @@ class HypothesisLayoutSettingsController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      * @param EventBus
      */
-    constructor($modalInstance, modalData, EventBus) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, modalData, EventBus) {
+        this.$uibModalInstance = $uibModalInstance;
         this.EventBus = EventBus;
 
         /**
@@ -57,7 +57,7 @@ class HypothesisLayoutSettingsController {
 
     /** Closes the modal window */
     close() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 
     /** Sets the layout settings to its default values */
@@ -78,11 +78,11 @@ class HypothesisLayoutSettingsController {
  *
  * Use: '<button hypothesis-layout-settings-modal-handle layout-settings="...">Click Me!</button>'
  *
- * @param $modal - The ui.boostrap $modal service
+ * @param $uibModal - The ui.boostrap $modal service
  * @returns {{restrict: string, scope: {layoutSettings: string}, link: link}}
  */
 // @ngInject
-function hypothesisLayoutSettingsModalHandle($modal) {
+function hypothesisLayoutSettingsModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -93,7 +93,7 @@ function hypothesisLayoutSettingsModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/hypothesis-layout-settings-modal.html',
                 controller: HypothesisLayoutSettingsController,
                 controllerAs: 'vm',

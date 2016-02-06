@@ -1,14 +1,14 @@
 import {PromptService, PromptDialogController, ConfirmDialogController} from '../../../app/modules/services/PromptService';
 
 describe('PromptService', () => {
-    let PromptService, $modal, $controller, $rootScope;
+    let PromptService, $uibModal, $controller, $rootScope;
     let promptCtrl, confirmCtrl;
     let modalInstance;
 
     beforeEach(angular.mock.module('ALEX'));
     beforeEach(angular.mock.inject(($injector) => {
         PromptService = $injector.get('PromptService');
-        $modal = $injector.get('$modal');
+        $uibModal = $injector.get('$uibModal');
         $controller = $injector.get('$controller');
         $rootScope = $injector.get('$rootScope');
 
@@ -23,31 +23,31 @@ describe('PromptService', () => {
         };
 
         promptCtrl = $controller(PromptDialogController, {
-            $modalInstance: modalInstance,
+            $uibModalInstance: modalInstance,
             modalData: {text: 'test text'}
         });
 
         confirmCtrl = $controller(ConfirmDialogController, {
-            $modalInstance: modalInstance,
+            $uibModalInstance: modalInstance,
             modalData: {text: 'test text'}
         });
     }));
 
     it('should open a prompt dialog', () => {
-        spyOn($modal, 'open').and.callThrough();
+        spyOn($uibModal, 'open').and.callThrough();
 
         const result = PromptService.prompt();
 
-        expect($modal.open).toHaveBeenCalled();
+        expect($uibModal.open).toHaveBeenCalled();
         expect(result.then).toBeDefined();
     });
 
     it('should should open a conform dialog', () => {
-        spyOn($modal, 'open').and.callThrough();
+        spyOn($uibModal, 'open').and.callThrough();
 
         const result = PromptService.confirm();
 
-        expect($modal.open).toHaveBeenCalled();
+        expect($uibModal.open).toHaveBeenCalled();
         expect(result.then).toBeDefined();
     });
 

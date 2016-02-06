@@ -25,7 +25,7 @@ class SymbolMoveModalController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      * @param SymbolResource
      * @param SymbolGroupResource
@@ -33,10 +33,10 @@ class SymbolMoveModalController {
      * @param ToastService
      * @param EventBus
      */
-    constructor($modalInstance, modalData, SymbolResource, SymbolGroupResource, SessionService, ToastService,
+    constructor($uibModalInstance, modalData, SymbolResource, SymbolGroupResource, SessionService, ToastService,
                 EventBus) {
 
-        this.$modalInstance = $modalInstance;
+        this.$uibModalInstance = $uibModalInstance;
         this.SymbolResource = SymbolResource;
         this.modalData = modalData;
         this.ToastService = ToastService;
@@ -85,7 +85,7 @@ class SymbolMoveModalController {
                         symbols: this.symbols,
                         group: this.selectedGroup
                     });
-                    this.$modalInstance.dismiss();
+                    this.$uibModalInstance.dismiss();
                 })
                 .catch(response => {
                     this.ToastService.danger('<p><strong>Moving symbols failed</strong></p>' + response.data.message);
@@ -103,7 +103,7 @@ class SymbolMoveModalController {
 
     /** Close the modal dialog */
     close() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -114,11 +114,11 @@ class SymbolMoveModalController {
  *
  * Use: '<button symbol-move-modal-handle symbols="...">Click Me!</button>'
  *
- * @param $modal - The ui.bootstrap $modal service
+ * @param $uibModal - The ui.bootstrap $modal service
  * @returns {{scope: {symbols: string}, link: link}}
  */
 // @ngInject
-function symbolMoveModalHandle($modal) {
+function symbolMoveModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -129,7 +129,7 @@ function symbolMoveModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/symbol-move-modal.html',
                 controller: SymbolMoveModalController,
                 controllerAs: 'vm',

@@ -27,7 +27,7 @@ class UserEditModalController {
     /**
      * Constructor
      * @param $state
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param modalData
      * @param {UserResource} UserResource
      * @param {ToastService} ToastService
@@ -35,9 +35,9 @@ class UserEditModalController {
      * @param {EventBus} EventBus
      * @param {SessionService} SessionService
      */
-    constructor($state, $modalInstance, modalData, UserResource, ToastService, PromptService, EventBus, SessionService) {
+    constructor($state, $uibModalInstance, modalData, UserResource, ToastService, PromptService, EventBus, SessionService) {
         this.$state = $state;
-        this.$modalInstance = $modalInstance;
+        this.$uibModalInstance = $uibModalInstance;
         this.UserResource = UserResource;
         this.ToastService = ToastService;
         this.PromptService = PromptService;
@@ -81,7 +81,7 @@ class UserEditModalController {
                     this.SessionService.saveUser(user);
                 }
                 this.EventBus.emit(events.USER_UPDATED, {user: user});
-                this.$modalInstance.dismiss();
+                this.$uibModalInstance.dismiss();
                 this.ToastService.success('The email has been changed.');
             })
             .catch(response => {
@@ -98,7 +98,7 @@ class UserEditModalController {
             .then((user) => {
                 this.EventBus.emit(events.USER_UPDATED, {user: user});
                 this.ToastService.success('The user now has admin rights.');
-                this.$modalInstance.dismiss();
+                this.$uibModalInstance.dismiss();
             })
             .catch(response => {
                 this.error = response.data.message;
@@ -120,7 +120,7 @@ class UserEditModalController {
                 } else {
                     this.EventBus.emit(events.USER_UPDATED, {user: user});
                 }
-                this.$modalInstance.dismiss();
+                this.$uibModalInstance.dismiss();
                 this.ToastService.success('The user now has default user rights.');
             })
             .catch(response => {
@@ -139,7 +139,7 @@ class UserEditModalController {
                     .then(() => {
                         this.EventBus.emit(events.USER_DELETED, {user: this.user});
                         this.ToastService.success('The user has been deleted');
-                        this.$modalInstance.dismiss();
+                        this.$uibModalInstance.dismiss();
                     })
                     .catch(response => {
                         this.error = response.data.message;
@@ -151,7 +151,7 @@ class UserEditModalController {
      * Closes the modal window.
      */
     close() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -163,11 +163,11 @@ class UserEditModalController {
  * Usage: <a href="" user-edit-modal-handle user="..."></a>
  * where attribute 'user' expects a user object
  *
- * @param $modal
+ * @param $uibModal
  * @returns {{scope: {user: string}, restrict: string, link: link}}
  */
 // @ngInject
-function userEditModalHandle($modal) {
+function userEditModalHandle($uibModal) {
     return {
         scope: {
             user: '='
@@ -178,7 +178,7 @@ function userEditModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/user-edit-modal.html',
                 controller: UserEditModalController,
                 controllerAs: 'vm',

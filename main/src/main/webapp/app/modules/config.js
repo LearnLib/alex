@@ -16,21 +16,13 @@
 
 /**
  * Configure some third party libraries and set the http interceptor to send the jwt with each request
- * @param ngToastProvider
+ * @param toastrConfig
  * @param selectionModelOptionsProvider
  * @param jwtInterceptorProvider
  * @param $httpProvider
  */
 // @ngInject
-function config(ngToastProvider, selectionModelOptionsProvider, jwtInterceptorProvider, $httpProvider) {
-
-    // configure ngToast toast position
-    ngToastProvider.configure({
-        verticalPosition: 'bottom',
-        horizontalPosition: 'center',
-        maxNumber: 1,
-        additionalClasses: 'animate-toast'
-    });
+function config(selectionModelOptionsProvider, jwtInterceptorProvider, $httpProvider, toastrConfig) {
 
     // default options for selection model
     selectionModelOptionsProvider.set({
@@ -38,6 +30,20 @@ function config(ngToastProvider, selectionModelOptionsProvider, jwtInterceptorPr
         selectedClass: 'selected',
         mode: 'multiple',
         cleanupStrategy: 'deselect'
+    });
+
+    // configure the toaster
+    angular.extend(toastrConfig, {
+        autoDismiss: false,
+        containerId: 'toast-container',
+        maxOpened: 1,
+        newestOnTop: true,
+        positionClass: 'toast-bottom-center',
+        preventDuplicates: false,
+        preventOpenDuplicates: false,
+        target: 'body',
+        allowHtml: true,
+        extendedTimeOut: 2000
     });
 
     // pass the jwt with each request to the server

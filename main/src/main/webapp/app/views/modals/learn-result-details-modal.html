@@ -36,8 +36,8 @@
     <h3>Statistics</h3>
     <hr>
 
-    <tabset justified="true">
-        <tab ng-repeat="tab in vm.tabs" heading="{{tab.heading}}">
+    <uib-tabset justified="true">
+        <uib-tab ng-repeat="tab in vm.tabs" heading="{{tab.heading}}">
 
             <div class="alert alert-condensed alert-danger" ng-show="tab.result.error">
                 <i class="fa fa-fw fa-warning"></i> <strong>This step failed:</strong>
@@ -90,8 +90,8 @@
 
             </table>
 
-        </tab>
-    </tabset>
+        </uib-tab>
+    </uib-tabset>
 
 </div>
 

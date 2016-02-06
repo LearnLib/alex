@@ -22,14 +22,14 @@ class ActionCreateModalController {
 
     /**
      * Constructor
-     * @param $modalInstance
+     * @param $uibModalInstance
      * @param ActionService
      * @param SymbolResource
      * @param SessionService
      * @param EventBus
      */
-    constructor($modalInstance, ActionService, SymbolResource, SessionService, EventBus) {
-        this.$modalInstance = $modalInstance;
+    constructor($uibModalInstance, ActionService, SymbolResource, SessionService, EventBus) {
+        this.$uibModalInstance = $uibModalInstance;
         this.ActionService = ActionService;
         this.EventBus = EventBus;
 
@@ -64,7 +64,7 @@ class ActionCreateModalController {
     /** Closes the modal dialog an passes the created action back to the handle that called the modal */
     createAction() {
         this.EventBus.emit(events.ACTION_CREATED, {action: this.action});
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 
     /** Creates a new action in the background without closing the dialog */
@@ -75,7 +75,7 @@ class ActionCreateModalController {
 
     /** Closes the modal dialog without passing any data */
     closeModal() {
-        this.$modalInstance.dismiss();
+        this.$uibModalInstance.dismiss();
     }
 }
 
@@ -87,11 +87,11 @@ class ActionCreateModalController {
  *
  * Can be used like this: '<button action-create-modal-handle>Click Me!</button>'
  *
- * @param $modal - The modal service
+ * @param $uibModal - The modal service
  * @returns {{restrict: string, scope: {}, link: link}}
  */
 // @ngInject
-function actionCreateModalHandle($modal) {
+function actionCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {},
@@ -100,7 +100,7 @@ function actionCreateModalHandle($modal) {
 
     function link(scope, el) {
         el.on('click', () => {
-            $modal.open({
+            $uibModal.open({
                 templateUrl: 'views/modals/action-create-modal.html',
                 size: 'lg',
                 controller: ActionCreateModalController,

@@ -14,11 +14,11 @@
         <div class="row">
             <div class="col-xs-4">
 
-                <accordion close-others="true" class="action-types-accordion">
-                    <accordion-group>
-                        <accordion-heading>
+                <uib-accordion close-others="true" class="action-types-accordion">
+                    <uib-accordion-group>
+                        <uib-accordion-heading>
                             <div><strong>Web</strong></div>
-                        </accordion-heading>
+                        </uib-accordion-heading>
 
                         <a href="" ng-click="vm.selectNewActionType('web_clear')">Clear input</a>
                         <a href="" ng-click="vm.selectNewActionType('web_click')">Click element</a>
@@ -32,12 +32,12 @@
                         <a href="" ng-click="vm.selectNewActionType('web_select')">Select from list</a>
                         <a href="" ng-click="vm.selectNewActionType('web_waitForTitle')">Wait for the title</a>
                         <a href="" ng-click="vm.selectNewActionType('web_waitForNode')">Wait for an element</a>
-                    </accordion-group>
+                    </uib-accordion-group>
 
-                    <accordion-group>
-                        <accordion-heading>
+                    <uib-accordion-group>
+                        <uib-accordion-heading>
                             <div><strong>REST</strong></div>
-                        </accordion-heading>
+                        </uib-accordion-heading>
 
                         <a href="" ng-click="vm.selectNewActionType('rest_call')">Make request</a>
                         <a href="" ng-click="vm.selectNewActionType('rest_checkStatus')">Check status</a>
@@ -46,12 +46,12 @@
                         <a href="" ng-click="vm.selectNewActionType('rest_checkAttributeExists')">Check attribute</a>
                         <a href="" ng-click="vm.selectNewActionType('rest_checkAttributeValue')">Check attribute value</a>
                         <a href="" ng-click="vm.selectNewActionType('rest_checkAttributeType')">Check attribute type</a>
-                    </accordion-group>
+                    </uib-accordion-group>
 
-                    <accordion-group>
-                        <accordion-heading>
+                    <uib-accordion-group>
+                        <uib-accordion-heading>
                             <div><strong>Misc</strong></div>
-                        </accordion-heading>
+                        </uib-accordion-heading>
 
                         <a href="" ng-click="vm.selectNewActionType('assertCounter')">Assert counter</a>
                         <a href="" ng-click="vm.selectNewActionType('assertVariable')">Assert variable</a>
@@ -64,8 +64,8 @@
                         <a href="" ng-click="vm.selectNewActionType('setVariableByHTML')">Set variable by HTML</a>
                         <a href="" ng-click="vm.selectNewActionType('setVariableByNodeAttribute')">Set variable by node attribute</a>
                         <a href="" ng-click="vm.selectNewActionType('wait')">Wait</a>
-                    </accordion-group>
-                </accordion>
+                    </uib-accordion-group>
+                </uib-accordion>
 
             </div>
             <div class="col-xs-8">

@@ -5,11 +5,11 @@
         <div ng-if="vm.groups.length > 0">
             <checkbox-multiple model-fn="vm.getAllSymbols()" class="pull-left"></checkbox-multiple>
 
-            <div class="btn-group btn-group-sm" dropdown dropdown-hover>
-                <button class="btn btn-primary btn-dropdown">
+            <div class="btn-group btn-group-sm" uib-dropdown>
+                <button class="btn btn-primary btn-dropdown" uib-dropdown-toggle dropdown-hover>
                     Create <i class="fa fa-fw fa-caret-down"></i>
                 </button>
-                <ul class="dropdown-menu" role="menu">
+                <ul uib-dropdown-menu class="dropdown-menu" role="menu">
                     <li>
                         <a href="" symbol-create-modal-handle>Symbol</a>
                     </li>
@@ -37,11 +37,11 @@
                 </button>
             </div>
 
-            <div class="btn-group btn-group-sm" dropdown dropdown-hover>
-                <button class="btn btn-default btn-sm btn-dropdown">
+            <div class="btn-group btn-group-sm" uib-dropdown>
+                <button class="btn btn-default btn-sm btn-dropdown" uib-dropdown-toggle dropdown-hover>
                     <i class="fa fa-fw fa-ellipsis-h"></i>
                 </button>
-                <ul class="dropdown-menu" role="menu">
+                <ul uib-dropdown-menu class="dropdown-menu" role="menu">
                     <li>
                         <a href="" ng-click="vm.exportSelectedSymbols()">
                             <i class="fa fa-download"></i>&nbsp; Export as JSON
@@ -63,11 +63,11 @@
                         <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true" symbol="symbol"
                                           selection-model selection-model-selected-items="vm.selectedSymbols">
 
-                            <div class="btn-group btn-group-xs pull-right" dropdown dropdown-hover>
-                                <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                            <div class="btn-group btn-group-xs pull-right" uib-dropdown>
+                                <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle dropdown-hover>
                                     <i class="fa fa-bars"></i>
                                 </button>
-                                <ul class="dropdown-menu pull-left" role="menu">
+                                <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
                                     <li>
                                         <a href="" symbol-edit-modal-handle symbol="symbol">
                                             <i class="fa fa-edit fa-fw"></i> Edit

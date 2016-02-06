@@ -5,12 +5,13 @@
         <div ng-if="vm.results.length > 0">
             <checkbox-multiple model="vm.results" class="pull-left"></checkbox-multiple>
 
-            <div class="btn-group btn-group-sm pull-left" dropdown dropdown-hover>
+            <div class="btn-group btn-group-sm pull-left" uib-dropdown>
                 <button class="btn btn-primary btn-dropdown"
+                        uib-dropdown-toggle dropdown-hover
                         ng-class="{'disabled': vm.selectedResults.length === 0}">
                     Create Chart
                 </button>
-                <ul class="dropdown-menu" role="menu" ng-if="vm.selectedResults.length === 1">
+                <ul uib-dropdown-menu class="dropdown-menu" role="menu" ng-if="vm.selectedResults.length === 1">
                     <li>
                         <a href="" ng-click="vm.createChartFinalResult(vm.selectedResults[0])">
                             <i class="fa fa-fw fa-bar-chart"></i> Cumulated Result
@@ -22,7 +23,7 @@
                         </a>
                     </li>
                 </ul>
-                <ul class="dropdown-menu" role="menu" ng-if="vm.selectedResults.length > 1">
+                <ul uib-dropdown-menu class="dropdown-menu" role="menu" ng-if="vm.selectedResults.length > 1">
                     <li>
                         <a href="" ng-click="vm.createChartSelectedFinalResults()">
                             <i class="fa fa-fw fa-bar-chart"></i> Cumulated Results
@@ -52,11 +53,11 @@
                                         selection-model selection-model-selected-items="vm.selectedResults"
                                         link-to="statistics">
 
-                    <div class="btn-group btn-group-xs" dropdown dropdown-hover>
-                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" dropdown-toggle>
+                    <div class="btn-group btn-group-xs" uib-dropdown>
+                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle dropdown-hover>
                             <i class="fa fa-bars"></i>
                         </button>
-                        <ul class="dropdown-menu pull-right" role="menu">
+                        <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
                             <li>
                                 <a href="" ng-click="vm.createChartFinalResult(result)">
                                     <i class="fa fa-fw fa-bar-chart"></i> Chart for cumulated step

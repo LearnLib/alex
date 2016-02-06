@@ -43,7 +43,7 @@ function symbolGroupListItem() {
                         </div>
                         <div class="flex-item" ng-if="editable">
                             <a href="" symbol-group-edit-modal-handle group="group"
-                               tooltip="Edit this group" tooltip-placement="left">
+                               uib-tooltip="Edit this group" tooltip-placement="left">
                                  <i class="fa fa-fw fa-gear"></i>
                             </a>
                         </div>
