@@ -65,7 +65,7 @@ const actionCreateEditForm = {
                     <i class="fa fa-gear fa-fw"></i> Advanced Options
                 </a>
             </p>
-            <div collapse="!vm.showOptions">
+            <div uib-collapse="!vm.showOptions">
                 <div class="checkbox">
                     <label>
                         <input type="checkbox" ng-model="vm.action.negated"> Negate
