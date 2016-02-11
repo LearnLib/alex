@@ -27,10 +27,10 @@ class UserEditForm {
     /**
      * Constructor
      * @param $state
-     * @param SessionService
-     * @param ToastService
-     * @param UserResource
-     * @param PromptService
+     * @param {SessionService} SessionService
+     * @param {ToastService} ToastService
+     * @param {UserResource} UserResource
+     * @param {PromptService} PromptService
      */
     constructor($state, SessionService, ToastService, UserResource, PromptService) {
         this.$state = $state;
@@ -112,7 +112,7 @@ class UserEditForm {
                         this.$state.go('home');
                     })
                     .catch(response => {
-                        this. ToastService.danger("The profile could not be deleted. " + response.data.message);
+                        this.ToastService.danger("The profile could not be deleted. " + response.data.message);
                     });
             });
     }

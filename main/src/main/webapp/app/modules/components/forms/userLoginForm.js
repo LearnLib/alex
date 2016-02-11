@@ -24,11 +24,11 @@ class UserLoginForm {
     /**
      * Constructor
      * @param $state
-     * @param UserResource
+     * @param {UserResource} UserResource
      * @param jwtHelper
-     * @param ToastService
-     * @param SessionService
-     * @param EventBus
+     * @param {ToastService} ToastService
+     * @param {SessionService} SessionService
+     * @param {EventBus} EventBus
      */
     constructor($state, UserResource, jwtHelper, ToastService, SessionService, EventBus) {
         this.$state = $state;
@@ -59,9 +59,7 @@ class UserLoginForm {
                         role: tokenPayload.userRole
                     };
 
-                    // save the user in the session
                     this.SessionService.saveUser(user, token);
-
                     this.EventBus.emit(events.USER_LOGGED_IN, {user: user});
                     this.$state.go('projects');
                 })
