@@ -35,6 +35,7 @@ describe('ProjectSettingsModalController', () => {
 
     afterEach(() => {
         sessionStorage.removeItem('project');
+        document.body.innerHTML = "";
     });
 
     function createController() {
