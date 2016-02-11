@@ -22,9 +22,9 @@ import static org.junit.Assert.assertTrue;
 
 public class AlexIT {
 
-    private static final String BASE_URL = "http://localhost:8080/rest";
+    private static final String BASE_URL = "http://localhost:8000/rest";
     private static final String PROJECT_NAME = "IT Project";
-    private static final String PROJECT_URL  = "http://localhost:8080/rest";
+    private static final String PROJECT_URL  = "http://localhost:8000/rest";
     private static final int TIME_TO_WAIT_BETWEEN_POLLS = 2000; // two seconds
 
     private Client client;
