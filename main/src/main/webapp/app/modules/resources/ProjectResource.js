@@ -35,7 +35,7 @@ class ProjectResource {
      * @returns {*}
      */
     getAll() {
-        return this.$http.get('/rest/projects')
+        return this.$http.get('rest/projects')
             .then(response => response.data.map(p => new Project(p)));
     }
 
@@ -45,7 +45,7 @@ class ProjectResource {
      * @returns {*}
      */
     create(project) {
-        return this.$http.post('/rest/projects', project)
+        return this.$http.post('rest/projects', project)
             .then(response => new Project(response.data));
     }
 
@@ -55,7 +55,7 @@ class ProjectResource {
      * @returns {*}
      */
     update(project) {
-        return this.$http.put(`/rest/projects/${project.id}`, project)
+        return this.$http.put(`rest/projects/${project.id}`, project)
             .then(response => new Project(response.data));
     }
 
@@ -65,7 +65,7 @@ class ProjectResource {
      * @returns {*}
      */
     remove(project) {
-        return this.$http.delete(`/rest/projects/${project.id}`);
+        return this.$http.delete(`rest/projects/${project.id}`);
     }
 }
 

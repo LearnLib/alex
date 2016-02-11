@@ -34,7 +34,7 @@ class FileResource {
      * @param {number} projectId - The id of the project
      */
     getAll(projectId) {
-        return this.$http.get(`/rest/projects/${projectId}/files`)
+        return this.$http.get(`rest/projects/${projectId}/files`)
             .then(response => response.data);
     }
 
@@ -46,7 +46,7 @@ class FileResource {
      */
     remove(projectId, file) {
         const encodedFileName = encodeURI(file.name);
-        return this.$http.delete(`/rest/projects/${projectId}/files/${encodedFileName}`);
+        return this.$http.delete(`rest/projects/${projectId}/files/${encodedFileName}`);
     }
 }
 

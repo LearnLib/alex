@@ -37,7 +37,7 @@ class CounterResource {
      * @returns angular promise object of the request
      */
     getAll(projectId) {
-        return this.$http.get(`/rest/projects/${projectId}/counters`)
+        return this.$http.get(`rest/projects/${projectId}/counters`)
             .then(response => response.data.map(c => new Counter(c)));
     }
 
@@ -49,7 +49,7 @@ class CounterResource {
      * @returns angular promise object of the request
      */
     remove(projectId, counter) {
-        return this.$http.delete(`/rest/projects/${projectId}/counters/${counter.name}`);
+        return this.$http.delete(`rest/projects/${projectId}/counters/${counter.name}`);
     }
 
     /**
@@ -61,7 +61,7 @@ class CounterResource {
      */
     removeMany(projectId, counters) {
         const names = counters.map(c => c.name).join(',');
-        return this.$http.delete(`/rest/projects/${projectId}/counters/batch/${names}`);
+        return this.$http.delete(`rest/projects/${projectId}/counters/batch/${names}`);
     }
 }
 

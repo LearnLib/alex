@@ -39,7 +39,7 @@ class UserResource {
      * @returns {*} - A promise
      */
     changePassword(user, oldPassword, newPassword) {
-        return this.$http.put(`/rest/users/${user.id}/password`, {
+        return this.$http.put(`rest/users/${user.id}/password`, {
             oldPassword: oldPassword,
             newPassword: newPassword
         });
@@ -53,7 +53,7 @@ class UserResource {
      * @returns {*} - A promise
      */
     changeEmail(user, email) {
-        return this.$http.put(`/rest/users/${user.id}/email`, {
+        return this.$http.put(`rest/users/${user.id}/email`, {
                 email: email
             })
             .then(response => new User(response.data));
@@ -66,7 +66,7 @@ class UserResource {
      * @returns {*} - A promise
      */
     get(userId) {
-        return this.$http.get(`/rest/users/${userId}`)
+        return this.$http.get(`rest/users/${userId}`)
             .then(response => new User(response.data));
     }
 
@@ -76,7 +76,7 @@ class UserResource {
      * @returns {*} - A promise
      */
     getAll() {
-        return this.$http.get('/rest/users')
+        return this.$http.get('rest/users')
             .then(response => response.data.map(u => new User(u)));
     }
 
@@ -87,7 +87,7 @@ class UserResource {
      * @returns {*} - A promise
      */
     create(user) {
-        return this.$http.post('/rest/users', user);
+        return this.$http.post('rest/users', user);
     }
 
     /**
@@ -97,7 +97,7 @@ class UserResource {
      * @returns {*} - A promise that contains the jwt
      */
     login(user) {
-        return this.$http.post('/rest/users/login', user);
+        return this.$http.post('rest/users/login', user);
     }
 
     /**
@@ -107,7 +107,7 @@ class UserResource {
      * @returns {*} - A promise
      */
     remove(user) {
-        return this.$http.delete(`/rest/users/${user.id}`, {});
+        return this.$http.delete(`rest/users/${user.id}`, {});
     }
 
     /**
@@ -117,7 +117,7 @@ class UserResource {
      * @returns {*}
      */
     promote(user) {
-        return this.$http.put(`/rest/users/${user.id}/promote`, {})
+        return this.$http.put(`rest/users/${user.id}/promote`, {})
             .then(response => new User(response.data));
     }
 
@@ -128,7 +128,7 @@ class UserResource {
      * @returns {*}
      */
     demote(user) {
-        return this.$http.put(`/rest/users/${user.id}/demote`, {})
+        return this.$http.put(`rest/users/${user.id}/demote`, {})
             .then(response => new User(response.data));
     }
 }

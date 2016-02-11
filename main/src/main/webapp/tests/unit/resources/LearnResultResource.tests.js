@@ -15,7 +15,7 @@ describe('LearnResultResource', () => {
     }));
 
     it('should get all results', () => {
-        const uri = `/rest/projects/${projectId}/results?embed=steps`;
+        const uri = `rest/projects/${projectId}/results?embed=steps`;
         spyOn($http, 'get').and.callThrough();
 
         $httpBackend.whenGET(uri).respond(200, results);
@@ -31,7 +31,7 @@ describe('LearnResultResource', () => {
     });
 
     it('should get a single result', () => {
-        const uri = `/rest/projects/${projectId}/results/0?embed=steps`;
+        const uri = `rest/projects/${projectId}/results/0?embed=steps`;
         spyOn($http, 'get').and.callThrough();
 
         $httpBackend.whenGET(uri).respond(200, results[0]);
@@ -45,7 +45,7 @@ describe('LearnResultResource', () => {
     });
 
     it('should remove a single result', () => {
-        const uri = `/rest/projects/${results[0].project}/results/${results[0].testNo}`;
+        const uri = `rest/projects/${results[0].project}/results/${results[0].testNo}`;
         spyOn($http, 'delete').and.callThrough();
 
         $httpBackend.whenDELETE(uri).respond(200, null);
@@ -58,7 +58,7 @@ describe('LearnResultResource', () => {
 
     it('should remove many results', () => {
         const testNos = results.map(r => r.testNo).join(',');
-        const uri = `/rest/projects/${results[0].project}/results/${testNos}`;
+        const uri = `rest/projects/${results[0].project}/results/${testNos}`;
         spyOn($http, 'delete').and.callThrough();
 
         $httpBackend.whenDELETE(uri).respond(200, null);
@@ -70,7 +70,7 @@ describe('LearnResultResource', () => {
     });
 
     //it('should change the password of a user', () => {
-    //    const uri = `/rest/users/${user.id}/password`;
+    //    const uri = `rest/users/${user.id}/password`;
     //    spyOn($http, 'put').and.callThrough();
     //
     //    UserResource.changePassword(user, 'pw1', 'pw2');
@@ -78,7 +78,7 @@ describe('LearnResultResource', () => {
     //});
     //
     //it('should change the email of a user', () => {
-    //    const uri = `/rest/users/${user.id}/email`;
+    //    const uri = `rest/users/${user.id}/email`;
     //    spyOn($http, 'put').and.callThrough();
     //
     //    UserResource.changeEmail(user, 'mail');
@@ -86,7 +86,7 @@ describe('LearnResultResource', () => {
     //});
     //
     //it('should get a single user by its it and return an instance of the user', () => {
-    //    const uri = `/rest/users/${user.id}`;
+    //    const uri = `rest/users/${user.id}`;
     //    spyOn($http, 'get').and.callThrough();
     //
     //    $httpBackend.whenGET(uri).respond(200, ENTITIES.users[0]);
@@ -100,7 +100,7 @@ describe('LearnResultResource', () => {
     //});
     //
     //it('should get all users', () => {
-    //    const uri = `/rest/users`;
+    //    const uri = `rest/users`;
     //    spyOn($http, 'get').and.callThrough();
     //
     //    $httpBackend.whenGET(uri).respond(200, ENTITIES.users);
@@ -114,7 +114,7 @@ describe('LearnResultResource', () => {
     //});
     //
     //it('should create a new user', () => {
-    //    const uri = `/rest/users`;
+    //    const uri = `rest/users`;
     //    const user = new UserFormModel('mail', 'pw');
     //    spyOn($http, 'post').and.callThrough();
     //
@@ -129,7 +129,7 @@ describe('LearnResultResource', () => {
     //});
     //
     //it('should login a user', () => {
-    //    const uri = `/rest/users/login`;
+    //    const uri = `rest/users/login`;
     //    spyOn($http, 'post').and.callThrough();
     //
     //    $httpBackend.whenPOST(uri).respond(200, user);
@@ -141,7 +141,7 @@ describe('LearnResultResource', () => {
     //});
     //
     //it('should delete a user', () => {
-    //    const uri = `/rest/users/${user.id}`;
+    //    const uri = `rest/users/${user.id}`;
     //    spyOn($http, 'delete').and.callThrough();
     //
     //    $httpBackend.whenDELETE(uri).respond(204, {});
@@ -153,7 +153,7 @@ describe('LearnResultResource', () => {
     //});
     //
     //it('should promote a user', () => {
-    //    const uri = `/rest/users/${user.id}/promote`;
+    //    const uri = `rest/users/${user.id}/promote`;
     //    spyOn($http, 'put').and.callThrough();
     //
     //    $httpBackend.whenPUT(uri).respond(200, ENTITIES.users[1]);
@@ -167,7 +167,7 @@ describe('LearnResultResource', () => {
     //});
     //
     //it('should demote a user', () => {
-    //    const uri = `/rest/users/${user.id}/demote`;
+    //    const uri = `rest/users/${user.id}/demote`;
     //    spyOn($http, 'put').and.callThrough();
     //
     //    $httpBackend.whenPUT(uri).respond(200, ENTITIES.users[1]);

@@ -19,11 +19,11 @@ describe('ProjectResource', () => {
     it('should get all projects and return a list of project instances', () => {
         spyOn(ProjectResource.$http, 'get').and.callThrough();
 
-        $httpBackend.whenGET('/rest/projects').respond(200, ENTITIES.projects);
+        $httpBackend.whenGET('rest/projects').respond(200, ENTITIES.projects);
         const promise = ProjectResource.getAll();
         $httpBackend.flush();
 
-        expect(ProjectResource.$http.get).toHaveBeenCalledWith('/rest/projects');
+        expect(ProjectResource.$http.get).toHaveBeenCalledWith('rest/projects');
         promise.then((projects) => {
             projects.forEach(p => expect(p instanceof Project).toBeTruthy());
         })
@@ -37,11 +37,11 @@ describe('ProjectResource', () => {
         projectToCreate.baseUrl = 'http://localhost';
         projectToCreate.description = null;
 
-        $httpBackend.whenPOST('/rest/projects', projectToCreate).respond(201, ENTITIES.projects[0]);
+        $httpBackend.whenPOST('rest/projects', projectToCreate).respond(201, ENTITIES.projects[0]);
         const promise = ProjectResource.create(projectToCreate);
         $httpBackend.flush();
 
-        expect(ProjectResource.$http.post).toHaveBeenCalledWith('/rest/projects', projectToCreate);
+        expect(ProjectResource.$http.post).toHaveBeenCalledWith('rest/projects', projectToCreate);
         promise.then((project) => {
             expect(project instanceof Project).toBeTruthy();
         })
@@ -51,11 +51,11 @@ describe('ProjectResource', () => {
         spyOn(ProjectResource.$http, 'delete').and.callThrough();
         const project = ENTITIES.projects[0];
 
-        $httpBackend.whenDELETE(`/rest/projects/${project.id}`).respond(200, {});
+        $httpBackend.whenDELETE(`rest/projects/${project.id}`).respond(200, {});
         const promise = ProjectResource.remove(project);
         $httpBackend.flush();
 
-        expect(ProjectResource.$http.delete).toHaveBeenCalledWith(`/rest/projects/${project.id}`);
+        expect(ProjectResource.$http.delete).toHaveBeenCalledWith(`rest/projects/${project.id}`);
         expect(promise.then).toBeDefined();
         expect(promise.catch).toBeDefined();
     });
@@ -66,13 +66,13 @@ describe('ProjectResource', () => {
         const projectToUpdate = ENTITIES.projects[0];
         projectToUpdate.name = 'updatedName';
 
-        $httpBackend.whenPUT(`/rest/projects/${projectToUpdate.id}`, projectToUpdate)
+        $httpBackend.whenPUT(`rest/projects/${projectToUpdate.id}`, projectToUpdate)
             .respond(201, projectToUpdate);
 
         const promise = ProjectResource.update(projectToUpdate);
         $httpBackend.flush();
 
-        expect(ProjectResource.$http.put).toHaveBeenCalledWith(`/rest/projects/${projectToUpdate.id}`, projectToUpdate);
+        expect(ProjectResource.$http.put).toHaveBeenCalledWith(`rest/projects/${projectToUpdate.id}`, projectToUpdate);
         promise.then((project) => {
             expect(project instanceof Project).toBeTruthy();
             expect(project).toEqual(projectToUpdate);

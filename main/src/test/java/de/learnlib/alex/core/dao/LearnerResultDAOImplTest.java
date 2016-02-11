@@ -56,6 +56,7 @@ public class LearnerResultDAOImplTest {
 
     private static final Long USER_ID = 4L;
     private static final int RESULTS_AMOUNT = 5;
+    private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE = new MealyRandomWordsEQOracleProxy(1, 5, 10);
 
     private static UserDAO userDAO;
     private static ProjectDAO projectDAO;
@@ -236,7 +237,7 @@ public class LearnerResultDAOImplTest {
     public void shouldCreateAStepFromValidConfiguration() throws NotFoundException {
         learnerResultDAO.create(learnerResult);
         LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
-        configuration.setEqOracle(new MealyRandomWordsEQOracleProxy(1, 5, 10));
+        configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
         configuration.setMaxAmountOfStepsToLearn(-1);
 
         LearnerResultStep step = learnerResultDAO.createStep(learnerResult, configuration);
@@ -352,7 +353,7 @@ public class LearnerResultDAOImplTest {
         step.setResult(result);
         step.setStepNo(0L);
         step.setStepsToLearn(-1);
-        step.setEqOracle(new MealyRandomWordsEQOracleProxy(1, 2, 3));
+        step.setEqOracle(EXAMPLE_EQ_ORACLE);
         result.getSteps().add(step);
     }
 

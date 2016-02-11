@@ -97,7 +97,7 @@ class FilesView {
             if (this.filesToUpload.length > 0) {
                 const file = this.filesToUpload[0];
                 this.Upload.upload({
-                    url: '/rest/projects/' + this.project.id + '/files',
+                    url: 'rest/projects/' + this.project.id + '/files',
                     file: file
                 }).progress(evt => {
                     this.progress = parseInt(100.0 * evt.loaded / evt.total);

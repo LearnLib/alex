@@ -22,6 +22,7 @@ import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.List;
 /**
  * Implementation of a UserDAO using Hibernate.
  */
+@Repository
 public class UserDAOImpl implements UserDAO {
 
     @Override

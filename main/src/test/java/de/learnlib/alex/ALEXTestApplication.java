@@ -16,52 +16,90 @@
 
 package de.learnlib.alex;
 
-import de.learnlib.alex.core.dao.CounterDAO;
-import de.learnlib.alex.core.dao.FileDAO;
-import de.learnlib.alex.core.dao.LearnerResultDAO;
-import de.learnlib.alex.core.dao.ProjectDAO;
-import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.dao.SymbolGroupDAO;
 import de.learnlib.alex.core.dao.UserDAO;
-import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.UserRole;
+import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.AuthenticationFilter;
+import de.learnlib.alex.security.JWTHelper;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.jose4j.lang.JoseException;
+import org.springframework.context.annotation.Configuration;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+
+@Configuration
 public class ALEXTestApplication extends ResourceConfig {
 
-    public ALEXTestApplication(final UserDAO userDAO,
-                               final ProjectDAO projectDAO,
-                               CounterDAO counterDAO,
-                               final SymbolGroupDAO symbolGroupDAO,
-                               final SymbolDAO symbolDAO,
-                               final LearnerResultDAO learnerResultDAO,
-                               final FileDAO fileDAO,
-                               final Learner learner,
-                               Class<?>... classes) {
-        super(classes);
+    private User admin;
 
+    private String adminToken;
+
+    public ALEXTestApplication(Class<?>... classes) {
+        this(mock(UserDAO.class), classes);
+    }
+
+    public ALEXTestApplication(UserDAO userDAO, Class<?>... classes) {
+        super(classes);
+        registerFeatures();
+
+        try {
+            bindUserDAO(userDAO);
+            initAdmin(userDAO);
+            initToken();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            admin = null;
+            adminToken = null;
+        }
+    }
+
+    private void registerFeatures() {
         register(MultiPartFeature.class);
         register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
         register(AuthenticationFilter.class);
+    }
 
-        // register some classes/ objects for IoC.
+    private void bindUserDAO(final UserDAO userDAO) {
         register(new AbstractBinder() {
             @Override
             protected void configure() {
                 bind(userDAO).to(UserDAO.class);
-                bind(projectDAO).to(ProjectDAO.class);
-                bind(counterDAO).to(CounterDAO.class);
-                bind(symbolGroupDAO).to(SymbolGroupDAO.class);
-                bind(symbolDAO).to(SymbolDAO.class);
-                bind(fileDAO).to(FileDAO.class);
-                bind(learner).to(Learner.class);
-                bind(learnerResultDAO).to(LearnerResultDAO.class);
             }
         });
+    }
 
+    private void initAdmin(UserDAO userDAO) throws NotFoundException {
+        admin = mock(User.class);
+        given(admin.getId()).willReturn(1L);
+        given(admin.getEmail()).willReturn("admin@alex.example");
+        given(admin.getRole()).willReturn(UserRole.ADMIN);
+        given(admin.isValidPassword(anyString())).willReturn(true);
+
+        given(userDAO.getById(admin.getId())).willReturn(admin);
+        given(userDAO.getByEmail(admin.getEmail())).willReturn(admin);
+    }
+
+    private void initToken() {
+        try {
+            adminToken = "Bearer " + JWTHelper.generateJWT(admin);
+        } catch (JoseException e) {
+            e.printStackTrace();
+            adminToken = "";
+        }
+    }
+
+    public User getAdmin() {
+        return admin;
+    }
+
+    public String getAdminToken() {
+        return adminToken;
     }
 
 }

@@ -38,7 +38,7 @@ class LearnerResource {
      * @return {*}
      */
     start(projectId, learnConfiguration) {
-        return this.$http.post(`/rest/learner/start/${projectId}`, learnConfiguration);
+        return this.$http.post(`rest/learner/start/${projectId}`, learnConfiguration);
     }
 
     /**
@@ -48,7 +48,7 @@ class LearnerResource {
      * @return {*}
      */
     stop() {
-        return this.$http.get('/rest/learner/stop');
+        return this.$http.get('rest/learner/stop');
     }
 
     /**
@@ -61,7 +61,7 @@ class LearnerResource {
      * @return {*}
      */
     resume(projectId, testNo, learnConfiguration) {
-        return this.$http.post(`/rest/learner/resume/${projectId}/${testNo}`, learnConfiguration);
+        return this.$http.post(`rest/learner/resume/${projectId}/${testNo}`, learnConfiguration);
     }
 
     /**
@@ -71,7 +71,7 @@ class LearnerResource {
      * @return {*}
      */
     getStatus() {
-        return this.$http.get('/rest/learner/status')
+        return this.$http.get('rest/learner/status')
             .then(response => new LearnResult(response.data))
             .catch(() => null);
     }
@@ -82,7 +82,7 @@ class LearnerResource {
      * @return {*}
      */
     isActive() {
-        return this.$http.get('/rest/learner/active')
+        return this.$http.get('rest/learner/active')
             .then(response => response.data);
     }
 
@@ -95,7 +95,7 @@ class LearnerResource {
      * @returns {*}
      */
     isCounterexample(projectId, resetSymbol, symbols) {
-        return this.$http.post(`/rest/learner/outputs/${projectId}`, {
+        return this.$http.post(`rest/learner/outputs/${projectId}`, {
             resetSymbol: resetSymbol,
             symbols: symbols
         }).then(response => response.data);

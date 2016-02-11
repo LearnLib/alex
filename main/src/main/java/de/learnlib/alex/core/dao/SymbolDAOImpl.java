@@ -35,6 +35,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.springframework.stereotype.Repository;
 
 import javax.validation.ValidationException;
 import java.util.Arrays;
@@ -47,6 +48,7 @@ import java.util.Objects;
 /**
  * Implementation of a SymbolDAO using Hibernate.
  */
+@Repository
 public class SymbolDAOImpl implements SymbolDAO {
 
     @Override

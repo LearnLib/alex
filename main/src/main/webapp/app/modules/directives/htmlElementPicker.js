@@ -231,7 +231,7 @@ function htmlElementPickerWindow($window, SessionService) {
         // load project, create proxy address and load the last url in the iframe
         function init() {
             scope.project = SessionService.getProject();
-            proxyUrl = $window.location.origin + '/rest/proxy?url=';
+            proxyUrl = $window.location.origin + 'rest/proxy?url=';
 
             scope.url = lastUrl;
             scope.loadUrl();

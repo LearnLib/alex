@@ -19,6 +19,7 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.UploadableFile;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +33,7 @@ import java.util.List;
 /**
  * Simple implementation of a FileDAO.
  */
+@Repository
 public class FileDAOImpl implements FileDAO {
 
     /** The size of the output write buffer in bytes. */

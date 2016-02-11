@@ -15,7 +15,7 @@ describe('SymbolGroupResource', () => {
         $httpBackend = _$httpBackend_;
 
         project = ENTITIES.projects[0];
-        uri = `/rest/projects/${project.id}/groups`;
+        uri = `rest/projects/${project.id}/groups`;
     }));
 
     it('should correctly initialize the resource', () => {

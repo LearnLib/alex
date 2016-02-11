@@ -37,7 +37,7 @@ class SymbolResource {
      * @param {number} symbolId - The id of the symbol that should be fetched
      */
     get(projectId, symbolId) {
-        return this.$http.get(`/rest/projects/${projectId}/symbols/${symbolId}`)
+        return this.$http.get(`rest/projects/${projectId}/symbols/${symbolId}`)
             .then(response => new Symbol(response.data));
     }
 
@@ -50,7 +50,7 @@ class SymbolResource {
      */
     getAll(projectId, includeHiddenSymbols = false) {
         const params = includeHiddenSymbols ? '?visibility=hidden' : '';
-        return this.$http.get(`/rest/projects/${projectId}/symbols${params}`)
+        return this.$http.get(`rest/projects/${projectId}/symbols${params}`)
             .then(response => response.data.map(s => new Symbol(s)));
     }
 
@@ -64,12 +64,12 @@ class SymbolResource {
      */
     getManyByIdRevisionPairs(projectId, idRevisionPairs) {
         const pairs = idRevisionPairs.map(pair => pair.id + ':' + pair.revision).join(',');
-        return this.$http.get(`/rest/projects/${projectId}/symbols/batch/${pairs}`)
+        return this.$http.get(`rest/projects/${projectId}/symbols/batch/${pairs}`)
             .then(response => response.data.map(s => new Symbol(s)));
     }
 
     /**
-     * Make a GET request to /rest/projects/{projectId}/symbols/{symbolId}/complete in order to fetch all revisions.
+     * Make a GET request to rest/projects/{projectId}/symbols/{symbolId}/complete in order to fetch all revisions.
      * of a symbol
      *
      * @param {number} projectId - The id of the project the symbol belongs to
@@ -77,7 +77,7 @@ class SymbolResource {
      * @returns {*}
      */
     getRevisions(projectId, symbolId) {
-        return this.$http.get(`/rest/projects/${projectId}/symbols/${symbolId}/complete`)
+        return this.$http.get(`rest/projects/${projectId}/symbols/${symbolId}/complete`)
             .then(response => response.data.map(s => new Symbol(s)));
     }
 
@@ -88,7 +88,7 @@ class SymbolResource {
      * @param {SymbolFormModel} symbol - The symbol that should be created
      */
     create(projectId, symbol) {
-        return this.$http.post(`/rest/projects/${projectId}/symbols`, symbol)
+        return this.$http.post(`rest/projects/${projectId}/symbols`, symbol)
             .then(response => new Symbol(response.data));
     }
 
@@ -100,12 +100,12 @@ class SymbolResource {
      * @returns {*}
      */
     createMany(projectId, symbols) {
-        return this.$http.post(`/rest/projects/${projectId}/symbols/batch`, symbols)
+        return this.$http.post(`rest/projects/${projectId}/symbols/batch`, symbols)
             .then(response => response.data.map(s => new Symbol(s)));
     }
 
     /**
-     * Makes a PUT request to /rest/projects/{projectId}/symbols[/batch]/{symbolId[s]}/moveTo/{groupId} in order to
+     * Makes a PUT request to rest/projects/{projectId}/symbols[/batch]/{symbolId[s]}/moveTo/{groupId} in order to
      * move [a] symbol[s] to another group without creating a new revision
      *
      * @param {Symbol|Symbol[]} symbols - The symbol[s] to be moved to another group
@@ -115,7 +115,7 @@ class SymbolResource {
     moveMany(symbols, group) {
         const ids = symbols.map(s => s.id).join(',');
         const project = symbols[0].project;
-        return this.$http.put(`/rest/projects/${project}/symbols/batch/${ids}/moveTo/${group.id}`, {});
+        return this.$http.put(`rest/projects/${project}/symbols/batch/${ids}/moveTo/${group.id}`, {});
     }
 
     /**
@@ -125,7 +125,7 @@ class SymbolResource {
      * @returns {*}
      */
     update(symbol) {
-        return this.$http.put(`/rest/projects/${symbol.project}/symbols/${symbol.id}`, symbol)
+        return this.$http.put(`rest/projects/${symbol.project}/symbols/${symbol.id}`, symbol)
             .then(response => new Symbol(response.data));
     }
 
@@ -136,7 +136,7 @@ class SymbolResource {
      * @returns {*}
      */
     remove(symbol) {
-        return this.$http.post(`/rest/projects/${symbol.project}/symbols/${symbol.id}/hide`, {});
+        return this.$http.post(`rest/projects/${symbol.project}/symbols/${symbol.id}/hide`, {});
     }
 
     /**
@@ -148,7 +148,7 @@ class SymbolResource {
     removeMany(symbols) {
         const ids = symbols.map(s => s.id).join(',');
         const project = symbols[0].project;
-        return this.$http.post(`/rest/projects/${project}/symbols/batch/${ids}/hide`, {});
+        return this.$http.post(`rest/projects/${project}/symbols/batch/${ids}/hide`, {});
     }
 
     /**
@@ -158,7 +158,7 @@ class SymbolResource {
      * @returns {*}
      */
     recover(symbol) {
-        return this.$http.post(`/rest/projects/${symbol.project}/symbols/${symbol.id}/show`, {});
+        return this.$http.post(`rest/projects/${symbol.project}/symbols/${symbol.id}/show`, {});
     }
 
     /**
@@ -170,7 +170,7 @@ class SymbolResource {
     recoverMany(symbols) {
         const ids = symbols.map(s => s.id).join(',');
         const project = symbols[0].project;
-        return this.$http.post(`/rest/projects/${project}/symbols/batch/${ids}/show`, {});
+        return this.$http.post(`rest/projects/${project}/symbols/batch/${ids}/show`, {});
     }
 }
 

@@ -40,7 +40,7 @@ class SymbolGroupResource {
     getAll(projectId, includeSymbols = false) {
         const params = includeSymbols ? '?embed=symbols' : '';
 
-        return this.$http.get(`/rest/projects/${projectId}/groups${params}`)
+        return this.$http.get(`rest/projects/${projectId}/groups${params}`)
             .then(response => response.data.map(g => new SymbolGroup(g)));
     }
 
@@ -52,7 +52,7 @@ class SymbolGroupResource {
      * @returns {*}
      */
     create(projectId, group) {
-        return this.$http.post(`/rest/projects/${projectId}/groups`, group)
+        return this.$http.post(`rest/projects/${projectId}/groups`, group)
             .then(response => new SymbolGroup(response.data));
     }
 
@@ -63,7 +63,7 @@ class SymbolGroupResource {
      * @returns {*}
      */
     update(group) {
-        return this.$http.put(`/rest/projects/${group.project}/groups/${group.id}`, group)
+        return this.$http.put(`rest/projects/${group.project}/groups/${group.id}`, group)
             .then(response => new SymbolGroup(response.data));
     }
 
@@ -74,7 +74,7 @@ class SymbolGroupResource {
      * @returns {*} - An angular promise
      */
     remove(group) {
-        return this.$http.delete(`/rest/projects/${group.project}/groups/${group.id}`);
+        return this.$http.delete(`rest/projects/${group.project}/groups/${group.id}`);
     }
 }
 

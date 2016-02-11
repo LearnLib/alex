@@ -26,6 +26,7 @@ import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 
 import javax.validation.ValidationException;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import java.util.Set;
 /**
  * Implementation of a SymbolGroupDAO using Hibernate.
  */
+@Repository
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     /** The SymbolDAO to use. */

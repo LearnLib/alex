@@ -19,7 +19,7 @@ describe('UserResource', () => {
     });
 
     it('should change the password of a user', () => {
-        const uri = `/rest/users/${user.id}/password`;
+        const uri = `rest/users/${user.id}/password`;
         spyOn($http, 'put').and.callThrough();
 
         UserResource.changePassword(user, 'pw1', 'pw2');
@@ -27,7 +27,7 @@ describe('UserResource', () => {
     });
 
     it('should change the email of a user', () => {
-        const uri = `/rest/users/${user.id}/email`;
+        const uri = `rest/users/${user.id}/email`;
         spyOn($http, 'put').and.callThrough();
 
         UserResource.changeEmail(user, 'mail');
@@ -35,7 +35,7 @@ describe('UserResource', () => {
     });
 
     it('should get a single user by its it and return an instance of the user', () => {
-        const uri = `/rest/users/${user.id}`;
+        const uri = `rest/users/${user.id}`;
         spyOn($http, 'get').and.callThrough();
 
         $httpBackend.whenGET(uri).respond(200, ENTITIES.users[0]);
@@ -49,7 +49,7 @@ describe('UserResource', () => {
     });
 
     it('should get all users', () => {
-        const uri = `/rest/users`;
+        const uri = `rest/users`;
         spyOn($http, 'get').and.callThrough();
 
         $httpBackend.whenGET(uri).respond(200, ENTITIES.users);
@@ -63,7 +63,7 @@ describe('UserResource', () => {
     });
 
     it('should create a new user', () => {
-        const uri = `/rest/users`;
+        const uri = `rest/users`;
         const user = new UserFormModel('mail', 'pw');
         spyOn($http, 'post').and.callThrough();
 
@@ -78,7 +78,7 @@ describe('UserResource', () => {
     });
 
     it('should login a user', () => {
-        const uri = `/rest/users/login`;
+        const uri = `rest/users/login`;
         spyOn($http, 'post').and.callThrough();
 
         $httpBackend.whenPOST(uri).respond(200, user);
@@ -90,7 +90,7 @@ describe('UserResource', () => {
     });
 
     it('should delete a user', () => {
-        const uri = `/rest/users/${user.id}`;
+        const uri = `rest/users/${user.id}`;
         spyOn($http, 'delete').and.callThrough();
 
         $httpBackend.whenDELETE(uri).respond(204, {});
@@ -102,7 +102,7 @@ describe('UserResource', () => {
     });
 
     it('should promote a user', () => {
-        const uri = `/rest/users/${user.id}/promote`;
+        const uri = `rest/users/${user.id}/promote`;
         spyOn($http, 'put').and.callThrough();
 
         $httpBackend.whenPUT(uri).respond(200, ENTITIES.users[1]);
@@ -116,7 +116,7 @@ describe('UserResource', () => {
     });
 
     it('should demote a user', () => {
-        const uri = `/rest/users/${user.id}/demote`;
+        const uri = `rest/users/${user.id}/demote`;
         spyOn($http, 'put').and.callThrough();
 
         $httpBackend.whenPUT(uri).respond(200, ENTITIES.users[1]);

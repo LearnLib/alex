@@ -20,7 +20,7 @@ describe('FileResource', () => {
             {project: project.id, name: 'file3'}
         ];
 
-        uri = `/rest/projects/${project.id}/files`;
+        uri = `rest/projects/${project.id}/files`;
     }));
 
     it('should correctly initialize the resource', () => {

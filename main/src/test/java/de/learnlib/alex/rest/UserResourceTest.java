@@ -1,17 +1,9 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.ALEXTestApplication;
-import de.learnlib.alex.core.dao.CounterDAO;
-import de.learnlib.alex.core.dao.FileDAO;
-import de.learnlib.alex.core.dao.LearnerResultDAO;
-import de.learnlib.alex.core.dao.ProjectDAO;
-import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.dao.SymbolGroupDAO;
 import de.learnlib.alex.core.dao.UserDAO;
-import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
-import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.UserHelper;
 import org.glassfish.jersey.test.JerseyTest;
@@ -23,12 +15,10 @@ import org.mockito.MockitoAnnotations;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
-
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Matchers.any;
@@ -43,33 +33,7 @@ public class UserResourceTest extends JerseyTest {
     @Mock
     private UserDAO userDAO;
 
-    @Mock
-    private ProjectDAO projectDAO;
-
-    @Mock
-    private CounterDAO counterDAO;
-
-    @Mock
-    private SymbolGroupDAO symbolGroupDAO;
-
-    @Mock
-    private SymbolDAO symbolDAO;
-
-    @Mock
-    private LearnerResultDAO learnerResultDAO;
-
-    @Mock
-    private FileDAO fileDAO;
-
-    @Mock
     private User admin;
-
-
-    @Mock
-    private Project project;
-
-    @Mock
-    private Learner learner;
 
     private String adminToken;
 
@@ -77,22 +41,15 @@ public class UserResourceTest extends JerseyTest {
 
     private String userToken;
 
+
     @Override
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        try {
-            UserHelper.initFakeAdmin(admin);
-            given(userDAO.getById(admin.getId())).willReturn(admin);
-            given(userDAO.getByEmail(admin.getEmail())).willReturn(admin);
-            adminToken = UserHelper.login(admin);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            fail();
-        }
-
-        return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO, learnerResultDAO,
-                                       fileDAO, learner, UserResource.class);
+        ALEXTestApplication testApplication = new ALEXTestApplication(userDAO, UserResource.class);
+        admin = testApplication.getAdmin();
+        adminToken = testApplication.getAdminToken();
+        return testApplication;
     }
 
     @Override

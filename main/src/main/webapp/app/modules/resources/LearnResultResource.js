@@ -37,7 +37,7 @@ class LearnResultResource {
      * @returns {*}
      */
     getAll(projectId) {
-        return this.$http.get(`/rest/projects/${projectId}/results?embed=steps`)
+        return this.$http.get(`rest/projects/${projectId}/results?embed=steps`)
             .then(response => response.data.map(r => new LearnResult(r)));
     }
 
@@ -49,7 +49,7 @@ class LearnResultResource {
      * @returns {*}
      */
     get(projectId, testNo) {
-        return this.$http.get(`/rest/projects/${projectId}/results/${testNo}?embed=steps`)
+        return this.$http.get(`rest/projects/${projectId}/results/${testNo}?embed=steps`)
             .then(response => new LearnResult(response.data));
     }
 
@@ -67,7 +67,7 @@ class LearnResultResource {
             testNos = results.testNo;
             projectId = results.project;
         }
-        return this.$http.delete(`/rest/projects/${projectId}/results/${testNos}`, {});
+        return this.$http.delete(`rest/projects/${projectId}/results/${testNos}`, {});
     }
 }
 

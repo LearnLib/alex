@@ -17,10 +17,12 @@
 package de.learnlib.alex.core.learner.connectors;
 
 import de.learnlib.alex.core.entities.Project;
+import org.springframework.stereotype.Service;
 
 /**
  * Factor to create a ContextHandler which knows all available connectors.
  */
+@Service
 public class ConnectorContextHandlerFactory {
 
     /**

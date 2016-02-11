@@ -23,11 +23,11 @@ describe('CounterResource', () => {
     it('should get all counters and return a list of counter instances', () => {
         spyOn(CounterResource.$http, 'get').and.callThrough();
 
-        $httpBackend.whenGET(`/rest/projects/${project.id}/counters`).respond(200, ENTITIES.counters);
+        $httpBackend.whenGET(`rest/projects/${project.id}/counters`).respond(200, ENTITIES.counters);
         const promise = CounterResource.getAll(project.id);
         $httpBackend.flush();
 
-        expect(CounterResource.$http.get).toHaveBeenCalledWith(`/rest/projects/${project.id}/counters`);
+        expect(CounterResource.$http.get).toHaveBeenCalledWith(`rest/projects/${project.id}/counters`);
         promise.then((counters) => {
             counters.forEach(c => expect(c instanceof Counter).toBeTruthy());
         })
@@ -37,11 +37,11 @@ describe('CounterResource', () => {
         spyOn(CounterResource.$http, 'delete').and.callThrough();
         const counter = ENTITIES.counters[0];
 
-        $httpBackend.whenDELETE(`/rest/projects/${project.id}/counters/${counter.name}`).respond(200, {});
+        $httpBackend.whenDELETE(`rest/projects/${project.id}/counters/${counter.name}`).respond(200, {});
         const promise = CounterResource.remove(project.id, counter);
         $httpBackend.flush();
 
-        expect(CounterResource.$http.delete).toHaveBeenCalledWith(`/rest/projects/${project.id}/counters/${counter.name}`);
+        expect(CounterResource.$http.delete).toHaveBeenCalledWith(`rest/projects/${project.id}/counters/${counter.name}`);
         expect(promise.then).toBeDefined();
         expect(promise.catch).toBeDefined();
     });
@@ -51,7 +51,7 @@ describe('CounterResource', () => {
         const counters = ENTITIES.counters;
         const names = counters.map(c => c.name).join(',');
 
-        const uri = `/rest/projects/${project.id}/counters/batch/${names}`;
+        const uri = `rest/projects/${project.id}/counters/batch/${names}`;
 
         $httpBackend.whenDELETE(uri).respond(200, {});
         const promise = CounterResource.removeMany(project.id, counters);

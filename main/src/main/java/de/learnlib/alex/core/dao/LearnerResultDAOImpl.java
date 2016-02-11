@@ -30,6 +30,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
@@ -43,6 +44,7 @@ import java.util.TreeSet;
 /**
  * Implementation of a LearnerResultDAO using Hibernate.
  */
+@Repository
 public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     /** The {@link Learner learner} to use. */

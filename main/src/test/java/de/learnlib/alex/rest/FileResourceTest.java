@@ -17,14 +17,8 @@
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.ALEXTestApplication;
-import de.learnlib.alex.core.dao.CounterDAO;
 import de.learnlib.alex.core.dao.FileDAO;
-import de.learnlib.alex.core.dao.LearnerResultDAO;
-import de.learnlib.alex.core.dao.ProjectDAO;
-import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.dao.SymbolGroupDAO;
-import de.learnlib.alex.core.dao.UserDAO;
-import de.learnlib.alex.core.learner.Learner;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
@@ -47,35 +41,20 @@ public class FileResourceTest extends JerseyTest {
     private static final long PROJECT_TEST_ID = 10;
 
     @Mock
-    private UserDAO userDAO;
-
-    @Mock
-    private ProjectDAO projectDAO;
-
-    @Mock
-    private CounterDAO counterDAO;
-
-    @Mock
-    private SymbolGroupDAO symbolGroupDAO;
-
-    @Mock
-    private SymbolDAO symbolDAO;
-
-    @Mock
-    private LearnerResultDAO learnerResultDAO;
-
-    @Mock
     private FileDAO fileDAO;
-
-    @Mock
-    private Learner learner;
 
     @Override
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        return new ALEXTestApplication(userDAO, projectDAO, counterDAO, symbolGroupDAO, symbolDAO,
-                                       learnerResultDAO, fileDAO, learner, FileResource.class);
+        ALEXTestApplication testApplication = new ALEXTestApplication(FileResource.class);
+        testApplication.register(new AbstractBinder() {
+            @Override
+            protected void configure() {
+                bind(fileDAO).to(FileDAO.class);
+            }
+        });
+        return testApplication;
     }
 
     @Test

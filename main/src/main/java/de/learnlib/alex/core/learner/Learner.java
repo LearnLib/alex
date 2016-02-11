@@ -17,9 +17,7 @@
 package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
-import de.learnlib.alex.core.dao.LearnerResultDAOImpl;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.dao.SymbolDAOImpl;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
@@ -35,7 +33,10 @@ import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.oracles.ResetCounterSUL;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,20 +53,25 @@ import java.util.stream.Collectors;
  * Basic class to control and monitor a learn process.
  * This class is a high level abstraction of the LearnLib.
  */
+@Service
+@Scope("singleton")
 public class Learner {
 
     /** How many concurrent threads the system can handle. */
     private static final int MAX_CONCURRENT_THREADS = 2;
 
     /** The SymbolDAO to use. */
+    @Inject
     private SymbolDAO symbolDAO;
 
     /** The LearnerResultDAO to use. */
+    @Inject
     private LearnerResultDAO learnerResultDAO;
 
     /**
      * Factory to create a new ContextHandler.
      */
+    @Inject
     private ConnectorContextHandlerFactory contextHandlerFactory;
 
     /**
@@ -74,6 +80,7 @@ public class Learner {
     private ConnectorContextHandler contextHandler;
 
     /** The factory to create the learner threads. */
+    @Inject
     private LearnerThreadFactory learnerThreadFactory;
 
     /**
@@ -87,30 +94,19 @@ public class Learner {
     private final Map<User, LearnerThread> activeThreads;
 
     /**
-     * This constructor creates a new SymbolDAO, LearnerResultDAO and ConnectorContextHandlerFactory for internal use.
+     * This constructor creates a new Learner
+     * The SymbolDAO and LearnerResultDAO must be externally injected.
      */
     public Learner() {
-        this(new ConnectorContextHandlerFactory(), new LearnerThreadFactory());
-    }
-
-    /**
-     * Constructor that initialises the ConnectorContextHandlerFactory by the given paramter.
-     * It will create a new SymbolDAO and LearnerResultDAO for internal use.
-     *
-     * @param contextHandlerFactory
-     *         The factory that will be used to create new context handler.
-     * @param learnerThreadFactory
-     *         The factory to create the learner threads.
-     */
-    public Learner(ConnectorContextHandlerFactory contextHandlerFactory, LearnerThreadFactory learnerThreadFactory) {
-        this(new SymbolDAOImpl(), new LearnerResultDAOImpl(), contextHandlerFactory, learnerThreadFactory);
+        this.activeThreads = new HashMap<>();
+        this.userThreads   = new HashMap<>();
     }
 
     /**
      * Constructor that sets all fields by the given parameter.
      *
      * @param symbolDAO
-     *         THe SymbolDAO to use.
+     *         The SymbolDAO to use.
      * @param learnerResultDAO
      *         The LearnerResultDAO to use.
      * @param contextHandlerFactory
@@ -118,14 +114,13 @@ public class Learner {
      * @param learnerThreadFactory
      *         The factory to create the learner threads.
      */
-    public Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
+    Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
                    ConnectorContextHandlerFactory contextHandlerFactory, LearnerThreadFactory learnerThreadFactory) {
+        this();
         this.symbolDAO = symbolDAO;
         this.learnerResultDAO = learnerResultDAO;
         this.contextHandlerFactory = contextHandlerFactory;
         this.learnerThreadFactory = learnerThreadFactory;
-        this.activeThreads = new HashMap<>();
-        this.userThreads   = new HashMap<>();
     }
 
     /**

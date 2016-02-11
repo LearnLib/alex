@@ -26,7 +26,7 @@ describe('LearnerResource', () => {
 
     it('should start a learn process', () => {
         spyOn($http, 'post').and.callThrough();
-        const uri = `/rest/learner/start/${project.id}`;
+        const uri = `rest/learner/start/${project.id}`;
 
         $httpBackend.whenPOST(uri).respond(200, {});
         const promise = LearnerResource.start(project.id, config);
@@ -38,7 +38,7 @@ describe('LearnerResource', () => {
 
     it('should stop a learn process', () => {
         spyOn($http, 'get').and.callThrough();
-        const uri = `/rest/learner/stop`;
+        const uri = `rest/learner/stop`;
 
         $httpBackend.whenGET(uri).respond(200, {});
         const promise = LearnerResource.stop();
@@ -50,7 +50,7 @@ describe('LearnerResource', () => {
 
     it('should resume a learn process', () => {
         spyOn($http, 'post').and.callThrough();
-        const uri = `/rest/learner/resume/${project.id}/${testNo}`;
+        const uri = `rest/learner/resume/${project.id}/${testNo}`;
 
         $httpBackend.whenPOST(uri).respond(200, {});
         const promise = LearnerResource.resume(project.id, testNo, config);
@@ -62,7 +62,7 @@ describe('LearnerResource', () => {
 
     it('should check if the learner is active', () => {
         spyOn($http, 'get').and.callThrough();
-        const uri = `/rest/learner/active`;
+        const uri = `rest/learner/active`;
 
         $httpBackend.whenGET(uri).respond(200, {});
         const promise = LearnerResource.isActive();
@@ -74,7 +74,7 @@ describe('LearnerResource', () => {
 
     it('should get the current status of the learner', () => {
         spyOn($http, 'get').and.callThrough();
-        const uri = `/rest/learner/status`;
+        const uri = `rest/learner/status`;
 
         $httpBackend.whenGET(uri).respond(200, ENTITIES.learnResults[0]);
         const promise = LearnerResource.getStatus();
@@ -88,7 +88,7 @@ describe('LearnerResource', () => {
 
     it('should return null status if there is no learner status', () => {
         spyOn($http, 'get').and.callThrough();
-        const uri = `/rest/learner/status`;
+        const uri = `rest/learner/status`;
 
         $httpBackend.whenGET(uri).respond(400, ENTITIES.learnResults[0]);
         const promise = LearnerResource.getStatus();

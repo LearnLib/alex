@@ -28,6 +28,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 
 import javax.validation.ValidationException;
 import java.util.Arrays;
@@ -39,6 +40,7 @@ import java.util.Set;
 /**
  * Implementation of a ProjectDAO using Hibernate.
  */
+@Repository
 public class ProjectDAOImpl implements ProjectDAO {
 
     /** Use the logger for the server part. */

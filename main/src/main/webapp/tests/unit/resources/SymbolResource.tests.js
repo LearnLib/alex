@@ -22,7 +22,7 @@ describe('SymbolResource', () => {
         spyOn($http, 'get').and.callThrough();
 
         const symbol = ENTITIES.symbols[0];
-        const uri = `/rest/projects/${project.id}/symbols/${symbol.id}`;
+        const uri = `rest/projects/${project.id}/symbols/${symbol.id}`;
         $httpBackend.whenGET(uri).respond(200, ENTITIES.symbols[0]);
         const promise = SymbolResource.get(project.id, symbol.id);
         $httpBackend.flush();
@@ -36,7 +36,7 @@ describe('SymbolResource', () => {
     it('should get all symbols and create instances of them', () => {
         spyOn($http, 'get').and.callThrough();
 
-        const uri = `/rest/projects/${project.id}/symbols`;
+        const uri = `rest/projects/${project.id}/symbols`;
 
         $httpBackend.whenGET(uri).respond(200, ENTITIES.symbols);
         const promise = SymbolResource.getAll(project.id);
@@ -51,7 +51,7 @@ describe('SymbolResource', () => {
     it('should create a new symbol', () => {
         spyOn($http, 'post').and.callThrough();
 
-        const uri = `/rest/projects/${project.id}/symbols`;
+        const uri = `rest/projects/${project.id}/symbols`;
         const symbol = new SymbolFormModel();
         $httpBackend.whenPOST(uri).respond(201, ENTITIES.symbols[0]);
         const promise = SymbolResource.create(project.id, symbol);
@@ -66,7 +66,7 @@ describe('SymbolResource', () => {
     it('should create multiple symbols at once', () => {
         spyOn($http, 'post').and.callThrough();
 
-        const uri = `/rest/projects/${project.id}/symbols/batch`;
+        const uri = `rest/projects/${project.id}/symbols/batch`;
         const symbols = [new SymbolFormModel(), new SymbolFormModel(), new SymbolFormModel()];
         $httpBackend.whenPOST(uri).respond(201, ENTITIES.symbols);
         const promise = SymbolResource.createMany(project.id, symbols);
@@ -84,7 +84,7 @@ describe('SymbolResource', () => {
         const groupId = ENTITIES.symbols[0].group;
 
         spyOn($http, 'put').and.callThrough();
-        const uri = `/rest/projects/${projectId}/symbols/batch/${ids}/moveTo/${groupId}`;
+        const uri = `rest/projects/${projectId}/symbols/batch/${ids}/moveTo/${groupId}`;
         $httpBackend.whenPUT(uri).respond(200, {});
         const promise = SymbolResource.moveMany(ENTITIES.symbols, {id: groupId});
         $httpBackend.flush();
@@ -97,7 +97,7 @@ describe('SymbolResource', () => {
         const pairs = ENTITIES.symbols.map(s => new Symbol(s).getIdRevisionPair());
         const concatenatedPairs = pairs.map(p => p.id + ':' + p.revision).join(',');
         const projectId = ENTITIES.symbols[0].project;
-        const uri = `/rest/projects/${projectId}/symbols/batch/${concatenatedPairs}`;
+        const uri = `rest/projects/${projectId}/symbols/batch/${concatenatedPairs}`;
 
         spyOn($http, 'get').and.callThrough();
         $httpBackend.whenGET(uri).respond(200, ENTITIES.symbols);
@@ -114,7 +114,7 @@ describe('SymbolResource', () => {
 
     it('should get all revisions of a symbol', () => {
         const symbol = ENTITIES.symbols[0];
-        const uri = `/rest/projects/${symbol.project}/symbols/${symbol.id}/complete`;
+        const uri = `rest/projects/${symbol.project}/symbols/${symbol.id}/complete`;
         spyOn($http, 'get').and.callThrough();
 
         $httpBackend.whenGET(uri).respond(200, ENTITIES.symbols);
@@ -130,7 +130,7 @@ describe('SymbolResource', () => {
     it('should update a single symbol', () => {
         spyOn($http, 'put').and.callThrough();
         const symbol = ENTITIES.symbols[0];
-        const uri = `/rest/projects/${symbol.project}/symbols/${symbol.id}`;
+        const uri = `rest/projects/${symbol.project}/symbols/${symbol.id}`;
 
         $httpBackend.whenPUT(uri).respond(200, symbol);
         const promise = SymbolResource.update(symbol);
@@ -146,7 +146,7 @@ describe('SymbolResource', () => {
         spyOn($http, 'post').and.callThrough();
 
         const symbol = new Symbol(ENTITIES.symbols[0]);
-        const uri = `/rest/projects/${project.id}/symbols/${symbol.id}/hide`;
+        const uri = `rest/projects/${project.id}/symbols/${symbol.id}/hide`;
 
         $httpBackend.whenPOST(uri).respond(200, {});
         const promise = SymbolResource.remove(symbol);
@@ -161,7 +161,7 @@ describe('SymbolResource', () => {
 
         const symbols = ENTITIES.symbols.map(s => new Symbol(s));
         const ids = symbols.map(s => s.id).join(',');
-        const uri = `/rest/projects/${project.id}/symbols/batch/${ids}/hide`;
+        const uri = `rest/projects/${project.id}/symbols/batch/${ids}/hide`;
 
         $httpBackend.whenPOST(uri).respond(200, {});
         const promise = SymbolResource.removeMany(symbols);
@@ -175,7 +175,7 @@ describe('SymbolResource', () => {
         spyOn($http, 'post').and.callThrough();
 
         const symbol = new Symbol(ENTITIES.symbols[0]);
-        const uri = `/rest/projects/${project.id}/symbols/${symbol.id}/show`;
+        const uri = `rest/projects/${project.id}/symbols/${symbol.id}/show`;
 
         $httpBackend.whenPOST(uri).respond(200, {});
         const promise = SymbolResource.recover(symbol);
@@ -190,7 +190,7 @@ describe('SymbolResource', () => {
 
         const symbols = ENTITIES.symbols.map(s => new Symbol(s));
         const ids = symbols.map(s => s.id).join(',');
-        const uri = `/rest/projects/${project.id}/symbols/batch/${ids}/show`;
+        const uri = `rest/projects/${project.id}/symbols/batch/${ids}/show`;
 
         $httpBackend.whenPOST(uri).respond(200, {});
         const promise = SymbolResource.recoverMany(symbols);
