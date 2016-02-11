@@ -251,7 +251,6 @@ public class UserResource {
 
             realUser.setEmail(email);
             userDAO.update(realUser);
-            // TODO: send the user a verification email
 
             return Response.ok(realUser).build();
         } catch (ValidationException e) {

@@ -154,7 +154,8 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfTheLearnerCouldNotFindASymbol() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learner).start(eq(admin), eq(project), any(LearnerConfiguration.class));
+        willThrow(NotFoundException.class).given(learner)
+                                                .start(eq(admin), eq(project), any(LearnerConfiguration.class));
 
         Response response = target("/learner/start/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(START_JSON));

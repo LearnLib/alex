@@ -95,10 +95,12 @@ public class LearnerStatus {
     /**
      * Constructor.
      *
-     * @param learner The learner to get the information from.
+     * @param user
+     *         The user that is related to the Status and that will be used to fethc the active thread.
+     * @param learner
+     *         The learner to get the information from.
      */
     public LearnerStatus(User user, Learner learner) {
-//        LogManager.getLogger("server").trace("Create new LearnerStatus for user" + user);
         this.user = user;
         this.active = learner.isActive(user);
 
@@ -117,6 +119,11 @@ public class LearnerStatus {
         }
     }
 
+    /**
+     * Ths user that is related to the status and the active learn thread.
+     *
+     * @return The related user.
+     */
     public User getUser() {
         return user;
     }

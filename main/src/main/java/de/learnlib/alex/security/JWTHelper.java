@@ -68,9 +68,11 @@ public final class JWTHelper {
      * Generates a JWT as String representation.
      * Encodes the id and the role of the user as "userId" and "userRole" in the claims of the jwt
      *
-     * @param user The user to generate the JWT from.
+     * @param user
+     *         The user to generate the JWT from.
      * @return The string representation of the jwt.
      * @throws JoseException
+     *         If the Jose library failed to create a JWT token.
      */
     public static String generateJWT(User user) throws JoseException {
         // generate claims with user data

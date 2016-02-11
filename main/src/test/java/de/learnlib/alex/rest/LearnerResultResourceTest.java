@@ -261,7 +261,8 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnActiveTestNo() throws NotFoundException {
-        willThrow(ValidationException.class).given(learnerResultDAO).delete(admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(ValidationException.class).given(learnerResultDAO)
+                                                .delete(admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
                             .request().header("Authorization", adminToken).delete();

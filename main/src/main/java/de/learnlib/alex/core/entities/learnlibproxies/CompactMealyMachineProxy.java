@@ -159,7 +159,8 @@ public class CompactMealyMachineProxy implements Serializable {
     @JsonIgnore
     public void setNodesDB(String nodesAsString) {
         try {
-            CollectionType valueType = OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, Integer.class);
+            CollectionType valueType = OBJECT_MAPPER.getTypeFactory()
+                                                    .constructCollectionType(List.class, Integer.class);
             this.nodes = OBJECT_MAPPER.readValue(nodesAsString, valueType);
         } catch (IOException e) {
             e.printStackTrace();

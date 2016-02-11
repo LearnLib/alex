@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
-import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import net.automatalib.automata.transout.MealyMachine;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -88,7 +88,7 @@ public class LearnerResult implements Serializable {
     private LearnAlgorithms algorithm;
 
     /** The browser to use during the learning. */
-    private WebSiteConnector.WebBrowser browser;
+    private WebBrowser browser;
 
     /** A comment to describe the intention / setting of the learn process.
      *  This field is optional. */
@@ -113,7 +113,7 @@ public class LearnerResult implements Serializable {
     public LearnerResult() {
         this.symbols = new HashSet<>();
         this.steps = new LinkedList<>();
-        this.browser = WebSiteConnector.WebBrowser.HTMLUNITDRIVER;
+        this.browser = WebBrowser.HTMLUNITDRIVER;
         this.comment = "";
         this.statistics = new Statistics();
     }
@@ -346,14 +346,14 @@ public class LearnerResult implements Serializable {
      * @return The browser to use during the learning.
      */
     @Enumerated
-    public WebSiteConnector.WebBrowser getBrowser() {
+    public WebBrowser getBrowser() {
         return browser;
     }
 
     /**
      * @param browser The new browser to use during the learning.
      */
-    public void setBrowser(WebSiteConnector.WebBrowser browser) {
+    public void setBrowser(WebBrowser browser) {
         this.browser = browser;
     }
 

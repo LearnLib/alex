@@ -28,7 +28,7 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -88,8 +88,8 @@ public class LearnerTest {
     @Before
     public void setUp() {
         given(project.getBaseUrl()).willReturn(FAKE_URL);
-        given(learnerConfiguration.getBrowser()).willReturn(WebSiteConnector.WebBrowser.HTMLUNITDRIVER);
-        given(contextHandlerFactory.createContext(project, WebSiteConnector.WebBrowser.HTMLUNITDRIVER))
+        given(learnerConfiguration.getBrowser()).willReturn(WebBrowser.HTMLUNITDRIVER);
+        given(contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER))
                 .willReturn(contextHandler);
         given(learnerThreadFactory.createThread(any(LearnerResult.class), any(ConnectorContextHandler.class)))
                 .willReturn(learnerThread);

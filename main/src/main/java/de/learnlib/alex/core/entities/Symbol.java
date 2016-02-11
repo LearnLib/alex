@@ -142,6 +142,42 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     /**
+     * @return The user that owns the project.
+     */
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @param user The new user that owns the project.
+     */
+    @JsonIgnore
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * @return The ID of the user, which is needed for the JSON.
+     */
+    @JsonProperty("user")
+    public Long getUserId() {
+        if (user == null) {
+            return 0L;
+        } else {
+            return user.getId();
+        }
+    }
+
+    /**
+     * @param userId The new ID of the user, which is needed for the JSON.
+     */
+    @JsonProperty("user")
+    public void setUserId(Long userId) {
+        user = new User(userId);
+    }
+
+    /**
      * Get the project the symbol belongs to.
      *
      * @return The (parent) project.
@@ -186,30 +222,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
         this.project = new Project(projectId);
-    }
-
-    @JsonIgnore
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @JsonIgnore
-    public User getUser() {
-        return user;
-    }
-
-    @JsonProperty("user")
-    public Long getUserId() {
-        if (user == null) {
-            return 0L;
-        } else {
-            return user.getId();
-        }
-    }
-
-    @JsonProperty("user")
-    public void setUserId(Long userid) {
-        user = new User(userid);
     }
 
     /**

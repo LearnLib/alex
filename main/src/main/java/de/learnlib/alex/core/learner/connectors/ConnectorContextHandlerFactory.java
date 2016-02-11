@@ -34,7 +34,7 @@ public class ConnectorContextHandlerFactory {
      *         The browser to use for the frontend learning.
      * @return A ContextHandler for the project with all the connectors.
      */
-    public ConnectorContextHandler createContext(Project project, WebSiteConnector.WebBrowser browser) {
+    public ConnectorContextHandler createContext(Project project, WebBrowser browser) {
         ConnectorContextHandler context = new ConnectorContextHandler();
         String baseUrl = project.getBaseUrl();
 

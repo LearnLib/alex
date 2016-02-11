@@ -338,10 +338,24 @@ public abstract class SymbolAction implements Serializable {
      */
     protected abstract ExecuteResult execute(ConnectorManager connector);
 
+    /**
+     * Checks the given text for any occurrences of a variable and replaces this part with the actual value.
+     * The input string will not be modified.
+     *
+     * @param text
+     *         The text to check for variables, which than will be replaced by the real value.
+     * @return The input string with all variables inserted.
+     */
     protected final String insertVariableValues(String text) {
         return SearchHelper.insertVariableValues(connectorManager, user.getId(), project.getId(), text);
     }
 
+    /**
+     * Get the proper return value for a successful action.
+     * This method checks the 'negated' field and should be used by all actions if no failure / error occurred.
+     *
+     * @return OK if 'negated' is false; FALSE if 'negated' is true.
+     */
     protected final ExecuteResult getSuccessOutput() {
         if (negated) {
             return ExecuteResult.FAILED;
@@ -350,6 +364,12 @@ public abstract class SymbolAction implements Serializable {
         }
     }
 
+    /**
+     * Get the proper return value for a failed action.
+     * This method checks the 'negated' field and should be used by all actions if an failure / error occurred.
+     *
+     * @return FAILED if 'negated' is false; OK if 'negated' is true.
+     */
     protected final ExecuteResult getFailedOutput() {
         if (negated) {
             return ExecuteResult.OK;

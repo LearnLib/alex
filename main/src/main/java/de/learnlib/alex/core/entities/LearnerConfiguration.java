@@ -18,7 +18,7 @@ package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import de.learnlib.alex.core.learner.connectors.WebBrowser;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -33,6 +33,9 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
 
     /** to be serializable. */
     private static final long serialVersionUID = -5130245647384793948L;
+
+    /** The maximum length of a comment. */
+    private static final int MAX_COMMENT_LENGTH = 255;
 
     /**
      * Link to the Symbols that are used during the learning.
@@ -53,7 +56,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     private LearnAlgorithms algorithm;
 
     /** The browser to use during the learn process. */
-    private WebSiteConnector.WebBrowser browser;
+    private WebBrowser browser;
 
     /** A shot comment to describe the learn set up. */
     private String comment;
@@ -131,15 +134,21 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         this.algorithm = algorithm;
     }
 
-    public WebSiteConnector.WebBrowser getBrowser() {
+    /**
+     * @return The browser to use for the learning.
+     */
+    public WebBrowser getBrowser() {
         if (browser == null) {
-            return WebSiteConnector.WebBrowser.HTMLUNITDRIVER;
+            return WebBrowser.HTMLUNITDRIVER;
         } else {
             return browser;
         }
     }
 
-    public void setBrowser(WebSiteConnector.WebBrowser browser) {
+    /**
+     * @param browser The new browser to use for the learning process.
+     */
+    public void setBrowser(WebBrowser browser) {
         this.browser = browser;
     }
 
@@ -148,7 +157,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return The current comment.
      */
-    @Size(max = 255)
+    @Size(max = MAX_COMMENT_LENGTH)
     public String getComment() {
         return comment;
     }

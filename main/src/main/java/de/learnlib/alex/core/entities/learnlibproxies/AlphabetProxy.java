@@ -55,7 +55,7 @@ public class AlphabetProxy extends LinkedList<String> {
      *
      * @param input
      *         The base Alphabet of the new proxy. Can be null.
-     * @return
+     * @return A new proxy based on the given Alphabet.
      */
     public static AlphabetProxy createFrom(Alphabet<String> input) {
         return new AlphabetProxy(input);

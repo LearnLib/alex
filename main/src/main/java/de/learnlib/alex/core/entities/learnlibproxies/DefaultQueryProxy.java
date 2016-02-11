@@ -56,6 +56,9 @@ public class DefaultQueryProxy implements Serializable {
     /** The Output of the query as Strings. */
     private List<String> output;
 
+    /**
+     * Default constructor that creates a new LinkedList for the prefix, the suffix and the output.
+     */
     public DefaultQueryProxy() {
         this.prefix = new LinkedList<>();
         this.suffix = new LinkedList<>();

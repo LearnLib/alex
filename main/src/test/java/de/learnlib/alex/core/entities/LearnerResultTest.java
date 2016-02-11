@@ -44,7 +44,7 @@ public class LearnerResultTest {
     private static final Long ID = 3L;
     private static final ZonedDateTime TEST_DATE = ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00");
     private static final long TEST_DURATION = 9001;
-    private static final int EQS_USED = 123;
+    private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE = new MealyRandomWordsEQOracleProxy(1, 5, 10);
 
     @Test
     public void shouldCreateTheCorrectJSON() throws IOException {
@@ -84,7 +84,7 @@ public class LearnerResultTest {
         firstStep.setProject(project);
         firstStep.setResult(result);
         firstStep.setStepNo(0L);
-        firstStep.setEqOracle(new MealyRandomWordsEQOracleProxy(1, 5, 10));
+        firstStep.setEqOracle(EXAMPLE_EQ_ORACLE);
         firstStep.createHypothesisFrom(hypothesis);
         firstStep.setStatistics(statistics);
         result.getSteps().add(firstStep);

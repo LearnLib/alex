@@ -60,7 +60,8 @@ public class AlexIT {
     private void createProject() throws IOException {
         String json =  "{\"name\": \"" + PROJECT_NAME + "\", \"baseUrl\": \"" + PROJECT_URL + "\"}";
 
-        Response response = client.target(BASE_URL + "/projects").request().header("Authorization", token).post(Entity.json(json));
+        Response response = client.target(BASE_URL + "/projects").request().header("Authorization", token)
+                                .post(Entity.json(json));
         String projectAsString = response.readEntity(String.class);
         System.out.println(" -> " + projectAsString);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -127,7 +128,8 @@ public class AlexIT {
     }
 
     private void deleteProject() {
-        Response response = client.target(BASE_URL + "/projects/" + projectId).request().header("Authorization", token).delete();
+        Response response = client.target(BASE_URL + "/projects/" + projectId).request()
+                                .header("Authorization", token).delete();
 
         if (projectId != null) {
             assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());

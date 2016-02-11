@@ -19,7 +19,7 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.CompleteExplorationEQOracleProxy;
-import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class LearnerConfigurationTest {
         LearnerConfiguration configuration = mapper.readValue(json, LearnerConfiguration.class);
 
         assertEquals(LearnAlgorithms.DHC, configuration.getAlgorithm());
-        assertEquals(WebSiteConnector.WebBrowser.FIREFOX, configuration.getBrowser());
+        assertEquals(WebBrowser.FIREFOX, configuration.getBrowser());
         assertTrue(configuration.getEqOracle() instanceof CompleteExplorationEQOracleProxy);
         assertEquals(2, configuration.getSymbolsAsIdRevisionPairs().size());
         LinkedList<IdRevisionPair> idRevisionPairs = new LinkedList<>(configuration.getSymbolsAsIdRevisionPairs());

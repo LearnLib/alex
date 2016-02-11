@@ -35,7 +35,8 @@ import java.util.Map;
 /**
  * Class to map the Symbols and their result to the values used in the learning process.
  */
-public class SymbolMapper implements Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> {
+public class SymbolMapper
+        implements Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> {
 
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("learner");

@@ -50,16 +50,16 @@ public class Project implements Serializable {
     private static final long serialVersionUID = -6760395646972200067L;
 
     /**
-     * Use the logger for the server part.
-     */
-    private static final Logger LOGGER = LogManager.getLogger("server");
-
-    /**
      * The project ID.
      */
     @Id
     @GeneratedValue
     private Long id;
+
+    /** The user that owns this project. */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JsonIgnore
+    private User user;
 
     /**
      * The name of the project. This property is required & must be unique.
@@ -68,11 +68,6 @@ public class Project implements Serializable {
      */
     @NotBlank
     private String name;
-
-    /** The user that owns this project. */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JsonIgnore
-    private User user;
 
     /**
      * The root URL of the project.
@@ -174,6 +169,42 @@ public class Project implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * @return The user that owns the project.
+     */
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @param user The new user that owns the project.
+     */
+    @JsonIgnore
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * @return The ID of the user, which is needed for the JSON.
+     */
+    @JsonProperty("user")
+    public Long getUserId() {
+        if (user == null) {
+            return 0L;
+        } else {
+            return user.getId();
+        }
+    }
+
+    /**
+     * @param userId The new ID of the user, which is needed for the JSON.
+     */
+    @JsonProperty("user")
+    public void setUserId(Long userId) {
+        user = new User(userId);
     }
 
     /**
@@ -314,30 +345,6 @@ public class Project implements Serializable {
      */
     public void setSymbols(Set<Symbol> symbols) {
         this.symbols = symbols;
-    }
-
-    @JsonIgnore
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @JsonIgnore
-    public User getUser() {
-        return user;
-    }
-
-    @JsonProperty("user")
-    public Long getUserId() {
-        if (user == null) {
-            return 0L;
-        } else {
-            return user.getId();
-        }
-    }
-
-    @JsonProperty("user")
-    public void setUserId(Long userId) {
-        user = new User(userId);
     }
 
     /**

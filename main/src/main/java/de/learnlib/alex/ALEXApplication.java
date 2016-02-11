@@ -51,6 +51,7 @@ public class ALEXApplication extends ResourceConfig {
     /** The Password for the default admin, i.e. the admin that will be auto created if no other admin exists. */
     public static final String DEFAULT_ADMIN_PASSWORD = "admin";
 
+    /** The UserDOA to create an admin if needed. */
     @Inject
     private UserDAO userDAO;
 
@@ -74,6 +75,9 @@ public class ALEXApplication extends ResourceConfig {
         register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
     }
 
+    /**
+     * Create an admin at the start of th ALEX if no admin is currently in the DB.
+     */
     @PostConstruct
     public void createAdminIfNeeded() {
         // create an admin if none exists

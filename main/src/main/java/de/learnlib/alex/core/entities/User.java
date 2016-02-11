@@ -178,24 +178,24 @@ public class User implements Serializable {
     }
 
     /**
-     * @param password The new password of the User as plain text.
+     * @param plainPassword The new password of the User as plain text.
      */
     @JsonIgnore
-    public void setEncryptedPassword(String password) {
+    public void setEncryptedPassword(String plainPassword) {
         this.salt = new SecureRandomNumberGenerator().nextBytes().toBase64();
-        this.password = new Sha512Hash(password, this.salt, HASH_ITERATIONS).toBase64();
+        this.password = new Sha512Hash(plainPassword, this.salt, HASH_ITERATIONS).toBase64();
     }
 
     /**
      * Checks if the given password equals the password of the user.
      *
-     * @param password
+     * @param plainPasswordToCheck
      *         The password to check.
      * @return True, if both passwords matched, false otherwise.
      */
     @JsonIgnore
-    public boolean isValidPassword(String password) {
-        String hashedPassword = new Sha512Hash(password, this.salt, HASH_ITERATIONS).toBase64();
+    public boolean isValidPassword(String plainPasswordToCheck) {
+        String hashedPassword = new Sha512Hash(plainPasswordToCheck, this.salt, HASH_ITERATIONS).toBase64();
         return hashedPassword.equals(this.password);
     }
 

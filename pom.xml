@@ -206,7 +206,7 @@
                         </goals>
                         <configuration>
                             <failOnViolation>true</failOnViolation>
-                            <maxAllowedViolations>200</maxAllowedViolations>
+                            <maxAllowedViolations>50</maxAllowedViolations>
                         </configuration>
                     </execution>
                 </executions>

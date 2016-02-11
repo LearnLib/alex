@@ -29,7 +29,7 @@ import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOraclePr
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.oracles.ResetCounterSUL;
@@ -145,7 +145,7 @@ public class Learner {
 
         LearnerResult learnerResult = createLearnerResult(user, project, configuration);
 
-        WebSiteConnector.WebBrowser browser = configuration.getBrowser();
+        WebBrowser browser = configuration.getBrowser();
         contextHandler = contextHandlerFactory.createContext(project, browser);
         contextHandler.setResetSymbol(learnerResult.getResetSymbol());
         LearnerThread learnThread = learnerThreadFactory.createThread(learnerResult, contextHandler);
@@ -448,7 +448,7 @@ public class Learner {
             throws LearnerException {
         if (contextHandler == null) {
             // todo: remove hardcoded browser
-            contextHandler = contextHandlerFactory.createContext(project, WebSiteConnector.WebBrowser.HTMLUNITDRIVER);
+            contextHandler = contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER);
         }
         contextHandler.setResetSymbol(resetSymbol);
 

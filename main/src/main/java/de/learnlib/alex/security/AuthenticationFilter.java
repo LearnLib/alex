@@ -128,17 +128,18 @@ public class AuthenticationFilter implements ContainerRequestFilter {
          * Checks for the role of the user.
          * Allow an admin to do everything a registered one can also do
          *
-         * @param role - The role to check
-         * @return
+         * @param role
+         *         - The role to check
+         * @return true, if the user is in the role; false otherwise.
          */
         @Override
         public boolean isUserInRole(String role) {
             return UserRole.valueOf(role) == user.getRole() || user.getRole() == UserRole.ADMIN;
         }
 
+        // set this to true when ssl enabled
         @Override
         public boolean isSecure() {
-            // TODO: set this to true when ssl enabled
             return false;
         }
 

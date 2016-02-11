@@ -142,8 +142,10 @@ public class LearnerThread extends Thread {
         this.sigma = symbolMapper.getAlphabet();
         this.result.setSigma(AlphabetProxy.createFrom(sigma));
 
-        ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult, ConnectorManager> ceiSUL;
-        ceiSUL = new ContextExecutableInputSUL<>(context);
+        ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>,
+                                  ExecuteResult,
+                                  ConnectorManager>
+                ceiSUL = new ContextExecutableInputSUL<>(context);
         SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
         this.cachedSUL = SULCaches.createCache(this.sigma, mappedSUL);
         resetCounterSUL = new ResetCounterSUL<>("reset counter", this.cachedSUL);
