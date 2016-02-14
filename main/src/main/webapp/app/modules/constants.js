@@ -75,7 +75,10 @@ const events = {
     LEARN_CONFIG_UPDATED: 'learnConfig:updated',
 
     // file related events
-    FILE_LOADED: 'file:loaded'
+    FILE_LOADED: 'file:loaded',
+
+    // results related events
+    RESULT_SELECTED: 'result:selected'
 };
 
 const chartMode = {

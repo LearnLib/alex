@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {events} from '../../constants';
+
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
  */
@@ -23,15 +25,20 @@ class ResultsCompareView {
     /**
      * Constructor
      * @param $timeout
+     * @param $scope
+     * @param $uibModal
      * @param $stateParams
-     * @param SessionService
-     * @param LearnResultResource
-     * @param ErrorService
+     * @param {SessionService} SessionService
+     * @param {LearnResultResource} LearnResultResource
+     * @param {ErrorService} ErrorService
+     * @param {EventBus} EventBus
      */
-    constructor($timeout, $stateParams, SessionService, LearnResultResource, ErrorService) {
+    constructor($timeout, $scope, $uibModal, $stateParams, SessionService, LearnResultResource, ErrorService, EventBus) {
         this.$timeout = $timeout;
+        this.$uibModal = $uibModal;
         this.LearnResultResource = LearnResultResource;
         this.ErrorService = ErrorService;
+        this.EventBus = EventBus;
 
         /**
          * The project that is in the session
@@ -66,7 +73,6 @@ class ResultsCompareView {
             this.LearnResultResource.getAll(this.project.id)
                 .then(results => {
                     this.results = results;
-
                     this.results.forEach(result => {
                         if (testNos.indexOf(String(result.testNo)) > -1) {
                             this.panels.push(result);
@@ -74,6 +80,10 @@ class ResultsCompareView {
                     })
                 });
         }
+
+        EventBus.on(events.RESULT_SELECTED, (evt, data) => {
+            this.panels.push(data.result);
+        }, $scope);
     }
 
     /**
@@ -87,19 +97,15 @@ class ResultsCompareView {
     }
 
     /**
-     * Adds a new empty panel
-     */
-    addPanel() {
-        this.panels.push(null);
-    }
-
-    /**
      * Removes a panel by a given index
      * @param {number} index - The index of the panel to remove
      */
     closePanel(index) {
         this.panels[index] = null;
         this.panels.splice(index, 1);
+        window.setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+        }, 100);
     }
 }
 

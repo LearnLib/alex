@@ -25,8 +25,8 @@ class Sidebar {
      * @param $scope
      * @param $document
      * @param $state
-     * @param SessionService
-     * @param EventBus
+     * @param {SessionService} SessionService
+     * @param {EventBus} EventBus
      */
     constructor($scope, $document, $state, SessionService, EventBus) {
         this.$state = $state;
@@ -110,4 +110,4 @@ const sidebar = {
     templateUrl: 'views/components/sidebar.html'
 };
 
-export default sidebar;
+export {sidebar};

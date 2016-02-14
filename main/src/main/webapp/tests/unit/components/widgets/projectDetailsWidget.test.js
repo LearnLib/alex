@@ -1,48 +1,67 @@
 import {Project} from '../../../../app/modules/entities/Project';
+import {SymbolGroup} from '../../../../app/modules/entities/SymbolGroup';
+import LearnResult from '../../../../app/modules/entities/LearnResult';
 import {events} from '../../../../app/modules/constants';
 
 describe('projectDetailsWidget', () => {
-    let $rootScope;
-    let $compile;
-    let renderedElement;
-    let controller;
-    let SessionService;
-    let SymbolGroupResource;
-    let LearnResultResource;
-    let EventBus;
-
-    let project;
+    let $rootScope, $compile, $q, SessionService, SymbolGroupResource, LearnResultResource, EventBus;
+    let controller, project, renderedElement;
 
     beforeEach(angular.mock.module('ALEX'));
-    beforeEach(angular.mock.inject((_$rootScope_, _$compile_, _SessionService_, _SymbolGroupResource_,
-                       _LearnResultResource_, _EventBus_) => {
+    beforeEach(angular.mock.inject(($injector) => {
 
-        $rootScope = _$rootScope_;
-        $compile = _$compile_;
-        SessionService = _SessionService_;
-        SymbolGroupResource = _SymbolGroupResource_;
-        LearnResultResource = _LearnResultResource_;
-        EventBus = _EventBus_;
+        $rootScope = $injector.get('$rootScope');
+        $compile = $injector.get('$compile');
+        $q = $injector.get('$q');
+        SessionService = $injector.get('SessionService');
+        SymbolGroupResource = $injector.get('SymbolGroupResource');
+        LearnResultResource = $injector.get('LearnResultResource');
+        EventBus = $injector.get('EventBus');
 
         project = new Project(ENTITIES.projects[0]);
         SessionService.saveProject(project);
     }));
-
     afterEach(() => {
         SessionService.removeProject();
     });
 
-    function render() {
+    function createComponent() {
+
+        const d1 = $q.defer();
+        const d2 = $q.defer();
+        spyOn(SymbolGroupResource, 'getAll').and.returnValue(d1.promise);
+        spyOn(LearnResultResource, 'getAll').and.returnValue(d2.promise);
+
+        const groups = ENTITIES.groups.map(g => new SymbolGroup(g));
+        const results = ENTITIES.learnResults.map(r => new LearnResult(r));
+
+        d1.resolve(groups);
+        d2.resolve(results);
+
         const element = angular.element("<project-details-widget></project-details-widget>");
         renderedElement = $compile(element)($rootScope);
         controller = element.controller('projectDetailsWidget');
+        $rootScope.$digest();
+
+        const numberOfSymbols = groups.map(g => g.symbols.length)
+            .reduce((a, b) => a + b);
+
+        expect(controller.numberOfGroups).toEqual(groups.length);
+        expect(controller.numberOfSymbols).toEqual(numberOfSymbols);
+        expect(controller.numberOfTests).toEqual(results.length);
     }
 
     it('should initialize the the component correctly and display all important data', () => {
-        render();
+        createComponent();
     });
 
     it('should update the project on project:updated event', () => {
-        render();
+        createComponent();
+        const project = new Project({
+            name: 'test',
+            baseUrl: 'http://localhost'
+        });
+        EventBus.emit(events.PROJECT_UPDATED, {project: project});
+        expect(controller.project).toEqual(project);
     });
 });

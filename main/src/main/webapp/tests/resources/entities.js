@@ -89,6 +89,20 @@ ENTITIES.learnResults = [{
         },
         "stepNo": 0,
         "stepsToLearn": -1
+    },{
+        "algorithmInformation": "+====+====+\n|    | s1 |\n+====+====+\n| ε  | OK |\n+====+====+\n| s1 | OK |\n+====+====+\n",
+        "counterExample": "",
+        "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20},
+        "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
+        "statistics": {
+            "duration": 8868,
+            "eqsUsed": 1,
+            "mqsUsed": 23,
+            "startDate": "2016-02-01T20:02:58.256+01:00",
+            "symbolsUsed": 112
+        },
+        "stepNo": 1,
+        "stepsToLearn": -1
     }],
     "symbols": [{"id": 1, "revision": 2}],
     "testNo": 1,

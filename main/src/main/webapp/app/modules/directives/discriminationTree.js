@@ -212,7 +212,7 @@ function discriminationTree($window) {
 
             // in order to prevent only a white screen in some browsers, firing a resize event on the window
             // displays the svg contents
-            window.setTimeout(function () {
+            window.setTimeout(() => {
                 window.dispatchEvent(new Event('resize'));
             }, 100);
         }

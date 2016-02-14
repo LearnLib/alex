@@ -58,9 +58,11 @@ import {checkbox, checkboxMultiple} from './checkbox';
 import {fileDropzone} from './fileDropzone';
 import loadScreen from './loadScreen';
 import projectList from './projectList';
-import sidebar from './sidebar';
+import {sidebar} from './sidebar';
 import viewHeader from './viewHeader';
 import {responsiveIframe} from './responsiveIframe';
+import {learnResultPanel} from './learnResultPanel';
+import {observationTable} from './observationTable';
 
 const moduleName = 'ALEX.components';
 
@@ -114,6 +116,8 @@ angular
     .component('projectList', projectList)
     .component('sidebar', sidebar)
     .component('responsiveIframe', responsiveIframe)
-    .component('viewHeader', viewHeader);
+    .component('viewHeader', viewHeader)
+    .component('learnResultPanel', learnResultPanel)
+    .component('observationTable', observationTable);
 
 export const components = moduleName;

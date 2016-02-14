@@ -19,8 +19,6 @@ import dropdownHover from './dropdownHover';
 import {htmlElementPicker, htmlElementPickerWindow} from './htmlElementPicker';
 import hypothesis from './hypothesis';
 import {learnResultList, learnResultListItem} from './learnResultList';
-import {learnResultPanel, learnResultComparePanel} from './learnResultPanel';
-import observationTable from './observationTable';
 import {symbolGroupList, symbolGroupListItem} from './symbolGroupList';
 import {symbolList, symbolListItem} from './symbolList';
 
@@ -36,7 +34,8 @@ import symbolEditModalHandle from './modals/symbolEditModalHandle';
 import {symbolGroupCreateModalHandle} from './modals/symbolGroupCreateModalHandle';
 import {symbolGroupEditModalHandle} from './modals/symbolGroupEditModalHandle';
 import symbolMoveModalHandle from './modals/symbolMoveModalHandle';
-import userEditModalHandle from './modals/userEditModalHandle';
+import {userEditModalHandle} from './modals/userEditModalHandle';
+import {resultListModalHandle} from './modals/resultListModalHandle';
 
 const moduleName = 'ALEX.directives';
 
@@ -49,9 +48,6 @@ angular
     .directive('hypothesis', hypothesis)
     .directive('learnResultList', learnResultList)
     .directive('learnResultListItem', learnResultListItem)
-    .directive('learnResultPanel', learnResultPanel)
-    .directive('learnResultComparePanel', learnResultComparePanel)
-    .directive('observationTable', observationTable)
     .directive('symbolGroupList', symbolGroupList)
     .directive('symbolGroupListItem', symbolGroupListItem)
     .directive('symbolList', symbolList)
@@ -69,6 +65,7 @@ angular
     .directive('symbolGroupCreateModalHandle', symbolGroupCreateModalHandle)
     .directive('symbolGroupEditModalHandle', symbolGroupEditModalHandle)
     .directive('symbolMoveModalHandle', symbolMoveModalHandle)
-    .directive('userEditModalHandle', userEditModalHandle);
+    .directive('userEditModalHandle', userEditModalHandle)
+    .directive('resultListModalHandle', resultListModalHandle);
 
 export const directives = moduleName;

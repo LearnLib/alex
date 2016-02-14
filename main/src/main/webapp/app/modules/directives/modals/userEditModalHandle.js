@@ -192,4 +192,4 @@ function userEditModalHandle($uibModal) {
     }
 }
 
-export default userEditModalHandle;
+export {userEditModalHandle, UserEditModalController};

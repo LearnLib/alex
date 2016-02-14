@@ -1,62 +1,22 @@
 <div id="view-results-compare">
     <div class="learn-results-compare-wrapper">
 
-        <div class="learn-result-compare-panel" learn-result-compare-panel
-             ng-repeat="result in vm.panels track by $index" index="{{$index}}" from="{{vm.panels.length}}">
+        <learn-result-panel ng-repeat="result in vm.panels track by $index"
+                            result="result" index="{{$index}}" from="{{vm.panels.length}}">
+            <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
+                <i class="fa fa-close"></i>
+            </button>
+        </learn-result-panel>
 
-            <learn-result-panel result="result" index="{{$index}}" ng-if="result">
-                <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
-                    <i class="fa fa-close"></i>
-                </button>
-            </learn-result-panel>
-
-            <div class="learn-result-panel" ng-if="!result">
-                <div class="learn-result-panel-header">
-                    <button class="btn btn-sm btn-danger learn-result-panel-close-button pull-right"
-                            ng-click="vm.closePanel($index)">
-                        <i class="fa fa-close"></i>
-                    </button>
-                </div>
-                <div class="learn-result-panel-body">
-                    <div class="alx-container">
-
-                        <ul class="list-group">
-                            <li class="list-group-item" ng-repeat="result in vm.results"
-                                ng-click="vm.fillPanel(result, $parent.$index)">
-
-                                <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
-
-                                <strong>Test No
-                                    <span ng-bind="result.testNo"></span>
-                                </strong>,
-                                [<span ng-bind="(result.algorithm|formatAlgorithm)"></span>]
-
-                                <br>
-
-                                <p class="text-muted">
-                                    Started:
-                                    <span ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
-                                </p>
-
-                            </li>
-                        </ul>
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="alx-container" ng-if="vm.panels.length === 0">
-            <br>
-            <div class="alert alert-info" ng-click="vm.addPanel()">
+        <div class="alx-container" ng-if="vm.panels.length === 0" style="padding-top: 14px;">
+            <div class="alert alert-info" result-list-modal-handle results="vm.results">
+                <i class="fa fa-plus-square fa-fw"></i>
                 <strong>Click to add a new panel</strong> or click on the green button on the bottom right
             </div>
         </div>
 
-        <!-- add learn result panel button -->
-        <div class="add-panel-button text-center" ng-click="vm.addPanel()" uib-tooltip="Add Panel" tooltip-placement="left"
-             ng-show="vm.panels.length === 0 || vm.panels[vm.panels.length - 1] !== null">
+        <div class="add-panel-button text-center" uib-tooltip="Add result" tooltip-placement="left"
+             result-list-modal-handle results="vm.results">
             <i class="fa fa-2x fa-plus"></i>
         </div>
     </div>

@@ -67,7 +67,7 @@ class SymbolsImportView {
 
         // listen on the symbol updated event
         EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
-            this.updateSymbol(data.newSymbol, data.oldSymbol);
+            this.updateSymbol(data.newSymbol);
         }, $scope);
     }
 
@@ -78,7 +78,10 @@ class SymbolsImportView {
      */
     fileLoaded(data) {
         try {
-            this.symbols = angular.fromJson(data).map(s => new Symbol(s));
+            this.symbols = angular.fromJson(data).map(s => {
+                s.id = _.uniqueId();
+                return new Symbol(s)
+            });
         } catch (e) {
             this.ToastService.danger('<p><strong>Loading json file failed</strong></p>' + e);
         }
@@ -95,6 +98,7 @@ class SymbolsImportView {
                     const maxId = _.max(existingSymbols, 'id').id;
                     const symbols = this.selectedSymbols.map(s => new Symbol(s));
                     symbols.forEach(symbol => {
+                        delete symbol.id;
 
                         // search in all actions of all symbols for an action with the type EXECUTE_SYMBOL and
                         // adjust referenced ids according to the max. existing id
@@ -126,31 +130,28 @@ class SymbolsImportView {
      * database.
      *
      * @param {Symbol} updatedSymbol - The updated symbol
-     * @param {Symbol} oldSymbol - The old symbol
      */
-    updateSymbol(updatedSymbol, oldSymbol) {
+    updateSymbol(updatedSymbol) {
 
-        // check whether name or abbreviation already exist and don't update symbol
-        if (angular.equals(updatedSymbol, oldSymbol)) {
+        // check if the name already exists
+        let symbol = this.symbols.find(s => s.name === updatedSymbol.name);
+        if (symbol && symbol.id !== updatedSymbol.id) {
+            this.ToastService.danger(`The symbol with the name "${updatedSymbol.name}" already exists.`);
             return;
-        } else if (updatedSymbol.name !== oldSymbol.name &&
-            updatedSymbol.abbreviation === oldSymbol.abbreviation) {
-            if (_.where(this.symbols, {name: updatedSymbol.name}).length > 0) {
-                this.ToastService.danger('Name <strong>' + updatedSymbol.name + '</strong> already exists');
-                return;
-            }
-        } else if (updatedSymbol.abbreviation !== oldSymbol.abbreviation &&
-            updatedSymbol.name === oldSymbol.name) {
-            if (_.where(this.symbols, {abbreviation: updatedSymbol.abbreviation}).length > 0) {
-                this.ToastService.danger('Abbreviation <strong>' + updatedSymbol.abbreviation + '</strong> already exists');
-                return;
-            }
         }
 
-        // update symbol in scope
-        const symbol = this.symbols.find(s => s.name === oldSymbol.name);
+        // check if the abbreviation already exists
+        symbol = this.symbols.find(s => s.abbreviation === updatedSymbol.abbreviation);
+        if (symbol && symbol.id !== updatedSymbol.id) {
+            this.ToastService.danger(`The symbol with the abbreviation "${updatedSymbol.abbreviation}" already exists.`);
+            return;
+        }
+
+        // update name and abbreviation
+        symbol = this.symbols.find(s => s.id === updatedSymbol.id);
         symbol.name = updatedSymbol.name;
         symbol.abbreviation = updatedSymbol.abbreviation;
+        this.ToastService.success('The symbol has been updated');
     }
 }
 
