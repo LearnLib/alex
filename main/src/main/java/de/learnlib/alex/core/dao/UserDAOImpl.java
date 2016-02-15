@@ -20,10 +20,13 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
+import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.GenericJDBCException;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.List;
 
@@ -41,8 +44,13 @@ public class UserDAOImpl implements UserDAO {
         try {
             session.save(user);
             HibernateUtil.commitTransaction();
-        } catch (Exception e) {
+        } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
+            throw ValidationExceptionHelper.createValidationException("User was not created:", e);
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            throw new ValidationException("User was not created: " + e.getMessage(), e);
+        } catch (GenericJDBCException e) {
             throw new javax.validation.ValidationException(
                     "The User was not created because it did not pass the validation!", e);
         }

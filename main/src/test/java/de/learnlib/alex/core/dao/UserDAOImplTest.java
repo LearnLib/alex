@@ -104,7 +104,7 @@ public class UserDAOImplTest {
 
     @Test(expected = ValidationException.class)
     public void shouldNotCreateAUserWithANonUniqueEmail() {
-        user.setEmail("UserDAOImplTest@alex-tests.example");
+        user.setEmail(ADMIN_MAIL);
 
         userDAO.create(user);
     }

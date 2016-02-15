@@ -19,8 +19,7 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import de.learnlib.alex.core.entities.validators.UniqueProjectName;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
@@ -42,6 +41,7 @@ import java.util.Set;
  */
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@UniqueProjectName
 public class Project implements Serializable {
 
     /**
