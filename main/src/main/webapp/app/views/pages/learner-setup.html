@@ -59,11 +59,11 @@
 
             <div class="row">
                 <div class="col-sm-8 col-md-9">
-                    <symbol-group-list ng-if="vm.groups.length > 0">
+                    <div class="symbol-group-list" ng-if="vm.groups.length > 0">
                         <symbol-group-list-item ng-repeat="group in vm.groups | orderBy:'-name':true"
                                                 group="group" editable="false">
 
-                            <symbol-list>
+                            <div class="symbol-list">
                                 <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true"
                                                   symbol="symbol"
                                                   selection-model selection-model-selected-items="vm.selectedSymbols">
@@ -79,10 +79,10 @@
                                           class="label label-primary">Reset Symbol</span>
 
                                 </symbol-list-item>
-                            </symbol-list>
+                            </div>
 
                         </symbol-group-list-item>
-                    </symbol-group-list>
+                    </div>
                 </div>
 
                 <div class="col-sm-4 col-md-3">

@@ -1,4 +1,4 @@
-import LearnResult from '../../../app/modules/entities/LearnResult';
+import {LearnResult} from '../../../app/modules/entities/LearnResult';
 import {events} from '../../../app/modules/constants';
 
 SVGElement.prototype.getTransformToElement =

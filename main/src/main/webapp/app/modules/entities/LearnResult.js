@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import LearnConfiguration from './LearnConfiguration';
+import {LearnConfiguration} from './LearnConfiguration';
 
 /**
  * The model for a learner result
@@ -107,4 +107,4 @@ class LearnResult {
     }
 }
 
-export default LearnResult;
+export {LearnResult};

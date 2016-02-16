@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import LearnResult from '../entities/LearnResult';
+import {LearnResult} from '../entities/LearnResult';
 
 /**
  * The service for interacting with the learner

@@ -9,8 +9,21 @@ describe('DownloadService', () => {
         document = $document[0];
     }));
 
-    // cannot really test DownloadService.download directly
-    // it('should download something given as a href', () => {});
+     it('should download something given as a href', () => {
+         spyOn(document.body, 'appendChild').and.returnValue(null);
+         spyOn(document.body, 'removeChild').and.returnValue(null);
+
+         DownloadService.download('filename', 'ext', 'content');
+
+         const a = document.createElement('a');
+         a.style['display'] = 'none';
+         a.setAttribute('href', 'content');
+         a.setAttribute('target', '_blank');
+         a.setAttribute('download', 'filename.ext');
+
+         expect(document.body.appendChild).toHaveBeenCalledWith(a);
+         expect(document.body.removeChild).toHaveBeenCalledWith(a);
+     });
 
     it('should download an object as json file', () => {
         spyOn(DownloadService, 'download').and.returnValue(null);

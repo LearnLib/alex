@@ -16,7 +16,7 @@
 
 import _ from 'lodash';
 import {events} from '../../constants';
-import LearnConfiguration from '../../entities/LearnConfiguration';
+import {LearnConfiguration} from '../../entities/LearnConfiguration';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.

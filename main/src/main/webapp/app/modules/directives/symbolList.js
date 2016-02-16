@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-function symbolList() {
-    return {
-        transclude: true,
-        template: '<div class="symbol-list" ng-transclude></div>'
-    };
-}
-
 function symbolListItem() {
     return {
         replace: true,
@@ -38,4 +31,4 @@ function symbolListItem() {
     };
 }
 
-export {symbolList, symbolListItem};
+export {symbolListItem};

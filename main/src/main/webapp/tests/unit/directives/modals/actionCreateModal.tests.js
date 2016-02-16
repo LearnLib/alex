@@ -4,8 +4,8 @@ import {ActionCreateModalController} from '../../../../app/modules/directives/mo
 
 describe('ActionCreateModalController', () => {
     let $controller, $rootScope, $q;
-    let SessionService, ActionService, SymbolResource, EventBus;
-    let project;
+    let SessionService, $compile, ActionService, SymbolResource, $uibModal, EventBus;
+    let project, element;
     let modalInstance;
     let controller;
 
@@ -14,6 +14,8 @@ describe('ActionCreateModalController', () => {
         $controller = $injector.get('$controller');
         $rootScope = $injector.get('$rootScope');
         $q = $injector.get('$q');
+        $compile = $injector.get('$compile');
+        $uibModal = $injector.get('$uibModal');
 
         SessionService = $injector.get('SessionService');
         ActionService = $injector.get('ActionService');
@@ -47,12 +49,24 @@ describe('ActionCreateModalController', () => {
         });
     }
 
+    function createElement() {
+        element = angular.element("<button action-create-modal-handle>click me</button>");
+        $compile(element)($rootScope);
+    }
+
     function init() {
         const deferred = $q.defer();
         spyOn(SymbolResource, 'getAll').and.returnValue(deferred.promise);
         deferred.resolve(ENTITIES.symbols);
         createController();
     }
+
+    it('should open the modal on click', () => {
+        createElement();
+        spyOn($uibModal, 'open').and.callThrough();
+        element[0].click();
+        expect($uibModal.open).toHaveBeenCalled();
+    });
 
     it('should correctly instantiate the controller', () => {
         init();

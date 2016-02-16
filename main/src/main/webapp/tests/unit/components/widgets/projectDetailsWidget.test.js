@@ -1,6 +1,6 @@
 import {Project} from '../../../../app/modules/entities/Project';
 import {SymbolGroup} from '../../../../app/modules/entities/SymbolGroup';
-import LearnResult from '../../../../app/modules/entities/LearnResult';
+import {LearnResult} from '../../../../app/modules/entities/LearnResult';
 import {events} from '../../../../app/modules/constants';
 
 describe('projectDetailsWidget', () => {

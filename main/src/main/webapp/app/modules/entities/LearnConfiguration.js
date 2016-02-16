@@ -86,4 +86,4 @@ class LearnConfiguration {
     }
 }
 
-export default LearnConfiguration;
+export {LearnConfiguration};

@@ -55,11 +55,11 @@
     <div class="view-body has-sub-nav">
         <div class="alx-container-fluid">
 
-            <symbol-group-list>
+            <div class="symbol-group-list">
                 <symbol-group-list-item ng-repeat="group in vm.groups | orderBy:'-name':true"
                                         group="group" editable="true">
 
-                    <symbol-list>
+                    <div class="symbol-list">
                         <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true" symbol="symbol"
                                           selection-model selection-model-selected-items="vm.selectedSymbols">
 
@@ -99,10 +99,10 @@
                             </div>
 
                         </symbol-list-item>
-                    </symbol-list>
+                    </div>
 
                 </symbol-group-list-item>
-            </symbol-group-list>
+            </div>
 
         </div>
     </div>

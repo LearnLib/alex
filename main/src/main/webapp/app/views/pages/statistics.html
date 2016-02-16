@@ -48,7 +48,7 @@
     <div class="view-body has-sub-nav">
         <div class="alx-container-fluid">
 
-            <learn-result-list>
+            <div class="learn-result-list">
                 <learn-result-list-item ng-repeat="result in vm.results | orderBy:'-testNo':false" result="result"
                                         selection-model selection-model-selected-items="vm.selectedResults"
                                         link-to="statistics">
@@ -78,7 +78,7 @@
                     </div>
 
                 </learn-result-list-item>
-            </learn-result-list>
+            </div>
 
         </div>
     </div>

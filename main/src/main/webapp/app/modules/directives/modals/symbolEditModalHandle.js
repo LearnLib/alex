@@ -128,4 +128,4 @@ function symbolEditModalHandle($uibModal) {
     }
 }
 
-export default symbolEditModalHandle;
+export {symbolEditModalHandle, SymbolEditModalController};

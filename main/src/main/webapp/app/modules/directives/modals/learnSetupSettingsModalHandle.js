@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import LearnConfiguration from '../../entities/LearnConfiguration';
+import {LearnConfiguration} from '../../entities/LearnConfiguration';
 import {events, webBrowser, learnAlgorithm, eqOracleType} from '../../constants';
 
 /**

@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
-function symbolGroupList() {
-    return {
-        transclude: true,
-        template: `
-            <div class="symbol-group-list" ng-transclude></div>
-        `
-    };
-}
-
 function symbolGroupListItem() {
     return {
         transclude: true,
@@ -57,4 +48,4 @@ function symbolGroupListItem() {
     };
 }
 
-export {symbolGroupList, symbolGroupListItem};
+export {symbolGroupListItem};

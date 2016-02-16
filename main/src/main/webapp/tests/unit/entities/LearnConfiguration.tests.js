@@ -1,5 +1,5 @@
 import {Symbol} from '../../../app/modules/entities/Symbol';
-import LearnConfiguration from '../../../app/modules/entities/LearnConfiguration';
+import {LearnConfiguration} from '../../../app/modules/entities/LearnConfiguration';
 
 describe('LearnConfiguration', () => {
     beforeEach(angular.mock.module('ALEX'));

@@ -9,22 +9,28 @@ describe('SymbolGroupEditModalController', () => {
     let EventBus;
     let ToastService;
     let scope;
+    let $uibModal;
+    let $rootScope;
 
     let controller;
     let modalInstance;
     let deferred;
     let group;
+    let element;
 
     beforeEach(angular.mock.module('ALEX'));
-    beforeEach(angular.mock.inject((_$controller_, $rootScope, _SymbolGroupResource_, _EventBus_,
-                       _ToastService_, _$q_, _$compile_) => {
+    beforeEach(angular.mock.inject((_$controller_, _SymbolGroupResource_, _EventBus_,
+                       _ToastService_, _$q_, _$compile_, _$uibModal_, _$rootScope_) => {
 
-        scope = $rootScope.$new();
         SymbolGroupResource = _SymbolGroupResource_;
         $controller = _$controller_;
+        $rootScope = _$rootScope_;
         EventBus = _EventBus_;
         ToastService = _ToastService_;
         $compile = _$compile_;
+        $uibModal = _$uibModal_;
+
+        scope = $rootScope.$new();
 
         modalInstance = {
             close: jasmine.createSpy('modalInstance.close'),
@@ -47,6 +53,20 @@ describe('SymbolGroupEditModalController', () => {
             EventBus: EventBus
         });
     }
+
+    function createElement() {
+        const scope = $rootScope.$new();
+        scope.group = {};
+        element = angular.element("<button symbol-group-edit-modal-handle group='group'>click me</button>");
+        $compile(element)(scope);
+    }
+
+    it('should open the modal on click', () => {
+        createElement();
+        spyOn($uibModal, 'open').and.callThrough();
+        element[0].click();
+        expect($uibModal.open).toHaveBeenCalled();
+    });
 
     it('should initialize the controller correctly', () => {
         createController();

@@ -4,29 +4,24 @@ import {events} from '../../../../app/modules/constants';
 import {SymbolGroupCreateModalController} from '../../../../app/modules/directives/modals/symbolGroupCreateModalHandle';
 
 describe('SymbolGroupCreateModalController', () => {
-    let SessionService;
-    let SymbolGroupResource;
-    let $controller;
-    let EventBus;
-    let ToastService;
-    let scope;
+    let SessionService, SymbolGroupResource, $compile, $uibModal, $q, $controller, EventBus, ToastService, $rootScope;
 
-    let controller;
-    let project;
-    let modalInstance;
-    let deferred;
+    let controller, project, modalInstance, deferred, element, scope;
 
     beforeEach(angular.mock.module('ALEX'));
-    beforeEach(angular.mock.inject((_$controller_, $rootScope, _SessionService_, _SymbolGroupResource_, _EventBus_,
-                       _ToastService_, _$q_) => {
+    beforeEach(angular.mock.inject(($injector) => {
 
-        SessionService = _SessionService_;
+        SessionService = $injector.get('SessionService');
+        $rootScope = $injector.get('$rootScope');
+        SymbolGroupResource = $injector.get('SymbolGroupResource');
+        $controller = $injector.get('$controller');
+        $compile = $injector.get('$compile');
+        $q = $injector.get('$q');
+        EventBus = $injector.get('EventBus');
+        ToastService = $injector.get('ToastService');
+        $uibModal = $injector.get('$uibModal');
+
         scope = $rootScope.$new();
-        SymbolGroupResource = _SymbolGroupResource_;
-        $controller = _$controller_;
-        EventBus = _EventBus_;
-        ToastService = _ToastService_;
-
         modalInstance = {
             close: jasmine.createSpy('modalInstance.close'),
             dismiss: jasmine.createSpy('modalInstance.dismiss'),
@@ -37,7 +32,7 @@ describe('SymbolGroupCreateModalController', () => {
 
         project = new Project(ENTITIES.projects[0]);
         SessionService.saveProject(project);
-        deferred = _$q_.defer();
+        deferred = $q.defer();
     }));
 
     afterEach(() => {
@@ -53,6 +48,18 @@ describe('SymbolGroupCreateModalController', () => {
             EventBus: EventBus
         });
     }
+
+    function createElement() {
+        element = angular.element("<button symbol-group-create-modal-handle>click me</button>");
+        $compile(element)($rootScope);
+    }
+
+    it('should open the modal on click', () => {
+        createElement();
+        spyOn($uibModal, 'open').and.callThrough();
+        element[0].click();
+        expect($uibModal.open).toHaveBeenCalled();
+    });
 
     it('should initialize the controller correctly', () => {
         createController();

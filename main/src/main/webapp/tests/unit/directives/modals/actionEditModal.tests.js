@@ -3,15 +3,17 @@ import {actionType, events} from '../../../../app/modules/constants';
 import {ActionEditModalController} from '../../../../app/modules/directives/modals/actionEditModalHandle';
 
 describe('ActionEditModalController', () => {
-    let $controller, $rootScope, $q;
+    let $controller, $rootScope, $q, $compile, $uibModal;
     let SessionService, ActionService, SymbolResource, EventBus;
-    let project, modalData, modalInstance, controller;
+    let project, modalData, modalInstance, controller, element;
 
     beforeEach(angular.mock.module('ALEX'));
     beforeEach(angular.mock.inject(($injector) => {
         $controller = $injector.get('$controller');
         $rootScope = $injector.get('$rootScope');
         $q = $injector.get('$q');
+        $compile = $injector.get('$compile');
+        $uibModal = $injector.get('$uibModal');
 
         SessionService = $injector.get('SessionService');
         ActionService = $injector.get('ActionService');
@@ -50,12 +52,29 @@ describe('ActionEditModalController', () => {
         });
     }
 
+    function createElement() {
+        const scope = $rootScope.$new();
+        scope.action = {
+            type: 'web_click',
+            _id: 0
+        };
+        element = angular.element("<button action-edit-modal-handle action='action'>click me</button>");
+        $compile(element)(scope);
+    }
+
     function init() {
         const deferred = $q.defer();
         spyOn(SymbolResource, 'getAll').and.returnValue(deferred.promise);
         deferred.resolve(ENTITIES.symbols);
         createController();
     }
+
+    it('should open the modal on click', () => {
+        createElement();
+        spyOn($uibModal, 'open').and.callThrough();
+        element[0].click();
+        expect($uibModal.open).toHaveBeenCalled();
+    });
 
     it('should correctly instantiate the controller', () => {
         init();

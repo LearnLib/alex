@@ -15,17 +15,6 @@
  */
 
 /**
- * The directive that displays the learn result list
- * @returns {{transclude: boolean, template: string}}
- */
-function learnResultList() {
-    return {
-        transclude: true,
-        template: '<div class="learn-result-list" ng-transclude></div>'
-    };
-}
-
-/**
  * The directive that displays a learn result list item
  *
  * Use: <learn-result-list-item result="..."></learn-result-list-item> where
@@ -69,4 +58,4 @@ function learnResultListItem() {
     };
 }
 
-export {learnResultList, learnResultListItem};
+export {learnResultListItem};

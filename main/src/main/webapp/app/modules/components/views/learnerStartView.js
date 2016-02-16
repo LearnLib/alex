@@ -15,7 +15,7 @@
  */
 
 import _ from 'lodash';
-import LearnConfiguration from '../../entities/LearnConfiguration';
+import {LearnConfiguration} from '../../entities/LearnConfiguration';
 
 /**
  * The controller for showing a load screen during the learning and shows all learn results from the current test

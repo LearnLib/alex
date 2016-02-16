@@ -1,14 +1,16 @@
 import {User} from '../../../../app/modules/entities/User';
 import {UserEditModalController} from '../../../../app/modules/directives/modals/userEditModalHandle';
+import {events} from '../../../../app/modules/constants';
 
 describe('userEditModal', () => {
-    let $rootScope, $controller, $compile, $uibModal, $state, UserResource, ToastService, PromptService, EventBus, SessionService;
+    let $rootScope, $controller, $q, $compile, $uibModal, $state, UserResource, ToastService, PromptService, EventBus, SessionService;
     let controller, modalInstance;
 
     beforeEach(angular.mock.module('ALEX'));
     beforeEach(angular.mock.inject(($injector) => {
         $rootScope = $injector.get('$rootScope');
         $controller = $injector.get('$controller');
+        $q = $injector.get('$q');
         $compile = $injector.get('$compile');
         $uibModal = $injector.get('$uibModal');
         $state = $injector.get('$state');
@@ -79,22 +81,89 @@ describe('userEditModal', () => {
 
     it('should promote a user', () => {
         createController();
+
+        const deferred = $q.defer();
+        spyOn(UserResource, 'promote').and.returnValue(deferred.promise);
+        spyOn(EventBus, 'emit').and.callThrough();
+        deferred.resolve({});
+
+        controller.promoteUser();
+        $rootScope.$digest();
+
+        expect(UserResource.promote).toHaveBeenCalledWith(controller.user);
+        expect(EventBus.emit).toHaveBeenCalled();
+        expect(modalInstance.dismiss).toHaveBeenCalled();
     });
 
     it('should display a message if promoting a user failed', () => {
         createController();
+
+        const deferred = $q.defer();
+        spyOn(UserResource, 'promote').and.returnValue(deferred.promise);
+        spyOn(EventBus, 'emit').and.callThrough();
+        deferred.reject({data: {message: 'failed'}});
+
+        controller.promoteUser();
+        $rootScope.$digest();
+
+        expect(UserResource.promote).toHaveBeenCalledWith(controller.user);
+        expect(controller.error).toEqual('failed');
+        expect(EventBus.emit).not.toHaveBeenCalled();
     });
 
     it('should delete a user after the user confirmed the action', () => {
         createController();
+
+        const d1 = $q.defer();
+        const d2 = $q.defer();
+        spyOn(UserResource, 'remove').and.returnValue(d1.promise);
+        spyOn(PromptService, 'confirm').and.returnValue(d2.promise);
+        spyOn(EventBus, 'emit').and.callThrough();
+        d1.resolve({});
+        d2.resolve({});
+
+        controller.deleteUser();
+        $rootScope.$digest();
+
+        expect(PromptService.confirm).toHaveBeenCalled();
+        expect(UserResource.remove).toHaveBeenCalledWith(controller.user);
+        expect(EventBus.emit).toHaveBeenCalledWith(events.USER_DELETED, {user: controller.user});
+        expect(modalInstance.dismiss).toHaveBeenCalled();
     });
 
     it('should not delete a user if the user denied the action', () => {
         createController();
+
+        const d1 = $q.defer();
+        const d2 = $q.defer();
+        spyOn(UserResource, 'remove').and.returnValue(d1.promise);
+        spyOn(PromptService, 'confirm').and.returnValue(d2.promise);
+        d2.reject({});
+
+        controller.deleteUser();
+        $rootScope.$digest();
+
+        expect(PromptService.confirm).toHaveBeenCalled();
+        expect(UserResource.remove).not.toHaveBeenCalled();
+        expect(controller.error).toBeNull();
     });
 
     it('should display a message if the user could not be deleted', () => {
         createController();
+
+        const d1 = $q.defer();
+        const d2 = $q.defer();
+        spyOn(UserResource, 'remove').and.returnValue(d1.promise);
+        spyOn(PromptService, 'confirm').and.returnValue(d2.promise);
+        d1.reject({data: {message: 'failed'}});
+        d2.resolve({});
+
+        controller.deleteUser();
+        $rootScope.$digest();
+
+        expect(PromptService.confirm).toHaveBeenCalled();
+        expect(UserResource.remove).toHaveBeenCalledWith(controller.user);
+        expect(controller.error).toEqual('failed');
     });
 
     it('should close the modal', () => {
