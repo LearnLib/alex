@@ -95,10 +95,6 @@ public class ProjectResource {
         project.setUser(user);
 
         try {
-            if (projectDAO.getByName(user.getId(), project.getName()) != null) {
-                throw new ValidationException("There is already a project with that name!");
-            }
-
             projectDAO.create(project);
             String projectURL = uri.getBaseUri() + "projects/" + project.getId();
             return Response.status(Status.CREATED).header("Location", projectURL).entity(project).build();
@@ -201,10 +197,6 @@ public class ProjectResource {
         } else {
             try {
                 if (project.getUser() == null || user.equals(project.getUser())) {
-                    Project p = projectDAO.getByName(user.getId(), project.getName());
-                    if (p != null && !p.equals(project)) {
-                        throw new ValidationException("There is already a project with that name");
-                    }
                     projectDAO.update(project);
                     return Response.ok(project).build();
                 } else {

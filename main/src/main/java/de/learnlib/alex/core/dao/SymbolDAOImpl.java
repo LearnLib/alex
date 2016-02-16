@@ -26,11 +26,11 @@ import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
+import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -63,9 +63,17 @@ public class SymbolDAOImpl implements SymbolDAO {
             HibernateUtil.commitTransaction();
 
         // error handling
-        } catch (javax.validation.ConstraintViolationException
-                 | org.hibernate.exception.ConstraintViolationException
-                 | IllegalStateException e) {
+        } catch (javax.validation.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            symbol.setId(null);
+            symbol.setRevision(null);
+            throw ValidationExceptionHelper.createValidationException("Symbol was not created:", e);
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            symbol.setId(null);
+            symbol.setRevision(null);
+            throw new ValidationException("Symbol was not created: " + e.getMessage(), e);
+        } catch (IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
             symbol.setId(null);
             symbol.setRevision(null);
@@ -105,9 +113,21 @@ public class SymbolDAOImpl implements SymbolDAO {
             });
             throw new ValidationException("Could not create a symbol because it has a reference to another"
                                                   + " unknown symbol.", e);
-        } catch (javax.validation.ConstraintViolationException
-                | org.hibernate.exception.ConstraintViolationException
-                | IllegalStateException e) {
+        } catch (javax.validation.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            symbols.forEach(s -> {
+                s.setId(null);
+                s.setRevision(null);
+            });
+            throw ValidationExceptionHelper.createValidationException("Symbols were not created:", e);
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            symbols.forEach(s -> {
+                s.setId(null);
+                s.setRevision(null);
+            });
+            throw new ValidationException("Symbols were not created: " + e.getMessage(), e);
+        } catch (IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
@@ -124,10 +144,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                     "To create a symbols it must have a Project but not haven an ID or and revision");
         }
 
-        Project project = (Project) session.load(Project.class, symbol.getProjectId());
-
-        // test for unique constrains
-        checkUniqueConstrains(session, symbol); // will throw exception if the symbol is invalid
+        Project project = session.load(Project.class, symbol.getProjectId());
 
         // get the current highest symbol id in the project and add 1 for the next id
         long id = project.getNextSymbolId();
@@ -139,11 +156,11 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.setRevision(1L);
         project.addSymbol(symbol);
 
-        SymbolGroup group = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
-                                                    .using("user", symbol.getUser())
-                                                    .using("project", project)
-                                                    .using("id", symbol.getGroupId())
-                                                    .load();
+        SymbolGroup group = session.byNaturalId(SymbolGroup.class)
+                                    .using("user", symbol.getUser())
+                                    .using("project", project)
+                                    .using("id", symbol.getGroupId())
+                                    .load();
         if (group == null) {
             throw new ValidationException("The specified group was not found and thus the Symbol was not created.");
         }
@@ -354,7 +371,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        Project project = (Project) session.get(Project.class, projectId);
+        Project project = session.get(Project.class, projectId);
         if (project == null) {
             throw new NotFoundException("Could not find the project with the id " + projectId + ".");
         }
@@ -456,9 +473,13 @@ public class SymbolDAOImpl implements SymbolDAO {
             HibernateUtil.commitTransaction();
 
         // error handling
-        } catch (javax.validation.ConstraintViolationException
-                 | org.hibernate.exception.ConstraintViolationException
-                 | IllegalStateException e) {
+        } catch (javax.validation.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            throw ValidationExceptionHelper.createValidationException("Symbol was not updated:", e);
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            throw new ValidationException("Symbol was not updated: " + e.getMessage(), e);
+        } catch (IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
             throw new ValidationException("Could not update the Symbol because it is not valid.", e);
         } catch (IllegalArgumentException e) {
@@ -491,9 +512,21 @@ public class SymbolDAOImpl implements SymbolDAO {
             HibernateUtil.commitTransaction();
 
             // error handling
-        } catch (javax.validation.ConstraintViolationException
-                | org.hibernate.exception.ConstraintViolationException
-                | IllegalStateException e) {
+        } catch (javax.validation.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            symbols.forEach(s -> {
+                s.setId(null);
+                s.setRevision(null);
+            });
+            throw ValidationExceptionHelper.createValidationException("Symbols were not updated:", e);
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            symbols.forEach(s -> {
+                s.setId(null);
+                s.setRevision(null);
+            });
+            throw new ValidationException("Symbols were not updated: " + e.getMessage(), e);
+        } catch (IllegalStateException e) {
             HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
@@ -539,19 +572,16 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                        + symbol.getProjectId() + ".");
         }
 
-        // test for unique constrains
-        checkUniqueConstrains(session, symbol); // will throw exception if the symbol is invalid
-
-        SymbolGroup oldGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
-                                                    .using("user", symbol.getUser())
-                                                    .using("project", symbol.getProject())
-                                                    .using("id", symbolInDB.getGroupId())
-                                                    .load();
-        SymbolGroup newGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
-                                                    .using("user", symbol.getUser())
-                                                    .using("project", symbol.getProject())
-                                                    .using("id", symbol.getGroupId())
-                                                    .load();
+        SymbolGroup oldGroup = session.byNaturalId(SymbolGroup.class)
+                                        .using("user", symbol.getUser())
+                                        .using("project", symbol.getProject())
+                                        .using("id", symbolInDB.getGroupId())
+                                        .load();
+        SymbolGroup newGroup = session.byNaturalId(SymbolGroup.class)
+                                        .using("user", symbol.getUser())
+                                        .using("project", symbol.getProject())
+                                        .using("id", symbol.getGroupId())
+                                        .load();
 
         // count revision up
         symbol.setSymbolId(0L);
@@ -607,16 +637,16 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     private void move(Session session, Symbol symbol, Long newGroupId) throws NotFoundException {
-        SymbolGroup oldGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
-                                                    .using("user", symbol.getUser())
-                                                    .using("project", symbol.getProject())
-                                                    .using("id", symbol.getGroupId())
-                                                    .load();
-        SymbolGroup newGroup = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
-                                                    .using("user", symbol.getUser())
-                                                    .using("project", symbol.getProject())
-                                                    .using("id", newGroupId)
-                                                    .load();
+        SymbolGroup oldGroup = session.byNaturalId(SymbolGroup.class)
+                                        .using("user", symbol.getUser())
+                                        .using("project", symbol.getProject())
+                                        .using("id", symbol.getGroupId())
+                                        .load();
+        SymbolGroup newGroup = session.byNaturalId(SymbolGroup.class)
+                                        .using("user", symbol.getUser())
+                                        .using("project", symbol.getProject())
+                                        .using("id", newGroupId)
+                                        .load();
 
         if (newGroup == null) {
             throw new NotFoundException("The group with the id " + newGroupId + " does not exist!");
@@ -717,43 +747,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
 
         return symbols;
-    }
-
-    /**
-     * Check the unique constrains of a symbol, e.g. a unique id, name or abbreviation per Project.
-     * If the symbol is valid, nothing will happen, otherwise an exception will be thrown.
-     * 
-     * @param session
-     *            The current session.
-     * @param symbol
-     *            The Symbol to check.
-     * @throws IllegalArgumentException
-     *             If the symbol failed the check.
-     */
-    private void checkUniqueConstrains(Session session, Symbol symbol) throws IllegalArgumentException {
-        // put constrains into a query
-        Junction restrictions = Restrictions.conjunction()
-                                    .add(Restrictions.eq("user", symbol.getUser()))
-                                    .add(Restrictions.eq("project", symbol.getProject()))
-                                    .add(Restrictions.disjunction()
-                                            .add(Restrictions.eq("name", symbol.getName()))
-                                            .add(Restrictions.eq("abbreviation", symbol.getAbbreviation())));
-        if (symbol.getId() != null) {
-            restrictions = restrictions.add(Restrictions.ne("idRevisionPair.id", symbol.getId()));
-        }
-
-        @SuppressWarnings("unchecked") // should return list of symbols
-        List<Symbol> testList = session.createCriteria(symbol.getClass())
-                                            .add(restrictions)
-                                            .list();
-
-        // if the query result is not empty, the constrains are violated.
-        if (testList.size() > 0) {
-            HibernateUtil.rollbackTransaction();
-            throw new ValidationException("The name '" + symbol.getName() + "' or the abbreviation '"
-                                            + symbol.getAbbreviation() + "' of the symbol is already used"
-                                              + " in the project.");
-        }
     }
 
     private void beforeSymbolSave(Symbol symbol) {

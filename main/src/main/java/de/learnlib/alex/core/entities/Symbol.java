@@ -19,6 +19,8 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.core.entities.validators.UniqueSymbolAbbreviation;
+import de.learnlib.alex.core.entities.validators.UniqueSymbolName;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
@@ -49,6 +51,8 @@ import java.util.List;
  */
 @Entity
 @JsonPropertyOrder(alphabetic = true)
+@UniqueSymbolName
+@UniqueSymbolAbbreviation
 public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorManager>, Serializable {
 
     /** to be serializable. */

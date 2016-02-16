@@ -22,6 +22,7 @@ import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
+import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -105,12 +106,15 @@ public class ProjectDAOImpl implements ProjectDAO {
             HibernateUtil.commitTransaction();
 
         // error handling
-        } catch (javax.validation.ConstraintViolationException
-                | org.hibernate.exception.ConstraintViolationException e) {
+        } catch (javax.validation.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
-            e.printStackTrace();
+            LOGGER.info("Project creation failed:", e);
+            throw ValidationExceptionHelper.createValidationException("Project was not created:", e);
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            LOGGER.info("Project creation failed:", e);
             throw new javax.validation.ValidationException(
-                    "The Project was not created because it did not pass the validation!", e);
+                    "The Project was not created: " + e.getMessage(), e);
         }
     }
 
@@ -194,15 +198,18 @@ public class ProjectDAOImpl implements ProjectDAO {
 
         // error handling
         } catch (ObjectNotFoundException e) {
-            LOGGER.info("Project Update Failed:", e);
+            LOGGER.info("Project update failed:", e);
             HibernateUtil.rollbackTransaction();
             throw new NotFoundException("Could not find the project with the id " + project.getId() + ".", e);
-        } catch (javax.validation.ConstraintViolationException
-                 | org.hibernate.exception.ConstraintViolationException e) {
-            LOGGER.info("Project Update Failed:", e);
+        } catch (javax.validation.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
+            LOGGER.info("Project update failed:", e);
+            throw ValidationExceptionHelper.createValidationException("Project was not updated:", e);
+        } catch (org.hibernate.exception.ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            LOGGER.info("Project update failed:", e);
             throw new javax.validation.ValidationException(
-                    "The Project was not updated because it did not pass the validation!", e);
+                    "The Project was not updated: " + e.getMessage(), e);
         }
     }
 

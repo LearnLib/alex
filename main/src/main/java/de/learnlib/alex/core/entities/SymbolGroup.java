@@ -19,6 +19,7 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.learnlib.alex.core.entities.validators.UniqueSymbolGroupName;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NaturalId;
@@ -42,6 +43,7 @@ import java.util.Set;
  */
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@UniqueSymbolGroupName
 public class SymbolGroup implements Serializable {
 
     /** to be serializable. */

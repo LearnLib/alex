@@ -24,10 +24,14 @@ import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
+import de.learnlib.alex.utils.ValidationExceptionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,6 +44,9 @@ import java.util.Set;
  */
 @Repository
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
+
+    /** Use the logger for the server part. */
+    private static final Logger LOGGER = LogManager.getLogger("server");
 
     /** The SymbolDAO to use. */
     private final SymbolDAOImpl symbolDAO;
@@ -64,20 +71,25 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        Project project = (Project) session.load(Project.class, group.getProjectId());
+        try {
+            Project project = session.load(Project.class, group.getProjectId());
 
-        checkConstrains(session, group); // will throw an ValidationException, if something is wrong
+            // get the current highest group id in the project and add 1 for the next id
+            long id = project.getNextGroupId();
+            project.setNextGroupId(id + 1);
+            session.update(project);
 
-        // get the current highest group id in the project and add 1 for the next id
-        long id = project.getNextGroupId();
-        project.setNextGroupId(id + 1);
-        session.update(project);
+            group.setId(id);
+            project.addGroup(group);
 
-        group.setId(id);
-        project.addGroup(group);
-
-        session.save(group);
-        HibernateUtil.commitTransaction();
+            session.save(group);
+            HibernateUtil.commitTransaction();
+        // error handling
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            LOGGER.info("SymbolGroup creation failed:", e);
+            throw ValidationExceptionHelper.createValidationException("SymbolGroup was not created:", e);
+        }
     }
 
     @Override
@@ -87,8 +99,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        Project project = (Project) session.load(Project.class, projectId);
-        User user = (User) session.load(User.class, userId);
+        Project project = session.load(Project.class, projectId);
+        User user = session.load(User.class, userId);
 
         if (project == null) {
             HibernateUtil.rollbackTransaction();
@@ -115,8 +127,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        Project project = (Project) session.load(Project.class, projectId);
-        SymbolGroup result = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+        Project project = session.load(Project.class, projectId);
+        SymbolGroup result = session.byNaturalId(SymbolGroup.class)
                                                     .using("user", user)
                                                     .using("project", project)
                                                     .using("id", groupId)
@@ -140,11 +152,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        checkConstrains(session, group); // will throw an ValidationException, if something is wrong
-
-        SymbolGroup groupInDB = (SymbolGroup) session.byNaturalId(SymbolGroup.class)
+        SymbolGroup groupInDB = session.byNaturalId(SymbolGroup.class)
                                                         .using("user", group.getUser())
-                .using("project", group.getProject())
+                                                        .using("project", group.getProject())
                                                         .using("id", group.getId())
                                                         .load();
         if (groupInDB == null) {
@@ -152,11 +162,18 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             throw new NotFoundException("You can only update existing groups!");
         }
 
-        // apply changes
-        groupInDB.setName(group.getName());
-        session.update(groupInDB);
+        try {
+            // apply changes
+            groupInDB.setName(group.getName());
+            session.update(groupInDB);
 
-        HibernateUtil.commitTransaction();
+            HibernateUtil.commitTransaction();
+        // error handling
+        } catch (ConstraintViolationException e) {
+            HibernateUtil.rollbackTransaction();
+            LOGGER.info("SymbolGroup update failed:", e);
+            throw ValidationExceptionHelper.createValidationException("SymbolGroup was not updated:", e);
+        }
     }
 
     @Override
@@ -167,7 +184,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
-        Project project = (Project) session.load(Project.class, projectId);
+        Project project = session.load(Project.class, projectId);
 
         if (group.equals(project.getDefaultGroup())) {
             HibernateUtil.rollbackTransaction();
@@ -183,19 +200,6 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         group.setSymbols(null);
         session.delete(group);
         HibernateUtil.commitTransaction();
-    }
-
-    private void checkConstrains(Session session, SymbolGroup group) throws ValidationException {
-        List<SymbolGroup> constrainsTestList = session.createCriteria(SymbolGroup.class)
-                                                        .add(Restrictions.eq("user", group.getUser()))
-                                                        .add(Restrictions.eq("project", group.getProject()))
-                                                        .add(Restrictions.eq("name", group.getName()))
-                                                        .list();
-
-        if (!constrainsTestList.isEmpty()) {
-            HibernateUtil.rollbackTransaction();
-            throw new ValidationException("The group name must be unique per project.");
-        }
     }
 
     private void initLazyRelations(Session session, User user, SymbolGroup group, EmbeddableFields... embedFields) {

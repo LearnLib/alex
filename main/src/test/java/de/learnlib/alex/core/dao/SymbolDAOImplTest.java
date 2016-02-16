@@ -352,6 +352,7 @@ public class SymbolDAOImplTest {
         Long idBefore = project.getNextSymbolId();
         Symbol invalidSymbol = new Symbol();
         invalidSymbol.setProject(symbol.getProject());
+        invalidSymbol.setAbbreviation("no_unique_name");
         invalidSymbol.setUser(user);
         invalidSymbol.setName(symbol.getName());
         symbolDAO.create(invalidSymbol);
