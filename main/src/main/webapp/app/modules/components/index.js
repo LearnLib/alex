@@ -63,6 +63,9 @@ import viewHeader from './viewHeader';
 import {responsiveIframe} from './responsiveIframe';
 import {learnResultPanel} from './learnResultPanel';
 import {observationTable} from './observationTable';
+import {symbolListItem} from './symbolListItem';
+import {symbolGroupListItem} from './symbolGroupListItem';
+import {learnResultListItem} from './learnResultListItem';
 
 const moduleName = 'ALEX.components';
 
@@ -118,6 +121,9 @@ angular
     .component('responsiveIframe', responsiveIframe)
     .component('viewHeader', viewHeader)
     .component('learnResultPanel', learnResultPanel)
-    .component('observationTable', observationTable);
+    .component('observationTable', observationTable)
+    .component('symbolListItem', symbolListItem)
+    .component('symbolGroupListItem', symbolGroupListItem)
+    .component('learnResultListItem', learnResultListItem);
 
 export const components = moduleName;

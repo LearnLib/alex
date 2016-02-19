@@ -21,9 +21,9 @@ class FilesView {
     /**
      * Constructor
      * @param Upload
-     * @param ToastService
-     * @param SessionService
-     * @param FileResource
+     * @param {ToastService} ToastService
+     * @param {SessionService} SessionService
+     * @param {FileResource} FileResource
      */
     constructor(Upload, ToastService, SessionService, FileResource) {
         this.Upload = Upload;

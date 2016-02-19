@@ -14,17 +14,29 @@
  * limitations under the License.
  */
 
-/** The controller of the index page. */
+/**
+ * The controller of the index page.
+ */
 // @ngInject
 class HomeView {
 
     /**
      * Constructor
      * @param $state
-     * @param SessionService
+     * @param {SessionService} SessionService
      */
     constructor($state, SessionService) {
+
+        /**
+         * The current user
+         * @type {User}
+         */
         this.user = SessionService.getUser();
+
+        /**
+         * The current project
+         * @type {Project}
+         */
         this.project = SessionService.getProject();
 
         if (this.user !== null) {

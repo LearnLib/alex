@@ -18,6 +18,12 @@ ENTITIES.counters = [
     {user: 1, project: 1, name: 'k', value: 3}
 ];
 
+ENTITIES.files = [
+    {name: 'file1', project: 0},
+    {name: 'file2', project: 0},
+    {name: 'file3', project: 0}
+];
+
 ENTITIES.symbols = [
     {id: 1, revision: 1, name: 's1', abbreviation: 's1', group: 1, project: 1, user: 1, actions: [], hidden: false},
     {id: 2, revision: 1, name: 's2', abbreviation: 's2', group: 1, project: 1, user: 1, actions: [], hidden: true},

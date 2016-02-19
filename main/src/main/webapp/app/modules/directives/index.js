@@ -18,9 +18,6 @@ import discriminationTree from './discriminationTree';
 import dropdownHover from './dropdownHover';
 import {htmlElementPicker, htmlElementPickerWindow} from './htmlElementPicker';
 import hypothesis from './hypothesis';
-import {learnResultListItem} from './learnResultList';
-import {symbolGroupListItem} from './symbolGroupList';
-import {symbolListItem} from './symbolList';
 
 // modal handles
 import {actionCreateModalHandle} from './modals/actionCreateModalHandle';
@@ -46,9 +43,6 @@ angular
     .directive('htmlElementPicker', htmlElementPicker)
     .directive('htmlElementPickerWindow', htmlElementPickerWindow)
     .directive('hypothesis', hypothesis)
-    .directive('learnResultListItem', learnResultListItem)
-    .directive('symbolGroupListItem', symbolGroupListItem)
-    .directive('symbolListItem', symbolListItem)
 
     // modal handles
     .directive('actionCreateModalHandle', actionCreateModalHandle)

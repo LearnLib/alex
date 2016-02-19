@@ -7,14 +7,17 @@ SVGElement.prototype.getTransformToElement =
     };
 
 describe('learnResultPanel', () => {
-    let $rootScope, $compile, EventBus;
+    let $rootScope, $q, $compile, EventBus, PromptService, DownloadService;
     let controller;
 
     beforeEach(angular.mock.module('ALEX'));
     beforeEach(angular.mock.inject(($injector) => {
         $rootScope = $injector.get('$rootScope');
+        $q = $injector.get('$q');
         $compile = $injector.get('$compile');
         EventBus = $injector.get('EventBus');
+        PromptService = $injector.get('PromptService');
+        DownloadService = $injector.get('DownloadService');
 
         const scope = $rootScope.$new();
         scope.result = new LearnResult(ENTITIES.learnResults[0]);
@@ -75,5 +78,50 @@ describe('learnResultPanel', () => {
         };
         EventBus.emit(events.HYPOTHESIS_LAYOUT_UPDATED, {settings: options});
         expect(controller.layoutSettings).toEqual(options);
-    })
+    });
+
+    it('should download a hypothesis as json', () => {
+        const d1 = $q.defer();
+        spyOn(PromptService, 'prompt').and.returnValue(d1.promise);
+        d1.resolve('filename');
+        spyOn(DownloadService, 'downloadObject').and.returnValue(null);
+
+        const hypothesis = controller.result.steps[controller.pointer].hypothesis;
+        controller.exportHypothesisAsJson();
+        $rootScope.$digest();
+
+        expect(PromptService.prompt).toHaveBeenCalled();
+        expect(DownloadService.downloadObject).toHaveBeenCalledWith(hypothesis, 'filename');
+    });
+
+    it('should set the mode to hypothesis', () => {
+        controller.showHypothesis();
+        expect(controller.mode).toEqual(controller.modes.HYPOTHESIS);
+    });
+
+    it('should download the hypothesis as svg', () => {
+        const d1 = $q.defer();
+        spyOn(PromptService, 'prompt').and.returnValue(d1.promise);
+        d1.resolve('filename');
+        spyOn(DownloadService, 'downloadSvg').and.returnValue(null);
+
+        controller.downloadSvg('#hypothesis');
+        $rootScope.$digest();
+
+        expect(PromptService.prompt).toHaveBeenCalled();
+        expect(DownloadService.downloadSvg).toHaveBeenCalledWith('#hypothesis', true, 'filename')
+    });
+
+    it('should download the observation table as csv', () => {
+        const d1 = $q.defer();
+        spyOn(PromptService, 'prompt').and.returnValue(d1.promise);
+        d1.resolve('filename');
+        spyOn(DownloadService, 'downloadTable').and.returnValue(null);
+
+        controller.downloadObservationTable('#table');
+        $rootScope.$digest();
+
+        expect(PromptService.prompt).toHaveBeenCalled();
+        expect(DownloadService.downloadTable).toHaveBeenCalledWith('#table', 'filename')
+    });
 });

@@ -63,7 +63,7 @@ const learnResumeSettingsWidget = {
     },
     controller: LearnResumeSettingsWidget,
     controllerAs: 'vm',
-    templateUrl: 'views/directives/learn-resume-settings-widget.html'
+    templateUrl: 'views/components/learn-resume-settings-widget.html'
 };
 
 export default learnResumeSettingsWidget;
