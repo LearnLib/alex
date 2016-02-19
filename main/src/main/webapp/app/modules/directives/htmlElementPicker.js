@@ -231,7 +231,7 @@ function htmlElementPickerWindow($window, SessionService) {
         // load project, create proxy address and load the last url in the iframe
         function init() {
             scope.project = SessionService.getProject();
-            proxyUrl = $window.location.origin + 'rest/proxy?url=';
+            proxyUrl = 'rest/proxy?url=';
 
             scope.url = lastUrl;
             scope.loadUrl();
@@ -245,15 +245,15 @@ function htmlElementPickerWindow($window, SessionService) {
             iframe[0].onload = function () {
                 angular.element(iframe.contents()[0].body.getElementsByTagName('a'))
                     .on('click', function () {
-                            if (!scope.isSelectable) {
-                                var _this = this;
-                                if (_this.getAttribute('href') !== '' && _this.getAttribute('href')[0] !== '#') {
-                                    scope.$apply(function () {
-                                        scope.url = decodeURIComponent(_this.getAttribute('href'))
-                                            .replace(proxyUrl + scope.project.baseUrl + '/', '');
-                                    });
-                                }
+                        if (!scope.isSelectable) {
+                            var _this = this;
+                            if (_this.getAttribute('href') !== '' && _this.getAttribute('href')[0] !== '#') {
+                                scope.$apply(function () {
+                                    scope.url = decodeURIComponent(_this.getAttribute('href'))
+                                        .replace(proxyUrl + scope.project.baseUrl + '/', '');
+                                });
                             }
+                        }
                         }
                     );
             };
