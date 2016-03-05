@@ -35,7 +35,7 @@
     "angular-ui-router": "^0.2.17",
     "bootstrap-sass": "^3.3.6",
     "d3": "^3.5.9",
-    "dagre-d3": "^0.4.11",
+    "dagre-d3": "^0.4.17",
     "font-awesome": "^4.4.0",
     "install": "^0.3.0",
     "lodash": "^3.10.1",

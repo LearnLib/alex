@@ -1,11 +1,6 @@
 import {LearnResult} from '../../../app/modules/entities/LearnResult';
 import {events} from '../../../app/modules/constants';
 
-SVGElement.prototype.getTransformToElement =
-    SVGElement.prototype.getTransformToElement || function (toElement) {
-        return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM());
-    };
-
 describe('learnResultPanel', () => {
     let $rootScope, $q, $compile, EventBus, PromptService, DownloadService;
     let controller;
