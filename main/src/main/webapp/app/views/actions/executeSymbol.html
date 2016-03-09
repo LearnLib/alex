@@ -4,20 +4,6 @@
 </p>
 <hr>
 
-<div class="form-group" ng-if="vm.action.getModel().name">
-    <div class="panel panel-default">
-        <div class="panel-body clearfix" style="padding: 5px 10px;">
-            <a href="" class="btn btn-default btn-sm pull-right" uib-tooltip="Update to latest revision"
-               tooltip-placement="left" ng-click="vm.action.updateRevision(vm.symbols)">
-                <i class="fa fa-refresh"></i>
-            </a>
-            <strong ng-bind="vm.action.getModel().name"></strong> <br>
-            <em class="text-muted">Revision <span ng-bind="vm.action.symbolToExecute.revision"></span></em>
-        </div>
-    </div>
-    <hr>
-</div>
-
 <div class="row">
     <div class="col-xs-8 no-padding-right">
         <div class="form-group">
@@ -34,6 +20,33 @@
             <label>Rev.</label>
             <input class="form-control" type="number" min="1" ng-model="vm.action.symbolToExecute.revision"
                    max="{{vm.action.getModel().maxRevision}}">
+        </div>
+    </div>
+</div>
+
+<div ng-if="vm.action.getModel().name">
+    <hr>
+    <div class="form-group">
+        <div class="panel panel-default">
+            <div class="panel-body clearfix" style="padding: 5px 10px;">
+                <a href="" class="btn btn-default btn-sm pull-right" uib-tooltip="Update to latest revision"
+                   tooltip-placement="left" ng-if="!vm.action.useLatestRevision"
+                   ng-click="vm.action.updateRevision(vm.symbols)">
+                    <i class="fa fa-refresh"></i>
+                </a>
+                <strong ng-bind="vm.action.getModel().name"></strong> <br>
+                <em class="text-muted" ng-if="!vm.action.useLatestRevision">
+                    Revision <span ng-bind="vm.action.symbolToExecute.revision"></span>
+                </em>
+                <em class="text-muted" ng-if="vm.action.useLatestRevision">
+                    Latest revision
+                </em>
+            </div>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="vm.action.useLatestRevision"> Always use the latest revision
+            </label>
         </div>
     </div>
 </div>

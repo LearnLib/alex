@@ -78,8 +78,9 @@ To install and run ALEX, Execute the following commands:
 1. `git clone https://github.com/learnlib/alex`
 2. `cd alex`
 3. `mvn install [-DskipTests]`
-4. `mvn jetty:run [-Djetty.port=PORT]`
-5. open *http://localhost:8080* in a web browser
+4. `cd main`
+5. `mvn spring-boot:run`
+6. open *http://localhost:8000* in a web browser
 
 ## Further reading
 
