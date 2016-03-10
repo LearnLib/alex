@@ -1,4 +1,4 @@
-import {Symbol, SymbolFormModel} from '../../../app/modules/entities/Symbol';
+import {Symbol, SymbolFormModel} from '../../../src/js/entities/Symbol';
 
 describe('SymbolResource', () => {
     let $http, $httpBackend;

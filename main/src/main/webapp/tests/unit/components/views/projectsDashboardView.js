@@ -1,4 +1,4 @@
-import {Project} from '../../../../app/modules/entities/Project';
+import {Project} from '../../../../src/js/entities/Project';
 
 describe('projectsDashboardView', () => {
 

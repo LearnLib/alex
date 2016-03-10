@@ -1,4 +1,4 @@
-import {User, UserFormModel} from '../../../app/modules/entities/User';
+import {User, UserFormModel} from '../../../src/js/entities/User';
 
 describe('UserFormModel', () => {
     beforeEach(angular.mock.module('ALEX'));

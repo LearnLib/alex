@@ -26,7 +26,7 @@ describe('actionCreateEditForm', () => {
     it('should render correctly and load the template of an action', () => {
         spyOn(controller, 'getTemplate').and.callThrough();
 
-        $httpBackend.whenGET(`views/actions/${ACTION_TYPE}.html`).respond(200, '');
+        $httpBackend.whenGET(`html/actions/${ACTION_TYPE}.html`).respond(200, '');
         $rootScope.$digest();
         $httpBackend.flush();
 

@@ -1,5 +1,5 @@
-import {User} from '../../../../app/modules/entities/User';
-import {events} from '../../../../app/modules/constants';
+import {User} from '../../../../src/js/entities/User';
+import {events} from '../../../../src/js/constants';
 
 describe('AdminUsersViewComponent', () => {
     let $controller;

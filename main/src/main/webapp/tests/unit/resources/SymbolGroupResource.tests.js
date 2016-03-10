@@ -1,4 +1,4 @@
-import {SymbolGroup, SymbolGroupFormModel} from '../../../app/modules/entities/SymbolGroup';
+import {SymbolGroup, SymbolGroupFormModel} from '../../../src/js/entities/SymbolGroup';
 
 describe('SymbolGroupResource', () => {
     let $http;

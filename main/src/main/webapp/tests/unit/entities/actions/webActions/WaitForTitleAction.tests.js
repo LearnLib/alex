@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import WaitForTitleAction from '../../../../../app/modules/entities/actions/webActions/WaitForTitleAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import WaitForTitleAction from '../../../../../src/js/entities/actions/webActions/WaitForTitleAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('WaitForNodeAction', () => {
     beforeEach(angular.mock.module('ALEX'));

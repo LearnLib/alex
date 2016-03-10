@@ -1,7 +1,7 @@
-import {Project} from '../../../../app/modules/entities/Project';
-import {SymbolGroup} from '../../../../app/modules/entities/SymbolGroup';
-import {LearnResult} from '../../../../app/modules/entities/LearnResult';
-import {events} from '../../../../app/modules/constants';
+import {Project} from '../../../../src/js/entities/Project';
+import {SymbolGroup} from '../../../../src/js/entities/SymbolGroup';
+import {LearnResult} from '../../../../src/js/entities/LearnResult';
+import {events} from '../../../../src/js/constants';
 
 describe('projectDetailsWidget', () => {
     let $rootScope, $compile, $q, SessionService, SymbolGroupResource, LearnResultResource, EventBus;

@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import SelectWebAction from '../../../../../app/modules/entities/actions/webActions/SelectWebAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import SelectWebAction from '../../../../../src/js/entities/actions/webActions/SelectWebAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('SelectWebAction', () => {
     beforeEach(angular.mock.module('ALEX'));

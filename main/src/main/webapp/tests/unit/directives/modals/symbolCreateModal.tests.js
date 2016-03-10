@@ -1,6 +1,6 @@
-import {SymbolFormModel, Symbol} from '../../../../app/modules/entities/Symbol';
-import {events} from '../../../../app/modules/constants';
-import {SymbolCreateModalController} from '../../../../app/modules/directives/modals/symbolCreateModalHandle';
+import {SymbolFormModel, Symbol} from '../../../../src/js/entities/Symbol';
+import {events} from '../../../../src/js/constants';
+import {SymbolCreateModalController} from '../../../../src/js/directives/modals/symbolCreateModalHandle';
 
 describe('symbolCreateModal', () => {
     let $controller, $uibModal, $q, $compile, $rootScope, SymbolGroupResource, SymbolResource, ToastService, SessionService;
@@ -51,7 +51,7 @@ describe('symbolCreateModal', () => {
         expect(controller.groups).toEqual([]);
 
         $uibModal.open({
-            templateUrl: 'views/modals/symbol-create-modal.html',
+            templateUrl: 'html/modals/symbol-create-modal.html',
             controller: () => controller,
             controllerAs: 'vm'
         });

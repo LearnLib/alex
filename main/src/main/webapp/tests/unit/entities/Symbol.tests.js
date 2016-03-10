@@ -1,5 +1,5 @@
-import {Symbol, SymbolFormModel} from '../../../app/modules/entities/Symbol';
-import Action from '../../../app/modules/entities/actions/Action';
+import {Symbol, SymbolFormModel} from '../../../src/js/entities/Symbol';
+import Action from '../../../src/js/entities/actions/Action';
 
 describe('SymbolFormModel', () => {
     beforeEach(angular.mock.module('ALEX'));

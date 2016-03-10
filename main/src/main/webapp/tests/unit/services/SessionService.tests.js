@@ -1,5 +1,5 @@
-import {Project} from '../../../app/modules/entities/Project';
-import {User} from '../../../app/modules/entities/User';
+import {Project} from '../../../src/js/entities/Project';
+import {User} from '../../../src/js/entities/User';
 
 describe('SessionService', () => {
     let EventBus;

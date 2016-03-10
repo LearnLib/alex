@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import ClickLinkByTextWebAction from '../../../../../app/modules/entities/actions/webActions/ClickLinkByTextWebAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import ClickLinkByTextWebAction from '../../../../../src/js/entities/actions/webActions/ClickLinkByTextWebAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('ClickLinkByTextWebAction', () => {
     beforeEach(angular.mock.module('ALEX'));

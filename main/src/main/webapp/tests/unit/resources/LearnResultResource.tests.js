@@ -1,4 +1,4 @@
-import {LearnResult} from '../../../app/modules/entities/LearnResult';
+import {LearnResult} from '../../../src/js/entities/LearnResult';
 
 describe('LearnResultResource', () => {
     let LearnResultResource, $http, $q, $httpBackend;

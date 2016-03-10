@@ -1,4 +1,4 @@
-import {events} from '../../../../app/modules/constants';
+import {events} from '../../../../src/js/constants';
 
 describe('userLoginForm', () => {
     let $rootScope, $compile, $q, UserResource, ToastService, $state, EventBus, SessionService;

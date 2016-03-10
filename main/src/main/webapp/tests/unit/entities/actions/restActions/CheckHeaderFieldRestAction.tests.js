@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import CheckHeaderFieldRestAction from '../../../../../app/modules/entities/actions/restActions/CheckHeaderFieldRestAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import CheckHeaderFieldRestAction from '../../../../../src/js/entities/actions/restActions/CheckHeaderFieldRestAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckHeaderFieldRestAction', () => {
     beforeEach(angular.mock.module('ALEX'));

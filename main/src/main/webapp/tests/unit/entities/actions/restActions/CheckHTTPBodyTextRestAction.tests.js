@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import CheckHTTPBodyTextRestAction from '../../../../../app/modules/entities/actions/restActions/CheckHTTPBodyTextRestAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import CheckHTTPBodyTextRestAction from '../../../../../src/js/entities/actions/restActions/CheckHTTPBodyTextRestAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckHTTPBodyTextRestAction', () => {
     beforeEach(angular.mock.module('ALEX'));

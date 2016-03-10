@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import CheckStatusRestAction from '../../../../../app/modules/entities/actions/restActions/CheckStatusRestAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import CheckStatusRestAction from '../../../../../src/js/entities/actions/restActions/CheckStatusRestAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckStatusRestAction', () => {
     beforeEach(angular.mock.module('ALEX'));

@@ -1,4 +1,4 @@
-import Counter from '../../../app/modules/entities/Counter';
+import Counter from '../../../src/js/entities/Counter';
 
 describe('CounterResource', () => {
     let $http;

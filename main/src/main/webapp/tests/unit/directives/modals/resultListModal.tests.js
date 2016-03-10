@@ -1,6 +1,6 @@
-import {ResultListModalController} from '../../../../app/modules/directives/modals/resultListModalHandle';
-import {LearnResult} from '../../../../app/modules/entities/LearnResult';
-import {events} from '../../../../app/modules/constants';
+import {ResultListModalController} from '../../../../src/js/directives/modals/resultListModalHandle';
+import {LearnResult} from '../../../../src/js/entities/LearnResult';
+import {events} from '../../../../src/js/constants';
 
 describe('resultListModal', () => {
     let $controller, $uibModal, $compile, $rootScope;

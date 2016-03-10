@@ -1,4 +1,4 @@
-import {Symbol} from '../../../../app/modules/entities/Symbol';
+import {Symbol} from '../../../../src/js/entities/Symbol';
 
 describe('symbolsHistoryView', () => {
     const SYMBOL_ID = 1;

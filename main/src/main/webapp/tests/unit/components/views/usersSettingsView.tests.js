@@ -1,4 +1,4 @@
-import {User} from '../../../../app/modules/entities/User';
+import {User} from '../../../../src/js/entities/User';
 
 describe('UsersSettingsViewComponent', () => {
     let scope;

@@ -1,5 +1,5 @@
-import {RandomEqOracle, CompleteEqOracle, WMethodEqOracle, SampleEqOracle} from '../../../app/modules/entities/EqOracle';
-import {eqOracleType} from '../../../app/modules/constants';
+import {RandomEqOracle, CompleteEqOracle, WMethodEqOracle, SampleEqOracle} from '../../../src/js/entities/EqOracle';
+import {eqOracleType} from '../../../src/js/constants';
 
 describe('EqOracle', () => {
     beforeEach(angular.mock.module('ALEX'));

@@ -1,6 +1,6 @@
-import {SymbolGroup} from '../../../../app/modules/entities/SymbolGroup';
-import {events} from '../../../../app/modules/constants';
-import {SymbolGroupEditModalController} from '../../../../app/modules/directives/modals/symbolGroupEditModalHandle';
+import {SymbolGroup} from '../../../../src/js/entities/SymbolGroup';
+import {events} from '../../../../src/js/constants';
+import {SymbolGroupEditModalController} from '../../../../src/js/directives/modals/symbolGroupEditModalHandle';
 
 describe('SymbolGroupEditModalController', () => {
     let SymbolGroupResource;

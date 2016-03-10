@@ -1,7 +1,7 @@
-import {Project} from '../../../../app/modules/entities/Project';
-import {SymbolGroupFormModel} from '../../../../app/modules/entities/SymbolGroup';
-import {events} from '../../../../app/modules/constants';
-import {SymbolGroupCreateModalController} from '../../../../app/modules/directives/modals/symbolGroupCreateModalHandle';
+import {Project} from '../../../../src/js/entities/Project';
+import {SymbolGroupFormModel} from '../../../../src/js/entities/SymbolGroup';
+import {events} from '../../../../src/js/constants';
+import {SymbolGroupCreateModalController} from '../../../../src/js/directives/modals/symbolGroupCreateModalHandle';
 
 describe('SymbolGroupCreateModalController', () => {
     let SessionService, SymbolGroupResource, $compile, $uibModal, $q, $controller, EventBus, ToastService, $rootScope;

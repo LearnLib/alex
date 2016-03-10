@@ -1,4 +1,4 @@
-import {User, UserFormModel} from '../../../app/modules/entities/User';
+import {User, UserFormModel} from '../../../src/js/entities/User';
 
 describe('UserResource', () => {
     let UserResource, $http, $q, $httpBackend;

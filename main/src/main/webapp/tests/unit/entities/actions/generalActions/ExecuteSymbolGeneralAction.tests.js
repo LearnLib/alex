@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import ExecuteSymbolGeneralAction from '../../../../../app/modules/entities/actions/generalActions/ExecuteSymbolGeneralAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import ExecuteSymbolGeneralAction from '../../../../../src/js/entities/actions/generalActions/ExecuteSymbolGeneralAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('ExecuteSymbolGeneralAction', () => {
     beforeEach(angular.mock.module('ALEX'));

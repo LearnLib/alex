@@ -1,4 +1,4 @@
-import {LearnResult} from '../../../app/modules/entities/LearnResult';
+import {LearnResult} from '../../../src/js/entities/LearnResult';
 
 describe('LearnerResource', () => {
     const testNo = 1;

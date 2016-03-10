@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import CheckForNodeWebAction from '../../../../../app/modules/entities/actions/webActions/CheckForNodeWebAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import CheckForNodeWebAction from '../../../../../src/js/entities/actions/webActions/CheckForNodeWebAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckForNodeWebAction', () => {
     beforeEach(angular.mock.module('ALEX'));

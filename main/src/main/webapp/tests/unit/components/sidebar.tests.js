@@ -1,6 +1,6 @@
-import {events} from '../../../app/modules/constants';
-import {Project} from '../../../app/modules/entities/Project';
-import {User} from '../../../app/modules/entities/User';
+import {events} from '../../../src/js/constants';
+import {Project} from '../../../src/js/entities/Project';
+import {User} from '../../../src/js/entities/User';
 
 describe('sidebar', () => {
     let $rootScope, $compile, $state, SessionService, EventBus;

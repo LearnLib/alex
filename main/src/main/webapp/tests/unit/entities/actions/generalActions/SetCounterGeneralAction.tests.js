@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import SetCounterGeneralAction from '../../../../../app/modules/entities/actions/generalActions/SetCounterGeneralAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import SetCounterGeneralAction from '../../../../../src/js/entities/actions/generalActions/SetCounterGeneralAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('SetCounterGeneralAction', () => {
     beforeEach(angular.mock.module('ALEX'));

@@ -1,6 +1,6 @@
-import {User} from '../../../../app/modules/entities/User';
-import {UserEditModalController} from '../../../../app/modules/directives/modals/userEditModalHandle';
-import {events} from '../../../../app/modules/constants';
+import {User} from '../../../../src/js/entities/User';
+import {UserEditModalController} from '../../../../src/js/directives/modals/userEditModalHandle';
+import {events} from '../../../../src/js/constants';
 
 describe('userEditModal', () => {
     let $rootScope, $controller, $q, $compile, $uibModal, $state, UserResource, ToastService, PromptService, EventBus, SessionService;
@@ -46,7 +46,7 @@ describe('userEditModal', () => {
         });
 
         $uibModal.open({
-            templateUrl: 'views/modals/user-edit-modal.html',
+            templateUrl: 'html/modals/user-edit-modal.html',
             controller: () => controller,
             controllerAs: 'vm',
             resolve: {

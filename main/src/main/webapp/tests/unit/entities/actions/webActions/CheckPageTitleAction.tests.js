@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import CheckPageTitleAction from '../../../../../app/modules/entities/actions/webActions/CheckPageTitleAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import CheckPageTitleAction from '../../../../../src/js/entities/actions/webActions/CheckPageTitleAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckPageTitleAction', () => {
     beforeEach(angular.mock.module('ALEX'));

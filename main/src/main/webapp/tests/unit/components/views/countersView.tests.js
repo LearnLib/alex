@@ -1,5 +1,5 @@
-import Counter from '../../../../app/modules/entities/Counter';
-import {Project} from '../../../../app/modules/entities/Project';
+import Counter from '../../../../src/js/entities/Counter';
+import {Project} from '../../../../src/js/entities/Project';
 
 describe('CountersController', () => {
     let $controller, $q, $rootScope, SessionService, CounterResource, ToastService, $compile;

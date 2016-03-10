@@ -1,5 +1,5 @@
-import {SymbolEditModalController} from '../../../../app/modules/directives/modals/symbolEditModalHandle';
-import {Symbol} from '../../../../app/modules/entities/Symbol';
+import {SymbolEditModalController} from '../../../../src/js/directives/modals/symbolEditModalHandle';
+import {Symbol} from '../../../../src/js/entities/Symbol';
 
 describe('symbolEditModal', () => {
     let $controller, $compile, $q, $rootScope, SymbolResource, ToastService, EventBus, $uibModal;
@@ -43,7 +43,7 @@ describe('symbolEditModal', () => {
         });
 
         $uibModal.open({
-            templateUrl: 'views/modals/symbol-edit-modal.html',
+            templateUrl: 'html/modals/symbol-edit-modal.html',
             controller: () => controller,
             controllerAs: 'vm',
             resolve: {

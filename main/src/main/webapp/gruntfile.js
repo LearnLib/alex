@@ -20,12 +20,12 @@ module.exports = function (grunt) {
             uglify: {
                 app: {
                     files: {
-                        './app/alex.min.js': ['./app/alex.js']
+                        './dist/alex.min.js': ['./dist/alex.js']
                     }
                 },
                 libs: {
                     files: {
-                        './app/libs.min.js': ['./app/libs.js']
+                        './dist/libs.min.js': ['./dist/libs.js']
                     }
                 }
             },
@@ -36,14 +36,14 @@ module.exports = function (grunt) {
                 },
                 libs: {
                     src: libraries,
-                    dest: 'app/libs.js'
+                    dest: 'dist/libs.js'
                 }
             },
 
             html2js: {
                 options: {
                     useStrict: true,
-                    base: '../webapp/app',
+                    base: '../webapp/src',
                     module: 'ALEX.templates',
                     singleModule: true,
                     htmlmin: {
@@ -58,28 +58,28 @@ module.exports = function (grunt) {
                     }
                 },
                 all: {
-                    src: ['app/views/**/*.html'],
-                    dest: 'app/alex.templates.js'
+                    src: ['src/html/**/*.html'],
+                    dest: 'dist/alex.templates.js'
                 }
             },
 
             watch: {
                 scripts: {
-                    files: ['app/modules/**/*.js'],
+                    files: ['src/js/**/*.js'],
                     tasks: ['build-js'],
                     options: {
                         spawn: false
                     }
                 },
                 sass: {
-                    files: ['app/stylesheets/**/*.scss'],
+                    files: ['src/scss/**/*.scss'],
                     tasks: ['build-css'],
                     options: {
                         spawn: false
                     }
                 },
                 html: {
-                    files: ['app/views/**/*.html'],
+                    files: ['src/html/**/*.html'],
                     tasks: ['build-html'],
                     options: {
                         spawn: false
@@ -93,7 +93,7 @@ module.exports = function (grunt) {
                 },
                 dist: {
                     files: {
-                        'app/style.css': 'app/stylesheets/style.scss'
+                        'dist/style.css': 'src/scss/style.scss'
                     }
                 }
             },
@@ -101,11 +101,11 @@ module.exports = function (grunt) {
             cssmin: {
                 target: {
                     files: {
-                        'app/style.min.css': [
+                        'dist/style.min.css': [
                             'node_modules/n3-charts/build/LineChart.css',
                             'node_modules/angular-dragula/dist/dragula.min.css',
                             'node_modules/angular-toastr/dist/angular-toastr.min.css',
-                            'app/style.css'
+                            'dist/style.css'
                         ]
                     }
                 }
@@ -121,7 +121,7 @@ module.exports = function (grunt) {
                     ]
                 },
                 dist: {
-                    src: 'app/style.css'
+                    src: 'dist/style.css'
                 }
             },
 
@@ -131,7 +131,7 @@ module.exports = function (grunt) {
                 },
                 dist: {
                     files: {
-                        'app/alex.js': ['app/alex.js']
+                        'dist/alex.js': ['dist/alex.js']
                     }
                 }
             },
@@ -139,7 +139,7 @@ module.exports = function (grunt) {
             browserify: {
                 dist: {
                     files: {
-                        'app/alex.js': ['app/modules/index.js']
+                        'dist/alex.js': ['src/js/index.js']
                     },
                     options: {
                         transform: [['babelify', {
@@ -159,7 +159,7 @@ module.exports = function (grunt) {
 
             jshint: {
                 dist: {
-                    src: ['app/modules/**/*.js']
+                    src: ['src/js/**/*.js']
                 },
                 options: {
                     'esnext': true,

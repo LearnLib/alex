@@ -1,6 +1,6 @@
-import {Project} from '../../../../app/modules/entities/Project';
-import {actionType, events} from '../../../../app/modules/constants';
-import {ActionEditModalController} from '../../../../app/modules/directives/modals/actionEditModalHandle';
+import {Project} from '../../../../src/js/entities/Project';
+import {actionType, events} from '../../../../src/js/constants';
+import {ActionEditModalController} from '../../../../src/js/directives/modals/actionEditModalHandle';
 
 describe('ActionEditModalController', () => {
     let $controller, $rootScope, $q, $compile, $uibModal;

@@ -1,4 +1,4 @@
-import {Project, ProjectFormModel} from '../../../app/modules/entities/Project';
+import {Project, ProjectFormModel} from '../../../src/js/entities/Project';
 
 describe('ProjectResource', () => {
     let $http;

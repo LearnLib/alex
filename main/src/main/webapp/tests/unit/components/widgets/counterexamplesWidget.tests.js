@@ -1,4 +1,4 @@
-import {events} from '../../../../app/modules/constants';
+import {events} from '../../../../src/js/constants';
 
 describe('counterexamplesWidget', () => {
     let $rootScope, $controller, $q, $compile, LearnerResource, SymbolResource, EventBus;

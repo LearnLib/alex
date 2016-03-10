@@ -12,10 +12,10 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             './resources/**/*.js',
-            '../app/libs.js',
+            '../dist/libs.js',
             '../node_modules/angular-mocks/angular-mocks.js',
-            '../app/alex.templates.js',
-            '../app/modules/**/*.js',
+            '../dist/alex.templates.js',
+            '../src/js/**/*.js',
             './unit/**/*.js'
         ],
 
@@ -26,7 +26,7 @@ module.exports = function (config) {
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             './unit/**/*.js': ['browserify'],
-            '../app/modules/**/*.js': ['browserify']
+            '../src/js/**/*.js': ['browserify']
         },
 
         // es6 module bundler and es6 to es5 preprocessor

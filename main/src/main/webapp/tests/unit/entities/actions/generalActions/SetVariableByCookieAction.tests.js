@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import SetVariableByCookieAction from '../../../../../app/modules/entities/actions/generalActions/SetVariableByCookieAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import SetVariableByCookieAction from '../../../../../src/js/entities/actions/generalActions/SetVariableByCookieAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('SetVariableByCookieAction', () => {
     beforeEach(angular.mock.module('ALEX'));

@@ -1,4 +1,4 @@
-import {PromptService, PromptDialogController, ConfirmDialogController} from '../../../app/modules/services/PromptService';
+import {PromptService, PromptDialogController, ConfirmDialogController} from '../../../src/js/services/PromptService';
 
 describe('PromptService', () => {
     let PromptService, $uibModal, $controller, $rootScope;

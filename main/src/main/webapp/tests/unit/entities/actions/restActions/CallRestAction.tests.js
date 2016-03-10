@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import CallRestAction from '../../../../../app/modules/entities/actions/restActions/CallRestAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import CallRestAction from '../../../../../src/js/entities/actions/restActions/CallRestAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('CallRestAction', () => {
     beforeEach(angular.mock.module('ALEX'));

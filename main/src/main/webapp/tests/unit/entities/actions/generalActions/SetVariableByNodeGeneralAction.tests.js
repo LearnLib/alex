@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import SetVariableByNodeGeneralAction from '../../../../../app/modules/entities/actions/generalActions/SetVariableByNodeGeneralAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import SetVariableByNodeGeneralAction from '../../../../../src/js/entities/actions/generalActions/SetVariableByNodeGeneralAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('SetVariableByNodeGeneralAction', () => {
     beforeEach(angular.mock.module('ALEX'));

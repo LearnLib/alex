@@ -1,6 +1,6 @@
-import {Project} from '../../../../app/modules/entities/Project';
-import {events} from '../../../../app/modules/constants';
-import {ProjectSettingsModalController} from '../../../../app/modules/directives/modals/projectSettingsModalHandle';
+import {Project} from '../../../../src/js/entities/Project';
+import {events} from '../../../../src/js/constants';
+import {ProjectSettingsModalController} from '../../../../src/js/directives/modals/projectSettingsModalHandle';
 
 
 describe('ProjectSettingsModalController', () => {
@@ -48,7 +48,7 @@ describe('ProjectSettingsModalController', () => {
         });
 
         $uibModal.open({
-            templateUrl: 'views/modals/project-settings-modal.html',
+            templateUrl: 'html/modals/project-settings-modal.html',
             controller: () => controller,
             controllerAs: 'vm',
             resolve: {

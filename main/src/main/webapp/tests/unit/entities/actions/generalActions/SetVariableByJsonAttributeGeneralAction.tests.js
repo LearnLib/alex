@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import SetVariableByJsonAttributeGeneralAction from '../../../../../app/modules/entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import SetVariableByJsonAttributeGeneralAction from '../../../../../src/js/entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('SetVariableByJsonAttributeGeneralAction', () => {
     beforeEach(angular.mock.module('ALEX'));

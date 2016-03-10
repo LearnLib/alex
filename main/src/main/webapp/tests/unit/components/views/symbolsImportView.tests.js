@@ -1,5 +1,5 @@
-import {Symbol} from '../../../../app/modules/entities/Symbol';
-import {events} from '../../../../app/modules/constants';
+import {Symbol} from '../../../../src/js/entities/Symbol';
+import {events} from '../../../../src/js/constants';
 
 describe('symbolsImportView', () => {
     let $rootScope, $compile, SessionService, SymbolResource, ToastService, EventBus;

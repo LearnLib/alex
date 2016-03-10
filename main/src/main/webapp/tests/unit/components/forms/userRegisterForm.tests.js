@@ -1,4 +1,4 @@
-import {UserFormModel} from '../../../../app/modules/entities/User';
+import {UserFormModel} from '../../../../src/js/entities/User';
 
 describe('userRegisterForm', () => {
     let $rootScope, $compile, $q, UserResource, ToastService;

@@ -1,5 +1,5 @@
-import {LearnResult} from '../../../app/modules/entities/LearnResult';
-import {events} from '../../../app/modules/constants';
+import {LearnResult} from '../../../src/js/entities/LearnResult';
+import {events} from '../../../src/js/constants';
 
 describe('learnResultPanel', () => {
     let $rootScope, $q, $compile, EventBus, PromptService, DownloadService;

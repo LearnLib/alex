@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import CheckAttributeValueRestAction from '../../../../../app/modules/entities/actions/restActions/CheckAttributeValueRestAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import CheckAttributeValueRestAction from '../../../../../src/js/entities/actions/restActions/CheckAttributeValueRestAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckAttributeValueRestAction', () => {
     beforeEach(angular.mock.module('ALEX'));

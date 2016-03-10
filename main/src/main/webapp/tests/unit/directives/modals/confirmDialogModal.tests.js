@@ -1,4 +1,4 @@
-import {ConfirmDialogController} from '../../../../app/modules/services/PromptService';
+import {ConfirmDialogController} from '../../../../src/js/services/PromptService';
 
 describe('ConfirmDialogController', () => {
     let $controller;

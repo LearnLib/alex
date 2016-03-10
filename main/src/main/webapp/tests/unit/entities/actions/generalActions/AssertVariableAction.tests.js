@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import AssertVariableAction from '../../../../../app/modules/entities/actions/generalActions/AssertVariableAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import AssertVariableAction from '../../../../../src/js/entities/actions/generalActions/AssertVariableAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('AssertVariableAction', () => {
     beforeEach(angular.mock.module('ALEX'));

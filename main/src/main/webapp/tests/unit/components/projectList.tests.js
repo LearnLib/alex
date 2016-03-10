@@ -1,5 +1,5 @@
-import {Project} from '../../../app/modules/entities/Project';
-import {events} from '../../../app/modules/constants';
+import {Project} from '../../../src/js/entities/Project';
+import {events} from '../../../src/js/constants';
 
 describe('projectList', () => {
     let $state, ProjectResource, ToastService, SessionService, PromptService, EventBus, $q;

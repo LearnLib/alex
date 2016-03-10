@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import WaitGeneralAction from '../../../../../app/modules/entities/actions/generalActions/WaitGeneralAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import WaitGeneralAction from '../../../../../src/js/entities/actions/generalActions/WaitGeneralAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('WaitGeneralAction', () => {
     beforeEach(angular.mock.module('ALEX'));

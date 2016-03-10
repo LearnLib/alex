@@ -1,5 +1,5 @@
-import {Project, ProjectFormModel} from '../../../../app/modules/entities/Project';
-import {events} from '../../../../app/modules/constants';
+import {Project, ProjectFormModel} from '../../../../src/js/entities/Project';
+import {events} from '../../../../src/js/constants';
 
 describe('projectCreateForm', () => {
     let $rootScope;

@@ -1,6 +1,6 @@
-import Action from '../../../../../app/modules/entities/actions/Action';
-import SubmitWebAction from '../../../../../app/modules/entities/actions/webActions/SubmitWebAction';
-import {actionType} from '../../../../../app/modules/constants';
+import Action from '../../../../../src/js/entities/actions/Action';
+import SubmitWebAction from '../../../../../src/js/entities/actions/webActions/SubmitWebAction';
+import {actionType} from '../../../../../src/js/constants';
 
 describe('SubmitWebAction', () => {
     beforeEach(angular.mock.module('ALEX'));
