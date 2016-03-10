@@ -19,11 +19,14 @@ package de.learnlib.alex.actions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.core.dao.SymbolDAO;
+import de.learnlib.alex.core.dao.SymbolDAOImpl;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.exceptions.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,14 +44,19 @@ import javax.persistence.Transient;
 @JsonTypeName("executeSymbol")
 public class ExecuteSymbolAction extends SymbolAction {
 
-    /** to be serializable. */
+    /**
+     * to be serializable.
+     */
     private static final long serialVersionUID = 3143716533295082498L;
 
-    /** Use the learner logger. */
+    /**
+     * Use the learner logger.
+     */
     private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /**
      * Reference to the Symbol that will be executed.
+     *
      * @requiredField
      */
     @Transient
@@ -62,6 +70,11 @@ public class ExecuteSymbolAction extends SymbolAction {
     @ManyToOne
     @JsonIgnore
     private Symbol symbolToExecute;
+
+    /**
+     * Indicates if the latest revision of the symbol should be used
+     */
+    private boolean useLatestRevision;
 
     /**
      * Get the reference to the Symbol which will be executed.
@@ -79,8 +92,7 @@ public class ExecuteSymbolAction extends SymbolAction {
      * Set a new reference to the Symbol to execute.
      * This does not update the actual Symbol!
      *
-     * @param symbolToExecuteAsIdRevisionPair
-     *         The new IdRevisionPair of the Symbol to execute.
+     * @param symbolToExecuteAsIdRevisionPair The new IdRevisionPair of the Symbol to execute.
      */
     public void setSymbolToExecuteAsIdRevisionPair(IdRevisionPair symbolToExecuteAsIdRevisionPair) {
         this.symbolToExecuteAsIdRevisionPair = symbolToExecuteAsIdRevisionPair;
@@ -120,18 +132,48 @@ public class ExecuteSymbolAction extends SymbolAction {
         return symbolToExecute.getName();
     }
 
+    /**
+     * Checks if the latest revision of the symbols should be used
+     *
+     * @return if the latest revision should be used
+     */
+    public boolean isUseLatestRevision() {
+        return useLatestRevision;
+    }
+
+    /**
+     * Sets the flag that indicates if the latest revision of the symbol should be used
+     *
+     * @param useLatestRevision the flag
+     */
+    public void setUseLatestRevision(boolean useLatestRevision) {
+        this.useLatestRevision = useLatestRevision;
+    }
+
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         if (symbolToExecute == null) {
             LOGGER.info("No other Symbol to execute was set "
-                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+                    + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
             return getFailedOutput();
+        }
+
+        if (isUseLatestRevision()) {
+            try {
+                SymbolDAO dao = new SymbolDAOImpl();
+                symbolToExecute = dao.getWithLatestRevision(getUser(), getProject().getId(),
+                        symbolToExecuteAsIdRevisionPair.getId());
+            } catch (NotFoundException e) {
+                LOGGER.info("The symbol with the latest revision could not be found "
+                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+                return getFailedOutput();
+            }
         }
 
         ExecuteResult symbolResult = symbolToExecute.execute(connector);
         LOGGER.info("Executed other Symbol <" + symbolToExecute.getId() + ":" + symbolToExecute.getRevision() + "> "
-                    + " with the result of '" + symbolResult + "' "
-                    + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+                + " with the result of '" + symbolResult + "' "
+                + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
 
         if (symbolResult == ExecuteResult.OK) {
             return getSuccessOutput();

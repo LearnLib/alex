@@ -33,6 +33,13 @@ class ExecuteSymbolGeneralAction extends Action {
          */
         this.symbolToExecute = obj.symbolToExecute || {id: null, revision: null};
 
+        /**
+         * The flag that indicates if the latest revision of the symbol should be used
+         * without explicitly declaring it every time.
+         * @type {boolean}
+         */
+        this.useLatestRevision = obj.useLatestRevision || true;
+
         let model = {
             name: obj.symbolToExecuteName || null,
             maxRevision: null
@@ -50,7 +57,11 @@ class ExecuteSymbolGeneralAction extends Action {
      * @returns {string}
      */
     toString() {
-        return 'Execute symbol "' + this.getModel().name + '", rev. ' + this.symbolToExecute.revision;
+        if (this.useLatestRevision) {
+            return `Execute Symbol ${this.getModel().name} with the latest revision`;
+        } else {
+            return `Execute symbol ${this.getModel().name}, rev. ${this.symbolToExecute.revision}`;
+        }
     }
 
     /**
