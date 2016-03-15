@@ -242,9 +242,13 @@
                 <excludes>
                     <exclude>**/node_modules/**</exclude>
                     <exclude>**/tests/**</exclude>
+                    <exclude>**/src/**</exclude>
                     <exclude>package.json</exclude>
                     <exclude>gruntfile.js</exclude>
                 </excludes>
+                <includes>
+                    <include>**/node_modules/font-awesome/fonts/**</include>
+                </includes>
             </resource>
         </resources>
 
@@ -261,17 +265,25 @@
                             <excludes>
                                 <exclude>**/node_modules/**</exclude>
                                 <exclude>**/tests/**</exclude>
+                                <exclude>**/src/**</exclude>
                                 <exclude>package.json</exclude>
                                 <exclude>gruntfile.js</exclude>
                             </excludes>
+                            <includes>
+                                <include>**/node_modules/font-awesome/fonts/**</include>
+                            </includes>
                         </resource>
                     </webResources>
                     <warSourceExcludes>
-                        **/node_modules/**,
-                        **/tests/**,
-                        package.json,
+                        **/node_modules/**
+                        **/tests/**
+                        **/src/**
+                        package.json
                         gruntfile.js
                     </warSourceExcludes>
+                    <warSourceIncludes>
+                        **/node_modules/font-awesome/fonts/**
+                    </warSourceIncludes>
                 </configuration>
             </plugin>
 
