@@ -72,7 +72,7 @@ public class ExecuteSymbolAction extends SymbolAction {
     private Symbol symbolToExecute;
 
     /**
-     * Indicates if the latest revision of the symbol should be used
+     * Indicates if the latest revision of the symbol should be used.
      */
     private boolean useLatestRevision;
 
@@ -133,16 +133,16 @@ public class ExecuteSymbolAction extends SymbolAction {
     }
 
     /**
-     * Checks if the latest revision of the symbols should be used
+     * Checks if the latest revision of the symbols should be used.
      *
-     * @return if the latest revision should be used
+     * @return if the latest revision should be used.
      */
     public boolean isUseLatestRevision() {
         return useLatestRevision;
     }
 
     /**
-     * Sets the flag that indicates if the latest revision of the symbol should be used
+     * Sets the flag that indicates if the latest revision of the symbol should be used.
      *
      * @param useLatestRevision the flag
      */
