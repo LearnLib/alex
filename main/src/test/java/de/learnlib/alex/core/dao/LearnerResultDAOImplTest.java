@@ -21,7 +21,9 @@ import de.learnlib.alex.core.entities.LearnAlgorithms;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResultStep;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
+import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.Statistics;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
@@ -276,6 +278,8 @@ public class LearnerResultDAOImplTest {
 
     @Test
     public void shouldDeleteMultipleResults() throws NotFoundException {
+        LearnerStatus status = new LearnerStatus();
+        given(learner.getStatus(user)).willReturn(status);
         List<LearnerResult> learnerResults = createLearnerResultsList();
 
         Long[] ids = new Long[learnerResults.size()];
@@ -302,6 +306,8 @@ public class LearnerResultDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheTestResultToDeleteWasNotFound() throws NotFoundException {
+        LearnerStatus status = new LearnerStatus();
+        given(learner.getStatus(user)).willReturn(status);
         List<LearnerResult> learnerResults = createLearnerResultsList();
 
         Long[] ids = new Long[learnerResults.size()];
@@ -318,6 +324,10 @@ public class LearnerResultDAOImplTest {
         learnerResultDAO.create(learnerResult);
         given(learner.isActive(user)).willReturn(true);
         given(learner.getResult(user)).willReturn(learnerResult);
+        Statistics statistics = new Statistics();
+        learnerResult.setStatistics(statistics);
+        LearnerStatus status = new LearnerStatus(learnerResult);
+        given(learner.getStatus(user)).willReturn(status);
 
         learnerResultDAO.delete(user, project.getId(), learnerResult.getTestNo()); // should fail
     }

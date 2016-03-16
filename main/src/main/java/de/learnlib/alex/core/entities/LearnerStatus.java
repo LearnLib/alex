@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.core.learner.Learner;
 
 import java.time.ZonedDateTime;
 
@@ -30,10 +29,6 @@ import java.time.ZonedDateTime;
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerStatus {
-
-    /** The user that 'owns' the LearningThread and Status. */
-    @JsonIgnore
-    private final User user;
 
     /** Is the Learner active? */
     private final boolean active;
@@ -93,39 +88,28 @@ public class LearnerStatus {
     }
 
     /**
-     * Constructor.
-     *
-     * @param user
-     *         The user that is related to the Status and that will be used to fethc the active thread.
-     * @param learner
-     *         The learner to get the information from.
+     * Constructor for a status of an incative thread.
      */
-    public LearnerStatus(User user, Learner learner) {
-        this.user = user;
-        this.active = learner.isActive(user);
-
-        if (active) {
-            // because there is an active thread, this will return not null
-            LearnerResult result = learner.getResult(user);
-
-            this.projectId = result.getProjectId();
-            this.testNo = result.getTestNo();
-            this.statistics = new LearnerStatusStatistics(learner.getStartDate(user), learner.getMQsUsed(user));
-        } else {
-            // if not active, those fields should not be included in the final JSON -> set them to null
-            this.projectId = null;
-            this.testNo = null;
-            this.statistics = null;
-        }
+    public LearnerStatus() {
+        this.active = false;
+        this.projectId = null;
+        this.testNo = null;
+        this.statistics = null;
     }
 
     /**
-     * Ths user that is related to the status and the active learn thread.
+     * Constructor for a status of an active thread.
      *
-     * @return The related user.
+     * @param learnerResult
+     *         The result that contain the interesting statistics and information for the status..
      */
-    public User getUser() {
-        return user;
+    public LearnerStatus(LearnerResult learnerResult) {
+        this.active = true;
+
+        this.projectId = learnerResult.getProjectId();
+        this.testNo = learnerResult.getTestNo();
+        this.statistics = new LearnerStatusStatistics(learnerResult.getStatistics().getStartDate(),
+                                                      learnerResult.getStatistics().getMqsUsed());
     }
 
     /**

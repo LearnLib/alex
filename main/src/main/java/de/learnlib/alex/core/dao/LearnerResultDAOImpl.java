@@ -302,7 +302,13 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     private void checkIfResultsCanBeDeleted(User user, Long projectId, Long... testNo) throws ValidationException {
         // don't delete the learnResult of the active learning process
-        LearnerStatus status = new LearnerStatus(user, learner);
+        LearnerStatus status = learner.getStatus(user);
+
+        // user has no active thread -> no conflict possible
+        if (!status.isActive()) {
+            return;
+        }
+
         Long activeTestNo = status.getTestNo();
         Long activeProjectId = status.getProjectId();
 

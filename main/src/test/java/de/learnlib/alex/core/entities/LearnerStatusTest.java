@@ -27,8 +27,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LearnerStatusTest {
@@ -41,14 +39,17 @@ public class LearnerStatusTest {
 
     @Test
     public void shouldCreateTheCorrectJSONIfActive() throws JsonProcessingException {
-        given(learner.isActive(user)).willReturn(true);
-        given(learner.getResult(user)).willReturn(mock(LearnerResult.class));
-        given(learner.getStartDate(user)).willReturn(ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00"));
-        given(learner.getMQsUsed(user)).willReturn(0L);
+        LearnerResult learnerResult = new LearnerResult();
+        Statistics statistics = new Statistics();
+        statistics.setStartDate(ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00"));
+        statistics.setMqsUsed(0L);
+        learnerResult.setStatistics(statistics);
+        learnerResult.setTestNo(0L);
+
         String expectedJSON = "{\"active\":true,\"project\":0,\"statistics\":"
                                 + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":0}";
 
-        LearnerStatus status = new LearnerStatus(user, learner);
+        LearnerStatus status = new LearnerStatus(learnerResult);
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(status);
@@ -58,11 +59,9 @@ public class LearnerStatusTest {
 
     @Test
     public void shouldCreateTheCorrectJSONIfInactive() throws JsonProcessingException {
-        given(learner.isActive(user)).willReturn(false);
-        given(learner.getResult(user)).willReturn(null);
         String expectedJSON = "{\"active\":false}";
 
-        LearnerStatus status = new LearnerStatus(user, learner);
+        LearnerStatus status = new LearnerStatus();
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(status);

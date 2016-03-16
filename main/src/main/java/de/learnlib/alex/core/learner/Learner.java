@@ -36,6 +36,7 @@ import de.learnlib.oracles.ResetCounterSUL;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
@@ -88,18 +90,16 @@ public class Learner {
      */
     private final Map<User, LearnerThread> userThreads;
 
-    /**
-     * The current learning activeThreads. Could be empty.
-     */
-    private final Map<User, LearnerThread> activeThreads;
+    /** The executer service will take care of creating and scheduling the actual OS threads. */
+    private ExecutorService executorService;
 
     /**
      * This constructor creates a new Learner
      * The SymbolDAO and LearnerResultDAO must be externally injected.
      */
     public Learner() {
-        this.activeThreads = new HashMap<>();
         this.userThreads   = new HashMap<>();
+        this.executorService = Executors.newFixedThreadPool(MAX_CONCURRENT_THREADS);
     }
 
     /**
@@ -121,6 +121,15 @@ public class Learner {
         this.learnerResultDAO = learnerResultDAO;
         this.contextHandlerFactory = contextHandlerFactory;
         this.learnerThreadFactory = learnerThreadFactory;
+    }
+
+    /**
+     * Method should be called before the Learner is 'destroyed'.
+     * It will shutdown the executor service gracefully.
+     */
+    @PreDestroy
+    public void destroy() {
+        executorService.shutdown();
     }
 
     /**
@@ -247,17 +256,6 @@ public class Learner {
             throw new IllegalStateException("Only one active learning is allowed per user, "
                                             + "even for user" + user + "!");
         }
-
-        // clean up active threads.
-        List<User> finishedThreadsByUser = new LinkedList<>();
-        activeThreads.entrySet().stream()
-                                    .filter(e -> e.getValue().isFinished())
-                                    .forEach(e -> finishedThreadsByUser.add(e.getKey()));
-        finishedThreadsByUser.forEach(activeThreads::remove);
-
-        if (activeThreads.size() >= MAX_CONCURRENT_THREADS) {
-            throw new IllegalStateException("Maximum amount of parallel threads reached!");
-        }
     }
 
     /**
@@ -269,10 +267,8 @@ public class Learner {
      *         The thread to start.
      */
     private void startThread(User user, LearnerThread learnThread) {
-        Thread thread = Executors.defaultThreadFactory().newThread(learnThread);
+        executorService.submit(learnThread);
         userThreads.put(user, learnThread);
-        activeThreads.put(user, learnThread);
-        thread.start();
     }
 
     /**
@@ -332,7 +328,7 @@ public class Learner {
      *         The user that wants to stop his active thread.
      */
     public void stop(User user) {
-        LearnerThread learnerThread = activeThreads.get(user);
+        LearnerThread learnerThread = userThreads.get(user);
 
         if (learnerThread != null) {
             learnerThread.interrupt();
@@ -347,21 +343,14 @@ public class Learner {
      * @return true if the learning process is active, false otherwise.
      */
     public boolean isActive(User user) {
-        LearnerThread learnerThread = activeThreads.get(user);
+        LearnerThread learnerThread = userThreads.get(user);
 
-        // if no active thread for the user exists -> return false
+        // if no thread for the user exists -> return false
         if (learnerThread == null) {
             return false;
         }
 
-        // if an 'active' thread existed, but it is actually finished -> clean up activeThread map & return false
-        if (learnerThread.isFinished()) {
-            activeThreads.remove(user);
-            return false;
-        }
-
-        // otherwise an active thread exists -> return true
-        return true;
+        return !learnerThread.isFinished();
     }
 
     /**
@@ -372,7 +361,15 @@ public class Learner {
      * @return A snapshot of the Learner status.
      */
     public LearnerStatus getStatus(User user) {
-        LearnerStatus status = new LearnerStatus(user, this);
+        LearnerStatus status;
+
+        boolean active = isActive(user);
+        if (!active) {
+            status = new LearnerStatus(); // not active
+        } else {
+            status = new LearnerStatus(getResult(user)); // active
+        }
+
         return status;
     }
 

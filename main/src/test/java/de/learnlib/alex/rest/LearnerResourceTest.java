@@ -26,6 +26,7 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.Statistics;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
@@ -113,15 +114,18 @@ public class LearnerResourceTest extends JerseyTest {
         given(symbolDAO.get(admin, PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L)))
                 .willReturn(resetSymbol);
 
-        LearnerResult result = mock(LearnerResult.class);
-        given(result.getUserId()).willReturn(USER_TEST_ID);
-        given(result.getProjectId()).willReturn(PROJECT_TEST_ID);
-        given(result.getTestNo()).willReturn(TEST_NO);
-        given(learner.getStartDate(admin)).willReturn(ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00"));
+        LearnerResult result = new LearnerResult();
+        result.setUser(new User(USER_TEST_ID));
+        result.setProject(new Project(PROJECT_TEST_ID));
+        result.setTestNo(TEST_NO);
+        Statistics learnerStatistics = new Statistics();
+        learnerStatistics.setStartDate(ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00"));
+        result.setStatistics(learnerStatistics);
+
         given(learner.isActive(admin)).willReturn(true);
         given(learner.getResult(admin)).willReturn(result);
 
-        LearnerStatus learnerStatus = new LearnerStatus(admin, learner);
+        LearnerStatus learnerStatus = new LearnerStatus(result);
         given(learner.getStatus(admin)).willReturn(learnerStatus);
     }
 
@@ -302,7 +306,7 @@ public class LearnerResourceTest extends JerseyTest {
     public void shouldNotStopIfTheLearningIsNotActive() {
         given(learner.isActive(admin)).willReturn(false);
         given(learner.getResult(admin)).willReturn(null);
-        LearnerStatus learnerStatus = new LearnerStatus(admin, learner);
+        LearnerStatus learnerStatus = new LearnerStatus();
         given(learner.getStatus(admin)).willReturn(learnerStatus);
 
         Response response = target("/learner/stop").request().header("Authorization", adminToken).post(Entity.json(""));
@@ -326,8 +330,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnTheRightActiveInformationIfNoLearningProcessIsActive() {
-        given(learner.isActive(admin)).willReturn(false);
-        LearnerStatus learnerStatus = new LearnerStatus(admin, learner);
+        LearnerStatus learnerStatus = new LearnerStatus();
         given(learner.getStatus(admin)).willReturn(learnerStatus);
 
         Response response = target("/learner/active").request().header("Authorization", adminToken).get();

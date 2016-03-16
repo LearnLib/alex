@@ -57,9 +57,6 @@ public class LearnerTest {
     private ConnectorContextHandlerFactory contextHandlerFactory;
 
     @Mock
-    private LearnerThread thread;
-
-    @Mock
     private ConnectorContextHandler contextHandler;
 
     @Mock
@@ -108,7 +105,7 @@ public class LearnerTest {
     @Ignore
     public void shouldResumeAThread() throws NotFoundException {
         learner.start(user, project, learnerConfiguration);
-        given(thread.isFinished()).willReturn(true);
+        given(learnerThread.isFinished()).willReturn(true);
 
         learner.resume(user, learnerConfiguration);
     }
@@ -120,11 +117,13 @@ public class LearnerTest {
 
     @Test
     public void shouldCorrectlyTestIfTheUserHasAnActiveThread() throws NotFoundException {
+        given(learnerThread.isFinished()).willReturn(false);
         assertFalse(learner.isActive(user));
 
         learner.start(user, project, learnerConfiguration);
 
-        assertTrue(learner.isActive(user));
+        boolean active = learner.isActive(user);
+        assertTrue(active);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -132,7 +131,8 @@ public class LearnerTest {
         given(symbolDAO.getAll(any(User.class), any(Long.class), any(List.class))).willReturn(new LinkedList<>());
         given(learnerResultDAO.createStep(any(LearnerResult.class), any(LearnerConfiguration.class)))
                 .willReturn(new LearnerResultStep());
-        given(thread.isFinished()).willReturn(false);
+        given(learnerThread.isFinished()).willReturn(false);
+
         learner.start(user, project, learnerConfiguration);
 
         learner.start(user, project, learnerConfiguration); // should fail
