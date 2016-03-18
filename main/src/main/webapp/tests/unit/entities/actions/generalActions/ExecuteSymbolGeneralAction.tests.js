@@ -17,9 +17,8 @@ describe('ExecuteSymbolGeneralAction', () => {
             negated: false,
             ignoreFailure: false,
             disabled: false,
-            useLatestRevision: true,
-
-            symbolToExecute: {id: null, revision: null}
+            symbolToExecute: {id: null, revision: null},
+            useLatestRevision: true
         };
         const action = new ExecuteSymbolGeneralAction({});
         expect(angular.toJson(action)).toEqual(angular.toJson(expectedAction));

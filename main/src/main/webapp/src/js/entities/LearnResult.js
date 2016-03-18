@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {LearnConfiguration} from './LearnConfiguration';
-
 /**
  * The model for a learner result
  */
@@ -95,14 +93,6 @@ class LearnResult {
 
         if (this.steps) {
             this.steps.forEach(step => step.statistics.duration = Math.ceil(step.statistics.duration / 1000000));
-        }
-    }
-
-    getConfiguration() {
-        return {
-            algorith: this.algorithm,
-            browser: this.browser,
-            eqOracle: this.steps[this.steps.length - 1].eqOracle
         }
     }
 }

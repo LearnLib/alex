@@ -269,7 +269,7 @@ class SymbolsView {
                 .then(filename => {
                     this.DownloadService.downloadObject(symbolsToExport, filename);
                     this.ToastService.success('Symbols exported');
-                })
+                });
         } else {
             this.ToastService.info('Select symbols you want to export');
         }

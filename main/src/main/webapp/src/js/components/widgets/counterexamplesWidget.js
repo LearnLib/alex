@@ -159,7 +159,7 @@ class CounterexamplesWidget {
             this.SymbolResource.getAll(this.result.project).then(symbols => {
                 this.symbols = symbols;
                 test();
-            })
+            });
         } else {
             test();
         }

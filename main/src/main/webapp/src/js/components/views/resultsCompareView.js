@@ -77,7 +77,7 @@ class ResultsCompareView {
                         if (testNos.indexOf(String(result.testNo)) > -1) {
                             this.panels.push(result);
                         }
-                    })
+                    });
                 });
         }
 

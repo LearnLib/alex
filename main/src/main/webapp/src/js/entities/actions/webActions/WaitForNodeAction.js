@@ -69,7 +69,7 @@ class WaitForNodeAction extends Action {
                 text += `is removed from the DOM `;
                 break;
             default:
-                break
+                break;
         }
         text += `for a maximum of "${this.maxWaitTime}s"`;
         return text;

@@ -191,7 +191,7 @@ class StatisticsCompareView {
         this.PromptService.prompt("Enter a name for the svg file")
             .then(filename => {
                 this.DownloadService.downloadSvg(selector, false, filename);
-            })
+            });
     }
 }
 

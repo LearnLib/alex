@@ -52,7 +52,7 @@ function formatUserRole() {
             default:
                 return role;
         }
-    }
+    };
 }
 
 

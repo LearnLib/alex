@@ -80,7 +80,7 @@ class SymbolsImportView {
         try {
             this.symbols = angular.fromJson(data).map(s => {
                 s.id = _.uniqueId();
-                return new Symbol(s)
+                return new Symbol(s);
             });
         } catch (e) {
             this.ToastService.danger('<p><strong>Loading json file failed</strong></p>' + e);

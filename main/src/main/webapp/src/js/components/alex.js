@@ -32,4 +32,4 @@ const alex = {
     `
 };
 
-export default alex
+export default alex;

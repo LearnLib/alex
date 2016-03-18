@@ -58,7 +58,7 @@ class FileDropzone {
             this.EventBus.emit(events.FILE_LOADED, {
                 file: e.target.result
             });
-        })
+        });
     }
 
     /**
