@@ -28,10 +28,15 @@ public class FileStoreConnector implements Connector {
     /** The FileDAO to use. */
     private FileDAO fileDAO;
 
+    /** Constructor. */
     public FileStoreConnector() {
         this.fileDAO = new FileDAOImpl();
     }
 
+    /**
+     * Constructor.
+     * @param fileDAO An instance of the file dao.
+     */
     public FileStoreConnector(FileDAO fileDAO) {
         this.fileDAO = fileDAO;
     }
@@ -46,6 +51,15 @@ public class FileStoreConnector implements Connector {
         // nothing to do here
     }
 
+    /**
+     * Get the absolute path of a file in the uploads directory.
+     *
+     * @param userId The id of the user.
+     * @param projectId The id of the project.
+     * @param fileName The name of the file.
+     * @return The absolute path to the file.
+     * @throws IllegalStateException
+     */
     public String getAbsoluteFileLocation(Long userId, Long projectId, String fileName) throws IllegalStateException {
         try {
             return fileDAO.getAbsoluteFilePath(userId, projectId, fileName);

@@ -46,6 +46,10 @@ public class CounterStoreConnector implements Connector {
         this(new CounterDAOImpl());
     }
 
+    /**
+     * Constructor.
+     * @param counterDAO An instance of a counter dao.
+     */
     public CounterStoreConnector(CounterDAO counterDAO) {
         this.counterDAO = counterDAO;
     }
@@ -60,6 +64,15 @@ public class CounterStoreConnector implements Connector {
         // nothing to do here
     }
 
+    /**
+     * Set the value of an existing counter.
+     * Creates a new counter implicitly with the specified name and value if it does not exist yet.
+     *
+     * @param userId The id of the user.
+     * @param projectId The id of the project.
+     * @param name The name of the counter.
+     * @param value The value of the counter.
+     */
     public void set(Long userId, Long projectId, String name, Integer value) {
         try {
             Counter counter = counterDAO.get(userId, projectId, name);
@@ -72,6 +85,15 @@ public class CounterStoreConnector implements Connector {
                      + "of user <" + userId + "> to '" + value + "'.");
     }
 
+    /**
+     * Increment the value of an existing counter.
+     * Creates a new counter implicitly with the specified name if it does not exist yet.
+     * The value of the new counter will be 1.
+     *
+     * @param userId The id of the user.
+     * @param projectId The id of the project.
+     * @param name The name of the counter to increment.
+     */
     public void increment(Long userId, Long projectId, String name) {
         Counter counter;
         try {
@@ -85,6 +107,15 @@ public class CounterStoreConnector implements Connector {
                      + "of user <" + userId + "> to '" + counter.getValue() + "'.");
     }
 
+    /**
+     * Get the value of an existing counter.
+     *
+     * @param userId The id of the user.
+     * @param projectId The id of the project.
+     * @param name The name of the counter.
+     * @return The positive value of the counter.
+     * @throws IllegalStateException
+     */
     public Integer get(Long userId, Long projectId, String name) throws IllegalStateException {
         try {
             Counter counter;
@@ -95,6 +126,16 @@ public class CounterStoreConnector implements Connector {
         }
     }
 
+    /**
+     * Create a new counter with a name and an initial, non negative value.
+     * The name of the counter should not exist in the database.
+     *
+     * @param userId The id of the user.
+     * @param projectId The id of the project.
+     * @param name The name of the counter.
+     * @param value The initial value of the counter.
+     * @return The created counter.
+     */
     Counter createCounter(Long userId, Long projectId, String name, Integer value) {
         Counter counter = new Counter();
         counter.setUser(new User(userId));

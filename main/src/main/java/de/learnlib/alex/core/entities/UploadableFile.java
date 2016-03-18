@@ -24,26 +24,50 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class UploadableFile {
 
-    /** The ID of the project the File belongs to. */
+    /**
+     * The ID of the project the File belongs to.
+     */
     @JsonProperty("project")
     private Long projectId;
 
-    /** The name of the file. */
+    /**
+     * The name of the file.
+     */
     @NotBlank
     private String name;
 
+    /**
+     * Get the id of the project of the file.
+     *
+     * @return The id of the project.
+     */
     public Long getProjectId() {
         return projectId;
     }
 
+    /**
+     * Set the project id of the file.
+     *
+     * @param projectId The id of the project.
+     */
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
     }
 
+    /**
+     * Get the name of the file.
+     *
+     * @return The name of the file.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set the name of the file.
+     *
+     * @param name The name of the file.
+     */
     public void setName(String name) {
         this.name = name;
     }

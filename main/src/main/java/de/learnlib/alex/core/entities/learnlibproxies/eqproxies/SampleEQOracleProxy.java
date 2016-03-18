@@ -63,23 +63,44 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
         public InputOutputPair() {
         }
 
+        /**
+         * Constructor.
+         * @param input The input symbol.
+         * @param output The output symbol.
+         */
         public InputOutputPair(String input, String output) {
             this.input = input;
             this.output = output;
         }
 
+        /**
+         * Get the input.
+         * @return The input.
+         */
         public String getInput() {
             return input;
         }
 
+        /**
+         * Set the input.
+         * @param input The input.
+         */
         public void setInput(String input) {
             this.input = input;
         }
 
+        /**
+         * Get the output.
+         * @return The output.
+         */
         public String getOutput() {
             return output;
         }
 
+        /**
+         * Set the output.
+         * @param output The output.
+         */
         public void setOutput(String output) {
             this.output = output;
         }

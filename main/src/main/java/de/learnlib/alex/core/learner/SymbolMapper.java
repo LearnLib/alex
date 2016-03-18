@@ -44,6 +44,12 @@ public class SymbolMapper
     /** Map to manage the symbols according to their name in the Alphabet. */
     private Map<String, Symbol> symbols;
 
+    /**
+     * Constructor.
+     * Initialize the map abbreviation -> symbol.
+     *
+     * @param symbols - The symbols for the learning process.
+     */
     public SymbolMapper(Symbol... symbols) {
         this.symbols = new HashMap<>();
 
@@ -84,6 +90,11 @@ public class SymbolMapper
         // nothing to do
     }
 
+    /**
+     * Get the alphabet for the learning process as required by the LearnLib.
+     *
+     * @return The alphabet.
+     */
     public Alphabet<String> getAlphabet() {
         Alphabet<String> sigma = new SimpleAlphabet<>();
 
@@ -92,6 +103,11 @@ public class SymbolMapper
         return sigma;
     }
 
+    /**
+     * Get the list of symbols.
+     *
+     * @return The list of symbols.
+     */
     public List<Symbol> getSymbols() {
         List<Symbol> list = new LinkedList<>();
         list.addAll(symbols.values());

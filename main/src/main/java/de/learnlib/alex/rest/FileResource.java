@@ -64,6 +64,14 @@ public class FileResource {
     @Inject
     private FileDAO fileDAO;
 
+    /**
+     * Uploads a new file to the corresponding upload directory uploads/{userId}/{projectId}/{filename}.
+     *
+     * @param projectId The id of the project the file belongs to.
+     * @param uploadedInputStream The input stream for the file.
+     * @param fileDetail The form data of the file.
+     * @return The HTTP response with the file object on success.
+     */
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
@@ -93,6 +101,12 @@ public class FileResource {
         }
     }
 
+    /**
+     * Get all available files of a project.
+     *
+     * @param projectId The id of the project.
+     * @return The list of all files of the project.
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllFiles(@PathParam("project_id") Long projectId) {
@@ -108,6 +122,13 @@ public class FileResource {
         }
     }
 
+    /**
+     * Delete a single file from the project directory.
+     *
+     * @param projectId The id of the project.
+     * @param fileName The name of the file.
+     * @return Status 204 No Content on success.
+     */
     @DELETE
     @Path("/{file_name}")
     @Produces(MediaType.APPLICATION_JSON)

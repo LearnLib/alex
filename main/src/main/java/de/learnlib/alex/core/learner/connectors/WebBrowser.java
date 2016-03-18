@@ -39,10 +39,22 @@ public enum WebBrowser {
     /** The connected WebDriver class. */
     private Class webDriverClass;
 
+    /**
+     * Constructor.
+     *
+     * @param webDriverClass The class of the webDriver to instantiate.
+     */
     WebBrowser(Class webDriverClass) {
         this.webDriverClass = webDriverClass;
     }
 
+    /**
+     * Get the enum type of a web browser from a string.
+     *
+     * @param name The name of the web browser.
+     * @return The corresponding WebBrowser enum type.
+     * @throws IllegalArgumentException
+     */
     @JsonCreator
     public static WebBrowser fromString(String name) throws IllegalArgumentException {
         return WebBrowser.valueOf(name.toUpperCase());
@@ -54,6 +66,11 @@ public enum WebBrowser {
         return name().toLowerCase();
     }
 
+    /**
+     * Create an instance of a web driver given by the given class.
+     *
+     * @return An instance of a web driver.
+     */
     public WebDriver getWebDriver() {
         try {
             if (this == HTMLUNITDRIVER) {
