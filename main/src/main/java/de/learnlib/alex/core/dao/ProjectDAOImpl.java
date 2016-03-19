@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,6 +47,20 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     /** Use the logger for the server part. */
     private static final Logger LOGGER = LogManager.getLogger("server");
+
+    /** The SymbolDAO to use. */
+    private SymbolDAOImpl symbolDAO;
+
+    /**
+     * The constructor.
+     *
+     * @param symbolDAO
+     *         The SymbolDAOImpl to use.
+     */
+    @Inject
+    public ProjectDAOImpl(SymbolDAOImpl symbolDAO) {
+        this.symbolDAO = symbolDAO;
+    }
 
     @Override
     public void create(Project project) throws ValidationException {
@@ -241,19 +256,20 @@ public class ProjectDAOImpl implements ProjectDAO {
             Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
             if (fieldsToLoad.contains(EmbeddableFields.GROUPS)) {
-                project.getGroups().forEach(group -> group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations));
+                project.getGroups().forEach(group -> group.getSymbols()
+                                                          .forEach(s -> symbolDAO.loadLazyRelations(session, s)));
             } else {
                 project.setGroups(null);
             }
 
             if (fieldsToLoad.contains(EmbeddableFields.DEFAULT_GROUP)) {
-                project.getDefaultGroup().getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
+                project.getDefaultGroup().getSymbols().forEach(s -> symbolDAO.loadLazyRelations(session, s));
             } else {
                 project.setDefaultGroup(null);
             }
 
             if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
-                project.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
+                project.getSymbols().forEach(s -> symbolDAO.loadLazyRelations(session, s));
             } else {
                 project.setSymbols(null);
             }

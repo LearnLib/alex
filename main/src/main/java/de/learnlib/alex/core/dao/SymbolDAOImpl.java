@@ -27,6 +27,8 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
@@ -50,6 +52,9 @@ import java.util.Objects;
  */
 @Repository
 public class SymbolDAOImpl implements SymbolDAO {
+
+    /** Use the logger for the server part. */
+    private static final Logger LOGGER = LogManager.getLogger("server");
 
     @Override
     public void create(Symbol symbol) throws ValidationException {
@@ -224,7 +229,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
 
         // load the lazy relations
-        result.forEach(SymbolDAOImpl::loadLazyRelations);
+        result.forEach(s -> loadLazyRelations(session, s));
         return result;
     }
 
@@ -686,7 +691,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     private void hideSymbols(Session session, List<Symbol> symbols) {
         for (Symbol symbol : symbols) {
-            loadLazyRelations(symbol);
+            loadLazyRelations(session, symbol);
 
             symbol.setHidden(true);
             session.update(symbol);
@@ -796,16 +801,31 @@ public class SymbolDAOImpl implements SymbolDAO {
     /**
      * Use Hibernate to populate all fields of a Symbol, including all references to other entities.
      *
+     * @param session
+     *         The Hibernate session to use to fetch symbols from the DB.
      * @param symbol
      *         The Symbol to populate.
      */
-    public static void loadLazyRelations(Symbol symbol) {
+    public void loadLazyRelations(Session session, Symbol symbol) {
         Hibernate.initialize(symbol.getUser());
         Hibernate.initialize(symbol.getGroup());
 
         Hibernate.initialize(symbol.getActions());
         symbol.getActions().stream().filter(a -> a instanceof ExecuteSymbolAction).forEach(a -> {
             ExecuteSymbolAction action = (ExecuteSymbolAction) a;
+
+            if (action.isUseLatestRevision()) {
+                try {
+                    Symbol symbolToExecute = getWithLatestRevision(session, symbol.getUser(), symbol.getProjectId(),
+                                                                action.getSymbolToExecuteAsIdRevisionPair().getId());
+                    action.setSymbolToExecute(symbolToExecute);
+                } catch (NotFoundException e) {
+                    LOGGER.warn("While loading the lazy relation for the symbol '" + symbol + "': Could not find the"
+                                + "latest revision of the symbol to execute '" + action.getSymbolToExecute() + "'.");
+                    action.setSymbolToExecute(null);
+                }
+            }
+
             Symbol symbolToExecute = action.getSymbolToExecute();
 
             if (symbolToExecute != null
@@ -813,7 +833,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                             || !Hibernate.isInitialized(symbolToExecute.getActions()))) {
                 Hibernate.initialize(symbolToExecute);
                 Hibernate.initialize(symbolToExecute.getActions());
-                loadLazyRelations(symbolToExecute);
+                loadLazyRelations(session, symbolToExecute);
             }
         });
     }

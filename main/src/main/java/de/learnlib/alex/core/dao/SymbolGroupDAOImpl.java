@@ -31,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.Arrays;
@@ -49,14 +50,17 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     private static final Logger LOGGER = LogManager.getLogger("server");
 
     /** The SymbolDAO to use. */
-    private final SymbolDAOImpl symbolDAO;
+    private SymbolDAOImpl symbolDAO;
 
     /**
-     * Constructor.
-     * Creates a new SymbolDAOImpl for internal use.
+     * The constructor.
+     *
+     * @param symbolDAO
+     *         The SymbolDAOImpl to use.
      */
-    public SymbolGroupDAOImpl() {
-        this.symbolDAO = new SymbolDAOImpl();
+    @Inject
+    public SymbolGroupDAOImpl(SymbolDAOImpl symbolDAO) {
+        this.symbolDAO = symbolDAO;
     }
 
     @Override
@@ -206,7 +210,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
         if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
-            group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
+            group.getSymbols().forEach(s -> symbolDAO.loadLazyRelations(session, s));
         } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
             try {
                 List<IdRevisionPair> idRevisionPairs = symbolDAO.getIdRevisionPairs(session,

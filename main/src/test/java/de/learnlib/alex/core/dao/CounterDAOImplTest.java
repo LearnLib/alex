@@ -39,6 +39,7 @@ public class CounterDAOImplTest {
     private static final int AMOUNT_OF_COUNTERS = 10;
 
     private static UserDAO userDAO;
+    private static SymbolDAOImpl symbolDAO;
     private static ProjectDAO projectDAO;
     private static CounterDAO counterDAO;
 
@@ -49,7 +50,8 @@ public class CounterDAOImplTest {
     @BeforeClass
     public static void beforeClass() {
         userDAO = new UserDAOImpl();
-        projectDAO = new ProjectDAOImpl();
+        symbolDAO = new SymbolDAOImpl();
+        projectDAO = new ProjectDAOImpl(symbolDAO);
         counterDAO = new CounterDAOImpl();
     }
 

@@ -57,7 +57,7 @@ public class SymbolDAOImplTest {
     private static UserDAO userDAO;
     private static ProjectDAO projectDAO;
     private static SymbolGroupDAOImpl symbolGroupDAO;
-    private static SymbolDAO symbolDAO;
+    private static SymbolDAOImpl symbolDAO;
 
     private User user;
     private Project project;
@@ -69,9 +69,9 @@ public class SymbolDAOImplTest {
     @BeforeClass
     public static void beforeClass() {
         userDAO = new UserDAOImpl();
-        projectDAO = new ProjectDAOImpl();
-        symbolGroupDAO = new SymbolGroupDAOImpl();
         symbolDAO = new SymbolDAOImpl();
+        projectDAO = new ProjectDAOImpl(symbolDAO);
+        symbolGroupDAO = new SymbolGroupDAOImpl(symbolDAO);
     }
 
     @Before

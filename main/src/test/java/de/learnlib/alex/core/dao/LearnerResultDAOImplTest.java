@@ -76,7 +76,8 @@ public class LearnerResultDAOImplTest {
     @BeforeClass
     public static void beforeClass() {
         userDAO = new UserDAOImpl();
-        projectDAO = new ProjectDAOImpl();
+        SymbolDAOImpl symbolDAO = new SymbolDAOImpl();
+        projectDAO = new ProjectDAOImpl(symbolDAO);
         learnerResultDAO = new LearnerResultDAOImpl();
     }
 

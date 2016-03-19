@@ -38,9 +38,9 @@ public class SymbolGroupDAOImplTest {
 
     private static final int AMOUNT_OF_GROUPS = 10;
     private static UserDAO userDAO;
+    private static SymbolDAOImpl symbolDAO;
     private static ProjectDAO projectDAO;
     private static SymbolGroupDAO symbolGroupDAO;
-    private static SymbolDAO symbolDAO;
 
     private User user;
     private Project project;
@@ -51,9 +51,9 @@ public class SymbolGroupDAOImplTest {
     @BeforeClass
     public static void beforeClass() {
         userDAO = new UserDAOImpl();
-        projectDAO = new ProjectDAOImpl();
-        symbolGroupDAO = new SymbolGroupDAOImpl();
         symbolDAO = new SymbolDAOImpl();
+        projectDAO = new ProjectDAOImpl(symbolDAO);
+        symbolGroupDAO = new SymbolGroupDAOImpl(symbolDAO);
     }
 
     @Before

@@ -158,18 +158,6 @@ public class ExecuteSymbolAction extends SymbolAction {
             return getFailedOutput();
         }
 
-        if (isUseLatestRevision()) {
-            try {
-                SymbolDAO dao = new SymbolDAOImpl();
-                symbolToExecute = dao.getWithLatestRevision(getUser(), getProject().getId(),
-                        symbolToExecuteAsIdRevisionPair.getId());
-            } catch (NotFoundException e) {
-                LOGGER.info("The symbol with the latest revision could not be found "
-                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
-                return getFailedOutput();
-            }
-        }
-
         ExecuteResult symbolResult = symbolToExecute.execute(connector);
         LOGGER.info("Executed other Symbol <" + symbolToExecute.getId() + ":" + symbolToExecute.getRevision() + "> "
                 + " with the result of '" + symbolResult + "' "

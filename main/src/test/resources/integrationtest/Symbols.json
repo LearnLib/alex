@@ -7,7 +7,7 @@
       { "type": "setVariable", "name": "token",   "value": "" },
       { "type": "setVariable", "name": "project", "value": "" },
       { "type": "setVariable", "name": "symbols", "value": "" },
-      { "type": "executeSymbol", "symbolToExecute": { "id": 2, "revision": 1 } }
+      { "type": "executeSymbol", "symbolToExecute": { "id": 2, "revision": 1 }, "useLatestRevision": true }
     ]
   },
   {

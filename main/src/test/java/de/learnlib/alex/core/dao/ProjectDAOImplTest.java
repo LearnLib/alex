@@ -49,6 +49,7 @@ public class ProjectDAOImplTest {
 
     private static UserDAO userDAO;
     private static ProjectDAO projectDAO;
+    private static SymbolDAOImpl symbolDAO;
 
     private User user;
     private Project project;
@@ -56,7 +57,8 @@ public class ProjectDAOImplTest {
     @BeforeClass
     public static void beforeClass() {
         userDAO = new UserDAOImpl();
-        projectDAO = new ProjectDAOImpl();
+        symbolDAO = new SymbolDAOImpl();
+        projectDAO = new ProjectDAOImpl(symbolDAO);
     }
 
     @Before
