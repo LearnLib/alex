@@ -261,14 +261,6 @@
         </plugins>
     </build>
 
-    <!--===== distribution management ======-->
-    <distributionManagement>
-        <site>
-            <id>local</id>
-            <url>file://${user.home}/alex-documentation</url>
-        </site>
-    </distributionManagement>
-
     <profiles>
 
         <profile>
