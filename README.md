@@ -70,7 +70,6 @@ For the Installation from the source files make sure your system matches the fol
 * Java JDK 8
 * Maven 3
 * Node.js v4.2.* and the NPM
-* Bower `npm install -g bower`
 * Grunt and Grund-Cli `npm install -g grunt grunt-cli`
 
 To install and run ALEX, execute the following commands in a directory of your choice:
