@@ -504,8 +504,5 @@
             </build>
         </profile>
 
-        <profile>
-            <id>release</id>
-        </profile>
     </profiles>
 </project>

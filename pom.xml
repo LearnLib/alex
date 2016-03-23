@@ -99,7 +99,6 @@
         <!-- plugin versions -->
         <compiler-plugin.version>3.1</compiler-plugin.version>
         <dependency-plugin.version>2.10</dependency-plugin.version>
-        <assembly-plugin.version>2.5.5</assembly-plugin.version>
         <jar-plugin.version>2.6</jar-plugin.version>
         <javadoc-plugin.version>2.10.3</javadoc-plugin.version>
         <javadoc-umlgraph.version>5.6.6</javadoc-umlgraph.version>
@@ -260,62 +259,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <!--===== distribution management ======-->
-    <distributionManagement>
-        <site>
-            <id>local</id>
-            <url>file://${user.home}/alex-documentation</url>
-        </site>
-    </distributionManagement>
-
-    <profiles>
-
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>${assembly-plugin.version}</version>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/assembly/release.xml</descriptor>
-                            </descriptors>
-                            <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-                            <finalName>ALEX-${project.version}</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>deploy</id>
-            <properties>
-                <isDeploy>true</isDeploy>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>${assembly-plugin.version}</version>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/assembly/deploy.xml</descriptor>
-                            </descriptors>
-                            <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-                            <finalName>ALEX-${project.version}-deploy</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-    </profiles>
 
 </project>
