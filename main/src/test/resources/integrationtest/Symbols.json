@@ -1,0 +1,205 @@
+[
+  {
+    "name": "Reset",
+    "abbreviation": "reset",
+    "actions": [
+      { "type": "incrementCounter", "name": "user" },
+      { "type": "setVariable", "name": "token",   "value": "" },
+      { "type": "setVariable", "name": "project", "value": "" },
+      { "type": "setVariable", "name": "symbols", "value": "" },
+      { "type": "executeSymbol", "symbolToExecute": { "id": 2, "revision": 1 }, "useLatestRevision": true }
+    ]
+  },
+  {
+    "name": "User - Create",
+    "abbreviation": "user_c",
+    "actions": [
+      {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "/users",
+        "data" : "{\"email\": \"user{{#user}}@alex.example\", \"password\": \"alex\"}"
+      },
+      { "type": "rest_checkStatus", "status": 201 }
+    ]
+  },
+  {
+    "name": "User - Login",
+    "abbreviation": "login",
+    "actions": [
+      { "type": "assertVariable", "name": "token", "value": ""},
+      {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "/users/login",
+        "data" : "{\"email\": \"user{{#user}}@alex.example\", \"password\": \"alex\"}"
+      },
+      { "type": "rest_checkStatus", "status": 200 },
+      { "type": "setVariableByJSON", "name": "token", "value": "token" }
+    ]
+  },
+  {
+    "name": "User - Logout",
+    "abbreviation": "logout",
+    "actions": [
+      { "type": "assertVariable", "name": "token", "value": "", "negated": true},
+      { "type": "setVariable", "name": "token", "value": "" }
+    ]
+  },
+  {
+    "name": "Project - Create",
+    "abbreviation": "project_c",
+    "actions": [
+      { "type": "assertVariable", "name": "project", "value": ""},
+      {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "/projects",
+        "data" : "{\"name\": \"ALEX\", \"baseUrl\": \"%%PROJECT_PATH%%\"}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 201 },
+      { "type": "setVariableByJSON", "name": "project", "value": "id" }
+    ]
+  },
+  {
+    "name": "Project - Read",
+    "abbreviation": "project_r",
+    "actions": [
+      { "type": "assertVariable", "name": "project", "value": "", "negated": true},
+      {
+        "type": "rest_call",
+        "method": "GET",
+        "url": "/projects/{{$project}}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 200 }
+    ]
+  },
+  {
+    "name": "Project - Update",
+    "abbreviation": "project_u",
+    "actions": [
+      { "type": "assertVariable", "name": "project", "value": "", "negated": true},
+      {
+        "type": "rest_call",
+        "method": "PUT",
+        "url": "/projects/{{$project}}",
+        "data" : "{\"name\": \"The real ALEX\", \"baseUrl\": \"http://localhost:8080/rest\"}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 200 }
+    ]
+  },
+  {
+    "name": "Project - Delete",
+    "abbreviation": "project_d",
+    "actions": [
+      { "type": "assertVariable", "name": "project", "value": "", "negated": true},
+      {
+        "type": "rest_call",
+        "method": "DELETE",
+        "url": "/projects/{{$project}}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 204 },
+      { "type": "setVariable", "name": "project", "value": "" }
+    ]
+  },
+  {
+    "name": "Symbols - Create",
+    "abbreviation": "symbols_c",
+    "actions": [
+      { "type": "assertVariable", "name": "project", "value": "", "negated": true},
+      { "type": "assertVariable", "name": "symbols", "value": ""},
+      {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "/projects/{{$project}}/symbols",
+        "data": "{\"name\": \"Reset\", \"abbreviation\": \"reset\", \"actions\": [{ \"type\": \"web_goto\", \"url\": \"/test_app.html\" }]}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 201 },
+      {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "/projects/{{$project}}/symbols",
+        "data": "{\"name\": \"Web Symbol 1\", \"abbreviation\": \"web1\", \"actions\": [{ \"type\": \"web_checkForText\", \"value\": \"Lorem Ipsum\" }]}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 201 },
+      {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "/projects/{{$project}}/symbols",
+        "data": "{\"name\": \"Web Symbol 2\", \"abbreviation\": \"web2\", \"actions\": [{ \"type\": \"web_click\", \"node\" : \"#link\" }]}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 201 },
+      {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "/projects/{{$project}}/symbols",
+        "data": "{\"name\": \"Web Symbol 3\", \"abbreviation\": \"web3\", \"actions\": [{ \"type\": \"web_clickLinkByText\", \"value\" : \"The next awesome link\" }]}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 201 },
+      {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "/projects/{{$project}}/symbols",
+        "data": "{\"name\": \"Included Web Symbol\", \"abbreviation\": \"web4_inc\", \"actions\": [{ \"type\": \"web_checkForText\", \"value\": \".*Test App - Page [0-9].*\", \"regexp\": true }]}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 201 },
+      {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "/projects/{{$project}}/symbols",
+        "data": "{\"name\": \"Web Symbol 4\", \"abbreviation\": \"web4\", \"actions\": [{ \"type\": \"executeSymbol\", \"symbolToExecute\": {\"id\": 5, \"revision\": 1} }]}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 201 },
+      { "type": "setVariable", "name": "symbols", "value": "created" }
+    ]
+  },
+  {
+    "name": "Learn",
+    "abbreviation": "learn",
+    "actions": [
+      { "type": "assertVariable", "name": "project", "value": "", "negated": true},
+      { "type": "assertVariable", "name": "symbols", "value": "", "negated": true},
+      {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "/learner/start/{{$project}}",
+        "data": "{\"algorithm\": \"TTT\", \"eqOracle\": {\"type\": \"complete\", \"minDepth\": 1, \"maxDepth\": 3}, \"maxAmountOfStepsToLearn\": -1, \"resetSymbol\": {\"id\": 1, \"revision\": 1}, \"symbols\":[{\"id\":  2, \"revision\": 1}, {\"id\":  3, \"revision\": 1}, {\"id\":  4, \"revision\": 1}, {\"id\":  6, \"revision\": 1}]}",
+        "headers": {
+          "Authorization": "Bearer {{$token}}"
+        }
+      },
+      { "type": "rest_checkStatus", "status": 200 },
+      { "type": "wait", "duration": 150000}
+    ]
+  }
+]

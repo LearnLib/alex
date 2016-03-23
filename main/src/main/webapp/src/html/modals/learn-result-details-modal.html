@@ -1,0 +1,100 @@
+<div class="modal-header">
+
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.ok()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+    <h3 class="modal-title">Test Details</h3>
+    <span class="text-muted">View some details about this test</span>
+
+</div>
+
+<div class="modal-body">
+
+    <table class="table table-condensed">
+        <tr class="active">
+            <td colspan="2"><strong>About This Test</strong></td>
+        </tr>
+        <tr>
+            <td>nth Test</td>
+            <td ng-bind="vm.result.testNo"></td>
+        </tr>
+        <tr>
+            <td>|Sigma|</td>
+            <td ng-bind="vm.result.sigma.length"></td>
+        </tr>
+        <tr>
+            <td>Algorithm</td>
+            <td ng-bind="(vm.result.algorithm | formatAlgorithm)"></td>
+        </tr>
+        <tr>
+            <td>Web Driver</td>
+            <td ng-bind="(vm.result.browser|formatWebBrowser)"></td>
+        </tr>
+    </table>
+
+    <h3>Statistics</h3>
+    <hr>
+
+    <uib-tabset justified="true">
+        <uib-tab ng-repeat="tab in vm.tabs" heading="{{tab.heading}}">
+
+            <div class="alert alert-condensed alert-danger" ng-show="tab.result.error">
+                <i class="fa fa-fw fa-warning"></i> <strong>This step failed:</strong>
+                <span ng-bind="tab.result.errorText"></span>
+            </div>
+
+            <table class="table table-condensed">
+
+                <tr>
+                    <td>nth Step</td>
+                    <td ng-bind="tab.result.stepNo"></td>
+                </tr>
+
+                <tr>
+                    <td>Started</td>
+                    <td ng-bind="(tab.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></td>
+                </tr>
+
+                <tr class="active" ng-if="tab.result.eqOracle">
+                    <td colspan="2"><strong>Configuration</strong></td>
+                </tr>
+                <tr ng-if="tab.result.eqOracle">
+                    <td>EQ Oracle</td>
+                    <td ng-bind="(tab.result.eqOracle.type | formatEqOracle)"></td>
+                </tr>
+                <tr ng-if="tab.result.eqOracle">
+                    <td>Steps to Learn</td>
+                    <td ng-bind="tab.result.stepsToLearn"></td>
+                </tr>
+
+                <tr class="active">
+                    <td colspan="2"><strong>Numbers</strong></td>
+                </tr>
+                <tr>
+                    <td>Duration</td>
+                    <td ng-bind="(tab.result.statistics.duration | formatMilliseconds)"></td>
+                </tr>
+                <tr>
+                    <td>#Membership Queries</td>
+                    <td ng-bind="tab.result.statistics.mqsUsed"></td>
+                </tr>
+                <tr>
+                    <td>#Equivalence Queries</td>
+                    <td ng-bind="tab.result.statistics.eqsUsed"></td>
+                </tr>
+                <tr>
+                    <td>#Symbol Calls</td>
+                    <td ng-bind="tab.result.statistics.symbolsUsed"></td>
+                </tr>
+
+            </table>
+
+        </uib-tab>
+    </uib-tabset>
+
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-sm btn-primary" ng-click="vm.ok()">Ok</button>
+</div>

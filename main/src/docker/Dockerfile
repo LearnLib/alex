@@ -1,5 +1,9 @@
-FROM jetty:9.3
+FROM java:8
 
-ADD ALEX-*.war /var/lib/jetty/webapps/ROOT.war
+ADD ALEX-*.war /usr/src/alex/ALEX.war
+WORKDIR /usr/src/alex
 
-CMD ["jetty.sh", "run"]
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "ALEX.war"]
+

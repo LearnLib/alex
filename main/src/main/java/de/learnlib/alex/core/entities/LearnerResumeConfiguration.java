@@ -1,5 +1,22 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 
@@ -10,15 +27,51 @@ import javax.persistence.Transient;
  */
 public class LearnerResumeConfiguration {
 
+    /** The ID of the user related to the configuration. */
+    private Long userId;
+
+    /** The ID of the project related to the configuration. */
+    private Long projectId;
+
     /**
      * The type of EQ oracle to find a counter example.
      * @requiredField
      */
     protected AbstractEquivalenceOracleProxy eqOracle;
 
+    /**
+     * @return The ID of the user related to the configuration.
+     */
+    @JsonProperty("user")
+    public Long getUserId() {
+        return userId;
+    }
+
+    /**
+     * @param userId The new ID of the user related to the configuration.
+     */
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    /**
+     * @return The ID of the project related to the configuration.
+     */
+    @JsonProperty("project")
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    /**
+     * @param projectId The new ID of the project related to the configuration.
+     */
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
+
     /** How many steps should the learner take before stopping the process.
-     * Must be greater or equal to 0.
-     * 0 := Do not stop until no counter example is found. */
+     * Must be greater or equal to -1, but not 0.
+     * -1 := Do not stop until no counter example is found. */
     protected int maxAmountOfStepsToLearn;
 
     /**
@@ -26,7 +79,7 @@ public class LearnerResumeConfiguration {
      */
     public LearnerResumeConfiguration() {
         this.eqOracle = new MealyRandomWordsEQOracleProxy();
-        this.maxAmountOfStepsToLearn = 0; // infinity
+        this.maxAmountOfStepsToLearn = -1; // infinity
     }
 
     /**
@@ -73,6 +126,12 @@ public class LearnerResumeConfiguration {
      *         If the configuration is invalid.
      */
     public void checkConfiguration() throws IllegalArgumentException {
+        if (maxAmountOfStepsToLearn < -1) {
+            throw new IllegalArgumentException("The MaxAmountOfStep property must not be less than -1.");
+        } else if (maxAmountOfStepsToLearn == 0) {
+            throw new IllegalArgumentException("The MaxAmountOfStep property must not be equal to 0.");
+        }
+
         if (eqOracle == null) {
             throw new IllegalArgumentException("Could not find an EQ oracle.");
         }

@@ -1,14 +1,29 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.core.learner.connectors.WebBrowser;
 
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity to hold the information and parameters to configure a learn process.
@@ -19,37 +34,20 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     /** to be serializable. */
     private static final long serialVersionUID = -5130245647384793948L;
 
+    /** The maximum length of a comment. */
+    private static final int MAX_COMMENT_LENGTH = 255;
+
     /**
      * Link to the Symbols that are used during the learning.
      * @requiredField
      */
-    @Transient
-    @JsonProperty("symbols")
-    private List<IdRevisionPair> symbolsAsIdRevisionPairs;
-
-    /**
-     * The actual list of Symbols used during the learning.
-     * Only used internally.
-     */
-    @Transient
-    @JsonIgnore
-    private List<Symbol> symbols;
+    private Set<IdRevisionPair> symbolsAsIdRevisionPairs;
 
     /**
      * Link to the Symbols that should be used as a reset Symbol.
      * @requiredField
      */
-    @Transient
-    @JsonProperty("resetSymbol")
     private IdRevisionPair resetSymbolAsIdRevisionPair;
-
-    /**
-     * The actual Symbols that should be used as a reset Symbol.
-     * Only used internally.
-     */
-    @Transient
-    @JsonIgnore
-    private Symbol resetSymbol;
 
     /**
      * The algorithm to be used during the learning.
@@ -57,16 +55,17 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     private LearnAlgorithms algorithm;
 
+    /** The browser to use during the learn process. */
+    private WebBrowser browser;
+
     /** A shot comment to describe the learn set up. */
-    @Size(max = 255)
     private String comment;
 
     /**
      * Default constructor.
      */
     public LearnerConfiguration() {
-        super();
-        this.symbolsAsIdRevisionPairs = new LinkedList<>();
+        this.symbolsAsIdRevisionPairs = new HashSet<>();
         this.algorithm = LearnAlgorithms.TTT;
         this.comment = "";
     }
@@ -76,7 +75,12 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return A List of IdRevisionPair referring to symbols that must be used during the learning.
      */
-    public List<IdRevisionPair> getSymbolsAsIdRevisionPairs() {
+    @JsonProperty("symbols")
+    public Set<IdRevisionPair> getSymbolsAsIdRevisionPairs() {
+        if (symbolsAsIdRevisionPairs == null || symbolsAsIdRevisionPairs.isEmpty()) {
+            symbolsAsIdRevisionPairs = new HashSet<>();
+        }
+
         return symbolsAsIdRevisionPairs;
     }
 
@@ -86,27 +90,9 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * @param symbolsAsIdRevisionPairs
      *         The List of IdRevisionPairs to refer to symbols that must be used during the learning.
      */
-    public void setSymbolsAsIdRevisionPairs(List<IdRevisionPair> symbolsAsIdRevisionPairs) {
+    @JsonProperty("symbols")
+    public void setSymbolsAsIdRevisionPairs(Set<IdRevisionPair> symbolsAsIdRevisionPairs) {
         this.symbolsAsIdRevisionPairs = symbolsAsIdRevisionPairs;
-    }
-
-    /**
-     * Get the list of Symbols that must be used for the learning process.
-     *
-     * @return The list of Symbols.
-     */
-    public List<Symbol> getSymbols() {
-        return symbols;
-    }
-
-    /**
-     * Set a list of symbols to be used for the learning process.
-     *
-     * @param symbols
-     *         The new list of Symbols.
-     */
-    public void setSymbols(List<Symbol> symbols) {
-        this.symbols = symbols;
     }
 
     /**
@@ -114,6 +100,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return The link to the reset symbol.
      */
+    @JsonProperty("resetSymbol")
     public IdRevisionPair getResetSymbolAsIdRevisionPair() {
         return resetSymbolAsIdRevisionPair;
     }
@@ -129,28 +116,10 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     }
 
     /**
-     * Get the actual reset symbol.
-     *
-     * @return The reset symbol.
-     */
-    public Symbol getResetSymbol() {
-        return resetSymbol;
-    }
-
-    /**
-     * Set the reset symbol. This updates not the IdRevisionPair of the reset symbol.
-     * @param resetSymbol The new reset symbol.
-     */
-    public void setResetSymbol(Symbol resetSymbol) {
-        this.resetSymbol = resetSymbol;
-    }
-
-    /**
      * Get the LearnerAlgorithm that should be used for the learning process.
      *
      * @return The selected LearnerAlgorithm.
      */
-    @Transient
     public LearnAlgorithms getAlgorithm() {
         return algorithm;
     }
@@ -166,10 +135,29 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     }
 
     /**
+     * @return The browser to use for the learning.
+     */
+    public WebBrowser getBrowser() {
+        if (browser == null) {
+            return WebBrowser.HTMLUNITDRIVER;
+        } else {
+            return browser;
+        }
+    }
+
+    /**
+     * @param browser The new browser to use for the learning process.
+     */
+    public void setBrowser(WebBrowser browser) {
+        this.browser = browser;
+    }
+
+    /**
      * Get the current comment for the learn setup.
      *
      * @return The current comment.
      */
+    @Size(max = MAX_COMMENT_LENGTH)
     public String getComment() {
         return comment;
     }
@@ -185,14 +173,4 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         this.comment = comment;
     }
 
-    /**
-     * Update the configuration based on the different parameters in the ResumeConfiguration.
-     *
-     * @param configuration
-     *         Resume Configuration that specifies the new parameters for this Configuration
-     */
-    public void updateConfiguration(LearnerResumeConfiguration configuration) {
-        this.maxAmountOfStepsToLearn = configuration.maxAmountOfStepsToLearn;
-        this.eqOracle = configuration.eqOracle;
-    }
 }

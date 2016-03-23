@@ -1,7 +1,21 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.learner.connectors;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
 import de.learnlib.alex.core.learner.BaseUrlManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,12 +24,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 
-import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,23 +42,29 @@ public class WebSiteConnector implements Connector {
     /** Max. time to wait for JavaScript to load before aborting */
     private static final int JAVASCRIPT_LOADING_THRESHOLD = 5000; // 5 seconds
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("leaner");
 
-    /** The driver used to send and receive data to a WebSite. */
-    private WebDriver driver;
+    /** The browser to use. */
+    private WebBrowser browser;
 
     /** A managed base url to use. */
     private BaseUrlManager baseUrl;
+
+    /** The driver used to send and receive data to a WebSite. */
+    private WebDriver driver;
 
     /**
      * Constructor.
      *
      * @param baseUrl
      *         The new base url to use for further request. All request will be based on this!
+     * @param browser
+     *         The browser to use for further request.
      */
-    public WebSiteConnector(String baseUrl) {
+    public WebSiteConnector(String baseUrl, WebBrowser browser) {
         this.baseUrl = new BaseUrlManager(baseUrl);
+        this.browser = browser;
     }
 
     /**
@@ -57,44 +72,9 @@ public class WebSiteConnector implements Connector {
      */
     @Override
     public void reset() {
-        String driverName = System.getProperty("alex.driver", "HTMLUnitDriver");
-        switch (driverName.toLowerCase()) {
-            case "firefox":
-                this.driver = new FirefoxDriver();
-                break;
-            case "chrome":
-                this.driver = new ChromeDriver();
-                break;
-            case "ie":
-                this.driver = new InternetExplorerDriver();
-                break;
-            default:
-                this.driver = new HtmlUnitDriver(BrowserVersion.FIREFOX_38);
-                enableJavaScript((HtmlUnitDriver) this.driver);
-        }
-
+        this.driver = browser.getWebDriver();
         this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
         this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
-    }
-
-    /**
-     * Solves issues with "wrong" or non strict JavaScript that is executed on the page (e.g. jQuery).
-     * Uses reflections to get the private 'webClient' property from the UnitDriver and set the flag
-     * to ignore js errors.
-     */
-    private void enableJavaScript(HtmlUnitDriver htmlUnitDriver) {
-        try {
-            LOGGER.debug("Try enabling JavaScript");
-            htmlUnitDriver.setJavascriptEnabled(true);
-            Field f = htmlUnitDriver.getClass().getDeclaredField("webClient");
-            f.setAccessible(true);
-            WebClient client = (WebClient) f.get(htmlUnitDriver);
-            client.getOptions().setThrowExceptionOnScriptError(false);
-        } catch (NoSuchFieldException e) {
-            LOGGER.warn("Enabling JavaScript failed. Private Property 'webClient' does not exist", e);
-        } catch (IllegalAccessException e) {
-            LOGGER.warn("Enabling JavaScript failed. Problem accessing private 'webClient'", e);
-        }
     }
 
     @Override

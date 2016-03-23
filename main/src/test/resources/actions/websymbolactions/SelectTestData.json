@@ -1,5 +1,6 @@
 {
     "type" : "web_select",
     "node" : "#input",
-    "value" : "Lorem Ipsum"
+    "value" : "Lorem Ipsum",
+    "selectBy" : "text"
 }

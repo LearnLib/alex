@@ -1,35 +1,50 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
-import de.learnlib.oracles.DefaultQuery;
+import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import net.automatalib.automata.transout.MealyMachine;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.Word;
-import net.automatalib.words.impl.SimpleAlphabet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
@@ -45,143 +60,11 @@ public class LearnerResult implements Serializable {
     /** to be serializable. */
     private static final long serialVersionUID = 4619722174562257862L;
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
-
-    /**
-     * Embeddable statistics object to hold all the statistics together.
-     */
-    @Embeddable
-    @JsonPropertyOrder(alphabetic = true)
-    public static class Statistics implements Serializable {
-
-        /** to be serializable. */
-        private static final long serialVersionUID = -5221139436025380739L;
-
-        /**
-         * Date and Time when the learning step was started.
-         * The format is conform with the ISO 8601 (JavaScript-Style).
-         */
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS+00:00", timezone = "UTC")
-        private Date startTime;
-
-        /** The duration of the learn step. */
-        private long duration;
-
-        /** The amount of equivalence queries.. */
-        private long eqsUsed;
-
-        /** The amount of membership queries/ SUL resets. */
-        private long mqsUsed;
-
-        /** The amount of actual symbols called during the learning process. */
-        private long symbolsUsed;
-
-        /**
-         * Default constructor.
-         */
-        public Statistics() {
-            this.startTime = new Date(0);
-        }
-
-        /**
-         * Get the start time of the learn step.
-         *
-         * @return The start time.
-         */
-        public Date getStartTime() {
-            return startTime;
-        }
-
-        /**
-         * Set the start time of the learn step.
-         *
-         * @param startTime
-         *         The new start time.
-         */
-        public void setStartTime(Date startTime) {
-            this.startTime = startTime;
-        }
-
-        /**
-         * Get the duration the learn step took.
-         *
-         * @return The duration of the learn step.
-         */
-        public long getDuration() {
-            return duration;
-        }
-
-        /**
-         * Set how long the learn step took.
-         *
-         * @param duration
-         *         The new duration.
-         */
-        public void setDuration(long duration) {
-            this.duration = duration;
-        }
-
-        /**
-         * Get the amount of equivalence oracles used during the learning.
-         *
-         * @return The amount of eq oracles.
-         */
-        public long getEqsUsed() {
-            return eqsUsed;
-        }
-
-        /**
-         * Set the amount of equivalence oracles used during the learning.
-         *
-         * @param eqsUsed
-         *         The new amount of eq oracles.
-         */
-        public void setEqsUsed(long eqsUsed) {
-            this.eqsUsed = eqsUsed;
-        }
-
-        /**
-         * Get the amount of resets done while learning.
-         *
-         * @return The amount of resets during the learn step.
-         */
-        public long getMqsUsed() {
-            return mqsUsed;
-        }
-
-        /**
-         * Set the amount of resets done while learning.
-         *
-         * @param mqsUsed
-         *         The amount of resets during the learn step.
-         */
-        public void setMqsUsed(long mqsUsed) {
-            this.mqsUsed = mqsUsed;
-        }
-
-        /**
-         * Get the total amount of symbols executed during the learning.
-         *
-         * @return The total amount of symbols used.
-         */
-        public long getSymbolsUsed() {
-            return symbolsUsed;
-        }
-
-        /**
-         * Set the total amount of symbols executed during the learning.
-         *
-         * @param symbolsUsed
-         *         The new amount of symbols used during the learning.
-         */
-        public void setSymbolsUsed(long symbolsUsed) {
-            this.symbolsUsed = symbolsUsed;
-        }
-    }
-
     /** The id of the LearnerResult in the DB. */
     private Long id;
+
+    /** The user of the LearnerResult. */
+    private User user;
 
     /** The reference to the Project the test run belongs to. */
     private Project project;
@@ -189,33 +72,33 @@ public class LearnerResult implements Serializable {
     /** The test no. within a Project which lead to the result. */
     private Long testNo;
 
-    /** The step no. within a test run which lead to the result. */
-    private Long stepNo;
+    /** The steps of the LearnerResult. */
+    private List<LearnerResultStep> steps;
 
-    /** Buffer for the JSON which represents the result. */
-    private String json;
+    /** The reset symbol to use during the learning. */
+    private Symbol resetSymbol;
 
-    /** Internal helper field to determine if the json needs to be recalculated. */
-    @JsonIgnore
-    private boolean jsonChanged;
-
-    /** The LearnerConfiguration which was used to create the result. */
-    private LearnerConfiguration configuration;
-
-    /** The statistics of the result. */
-    private Statistics statistics;
+    /** The symbols to use during the learning. */
+    private Set<Symbol> symbols;
 
     /** The Alphabet used while learning. */
-    private Alphabet<String> sigma;
+    private AlphabetProxy sigma;
+
+    /** The algorithm to use during the learning. */
+    private LearnAlgorithms algorithm;
+
+    /** The browser to use during the learning. */
+    private WebBrowser browser;
+
+    /** A comment to describe the intention / setting of the learn process.
+     *  This field is optional. */
+    private String comment;
 
     /** The hypothesis of the result. */
     private CompactMealyMachineProxy hypothesis;
 
-    /** The last found counterexample. */
-    private DefaultQuery<String, Word<String>> counterExample;
-
-    /** This is an optional property and can contain things like the internal data structure. */
-    private String algorithmInformation;
+    /** The statistics of the result. */
+    private Statistics statistics;
 
     /**
      * If this field is set some sort of error occurred during the learning.
@@ -228,8 +111,10 @@ public class LearnerResult implements Serializable {
      * Default constructor.
      */
     public LearnerResult() {
-        this.configuration = new LearnerConfiguration();
-        this.jsonChanged = true;
+        this.symbols = new HashSet<>();
+        this.steps = new LinkedList<>();
+        this.browser = WebBrowser.HTMLUNITDRIVER;
+        this.comment = "";
         this.statistics = new Statistics();
     }
 
@@ -253,7 +138,36 @@ public class LearnerResult implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
-        this.jsonChanged = true;
+    }
+
+    /**
+     * @return Get the user of the result.
+     */
+    @NaturalId
+    @ManyToOne
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @param user Set a new user for the result.
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * @return Get the ID of the user related to the result.
+     */
+    @Transient
+    @JsonProperty("user")
+    public Long getUserId() {
+        if (user == null) {
+            return 0L;
+        }
+
+        return user.getId();
     }
 
     /**
@@ -263,7 +177,6 @@ public class LearnerResult implements Serializable {
      */
     @NaturalId
     @ManyToOne
-    //@JoinColumn(name = "projectId")
     @JsonIgnore
     public Project getProject() {
         return project;
@@ -277,7 +190,6 @@ public class LearnerResult implements Serializable {
      */
     public void setProject(Project project) {
         this.project = project;
-        this.jsonChanged = true;
     }
 
     /**
@@ -293,18 +205,6 @@ public class LearnerResult implements Serializable {
         } else {
             return project.getId();
         }
-    }
-
-    /**
-     * Set the related Project new by a project id.
-     *
-     * @param projectId
-     *         The id of the new Project.
-     */
-    @JsonProperty("project")
-    public void setProjectId(Long projectId) {
-        this.project = new Project(projectId);
-        this.jsonChanged = true;
     }
 
     /**
@@ -326,52 +226,183 @@ public class LearnerResult implements Serializable {
      */
     public void setTestNo(Long testNo) {
         this.testNo = testNo;
-        this.jsonChanged = true;
     }
 
     /**
-     * Get the step number of the result, i.e. the number of the result within the test run.
-     *
-     * @return The step no. of the result within the test run.
+     * @return Get the steps of the result.
      */
-    @NaturalId
-    @Column(nullable = false)
-    public Long getStepNo() {
-        return stepNo;
+    @OneToMany(mappedBy = "result")
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OrderBy("stepNo ASC")
+    public List<LearnerResultStep> getSteps() {
+        return steps;
     }
 
     /**
-     * Set a new step number of the result, i.e. the number of the result within the test run.
-     *
-     * @param stepNo
-     *         The new step no. of the result within the test run.
+     * @param steps The new list of steps for the result.
      */
-    public void setStepNo(Long stepNo) {
-        this.stepNo = stepNo;
-        this.jsonChanged = true;
+    public void setSteps(List<LearnerResultStep> steps) {
+        this.steps = steps;
     }
 
     /**
-     * Get the LearnerConfiguration used to create the result.
-     *
-     * @return The LearnerConfiguration used during the learning which lead to the result.
+     * @return The reset symbol used during the learning.
      */
-    @JsonProperty("configuration")
+    @ManyToOne
+    @JsonIgnore
+    public Symbol getResetSymbol() {
+        return resetSymbol;
+    }
+
+    /**
+     * @param resetSymbol The new reset symbol to use during the learning.
+     */
+    public void setResetSymbol(Symbol resetSymbol) {
+        this.resetSymbol = resetSymbol;
+    }
+
+    /**
+     * Return the reset symbol as ID and revision pair for the JSON output.
+     *
+     * @return The ID and revision pair of the reset symbol.
+     */
     @Transient
-    public LearnerConfiguration getConfiguration() {
-        return configuration;
+    @JsonProperty("resetSymbol")
+    public IdRevisionPair getResetSymbolAsIdRevisionPair() {
+        if (resetSymbol == null) {
+            return new IdRevisionPair();
+        } else {
+            return resetSymbol.getIdRevisionPair();
+        }
     }
 
     /**
-     * Set the LearnerConfiguration used while learning which lead to the result.
-     *
-     * @param configuration
-     *         The new LearnerConfiguration.
+     * @return Get the symbols used during the learning.
      */
-    @JsonProperty("configuration")
-    public void setConfiguration(LearnerConfiguration configuration) {
-        this.configuration = configuration;
-        this.jsonChanged = true;
+    @ManyToMany
+    @JsonIgnore
+    public Set<Symbol> getSymbols() {
+        return symbols;
+    }
+
+    /**
+     * @param symbols The new set of symbols used during the learning.
+     */
+    public void setSymbols(Set<Symbol> symbols) {
+        this.symbols = symbols;
+    }
+
+    /**
+     * Return the set of symbol as List of ID and revision pairs for the JSON output.
+     *
+     * @return The ID and revision pairs of the symbols.
+     */
+    @Transient
+    @JsonProperty("symbols")
+    public List<IdRevisionPair> getSymbolAsIdRevisionPair() {
+        List<IdRevisionPair> pairs = new LinkedList<>();
+        symbols.stream().map(Symbol::getIdRevisionPair).forEach(pairs::add);
+        return pairs;
+    }
+
+    /**
+     * Get the Alphabet used during the learning process. This Alphabet is also used in the hypothesis.
+     *
+     * @return The Alphabet of the learning process & the hypothesis.
+     */
+    @JsonProperty("sigma")
+    @Column(name = "sigma", columnDefinition = "BLOB")
+    public AlphabetProxy getSigma() {
+        return sigma;
+    }
+
+    /**
+     * Set a new Alphabet. The Alphabet should be the one used during the learning and must be used in the hypothesis.
+     *
+     * @param sigma
+     *         The new Alphabet.
+     */
+    @JsonIgnore
+    public void setSigma(AlphabetProxy sigma) {
+        this.sigma = sigma;
+    }
+
+    /**
+     * @return The algorithm to use during the learning.
+     */
+    @Enumerated
+    public LearnAlgorithms getAlgorithm() {
+        return algorithm;
+    }
+
+    /**
+     * @param algorithm The new algorithm to use during the learning.
+     */
+    public void setAlgorithm(LearnAlgorithms algorithm) {
+        this.algorithm = algorithm;
+    }
+
+    /**
+     * @return The browser to use during the learning.
+     */
+    @Enumerated
+    public WebBrowser getBrowser() {
+        return browser;
+    }
+
+    /**
+     * @param browser The new browser to use during the learning.
+     */
+    public void setBrowser(WebBrowser browser) {
+        this.browser = browser;
+    }
+
+    /**
+     * @return The comment to describe the result. Can be empty.
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * @param comment The new comment to describe the result. Can be empty.
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    /**
+     * The hypothesis (as proxy) which is one of the core information of the result.
+     *
+     * @return The hypothesis (as proxy) of the result.
+     */
+    @Embedded
+    @JsonProperty("hypothesis")
+    public CompactMealyMachineProxy getHypothesis() {
+        return hypothesis;
+    }
+
+    /**
+     * Set a new hypothesis (as proxy) for the result.
+     *
+     * @param hypothesis
+     *         The new hypothesis (as proxy).
+     */
+    @JsonProperty("hypothesis")
+    public void setHypothesis(CompactMealyMachineProxy hypothesis) {
+        this.hypothesis = hypothesis;
+    }
+
+    /**
+     * Set a new hypothesis (as proxy) for the result based on a MealyMachine from the LearnLib.
+     *
+     * @param mealyMachine
+     *         The new hypothesis as MealyMachine from the LearnLib.
+     */
+    @Transient
+    @JsonIgnore
+    public void createHypothesisFrom(MealyMachine<?, String, ?, String> mealyMachine) {
+        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, sigma.createAlphabet());
     }
 
     /**
@@ -392,137 +423,6 @@ public class LearnerResult implements Serializable {
      */
     public void setStatistics(Statistics statistics) {
         this.statistics = statistics;
-        this.jsonChanged = true;
-    }
-
-    /**
-     * Get the Alphabet used during the learning process. This Alphabet is also used in the hypothesis.
-     *
-     * @return The Alphabet of the learning process & the hypothesis.
-     */
-    @Transient
-    @JsonProperty("sigma")
-    public Alphabet<String> getSigma() {
-        return sigma;
-    }
-
-    /**
-     * Set a new Alphabet. The Alphabet should be the one used during the learning and must be used in the hypothesis.
-     *
-     * @param sigma
-     *         The new Alphabet.
-     */
-    @JsonIgnore
-    public void setSigma(Alphabet<String> sigma) {
-        this.sigma = sigma;
-        this.jsonChanged = true;
-    }
-
-    /**
-     * Create and set the Alphabet used during learning and used in the hypotheses through a List of String.
-     *
-     * @param sigmaAsList
-     *         The Alphabet encoded as List of String.
-     */
-    @JsonProperty("sigma")
-    public void createSigmaFrom(List<String> sigmaAsList) {
-        this.sigma = new SimpleAlphabet<>();
-
-        this.sigma.addAll(sigmaAsList);
-
-        this.jsonChanged = true;
-    }
-
-    /**
-     * The hypothesis (as proxy) which is one of the core information of the result.
-     *
-     * @return The hypothesis (as proxy) of the result.
-     */
-    @Transient
-    @JsonProperty("hypothesis")
-    public CompactMealyMachineProxy getHypothesis() {
-        return hypothesis;
-    }
-
-    /**
-     * Set a new hypothesis (as proxy) for the result.
-     *
-     * @param hypothesis
-     *         The new hypothesis (as proxy).
-     */
-    @JsonProperty("hypothesis")
-    public void setHypothesis(CompactMealyMachineProxy hypothesis) {
-        this.hypothesis = hypothesis;
-        this.jsonChanged = true;
-    }
-
-    /**
-     * Set a new hypothesis (as proxy) for the result based on a MealyMachine from the LearnLib.
-     *
-     * @param mealyMachine
-     *         The new hypothesis as MealyMachine from the LearnLib.
-     */
-    public void createHypothesisFrom(MealyMachine<?, String, ?, String> mealyMachine) {
-        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, sigma);
-        this.jsonChanged = true;
-    }
-
-    /**
-     * Get the latest counterexample that was found..
-     *
-     * @return The latest counterexample or null.
-     */
-    @JsonIgnore
-    @Transient
-    public DefaultQuery<String, Word<String>> getCounterExample() {
-        return counterExample;
-    }
-
-    /**
-     * Get the latest counterexample as string.
-     *
-     * @return The last counterexample or an empty string.
-     */
-    @JsonProperty("counterExample")
-    @Transient
-    public String getCounterExampleAsString() {
-        if (counterExample == null) {
-            return "";
-        } else {
-            return counterExample.toString();
-        }
-    }
-
-    /**
-     * Set the latest counterexample new.
-     *
-     * @param counterExample
-     *         The new counterexample.
-     */
-    public void setCounterExample(DefaultQuery<String, Word<String>> counterExample) {
-        this.counterExample = counterExample;
-        this.jsonChanged = true;
-    }
-
-    /**
-     * Get more (internal) information about the algorithm used during the learning.
-     *
-     * @return More (internal) information of the algorithm as string.
-     */
-    @Column(columnDefinition = "CLOB")
-    public String getAlgorithmInformation() {
-        return algorithmInformation;
-    }
-
-    /**
-     * Set the internal or other information about the algorithm.
-     *
-     * @param algorithmInformation
-     *         The new information about the algorithm.
-     */
-    public void setAlgorithmInformation(String algorithmInformation) {
-        this.algorithmInformation = algorithmInformation;
-        this.jsonChanged = true;
     }
 
     /**
@@ -530,35 +430,10 @@ public class LearnerResult implements Serializable {
      *
      * @return The current error text (can be null).
      */
+    @Column
     @JsonProperty("errorText")
-    @Column(columnDefinition = "CLOB")
     public String getErrorText() {
         return errorText;
-    }
-
-    /**
-     * Did some kind of error occurred during the learning, i.e. the error text property is set.
-     *
-     * @return true if the result represents a failed learning process; null otherwise.
-     */
-    @JsonProperty("error")
-    @Transient
-    public Boolean isError() {
-        if (errorText == null) {
-            return null; // null instead of false, so that it will not appear in the JSON
-        } else {
-            return Boolean.TRUE;
-        }
-    }
-
-    /**
-     * Does nothing but prevents {@link #setJSON(String)} from throwing an error when the learner has an error that
-     * results in the reset symbol and the symbols not being fetched.
-     *
-     * @param error - dummy
-     */
-    public void setError(Boolean error){
-        // do nothing :)
     }
 
     /**
@@ -571,99 +446,46 @@ public class LearnerResult implements Serializable {
      */
     public void setErrorText(String errorText) {
         this.errorText = errorText;
-        this.jsonChanged = true;
     }
 
-    /**
-     * Get the result as JSON.
-     * This method buffers the generated JSON.
-     *
-     * @return The result encoded as JSON data.
-     */
-    @Column(columnDefinition = "CLOB")
-    @JsonIgnore
-    public String getJSON() {
-        if (jsonChanged) {
-            this.json = generateJSON();
-            this.jsonChanged = false;
-        }
 
-        return json;
-    }
 
     /**
-     * Generate the JSON of this object.
+     * Did some kind of error occurred during the learning, i.e. the error text property is set.
      *
-     * @return This Object encoded as JSON.
+     * @return true if the result represents a failed learning process; null otherwise.
      */
-    private String generateJSON() {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            json = objectMapper.writeValueAsString(this);
-            return json;
-        } catch (JsonProcessingException e) {
-            LOGGER.warn("could not generate the JSON for the result '" + this.toString() + "'.", e);
-            return "{}";
+    @Transient
+    @JsonProperty("error")
+    public Boolean isError() {
+        if (errorText == null) {
+            return null; // null instead of false, so that it will not appear in the JSON
+        } else {
+            return Boolean.TRUE;
         }
     }
 
-    /**
-     * Set the result via JSON. This method will not only remember the JSON as String but will also parse the JSON and
-     * set all other field according to the JSON data!
-     *
-     * @param newJSON
-     *         The new result encoded in JSON data.
-     */
-    @JsonIgnore
-    public void setJSON(String newJSON) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            LearnerResult newResult = objectMapper.readValue(newJSON, LearnerResult.class);
-            setProject(newResult.getProject());
-            setTestNo(newResult.getTestNo());
-            setStepNo(newResult.getStepNo());
-            setStatistics(newResult.statistics);
-            setConfiguration(newResult.getConfiguration());
-            setSigma(newResult.getSigma());
-            setHypothesis(newResult.getHypothesis());
-            setCounterExample(newResult.getCounterExample());
-            setAlgorithmInformation(newResult.getAlgorithmInformation());
-
-            this.json = newJSON;
-            this.jsonChanged = false;
-        } catch (IOException e) {
-            LOGGER.info("could not read the JSON '" + newJSON + "' for a LearnerResult.", e);
-        }
-    }
-
-    //CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber|NeedBraces - auto generated by IntelliJ IDEA
+    //CHECKSTYLE.OFF: NeedBraces|OperatorWrap - auto generated by IntelliJ IDEA
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        LearnerResult result = (LearnerResult) o;
-
-        if (!Objects.equals(stepNo, result.stepNo)) return false;
-        if (!Objects.equals(testNo, result.testNo)) return false;
-        if (project != null ? !project.equals(result.project) : result.project != null) return false;
-
-        return true;
+        LearnerResult that = (LearnerResult) o;
+        return Objects.equals(user, that.user) &&
+                Objects.equals(project, that.project) &&
+                Objects.equals(testNo, that.testNo);
     }
 
     @Override
     public int hashCode() {
-        int result = project != null ? project.hashCode() : 0;
-        result = 31 * result + (int) (testNo ^ (testNo >>> 32));
-        result = 31 * result + (int) (stepNo ^ (stepNo >>> 32));
-        return result;
+        return Objects.hash(user, project, testNo);
     }
-    //CHECKSTYLE.ON: AvoidInlineConditionals|MagicNumber|NeedBraces
+    //CHECKSTYLE.ON: NeedBraces|OperatorWrap
 
     @Override
     public String toString() {
-        return "[LearnerResult " + id + "] " + getProjectId() + " / " + testNo + " / " + stepNo + ": "
-                + sigma + ", " + hypothesis;
+        return "[LearnerResult " + id + "] " + getUserId() + " / " +  getProjectId() + " / " + testNo + " / "
+                + ": " + sigma + ", " + hypothesis;
     }
 
 }

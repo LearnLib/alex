@@ -1,6 +1,23 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
@@ -28,6 +45,9 @@ public interface ProjectDAO {
         /** Flag to embed test results. */
         TEST_RESULTS,
 
+        /** FLag to embed counters. */
+        COUNTERS,
+
         /** Flag to embed everything. */
         ALL;
 
@@ -53,7 +73,7 @@ public interface ProjectDAO {
 
     /**
      * Save the given project.
-     * 
+     *
      * @param project
      *            The project to be saved.
      * @throws ValidationException
@@ -63,17 +83,20 @@ public interface ProjectDAO {
 
     /**
      * Get a list of all the projects.
-     *
+     * @param user
+     *         The user of the project.
      * @param embedFields
      *         The fields to include in returned project. By default no additional data will be fetched from the DB.
      * @return All projects in a list.
      */
-    List<Project> getAll(EmbeddableFields... embedFields);
+    List<Project> getAll(User user, EmbeddableFields... embedFields);
 
     /**
      * Get a specific project by its ID.
      *
-     * @param id
+     * @param userId
+     *          The ID of the user.
+     * @param projectId
      *         The ID of the project to find.
      * @param embedFields
      *         The fields to include in returned project. By default no additional data will be fetched from the DB.
@@ -81,11 +104,21 @@ public interface ProjectDAO {
      * @throws NotFoundException
      *         If the project could not be found.
      */
-    Project getByID(long id, EmbeddableFields... embedFields) throws NotFoundException;
+    Project getByID(Long userId, Long projectId, EmbeddableFields... embedFields) throws NotFoundException;
+
+    /**
+     * Get a specific project by its ID.
+     * @param userId
+     *          The ID of the user.
+     * @param projectName
+     *          The name of the project.
+     * @return The project with the name.
+     */
+    Project getByName(Long userId, String projectName);
 
     /**
      * Update a project.
-     * 
+     *
      * @param project
      *            The project to update.
      * @throws NotFoundException
@@ -97,12 +130,14 @@ public interface ProjectDAO {
 
     /**
      * Delete a project.
-     * 
-     * @param id
-     *            The id of the project to delete.
+     *
+     * @param userId
+     *         The id of the user.
+     * @param projectId
+     *         The id of the project to delete.
      * @throws NotFoundException
-     *            When the Project id was not found.
+     *         When the Project id was not found.
      */
-    void delete(long id) throws NotFoundException;
+    void delete(Long userId, Long projectId) throws NotFoundException;
 
 }

@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2016 TU Dortmund
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -6,13 +22,21 @@
 
     <groupId>de.learnlib.alex</groupId>
     <artifactId>alex-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>pom</packaging>
 
     <name>Automata Learning Experience (ALEX)</name>
     <description>
         A RESTful application with a fancy web frontend to configure and run automata learning algorithms on websites and web services.
     </description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
@@ -50,7 +74,7 @@
     </organization>
 
     <scm>
-        <developerConnection>scm:ssh://git@projekte.itmc.tu-dortmund.de/informatik-ls5/bachelorarbeiten/alex.git</developerConnection>
+        <developerConnection>https://github.com/LearnLib/alex.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
     <issueManagement>
@@ -62,7 +86,6 @@
         <module>api</module>
         <module>processors</module>
         <module>main</module>
-        <module>standalone</module>
     </modules>
 
     <!--===== properties ======-->
@@ -76,28 +99,28 @@
         <!-- plugin versions -->
         <compiler-plugin.version>3.1</compiler-plugin.version>
         <dependency-plugin.version>2.10</dependency-plugin.version>
-        <assembly-plugin.version>2.5.5</assembly-plugin.version>
         <jar-plugin.version>2.6</jar-plugin.version>
         <javadoc-plugin.version>2.10.3</javadoc-plugin.version>
         <javadoc-umlgraph.version>5.6.6</javadoc-umlgraph.version>
-        <surefire-plugin.version>2.18.1</surefire-plugin.version>
-        <surefire-report.version>2.18.1</surefire-report.version>
+        <surefire-plugin.version>2.19</surefire-plugin.version>
+        <surefire-report.version>2.19</surefire-report.version>
         <war-plugin.version>2.6</war-plugin.version>
 
-        <reports-plugin.version>2.8</reports-plugin.version>
-        <checkstyle.version>2.16</checkstyle.version>
+        <checkstyle.version>2.17</checkstyle.version>
         <cobertura.version>2.7</cobertura.version>
-        <findbugs.version>3.0.1</findbugs.version>
+        <findbugs.version>3.0.2</findbugs.version>
         <pmd.version>3.4</pmd.version>
         <versions-plugin.version>2.2</versions-plugin.version>
 
         <!-- dependencies versions -->
-        <jersey.version>2.17</jersey.version>
-        <hibernate.version>5.1.3.Final</hibernate.version>
+        <jersey.version>2.22.1</jersey.version>
+        <hibernate.version>5.2.2.Final</hibernate.version>
         <learnlib.version>0.12.0</learnlib.version>
         <automatalib.version>0.6.0</automatalib.version>
-        <selenium.version>2.47.0</selenium.version>
-        <jetty.version>9.3.2.v20150730</jetty.version>
+        <selenium.version>2.48.2</selenium.version>
+        <jetty.version>9.3.5.v20151012</jetty.version>
+        <jose4j.version>0.4.4</jose4j.version>
+        <shiro.version>1.2.4</shiro.version>
     </properties>
 
     <build>
@@ -128,230 +151,113 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
         <plugins>
+            <!-- Version / Update -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.4</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>lt.velykis.maven.skins</groupId>
-                        <artifactId>reflow-velocity-tools</artifactId>
-                        <version>1.1.1</version>
-                    </dependency>
-                    <!-- Reflow skin requires Velocity >= 1.7  -->
-                    <dependency>
-                        <groupId>org.apache.velocity</groupId>
-                        <artifactId>velocity</artifactId>
-                        <version>1.7</version>
-                    </dependency>
-                </dependencies>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <check>
+                        <branchRate>50</branchRate>
+                        <lineRate>50</lineRate>
+                        <haltOnFailure>false</haltOnFailure>
+                        <totalBranchRate>75</totalBranchRate>
+                        <totalLineRate>75</totalLineRate>
+                        <packageLineRate>65</packageLineRate>
+                        <packageBranchRate>65</packageBranchRate>
+                    </check>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>stage</id>
-                        <phase>site</phase>
+                        <id>verify</id>
+                        <phase>verify</phase>
                         <goals>
-                            <goal>stage</goal>
+                            <goal>check</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Checkstyle -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+                <configuration>
+                    <configLocation>src/main/resources/checkstyle.xml</configLocation>
+                    <suppressionsLocation>src/main/resources/checkstyle-suppressions.xml</suppressionsLocation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>verify</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <failOnViolation>true</failOnViolation>
+                            <maxAllowedViolations>50</maxAllowedViolations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- PMD -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${pmd.version}</version>
+                <configuration>
+                    <minimumTokens>75</minimumTokens>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>verify</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <failOnViolation>false</failOnViolation>
+                            <printFailingErrors>true</printFailingErrors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Findbugs -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>${findbugs.version}</version>
+                <configuration>
+                    <effort>max</effort>
+                    <threshold>medium</threshold>
+                    <includeTests>true</includeTests>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>verify</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
-    <!--===== reports ======-->
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${reports-plugin.version}</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>summary</report>
-                            <report>project-team</report>
-                            <report>modules</report>
-                            <report>dependencies</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
-
-    <!--===== distribution management ======-->
-    <distributionManagement>
-        <site>
-            <id>local</id>
-            <url>file://${user.home}/alex-documentation</url>
-        </site>
-    </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <!--===== reports ======-->
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-project-info-reports-plugin</artifactId>
-                        <version>${reports-plugin.version}</version>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>scm</report>
-                                    <report>issue-tracking</report>
-                                    <report>dependency-convergence</report>
-                                    <report>dependency-management</report>
-                                    <report>plugin-management</report>
-                                    <report>plugins</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                        <configuration>
-                            <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-                        </configuration>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>versions-maven-plugin</artifactId>
-                        <version>${versions-plugin.version}</version>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>dependency-updates-report</report>
-                                    <report>plugin-updates-report</report>
-                                    <report>property-updates-report</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
-
-                    <!-- javadoc -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${javadoc-plugin.version}</version>
-                        <configuration>
-                            <!-- UML -->
-                            <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
-                            <docletArtifact>
-                                <groupId>org.umlgraph</groupId>
-                                <artifactId>umlgraph</artifactId>
-                                <version>${javadoc-umlgraph.version}</version>
-                            </docletArtifact>
-                            <additionalparam>
-                                -all -hide java.* -collapsible -inferdep -collpackages java.util.*
-                            </additionalparam>
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                        </configuration>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>javadoc</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
-
-                    <!-- checkstyle -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>${checkstyle.version}</version>
-                        <configuration>
-                            <configLocation>src/site/resources/checkstyle.xml</configLocation>
-                            <suppressionsLocation>src/site/resources/checkstyle-suppressions.xml</suppressionsLocation>
-                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        </configuration>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>checkstyle</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
-
-                    <!-- PMD -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-pmd-plugin</artifactId>
-                        <version>${pmd.version}</version>
-                        <configuration>
-                            <minimumTokens>75</minimumTokens>
-                        </configuration>
-                    </plugin>
-
-                    <!-- Findbugs -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>${findbugs.version}</version>
-                        <configuration>
-                            <effort>Max</effort>
-                            <threshold>Medium</threshold>
-                            <includeTests>true</includeTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
-        </profile>
-
-        <profile>
-            <id>release</id>
-            <!--===== reports ======-->
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>${assembly-plugin.version}</version>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/assembly/release.xml</descriptor>
-                            </descriptors>
-                            <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-                            <finalName>ALEX-${project.version}</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>deploy</id>
-            <properties>
-                <isDeploy>true</isDeploy>
-            </properties>
-            <!--===== reports ======-->
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>${assembly-plugin.version}</version>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/assembly/deploy.xml</descriptor>
-                            </descriptors>
-                            <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-                            <finalName>ALEX-${project.version}-deploy</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-    </profiles>
 
 </project>

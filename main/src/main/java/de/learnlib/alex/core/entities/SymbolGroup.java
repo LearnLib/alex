@@ -1,8 +1,25 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.learnlib.alex.core.entities.validators.UniqueSymbolGroupName;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NaturalId;
@@ -26,6 +43,7 @@ import java.util.Set;
  */
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@UniqueSymbolGroupName
 public class SymbolGroup implements Serializable {
 
     /** to be serializable. */
@@ -36,6 +54,13 @@ public class SymbolGroup implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE)
     @JsonIgnore
     private Long groupId;
+
+    /** The User that owns this SymbolGroup. */
+    @NaturalId
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "userId")
+    @JsonIgnore
+    private User user;
 
     /** The related project. */
     @NaturalId
@@ -58,7 +83,7 @@ public class SymbolGroup implements Serializable {
 
     /** The Symbols manged by this group. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE })
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.DELETE })
     private Set<Symbol> symbols;
 
     /**
@@ -68,6 +93,30 @@ public class SymbolGroup implements Serializable {
         this.groupId = 0L;
         this.id = 0L;
         this.symbols = new HashSet<>();
+    }
+
+    @JsonIgnore
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    @JsonProperty("user")
+    public Long getUserId() {
+        if (user == null) {
+            return 0L;
+        } else {
+            return user.getId();
+        }
+    }
+
+    @JsonProperty("user")
+    public void setUserId(Long userId) {
+        user = new User(userId);
     }
 
     /**
@@ -225,6 +274,6 @@ public class SymbolGroup implements Serializable {
 
     @Override
     public String toString() {
-        return "SymbolGroup[" + groupId + "] (" + project + ", " + id + "): " + name;
+        return "SymbolGroup[" + groupId + "]: " + user + ", " + project + ", " + id + ", " + name;
     }
 }

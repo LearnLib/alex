@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+     "-//Puppy Crawl//DTD Suppressions 1.0//EN"
+     "http://www.puppycrawl.com/dtds/suppressions_1_0.dtd">
+
+<suppressions>
+
+    <!-- The tests should not need any JavaDoc -->
+	<suppress checks="JavadocPackage" files="src/test/.*\.java" />
+	<suppress checks="JavadocPackage" files="src\\test\\.*\.java" />
+	<suppress checks="JavadocMethod" files="src/test/.*\.java" />
+	<suppress checks="JavadocMethod" files="src\\test\\.*\.java" />
+	<suppress checks="JavadocType" files="src/test/.*\.java" />
+	<suppress checks="JavadocType" files="src\\test\\.*\.java" />
+	<suppress checks="JavadocVariable" files="src/test/.*\.java" />
+	<suppress checks="JavadocVariable" files="src\\test\\.*\.java" />
+
+</suppressions>

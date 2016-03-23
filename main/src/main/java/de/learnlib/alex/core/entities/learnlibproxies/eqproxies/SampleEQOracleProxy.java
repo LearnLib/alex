@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -8,6 +24,7 @@ import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -19,12 +36,18 @@ import java.util.stream.Stream;
  * @see de.learnlib.eqtests.basic.SampleSetEQOracle
  */
 @JsonTypeName("sample")
-public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
+public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
+
+    /** to be serializable. */
+    private static final long serialVersionUID = -110995671060498443L;
 
     /**
      * Construct to hold a pair of an input and output string.
      */
-    public static class InputOutputPair {
+    public static class InputOutputPair implements Serializable {
+
+        /** to be serializable. */
+        private static final long serialVersionUID = 2200629936714510637L;
 
         /** The input. */
         @NotBlank
@@ -40,23 +63,44 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy {
         public InputOutputPair() {
         }
 
+        /**
+         * Constructor.
+         * @param input The input symbol.
+         * @param output The output symbol.
+         */
         public InputOutputPair(String input, String output) {
             this.input = input;
             this.output = output;
         }
 
+        /**
+         * Get the input.
+         * @return The input.
+         */
         public String getInput() {
             return input;
         }
 
+        /**
+         * Set the input.
+         * @param input The input.
+         */
         public void setInput(String input) {
             this.input = input;
         }
 
+        /**
+         * Get the output.
+         * @return The output.
+         */
         public String getOutput() {
             return output;
         }
 
+        /**
+         * Set the output.
+         * @param output The output.
+         */
         public void setOutput(String output) {
             this.output = output;
         }

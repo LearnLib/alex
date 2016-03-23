@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.utils;
 
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
@@ -64,6 +80,8 @@ public final class SearchHelper {
      *
      * @param connector
      *         The connectors to connect to the counter and variable stores.
+     * @param userId
+     *         The user id for the context.
      * @param projectId
      *         The project as context.
      * @param text
@@ -72,7 +90,7 @@ public final class SearchHelper {
      * @throws IllegalStateException
      *         If a variable value should be inserted, but the variable does not exists or was never set.
      */
-    public static String insertVariableValues(ConnectorManager connector, Long projectId, String text)
+    public static String insertVariableValues(ConnectorManager connector, Long userId, Long projectId, String text)
                          throws IllegalStateException {
         StringBuilder result = new StringBuilder();
         int variableStartPos = text.indexOf("{{");
@@ -88,7 +106,8 @@ public final class SearchHelper {
             String variableValue;
             switch (text.charAt(variableStartPos + 2)) {
                 case '#': // counter
-                    variableValue = String.valueOf(connector.getConnector(CounterStoreConnector.class).get(projectId, variableName));
+                    variableValue = String.valueOf(connector.getConnector(CounterStoreConnector.class)
+                            .get(userId, projectId, variableName));
                     result.append(variableValue);
                     break;
                 case '$': // variable:
@@ -97,7 +116,7 @@ public final class SearchHelper {
                     break;
                 case '/': // file name
                     variableValue = connector.getConnector(FileStoreConnector.class)
-                                             .getAbsoluteFileLocation(projectId, variableName);
+                                             .getAbsoluteFileLocation(userId, projectId, variableName);
                     result.append(variableValue);
                     break;
                 default: // bullshit

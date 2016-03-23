@@ -1,8 +1,26 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.core.entities.validators.UniqueSymbolAbbreviation;
+import de.learnlib.alex.core.entities.validators.UniqueSymbolName;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
@@ -33,13 +51,18 @@ import java.util.List;
  */
 @Entity
 @JsonPropertyOrder(alphabetic = true)
+@UniqueSymbolName
+@UniqueSymbolAbbreviation
 public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorManager>, Serializable {
 
     /** to be serializable. */
     private static final long serialVersionUID = 7987585761829495962L;
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** The maximum lenght of the abbreviation. */
+    public static final int MAX_ABBREVIATION_LENGTH = 15;
+
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /** The ID of the Symbol in the DB. */
     @Id
@@ -47,10 +70,15 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonIgnore
     private Long symbolId;
 
+    /** The User that owns the Symbol. */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "userId")
+    @JsonIgnore
+    private User user;
+
     /** The Project the Symbol belongs to. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
-
     @JsonIgnore
     private Project project;
 
@@ -62,7 +90,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     /** The ID and revision of the symbol. */
     @Embedded
-    //@Column(nullable = false)
     @JsonIgnore
     private IdRevisionPair idRevisionPair;
 
@@ -77,7 +104,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * An abbreviation for the symbol.
      * @requiredField
      */
-    @Size(min = 1, max = 15)
+    @Size(min = 1, max = MAX_ABBREVIATION_LENGTH)
     private String abbreviation;
 
     /**
@@ -116,6 +143,42 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     public void setSymbolId(Long symbolId) {
         this.symbolId = symbolId;
+    }
+
+    /**
+     * @return The user that owns the project.
+     */
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @param user The new user that owns the project.
+     */
+    @JsonIgnore
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * @return The ID of the user, which is needed for the JSON.
+     */
+    @JsonProperty("user")
+    public Long getUserId() {
+        if (user == null) {
+            return 0L;
+        } else {
+            return user.getId();
+        }
+    }
+
+    /**
+     * @param userId The new ID of the user, which is needed for the JSON.
+     */
+    @JsonProperty("user")
+    public void setUserId(Long userId) {
+        user = new User(userId);
     }
 
     /**
@@ -364,19 +427,22 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) throws SULException {
-        for (int i = 0; i < actions.size(); i++) {
+        ExecuteResult result = ExecuteResult.OK;
+        for (int i = 0; i < actions.size() && result == ExecuteResult.OK; i++) {
             SymbolAction action = actions.get(i);
             if (!action.isDisabled()) {
-                ExecuteResult result = executeAction(action, connector);
+                ExecuteResult actionResult = executeAction(action, connector);
 
-                if (!action.isIgnoreFailure() && result != ExecuteResult.OK) {
+                if (!action.isIgnoreFailure() && actionResult != ExecuteResult.OK) {
+                    result = actionResult;
                     result.setFailedActionNumber(i);
-                    return result;
                 }
             }
         }
 
-        return ExecuteResult.OK;
+        LOGGER.info("Executed the Symbol " + idRevisionPair.toString() + " (" + name + ") "
+                    + "which returned '" + result + "'.");
+        return result;
     }
 
     private ExecuteResult executeAction(SymbolAction action, ConnectorManager connector) {
@@ -416,7 +482,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @Override
     public String toString() {
-        return "Symbol[" + symbolId + "] " + this.project + "/" + this.getId() + "/" + this.getRevision() + ": "
+        return "Symbol[" + symbolId + "] " + this.user + this.project + "/" + this.getId() + "/" + this.getRevision() + ", "
                 + name + "(" + abbreviation + ")";
     }
 

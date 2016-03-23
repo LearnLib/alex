@@ -1,12 +1,40 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.utils;
 
 /**
- * Utility class for CSS stuff
+ * Utility class for CSS stuff.
  */
-public class CSSUtils {
+public final class CSSUtils {
+
+    /** ASCII Code for the unit separator character, which is not really printable. */
+    public static final int UNIT_SEPARATOR_CHARACTER = 31;
+
+    /** ASCII Code for the delete character, which is not really printable. */
+    public static final int DELETE_CHARACTER = 127;
 
     /**
-     * Escape special characters in css id selectors
+     * Deactivate the constructor because this is a utility class.
+     */
+    private CSSUtils() {
+    }
+
+    /**
+     * Escape special characters in css id selectors.
      *
      * Port of https://github.com/mathiasbynens/CSS.escape/blob/master/css.escape.js
      *
@@ -14,46 +42,45 @@ public class CSSUtils {
      * @return The escaped id
      */
     private static String escapeIdentifier(String id) {
-        String result = "";
-        Integer firstUnit = (int) id.charAt(0);
+        StringBuilder result = new StringBuilder();
+        char firstUnit = id.charAt(0);
 
-        for (Integer i = 0; i < id.length(); i++) {
-            char c = id.charAt(i);
-            Integer unit = (int) c;
+        for (int i = 0; i < id.length(); i++) {
+            char unit = id.charAt(i);
 
-            if (unit.equals(0)) {
+            if (unit == 0) { // null character
                 return null;
             }
 
             if (
-                (unit >= 1 && unit <= 31) || unit.equals(127) ||
-                (i.equals(0) && unit >= 48 && unit <= 57) ||
-                (i.equals(1) && unit >= 48 && unit <= 57 && firstUnit.equals(45))
+                unit <= UNIT_SEPARATOR_CHARACTER || unit == DELETE_CHARACTER // the non printable ASCII characters
+                || (i == 0 && unit >= '0' && unit <= '9')
+                || (i == 1 && unit >= '0' && unit <= '9' && firstUnit == '-')
             ) {
-                result += "\\" + Integer.toHexString(unit) + " ";
+                result.append("\\").append(Integer.toHexString(unit)).append(" ");
                 continue;
             }
 
             if (
-                unit >= 128 ||
-                unit.equals(45) ||
-                unit.equals(95) ||
-                unit >= 48 && unit <= 57 ||
-                unit >= 65 && unit <= 90 ||
-                unit >= 97 && unit <= 122
+                unit > DELETE_CHARACTER // "second half" of the (extended) ASCII table
+                || unit == '-'
+                || unit == '_'
+                || unit >= '0' && unit <= '9'
+                || unit >= 'A' && unit <= 'Z'
+                || unit >= 'a' && unit <= 'z'
             ) {
-                result += c;
+                result.append(unit);
                 continue;
             }
 
-            result += "\\" + c;
+            result.append("\\").append(unit);
         }
 
-        return result;
+        return result.toString();
     }
 
     /**
-     * Escapes special characters in CSS selectors in case it contains ids
+     * Escapes special characters in CSS selectors in case it contains ids.
      *
      * @param css The css string to escape
      * @return The escaped css string
@@ -63,18 +90,18 @@ public class CSSUtils {
         if (!css.contains(" ") && css.startsWith("#")) {
             return "#" + escapeIdentifier(css.substring(1, css.length()));
         } else {
-            String result = "";
+            StringBuilder result = new StringBuilder();
             String[] pieces = css.split(" ");
 
             for (String p : pieces) {
                 if (p.startsWith("#")) {
-                    result += "#" + escapeIdentifier(p.substring(1, p.length())) + " ";
+                    result.append("#").append(escapeIdentifier(p.substring(1, p.length()))).append(" ");
                 } else {
-                    result += p + " ";
+                    result.append(p).append(" ");
                 }
             }
 
-            return result;
+            return result.toString();
         }
     }
 }

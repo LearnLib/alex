@@ -1,0 +1,60 @@
+<div id="html-element-picker-wrapper">
+    <div id="html-element-picker">
+        <div class="header">
+
+            <div class="header-element" style="flex: 0 0 320px">
+                <form ng-submit="loadUrl()">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon" tooltip-placement="right" uib-tooltip="{{project.baseUrl}}">
+                                ...
+                            </div>
+                            <input type="text" class="form-control" ng-model="url" placeholder="URL"/>
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default">Go!</button>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="header-element" style="flex: 0 0">
+                <div class="btn-group">
+                    <button class="btn btn-default" ng-click="toggleSelection()"
+                            tooltip-placement="right"
+                            uib-tooltip="{{isSelectable ? 'Disable selection' : 'Enable selection'}}">
+                        <i class="fa fa-fw" ng-class="isSelectable ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="header-element" style="flex: 1 0; overflow: hidden">
+                <div class="btn btn-block btn-default disabled"
+                     style="overflow: hidden; text-overflow: ellipsis; word-wrap: break-word; text-align: left">
+                    <span ng-if="selector" ng-bind="selector"></span>
+                    <span ng-if="!selector">Enable the selection mode</span>
+                </div>
+            </div>
+
+            <div class="header-element" style="flex: 0 0" ng-if="!isSelectable && selector">
+                <button class="btn btn-success" ng-click="ok()">
+                    <i class="fa fa-check"></i>
+                </button>
+            </div>
+
+            <div class="header-element" style="flex: 0 0">
+                <button class="btn btn-default" ng-click="close()">
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+
+        </div>
+        <div class="body">
+
+            <div class="iframe-wrapper">
+                <responsive-iframe></responsive-iframe>
+            </div>
+
+        </div>
+    </div>
+</div>

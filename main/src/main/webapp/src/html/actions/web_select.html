@@ -1,0 +1,38 @@
+<h4><strong>Select value</strong></h4>
+
+<p class="text-muted">
+    Select a value from a select input
+</p>
+<hr>
+
+<div class="form-group">
+    <label class="control-label">CSS selector</label>
+    <input class="form-control" type="text" placeholder="CSS selector" ng-model="vm.action.node">
+</div>
+
+<div class="form-group">
+    <a class="btn btn-default btn-sm" html-element-picker model="vm.action.node">
+        <i class="fa fa-magic fa-fw"></i>&nbsp; Element Picker
+    </a>
+</div>
+
+<div class="form-group">
+    <label class="control-label">Value</label>
+    <input class="form-control" type="text" placeholder="Selected value" ng-model="vm.action.value">
+</div>
+
+<div class="checkbox">
+    <label>
+        <input type="radio" name="selectBy" ng-model="vm.action.selectBy" value="TEXT"> by visible text
+    </label>
+</div>
+<div class="checkbox">
+    <label>
+        <input type="radio" name="selectBy" ng-model="vm.action.selectBy" value="VALUE"> by "value" attribute
+    </label>
+</div>
+<div class="checkbox">
+    <label>
+        <input type="radio" name="selectBy" ng-model="vm.action.selectBy" value="INDEX"> by index
+    </label>
+</div>

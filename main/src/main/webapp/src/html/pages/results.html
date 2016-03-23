@@ -1,0 +1,61 @@
+<div id="view-results">
+    <view-header title="Learn Results"></view-header>
+
+    <action-bar>
+        <div ng-show="vm.results.length > 0">
+            <checkbox-multiple model="vm.results" class="pull-left"></checkbox-multiple>
+
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-primary" ng-click="vm.openSelectedResults()"
+                        ng-class="{'disabled': vm.selectedResults.length === 0}">
+                    Compare
+                </button>
+                <button class="btn btn-default" ng-click="vm.deleteResults()"
+                        ng-class="{'disabled': vm.selectedResults.length === 0}">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </action-bar>
+
+    <div class="view-body has-sub-nav">
+        <div class="alx-container-fluid">
+
+            <div class="learn-result-list">
+                <learn-result-list-item ng-repeat="result in vm.results | orderBy:'-testNo':false" result="result"
+                                        selection-model selection-model-selected-items="vm.selectedResults"
+                                        link-to="hypothesis">
+
+                    <div class="btn-group btn-group-xs" uib-dropdown>
+                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle dropdown-hover>
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                            <li>
+                                <a href="" learn-result-details-modal-handle result="result">
+                                    <i class="fa fa-info fa-fw"></i> Details
+                                </a>
+                            </li>
+                            <li>
+                                <a ui-sref="resultsCompare({testNos: [result.testNo]})">
+                                    <i class="fa fa-code-fork fa-fw"></i> Hypotheses
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" ng-click="vm.deleteResult(result)">
+                                    <i class="fa fa-trash fa-fw"></i> Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </learn-result-list-item>
+            </div>
+
+            <div class="alert alert-info" ng-if="vm.results.length === 0">
+                You have not run any tests yet or the active one is not finished.
+            </div>
+
+        </div>
+    </div>
+</div>

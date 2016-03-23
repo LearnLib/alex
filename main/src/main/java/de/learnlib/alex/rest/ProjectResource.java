@@ -1,11 +1,33 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.rest;
 
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
@@ -21,6 +43,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
@@ -29,7 +52,11 @@ import java.util.List;
  * @resourceDescription Operations about projects
  */
 @Path("/projects")
+@RolesAllowed({"REGISTERED"})
 public class ProjectResource {
+
+    /** Use the logger for the server part. */
+    private static final Logger LOGGER = LogManager.getLogger("server");
 
     /** Context information about the URI. */
     @Context
@@ -39,9 +66,13 @@ public class ProjectResource {
     @Inject
     private ProjectDAO projectDAO;
 
+    /** The security context containing the user of the request. */
+    @Context
+    private SecurityContext securityContext;
+
     /**
      * Create a new Project.
-     * 
+     *
      * @param project
      *            The project to create.
      * @return On success the added project (enhanced with information from the DB); an error message on failure.
@@ -53,6 +84,16 @@ public class ProjectResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(Project project) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("ProjectResource.create(" + project + ") for user " + user + ".");
+
+        // make sure that if an user for a project is given, it the correct user id.
+        if (project.getUser() != null && !user.equals(project.getUser())) {
+            throw new ValidationException("The given user id does not belong to the current user!");
+        }
+
+        project.setUser(user);
+
         try {
             projectDAO.create(project);
             String projectURL = uri.getBaseUri() + "projects/" + project.getId();
@@ -63,11 +104,11 @@ public class ProjectResource {
     }
 
     /**
-     * Get a list of all the projects.
+     * Get a list of all the projects owned by the user of the request.
      *
      * @param embed
      *         By default no related objects are included in the projects. However you can ask to include them with
-     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group' & 'test_results'.
+     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
      *         You can request multiple by just put a ',' between them.
      * @return All projects in a list.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Project>
@@ -76,6 +117,9 @@ public class ProjectResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("embed") String embed) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("ProjectResource.getAll(" + embed + ") for user " + user + ".");
+
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
             embeddableFields = parseEmbeddableFields(embed);
@@ -83,18 +127,18 @@ public class ProjectResource {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
         }
 
-        List<Project> projects = projectDAO.getAll(embeddableFields);
+        List<Project> projects = projectDAO.getAll(user, embeddableFields);
         return ResponseHelper.renderList(projects, Status.OK);
     }
 
     /**
      * Get a specific project.
-     * 
-     * @param id
+     *
+     * @param projectId
      *            The ID of the project.
      * @param embed
      *         By default no related objects are included in the project. However you can ask to include them with
-     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group' & 'test_results'.
+     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
      *         You can request multiple by just put a ',' between them.
      * @return The project or an error message.
      * @responseType de.learnlib.alex.core.entities.Project
@@ -104,22 +148,32 @@ public class ProjectResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("id") long id, @QueryParam("embed") String embed) {
+    public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("ProjectResource.get(" + projectId + ", " + embed + ") for user " + user + ".");
+
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
             embeddableFields = parseEmbeddableFields(embed);
-            Project project = projectDAO.getByID(id, embeddableFields);
-            return Response.ok(project).build();
+            Project project = projectDAO.getByID(user.getId(), projectId, embeddableFields);
+
+            if (project.getUser().equals(user)) {
+                return Response.ok(project).build();
+            } else {
+                throw new UnauthorizedException("You are not allowed to view this project");
+            }
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.NOT_FOUND, null);
+        } catch (UnauthorizedException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.UNAUTHORIZED, e);
         }
     }
 
     /**
      * Update a specific project.
-     * 
+     *
      * @param id
      *            The ID of the project.
      * @param project
@@ -135,24 +189,33 @@ public class ProjectResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") long id, Project project) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("ProjectResource.update(" + id + ", " + project + ") for user " + user + ".");
+
         if (id != project.getId()) {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             try {
-                projectDAO.update(project);
-                return Response.ok(project).build();
+                if (project.getUser() == null || user.equals(project.getUser())) {
+                    projectDAO.update(project);
+                    return Response.ok(project).build();
+                } else {
+                    throw new UnauthorizedException("You are not allowed to update this project");
+                }
             } catch (NotFoundException e) {
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.NOT_FOUND, e);
             } catch (ValidationException e) {
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.BAD_REQUEST, e);
+            } catch (UnauthorizedException e) {
+                return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.UNAUTHORIZED, e);
             }
         }
     }
 
     /**
      * Delete a specific project.
-     * 
-     * @param id
+     *
+     * @param projectId
      *            The ID of the project.
      * @return On success no content will be returned; an error message on failure.
      * @successResponse 204 OK & no content
@@ -161,12 +224,22 @@ public class ProjectResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") long id) {
+    public Response delete(@PathParam("id") long projectId) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("ProjectResource.delete(" + projectId + ") for user " + user + ".");
+
         try {
-            projectDAO.delete(id);
-            return Response.status(Status.NO_CONTENT).build();
+            Project project = projectDAO.getByID(user.getId(), projectId);
+            if (project.getUser().equals(user)) {
+                projectDAO.delete(user.getId(), projectId);
+                return Response.status(Status.NO_CONTENT).build();
+            } else {
+                throw new UnauthorizedException("You are not allowed to delete this project");
+            }
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.NOT_FOUND, e);
+        } catch (UnauthorizedException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.UNAUTHORIZED, e);
         }
     }
 
@@ -184,5 +257,4 @@ public class ProjectResource {
 
         return embedFields;
     }
-
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -7,6 +23,7 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -16,7 +33,7 @@ import java.util.Random;
  * @see de.learnlib.eqtests.basic.RandomWordsEQOracle.MealyRandomWordsEQOracle
  */
 @JsonTypeName("random_word")
-public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProxy {
+public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
 
     /** The seed to use for the RNG. */
     public static final int RANDOM_SEED = 42;
