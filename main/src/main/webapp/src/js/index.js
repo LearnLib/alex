@@ -21,6 +21,8 @@ import d3 from 'd3/d3';
 import uiBootstrap from 'angular-ui-bootstrap';
 import uiRouter from 'angular-ui-router';
 import toastr from 'angular-toastr';
+import ngAnimate from 'angular-animate';
+import ngMessages from 'angular-messages';
 
 import {configuration} from './config';
 import {routes} from './routes';
@@ -36,8 +38,8 @@ angular
     .module('ALEX', [
 
         // modules from external libraries
-        'ngAnimate',
-        'ngMessages',
+        ngAnimate,
+        ngMessages,
         uiBootstrap,
         uiRouter,
         'ui.ace',

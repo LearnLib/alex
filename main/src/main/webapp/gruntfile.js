@@ -5,9 +5,6 @@ module.exports = function (grunt) {
         'node_modules/ace-builds/src/theme-eclipse.js',
         'node_modules/ace-builds/src/mode-json.js',
         'node_modules/angular/angular.js',
-        'node_modules/angular-animate/angular-animate.js',
-        'node_modules/angular-sanitize/angular-sanitize.js',
-        'node_modules/angular-messages/angular-messages.js',
         'node_modules/angular-ui-ace/src/ui-ace.js',
         'node_modules/n3-charts/build/LineChart.js',
         'node_modules/selection-model/dist/selection-model.js'
