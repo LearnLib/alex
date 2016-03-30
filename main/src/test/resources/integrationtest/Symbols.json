@@ -89,7 +89,7 @@
         "type": "rest_call",
         "method": "PUT",
         "url": "/projects/{{$project}}",
-        "data" : "{\"name\": \"The real ALEX\", \"baseUrl\": \"http://localhost:8080/rest\"}",
+        "data" : "{\"name\": \"The real ALEX\", \"baseUrl\": \"%%PROJECT_PATH%%\"}",
         "headers": {
           "Authorization": "Bearer {{$token}}"
         }
