@@ -113,13 +113,13 @@
         <versions-plugin.version>2.2</versions-plugin.version>
 
         <!-- dependencies versions -->
-        <jersey.version>2.22.1</jersey.version>
-        <hibernate.version>5.2.2.Final</hibernate.version>
+        <jersey.version>2.22.2</jersey.version>
+        <hibernate.version>5.2.4.Final</hibernate.version>
         <learnlib.version>0.12.0</learnlib.version>
         <automatalib.version>0.6.0</automatalib.version>
-        <selenium.version>2.48.2</selenium.version>
+        <selenium.version>2.53.0</selenium.version>
         <jetty.version>9.3.5.v20151012</jetty.version>
-        <jose4j.version>0.4.4</jose4j.version>
+        <jose4j.version>0.5.0</jose4j.version>
         <shiro.version>1.2.4</shiro.version>
     </properties>
 
