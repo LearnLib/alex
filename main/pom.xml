@@ -458,17 +458,16 @@
                         <version>1.4.0</version>
                         <executions>
                             <execution>
-                                <id>grunt</id>
+                                <id>npm-build</id>
                                 <phase>generate-sources</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>grunt</executable>
+                                    <executable>npm</executable>
                                     <arguments>
-                                        <argument>build-html</argument>
-                                        <argument>build-css</argument>
-                                        <argument>build-js</argument>
+                                        <argument>run</argument>
+                                        <argument>build</argument>
                                     </arguments>
                                     <workingDirectory>src/main/webapp</workingDirectory>
                                 </configuration>
@@ -494,7 +493,7 @@
                         <version>1.4.0</version>
                         <executions>
                             <execution>
-                                <id>npm</id>
+                                <id>npm-install</id>
                                 <phase>initialize</phase>
                                 <goals>
                                     <goal>exec</goal>
@@ -508,13 +507,17 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>grunt</id>
+                                <id>npm-build</id>
                                 <phase>generate-sources</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>grunt</executable>
+                                    <executable>npm</executable>
+                                    <arguments>
+                                        <argument>run</argument>
+                                        <argument>build</argument>
+                                    </arguments>
                                     <workingDirectory>src/main/webapp</workingDirectory>
                                 </configuration>
                             </execution>
