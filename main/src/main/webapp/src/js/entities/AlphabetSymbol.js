@@ -18,33 +18,32 @@ import ActionService from '../services/ActionService';
 
 const actionService = new ActionService();
 
-/** The model for the symbol create form */
-class SymbolFormModel {
-
-    /**
-     * Constructor
-     * @param {string} name - The unique name of the symbol
-     * @param {string} abbreviation - The unique abbreviation of the symbol
-     * @param {number} group - The id of the group the symbol should be created in
-     */
-    constructor(name = '', abbreviation = '', group = 0) {
-        this.name = name;
-        this.abbreviation = abbreviation;
-        this.group = group;
-        this.actions = [];
-    }
-}
-
-
 /** The symbol model */
-class Symbol extends SymbolFormModel {
+export class AlphabetSymbol {
 
     /**
      * Constructor
      * @param {object} obj - The object to create the symbol from
      */
-    constructor(obj) {
-        super(obj.name, obj.abbreviation);
+    constructor(obj = {}) {
+
+        /**
+         * The unique name of the symbol
+         * @type {string}
+         */
+        this.name = obj.name || null;
+
+        /**
+         * The unique abbreviation of the symbol
+         * @type {string}
+         */
+        this.abbreviation = obj.abbreviation || null;
+
+        /**
+         * The id of the group the symbol should be created in
+         * @type {number}
+         */
+        this.group = obj.group || 0;
 
         /**
          * The id of the symbol
@@ -86,7 +85,7 @@ class Symbol extends SymbolFormModel {
          * The actions of the symbol
          * @type {Action[]}
          */
-        this.actions = obj.actions.map(action => actionService.create(action));
+        this.actions = obj.actions ? obj.actions.map(action => actionService.create(action)) : [];
     }
 
     /**
@@ -120,5 +119,3 @@ class Symbol extends SymbolFormModel {
         };
     }
 }
-
-export {SymbolFormModel, Symbol};

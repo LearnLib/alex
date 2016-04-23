@@ -1,4 +1,4 @@
-import {Project, ProjectFormModel} from '../../../src/js/entities/Project';
+import {Project} from '../../../src/js/entities/Project';
 
 describe('ProjectResource', () => {
     let $http;
@@ -32,7 +32,7 @@ describe('ProjectResource', () => {
     it('should create project a project from a form model an return an instance of the created project', () => {
         spyOn(ProjectResource.$http, 'post').and.callThrough();
 
-        const projectToCreate = new ProjectFormModel();
+        const projectToCreate = new Project();
         projectToCreate.name = 'project1';
         projectToCreate.baseUrl = 'http://localhost';
         projectToCreate.description = null;

@@ -1,5 +1,5 @@
 import {Project} from '../../../../src/js/entities/Project';
-import {SymbolGroupFormModel} from '../../../../src/js/entities/SymbolGroup';
+import {SymbolGroup} from '../../../../src/js/entities/SymbolGroup';
 import {events} from '../../../../src/js/constants';
 import {SymbolGroupCreateModalController} from '../../../../src/js/directives/modals/symbolGroupCreateModalHandle';
 
@@ -64,7 +64,7 @@ describe('SymbolGroupCreateModalController', () => {
     it('should initialize the controller correctly', () => {
         createController();
         expect(controller.project).toEqual(project);
-        expect(controller.group).toEqual(new SymbolGroupFormModel());
+        expect(controller.group).toEqual(new SymbolGroup());
         expect(controller.errorMsg).toBeNull();
     });
 
@@ -80,7 +80,7 @@ describe('SymbolGroupCreateModalController', () => {
         spyOn(EventBus, 'emit');
         spyOn(ToastService, 'success');
 
-        const group = new SymbolGroupFormModel(ENTITIES.groups[0]);
+        const group = new SymbolGroup(ENTITIES.groups[0]);
         deferred.resolve(ENTITIES.groups[0]);
 
         controller.group = group;
@@ -99,7 +99,7 @@ describe('SymbolGroupCreateModalController', () => {
         spyOn(SymbolGroupResource, 'create').and.returnValue(deferred.promise);
 
         const message = 'failed';
-        const group = new SymbolGroupFormModel(ENTITIES.groups[0]);
+        const group = new SymbolGroup(ENTITIES.groups[0]);
         deferred.reject({data: {message: message}});
 
         controller.group = group;

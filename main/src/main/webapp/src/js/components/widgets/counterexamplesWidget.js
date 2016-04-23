@@ -45,7 +45,7 @@ class CounterexamplesWidget {
 
         /**
          * The symbols
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.symbols = [];
 

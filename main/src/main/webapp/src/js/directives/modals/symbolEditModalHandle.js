@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Symbol} from '../../entities/Symbol';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 import {events} from '../../constants';
 
 /**
@@ -40,15 +40,15 @@ class SymbolEditModalController {
 
         /**
          * The symbol to edit
-         * @type {Symbol}
+         * @type {AlphabetSymbol}
          */
         this.symbol = modalData.symbol;
 
         /**
          * A copy of the old symbol
-         * @type {Symbol}
+         * @type {AlphabetSymbol}
          */
-        this.symbolCopy = new Symbol(modalData.symbol);
+        this.symbolCopy = new AlphabetSymbol(modalData.symbol);
 
         /**
          * The error message that is displayed when update fails
@@ -118,7 +118,7 @@ function symbolEditModalHandle($uibModal) {
                 resolve: {
                     modalData: function () {
                         return {
-                            symbol: new Symbol(scope.symbol),
+                            symbol: new AlphabetSymbol(scope.symbol),
                             updateOnServer: scope.updateOnServer
                         };
                     }

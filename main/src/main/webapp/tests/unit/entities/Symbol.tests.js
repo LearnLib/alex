@@ -1,31 +1,14 @@
-import {Symbol, SymbolFormModel} from '../../../src/js/entities/Symbol';
+import {AlphabetSymbol} from '../../../src/js/entities/AlphabetSymbol';
 import Action from '../../../src/js/entities/actions/Action';
 
-describe('SymbolFormModel', () => {
-    beforeEach(angular.mock.module('ALEX'));
-
-    it('should correctly create a new SymbolFormModel', () => {
-        const expected = {
-            name: '',
-            abbreviation: '',
-            group: 0,
-            actions: []
-        };
-        const model = new SymbolFormModel();
-
-        expect(angular.toJson(model)).toEqual(angular.toJson(expected));
-    })
-});
-
-
-describe('Symbol', () => {
+describe('AlphabetSymbol', () => {
     let ActionService;
     let symbol;
 
     beforeEach(angular.mock.module('ALEX'));
     beforeEach(angular.mock.inject(($injector) => {
         ActionService = $injector.get('ActionService');
-        symbol = new Symbol(ENTITIES.symbols[0]);
+        symbol = new AlphabetSymbol(ENTITIES.symbols[0]);
     }));
 
     it('should count all enabled actions', () => {

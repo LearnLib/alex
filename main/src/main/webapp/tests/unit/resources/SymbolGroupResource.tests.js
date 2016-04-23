@@ -1,4 +1,4 @@
-import {SymbolGroup, SymbolGroupFormModel} from '../../../src/js/entities/SymbolGroup';
+import {SymbolGroup} from '../../../src/js/entities/SymbolGroup';
 
 describe('SymbolGroupResource', () => {
     let $http;
@@ -49,7 +49,7 @@ describe('SymbolGroupResource', () => {
     });
 
     it('should create a group from a form model and return an instance of the created group', () => {
-        const model = new SymbolGroupFormModel();
+        const model = new SymbolGroup();
         spyOn(SymbolGroupResource.$http, 'post').and.callThrough();
 
         $httpBackend.whenPOST(uri).respond(201, ENTITIES.groups[0]);

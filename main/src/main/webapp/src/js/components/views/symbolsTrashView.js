@@ -15,7 +15,7 @@
  */
 
 import _ from 'lodash';
-import {Symbol} from '../../entities/Symbol';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
@@ -42,13 +42,13 @@ class SymbolsTrashView {
 
         /**
          * The list of deleted symbols
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.symbols = [];
 
         /**
          * The list of selected symbols
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.selectedSymbols = [];
 
@@ -60,7 +60,7 @@ class SymbolsTrashView {
 
     /**
      * Recovers a deleted symbol by calling the API and removes the recovered symbol from the symbol list on success
-     * @param {Symbol} symbol - The symbol that should be recovered from the trash
+     * @param {AlphabetSymbol} symbol - The symbol that should be recovered from the trash
      */
     recoverSymbol(symbol) {
         this.SymbolResource.recover(symbol)

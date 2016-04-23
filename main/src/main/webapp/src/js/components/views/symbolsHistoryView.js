@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Symbol} from '../../entities/Symbol';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * The controller for the page where the revision history if a symbol is listed and old revisions can be restored
@@ -39,13 +39,13 @@ class SymbolsHistoryView {
 
         /**
          * All revisions of a symbol
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.revisions = [];
 
         /**
          * The most current version of a symbol
-         * @type {Symbol}
+         * @type {AlphabetSymbol}
          */
         this.latestRevision = null;
 
@@ -62,10 +62,10 @@ class SymbolsHistoryView {
 
     /**
      * Restores a previous revision of a symbol by updating the latest with the properties of the revision
-     * @param {Symbol} revision - The revision of the symbol that should be restored
+     * @param {AlphabetSymbol} revision - The revision of the symbol that should be restored
      */
     restoreRevision(revision) {
-        const symbol = new Symbol(this.latestRevision);
+        const symbol = new AlphabetSymbol(this.latestRevision);
 
         // copy all important properties from the revision to the latest
         symbol.name = revision.name;

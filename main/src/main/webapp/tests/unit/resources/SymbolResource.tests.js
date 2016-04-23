@@ -1,4 +1,4 @@
-import {Symbol, SymbolFormModel} from '../../../src/js/entities/Symbol';
+import {AlphabetSymbol} from '../../../src/js/entities/AlphabetSymbol';
 
 describe('SymbolResource', () => {
     let $http, $httpBackend;
@@ -29,7 +29,7 @@ describe('SymbolResource', () => {
 
         expect($http.get).toHaveBeenCalledWith(uri);
         promise.then((s) => {
-            expect(s instanceof Symbol).toBe(true)
+            expect(s instanceof AlphabetSymbol).toBe(true)
         })
     });
 
@@ -44,7 +44,7 @@ describe('SymbolResource', () => {
 
         expect($http.get).toHaveBeenCalledWith(uri);
         promise.then((symbols) => {
-            symbols.forEach(s => expect(s instanceof Symbol).toBe(true));
+            symbols.forEach(s => expect(s instanceof AlphabetSymbol).toBe(true));
         })
     });
 
@@ -52,14 +52,14 @@ describe('SymbolResource', () => {
         spyOn($http, 'post').and.callThrough();
 
         const uri = `rest/projects/${project.id}/symbols`;
-        const symbol = new SymbolFormModel();
+        const symbol = new AlphabetSymbol();
         $httpBackend.whenPOST(uri).respond(201, ENTITIES.symbols[0]);
         const promise = SymbolResource.create(project.id, symbol);
         $httpBackend.flush();
 
         expect($http.post).toHaveBeenCalledWith(uri, symbol);
         promise.then((symbol) => {
-            expect(symbol instanceof Symbol).toBe(true);
+            expect(symbol instanceof AlphabetSymbol).toBe(true);
         })
     });
 
@@ -67,14 +67,14 @@ describe('SymbolResource', () => {
         spyOn($http, 'post').and.callThrough();
 
         const uri = `rest/projects/${project.id}/symbols/batch`;
-        const symbols = [new SymbolFormModel(), new SymbolFormModel(), new SymbolFormModel()];
+        const symbols = [new AlphabetSymbol(), new AlphabetSymbol(), new AlphabetSymbol()];
         $httpBackend.whenPOST(uri).respond(201, ENTITIES.symbols);
         const promise = SymbolResource.createMany(project.id, symbols);
         $httpBackend.flush();
 
         expect($http.post).toHaveBeenCalledWith(uri, symbols);
         promise.then((symbols) => {
-            symbols.forEach(s => expect(s instanceof Symbol).toBe(true));
+            symbols.forEach(s => expect(s instanceof AlphabetSymbol).toBe(true));
         })
     });
 
@@ -94,7 +94,7 @@ describe('SymbolResource', () => {
     });
 
     it('should get a list of symbols by given id revision pairs', () => {
-        const pairs = ENTITIES.symbols.map(s => new Symbol(s).getIdRevisionPair());
+        const pairs = ENTITIES.symbols.map(s => new AlphabetSymbol(s).getIdRevisionPair());
         const concatenatedPairs = pairs.map(p => p.id + ':' + p.revision).join(',');
         const projectId = ENTITIES.symbols[0].project;
         const uri = `rest/projects/${projectId}/symbols/batch/${concatenatedPairs}`;
@@ -107,7 +107,7 @@ describe('SymbolResource', () => {
         expect($http.get).toHaveBeenCalledWith(uri);
         promise.then(symbols => {
             symbols.forEach(s => {
-                expect(s instanceof Symbol).toBe(true)
+                expect(s instanceof AlphabetSymbol).toBe(true)
             });
         })
     });
@@ -123,7 +123,7 @@ describe('SymbolResource', () => {
 
         expect($http.get).toHaveBeenCalledWith(uri);
         promise.then((symbols) => {
-            symbols.forEach(s => expect(s instanceof Symbol).toBe(true));
+            symbols.forEach(s => expect(s instanceof AlphabetSymbol).toBe(true));
         });
     });
 
@@ -138,14 +138,14 @@ describe('SymbolResource', () => {
 
         expect($http.put).toHaveBeenCalledWith(uri, symbol);
         promise.then((s) => {
-            expect(s instanceof Symbol).toBe(true)
+            expect(s instanceof AlphabetSymbol).toBe(true)
         })
     });
 
     it('should remove a single symbol', () => {
         spyOn($http, 'post').and.callThrough();
 
-        const symbol = new Symbol(ENTITIES.symbols[0]);
+        const symbol = new AlphabetSymbol(ENTITIES.symbols[0]);
         const uri = `rest/projects/${project.id}/symbols/${symbol.id}/hide`;
 
         $httpBackend.whenPOST(uri).respond(200, {});
@@ -159,7 +159,7 @@ describe('SymbolResource', () => {
     it('should remove many symbols', () => {
         spyOn($http, 'post').and.callThrough();
 
-        const symbols = ENTITIES.symbols.map(s => new Symbol(s));
+        const symbols = ENTITIES.symbols.map(s => new AlphabetSymbol(s));
         const ids = symbols.map(s => s.id).join(',');
         const uri = `rest/projects/${project.id}/symbols/batch/${ids}/hide`;
 
@@ -174,7 +174,7 @@ describe('SymbolResource', () => {
     it('should recover a single symbols', () => {
         spyOn($http, 'post').and.callThrough();
 
-        const symbol = new Symbol(ENTITIES.symbols[0]);
+        const symbol = new AlphabetSymbol(ENTITIES.symbols[0]);
         const uri = `rest/projects/${project.id}/symbols/${symbol.id}/show`;
 
         $httpBackend.whenPOST(uri).respond(200, {});
@@ -188,7 +188,7 @@ describe('SymbolResource', () => {
     it('should recover many symbols', () => {
         spyOn($http, 'post').and.callThrough();
 
-        const symbols = ENTITIES.symbols.map(s => new Symbol(s));
+        const symbols = ENTITIES.symbols.map(s => new AlphabetSymbol(s));
         const ids = symbols.map(s => s.id).join(',');
         const uri = `rest/projects/${project.id}/symbols/batch/${ids}/show`;
 

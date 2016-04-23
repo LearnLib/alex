@@ -41,7 +41,7 @@ class ProjectResource {
 
     /**
      * Creates a new project
-     * @param {ProjectFormModel} project - The project to create
+     * @param {Project} project - The project to create
      * @returns {*}
      */
     create(project) {

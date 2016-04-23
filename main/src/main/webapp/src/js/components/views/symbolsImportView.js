@@ -16,7 +16,7 @@
 
 import _ from 'lodash';
 import {events} from '../../constants';
-import {Symbol} from '../../entities/Symbol';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * The controller that handles the import of symbols from a *.json file.
@@ -44,13 +44,13 @@ class SymbolsImportView {
 
         /**
          * The symbols that will be uploaded
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.symbols = [];
 
         /**
          * The list of selected symbols
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.selectedSymbols = [];
 
@@ -80,7 +80,7 @@ class SymbolsImportView {
         try {
             this.symbols = angular.fromJson(data).map(s => {
                 s.id = _.uniqueId();
-                return new Symbol(s);
+                return new AlphabetSymbol(s);
             });
         } catch (e) {
             this.ToastService.danger('<p><strong>Loading json file failed</strong></p>' + e);
@@ -96,7 +96,7 @@ class SymbolsImportView {
             this.SymbolResource.getAll(this.project.id)
                 .then(existingSymbols => {
                     const maxId = _.max(existingSymbols, 'id').id;
-                    const symbols = this.selectedSymbols.map(s => new Symbol(s));
+                    const symbols = this.selectedSymbols.map(s => new AlphabetSymbol(s));
                     symbols.forEach(symbol => {
                         delete symbol.id;
 
@@ -129,7 +129,7 @@ class SymbolsImportView {
      * Changes the name and/or the abbreviation a symbol before uploading it to prevent naming conflicts in the
      * database.
      *
-     * @param {Symbol} updatedSymbol - The updated symbol
+     * @param {AlphabetSymbol} updatedSymbol - The updated symbol
      */
     updateSymbol(updatedSymbol) {
 

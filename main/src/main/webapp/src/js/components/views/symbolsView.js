@@ -16,7 +16,7 @@
 
 import _ from 'lodash';
 import {events} from '../../constants';
-import {Symbol} from '../../entities/Symbol';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * The controller that handles CRUD operations on symbols and symbol groups.
@@ -51,7 +51,7 @@ class SymbolsView {
 
         /**
          * The model for selected symbols
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.selectedSymbols = [];
 
@@ -110,7 +110,7 @@ class SymbolsView {
     /**
      * Extracts all symbols from all symbol groups and merges them into a single array
      *
-     * @returns {Symbol[]}
+     * @returns {AlphabetSymbol[]}
      */
     getAllSymbols() {
         return _.flatten(this.groups.map(g => g.symbols));
@@ -119,7 +119,7 @@ class SymbolsView {
     /**
      * Adds a single new symbol to the scope by finding its corresponding group and adding it there
      *
-     * @param {Symbol} symbol - The symbol that should be added
+     * @param {AlphabetSymbol} symbol - The symbol that should be added
      */
     addSymbol(symbol) {
         this.findGroupFromSymbol(symbol).symbols.push(symbol);
@@ -129,7 +129,7 @@ class SymbolsView {
      * Removes a list of symbols from the scope by finding the group of each symbol and removing it from
      * it
      *
-     * @param {Symbol[]} symbols - The symbols that should be removed
+     * @param {AlphabetSymbol[]} symbols - The symbols that should be removed
      */
     removeSymbols(symbols) {
         symbols.forEach(symbol => {
@@ -141,7 +141,7 @@ class SymbolsView {
     /**
      * Updates an existing symbol
      *
-     * @param {Symbol} updatedSymbol - The updated symbol object
+     * @param {AlphabetSymbol} updatedSymbol - The updated symbol object
      */
     updateSymbol(updatedSymbol) {
         this.updateSymbols([updatedSymbol]);
@@ -150,7 +150,7 @@ class SymbolsView {
     /**
      * Updates multiple existing symbols
      *
-     * @param {Symbol[]} updatedSymbols - The updated symbol objects
+     * @param {AlphabetSymbol[]} updatedSymbols - The updated symbol objects
      */
     updateSymbols(updatedSymbols) {
         updatedSymbols.forEach(symbol => {
@@ -168,7 +168,7 @@ class SymbolsView {
     /**
      * Moves a list of existing symbols into another group.
      *
-     * @param {Symbol[]} symbols - The symbols that should be moved
+     * @param {AlphabetSymbol[]} symbols - The symbols that should be moved
      * @param {SymbolGroup} group - The group the symbols should be moved into
      */
     moveSymbolsToGroup(symbols, group) {
@@ -186,7 +186,7 @@ class SymbolsView {
     /**
      * Deletes a single symbol from the server and from the scope if the deletion was successful
      *
-     * @param {Symbol} symbol - The symbol to be deleted
+     * @param {AlphabetSymbol} symbol - The symbol to be deleted
      */
     deleteSymbol(symbol) {
         this.SymbolResource.remove(symbol)
@@ -244,7 +244,7 @@ class SymbolsView {
             // create a copy of the symbol list and sort them by id
             // so that ids can be referenced correctly by executeSymbol actions
             const symbols = this.selectedSymbols
-                .map(s => new Symbol(s))
+                .map(s => new AlphabetSymbol(s))
                 .sort((s1, s2) => s1.id - s2.id);
 
             // adjust referenced symbol ids from executeSymbol actions

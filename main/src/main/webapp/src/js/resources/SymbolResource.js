@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Symbol} from '../entities/Symbol';
+import {AlphabetSymbol} from '../entities/AlphabetSymbol';
 
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbols
@@ -38,7 +38,7 @@ class SymbolResource {
      */
     get(projectId, symbolId) {
         return this.$http.get(`rest/projects/${projectId}/symbols/${symbolId}`)
-            .then(response => new Symbol(response.data));
+            .then(response => new AlphabetSymbol(response.data));
     }
 
     /**
@@ -51,7 +51,7 @@ class SymbolResource {
     getAll(projectId, includeHiddenSymbols = false) {
         const params = includeHiddenSymbols ? '?visibility=hidden' : '';
         return this.$http.get(`rest/projects/${projectId}/symbols${params}`)
-            .then(response => response.data.map(s => new Symbol(s)));
+            .then(response => response.data.map(s => new AlphabetSymbol(s)));
     }
 
     /**
@@ -65,7 +65,7 @@ class SymbolResource {
     getManyByIdRevisionPairs(projectId, idRevisionPairs) {
         const pairs = idRevisionPairs.map(pair => pair.id + ':' + pair.revision).join(',');
         return this.$http.get(`rest/projects/${projectId}/symbols/batch/${pairs}`)
-            .then(response => response.data.map(s => new Symbol(s)));
+            .then(response => response.data.map(s => new AlphabetSymbol(s)));
     }
 
     /**
@@ -78,37 +78,37 @@ class SymbolResource {
      */
     getRevisions(projectId, symbolId) {
         return this.$http.get(`rest/projects/${projectId}/symbols/${symbolId}/complete`)
-            .then(response => response.data.map(s => new Symbol(s)));
+            .then(response => response.data.map(s => new AlphabetSymbol(s)));
     }
 
     /**
      * Creates a new symbol
      *
      * @param {number} projectId - The id of the project the symbol should belong to
-     * @param {SymbolFormModel} symbol - The symbol that should be created
+     * @param {AlphabetSymbol} symbol - The symbol that should be created
      */
     create(projectId, symbol) {
         return this.$http.post(`rest/projects/${projectId}/symbols`, symbol)
-            .then(response => new Symbol(response.data));
+            .then(response => new AlphabetSymbol(response.data));
     }
 
     /**
      * Creates many new symbols
      *
      * @param {number} projectId - The id of the project
-     * @param {Symbol[]} symbols - The symbols to create
+     * @param {AlphabetSymbol[]} symbols - The symbols to create
      * @returns {*}
      */
     createMany(projectId, symbols) {
         return this.$http.post(`rest/projects/${projectId}/symbols/batch`, symbols)
-            .then(response => response.data.map(s => new Symbol(s)));
+            .then(response => response.data.map(s => new AlphabetSymbol(s)));
     }
 
     /**
      * Makes a PUT request to rest/projects/{projectId}/symbols[/batch]/{symbolId[s]}/moveTo/{groupId} in order to
      * move [a] symbol[s] to another group without creating a new revision
      *
-     * @param {Symbol|Symbol[]} symbols - The symbol[s] to be moved to another group
+     * @param {AlphabetSymbol|AlphabetSymbol[]} symbols - The symbol[s] to be moved to another group
      * @param {SymbolGroup} group - The id of the symbol group
      * @returns {HttpPromise}
      */
@@ -121,18 +121,18 @@ class SymbolResource {
     /**
      * Updates a single symbol and increments its revision number
      *
-     * @param {Symbol} symbol - The symbol to be updated
+     * @param {AlphabetSymbol} symbol - The symbol to be updated
      * @returns {*}
      */
     update(symbol) {
         return this.$http.put(`rest/projects/${symbol.project}/symbols/${symbol.id}`, symbol)
-            .then(response => new Symbol(response.data));
+            .then(response => new AlphabetSymbol(response.data));
     }
 
     /**
      * Deletes a single symbol
      *
-     * @param {Symbol} symbol - The the symbol that should be deleted
+     * @param {AlphabetSymbol} symbol - The the symbol that should be deleted
      * @returns {*}
      */
     remove(symbol) {
@@ -142,7 +142,7 @@ class SymbolResource {
     /**
      * Removes many symbols
      *
-     * @param {Symbol[]} symbols
+     * @param {AlphabetSymbol[]} symbols
      * @returns {*}
      */
     removeMany(symbols) {
@@ -154,7 +154,7 @@ class SymbolResource {
     /**
      * Recovers a single symbol by setting its property 'visible' to true
      *
-     * @param {Symbol} symbol - The symbol to recover
+     * @param {AlphabetSymbol} symbol - The symbol to recover
      * @returns {*}
      */
     recover(symbol) {
@@ -164,7 +164,7 @@ class SymbolResource {
     /**
      * Recovers many symbols by setting their property 'visible' to true
      *
-     * @param {Symbol[]} symbols - The symbols to recover
+     * @param {AlphabetSymbol[]} symbols - The symbols to recover
      * @returns {*}
      */
     recoverMany(symbols) {

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {UserFormModel} from '../../entities/User';
-
 /** The controller for the user register form component */
 // @ngInject
 class UserRegisterFrom {
@@ -31,18 +29,25 @@ class UserRegisterFrom {
 
 
         /**
-         * The user to create
-         * @type {UserFormModel}
+         * The email of the user
+         * @type {string}
          */
-        this.user = new UserFormModel();
+        this.email = null;
+
+        /**
+         * The password of the user
+         * @type {string}
+         */
+        this.password = null;
     }
 
     register() {
-        if (this.user.email && this.user.password) {
-            this.UserResource.create(this.user)
+        if (this.email && this.password) {
+            this.UserResource.create(this.email, this.password)
                 .then(() => {
                     this.ToastService.success('Registration successful');
-                    this.user = new UserFormModel();
+                    this.email = null;
+                    this.password = null;
                 })
                 .catch(response => {
                     this.ToastService.danger(`Registration failed. ${response.data.message}`);
@@ -60,7 +65,7 @@ const userRegisterForm = {
         <form name="vm.form" ng-submit="vm.register()">
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" class="form-control" name="mail" placeholder="Email address" autofocus required ng-model="vm.user.email">
+                <input type="email" class="form-control" name="mail" placeholder="Email address" autofocus required ng-model="vm.email">
 
                 <div class="help-block" ng-messages="vm.form.mail.$error" ng-if="vm.form.mail.$touched">
                     <div class="alert alert-danger alert-condensed" ng-message="required">
@@ -73,7 +78,7 @@ const userRegisterForm = {
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" class="form-control" name="password" placeholder="Password" required ng-minlength="1" ng-model="vm.user.password">
+                <input type="password" class="form-control" name="password" placeholder="Password" required ng-minlength="1" ng-model="vm.password">
 
                 <div class="help-block" ng-messages="vm.form.password.$error" ng-if="vm.form.password.$touched">
                     <div class="alert alert-danger alert-condensed" ng-message="required">

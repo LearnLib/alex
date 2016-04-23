@@ -16,7 +16,7 @@
 
 import _ from 'lodash';
 import {events} from '../../constants';
-import {Symbol} from '../../entities/Symbol';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
@@ -56,7 +56,7 @@ class SymbolsActionsView {
 
         /**
          * The symbol whose actions are managed
-         * @type {Symbol|null}
+         * @type {AlphabetSymbol|null}
          */
         this.symbol = null;
 
@@ -170,7 +170,7 @@ class SymbolsActionsView {
     saveChanges() {
 
         // make a copy of the symbol
-        const symbolToUpdate = new Symbol(this.symbol);
+        const symbolToUpdate = new AlphabetSymbol(this.symbol);
 
         // update the symbol
         this.SymbolResource.update(symbolToUpdate)
