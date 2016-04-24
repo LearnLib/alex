@@ -88,6 +88,12 @@ class LearnResult {
          */
         this.user = obj.user;
 
+        /**
+         * If the learner encounted an error
+         * @type {boolean}
+         */
+        this.error = obj.error;
+
         // convert ns to ms
         this.statistics.duration = Math.ceil(this.statistics.duration / 1000000);
 

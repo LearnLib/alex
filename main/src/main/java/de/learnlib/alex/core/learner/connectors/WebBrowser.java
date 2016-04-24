@@ -75,7 +75,7 @@ public enum WebBrowser {
         try {
             if (this == HTMLUNITDRIVER) {
                 HtmlUnitDriver driver = (HtmlUnitDriver) webDriverClass.getConstructor(BrowserVersion.class)
-                        .newInstance(BrowserVersion.FIREFOX_38);
+                        .newInstance(BrowserVersion.INTERNET_EXPLORER_11);
                 enableJavaScript(driver);
                 return driver;
             } else {
