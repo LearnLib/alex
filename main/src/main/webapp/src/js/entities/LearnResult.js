@@ -94,6 +94,12 @@ class LearnResult {
          */
         this.error = obj.error;
 
+        /**
+         * The description of the error that occurred
+         * @type {string}
+         */
+        this.errorText = obj.errorText;
+
         // convert ns to ms
         this.statistics.duration = Math.ceil(this.statistics.duration / 1000000);
 

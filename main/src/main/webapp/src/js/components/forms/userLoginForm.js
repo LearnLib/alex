@@ -80,7 +80,7 @@ const userLoginForm = {
     controller: UserLoginForm,
     controllerAs: 'vm',
     template: `
-        <form name="vm.form" ng-submit="vm.login()">
+        <form name="vm.form" ng-submit="vm.login()" id="user-login-form">
             <div class="form-group">
                 <label>Email</label>
                 <input type="email" class="form-control" name="mail" placeholder="Email address" autofocus required ng-model="vm.email">
