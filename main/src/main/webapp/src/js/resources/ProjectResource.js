@@ -31,6 +31,16 @@ class ProjectResource {
     }
 
     /**
+     * Get a project by its id
+     * @param {number} projectId
+     * @returns {*}
+     */
+    get(projectId) {
+        return this.$http.get(`rest/projects/${projectId}`)
+            .then(response => new Project(response.data));
+    }
+
+    /**
      * Get all projects of a user
      * @returns {*}
      */

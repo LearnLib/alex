@@ -27,19 +27,24 @@ class ProjectList {
     /**
      * Constructor
      * @param $state
-     * @param ProjectResource
-     * @param ToastService
-     * @param SessionService
-     * @param PromptService
-     * @param EventBus
+     * @param {ProjectResource} ProjectResource
+     * @param {SymbolGroupResource} SymbolGroupResource
+     * @param {ToastService} ToastService
+     * @param {SessionService} SessionService
+     * @param {PromptService} PromptService
+     * @param {EventBus} EventBus
+     * @param {DownloadService} DownloadService
      */
-    constructor($state, ProjectResource, ToastService, SessionService, PromptService, EventBus) {
+    constructor($state, ProjectResource, SymbolGroupResource, ToastService, SessionService, PromptService, EventBus,
+                DownloadService) {
         this.$state = $state;
         this.ProjectResource = ProjectResource;
+        this.SymbolGroupResource = SymbolGroupResource;
         this.ToastService = ToastService;
         this.SessionService = SessionService;
         this.PromptService = PromptService;
         this.EventBus = EventBus;
+        this.DownloadService = DownloadService;
     }
 
     /**
@@ -68,6 +73,34 @@ class ProjectList {
                         this.ToastService.danger(`The project could not be deleted. ${response.data.message}`);
                     });
             });
+    }
+
+    /**
+     * Downloads the project in an importable format.
+     * @param {Project} project
+     */
+    exportProject(project) {
+        this.ProjectResource.get(project.id).then(project => {
+            this.SymbolGroupResource.getAll(project.id, true).then(groups => {
+                groups.forEach(group => {
+                    delete group.id;
+                    delete group.project;
+                    delete group.user;
+
+                    group.symbols = group.symbols.map(symbol => symbol.getExportableSymbol())
+                });
+
+                delete project.id;
+                delete project.user;
+                project.defaultGroup = groups.shift();
+                project.groups = groups;
+
+                this.PromptService.prompt("Enter a filename for the project").then(filename => {
+                    this.DownloadService.downloadObject(project, filename);
+                    this.ToastService.success('The project has been exported.');
+                });
+            })
+        })
     }
 }
 
@@ -99,6 +132,11 @@ const projectList = {
                         <li>
                             <a href="" ng-click="vm.deleteProject(project)">
                                 <i class="fa fa-trash fa-fw"></i> Delete
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" ng-click="vm.exportProject(project)">
+                                <i class="fa fa-download fa-fw"></i> Export
                             </a>
                         </li>
                     </ul>

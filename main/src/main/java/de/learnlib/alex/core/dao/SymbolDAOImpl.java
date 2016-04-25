@@ -754,7 +754,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         return symbols;
     }
 
-    private void beforeSymbolSave(Symbol symbol) {
+    public void beforeSymbolSave(Symbol symbol) {
         for (int i = 0; i < symbol.getActions().size(); i++) {
             SymbolAction action = symbol.getActions().get(i);
             action.setId(null);

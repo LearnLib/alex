@@ -16,10 +16,7 @@
 
 package de.learnlib.alex.core.dao;
 
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.SymbolGroup;
-import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.*;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
@@ -33,11 +30,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementation of a ProjectDAO using Hibernate.
@@ -45,17 +38,20 @@ import java.util.Set;
 @Repository
 public class ProjectDAOImpl implements ProjectDAO {
 
-    /** Use the logger for the server part. */
+    /**
+     * Use the logger for the server part.
+     */
     private static final Logger LOGGER = LogManager.getLogger("server");
 
-    /** The SymbolDAO to use. */
+    /**
+     * The SymbolDAO to use.
+     */
     private SymbolDAOImpl symbolDAO;
 
     /**
      * The constructor.
      *
-     * @param symbolDAO
-     *         The SymbolDAOImpl to use.
+     * @param symbolDAO The SymbolDAOImpl to use.
      */
     @Inject
     public ProjectDAOImpl(SymbolDAOImpl symbolDAO) {
@@ -64,43 +60,18 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     @Override
     public void create(Project project) throws ValidationException {
+
         // start session
         Session session = HibernateUtil.getSession();
         HibernateUtil.beginTransaction();
 
         try {
-
-            // TODO: fix this branch with multi user
-            if (project.getGroups().size() > 0) { // create new project from json with existing groups
-                Integer i = 0;
-                for (SymbolGroup group: project.getGroups()) {
-                    Long groupId = project.getNextGroupId();
-
-                    if (i.equals(0)) {  // just assume that the first group is the default one
-                        project.setDefaultGroup(group);
-                    } else {
-                        group.setId(groupId);
-                        project.setNextGroupId(groupId + 1);
-                    }
-                    group.setProject(project);
-
-                    if (group.getSymbols().size() > 0) {
-                        for (Symbol symbol: group.getSymbols()) {
-                            Long symbolId = project.getNextSymbolId();
-                            symbol.setProject(project);
-                            symbol.setGroup(group);
-                            symbol.setRevision(0L);
-                            symbol.setId(symbolId);
-                            project.setNextSymbolId(symbolId + 1);
-                        }
-                    }
-                    i++;
-                }
-            } else {
+            if (project.getGroups().size() == 0) { // if a new project is created the 'normal' way
                 SymbolGroup defaultGroup = new SymbolGroup();
                 defaultGroup.setName("Default Group");
                 defaultGroup.setProject(project);
                 defaultGroup.setUser(project.getUser());
+
                 project.addGroup(defaultGroup);
                 project.setDefaultGroup(defaultGroup);
 
@@ -115,12 +86,83 @@ public class ProjectDAOImpl implements ProjectDAO {
                     }
                     project.setNextSymbolId(nextSymbolId + 1);
                 }
+
+                session.save(project);
+                HibernateUtil.commitTransaction();
+            } else { // the project is imported
+
+                // map symbolName -> actions as a temporary store because actions cannot be
+                // persisted when a project is created
+                Map<String, List<SymbolAction>> actionMap = new HashMap<>();
+
+                // link all the entities for the default group
+                project.getDefaultGroup().setProject(project);
+                project.getDefaultGroup().setUser(project.getUser());
+                project.getDefaultGroup().getSymbols().forEach(symbol -> {
+                    actionMap.put(symbol.getName(), symbol.getActions());
+
+                    long symbolId = project.getNextSymbolId();
+                    project.setNextSymbolId(symbolId + 1);
+
+                    symbol.setId(symbolId);
+                    symbol.setUser(project.getUser());
+                    symbol.setProject(project);
+                    symbol.setGroup(project.getDefaultGroup());
+                    symbol.setRevision(0L);
+                    symbol.setActions(new ArrayList<>());
+                });
+
+                // link all entities for the other groups
+                project.getGroups().forEach(group -> {
+                    long groupId = project.getNextGroupId();
+                    project.setNextGroupId(groupId + 1);
+
+                    group.setProject(project);
+                    group.setUser(project.getUser());
+                    group.setId(groupId);
+                    group.getSymbols().forEach(symbol -> {
+                        actionMap.put(symbol.getName(), symbol.getActions());
+
+                        long symbolId = project.getNextSymbolId();
+                        project.setNextSymbolId(symbolId + 1);
+
+                        symbol.setId(symbolId);
+                        symbol.setUser(project.getUser());
+                        symbol.setProject(project);
+                        symbol.setGroup(group);
+                        symbol.setRevision(0L);
+                        symbol.setActions(new ArrayList<>());
+                    });
+                });
+
+                session.save(project);
+                HibernateUtil.commitTransaction();
+
+                // to this point the project, the symbol groups and all symbols are persisted
+                // now we have to make a new session to persist actions because ACID is for the weak!
+                final Session session2 = HibernateUtil.getSession();
+                HibernateUtil.beginTransaction();
+
+                // add the actions to the corresponding symbol and update it
+                // TODO: at the current time, references from ExecuteSymbolAction are not respected here
+                project.getDefaultGroup().getSymbols().forEach(symbol -> {
+                    symbol.setActions(actionMap.get(symbol.getName()));
+                    symbolDAO.beforeSymbolSave(symbol);
+                    session2.update(symbol);
+                });
+
+                project.getGroups().forEach(group -> {
+                    group.getSymbols().forEach(symbol -> {
+                        symbol.setActions(actionMap.get(symbol.getName()));
+                        symbolDAO.beforeSymbolSave(symbol);
+                        session2.update(symbol);
+                    });
+                });
+
+                HibernateUtil.commitTransaction();
             }
 
-            session.save(project);
-            HibernateUtil.commitTransaction();
-
-        // error handling
+            // error handling
         } catch (javax.validation.ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             LOGGER.info("Project creation failed:", e);
@@ -142,8 +184,8 @@ public class ProjectDAOImpl implements ProjectDAO {
         // get the Projects
         @SuppressWarnings("unchecked") // it should be a list of Projects
         List<Project> result = session.createCriteria(Project.class)
-                                      .add(Restrictions.eq("user", user))
-                                      .list();
+                .add(Restrictions.eq("user", user))
+                .list();
 
         // load lazy relations
         for (Project p : result) {
@@ -185,9 +227,9 @@ public class ProjectDAOImpl implements ProjectDAO {
         HibernateUtil.beginTransaction();
 
         Project result = (Project) session.createCriteria(Project.class)
-                                          .add(Restrictions.eq("user.id", userId))
-                                          .add(Restrictions.eq("name", projectName))
-                                          .uniqueResult();
+                .add(Restrictions.eq("user.id", userId))
+                .add(Restrictions.eq("name", projectName))
+                .uniqueResult();
 
         HibernateUtil.commitTransaction();
 
@@ -211,7 +253,7 @@ public class ProjectDAOImpl implements ProjectDAO {
             session.update(projectInDB);
             HibernateUtil.commitTransaction();
 
-        // error handling
+            // error handling
         } catch (ObjectNotFoundException e) {
             LOGGER.info("Project update failed:", e);
             HibernateUtil.rollbackTransaction();
@@ -246,10 +288,9 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     /**
      * Load objects that are connected with a project over a 'lazy' relation ship.
-     * @param project
-     *         The project which needs the 'lazy' objects.
-     * @param session
      *
+     * @param project The project which needs the 'lazy' objects.
+     * @param session
      */
     private void initLazyRelations(Project project, Session session, EmbeddableFields... embedFields) {
         if (embedFields != null && embedFields.length > 0) {
@@ -257,7 +298,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             if (fieldsToLoad.contains(EmbeddableFields.GROUPS)) {
                 project.getGroups().forEach(group -> group.getSymbols()
-                                                          .forEach(s -> symbolDAO.loadLazyRelations(session, s)));
+                        .forEach(s -> symbolDAO.loadLazyRelations(session, s)));
             } else {
                 project.setGroups(null);
             }
