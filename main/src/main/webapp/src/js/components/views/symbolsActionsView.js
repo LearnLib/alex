@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
-import {events} from '../../constants';
-import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
+import _ from "lodash";
+import {events} from "../../constants";
+import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be

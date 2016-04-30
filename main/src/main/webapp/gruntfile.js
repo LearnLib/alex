@@ -4,6 +4,7 @@ module.exports = function (grunt) {
         'node_modules/ace-builds/src/ace.js',
         'node_modules/ace-builds/src/theme-eclipse.js',
         'node_modules/ace-builds/src/mode-json.js',
+        'node_modules/ace-builds/src/mode-javascript.js',
         'node_modules/angular/angular.js',
         'node_modules/angular-ui-ace/src/ui-ace.js',
         'node_modules/n3-charts/build/LineChart.js',
