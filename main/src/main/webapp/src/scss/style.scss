@@ -579,3 +579,17 @@ body {
 .learn-loading-indicator {
   margin-top: 54px;
 }
+
+
+.label-reset {
+  &.label-default {
+    background: #fff;
+    border: 1px solid #555;
+    color: #555;
+    opacity: .6;
+  }
+
+  &.label-primary {
+    border: 1px solid #337ab7;
+  }
+}
