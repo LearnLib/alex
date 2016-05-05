@@ -2,7 +2,7 @@
     <view-header title="Counters"></view-header>
 
     <action-bar>
-        <div ng-show="vm.counters.length > 0">
+        <div ng-if="vm.counters.length > 0">
             <checkbox-multiple model="vm.counters" class="pull-left"></checkbox-multiple>
 
             <div class="pull-left">

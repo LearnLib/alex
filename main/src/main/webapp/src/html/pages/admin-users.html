@@ -1,6 +1,19 @@
 <div id="view-admin-users">
     <view-header title="Manage Users"></view-header>
 
+    <action-bar>
+        <div ng-if="vm.users.length > 0">
+            <checkbox-multiple model="vm.users" class="pull-left"></checkbox-multiple>
+
+            <div class="pull-left">
+                <button class="btn btn-sm btn-primary" ng-click="vm.deleteSelectedUsers()"
+                        ng-class="{'disabled': vm.selectedUsers.length === 0}">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </action-bar>
+
     <div class="view-body">
         <div class="alx-container">
 
@@ -9,6 +22,7 @@
             <table class="table">
                 <thead>
                 <tr>
+                    <th width="1">&nbsp;</th>
                     <th width="1">ID</th>
                     <th width="1">Email</th>
                     <th>Role</th>
@@ -17,7 +31,12 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="user in vm.users"
-                    ng-class="{'success': user.id === vm.user.id, 'info': user.role === 'ADMIN' && user.id !== vm.user.id}">
+                    ng-class="{'success': user.id === vm.user.id, 'info': user.role === 'ADMIN' && user.id !== vm.user.id}"
+                    selection-model
+                    selection-model-selected-items="vm.selectedUsers">
+                    <td>
+                        <checkbox selection-model-ignore class="pull-left" ng-if="user.role !== 'ADMIN'" model="user"></checkbox>
+                    </td>
                     <td ng-bind="user.id"></td>
                     <td ng-bind="user.email"></td>
                     <td>

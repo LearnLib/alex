@@ -19,6 +19,7 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.utils.IdsList;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -97,4 +98,14 @@ public interface UserDAO {
      */
     void delete(Long id) throws NotFoundException;
 
+    /**
+     * Deletes multiple users from the database at once. This method should only be called by admins.
+     * The admin that calls this method cannot delete himself.
+     *
+     * @param ids
+     *          The ids of the users to delete
+     * @throws NotFoundException
+     *          If the user to delete was not found (and thus not deleted).
+     */
+    void delete(IdsList ids) throws NotFoundException;
 }

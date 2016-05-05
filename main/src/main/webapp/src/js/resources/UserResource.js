@@ -119,6 +119,14 @@ class UserResource {
     }
 
     /**
+     * Deletes the users with the specified ids
+     * @param {number[]} userIds
+     */
+    removeManyUsers(userIds) {
+        return this.$http.delete(`rest/users/batch/${userIds.join(',')}`);
+    }
+
+    /**
      * Gives a registered user admin rights
      *
      * @param {User} user - The user to promote
