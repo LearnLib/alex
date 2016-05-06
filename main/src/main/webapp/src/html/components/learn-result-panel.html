@@ -87,7 +87,7 @@
     </div>
     <div class="learn-result-panel-body">
         <div ng-if="!vm.result.steps[vm.pointer].error">
-            <hypothesis id="hypothesis-{{vm.index}}" result="vm.result.steps[vm.pointer]" layout-settings="vm.layoutSettings"
+            <hypothesis id="hypothesis-{{vm.index}}" data="vm.result.steps[vm.pointer].hypothesis" layout-settings="vm.layoutSettings"
                         is-selectable="true" ng-if="vm.mode === vm.modes.HYPOTHESIS">
             </hypothesis>
 

@@ -3,13 +3,13 @@
         <div class="header">
 
             <div class="header-element" style="flex: 0 0 320px">
-                <form ng-submit="loadUrl()">
+                <form ng-submit="vm.loadUrl()">
                     <div class="form-group">
                         <div class="input-group">
-                            <div class="input-group-addon" tooltip-placement="right" uib-tooltip="{{project.baseUrl}}">
+                            <div class="input-group-addon" tooltip-placement="right" uib-tooltip="{{vm.project.baseUrl}}">
                                 ...
                             </div>
-                            <input type="text" class="form-control" ng-model="url" placeholder="URL"/>
+                            <input type="text" class="form-control" ng-model="vm.url" placeholder="URL"/>
                             <span class="input-group-btn">
                                 <button type="submit" class="btn btn-default">Go!</button>
                             </span>
@@ -20,10 +20,10 @@
 
             <div class="header-element" style="flex: 0 0">
                 <div class="btn-group">
-                    <button class="btn btn-default" ng-click="toggleSelection()"
+                    <button class="btn btn-default" ng-click="vm.toggleSelection()"
                             tooltip-placement="right"
-                            uib-tooltip="{{isSelectable ? 'Disable selection' : 'Enable selection'}}">
-                        <i class="fa fa-fw" ng-class="isSelectable ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
+                            uib-tooltip="{{vm.isSelectable ? 'Disable selection' : 'Enable selection'}}">
+                        <i class="fa fa-fw" ng-class="vm.isSelectable ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
                     </button>
                 </div>
             </div>
@@ -31,19 +31,19 @@
             <div class="header-element" style="flex: 1 0; overflow: hidden">
                 <div class="btn btn-block btn-default disabled"
                      style="overflow: hidden; text-overflow: ellipsis; word-wrap: break-word; text-align: left">
-                    <span ng-if="selector" ng-bind="selector"></span>
-                    <span ng-if="!selector">Enable the selection mode</span>
+                    <span ng-if="vm.selector" ng-bind="vm.selector"></span>
+                    <span ng-if="!vm.selector">Enable the selection mode</span>
                 </div>
             </div>
 
-            <div class="header-element" style="flex: 0 0" ng-if="!isSelectable && selector">
-                <button class="btn btn-success" ng-click="ok()">
+            <div class="header-element" style="flex: 0 0" ng-if="!vm.isSelectable && vm.selector">
+                <button class="btn btn-success" ng-click="vm.ok()">
                     <i class="fa fa-check"></i>
                 </button>
             </div>
 
             <div class="header-element" style="flex: 0 0">
-                <button class="btn btn-default" ng-click="close()">
+                <button class="btn btn-default" ng-click="vm.close()">
                     <i class="fa fa-close"></i>
                 </button>
             </div>

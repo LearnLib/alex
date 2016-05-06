@@ -66,6 +66,9 @@ import {observationTable} from './observationTable';
 import {symbolListItem} from './symbolListItem';
 import {symbolGroupListItem} from './symbolGroupListItem';
 import {learnResultListItem} from './learnResultListItem';
+import {hypothesis} from './hypothesis';
+import {discriminationTree} from './discriminationTree';
+import {htmlElementPicker} from './htmlElementPicker';
 
 const moduleName = 'ALEX.components';
 
@@ -113,6 +116,8 @@ angular
     .component('alex', alex)
     .component('actionBar', actionBar)
     .component('checkbox', checkbox)
+    .component('hypothesis', hypothesis)
+    .component('discriminationTree', discriminationTree)
     .component('checkboxMultiple', checkboxMultiple)
     .component('fileDropzone', fileDropzone)
     .component('loadScreen', loadScreen)
@@ -120,6 +125,7 @@ angular
     .component('sidebar', sidebar)
     .component('responsiveIframe', responsiveIframe)
     .component('viewHeader', viewHeader)
+    .component('htmlElementPicker', htmlElementPicker)
     .component('learnResultPanel', learnResultPanel)
     .component('observationTable', observationTable)
     .component('symbolListItem', symbolListItem)

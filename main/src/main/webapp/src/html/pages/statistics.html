@@ -48,7 +48,7 @@
     <div class="view-body has-sub-nav">
         <div class="alx-container-fluid">
 
-            <div class="learn-result-list">
+            <div class="learn-result-list" ng-if="vm.results.length > 0">
                 <learn-result-list-item ng-repeat="result in vm.results | orderBy:'-testNo':false" result="result"
                                         selection-model selection-model-selected-items="vm.selectedResults"
                                         link-to="statistics">
@@ -78,6 +78,10 @@
                     </div>
 
                 </learn-result-list-item>
+            </div>
+
+            <div class="alert alert-info" ng-if="vm.results.length === 0">
+                You have not run any tests yet.
             </div>
 
         </div>

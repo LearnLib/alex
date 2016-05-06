@@ -21,7 +21,7 @@
  *
  * @return {{require: string, link: link}}
  */
-function dropdownHover() {
+export function dropdownHover() {
     return {
         require: '^uibDropdown',
         link: link
@@ -41,5 +41,3 @@ function dropdownHover() {
         });
     }
 }
-
-export default dropdownHover;

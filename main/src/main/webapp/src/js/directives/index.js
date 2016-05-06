@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import discriminationTree from './discriminationTree';
-import dropdownHover from './dropdownHover';
-import {htmlElementPicker, htmlElementPickerWindow} from './htmlElementPicker';
-import hypothesis from './hypothesis';
+import {dropdownHover} from './dropdownHover';
+import {htmlElementPickerHandle} from './htmlElementPickerHandle';
 
 // modal handles
 import {actionCreateModalHandle} from './modals/actionCreateModalHandle';
@@ -38,11 +36,8 @@ const moduleName = 'ALEX.directives';
 
 angular
     .module(moduleName, [])
-    .directive('discriminationTree', discriminationTree)
     .directive('dropdownHover', dropdownHover)
-    .directive('htmlElementPicker', htmlElementPicker)
-    .directive('htmlElementPickerWindow', htmlElementPickerWindow)
-    .directive('hypothesis', hypothesis)
+    .directive('htmlElementPickerHandle', htmlElementPickerHandle)
 
     // modal handles
     .directive('actionCreateModalHandle', actionCreateModalHandle)

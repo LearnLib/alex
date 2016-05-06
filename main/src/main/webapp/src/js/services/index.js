@@ -25,6 +25,7 @@ import {PromptService} from './PromptService';
 import SessionService from './SessionService';
 import ToastService from './ToastService';
 import LearnerResultDownloadService from './LearnerResultDownloadService';
+import {HtmlElementPickerService} from './HtmlElementPickerService';
 
 const moduleName = 'ALEX.services';
 
@@ -40,6 +41,7 @@ angular
     .service('PromptService', PromptService)
     .service('SessionService', SessionService)
     .service('ToastService', ToastService)
-    .service('LearnerResultDownloadService', LearnerResultDownloadService);
+    .service('LearnerResultDownloadService', LearnerResultDownloadService)
+    .service('HtmlElementPickerService', HtmlElementPickerService);
 
 export const services = moduleName;
