@@ -33,6 +33,12 @@ class GoToWebAction extends Action {
          * @type {*|string}
          */
         this.url = obj.url || '';
+
+        /**
+         * The HTTP Basic auth credentials of the request (optional).
+         * @type {*|{}}
+         */
+        this.credentials = obj.credentials || {};
     }
 
     /**

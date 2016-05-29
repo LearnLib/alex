@@ -60,6 +60,12 @@ class CallRestAction extends Action {
          * @type {*|{}}
          */
         this.headers = obj.headers || {};
+
+        /**
+         * The HTTP Basic auth credentials of the request (optional).
+         * @type {*|{}}
+         */
+        this.credentials = obj.credentials || {};
     }
 
     /**
