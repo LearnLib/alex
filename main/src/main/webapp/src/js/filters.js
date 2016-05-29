@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm, eqOracleType, userRole, webBrowser} from '../constants';
+import {learnAlgorithm, eqOracleType, userRole, webBrowser} from './constants';
 
 /**
  * The filter to format a EQ type constant to something more readable
  * @returns {Function}
  */
-function formatEqOracle() {
+export function formatEqOracle() {
     return type => {
         switch (type) {
             case eqOracleType.RANDOM:
@@ -42,7 +42,7 @@ function formatEqOracle() {
  * The filter to format a user role
  * @returns {Function}
  */
-function formatUserRole() {
+export function formatUserRole() {
     return role => {
         switch (role) {
             case userRole.ADMIN:
@@ -60,7 +60,7 @@ function formatUserRole() {
  * Formats the web browser dictionary
  * @returns {Function}
  */
-function formatWebBrowser() {
+export function formatWebBrowser() {
     return browser => {
         switch (browser) {
             case webBrowser.HTMLUNITDRIVER:
@@ -82,7 +82,7 @@ function formatWebBrowser() {
  * The filter to format a learn algorithm name to something more readable
  * @returns {Function}
  */
-function formatAlgorithm() {
+export function formatAlgorithm() {
     return name => {
         switch (name) {
             case learnAlgorithm.LSTAR:
@@ -103,7 +103,7 @@ function formatAlgorithm() {
  * The filter takes a number representing milliseconds and formats it to [h] [min] s
  * @returns {Function}
  */
-function formatMilliseconds() {
+export function formatMilliseconds() {
     return ms => {
         let hours, minutes, seconds;
 
@@ -121,5 +121,3 @@ function formatMilliseconds() {
         }
     };
 }
-
-export {formatAlgorithm, formatEqOracle, formatMilliseconds, formatUserRole, formatWebBrowser};
