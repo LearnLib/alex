@@ -17,6 +17,7 @@
 package de.learnlib.alex.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.actions.Credentials;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
@@ -34,6 +35,8 @@ import java.net.URISyntaxException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -84,13 +87,13 @@ public class GotoActionTest {
         WebSiteConnector connector = mock(WebSiteConnector.class);
 
         assertEquals(ExecuteResult.OK, g.execute(connector));
-        verify(connector).get(FAKE_URL);
+        verify(connector).get(eq(FAKE_URL), any(Credentials.class));
     }
 
     @Test
     public void shouldReturnFailedIfTheUrlCouldNotBeFound() {
         WebSiteConnector connector = mock(WebSiteConnector.class);
-        willThrow(Exception.class).given(connector).get(FAKE_URL);
+        willThrow(Exception.class).given(connector).get(eq(FAKE_URL), any(Credentials.class));
 
         assertEquals(ExecuteResult.FAILED, g.execute(connector));
     }

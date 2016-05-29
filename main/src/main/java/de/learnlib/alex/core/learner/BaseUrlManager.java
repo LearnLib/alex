@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.core.learner;
 
+import de.learnlib.alex.actions.Credentials;
+
 /**
  * Class to mange a URL and get URL based on this.
  */
@@ -62,6 +64,22 @@ public class BaseUrlManager {
      */
     public String getAbsoluteUrl(String path) {
         return combineUrls(baseUrl, path);
+    }
+
+    /**
+     * Get the absolute URL of a path, i.e. based on the base url (base url + '/' + path'), as String
+     * and insert the credentials if possible.
+     *
+     * @param path
+     *         The path to append on the base url.
+     * @param credentials
+     *         The credentials to insert into the URL.
+     * @return An absolute URL as String
+     */
+    public String getAbsoluteUrl(String path, Credentials credentials) {
+        String url = combineUrls(baseUrl, path);
+        url = url.replaceFirst("^(http[s]?://)", "$1" + credentials.getName() + ":" + credentials.getPassword() + "@");
+        return url;
     }
 
     /**
