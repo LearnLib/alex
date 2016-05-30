@@ -1,7 +1,7 @@
-<h4><strong>Go to URL</strong></h4>
+<h4><strong>Open URL</strong></h4>
 
 <p class="text-muted">
-    Go to a url that is <strong>relative</strong> to your projects' base url
+    Open a URL that is <strong>relative</strong> to your projects' base URL
 </p>
 <hr>
 
@@ -10,12 +10,17 @@
     <input class="form-control" type="text" placeholder="url" ng-model="vm.action.url">
 </div>
 
-<label>Authentication</label>
+<hr>
+
+<h4><strong>Authentication</strong></h4>
+<p class="text-muted">
+    Use Basic HTTP authentication (optional)
+</p>
 <div class="form-group">
-    <label class="control-label">Name:</label>
+    <label class="control-label">Name</label>
     <input class="form-control" type="text" ng-model="vm.action.credentials.name" placeholder="Name">
 </div>
 <div class="form-group">
-    <label class="control-label">Password:</label>
+    <label class="control-label">Password</label>
     <input class="form-control" type="text" ng-model="vm.action.credentials.password" placeholder="Password">
 </div>
