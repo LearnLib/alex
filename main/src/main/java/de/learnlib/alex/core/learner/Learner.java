@@ -452,11 +452,8 @@ public class Learner {
         ConnectorManager connectors = contextHandler.createContext();
 
         try {
-            List<String> output = symbols.stream().map(s -> s.execute(connectors).toString()).collect(Collectors.toList());
-            connectors.dispose();
-            return output;
+            return symbols.stream().map(s -> s.execute(connectors).toString()).collect(Collectors.toList());
         } catch (Exception e) {
-            connectors.dispose();
             throw new LearnerException("Could not read the outputs", e);
         }
     }

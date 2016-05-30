@@ -30,7 +30,6 @@ import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.mapper.ContextExecutableInputSUL;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -47,7 +46,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LearnerTest {
@@ -144,24 +142,17 @@ public class LearnerTest {
     public void shouldReadTheCorrectOutputOfSomeSymbols() {
         Symbol resetSymbol = mock(Symbol.class);
         given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
-        //
         List<Symbol> symbols = new LinkedList<>();
         for (int i = 0; i < SYMBOL_AMOUNT; i++) {
             Symbol symbol = mock(Symbol.class);
             given(symbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
             symbols.add(symbol);
         }
-        //
-        ConnectorContextHandler contextHandler = mock(ConnectorContextHandler.class);
-        ConnectorManager connectorManager = mock(ConnectorManager.class);
-        given(contextHandler.createContext()).willReturn(connectorManager);
-        given(contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER)).willReturn(contextHandler);
 
         List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols);
 
         assertEquals(symbols.size(), outputs.size());
         assertTrue("at least one output was not OK", outputs.stream().allMatch(output -> output.equals("OK")));
-        verify(connectorManager).dispose();
     }
 
 }

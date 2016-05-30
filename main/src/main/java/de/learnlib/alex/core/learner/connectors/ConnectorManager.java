@@ -38,6 +38,13 @@ public class ConnectorManager implements Iterable<Connector> {
     }
 
     /**
+     * Removes all connectors.
+     */
+    public void reset() {
+        this.connectors.clear();
+    }
+
+    /**
      * Adds a new connector to the manager.
      *
      * @param type      The class of the connector to add.
@@ -62,14 +69,4 @@ public class ConnectorManager implements Iterable<Connector> {
     public Iterator<Connector> iterator() {
         return connectors.values().iterator();
     }
-
-    /**
-     * Disposes all connectors and clear the list of managed connectors.
-     * This method is idempotent.
-     */
-    public void dispose() {
-        connectors.forEach((t, u) -> u.dispose());
-        connectors.clear();
-    }
-
 }
