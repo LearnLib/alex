@@ -78,7 +78,9 @@ public class BaseUrlManager {
      */
     public String getAbsoluteUrl(String path, Credentials credentials) {
         String url = combineUrls(baseUrl, path);
-        url = url.replaceFirst("^(http[s]?://)", "$1" + credentials.getName() + ":" + credentials.getPassword() + "@");
+        if (credentials != null && credentials.areValid()) {
+            url = url.replaceFirst("^(http[s]?://)", "$1" + credentials.getName() + ":" + credentials.getPassword() + "@");
+        }
         return url;
     }
 

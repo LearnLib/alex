@@ -72,4 +72,11 @@ public class Credentials {
         return  Base64.encodeBase64String(credentialsAsString.getBytes());
     }
 
+    /**
+     * Check if the credentials are not empty.
+     * @return If the credentials are valid.
+     */
+    public boolean areValid() {
+        return !name.trim().equals("") && !password.trim().equals("");
+    }
 }
