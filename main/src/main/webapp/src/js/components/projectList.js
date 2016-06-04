@@ -87,7 +87,7 @@ class ProjectList {
                     delete group.project;
                     delete group.user;
 
-                    group.symbols = group.symbols.map(symbol => symbol.getExportableSymbol())
+                    group.symbols = group.symbols.map(symbol => symbol.getExportableSymbol());
                 });
 
                 delete project.id;
@@ -99,8 +99,8 @@ class ProjectList {
                     this.DownloadService.downloadObject(project, filename);
                     this.ToastService.success('The project has been exported.');
                 });
-            })
-        })
+            });
+        });
     }
 }
 

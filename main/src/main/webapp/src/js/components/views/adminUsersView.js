@@ -88,7 +88,7 @@ class AdminUsersView {
             })
             .catch(response => {
                 this.ToastService.danger(`Deleting failed! ${response.data.message}`);
-            })
+            });
     }
 }
 

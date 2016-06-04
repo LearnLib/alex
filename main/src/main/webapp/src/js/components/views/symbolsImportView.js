@@ -27,10 +27,10 @@ class SymbolsImportView {
     /**
      * Constructor
      * @param $scope
-     * @param SessionService
-     * @param SymbolResource
-     * @param ToastService
-     * @param EventBus
+     * @param {SessionService} SessionService
+     * @param {SymbolResource} SymbolResource
+     * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
      */
     constructor($scope, SessionService, SymbolResource, ToastService, EventBus) {
         this.SymbolResource = SymbolResource;
@@ -83,7 +83,7 @@ class SymbolsImportView {
                 return new AlphabetSymbol(s);
             });
         } catch (e) {
-            this.ToastService.danger('<p><strong>Loading json file failed</strong></p>' + e);
+            this.ToastService.danger('<p><strong>Loading json file failed</strong></p> The file is not properly formatted');
         }
     }
 
@@ -95,7 +95,8 @@ class SymbolsImportView {
         if (this.selectedSymbols.length > 0) {
             this.SymbolResource.getAll(this.project.id)
                 .then(existingSymbols => {
-                    const maxId = _.max(existingSymbols, 'id').id;
+                    let maxId = _.max(existingSymbols, 'id');
+                    maxId = typeof maxId === "undefined" ? 0 : maxId;
                     const symbols = this.selectedSymbols.map(s => new AlphabetSymbol(s));
                     symbols.forEach(symbol => {
                         delete symbol.id;
@@ -118,11 +119,20 @@ class SymbolsImportView {
                                 _.remove(this.symbols, {name: symbol.name});
                             });
                         })
-                        .catch(response => {
-                            this.ToastService.danger('<p><strong>Symbol upload failed</strong></p>' + response.data.message);
+                        .catch(() => {
+                            this.ToastService.danger('<p><strong>Symbol upload failed</strong></p> It seems at least on symbol already exists');
                         });
                 });
         }
+    }
+
+    /**
+     * Remove selected symbols from the list.
+     */
+    removeSelectedSymbols() {
+        this.selectedSymbols.forEach(symbol => {
+            _.remove(this.symbols, {name: symbol.name});
+        });
     }
 
     /**

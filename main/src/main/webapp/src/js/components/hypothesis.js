@@ -136,7 +136,7 @@ class HypothesisComponent {
                 width: 25,
                 labelStyle: STYLE.nodeLabel,
                 style: node === this.data.initNode ? STYLE.initNode : STYLE.node
-            })
+            });
         });
 
         // another format of a graph for merged multi edges

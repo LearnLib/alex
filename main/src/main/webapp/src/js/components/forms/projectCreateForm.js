@@ -74,10 +74,10 @@ class ProjectCreateForm {
                 .then(importedProject => {
                     this.EventBus.emit(events.PROJECT_CREATED, {project: importedProject});
                     this.projectToImport = null;
-                    this.ToastService.success(`The project '${importedProject.name}' has been imported.`)
+                    this.ToastService.success(`The project '${importedProject.name}' has been imported.`);
                 })
                 .catch(response => {
-                    this.ToastService.danger(`<p><strong>The import failed!</strong></p> ${response.data.message}`)
+                    this.ToastService.danger(`<p><strong>The import failed!</strong></p> ${response.data.message}`);
                 });
         }
     }
