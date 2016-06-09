@@ -148,8 +148,8 @@ public class LearnerThread extends Thread {
                 ceiSUL = new ContextExecutableInputSUL<>(context);
         SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
         this.cachedSUL = SULCaches.createCache(this.sigma, mappedSUL);
-        resetCounterSUL = new ResetCounterSUL<>("reset counter", this.cachedSUL);
-        symbolCounterSUL = new SymbolCounterSUL<>("symbol counter", resetCounterSUL);
+        this.resetCounterSUL = new ResetCounterSUL<>("resets", this.cachedSUL);
+        this.symbolCounterSUL = new SymbolCounterSUL<>("symbols used", resetCounterSUL);
         this.sul = symbolCounterSUL;
 
         this.mqOracle = new SULOracle<>(sul);
@@ -180,8 +180,12 @@ public class LearnerThread extends Thread {
         result.setSigma(AlphabetProxy.createFrom(sigma));
 
         this.cachedSUL = existingSUL;
-        resetCounterSUL = new ResetCounterSUL<>("reset counter", this.cachedSUL);
-        symbolCounterSUL = new SymbolCounterSUL<>("symbol counter", resetCounterSUL);
+        this.resetCounterSUL = new ResetCounterSUL<>("resets", this.cachedSUL);
+        this.resetCounterSUL.getStatisticalData().increment(result.getStatistics().getMqsUsed());
+
+        this.symbolCounterSUL = new SymbolCounterSUL<>("symbols used", resetCounterSUL);
+        this.symbolCounterSUL.getStatisticalData().increment(result.getStatistics().getSymbolsUsed());
+
         this.sul = symbolCounterSUL;
 
         this.mqOracle = new SULOracle<>(sul);
@@ -360,9 +364,9 @@ public class LearnerThread extends Thread {
                      + "(start: " + startTime + ", end: " + currentTime + ").");
 
         long mqUsedDiff = resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed();
-        statistics.setMqsUsed(Math.abs(mqUsedDiff));
+        statistics.setMqsUsed(mqUsedDiff);
         long symbolUsedDiff = symbolCounterSUL.getStatisticalData().getCount() - statistics.getSymbolsUsed();
-        statistics.setSymbolsUsed(Math.abs(symbolUsedDiff));
+        statistics.setSymbolsUsed(symbolUsedDiff);
 
         // algorithm information
         LearnAlgorithms algorithm = result.getAlgorithm();
