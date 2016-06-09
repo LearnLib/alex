@@ -286,9 +286,6 @@
                         package.json,
                         gruntfile.js
                     </warSourceExcludes>
-                    <!--<warSourceIncludes>-->
-                        <!--**/node_modules/font-awesome/fonts/**-->
-                    <!--</warSourceIncludes>-->
                 </configuration>
             </plugin>
 
