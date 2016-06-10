@@ -15,7 +15,7 @@
  */
 
 import {events} from '../../constants';
-import {SymbolFormModel} from '../../entities/Symbol';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /** The controller for the modal window to create a new symbol */
 // @ngInject
@@ -44,9 +44,9 @@ class SymbolCreateModalController {
 
         /**
          * The model of the symbol that will be created
-         * @type {SymbolFormModel}
+         * @type {AlphabetSymbol}
          */
-        this.symbol = new SymbolFormModel();
+        this.symbol = new AlphabetSymbol();
 
         /**
          * The list of available symbol groups where the new symbol could be created in
@@ -88,7 +88,7 @@ class SymbolCreateModalController {
             .then(symbol => {
                 this.ToastService.success(`Created symbol "${symbol.name}"`);
                 this.EventBus.emit(events.SYMBOL_CREATED, {symbol: symbol});
-                this.symbol = new SymbolFormModel();
+                this.symbol = new AlphabetSymbol();
 
                 // set the form to its original state
                 this.form.$setPristine();

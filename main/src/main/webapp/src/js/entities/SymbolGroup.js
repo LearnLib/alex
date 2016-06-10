@@ -14,38 +14,24 @@
  * limitations under the License.
  */
 
-import {Symbol} from './Symbol';
+import {AlphabetSymbol} from './AlphabetSymbol';
 
 /**
- * The symbol group model for forms
+ * The model for symbol group
  */
-class SymbolGroupFormModel {
+export class SymbolGroup {
 
     /**
      * Constructor
-     * @param {string} name - The name of the group
+     * @param {*} obj - The object to create the symbol group from
      */
-    constructor(name = '') {
+    constructor(obj = {}) {
 
         /**
          * The name of the group
          * @type {string}
          */
-        this.name = name;
-    }
-}
-
-/**
- * The model for symbol group
- */
-class SymbolGroup extends SymbolGroupFormModel {
-
-    /**
-     * Constructor
-     * @param {object} obj - The object to create the symbol group from
-     */
-    constructor(obj) {
-        super(obj.name);
+        this.name = obj.name || null;
 
         /**
          * The id of the group
@@ -67,10 +53,8 @@ class SymbolGroup extends SymbolGroupFormModel {
 
         /**
          * The visible symbols of the group
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
-        this.symbols = obj.symbols ? obj.symbols.filter(s => !s.hidden).map(s => new Symbol(s)) : [];
+        this.symbols = obj.symbols ? obj.symbols.filter(s => !s.hidden).map(s => new AlphabetSymbol(s)) : [];
     }
 }
-
-export {SymbolGroupFormModel, SymbolGroup};

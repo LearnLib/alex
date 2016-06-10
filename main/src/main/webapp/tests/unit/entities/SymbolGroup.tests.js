@@ -1,19 +1,5 @@
-import {SymbolGroup, SymbolGroupFormModel} from '../../../src/js/entities/SymbolGroup';
-import {Symbol} from '../../../src/js/entities/Symbol';
-
-describe('SymbolGroupFormModel', () => {
-    beforeEach(angular.mock.module('ALEX'));
-
-    it('should correctly create a new SymbolGroupFormModel', () => {
-        let group = new SymbolGroupFormModel();
-        expect(Object.keys(group).length).toEqual(1);
-        expect(group.name).toEqual('');
-
-        group = new SymbolGroupFormModel('newGroup');
-        expect(Object.keys(group).length).toEqual(1);
-        expect(group.name).toEqual('newGroup');
-    });
-});
+import {SymbolGroup} from '../../../src/js/entities/SymbolGroup';
+import {AlphabetSymbol} from '../../../src/js/entities/AlphabetSymbol';
 
 describe('SymbolGroup', () => {
     beforeEach(angular.mock.module('ALEX'));
@@ -24,6 +10,6 @@ describe('SymbolGroup', () => {
 
         expect(Object.keys(group).length).toEqual(5);
 
-        group.symbols.forEach(s => expect(s instanceof Symbol).toBe(true));
+        group.symbols.forEach(s => expect(s instanceof AlphabetSymbol).toBe(true));
     })
 });

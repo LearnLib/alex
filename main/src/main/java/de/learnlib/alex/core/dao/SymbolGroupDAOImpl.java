@@ -34,11 +34,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementation of a SymbolGroupDAO using Hibernate.
@@ -219,7 +215,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                                                                                     group.getId(),
                                                                                     SymbolVisibilityLevel.ALL);
                 List<Symbol> symbols = symbolDAO.getAll(session, user, group.getProjectId(), idRevisionPairs);
-                group.setSymbols(new HashSet<>(symbols));
+                group.setSymbols(new ArrayList<>(symbols));
             } catch (NotFoundException e) {
                 group.setSymbols(null);
             }

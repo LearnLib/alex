@@ -15,7 +15,7 @@
  */
 
 import {events} from '../../constants';
-import {UserFormModel} from '../../entities/User';
+import {User} from '../../entities/User';
 
 /** The component controller for the user login form */
 // @ngInject
@@ -39,25 +39,31 @@ class UserLoginForm {
         this.EventBus = EventBus;
 
         /**
-         * The user that wants to login
-         * @type {UserFormModel}
+         * The email of the user
+         * @type {string}
          */
-        this.user = new UserFormModel();
+        this.email = null;
+
+        /**
+         * The password of the user
+         * @type {string}
+         */
+        this.password = null;
     }
 
     login() {
-        if (this.user.email && this.user.password) {
-            this.UserResource.login(this.user)
+        if (this.email && this.password) {
+            this.UserResource.login(this.email, this.password)
                 .then(response => {
                     this.ToastService.info('You have logged in!');
 
                     // decode the token and create a user from it
                     const token = response.data.token;
                     const tokenPayload = this.jwtHelper.decodeToken(token);
-                    const user = {
+                    const user = new User({
                         id: tokenPayload.userId,
                         role: tokenPayload.userRole
-                    };
+                    });
 
                     this.SessionService.saveUser(user, token);
                     this.EventBus.emit(events.USER_LOGGED_IN, {user: user});
@@ -74,10 +80,10 @@ const userLoginForm = {
     controller: UserLoginForm,
     controllerAs: 'vm',
     template: `
-        <form name="vm.form" ng-submit="vm.login()">
+        <form name="vm.form" ng-submit="vm.login()" id="user-login-form">
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" class="form-control" name="mail" placeholder="Email address" autofocus required ng-model="vm.user.email">
+                <input type="email" class="form-control" name="mail" placeholder="Email address" autofocus required ng-model="vm.email">
 
                 <div class="help-block" ng-messages="vm.form.mail.$error" ng-if="vm.form.mail.$touched">
                     <div class="alert alert-danger alert-condensed" ng-message="required">
@@ -90,7 +96,7 @@ const userLoginForm = {
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" class="form-control" name="password" placeholder="Password" required ng-minlength="1" ng-model="vm.user.password">
+                <input type="password" class="form-control" name="password" placeholder="Password" required ng-minlength="1" ng-model="vm.password">
 
                 <div class="help-block" ng-messages="vm.form.password.$error" ng-if="vm.form.password.$touched">
                     <div class="alert alert-danger alert-condensed" ng-message="required">

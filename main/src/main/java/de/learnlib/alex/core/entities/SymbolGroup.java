@@ -35,8 +35,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entity to organize symbols.
@@ -84,7 +84,7 @@ public class SymbolGroup implements Serializable {
     /** The Symbols manged by this group. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.DELETE })
-    private Set<Symbol> symbols;
+    private List<Symbol> symbols;
 
     /**
      * Default constructor.
@@ -92,7 +92,7 @@ public class SymbolGroup implements Serializable {
     public SymbolGroup() {
         this.groupId = 0L;
         this.id = 0L;
-        this.symbols = new HashSet<>();
+        this.symbols = new ArrayList<>();
     }
 
     @JsonIgnore
@@ -205,7 +205,7 @@ public class SymbolGroup implements Serializable {
      *
      * @return The related symbols.
      */
-    public Set<Symbol> getSymbols() {
+    public List<Symbol> getSymbols() {
         return symbols;
     }
 
@@ -228,7 +228,7 @@ public class SymbolGroup implements Serializable {
      * @param symbols
      *         The new set of related symbols.
      */
-    public void setSymbols(Set<Symbol> symbols) {
+    public void setSymbols(List<Symbol> symbols) {
         this.symbols = symbols;
     }
 

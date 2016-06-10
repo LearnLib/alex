@@ -46,7 +46,7 @@ public class ConnectorContextHandlerTest {
     }
 
     @Test
-    public void shouldCreateTheContextCorrectly() {
+    public void shouldCreateTheContextCorrectly() throws Exception {
         given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
         Connector connector1 = mock(VariableStoreConnector.class);
         handler.addConnector(connector1);

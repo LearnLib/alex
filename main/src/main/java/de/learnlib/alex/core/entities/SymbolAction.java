@@ -38,19 +38,7 @@ import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByHTMLElementActio
 import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
 import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByNodeAttributeAction;
 import de.learnlib.alex.actions.WaitAction;
-import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
-import de.learnlib.alex.actions.WebSymbolActions.CheckPageTitleAction;
-import de.learnlib.alex.actions.WebSymbolActions.CheckTextWebAction;
-import de.learnlib.alex.actions.WebSymbolActions.ClearAction;
-import de.learnlib.alex.actions.WebSymbolActions.ClickAction;
-import de.learnlib.alex.actions.WebSymbolActions.ClickLinkAction;
-import de.learnlib.alex.actions.WebSymbolActions.FillAction;
-import de.learnlib.alex.actions.WebSymbolActions.GotoAction;
-import de.learnlib.alex.actions.WebSymbolActions.SelectAction;
-import de.learnlib.alex.actions.WebSymbolActions.SubmitAction;
-import de.learnlib.alex.actions.WebSymbolActions.WaitForNodeAction;
-import de.learnlib.alex.actions.WebSymbolActions.WaitForTitleAction;
-import de.learnlib.alex.actions.WebSymbolActions.WebSymbolAction;
+import de.learnlib.alex.actions.WebSymbolActions.*;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.utils.SearchHelper;
 import org.hibernate.annotations.NaturalId;
@@ -100,6 +88,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web_clear", value = ClearAction.class),
         @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
         @JsonSubTypes.Type(name = "web_clickLinkByText", value = ClickLinkAction.class),
+        @JsonSubTypes.Type(name = "web_executeScript", value = ExecuteScriptAction.class),
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),

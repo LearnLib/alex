@@ -1,4 +1,4 @@
-import {SymbolFormModel, Symbol} from '../../../../src/js/entities/Symbol';
+import {AlphabetSymbol} from '../../../../src/js/entities/AlphabetSymbol';
 import {events} from '../../../../src/js/constants';
 import {SymbolCreateModalController} from '../../../../src/js/directives/modals/symbolCreateModalHandle';
 
@@ -83,7 +83,7 @@ describe('symbolCreateModal', () => {
     it('should create a symbol and not close the modal', () => {
         createController();
         const deferred = $q.defer();
-        const symbol = new Symbol(ENTITIES.symbols[0]);
+        const symbol = new AlphabetSymbol(ENTITIES.symbols[0]);
         spyOn(SymbolResource, 'create').and.returnValue(deferred.promise);
         spyOn(EventBus, 'emit').and.callThrough();
         deferred.resolve(symbol);

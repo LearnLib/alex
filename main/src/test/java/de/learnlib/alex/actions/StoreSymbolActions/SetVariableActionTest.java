@@ -18,8 +18,11 @@ package de.learnlib.alex.actions.StoreSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,14 +39,25 @@ import static org.mockito.Mockito.verify;
 
 public class SetVariableActionTest {
 
+    private static long USER_ID    = 21;
+    private static long PROJECT_ID = 42;
+
     private static final String TEST_VALUE = "foobar";
-    private static final String TEST_NAME = "variable";
+    private static final String TEST_NAME  = "variable";
 
     private SetVariableAction setAction;
 
     @Before
     public void setUp() {
+        User user = new User();
+        user.setId(USER_ID);
+
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+
         setAction = new SetVariableAction();
+        setAction.setUser(user);
+        setAction.setProject(project);
         setAction.setName(TEST_NAME);
         setAction.setValue(TEST_VALUE);
     }
@@ -81,6 +95,25 @@ public class SetVariableActionTest {
 
         assertEquals(ExecuteResult.OK, result);
         verify(variables).set(TEST_NAME, TEST_VALUE);
+    }
+
+    @Test
+    public void shouldSuccessfulSetTheVariableValueWithCounter() {
+        ConnectorManager connector = mock(ConnectorManager.class);
+        //
+        CounterStoreConnector counters = mock(CounterStoreConnector.class);
+        given(counters.get(USER_ID, PROJECT_ID, "counter")).willReturn(2);
+        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        //
+        VariableStoreConnector variables = mock(VariableStoreConnector.class);
+        given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
+        //
+        setAction.setValue(TEST_VALUE + "{{#counter}}");
+
+        ExecuteResult result = setAction.executeAction(connector);
+
+        assertEquals(ExecuteResult.OK, result);
+        verify(variables).set(TEST_NAME, TEST_VALUE + "2");
     }
 
 }

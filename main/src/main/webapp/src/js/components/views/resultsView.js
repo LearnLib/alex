@@ -107,7 +107,7 @@ class ResultsView {
      */
     openSelectedResults() {
         if (this.selectedResults.length > 0) {
-            const testNos = _.pluck(this.selectedResults, 'testNo');
+            const testNos = this.selectedResults.map(r => r.testNo);
             this.$state.go('resultsCompare', {testNos: testNos.join(',')});
         }
     }

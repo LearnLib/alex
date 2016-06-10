@@ -15,7 +15,7 @@
  */
 
 import {events} from '../../constants';
-import {ProjectFormModel} from '../../entities/Project';
+import {Project} from '../../entities/Project';
 
 /** The class of the project create form component */
 // @ngInject
@@ -23,20 +23,31 @@ class ProjectCreateForm {
 
     /**
      * Constructor
-     * @param ProjectResource
-     * @param ToastService
-     * @param EventBus
+     * @param $scope
+     * @param {ProjectResource} ProjectResource
+     * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
      */
-    constructor(ProjectResource, ToastService, EventBus) {
+    constructor($scope, ProjectResource, ToastService, EventBus) {
         this.ProjectResource = ProjectResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
 
         /**
          * The empty project model that is used for the form
-         * @type {ProjectFormModel}
+         * @type {Project}
          */
-        this.project = new ProjectFormModel();
+        this.project = new Project();
+
+        /**
+         * The project that should be imported
+         * @type {Project}
+         */
+        this.projectToImport = null;
+
+        EventBus.on(events.FILE_LOADED, (evt, data) => {
+            this.projectToImport = JSON.parse(data.file);
+        }, $scope);
     }
 
     /** Creates a new project */
@@ -45,7 +56,7 @@ class ProjectCreateForm {
             .then(createdProject => {
                 this.ToastService.success(`Project "${createdProject.name}" created`);
                 this.EventBus.emit(events.PROJECT_CREATED, {project: createdProject});
-                this.project = new ProjectFormModel();
+                this.project = new Project();
 
                 // set the form to its original state
                 this.form.$setPristine();
@@ -54,6 +65,21 @@ class ProjectCreateForm {
             .catch(response => {
                 this.ToastService.danger('<p><strong>Creation of project failed</strong></p>' + response.data.message);
             });
+    }
+
+    /** Imports a project **/
+    importProject() {
+        if (this.projectToImport !== null) {
+            this.ProjectResource.create(this.projectToImport)
+                .then(importedProject => {
+                    this.EventBus.emit(events.PROJECT_CREATED, {project: importedProject});
+                    this.projectToImport = null;
+                    this.ToastService.success(`The project '${importedProject.name}' has been imported.`);
+                })
+                .catch(response => {
+                    this.ToastService.danger(`<p><strong>The import failed!</strong></p> ${response.data.message}`);
+                });
+        }
     }
 }
 

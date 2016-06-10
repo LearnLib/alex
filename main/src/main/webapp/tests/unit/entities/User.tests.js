@@ -1,21 +1,5 @@
 import {User, UserFormModel} from '../../../src/js/entities/User';
 
-describe('UserFormModel', () => {
-    beforeEach(angular.mock.module('ALEX'));
-
-    it('should correctly create a new UserFormModel', () => {
-        let user = new UserFormModel();
-        expect(Object.keys(user).length).toEqual(2);
-        expect(user.email).toEqual('');
-        expect(user.password).toEqual('');
-
-        user = new UserFormModel('email', 'password');
-        expect(Object.keys(user).length).toEqual(2);
-        expect(user.email).toEqual('email');
-        expect(user.password).toEqual('password');
-    });
-});
-
 describe('User', () => {
     beforeEach(angular.mock.module('ALEX'));
 

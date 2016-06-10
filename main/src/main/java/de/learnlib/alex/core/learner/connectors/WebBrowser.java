@@ -71,28 +71,20 @@ public enum WebBrowser {
      *
      * @return An instance of a web driver.
      */
-    public WebDriver getWebDriver() {
+    public WebDriver getWebDriver() throws Exception {
         try {
             if (this == HTMLUNITDRIVER) {
                 HtmlUnitDriver driver = (HtmlUnitDriver) webDriverClass.getConstructor(BrowserVersion.class)
-                        .newInstance(BrowserVersion.FIREFOX_38);
+                        .newInstance(BrowserVersion.INTERNET_EXPLORER_11);
                 enableJavaScript(driver);
                 return driver;
             } else {
                 return (WebDriver) webDriverClass.getConstructor().newInstance();
             }
-            // todo: logging and error handling
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.warn("Could not create a WebDriver.", e);
+            throw e;
         }
-
-        return null;
     }
 
     /**

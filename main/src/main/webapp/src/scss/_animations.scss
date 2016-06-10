@@ -29,3 +29,9 @@
     z-index: 9999;
   }
 }
+
+#load-screen {
+  &.ng-leave {
+    animation: fadeOut 1s both ease-in;
+  }
+}

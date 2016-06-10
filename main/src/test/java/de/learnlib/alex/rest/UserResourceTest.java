@@ -5,6 +5,7 @@ import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.UserHelper;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Ignore;
@@ -340,6 +341,40 @@ public class UserResourceTest extends JerseyTest {
 
         Response response = target("/users/" + USER_TEST_ID).request().header("Authorization", adminToken)
                                 .delete();
+
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldDeleteMultipleUsers() throws NotFoundException {
+        userDAO.delete(new IdsList("2,3"));
+
+        Response response = target("/users/batch/2,3")
+                .request()
+                .header("Authorization", adminToken)
+                .delete();
+
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldReturn400IfAdminsIdIsInList() {
+        Response response = target("/users/batch/2,3," + String.valueOf(admin.getId()))
+                .request()
+                .header("Authorization", adminToken)
+                .delete();
+
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void shouldReturn404IfAtLeastOneUserHasNotBeenFound() throws NotFoundException {
+        willThrow(NotFoundException.class).given(userDAO).delete(new IdsList("2,3"));
+
+        Response response = target("/users/batch/2,3")
+                .request()
+                .header("Authorization", adminToken)
+                .delete();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }

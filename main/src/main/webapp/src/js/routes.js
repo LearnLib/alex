@@ -26,101 +26,103 @@ function config($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('home', {
             url: '/home',
-            template: '<home-view></home-view>'
+            template: '<home-view></home-view>',
+            data: {title: 'Automata Learning EXperience'}
         })
         .state('usersSettings', {
             url: '/users/settings',
             template: '<users-settings-view></users-settings-view>',
-            data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN'], title: 'Settings'}
         })
         .state('projects', {
             url: '/projects',
             template: '<projects-view></projects-view>',
-            data: {roles: ['REGISTERED', 'ADMIN']}
+            data: {roles: ['REGISTERED', 'ADMIN'], title : 'Projects'}
         })
         .state('projectsDashboard', {
             url: '/projects/dashboard',
             template: '<projects-dashboard-view></projects-dashboard-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Dashboard'}
         })
         .state('counters', {
             url: '/counters',
             template: '<counters-view></counters-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Counters'}
         })
         .state('symbols', {
             url: '/symbols',
             template: '<symbols-view></symbols-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols'}
         })
         .state('symbolsTrash', {
             url: '/symbols/trash',
             template: '<symbols-trash-view></symbols-trash-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Trash'}
         })
         .state('symbolsHistory', {
             url: '/symbols/{symbolId:int}/history',
             template: '<symbols-history-view></symbols-history-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > History'}
         })
         .state('symbolsActions', {
             url: '/symbols/{symbolId:int}/actions',
             template: '<symbols-actions-view></symbols-actions-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Actions'}
         })
         .state('symbolsImport', {
             url: '/symbols/import',
             template: '<symbols-import-view></symbols-import-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Import'}
         })
         .state('learnerSetup', {
             url: '/learner/setup',
             template: '<learner-setup-view></learner-setup-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Learner > Setup'}
         })
         .state('learnerStart', {
             url: '/learner/start',
             template: '<learner-start-view></learner-start-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Learning'}
         })
         .state('results', {
             url: '/results',
             template: '<results-view></results-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Results'}
         })
         .state('resultsCompare', {
             url: '/results/:testNos/compare',
             template: '<results-compare-view></results-compare-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Results > Compare'}
         })
         .state('statistics', {
             url: '/statistics',
             template: '<statistics-view></statistics-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Statistics'}
         })
         .state('statisticsCompare', {
             url: '/statistics/{testNos:string}/compare/{mode:string}',
             template: '<statistics-compare-view></statistics-compare-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Statistics > Compare'}
         })
         .state('adminUsers', {
             url: '/admin/users',
             template: '<admin-users-view></admin-users-view>',
-            data: {requiresProject: false, roles: ['ADMIN']}
+            data: {requiresProject: false, roles: ['ADMIN'], title: 'Admin > Users'}
         })
         .state('about', {
             url: '/about',
             template: '<about-view></about-view>',
-            data: {}
+            data: {title: 'About'}
         })
         .state('error', {
             url: '/error',
-            template: '<error-view></error-view>'
+            template: '<error-view></error-view>',
+            data: {title: 'Error'}
         })
         .state('files', {
             url: '/files',
             template: '<files-view></files-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN']}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Files'}
         });
 }
 
@@ -137,6 +139,8 @@ function run($rootScope, $state, SessionService, ToastService) {
         if (toState.data) {
             const user = SessionService.getUser();
             const project = SessionService.getProject();
+
+            document.querySelector('title').innerHTML = 'ALEX | ' + toState.data.title;
 
             if ((toState.data.roles && (user === null
                 || toState.data.roles.indexOf(user.role) === -1))

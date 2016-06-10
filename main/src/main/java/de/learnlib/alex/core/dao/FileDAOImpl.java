@@ -19,13 +19,16 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.UploadableFile;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,18 +42,27 @@ public class FileDAOImpl implements FileDAO {
     /** The size of the output write buffer in bytes. */
     public static final int WRITE_BUFFER_SIZE = 1024;
 
+    /**
+     * The path of the upload directory as String.
+     * This will be injected by Spring and is configured in the applications.properties file.
+     */
+    @Value("${alex.uploadspath}")
+    private String uploadPathAsString;
+
     /** Path to the root of the upload directory. */
     private java.nio.file.Path uploadedDirectoryBaseLocation;
 
     /**
-     * Default consturtor that jsut initialises the internal data structures.
+     * Create the uploads directory, if necessary.
+     * Called by Spring after the DAO object is created and all injections are present.
      */
-    public FileDAOImpl() {
-        this.uploadedDirectoryBaseLocation = Paths.get(System.getProperty("user.dir"), "uploads");
+    @PostConstruct
+    private void init() {
+        this.uploadedDirectoryBaseLocation = Paths.get(uploadPathAsString);
 
         File uploadBaseDirectory = uploadedDirectoryBaseLocation.toFile();
         if (!uploadBaseDirectory.exists()) {
-            uploadBaseDirectory.mkdir();
+            uploadBaseDirectory.mkdirs();
         }
     }
 

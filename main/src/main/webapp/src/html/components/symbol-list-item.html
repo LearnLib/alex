@@ -7,7 +7,7 @@
 
         <h4 class="symbol-title" ng-bind="vm.symbol.name"></h4>
 
-        [<span ng-bind="vm.symbol.abbreviation"></span>]<br>
+        <span class="text-muted"> &nbsp;[<span ng-bind="vm.symbol.abbreviation"></span>]</span><br>
 
         <a ui-sref="symbolsActions({symbolId:vm.symbol.id})" ng-if="vm.symbol.id && !vm.symbol.hidden">
             <span ng-bind="vm.symbol.countEnabledActions()"></span> Actions &nbsp;<i class="fa fa-edit"></i>

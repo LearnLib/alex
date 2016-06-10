@@ -43,7 +43,7 @@ class ActionCreateModalController {
 
         /**
          * All symbols of the project
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.symbols = [];
 

@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-import * as filter from './filters';
+// the instance of the service
+let instance = null;
 
-const moduleName = 'ALEX.filters';
+/**
+ * The service fot the html element picker
+ */
+export class HtmlElementPickerService {
+    constructor() {
+        if (instance !== null) return instance;
+        
+        /**
+         * The promise that is used to communicate between the picker and the handle
+         * @type {Promise|null}
+         */
+        this.deferred = null;
 
-angular
-    .module(moduleName, [])
-    .filter('formatEqOracle', filter.formatEqOracle)
-    .filter('formatAlgorithm', filter.formatAlgorithm)
-    .filter('formatMilliseconds', filter.formatMilliseconds)
-    .filter('formatUserRole', filter.formatUserRole)
-    .filter('formatWebBrowser', filter.formatWebBrowser);
+        /**
+         * The url that was opened until the picker got closed.
+         * @type {string|null}
+         */
+        this.lastUrl = null;
 
-export const filters = moduleName;
+        instance = this;
+    }
+}

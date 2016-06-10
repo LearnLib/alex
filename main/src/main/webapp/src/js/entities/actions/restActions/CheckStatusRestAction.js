@@ -19,9 +19,6 @@ import {actionType} from '../../../constants';
 
 /** Checks for the status code (e.g. 404) in an HTTP response */
 class CheckStatusRestAction extends Action {
-    static get type() {
-        return 'rest_checkStatus';
-    }
 
     /**
      * Constructor
@@ -29,7 +26,7 @@ class CheckStatusRestAction extends Action {
      * @constructor
      */
     constructor(obj) {
-        super(CheckStatusRestAction.type, obj);
+        super(actionType.REST_CHECK_STATUS, obj);
 
         /**
          * The status code

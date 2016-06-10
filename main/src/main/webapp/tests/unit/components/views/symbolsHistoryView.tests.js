@@ -1,4 +1,4 @@
-import {Symbol} from '../../../../src/js/entities/Symbol';
+import {AlphabetSymbol} from '../../../../src/js/entities/AlphabetSymbol';
 
 describe('symbolsHistoryView', () => {
     const SYMBOL_ID = 1;
@@ -18,7 +18,7 @@ describe('symbolsHistoryView', () => {
         ToastService = $injector.get('ToastService');
         ErrorService = $injector.get('ErrorService');
 
-        symbols = ENTITIES.symbols.map(s => new Symbol(s));
+        symbols = ENTITIES.symbols.map(s => new AlphabetSymbol(s));
         project = ENTITIES.projects[0];
         user = ENTITIES.users[0];
 
@@ -48,7 +48,7 @@ describe('symbolsHistoryView', () => {
         spyOn(SymbolResource, 'getRevisions').and.returnValue(deferred.promise);
         deferred.resolve(symbols);
 
-        const copy = symbols.map(s => new Symbol(s));
+        const copy = symbols.map(s => new AlphabetSymbol(s));
         createComponent();
         $rootScope.$digest();
 

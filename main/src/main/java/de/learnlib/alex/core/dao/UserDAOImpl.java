@@ -20,6 +20,7 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
+import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -145,8 +146,8 @@ public class UserDAOImpl implements UserDAO {
 
             @SuppressWarnings("unchecked")
             List<User> admins = session.createCriteria(User.class)
-                                       .add(Restrictions.eq("role", UserRole.ADMIN))
-                                       .list();
+                    .add(Restrictions.eq("role", UserRole.ADMIN))
+                    .list();
 
             if (admins.size() == 1) {
                 throw new NotFoundException("There has to be at least one admin left");
@@ -154,6 +155,24 @@ public class UserDAOImpl implements UserDAO {
         }
 
         session.delete(user);
+        HibernateUtil.commitTransaction();
+    }
+
+    @Override
+    public void delete(IdsList ids) throws NotFoundException {
+        Session session = HibernateUtil.getSession();
+        HibernateUtil.beginTransaction();
+
+        try {
+            for (Long id: ids) {
+                User user = get(session, id);
+                session.delete(user);
+            }
+        } catch (NotFoundException e) {
+            HibernateUtil.rollbackTransaction();
+            throw  e;
+        }
+
         HibernateUtil.commitTransaction();
     }
 

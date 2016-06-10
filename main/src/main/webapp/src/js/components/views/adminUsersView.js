@@ -23,12 +23,15 @@ class AdminUsersView {
     /**
      * Constructor
      * @param $scope
-     * @param UserResource
-     * @param EventBus
-     * @param SessionService
-     * @param ToastService
+     * @param {UserResource} UserResource
+     * @param {EventBus} EventBus
+     * @param {SessionService} SessionService
+     * @param {ToastService} ToastService
      */
     constructor($scope, UserResource, EventBus, SessionService, ToastService) {
+        this.UserResource = UserResource;
+        this.ToastService = ToastService;
+        this.EventBus = EventBus;
 
         /**
          * The user that is logged in
@@ -41,6 +44,12 @@ class AdminUsersView {
          * @type {User[]}
          */
         this.users = [];
+
+        /**
+         * All selected users
+         * @type {User[]}
+         */
+        this.selectedUsers = [];
 
         // fetch all users from the server
         UserResource.getAll()
@@ -63,6 +72,23 @@ class AdminUsersView {
             const i = this.users.findIndex(u => u.id === data.user.id);
             if (i > -1) this.users.splice(i, 1);
         }, $scope);
+    }
+
+    /**
+     * Deletes selected users which are not admins.
+     */
+    deleteSelectedUsers() {
+        const ids = this.selectedUsers.filter(user => user.role !== 'ADMIN')
+            .map(user => user.id);
+
+        this.UserResource.removeManyUsers(ids)
+            .then(() => {
+                this.ToastService.success('The users have been deleted');
+                ids.forEach(id => this.EventBus.emit(events.USER_DELETED, {user: {id: id}}));
+            })
+            .catch(response => {
+                this.ToastService.danger(`Deleting failed! ${response.data.message}`);
+            });
     }
 }
 

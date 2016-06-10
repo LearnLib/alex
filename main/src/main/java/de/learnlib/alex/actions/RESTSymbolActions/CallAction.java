@@ -16,7 +16,9 @@
 
 package de.learnlib.alex.actions.RESTSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.actions.Credentials;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +27,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
@@ -40,6 +43,7 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue("rest_call")
 @JsonTypeName("rest_call")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CallAction extends RESTSymbolAction {
 
     /** to be serializable. */
@@ -79,6 +83,12 @@ public class CallAction extends RESTSymbolAction {
      */
     @Lob
     private HashMap<String, String> headers;
+
+    /**
+     * Optional credentials to authenticate via HTTP basic auth.
+     */
+    @Embedded
+    private Credentials credentials;
 
     /**
      * Map to store cookies, that will be send with the request.
@@ -180,6 +190,40 @@ public class CallAction extends RESTSymbolAction {
     }
 
     /**
+     * Get the credentials to authenticate.
+     *
+     * @return The credentials to use for authentication.
+     */
+    public Credentials getCredentials() {
+        return credentials;
+    }
+
+    /**
+     * Like {@link #getCredentials()}, but the name and password will have all variables and counters inserted.
+     *
+     * @return The credentials to use, with the actual values of counters and variables in their values.
+     */
+    private Credentials getCredentialsWithVariableValues() {
+        if (credentials == null) {
+            return new Credentials();
+        }
+
+        String name     = insertVariableValues(credentials.getName());
+        String password = insertVariableValues(credentials.getPassword());
+
+        return new Credentials(name, password);
+    }
+
+    /**
+     * Set the credentials to use for authentication.
+     *
+     * @param credentials The new credentials to use.
+     */
+    public void setCredentials(Credentials credentials) {
+        this.credentials = credentials;
+    }
+
+    /**
      * Get the map of cookies that will be used for the requests.
      *
      * @return The map of cookies.
@@ -254,21 +298,26 @@ public class CallAction extends RESTSymbolAction {
     }
 
     private void doRequest(WebServiceConnector target) {
+        Map<String, String> headers = getHeadersWithVariableValues();
+        if (credentials != null) {
+            headers.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
+        }
+
         switch (method) {
             case GET:
-                target.get(getUrlWithVariableValues(), getHeadersWithVariableValues(),
+                target.get(getUrlWithVariableValues(), headers,
                            getCookiesWithVariableValues());
                 break;
             case POST:
-                target.post(getUrlWithVariableValues(), getHeadersWithVariableValues(),
+                target.post(getUrlWithVariableValues(), headers,
                             getCookiesWithVariableValues(), getDataWithVariableValues());
                 break;
             case PUT:
-                target.put(getUrlWithVariableValues(), getHeadersWithVariableValues(),
+                target.put(getUrlWithVariableValues(), headers,
                            getCookiesWithVariableValues(), getDataWithVariableValues());
                 break;
             case DELETE:
-                target.delete(getUrlWithVariableValues(), getHeadersWithVariableValues(),
+                target.delete(getUrlWithVariableValues(), headers,
                               getCookiesWithVariableValues());
                 break;
             default:

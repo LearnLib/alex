@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-/** The form model for a Project */
-class ProjectFormModel {
-
-    /**
-     * Constructor
-     * @param {string} name - The name of the project
-     * @param {string} baseUrl - The base URL of the project
-     * @param {string|null} description - The description of the project
-     * @constructor
-     */
-    constructor(name = '', baseUrl = '', description = null) {
-        this.name = name;
-        this.baseUrl = baseUrl;
-        this.description = description;
-    }
-}
-
 /** The api result model for a Project */
-class Project extends ProjectFormModel {
+export class Project {
 
     /**
      * Constructor
      * @param {object} obj - The object to create a project from
      */
-    constructor(obj) {
-        super(obj.name, obj.baseUrl, obj.description);
+    constructor(obj = {}) {
+
+        /**
+         * The name of the project
+         * @type {string}
+         */
+        this.name = obj.name || null;
+
+        /**
+         * The base URL of the project
+         * @type {string}
+         */
+        this.baseUrl = obj.baseUrl || null;
+
+        /**
+         * The description of the project
+         * @type {string}
+         */
+        this.description = obj.description || null;
 
         /**
          * The id of the project
@@ -54,5 +54,3 @@ class Project extends ProjectFormModel {
         this.user = obj.user;
     }
 }
-
-export {ProjectFormModel, Project};

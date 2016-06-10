@@ -1,5 +1,3 @@
-import {events} from '../../../../src/js/constants';
-
 describe('userLoginForm', () => {
     let $rootScope, $compile, $q, UserResource, ToastService, $state, EventBus, SessionService;
     let renderedElement, controller;
@@ -45,11 +43,12 @@ describe('userLoginForm', () => {
         spyOn(UserResource, 'login').and.returnValue(deferred.promise);
         deferred.reject({data: null});
 
-        controller.user = USER;
+        controller.email = USER.email;
+        controller.password = USER.password;
         controller.login();
         $rootScope.$digest();
 
-        expect(UserResource.login).toHaveBeenCalledWith(USER);
+        expect(UserResource.login).toHaveBeenCalledWith(USER.email, USER.password);
         expect(ToastService.danger).toHaveBeenCalled();
     });
 
@@ -62,7 +61,8 @@ describe('userLoginForm', () => {
         spyOn(EventBus, 'emit').and.callThrough();
         spyOn(SessionService, 'saveUser').and.callThrough();
 
-        controller.user = USER;
+        controller.email = USER.email;
+        controller.password = USER.password;
         controller.login();
         $rootScope.$digest();
 

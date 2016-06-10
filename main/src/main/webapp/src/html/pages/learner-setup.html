@@ -68,15 +68,18 @@
                                                   symbol="symbol"
                                                   selection-model selection-model-selected-items="vm.selectedSymbols">
 
-                                    <a href="" class="pull-right" ng-if="vm.resetSymbol !== symbol"
-                                       ng-click="vm.setResetSymbol(symbol)"
+                                    <a class="label label-default label-reset"
+                                       ng-if="vm.resetSymbol !== symbol"
                                        uib-tooltip="Set as reset symbol" tooltip-placement="left"
-                                       selection-model-ignore>
-                                        <i class="fa fa-circle-thin"></i>
+                                       selection-model-ignore
+                                       ng-click="vm.setResetSymbol(symbol)">
+                                        Reset
                                     </a>
 
                                     <span ng-if="vm.resetSymbol === symbol"
-                                          class="label label-primary">Reset Symbol</span>
+                                          class="label label-primary label-reset">
+                                        Reset
+                                    </span>
 
                                 </symbol-list-item>
                             </div>
