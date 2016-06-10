@@ -251,8 +251,14 @@ public class LearnerThread extends Thread {
             learn();
         } catch (Exception e) {
             LOGGER.warn("Something in the LearnerThread went wrong:", e);
-            currentStep.setErrorText(e.getMessage());
+
+            String message = e.getMessage();
+            if (message == null) {
+                message = e.getClass().getName();
+            }
+            currentStep.setErrorText(message);
             learnerResultDAO.saveStep(result, currentStep);
+
             sul.post();
         } finally {
             LOGGER.trace("LearnThread.run() - exit");

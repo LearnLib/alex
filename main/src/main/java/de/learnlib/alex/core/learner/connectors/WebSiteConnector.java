@@ -72,7 +72,7 @@ public class WebSiteConnector implements Connector {
      * Try to clear all data from the browser, including Cookies, local storage & session storage.
      */
     @Override
-    public void reset() {
+    public void reset() throws Exception {
         this.driver = browser.getWebDriver();
         this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
         this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
