@@ -254,10 +254,11 @@ public class LearnerThread extends Thread {
             currentStep.setErrorText(e.getMessage());
             learnerResultDAO.saveStep(result, currentStep);
             sul.post();
-        }
+        } finally {
+            LOGGER.trace("LearnThread.run() - exit");
+            finished = true;
 
-        LOGGER.trace("LearnThread.run() - exit");
-        finished = true;
+        }
     }
 
     /**
