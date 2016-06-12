@@ -61,7 +61,13 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
     @Override
     public ConnectorManager createContext() throws LearnerException {
-        connectors.forEach(Connector::reset);
+        for (Connector connector : connectors) {
+            try {
+                connector.reset();
+            } catch (Exception e) {
+                throw new LearnerException(e.getMessage(), e);
+            }
+        }
 
         executeResetSymbol();
 
@@ -84,7 +90,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
     @Override
     public void disposeContext(ConnectorManager connector) {
-        connectors.forEach(Connector::dispose);
+        connectors.dispose();
     }
 
 }
