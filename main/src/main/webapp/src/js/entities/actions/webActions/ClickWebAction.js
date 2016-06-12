@@ -33,6 +33,12 @@ class ClickWebAction extends Action {
          * @type {*|string}
          */
         this.node = obj.node || '';
+
+        /**
+         * If a double click should be executed.
+         * @type {boolean}
+         */
+        this.doubleClick = obj.doubleClick || false;
     }
 
     /**
@@ -40,7 +46,11 @@ class ClickWebAction extends Action {
      * @returns {string}
      */
     toString() {
-        return `Click on "${this.node}"`;
+        if (this.doubleClick) {
+            return `Double click on "${this.node}"`;
+        } else {
+            return `Click on "${this.node}"`;
+        }
     }
 }
 

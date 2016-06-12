@@ -1,3 +1,10 @@
+# ALEX v1.2
+
+## Features
+
+* New action: Move mouse
+* Click action supports double click
+
 # ALEX v1.1
 
 ## Bug Fixes

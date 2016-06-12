@@ -28,6 +28,7 @@ import ClearWebAction from '../entities/actions/webActions/ClearWebAction';
 import CheckPageTitleAction from '../entities/actions/webActions/CheckPageTitleAction';
 import CheckForTextWebAction from '../entities/actions/webActions/CheckForTextWebAction';
 import CheckForNodeWebAction from '../entities/actions/webActions/CheckForNodeWebAction';
+import MoveMouseAction from '../entities/actions/webActions/MoveMouseAction';
 import WaitForTitleAction from '../entities/actions/webActions/WaitForTitleAction';
 import WaitForNodeAction from '../entities/actions/webActions/WaitForNodeAction';
 
@@ -77,6 +78,8 @@ class ActionService {
                 return new ExecuteScriptAction(data);
             case actionType.WEB_CLICK:
                 return new ClickWebAction(data);
+            case actionType.WEB_MOUSE_MOVE:
+                return new MoveMouseAction(data);
             case actionType.WEB_CLICK_LINK_BY_TEXT:
                 return new ClickLinkByTextWebAction(data);
             case actionType.WEB_CLEAR:

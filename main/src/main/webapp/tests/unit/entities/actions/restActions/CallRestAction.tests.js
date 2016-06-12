@@ -22,7 +22,8 @@ describe('CallRestAction', () => {
             url: '',
             data: null,
             cookies: {},
-            headers: {}
+            headers: {},
+            credentials: {}
         };
         const action = new CallRestAction({});
         expect(angular.toJson(action)).toEqual(angular.toJson(expectedAction));

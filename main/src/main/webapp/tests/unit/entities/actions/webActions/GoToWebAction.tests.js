@@ -18,7 +18,8 @@ describe('GoToWebAction', () => {
             ignoreFailure: false,
             disabled: false,
 
-            url: ''
+            url: '',
+            credentials: {}
         };
         const action = new GoToWebAction({});
         expect(angular.toJson(action)).toEqual(angular.toJson(expectedAction));

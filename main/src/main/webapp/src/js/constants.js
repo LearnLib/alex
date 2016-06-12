@@ -99,6 +99,7 @@ const actionType = {
     WEB_EXECUTE_SCRIPT: 'web_executeScript',
     WEB_FILL: 'web_fill',
     WEB_GO_TO: 'web_goto',
+    WEB_MOUSE_MOVE: 'web_moveMouse',
     WEB_SELECT: 'web_select',
     WEB_SUBMIT: 'web_submit',
     WAIT_FOR_NODE: 'web_waitForNode',

@@ -23,10 +23,13 @@ import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.utils.CSSUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to click on a specific element.
@@ -36,17 +39,24 @@ import javax.persistence.Entity;
 @JsonTypeName("web_click")
 public class ClickAction extends WebSymbolAction {
 
-    /** to be serializable. */
+    /**
+     * to be serializable.
+     */
     private static final long serialVersionUID = -9158530821188611940L;
 
-    /** The information to identify the element. */
+    /**
+     * The information to identify the element.
+     */
     @NotBlank
     @Column(columnDefinition = "CLOB")
     private String node;
 
+    @NotNull
+    private boolean doubleClick;
+
     /**
      * Get the information to identify the element.
-     * 
+     *
      * @return The element identifier.
      */
     public String getNode() {
@@ -65,10 +75,27 @@ public class ClickAction extends WebSymbolAction {
     }
 
     /**
+     * If a double click should be executed.
+     *
+     * @return The flag.
+     */
+    public boolean isDoubleClick() {
+        return doubleClick;
+    }
+
+    /**
+     * Set if a double click should be executed.
+     *
+     * @param doubleClick The flag.
+     */
+    public void setDoubleClick(boolean doubleClick) {
+        this.doubleClick = doubleClick;
+    }
+
+    /**
      * Set the information to identify the element.
-     * 
-     * @param node
-     *            The new element identifier.
+     *
+     * @param node The new element identifier.
      */
     public void setNode(String node) {
         this.node = node;
@@ -77,11 +104,15 @@ public class ClickAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.getElement(CSSUtils.escapeSelector(getNodeWithVariableValues())).click();
+            WebElement element = connector.getElement(CSSUtils.escapeSelector(getNodeWithVariableValues()));
+            if (doubleClick) {
+                new Actions(connector.getDriver()).doubleClick(element).build().perform();
+            } else {
+                element.click();
+            }
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             return getFailedOutput();
         }
     }
-
 }
