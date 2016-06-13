@@ -71,7 +71,7 @@ class LearnConfiguration {
 
     /**
      * Adds a symbol to the configuration
-     * @param {Symbol} symbol - The symbol to add to the config
+     * @param {AlphabetSymbol} symbol - The symbol to add to the config
      */
     addSymbol(symbol) {
         this.symbols.push(symbol.getIdRevisionPair());
@@ -79,7 +79,7 @@ class LearnConfiguration {
 
     /**
      * Sets the reset symbols for the configuration
-     * @param {Symbol} symbol - The reset symbol to use
+     * @param {AlphabetSymbol} symbol - The reset symbol to use
      */
     setResetSymbol(symbol) {
         this.resetSymbol = symbol.getIdRevisionPair();

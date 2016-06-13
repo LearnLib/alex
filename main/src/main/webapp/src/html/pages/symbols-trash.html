@@ -21,7 +21,7 @@
                 There aren't any deleted symbols.
             </div>
 
-            <symbol-list>
+            <div class="symbol-list">
                 <symbol-list-item ng-repeat="symbol in vm.symbols | orderBy:'-name':true" symbol="symbol"
                                   selection-model selection-model-selected-items="vm.selectedSymbols">
 
@@ -30,7 +30,7 @@
                     </a>
 
                 </symbol-list-item>
-            </symbol-list>
+            </div>
 
         </div>
     </div>

@@ -1,4 +1,4 @@
-import {Symbol} from '../../../../src/js/entities/Symbol';
+import {AlphabetSymbol} from '../../../../src/js/entities/AlphabetSymbol';
 import {events} from '../../../../src/js/constants';
 
 describe('symbolsImportView', () => {
@@ -56,11 +56,11 @@ describe('symbolsImportView', () => {
 
     it('should load all symbols from a file', () => {
         createComponent();
-        const symbols = ENTITIES.symbols.map(s => new Symbol(s));
+        const symbols = ENTITIES.symbols.map(s => new AlphabetSymbol(s));
         const json = angular.toJson(symbols);
         controller.fileLoaded(json);
         controller.symbols.forEach((s,i) => {
-            expect(s instanceof Symbol).toBe(true);
+            expect(s instanceof AlphabetSymbol).toBe(true);
             expect(s.id).toBeDefined();
             expect(s.name).toEqual(symbols[i].name);
             expect(s.abbreviation).toEqual(symbols[i].abbreviation);

@@ -81,23 +81,31 @@ class UserResource {
     }
 
     /**
-     * Creates a new user
+     * Creates a new user.
      *
-     * @param {UserFormModel} user - The user to create
+     * @param {string} email
+     * @param {string} password
      * @returns {*} - A promise
      */
-    create(user) {
-        return this.$http.post('rest/users', user);
+    create(email, password) {
+        return this.$http.post('rest/users', {
+            email: email,
+            password: password
+        });
     }
 
     /**
      * Logs in a user
      *
-     * @param {User} user - The user to login
-     * @returns {*} - A promise that contains the jwt
+     * @param {string} email
+     * @param {string} password
+     * @returns {*} - A promise
      */
-    login(user) {
-        return this.$http.post('rest/users/login', user);
+    login(email, password) {
+        return this.$http.post('rest/users/login', {
+            email: email,
+            password: password
+        });
     }
 
     /**
@@ -108,6 +116,14 @@ class UserResource {
      */
     remove(user) {
         return this.$http.delete(`rest/users/${user.id}`, {});
+    }
+
+    /**
+     * Deletes the users with the specified ids
+     * @param {number[]} userIds
+     */
+    removeManyUsers(userIds) {
+        return this.$http.delete(`rest/users/batch/${userIds.join(',')}`);
     }
 
     /**

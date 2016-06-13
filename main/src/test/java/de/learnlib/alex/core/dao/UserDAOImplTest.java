@@ -19,6 +19,8 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.utils.IdsList;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.transaction.TransactionSystemException;
+import org.mockito.internal.matchers.Not;
 
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
@@ -235,6 +238,37 @@ public class UserDAOImplTest {
         given(userRepository.findByRole(UserRole.ADMIN)).willReturn(Collections.singletonList(admin));
 
         userDAO.delete(admin.getId());
+    }
+
+    @Test
+    public void shouldDeleteMultipleUsers() throws NotFoundException {
+        User user1 = new User();
+        user1.setEmail("user1@mail.de");
+        user1.setEncryptedPassword("test");
+
+        User user2 = new User();
+        user2.setEmail("user2@mail.de");
+        user2.setEncryptedPassword("test");
+
+        userDAO.create(user1);
+        userDAO.create(user2);
+
+        IdsList ids = new IdsList(String.valueOf(user1.getId()) + "," + String.valueOf(user2.getId()));
+        userDAO.delete(ids);
+
+        assertEquals(userDAO.getAllByRole(UserRole.REGISTERED).size(), 0);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void shouldNotDeleteMultipleUsersOnNotFound() throws NotFoundException {
+        User user1 = new User();
+        user1.setEmail("user1@mail.de");
+        user1.setEncryptedPassword("test");
+
+        userDAO.create(user1);
+
+        IdsList ids = new IdsList(String.valueOf(user1.getId()) + ",123");
+        userDAO.delete(ids);
     }
 
     @Test(expected = NotFoundException.class)

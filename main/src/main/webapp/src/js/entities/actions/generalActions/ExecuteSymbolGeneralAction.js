@@ -66,7 +66,7 @@ class ExecuteSymbolGeneralAction extends Action {
 
     /**
      * Update the revision of the symbol to execute
-     * @param {Symbol[]} symbols
+     * @param {AlphabetSymbol[]} symbols
      */
     updateRevision(symbols) {
         for (let i = 0; i < symbols.length; i++) {
@@ -80,7 +80,7 @@ class ExecuteSymbolGeneralAction extends Action {
     /**
      * Sets the symbol to execute
      * @param {string} name - The name of the symbol to execute
-     * @param {Symbol[]} symbols
+     * @param {AlphabetSymbol[]} symbols
      */
     setSymbol(name, symbols) {
         this.getModel().maxRevision = null;

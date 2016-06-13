@@ -56,9 +56,6 @@ class StatisticsView {
         this.LearnResultResource.getAll(this.project.id)
             .then(results => {
                 this.results = results;
-            })
-            .catch(response => {
-                this.ToastService.danger(`The results could not be loaded. ${response.data.message}`);
             });
     }
 

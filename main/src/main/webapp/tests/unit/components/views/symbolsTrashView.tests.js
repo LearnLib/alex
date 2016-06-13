@@ -1,4 +1,4 @@
-import {Symbol} from '../../../../src/js/entities/Symbol';
+import {AlphabetSymbol} from '../../../../src/js/entities/AlphabetSymbol';
 
 describe('symbolsTrashView', () => {
 
@@ -16,7 +16,7 @@ describe('symbolsTrashView', () => {
         ToastService = $injector.get('ToastService');
 
 
-        symbols = ENTITIES.symbols.map(s => new Symbol(s));
+        symbols = ENTITIES.symbols.map(s => new AlphabetSymbol(s));
         project = ENTITIES.projects[0];
         user = ENTITIES.users[0];
 

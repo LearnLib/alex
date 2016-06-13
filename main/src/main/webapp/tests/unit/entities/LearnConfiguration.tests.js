@@ -1,4 +1,4 @@
-import {Symbol} from '../../../src/js/entities/Symbol';
+import {AlphabetSymbol} from '../../../src/js/entities/AlphabetSymbol';
 import {LearnConfiguration} from '../../../src/js/entities/LearnConfiguration';
 
 describe('LearnConfiguration', () => {
@@ -30,7 +30,7 @@ describe('LearnConfiguration', () => {
 
     it('should add a symbol to the symbols list as id revision pair', () => {
         const config = new LearnConfiguration();
-        const symbol = new Symbol(ENTITIES.symbols[0]);
+        const symbol = new AlphabetSymbol(ENTITIES.symbols[0]);
         const pair = symbol.getIdRevisionPair();
 
         const pre = config.symbols.length;
@@ -41,7 +41,7 @@ describe('LearnConfiguration', () => {
 
     it('should set a symbols as id revision pair as reset symbol', () => {
         const config = new LearnConfiguration();
-        const symbol = new Symbol(ENTITIES.symbols[0]);
+        const symbol = new AlphabetSymbol(ENTITIES.symbols[0]);
         const pair = symbol.getIdRevisionPair();
 
         config.setResetSymbol(symbol);

@@ -37,18 +37,18 @@ class LoadScreen {
         $scope.$watch(() => $http.pendingRequests.length > 0, value => {
             this.visible = value ? true : false;
         });
+
     }
 }
 
 // the component definition
 const loadScreen = {
     controller: LoadScreen,
-    controllerAs: 'loadScreen',
+    controllerAs: 'vm',
     template: `
-        <div id="load-screen" ng-if="loadScreen.visible">
-            <p class="text-center" id="load-screen-indicator">
-                <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
-            </p>
+        <div id="load-screen" ng-if="vm.visible">
+            <i class="fa fa-spin fa-circle-o-notch"></i>
+            <strong>Loading...</strong>
         </div>
     `
 };

@@ -19,6 +19,7 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.exceptions.NotFoundException;
+import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,6 +110,14 @@ public class UserDAOImpl implements UserDAO {
         }
 
         userRepository.delete(user);
+    }
+
+    @Override
+    @Transactional
+    public void delete(IdsList ids) throws NotFoundException {
+        for (Long id: ids) {
+            userRepository.delete(id);
+        }
     }
 
     private void saveUser(User user) {

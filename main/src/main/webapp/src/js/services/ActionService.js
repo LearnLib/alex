@@ -20,6 +20,7 @@ import {actionType} from '../constants';
 import SelectWebAction from '../entities/actions/webActions/SelectWebAction';
 import SubmitWebAction from '../entities/actions/webActions/SubmitWebAction';
 import GoToWebAction from '../entities/actions/webActions/GoToWebAction';
+import ExecuteScriptAction from '../entities/actions/webActions/ExecuteScriptAction';
 import FillWebAction from '../entities/actions/webActions/FillWebAction';
 import ClickWebAction from '../entities/actions/webActions/ClickWebAction';
 import ClickLinkByTextWebAction from '../entities/actions/webActions/ClickLinkByTextWebAction';
@@ -27,6 +28,7 @@ import ClearWebAction from '../entities/actions/webActions/ClearWebAction';
 import CheckPageTitleAction from '../entities/actions/webActions/CheckPageTitleAction';
 import CheckForTextWebAction from '../entities/actions/webActions/CheckForTextWebAction';
 import CheckForNodeWebAction from '../entities/actions/webActions/CheckForNodeWebAction';
+import MoveMouseAction from '../entities/actions/webActions/MoveMouseAction';
 import WaitForTitleAction from '../entities/actions/webActions/WaitForTitleAction';
 import WaitForNodeAction from '../entities/actions/webActions/WaitForNodeAction';
 
@@ -72,8 +74,12 @@ class ActionService {
                 return new GoToWebAction(data);
             case actionType.WEB_FILL:
                 return new FillWebAction(data);
+            case actionType.WEB_EXECUTE_SCRIPT:
+                return new ExecuteScriptAction(data);
             case actionType.WEB_CLICK:
                 return new ClickWebAction(data);
+            case actionType.WEB_MOUSE_MOVE:
+                return new MoveMouseAction(data);
             case actionType.WEB_CLICK_LINK_BY_TEXT:
                 return new ClickLinkByTextWebAction(data);
             case actionType.WEB_CLEAR:

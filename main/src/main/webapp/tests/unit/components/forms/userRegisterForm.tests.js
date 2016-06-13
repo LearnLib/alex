@@ -1,5 +1,3 @@
-import {UserFormModel} from '../../../../src/js/entities/User';
-
 describe('userRegisterForm', () => {
     let $rootScope, $compile, $q, UserResource, ToastService;
     let renderedElement, controller;
@@ -38,11 +36,12 @@ describe('userRegisterForm', () => {
         spyOn(UserResource, 'create').and.returnValue(deferred.promise);
         deferred.reject({data: {message: null}});
 
-        controller.user = USER;
+        controller.email = USER.email;
+        controller.password = USER.password;
         controller.register();
         $rootScope.$digest();
 
-        expect(UserResource.create).toHaveBeenCalledWith(USER);
+        expect(UserResource.create).toHaveBeenCalledWith(USER.email, USER.password);
         expect(ToastService.danger).toHaveBeenCalled();
     });
 
@@ -53,11 +52,13 @@ describe('userRegisterForm', () => {
 
         spyOn(ToastService, 'success').and.callThrough();
 
-        controller.user = USER;
+        controller.email = USER.email;
+        controller.password = USER.password;
         controller.register();
         $rootScope.$digest();
 
         expect(ToastService.success).toHaveBeenCalled();
-        expect(controller.user).toEqual(new UserFormModel());
+        expect(controller.email).toBeNull()
+        expect(controller.password).toBeNull()
     });
 });

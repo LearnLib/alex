@@ -40,7 +40,7 @@ From here on, more symbols can be added and learned.
 
 It can be that the learner has not learned the application correctly, i.e. there is a word in the model that has a different output than the actual application.
 In fact, one can never be a 100% sure if the model actually represents the system under learning.
-How to check for and handle these mistakes is described in the user manual.
+How to check for and handle these mistakes is described in the [user manual](http://learnlib.github.io/alex/book/1.0/contents/user-manual/index.html).
 
 If you want to know more about Active Automata Learning, you can find some resources at [Google Scholar](https://scholar.google.de/scholar?hl=de&q=active+automata+learning) or the homepage of the [LearnLib](http://learnlib.de/).
 
@@ -59,7 +59,7 @@ Password: *admin*
 
 Make sure you have Java 8 installed on your system.
 
-1. Download the latest version from here.
+1. Download the latest version. [Download](https://github.com/LearnLib/alex/releases/download/v1.0/ALEX-1.0.war)
 2. Open a terminal and start the war archive using `java -jar ALEX.war [--port=XXXX]`
 3. Open *http://localhost:8000* in a web browser
 
@@ -70,8 +70,6 @@ For the Installation from the source files make sure your system matches the fol
 * Java JDK 8
 * Maven 3
 * Node.js v4.2.* and the NPM
-* Bower `npm install -g bower`
-* Grunt and Grund-Cli `npm install -g grunt grunt-cli`
 
 To install and run ALEX, execute the following commands in a directory of your choice:
 
@@ -84,10 +82,9 @@ To install and run ALEX, execute the following commands in a directory of your c
 
 ## Further reading
 
-* Frontend user manual
-* REST API documentation
-* Screencasts
-* Developer docs
+* [Frontend user manual](http://learnlib.github.io/alex/book/1.0/contents/user-manual/index.html)
+* [Screencasts](http://learnlib.github.io/alex/book/1.0/contents/screencasts/index.html)
+* [Developer docs](http://learnlib.github.io/alex/book/1.0/contents/developer-documents/index.html)
 
 ## FAQs
 

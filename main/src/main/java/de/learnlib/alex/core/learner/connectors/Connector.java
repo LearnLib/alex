@@ -25,11 +25,11 @@ public interface Connector {
      * Method called during the reset of the SUL.
      * Set the connector back to init. state.
      */
-    void reset();
+    void reset() throws Exception;
 
     /**
      * Dispose the connector.
-     * This method will be called after the learning and allow to do necessary clean ups.
+     * This method will be called after the learning and allows to do necessary clean ups.
      * After this method is called, the connector should not work anymore.
      */
     void dispose();

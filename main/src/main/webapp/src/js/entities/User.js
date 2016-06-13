@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-/** The model for user forms */
-class UserFormModel {
-
-    /**
-     * Constructor
-     * @param {string} email - The email of the user
-     * @param {string} password - The unencrypted password of the user
-     */
-    constructor(email = '', password = '') {
-        this.email = email;
-        this.password = password;
-    }
-}
-
 /** The model for user api results */
-class User {
+export class User {
 
     /**
      * Constructor
      * @param {object} obj - The object to create a user from
      */
-    constructor(obj) {
+    constructor(obj = {}) {
 
         /**
          * The id of the user
@@ -56,5 +42,3 @@ class User {
         this.email = obj.email;
     }
 }
-
-export {UserFormModel, User};

@@ -52,7 +52,7 @@ const symbolGroupListItem = {
                         <span ng-bind="vm.group.symbols.length"></span> Symbols
                     </span>
                 </div>
-                <div class="flex-item" ng-if="editable">
+                <div class="flex-item" ng-if="vm.editable">
                     <a href="" symbol-group-edit-modal-handle group="vm.group"
                        uib-tooltip="Edit this group" tooltip-placement="left">
                          <i class="fa fa-fw fa-gear"></i>

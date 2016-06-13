@@ -22,6 +22,7 @@ import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.JWTHelper;
 import de.learnlib.alex.security.UserPrincipal;
+import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
@@ -343,7 +344,7 @@ public class UserResource {
      *         The ID of the user to delete.
      * @return Nothing if the user was deleted.
      *
-     * @successResponse 204 No Contetnt
+     * @successResponse 204 No Content
      * @errorResponse 400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      * @errorResponse 404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
@@ -367,6 +368,40 @@ public class UserResource {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.NOT_FOUND, e);
         }
     }
+
+    /**
+     * Deletes multiples users.
+     * An admin cannot delete himself.
+     *
+     * @param ids
+     *          The ids of the user to delete.
+     * @return Nothing if the users have been deleted.
+     *
+     * @successResponse 204 No Content
+     * @errorResponse 400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     */
+    @DELETE
+    @Path("/batch/{ids}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"ADMIN"})
+    public Response delete(@PathParam("ids") IdsList ids) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("UserResource.delete(" + ids + ").");
+
+        if (ids.contains(user.getId())) {
+            Exception e = new Exception("You cannot delete your own account this way.");
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.BAD_REQUEST, e);
+        }
+
+        try {
+            userDAO.delete(ids);
+            return Response.status(Status.NO_CONTENT).build();
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.NOT_FOUND, e);
+        }
+    }
+
 
     /**
      * Logs in a user by generating a unique JWT for him that needs to be send in every request.

@@ -58,6 +58,7 @@ public class ClickActionTest {
         c.setUser(user);
         c.setProject(project);
         c.setNode("#node");
+        c.setDoubleClick(false);
     }
 
     @Test
@@ -67,6 +68,7 @@ public class ClickActionTest {
         ClickAction c2 = mapper.readValue(json, ClickAction.class);
 
         assertEquals(c.getNode(), c2.getNode());
+        assertEquals(c.isDoubleClick(), c2.isDoubleClick());
     }
 
     @Test
@@ -79,6 +81,7 @@ public class ClickActionTest {
         ClickAction c2 = mapper.readValue(json, ClickAction.class);
 
         assertEquals(c.getNode(), c2.getNode());
+        assertEquals(c.isDoubleClick(), c2.isDoubleClick());
     }
 
     @Test
@@ -110,5 +113,4 @@ public class ClickActionTest {
 
         assertEquals(ExecuteResult.FAILED, c.execute(connector));
     }
-
 }

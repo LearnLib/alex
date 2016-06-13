@@ -31,6 +31,16 @@ class ProjectResource {
     }
 
     /**
+     * Get a project by its id
+     * @param {number} projectId
+     * @returns {*}
+     */
+    get(projectId) {
+        return this.$http.get(`rest/projects/${projectId}`)
+            .then(response => new Project(response.data));
+    }
+
+    /**
      * Get all projects of a user
      * @returns {*}
      */
@@ -41,7 +51,7 @@ class ProjectResource {
 
     /**
      * Creates a new project
-     * @param {ProjectFormModel} project - The project to create
+     * @param {Project} project - The project to create
      * @returns {*}
      */
     create(project) {

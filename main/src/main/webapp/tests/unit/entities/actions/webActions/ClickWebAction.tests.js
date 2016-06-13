@@ -18,7 +18,8 @@ describe('ClickWebAction', () => {
             ignoreFailure: false,
             disabled: false,
 
-            node: ''
+            node: '',
+            doubleClick: false
         };
         const action = new ClickWebAction({});
         expect(angular.toJson(action)).toEqual(angular.toJson(expectedAction));

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Symbol} from '../../entities/Symbol';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 import {events} from '../../constants';
 
 /**
@@ -46,7 +46,7 @@ class SymbolMoveModalController {
 
         /**
          * The list of symbols that should be moved
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.symbols = modalData.symbols;
 
@@ -75,7 +75,7 @@ class SymbolMoveModalController {
     moveSymbols() {
         if (this.selectedGroup !== null) {
 
-            const symbolsToMove = this.symbols.map(s => new Symbol(s));
+            const symbolsToMove = this.symbols.map(s => new AlphabetSymbol(s));
             symbolsToMove.forEach(s => {s.group = this.selectedGroup.id;});
 
             this.SymbolResource.moveMany(symbolsToMove, this.selectedGroup)
@@ -135,7 +135,7 @@ function symbolMoveModalHandle($uibModal) {
                 controllerAs: 'vm',
                 resolve: {
                     modalData: function () {
-                        return {symbols: scope.symbols.map(s => new Symbol(s))};
+                        return {symbols: scope.symbols.map(s => new AlphabetSymbol(s))};
                     }
                 }
             });

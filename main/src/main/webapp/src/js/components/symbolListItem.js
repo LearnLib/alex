@@ -48,7 +48,7 @@ class SymbolListItem {
 }
 
 const symbolListItem = {
-    templateUrl: 'html/directives/symbol-list-item.html',
+    templateUrl: 'html/components/symbol-list-item.html',
     controller: SymbolListItem,
     controllerAs: 'vm',
     transclude: true,

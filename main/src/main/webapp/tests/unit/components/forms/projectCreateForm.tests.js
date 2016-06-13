@@ -1,4 +1,4 @@
-import {Project, ProjectFormModel} from '../../../../src/js/entities/Project';
+import {Project} from '../../../../src/js/entities/Project';
 import {events} from '../../../../src/js/constants';
 
 describe('projectCreateForm', () => {
@@ -30,7 +30,7 @@ describe('projectCreateForm', () => {
     }));
 
     it('should start with an empty project model', () => {
-        expect(controller.project).toEqual(new ProjectFormModel());
+        expect(controller.project).toEqual(new Project());
     });
 
     it('should create a project, display a message, emit an event and reset the form', () => {
@@ -51,7 +51,7 @@ describe('projectCreateForm', () => {
         expect(ProjectResource.create).toHaveBeenCalled();
         expect(ToastService.success).toHaveBeenCalled();
         expect(EventBus.emit).toHaveBeenCalledWith(events.PROJECT_CREATED, {project: project});
-        expect(controller.project).toEqual(new ProjectFormModel());
+        expect(controller.project).toEqual(new Project());
     });
 
     it('should display a fail message if the project could not be created', () => {

@@ -1,0 +1,6 @@
+{
+  "type": "web_moveMouse",
+  "node": "#node",
+  "offsetX": 0,
+  "offsetY": 0
+}

@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.core.learner.connectors;
 
+import de.learnlib.alex.actions.Credentials;
 import de.learnlib.alex.core.learner.BaseUrlManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,7 +72,7 @@ public class WebSiteConnector implements Connector {
      * Try to clear all data from the browser, including Cookies, local storage & session storage.
      */
     @Override
-    public void reset() {
+    public void reset() throws Exception {
         this.driver = browser.getWebDriver();
         this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
         this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
@@ -83,13 +84,16 @@ public class WebSiteConnector implements Connector {
     }
 
     /**
-     * Do a HTTP GET request.
+     * Do a HTTP GET request within the browser.
+     * Optionally credentials for HTTP Basic Auth can be provided.
      *
      * @param path
      *         The path to send the request to.
+     * @param credentials
+     *         The credential to use. Can be null.
      */
-    public void get(String path) {
-        String url = getAbsoluteUrl(path);
+    public void get(String path, Credentials credentials) {
+        String url = getAbsoluteUrl(path, credentials);
         driver.get(url);
 
         // wait for page to have loaded everything
@@ -153,11 +157,14 @@ public class WebSiteConnector implements Connector {
     /**
      * @param path
      *         The path to append on the base url.
+     * @param credentials
+     *         The credentials to use for HTTP Basic Auth. Can be null.
+     *
      * @return An absolute URL as String
      * @see BaseUrlManager#getAbsoluteUrl(String)
      */
-    private String getAbsoluteUrl(String path) {
-        return baseUrl.getAbsoluteUrl(path);
+    private String getAbsoluteUrl(String path, Credentials credentials) {
+        return baseUrl.getAbsoluteUrl(path, credentials);
     }
 
     /**

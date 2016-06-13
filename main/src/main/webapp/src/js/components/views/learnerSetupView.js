@@ -50,13 +50,13 @@ class LearnerSetupView {
 
         /**
          * A list of all symbols of all groups that is used in order to select them
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.allSymbols = [];
 
         /**
          * A list of selected Symbols
-         * @type {Symbol[]}
+         * @type {AlphabetSymbol[]}
          */
         this.selectedSymbols = [];
 
@@ -68,7 +68,7 @@ class LearnerSetupView {
 
         /**
          * The symbol that should be used as a reset symbol
-         * @type {Symbol|null}
+         * @type {AlphabetSymbol|null}
          */
         this.resetSymbol = null;
 
@@ -119,7 +119,7 @@ class LearnerSetupView {
 
     /**
      * Sets the reset symbol
-     * @param {Symbol} symbol - The symbol that will be used to reset the sul
+     * @param {AlphabetSymbol} symbol - The symbol that will be used to reset the sul
      */
     setResetSymbol(symbol) {
         this.resetSymbol = symbol;

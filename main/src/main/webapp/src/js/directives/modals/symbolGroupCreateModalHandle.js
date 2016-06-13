@@ -15,7 +15,7 @@
  */
 
 import {events} from '../../constants';
-import {SymbolGroupFormModel} from '../../entities/SymbolGroup';
+import {SymbolGroup} from '../../entities/SymbolGroup';
 
 /** The controller for the modal dialog that handles the creation of a new symbol group. */
 // @ngInject
@@ -45,7 +45,7 @@ class SymbolGroupCreateModalController {
          * The new symbol group
          * @type {SymbolGroup}
          */
-        this.group = new SymbolGroupFormModel();
+        this.group = new SymbolGroup();
 
         /**
          * An error message that can be displayed in the modal template

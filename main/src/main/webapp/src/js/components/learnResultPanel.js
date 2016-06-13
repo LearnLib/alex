@@ -87,6 +87,10 @@ class LearnResultPanel {
             $element.children()[0].style.left = ((100 / from) * (index)) + '%';
         });
 
+        $scope.$watch(() => this.result, () => {
+            if (this.result) this.pointer = this.result.steps.length - 1;
+        });
+
         // wait for hypothesis layout settings to change
         EventBus.on(events.HYPOTHESIS_LAYOUT_UPDATED, (evt, data) => {
             this.layoutSettings = data.settings;

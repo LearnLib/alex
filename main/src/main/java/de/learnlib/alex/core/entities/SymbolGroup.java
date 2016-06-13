@@ -97,6 +97,8 @@ public class SymbolGroup implements Serializable {
      * Default constructor.
      */
     public SymbolGroup() {
+        this.groupId = 0L;
+        this.id = 0L;
         this.symbols = new HashSet<>();
     }
 

@@ -1,5 +1,5 @@
 import {SymbolEditModalController} from '../../../../src/js/directives/modals/symbolEditModalHandle';
-import {Symbol} from '../../../../src/js/entities/Symbol';
+import {AlphabetSymbol} from '../../../../src/js/entities/AlphabetSymbol';
 
 describe('symbolEditModal', () => {
     let $controller, $compile, $q, $rootScope, SymbolResource, ToastService, EventBus, $uibModal;
@@ -25,7 +25,7 @@ describe('symbolEditModal', () => {
         };
 
         data = {
-            symbol: new Symbol(ENTITIES.symbols[0]),
+            symbol: new AlphabetSymbol(ENTITIES.symbols[0]),
             updateOnServer: true
         };
     }));

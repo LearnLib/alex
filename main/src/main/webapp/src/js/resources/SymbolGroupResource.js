@@ -48,7 +48,7 @@ class SymbolGroupResource {
      * Creates a new symbol group
      *
      * @param {number} projectId - The id of the project of the symbol group
-     * @param {SymbolGroupFormModel} group - The object of the symbol group that should be created
+     * @param {SymbolGroup} group - The object of the symbol group that should be created
      * @returns {*}
      */
     create(projectId, group) {

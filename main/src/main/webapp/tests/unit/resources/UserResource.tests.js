@@ -1,4 +1,4 @@
-import {User, UserFormModel} from '../../../src/js/entities/User';
+import {User} from "../../../src/js/entities/User";
 
 describe('UserResource', () => {
     let UserResource, $http, $q, $httpBackend;
@@ -64,14 +64,16 @@ describe('UserResource', () => {
 
     it('should create a new user', () => {
         const uri = `rest/users`;
-        const user = new UserFormModel('mail', 'pw');
         spyOn($http, 'post').and.callThrough();
 
         $httpBackend.whenPOST(uri).respond(201, ENTITIES.users[0]);
-        const promise = UserResource.create(user);
+        const promise = UserResource.create('mail', 'pw');
         $httpBackend.flush();
 
-        expect(UserResource.$http.post).toHaveBeenCalledWith(uri, user);
+        expect(UserResource.$http.post).toHaveBeenCalledWith(uri, {
+            email: 'mail',
+            password: 'pw'
+        });
         promise.then((u) => {
             expect(u instanceof User);
         })
@@ -82,10 +84,13 @@ describe('UserResource', () => {
         spyOn($http, 'post').and.callThrough();
 
         $httpBackend.whenPOST(uri).respond(200, user);
-        const promise = UserResource.login(user);
+        const promise = UserResource.login('mail', 'pw');
         $httpBackend.flush();
 
-        expect(UserResource.$http.post).toHaveBeenCalledWith(uri, user);
+        expect(UserResource.$http.post).toHaveBeenCalledWith(uri, {
+            email: 'mail',
+            password: 'pw'
+        });
         expect(promise.then).toBeDefined();
     });
 
