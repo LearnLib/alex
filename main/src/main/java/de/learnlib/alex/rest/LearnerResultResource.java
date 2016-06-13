@@ -19,6 +19,7 @@ package de.learnlib.alex.rest;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.IdsList;
@@ -55,6 +56,9 @@ public class LearnerResultResource {
     /** The {@link de.learnlib.alex.core.dao.LearnerResultDAO} to use. */
     @Inject
     private LearnerResultDAO learnerResultDAO;
+
+    @Inject
+    private Learner learner;
 
     /** The security context containing the user of the request. */
     @Context
@@ -164,7 +168,7 @@ public class LearnerResultResource {
 
         try {
             Long[] numbersLongArray = testNumbers.toArray(new Long[testNumbers.size()]);
-            learnerResultDAO.delete(user, projectId, numbersLongArray);
+            learnerResultDAO.delete(learner, user, projectId, numbersLongArray);
             return Response.status(Response.Status.NO_CONTENT).build();
 
         }  catch (NotFoundException e) {

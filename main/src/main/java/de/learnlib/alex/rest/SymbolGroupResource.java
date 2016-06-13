@@ -141,7 +141,7 @@ public class SymbolGroupResource {
 
         try {
             SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
-            List<SymbolGroup> groups = symbolGroupDAO.getAll(user.getId(), projectId, embeddableFields);
+            List<SymbolGroup> groups = symbolGroupDAO.getAll(user, projectId, embeddableFields);
             return ResponseHelper.renderList(groups, Response.Status.OK);
         } catch (IllegalArgumentException e) {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",

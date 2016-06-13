@@ -102,10 +102,7 @@ public class WebSymbolTest {
         assertEquals(symbol.getIdRevisionPair(), symbolFromMapper.getIdRevisionPair());
         assertEquals(symbol.getAbbreviation(), symbolFromMapper.getAbbreviation());
         assertEquals(symbol.getName(), symbolFromMapper.getName());
-        assertEquals(symbol.getGroup(), symbolFromMapper.getGroup());
         assertEquals(symbol.getGroup().getId(), symbolFromMapper.getGroup().getId());
-        assertEquals(symbol.getGroup().getProject(), symbolFromMapper.getGroup().getProject());
-        assertEquals(symbol.getGroup(), symbolFromMapper.getGroup());
     }
 
     @Test

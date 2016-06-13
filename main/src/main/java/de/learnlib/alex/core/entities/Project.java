@@ -19,11 +19,9 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.learnlib.alex.core.entities.validators.UniqueProjectName;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,6 +29,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -40,8 +40,10 @@ import java.util.Set;
  * Representation of a testing project with different symbols.
  */
 @Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "name"})
+)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@UniqueProjectName
 public class Project implements Serializable {
 
     /**
@@ -85,16 +87,18 @@ public class Project implements Serializable {
     /**
      * The list of groups in the project.
      */
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToMany(
+            mappedBy = "project",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
     @JsonProperty("groups")
     private Set<SymbolGroup> groups;
 
     /**
      * The default group of the project.
      */
-    @OneToOne
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private SymbolGroup defaultGroup;
 
     /**
@@ -106,8 +110,7 @@ public class Project implements Serializable {
     /**
      * The symbols used to test.
      */
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonProperty("symbols")
     private Set<Symbol> symbols;
 
@@ -120,16 +123,14 @@ public class Project implements Serializable {
     /**
      * The results of the test for the project.
      */
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<LearnerResult> testResults;
 
     /**
      * The counters of the project.
      */
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<Counter> counters;
 
@@ -148,7 +149,7 @@ public class Project implements Serializable {
     public Project(Long projectId) {
         this.id = projectId;
         this.groups = new HashSet<>();
-        this.nextGroupId = 1L;
+        this.nextGroupId = 0L;
         this.symbols = new HashSet<>();
         this.nextSymbolId = 1L;
     }

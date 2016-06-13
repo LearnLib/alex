@@ -106,6 +106,7 @@ public class SymbolResourceTest extends JerseyTest {
         given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willReturn(project);
 
         group = new SymbolGroup();
+        group.setId(0L);
         group.setName("Symbol Resource Test Group");
 
         symbol = new Symbol();

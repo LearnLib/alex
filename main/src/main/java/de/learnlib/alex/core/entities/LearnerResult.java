@@ -24,10 +24,8 @@ import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import net.automatalib.automata.transout.MealyMachine;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.NaturalId;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -38,7 +36,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -53,6 +53,9 @@ import java.util.Set;
  * (duration, #EQ, ...).
  */
 @Entity
+@Table(
+    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "project_id", "testNo"})
+)
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerResult implements Serializable {
@@ -143,8 +146,7 @@ public class LearnerResult implements Serializable {
     /**
      * @return Get the user of the result.
      */
-    @NaturalId
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JsonIgnore
     public User getUser() {
         return user;
@@ -175,8 +177,7 @@ public class LearnerResult implements Serializable {
      *
      * @return The connected Project.
      */
-    @NaturalId
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JsonIgnore
     public Project getProject() {
         return project;
@@ -212,7 +213,6 @@ public class LearnerResult implements Serializable {
      *
      * @return The no. of the related test run.
      */
-    @NaturalId
     @Column(nullable = false)
     public Long getTestNo() {
         return testNo;
@@ -231,8 +231,7 @@ public class LearnerResult implements Serializable {
     /**
      * @return Get the steps of the result.
      */
-    @OneToMany(mappedBy = "result")
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "result", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @OrderBy("stepNo ASC")
     public List<LearnerResultStep> getSteps() {
         return steps;
@@ -310,8 +309,8 @@ public class LearnerResult implements Serializable {
      *
      * @return The Alphabet of the learning process & the hypothesis.
      */
-    @JsonProperty("sigma")
     @Column(name = "sigma", columnDefinition = "BLOB")
+    @JsonProperty("sigma")
     public AlphabetProxy getSigma() {
         return sigma;
     }

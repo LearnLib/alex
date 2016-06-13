@@ -1,13 +1,13 @@
 package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
-import de.learnlib.alex.core.dao.LearnerResultDAOImpl;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.api.LearningAlgorithm;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.util.List;
 
 /**
@@ -18,14 +18,8 @@ import java.util.List;
 public class LearnerThreadFactory {
 
     /** The LearnerResultDAO to use. */
+    @Inject
     private LearnerResultDAO learnerResultDAO;
-
-    /**
-     * Default constructor. This will create a new LearnerResultDAO for internal use.
-     */
-    public LearnerThreadFactory() {
-        this(new LearnerResultDAOImpl());
-    }
 
     /**
      * Constructor that sets the LearnerResultDAO.
@@ -33,9 +27,9 @@ public class LearnerThreadFactory {
      * @param learnerResultDAO
      *         The LearnerResultDAO to use.
      */
-    public LearnerThreadFactory(LearnerResultDAO learnerResultDAO) {
-        this.learnerResultDAO = learnerResultDAO;
-    }
+//    public LearnerThreadFactory(LearnerResultDAO learnerResultDAO) {
+//        this.learnerResultDAO = learnerResultDAO;
+//    }
 
     /**
      * Create a brand new LearnThread.

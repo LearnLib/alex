@@ -19,13 +19,15 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.alex.utils.HibernateUtil;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.exception.GenericJDBCException;
-import org.springframework.stereotype.Repository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.List;
@@ -33,138 +35,95 @@ import java.util.List;
 /**
  * Implementation of a UserDAO using Hibernate.
  */
-@Repository
+@Service
 public class UserDAOImpl implements UserDAO {
 
+    /** Use the logger for the data part. */
+    private static final Logger LOGGER = LogManager.getLogger("data");
+
+    private UserRepository userRepository;
+
+    @Inject
+    public UserDAOImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Override
+    @Transactional
     public void create(User user) throws ValidationException {
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        try {
-            session.save(user);
-            HibernateUtil.commitTransaction();
-        } catch (ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
-            throw ValidationExceptionHelper.createValidationException("User was not created:", e);
-        } catch (org.hibernate.exception.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
-            throw new ValidationException("User was not created: " + e.getMessage(), e);
-        } catch (GenericJDBCException e) {
-            throw new javax.validation.ValidationException(
-                    "The User was not created because it did not pass the validation!", e);
-        }
+        saveUser(user);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> getAll() {
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        @SuppressWarnings("unchecked")
-        List<User> users = session.createCriteria(User.class).list();
-
-        HibernateUtil.commitTransaction();
-        return users;
+        return userRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> getAllByRole(UserRole role) {
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        @SuppressWarnings("unchecked")
-        List<User> users = session.createCriteria(User.class)
-                                  .add(Restrictions.eq("role", role))
-                                  .list();
-
-        HibernateUtil.commitTransaction();
-        return users;
+        return userRepository.findByRole(role);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getById(Long id) throws NotFoundException {
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        User user;
-        try {
-            user = get(session, id);
-        } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
-            throw  e;
-        }
-
-        HibernateUtil.commitTransaction();
-        return user;
-    }
-
-    @Override
-    public User getByEmail(String email) throws NotFoundException {
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        User user = (User) session.createCriteria(User.class)
-                                  .add(Restrictions.eq("email", email))
-                                  .uniqueResult();
+        User user = userRepository.findOne(id);
 
         if (user == null) {
-            HibernateUtil.rollbackTransaction();
-            throw new NotFoundException("Could not find the user with the email '" + email + "'!");
+            throw new NotFoundException("Could not find the user with the ID " + id + ".");
         }
-
-        HibernateUtil.commitTransaction();
         return user;
     }
 
     @Override
-    public void update(User user) throws ValidationException {
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+    @Transactional(readOnly = true)
+    public User getByEmail(String email) throws NotFoundException {
+        User user = userRepository.findOneByEmail(email);
 
-        session.update(user);
-
-        HibernateUtil.commitTransaction();
+        if (user == null) {
+            throw new NotFoundException("Could not find the user with the email '" + email + "'!");
+        }
+        return user;
     }
 
     @Override
-    public void delete(Long id) throws NotFoundException {
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+    @Transactional
+    public void update(User user) throws ValidationException {
+        saveUser(user);
+    }
 
-        User user;
-        try {
-            user = get(session, id);
-        } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
-            throw  e;
-        }
+    @Override
+    @Transactional
+    public void delete(Long id) throws NotFoundException {
+        User user = getById(id);
 
         // make sure there is at least one registered admin
         if (user.getRole().equals(UserRole.ADMIN)) {
-
-            @SuppressWarnings("unchecked")
-            List<User> admins = session.createCriteria(User.class)
-                                       .add(Restrictions.eq("role", UserRole.ADMIN))
-                                       .list();
+            List<User> admins = userRepository.findByRole(UserRole.ADMIN);
 
             if (admins.size() == 1) {
                 throw new NotFoundException("There has to be at least one admin left");
             }
         }
 
-        session.delete(user);
-        HibernateUtil.commitTransaction();
+        userRepository.delete(user);
     }
 
-    private User get(Session session, Long id) throws NotFoundException {
-        User user = session.get(User.class, id);
+    private void saveUser(User user) {
+        try {
+            userRepository.save(user);
 
-        if (user == null) {
-            throw new NotFoundException("Could not find the user with the ID '" + id + "'!");
+        // error handling
+        } catch (TransactionSystemException e) {
+            LOGGER.info("Saving a user failed:", e);
+            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
+            throw ValidationExceptionHelper.createValidationException("User was not created:", cve);
+        } catch (JpaSystemException e) {
+            LOGGER.info("Saving a user failed:", e);
+            throw new ValidationException("The User was not created because it did not pass the validation!", e);
         }
-
-        return user;
     }
 
 }

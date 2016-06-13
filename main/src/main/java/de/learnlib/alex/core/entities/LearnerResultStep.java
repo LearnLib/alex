@@ -24,7 +24,6 @@ import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import net.automatalib.automata.transout.MealyMachine;
-import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -32,7 +31,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Objects;
@@ -44,6 +45,9 @@ import java.util.Objects;
  * (duration, #EQ, ...).
  */
 @Entity
+@Table(
+    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "project_id", "result_id", "stepNo"})
+)
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerResultStep implements Serializable {
@@ -123,8 +127,7 @@ public class LearnerResultStep implements Serializable {
     /**
      * @return The current user of the step.
      */
-    @NaturalId
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JsonIgnore
     public User getUser() {
         return user;
@@ -150,8 +153,7 @@ public class LearnerResultStep implements Serializable {
      *
      * @return The connected Project.
      */
-    @NaturalId
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JsonIgnore
     public Project getProject() {
         return project;
@@ -170,8 +172,7 @@ public class LearnerResultStep implements Serializable {
     /**
      * @return The current LearnResult of the step.
      */
-    @NaturalId
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JsonIgnore
     public LearnerResult getResult() {
         return result;
@@ -189,7 +190,6 @@ public class LearnerResultStep implements Serializable {
      *
      * @return The step no. of the result within the test run.
      */
-    @NaturalId
     @Column(nullable = false)
     public Long getStepNo() {
         return stepNo;

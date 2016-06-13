@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,6 +53,7 @@ public class User implements Serializable {
 
     /** The email address of the user he uses to login. */
     @NotNull
+    @Email
     @Column(unique = true)
     private String email;
 
@@ -303,9 +305,9 @@ public class User implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof User)) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id);
+        return Objects.equals(id, user.getId());
     }
 
     @Override

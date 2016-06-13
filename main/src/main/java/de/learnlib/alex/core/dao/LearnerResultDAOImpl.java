@@ -24,177 +24,122 @@ import de.learnlib.alex.core.entities.Statistics;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.alex.utils.HibernateUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
- * Implementation of a LearnerResultDAO using Hibernate.
+ * Implementation of a LearnerResultDAO using Spring Data.
  */
-@Repository
+@Service
 public class LearnerResultDAOImpl implements LearnerResultDAO {
 
-    /** The {@link Learner learner} to use. */
-    @Inject
-    private Learner learner;
+    /** Use the logger for the data part. */
+    private static final Logger LOGGER = LogManager.getLogger("data");
 
-    /**
-     * Set the learner instance to use.
-     * Only package visible, because normally this instance will be injected, but for testing a manual setter is needed.
-     *
-     * @param learner The learner to use.
-     */
-    void setLearner(Learner learner) {
-        this.learner = learner;
+    private LearnerResultRepository learnerResultRepository;
+
+    private LearnerResultStepRepository learnerResultStepRepository;
+
+    @Inject
+    public LearnerResultDAOImpl(LearnerResultRepository learnerResultRepository,
+                                LearnerResultStepRepository learnerResultStepRepository) {
+        this.learnerResultRepository = learnerResultRepository;
+        this.learnerResultStepRepository = learnerResultStepRepository;
     }
 
     @Override
     public void create(LearnerResult learnerResult) throws ValidationException {
-        // new LearnerResults should have a project, not a test number not a step number
-        if (learnerResult.getUser() == null
-                || learnerResult.getProject() == null
-                || learnerResult.getTestNo() != null) {
-            throw new ValidationException(
-                "To create a LearnResult it must have a User and Project but must not have a test no.");
+        // pre validation
+        if (learnerResult.getUser() == null || learnerResult.getProject() == null) {
+            throw new ValidationException("To create a LearnResult it must have a User and Project.");
         }
 
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+        if (learnerResult.getTestNo() != null) {
+            throw new ValidationException("To create a LearnResult it must not have a test no.");
+        }
 
         // get the current highest test no in the project and add 1 for the next id
-        Long maxTestNo = (Long) session.createCriteria(LearnerResult.class)
-                                        .add(Restrictions.eq("user", learnerResult.getUser()))
-                                        .add(Restrictions.eq("project", learnerResult.getProject()))
-                                        .setProjection(Projections.max("testNo"))
-                                        .uniqueResult();
+        Long maxTestNo = learnerResultRepository.findHighestTestNo(learnerResult.getUserId(),
+                                                                   learnerResult.getProjectId());
         if (maxTestNo == null) {
-            maxTestNo = 0L;
+            maxTestNo = -1L;
         }
+
         long nextTestNo = maxTestNo + 1;
 
         learnerResult.setId(0L);
         learnerResult.setTestNo(nextTestNo);
 
-        session.save(learnerResult);
-        HibernateUtil.commitTransaction();
+        try {
+            learnerResultRepository.save(learnerResult);
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.info("LearnerResult creation failed:", e);
+            throw new ValidationException("LearnerResult could not be created.", e);
+        }
     }
 
     @Override
     public List<LearnerResult> getAll(Long userId, Long projectId, boolean includeSteps) throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        // fetch the LearnerResults of the project with the the highest step no.
-        @SuppressWarnings("unchecked") // should return a list of LearnerResults
-        List<LearnerResult> results = session.createCriteria(LearnerResult.class)
-                                                .add(Restrictions.eq("user.id", userId))
-                                                .add(Restrictions.eq("project.id", projectId))
-                                                .addOrder(Order.asc("testNo"))
-                                                .list();
-
+        List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(userId,
+                                                                                                         projectId);
         if (results.isEmpty()) {
-            HibernateUtil.rollbackTransaction();
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
-        initializeLazyRelations(session, results, includeSteps);
+
+        initializeLazyRelations(results, includeSteps);
 
         // done
-        HibernateUtil.commitTransaction();
         return results;
     }
 
     @Override
     public List<LearnerResult> getAll(Long userId, Long projectId, Long[] testNos, boolean includeSteps)
             throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        try {
-            List<LearnerResult> result = getAll(session, userId, projectId, testNos, includeSteps);
-
-            // done
-            HibernateUtil.commitTransaction();
-            return result;
-        } catch (NoSuchElementException e) {
-            HibernateUtil.rollbackTransaction();
-            throw e;
-        }
-    }
-
-    @Override
-    public LearnerResult get(Long userId, Long projectId, Long testNo, boolean includeSteps) throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        try {
-            List<LearnerResult> result = getAll(session, userId, projectId, new Long[] {testNo}, includeSteps);
-
-            // done
-            HibernateUtil.commitTransaction();
-            return result.get(0);
-        } catch (NoSuchElementException e) {
-            HibernateUtil.rollbackTransaction();
-            throw e;
-        }
-    }
-
-    private List<LearnerResult> getAll(Session session, Long userId, Long projectId,
-                                       Long[] testNos, boolean includeSteps)
-            throws NotFoundException {
-        @SuppressWarnings("unchecked") // should return a list of LearnerResults
-        List<LearnerResult> results = session.createCriteria(LearnerResult.class)
-                                                .add(Restrictions.eq("user.id", userId))
-                                                .add(Restrictions.eq("project.id", projectId))
-                                                .add(Restrictions.in("testNo", testNos))
-                                                .list();
-
+        List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(userId,
+                                                                                                    projectId,
+                                                                                                    testNos);
         if (results.size() != testNos.length) {
-            throw new NotFoundException("Not all results with the test nos. " + Arrays.toString(testNos)
-                                                + " for the user " + userId + "were found.");
+            throw new NotFoundException("Not all Results with the test nos. " + Arrays.toString(testNos)
+                                                + " in the Project " + projectId + " for the user " + userId
+                                                + " were found.");
         }
-        initializeLazyRelations(session, results, includeSteps);
+
+        initializeLazyRelations(results, includeSteps);
 
         // done
         return results;
     }
 
-    private void initializeLazyRelations(Session session, List<LearnerResult> results, boolean includeSteps) {
-        results.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
-        results.forEach(r -> Hibernate.initialize(r.getSymbols()));
-        if (includeSteps) {
-            results.forEach(r -> Hibernate.initialize(r.getSteps()));
-        } else {
-            results.forEach(r -> {
-                session.evict(r);
-                r.setSteps(null);
-            });
+    @Override
+    public LearnerResult get(Long userId, Long projectId, Long testNo, boolean includeSteps) throws NotFoundException {
+        Long[] testNos = new Long[] {testNo};
+        List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(userId,
+                                                                                                    projectId,
+                                                                                                    testNos);
+        if (results.size() != 1) {
+            throw new NotFoundException("Could not find the Result with the test nos. " + testNo
+                                                + " in the Project " + projectId + " for the User " + userId
+                                                + " were found.");
         }
+
+        initializeLazyRelations(results, includeSteps);
+
+        // done
+        return results.get(0);
     }
 
     @Override
     public LearnerResultStep createStep(LearnerResult result)
             throws ValidationException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
         LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
 
         LearnerResultStep newStep = new LearnerResultStep();
@@ -208,26 +153,19 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         } else if (latestStep.getStepsToLearn() == -1) {
             newStep.setStepsToLearn(-1);
         } else {
-            HibernateUtil.rollbackTransaction();
-            throw new IllegalStateException("The previous step has a step to learn of 0 "
-                                                    + "-> no new step can be crated!");
+            throw new IllegalStateException("The previous step has a step to learn of 0 -> no new step can be crated!");
         }
 
         result.getSteps().add(newStep);
-        session.save(newStep);
-        session.update(result);
+        learnerResultStepRepository.save(newStep);
+        learnerResultRepository.save(result);
 
-        HibernateUtil.commitTransaction();
         return newStep;
     }
 
     @Override
     public LearnerResultStep createStep(LearnerResult result, LearnerResumeConfiguration configuration)
             throws ValidationException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
         // create the new step
         LearnerResultStep newStep = new LearnerResultStep();
         newStep.setUser(result.getUser());
@@ -238,25 +176,30 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         newStep.setStepsToLearn(configuration.getMaxAmountOfStepsToLearn());
 
         result.getSteps().add(newStep);
-        session.save(newStep);
-        session.update(result);
+        learnerResultStepRepository.save(newStep);
+        learnerResultRepository.save(result);
 
-        HibernateUtil.commitTransaction();
         return newStep;
     }
 
     @Override
     public void saveStep(LearnerResult result, LearnerResultStep step) throws ValidationException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        session.update(step);
+        learnerResultStepRepository.save(step);
 
         updateSummary(result, step);
-        session.update(result);
+        learnerResultRepository.save(result);
+    }
 
-        HibernateUtil.commitTransaction();
+    @Override
+    @Transactional(rollbackFor = NotFoundException.class)
+    public void delete(Learner learner, User user, Long projectId, Long... testNo)
+            throws NotFoundException, ValidationException {
+        checkIfResultsCanBeDeleted(learner, user, projectId, testNo); // check before the session is opened
+
+        Long amountOfDeletedResults = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user, projectId, testNo);
+        if (amountOfDeletedResults != testNo.length) {
+            throw new NotFoundException("Could not delete all results!");
+        }
     }
 
     private void updateSummary(LearnerResult result, LearnerResultStep step) {
@@ -272,35 +215,20 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         summaryStatistics.setEqsUsed(summaryStatistics.getEqsUsed() + newStatistics.getEqsUsed());
     }
 
-    @Override
-    public void delete(User user, Long projectId, Long... testNo) throws NotFoundException, ValidationException {
-        checkIfResultsCanBeDeleted(user, projectId, testNo); // check before the session is opened
-
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        List<Long> validTestNumbers = getTestNumbersInDB(session, user.getId(), projectId, testNo);
-        Set<Long> diffSet = setDifference(Arrays.asList(testNo), validTestNumbers);
-        if (diffSet.size() > 0) {
-            throw new NotFoundException("The result with the number " + diffSet + " was not found, thus nothing could"
-                                                + "be deleted");
+    private void initializeLazyRelations(List<LearnerResult> results, boolean includeSteps) {
+        results.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
+        results.forEach(r -> Hibernate.initialize(r.getSymbols()));
+        if (includeSteps) {
+            results.forEach(r -> Hibernate.initialize(r.getSteps()));
+        } else {
+            results.forEach(r -> {
+//                session.evict(r);
+                r.setSteps(null);
+            });
         }
-
-        @SuppressWarnings("unchecked") // should always return a list of LernerResults
-        List<LearnerResult> results = session.createCriteria(LearnerResult.class)
-                                                .add(Restrictions.eq("user", user))
-                                                .add(Restrictions.eq("project.id", projectId))
-                                                .add(Restrictions.in("testNo", testNo))
-                                                .list();
-
-        results.forEach(session::delete);
-
-        // done
-        HibernateUtil.commitTransaction();
     }
 
-    private void checkIfResultsCanBeDeleted(User user, Long projectId, Long... testNo) throws ValidationException {
+    private void checkIfResultsCanBeDeleted(Learner learner, User user, Long projectId, Long... testNo) throws ValidationException {
         // don't delete the learnResult of the active learning process
         LearnerStatus status = learner.getStatus(user);
 
@@ -325,21 +253,6 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                 }
             }
         }
-    }
-
-    private List<Long> getTestNumbersInDB(Session session, Long userId, Long projectId, Long... testNo) {
-        return session.createCriteria(LearnerResult.class)
-                .add(Restrictions.eq("user.id", userId))
-                .add(Restrictions.eq("project.id", projectId))
-                .add(Restrictions.in("testNo", testNo))
-                .setProjection(Projections.distinct(Projections.property("testNo")))
-                .list();
-    }
-
-    private Set<Long> setDifference(Collection<Long> collectionA, Collection<Long> collectionB) {
-        Set<Long> diffSet = new TreeSet<>(collectionA);
-        diffSet.removeAll(collectionB);
-        return  diffSet;
     }
 
 }

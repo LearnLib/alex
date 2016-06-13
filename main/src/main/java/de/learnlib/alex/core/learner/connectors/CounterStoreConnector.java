@@ -17,17 +17,20 @@
 package de.learnlib.alex.core.learner.connectors;
 
 import de.learnlib.alex.core.dao.CounterDAO;
-import de.learnlib.alex.core.dao.CounterDAOImpl;
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
 
 /**
  * Connector to store and manage counters.
  */
+@Service
 public class CounterStoreConnector implements Connector {
 
     /** Use the learner logger. */
@@ -39,17 +42,10 @@ public class CounterStoreConnector implements Connector {
     private CounterDAO counterDAO;
 
     /**
-     * Default constructor.
-     * Creates a new CounterDAO object.
-     */
-    public CounterStoreConnector() {
-        this(new CounterDAOImpl());
-    }
-
-    /**
      * Constructor.
      * @param counterDAO An instance of a counter dao.
      */
+    @Inject
     public CounterStoreConnector(CounterDAO counterDAO) {
         this.counterDAO = counterDAO;
     }

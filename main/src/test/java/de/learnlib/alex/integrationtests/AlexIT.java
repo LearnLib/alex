@@ -3,6 +3,7 @@ package de.learnlib.alex.integrationtests;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.ProjectTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
@@ -20,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class AlexIT {
 
     private static final String BASE_URL = "http://localhost:8000/rest";

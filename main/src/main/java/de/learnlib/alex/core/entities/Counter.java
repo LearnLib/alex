@@ -19,7 +19,6 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Entity;
@@ -27,6 +26,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
@@ -35,6 +36,9 @@ import java.io.Serializable;
  * A simple counter class.
  */
 @Entity
+@Table(
+    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "project_id", "name"})
+)
 @JsonPropertyOrder(alphabetic = true)
 public class Counter implements Serializable {
 
@@ -53,13 +57,11 @@ public class Counter implements Serializable {
     private User user;
 
     /** The project the counter belongs to. */
-    @ManyToOne
-    @NaturalId
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JsonIgnore
     private Project project;
 
     /** The name of the counter. */
-    @NaturalId
     @NotBlank
     @Pattern(regexp = "[a-zA-Z0-9]*")
     private String name;
@@ -67,6 +69,14 @@ public class Counter implements Serializable {
     /** The value of the counter. */
     @NotNull
     private Integer value;
+
+    public Counter() {
+        value = 0;
+    }
+
+    public Long getCounterId() {
+        return counterId;
+    }
 
     /**
      * @return The current user that owns the counter.

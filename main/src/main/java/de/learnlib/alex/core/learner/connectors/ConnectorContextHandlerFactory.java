@@ -19,11 +19,16 @@ package de.learnlib.alex.core.learner.connectors;
 import de.learnlib.alex.core.entities.Project;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
+
 /**
  * Factor to create a ContextHandler which knows all available connectors.
  */
 @Service
 public class ConnectorContextHandlerFactory {
+
+    @Inject
+    private CounterStoreConnector counterStoreConnector;
 
     /**
      * Factor to create a ContextHandler which knows all available connectors.
@@ -40,7 +45,7 @@ public class ConnectorContextHandlerFactory {
 
         context.addConnector(new WebSiteConnector(baseUrl, browser));
         context.addConnector(new WebServiceConnector(baseUrl));
-        context.addConnector(new CounterStoreConnector());
+        context.addConnector(counterStoreConnector);
         context.addConnector(new VariableStoreConnector());
         context.addConnector(new FileStoreConnector());
 

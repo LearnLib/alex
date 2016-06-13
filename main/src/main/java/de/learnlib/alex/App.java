@@ -2,22 +2,34 @@ package de.learnlib.alex;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
 
 /**
  * The entry point to ALEX.
  */
 @SpringBootApplication
-public class App extends SpringBootServletInitializer {
+public class App /*extends SpringBootServletInitializer*/ {
 
+    /*
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(App.class);
     }
 
+    @Primary
+    @Bean
+    public Validator getValidatorBean() {
+        return new LocalValidatorFactoryBean();
+    }
+
+    @Primary
+    @Bean
+    public LocalValidatorFactoryBean getLocalValidatorFactoryBean() {
+        return new LocalValidatorFactoryBean();
+    }
+    */
+
     /**
-     * Starts the standalone modus of ALEX.
+     * Starts the standalone version of ALEX.
      *
      * @param args
      *         Additional commandline parameters.

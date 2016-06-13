@@ -20,178 +20,259 @@ import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
-import org.junit.After;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.TransactionSystemException;
 
+import javax.persistence.RollbackException;
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CounterDAOImplTest {
 
-    public static final Long USER_ID = 3L;
-    public static final String   COUNTER_NAME  = "CounterNo1";
-    private static final Integer COUNTER_VALUE = 42;
-    private static final int AMOUNT_OF_COUNTERS = 10;
+    private static final long USER_ID = 21L;
+    private static final long PROJECT_ID = 42L;
+    private static final String COUNTER_NAME  = "CounterNo1";
+    private static final Integer COUNTER_VALUE = 123;
+    private static final int AMOUNT_OF_COUNTERS = 3;
 
-    private static UserDAO userDAO;
-    private static SymbolDAOImpl symbolDAO;
-    private static ProjectDAO projectDAO;
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private ProjectRepository projectRepository;
+
+    @Mock
+    private CounterRepository counterRepository;
+
     private static CounterDAO counterDAO;
-
-    private User user;
-    private Project project;
-    private Counter counter;
-
-    @BeforeClass
-    public static void beforeClass() {
-        userDAO = new UserDAOImpl();
-        symbolDAO = new SymbolDAOImpl();
-        projectDAO = new ProjectDAOImpl(symbolDAO);
-        counterDAO = new CounterDAOImpl();
-    }
 
     @Before
     public void setUp() {
-        user = new User();
-        user.setId(USER_ID);
-        user.setEmail("CounterDAOImplTest@alex.example");
-        user.setEncryptedPassword("alex");
-        userDAO.create(user);
-
-        // create project
-        project = new Project();
-        project.setName("SymbolDAO - Test Project");
-        project.setBaseUrl("http://example.com/");
-        project.setUser(user);
-        projectDAO.create(project);
-
-        counter = new Counter();
-        counter.setUser(user);
-        counter.setProject(project);
-        counter.setName(COUNTER_NAME);
-        counter.setValue(COUNTER_VALUE);
-    }
-
-    @After
-    public void tearDown() throws NotFoundException {
-        userDAO.delete(user.getId());
+        counterDAO = new CounterDAOImpl(projectRepository, counterRepository);
     }
 
     @Test
     public void shouldCreateACounter() {
+        User user = new User();
+        //
+        Project project = new Project();
+        //
+        Counter counter = new Counter();
+        counter.setUser(user);
+        counter.setProject(project);
+        counter.setName(COUNTER_NAME);
+        counter.setValue(COUNTER_VALUE);
+
         counterDAO.create(counter);
+
+        verify(counterRepository).save(counter);
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotCreateACounterWithoutAName() {
-        counter.setName("");
+    public void shouldHandleConstraintViolationExceptionOnCounterCreationGracefully() {
+        Counter counter = new Counter();
+        //
+        given(counterRepository.save(counter)).willThrow(ConstraintViolationException.class);
 
         counterDAO.create(counter); // should fail
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotCreateACopyOfACounter() {
-        counterDAO.create(counter);
+    public void shouldHandleDataIntegrityViolationExceptionOnCounterCreationGracefully() {
+        Counter counter = new Counter();
+        //
+        given(counterRepository.save(counter)).willThrow(DataIntegrityViolationException.class);
 
-        Counter invalidCounter = new Counter();
-        invalidCounter.setProject(counter.getProject());
-        invalidCounter.setName(counter.getName());
-        invalidCounter.setValue(1);
-        counterDAO.create(invalidCounter); // should fail
+        counterDAO.create(counter); // should fail
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldHandleTransactionSystemExceptionOnCounterCreationGracefully() {
+        Counter counter = new Counter();
+        //
+        ConstraintViolationException constraintViolationException = new ConstraintViolationException("Counter is not valid!", new HashSet<>());
+        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
+        TransactionSystemException transactionSystemException = new TransactionSystemException("Spring TransactionSystemException", rollbackException);
+        given(counterRepository.save(counter)).willThrow(transactionSystemException);
+
+        counterDAO.create(counter); // should fail
     }
 
     @Test
-    public void getAllCountersOfOneProject() throws NotFoundException {
-        for (int i = 0; i < AMOUNT_OF_COUNTERS; i++) {
-            Counter tmpCounter = new Counter();
-            tmpCounter.setUser(user);
-            tmpCounter.setProject(project);
-            tmpCounter.setName("CounterNo" + i);
-            tmpCounter.setValue(i);
-            counterDAO.create(tmpCounter);
+    public void shouldGetAllCounterOfAProject() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
+        Project project = new Project();
+        //
+        List<Counter> counters = createCounterList();
+        //
+        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(counterRepository.findByUser_IdAndProject(USER_ID, project)).willReturn(counters);
+
+        List<Counter> allCounters = counterDAO.getAll(USER_ID, PROJECT_ID);
+
+        MatcherAssert.assertThat(allCounters.size(), is(equalTo(counters.size())));
+        for (Counter c : allCounters) {
+            assertTrue(counters.contains(c));
         }
-
-        List<Counter> counters = counterDAO.getAll(user.getId(), project.getId());
-
-        assertEquals(AMOUNT_OF_COUNTERS, counters.size());
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionWhenFetchingAllCountersOfANotExistingProject() throws NotFoundException {
-        counterDAO.getAll(user.getId(), -1L); // should fail
     }
 
     @Test
-    public void shouldGetTheRightCounter() throws NotFoundException {
-        counterDAO.create(counter);
+    public void shouldGetOneCounter() throws NotFoundException {
+        Project project = new Project();
+        //
+        Counter counter = new Counter();
+        //
+        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(counterRepository.findByUser_IdAndProjectAndName(USER_ID, project, COUNTER_NAME)).willReturn(counter);
 
-        Counter counterInDB = counterDAO.get(user.getId(), project.getId(), COUNTER_NAME);
+        Counter c = counterDAO.get(USER_ID, PROJECT_ID, COUNTER_NAME);
 
-        assertEquals(counter, counterInDB);
+        assertThat(c, is(equalTo(counter)));
     }
 
     @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionWhenAskingForANonExistingCounter() throws NotFoundException {
-        counterDAO.get(user.getId(), project.getId(), COUNTER_NAME); // should fail
+    public void shouldThrowAnExceptionIfTheCounterCanNotBeFoundByItsName() throws NotFoundException {
+        Project project = new Project();
+        //
+        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+
+        counterDAO.get(USER_ID, PROJECT_ID, COUNTER_NAME); // should fail
     }
 
     @Test
     public void shouldUpdateACounter() throws NotFoundException {
-        counterDAO.create(counter);
-        counter.setValue(COUNTER_VALUE + 1);
+        User user = new User();
+        user.setId(USER_ID);
+        //
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        //
+        Counter counter = new Counter();
+        counter.setUser(user);
+        counter.setProject(project);
+        counter.setName(COUNTER_NAME);
+        //
+        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(counterRepository.findByUser_IdAndProjectAndName(USER_ID, project, COUNTER_NAME)).willReturn(counter);
 
         counterDAO.update(counter);
+
+        verify(counterRepository).save(counter);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionWhenUpdatingANonExistingCounter() throws NotFoundException {
-        counterDAO.update(counter); // should fail
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionWhenUpdatingACounterWithoutAName() throws NotFoundException {
-        counterDAO.create(counter);
-        counter.setName("");
+    @Test(expected = ValidationException.class)
+    public void shouldHandleConstraintViolationExceptionOnCounterUpdateGracefully() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        //
+        Counter counter = new Counter();
+        counter.setUser(user);
+        counter.setProject(project);
+        counter.setName(COUNTER_NAME);
+        //
+        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(counterRepository.findByUser_IdAndProjectAndName(USER_ID, project, COUNTER_NAME)).willReturn(counter);
+        given(counterRepository.save(counter)).willThrow(ConstraintViolationException.class);
 
         counterDAO.update(counter); // should fail
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldThrowAnExceptionWhenUpdatingWithADifferentName() throws NotFoundException {
-        counterDAO.create(counter);
-        Counter invalidCounter = new Counter();
-        invalidCounter.setProject(counter.getProject());
-        invalidCounter.setName(counter.getName() + "2");
-        invalidCounter.setValue(1);
-        counterDAO.create(invalidCounter); // up to here everything is fine
+    public void shouldHandleDataIntegrityViolationExceptionOnCounterUpdateGracefully() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        //
+        Counter counter = new Counter();
+        counter.setUser(user);
+        counter.setProject(project);
+        counter.setName(COUNTER_NAME);
+        //
+        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(counterRepository.findByUser_IdAndProjectAndName(USER_ID, project, COUNTER_NAME)).willReturn(counter);
+        given(counterRepository.save(counter)).willThrow(DataIntegrityViolationException.class);
 
-        invalidCounter.setName(counter.getName()); // let the madness begin...
+        counterDAO.update(counter); // should fail
+    }
 
-        counterDAO.update(invalidCounter); // should fail
+    @Test(expected = ValidationException.class)
+    public void shouldHandleTransactionSystemExceptionOnCounterUpdateGracefully() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        //
+        Counter counter = new Counter();
+        counter.setUser(user);
+        counter.setProject(project);
+        counter.setName(COUNTER_NAME);
+        //
+        ConstraintViolationException constraintViolationException = new ConstraintViolationException("Counter is not valid!", new HashSet<>());
+        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
+        TransactionSystemException transactionSystemException = new TransactionSystemException("Spring TransactionSystemException", rollbackException);
+        //
+        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(counterRepository.findByUser_IdAndProjectAndName(USER_ID, project, COUNTER_NAME)).willReturn(counter);
+        given(counterRepository.save(counter)).willThrow(transactionSystemException);
+
+        counterDAO.update(counter); // should fail
     }
 
     @Test
     public void shouldDeleteACounter() throws NotFoundException {
-        counterDAO.create(counter);
+        Project project = new Project();
+        //
+        Counter counter = new Counter();
+        List<Counter> counterAsList = Collections.singletonList(counter);
 
-        counterDAO.delete(user.getId(), project.getId(), counter.getName());
+        //
+        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(counterRepository.findAllByUser_IdAndProjectAndNameIn(USER_ID, project, COUNTER_NAME)).willReturn(counterAsList);
 
-        try {
-            counterDAO.get(user.getId(), project.getId(), counter.getName());
-            fail("Counter was not completely removed.");
-        } catch (NotFoundException e) {
-            // success
-        }
+        counterDAO.delete(USER_ID, PROJECT_ID, COUNTER_NAME);
+
+        verify(counterRepository).delete(counterAsList);
     }
 
     @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionWhenDeletingANonExistingCounter() throws NotFoundException {
-        counterDAO.delete(user.getId(), project.getId(), "This counter does not exists!"); // should fail
+    public void shouldFailToDeleteACounterThatDoesNotExist() throws NotFoundException {
+        counterDAO.delete(USER_ID, PROJECT_ID, COUNTER_NAME);
+    }
+
+
+    private List<Counter> createCounterList() {
+        List<Counter> counters = new LinkedList<>();
+        for (int i = 0; i  < AMOUNT_OF_COUNTERS; i++) {
+            Counter c = new Counter();
+            counters.add(c);
+        }
+        return counters;
     }
 
 }

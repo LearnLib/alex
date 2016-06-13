@@ -16,8 +16,6 @@
 
 package de.learnlib.alex.core.entities;
 
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
 
 /**
  * Enumeration used to filter the symbol list by a query parameter.
@@ -25,17 +23,17 @@ import org.hibernate.criterion.Restrictions;
 public enum SymbolVisibilityLevel {
 
     /** Show all symbols. */
-    ALL(Restrictions.in("hidden", new Boolean[] {true, false })),
+    ALL(new Boolean[] { true, false }),
 
     /** Show only visible ones. */
-    VISIBLE(Restrictions.eq("hidden", false)),
+    VISIBLE(new Boolean[] { false }),
 
     /** Show only hidden ones. */
-    HIDDEN(Restrictions.eq("hidden", true));
+    HIDDEN(new Boolean[] { true });
 
 
     /** A criterion/ expression related to the entry. */
-    private Criterion criterion;
+    private Boolean[] criterion;
 
     /**
      * Private constructor because it's an enum.
@@ -43,7 +41,7 @@ public enum SymbolVisibilityLevel {
      * @param criterion
      *         The criterion/ expression the entry represents.
      */
-    SymbolVisibilityLevel(Criterion criterion) {
+    SymbolVisibilityLevel(Boolean[] criterion) {
         this.criterion = criterion;
     }
 
@@ -52,7 +50,7 @@ public enum SymbolVisibilityLevel {
      *
      * @return The criterion/ expression of the entry.
      */
-    public Criterion getCriterion() {
+    public Boolean[] getCriterion() {
         return criterion;
     }
 
