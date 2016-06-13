@@ -112,7 +112,7 @@ public class WebSymbolTest {
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
                     + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                            + "\"node\":null},"
+                            + "\"node\":null,\"doubleClick\":false},"
                     + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
                         + "\"value\":\"F[oO0]+\",\"regexp\":true},"
                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
@@ -135,7 +135,7 @@ public class WebSymbolTest {
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
                                     + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,"
-                                        + "\"ignoreFailure\":false,\"node\":null},"
+                                        + "\"ignoreFailure\":false,\"node\":null,\"doubleClick\":false},"
                                     + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,"
                                         + "\"ignoreFailure\":false,\"value\":\"F[oO0]+\",\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
