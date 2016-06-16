@@ -17,7 +17,7 @@ public class Credentials {
     private String password;
 
     /**
-     * Default constructor;
+     * Default constructor.
      */
     public Credentials() {
         this("", "");
@@ -74,6 +74,7 @@ public class Credentials {
 
     /**
      * Check if the credentials are not empty.
+     *
      * @return If the credentials are valid.
      */
     public boolean areValid() {

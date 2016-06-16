@@ -16,7 +16,11 @@
 
 package de.learnlib.alex.core.dao;
 
-import de.learnlib.alex.core.entities.*;
+import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.HibernateUtil;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
@@ -30,7 +34,14 @@ import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementation of a ProjectDAO using Hibernate.

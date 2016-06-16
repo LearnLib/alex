@@ -24,7 +24,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.internal.matchers.Not;
 
 import javax.validation.ValidationException;
 import java.util.ArrayList;

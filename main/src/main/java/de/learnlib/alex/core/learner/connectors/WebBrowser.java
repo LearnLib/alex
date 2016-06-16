@@ -13,7 +13,6 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Enum to select the browser used by Selenium.
@@ -54,6 +53,7 @@ public enum WebBrowser {
      * @param name The name of the web browser.
      * @return The corresponding WebBrowser enum type.
      * @throws IllegalArgumentException
+     *          If an unsupported WebDriver string has been used.
      */
     @JsonCreator
     public static WebBrowser fromString(String name) throws IllegalArgumentException {
@@ -70,6 +70,8 @@ public enum WebBrowser {
      * Create an instance of a web driver given by the given class.
      *
      * @return An instance of a web driver.
+     * @throws Exception
+     *          If the instantiation of the driver failed.
      */
     public WebDriver getWebDriver() throws Exception {
         try {

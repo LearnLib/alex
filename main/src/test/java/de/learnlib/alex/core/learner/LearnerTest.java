@@ -30,7 +30,6 @@ import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.mapper.ContextExecutableInputSUL;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -151,11 +150,11 @@ public class LearnerTest {
             given(symbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
             symbols.add(symbol);
         }
-        //
-        ConnectorContextHandler contextHandler = mock(ConnectorContextHandler.class);
+
+        ConnectorContextHandler ctxHandler = mock(ConnectorContextHandler.class);
         ConnectorManager connectorManager = mock(ConnectorManager.class);
-        given(contextHandler.createContext()).willReturn(connectorManager);
-        given(contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER)).willReturn(contextHandler);
+        given(ctxHandler.createContext()).willReturn(connectorManager);
+        given(contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER)).willReturn(ctxHandler);
 
         List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols);
 

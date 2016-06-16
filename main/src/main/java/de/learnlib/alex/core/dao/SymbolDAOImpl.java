@@ -754,6 +754,11 @@ public class SymbolDAOImpl implements SymbolDAO {
         return symbols;
     }
 
+    /**
+     * Sets references to related entities to all actions of a symbol.
+     *
+     * @param symbol The symbol.
+     */
     public void beforeSymbolSave(Symbol symbol) {
         for (int i = 0; i < symbol.getActions().size(); i++) {
             SymbolAction action = symbol.getActions().get(i);

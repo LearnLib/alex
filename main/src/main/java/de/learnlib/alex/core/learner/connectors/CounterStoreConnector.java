@@ -115,6 +115,7 @@ public class CounterStoreConnector implements Connector {
      * @param name The name of the counter.
      * @return The positive value of the counter.
      * @throws IllegalStateException
+     *          If the counter 'name' has not been set yet.
      */
     public Integer get(Long userId, Long projectId, String name) throws IllegalStateException {
         try {

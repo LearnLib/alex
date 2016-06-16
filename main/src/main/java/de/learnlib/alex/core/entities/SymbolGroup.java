@@ -95,16 +95,28 @@ public class SymbolGroup implements Serializable {
         this.symbols = new ArrayList<>();
     }
 
+    /**
+     * Set the user.
+     * @param user The user.
+     */
     @JsonIgnore
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Get the user.
+     * @return The user.
+     */
     @JsonIgnore
     public User getUser() {
         return user;
     }
 
+    /**
+     * Get the id of the user.
+     * @return The id of the user.
+     */
     @JsonProperty("user")
     public Long getUserId() {
         if (user == null) {
@@ -114,6 +126,10 @@ public class SymbolGroup implements Serializable {
         }
     }
 
+    /**
+     * Set the id of the user.
+     * @param userId The id of the user.
+     */
     @JsonProperty("user")
     public void setUserId(Long userId) {
         user = new User(userId);

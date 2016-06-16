@@ -34,7 +34,12 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Implementation of a SymbolGroupDAO using Hibernate.

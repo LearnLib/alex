@@ -298,26 +298,26 @@ public class CallAction extends RESTSymbolAction {
     }
 
     private void doRequest(WebServiceConnector target) {
-        Map<String, String> headers = getHeadersWithVariableValues();
+        Map<String, String> requestHeaders = getHeadersWithVariableValues();
         if (credentials != null) {
-            headers.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
+            requestHeaders.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
         }
 
         switch (method) {
             case GET:
-                target.get(getUrlWithVariableValues(), headers,
+                target.get(getUrlWithVariableValues(), requestHeaders,
                            getCookiesWithVariableValues());
                 break;
             case POST:
-                target.post(getUrlWithVariableValues(), headers,
+                target.post(getUrlWithVariableValues(), requestHeaders,
                             getCookiesWithVariableValues(), getDataWithVariableValues());
                 break;
             case PUT:
-                target.put(getUrlWithVariableValues(), headers,
+                target.put(getUrlWithVariableValues(), requestHeaders,
                            getCookiesWithVariableValues(), getDataWithVariableValues());
                 break;
             case DELETE:
-                target.delete(getUrlWithVariableValues(), headers,
+                target.delete(getUrlWithVariableValues(), requestHeaders,
                               getCookiesWithVariableValues());
                 break;
             default:

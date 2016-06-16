@@ -167,8 +167,7 @@ public class Learner {
 
     private LearnerResult createLearnerResult(User user, Project project, LearnerConfiguration configuration)
             throws NotFoundException {
-        // TODO: make it nicer than this instanceof stuff, because you have to somehow tell the eq oracle that the
-        //       learner started and not resumed
+        // learner started and not resumed
         if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
             SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
             if (!oracle.getCounterExamples().isEmpty()) {
@@ -189,7 +188,6 @@ public class Learner {
             throw new NotFoundException("Could not find the reset symbol!", e);
         }
 
-        // TODO: remove new HashMap -> getAll should return a Set
         List<Symbol> symbolsAsList = symbolDAO.getAll(user, project.getId(),
                                                       new LinkedList<>(configuration.getSymbolsAsIdRevisionPairs()));
         Set<Symbol> symbols = new HashSet<>(symbolsAsList);
@@ -199,7 +197,6 @@ public class Learner {
         learnerResult.setAlgorithm(configuration.getAlgorithm());
         learnerResult.setComment(configuration.getComment());
         learnerResultDAO.create(learnerResult);
-
         learnerResultDAO.createStep(learnerResult, configuration);
 
         return learnerResult;
@@ -452,7 +449,8 @@ public class Learner {
         ConnectorManager connectors = contextHandler.createContext();
 
         try {
-            List<String> output = symbols.stream().map(s -> s.execute(connectors).toString()).collect(Collectors.toList());
+            List<String> output = symbols.stream().map(s ->
+                    s.execute(connectors).toString()).collect(Collectors.toList());
             connectors.dispose();
             return output;
         } catch (Exception e) {
