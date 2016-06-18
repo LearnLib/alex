@@ -31,6 +31,7 @@ import FileResource from "./resources/FileResource";
 import LearnerResource from "./resources/LearnerResource";
 import LearnResultResource from "./resources/LearnResultResource";
 import ProjectResource from "./resources/ProjectResource";
+import SettingsResource from "./resources/SettingsResource";
 import SymbolGroupResource from "./resources/SymbolGroupResource";
 import SymbolResource from "./resources/SymbolResource";
 import UserResource from "./resources/UserResource";
@@ -74,6 +75,7 @@ import {projectsView} from "./components/views/projectsView";
 import {projectsDashboardView} from "./components/views/projectsDashboardView";
 import {resultsCompareView} from "./components/views/resultsCompareView";
 import {resultsView} from "./components/views/resultsView";
+import {settingsView} from "./components/views/settingsView";
 import {statisticsCompareView} from "./components/views/statisticsCompareView";
 import {statisticsView} from "./components/views/statisticsView";
 import {symbolsActionsView} from "./components/views/symbolsActionsView";
@@ -154,6 +156,7 @@ angular
     .service('LearnerResource', LearnerResource)
     .service('LearnResultResource', LearnResultResource)
     .service('ProjectResource', ProjectResource)
+    .service('SettingsResource', SettingsResource)
     .service('SymbolGroupResource', SymbolGroupResource)
     .service('SymbolResource', SymbolResource)
     .service('UserResource', UserResource)
@@ -202,6 +205,7 @@ angular
     .component('projectsDashboardView', projectsDashboardView)
     .component('resultsCompareView', resultsCompareView)
     .component('resultsView', resultsView)
+    .component('settingsView', settingsView)
     .component('statisticsCompareView', statisticsCompareView)
     .component('statisticsView', statisticsView)
     .component('symbolsActionsView', symbolsActionsView)

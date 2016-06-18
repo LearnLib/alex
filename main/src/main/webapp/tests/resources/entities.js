@@ -1,5 +1,9 @@
 const ENTITIES = {};
 
+ENTITIES.settings = {
+    id: 1, driver: {firefox: "/path/to/geckodriver", chrome: "/path/to/chromedriver"}
+};
+
 ENTITIES.projects = [
     {id: 1, name: 'project1', baseUrl: 'http://localhost', user: 1, description: null},
     {id: 2, name: 'project2', baseUrl: 'http://localhost', user: 2, description: null},

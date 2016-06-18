@@ -34,6 +34,11 @@ function config($stateProvider, $urlRouterProvider) {
             template: '<users-settings-view></users-settings-view>',
             data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN'], title: 'Settings'}
         })
+        .state('settings', {
+            url: '/settings',
+            template: '<settings-view></settings-view>',
+            data: {requiresProject: false, roles: ['ADMIN'], title: 'Application Settings'}
+        })
         .state('projects', {
             url: '/projects',
             template: '<projects-view></projects-view>',

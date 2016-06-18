@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
+import de.learnlib.alex.core.dao.SettingsDAOImpl;
+import de.learnlib.alex.core.entities.Settings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.MarionetteDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.lang.reflect.Field;
 
@@ -19,14 +21,11 @@ import java.lang.reflect.Field;
  */
 public enum WebBrowser {
 
-    /** Use Mozilla Firefox. */
-    FIREFOX(FirefoxDriver.class),
-
     /** Use Google Chrome. */
     CHROME(ChromeDriver.class),
 
-    /** Use the Internet Explorer by Microsoft. */
-    IE(InternetExplorerDriver.class),
+    /** Use Mozilla Firefox. */
+    FIREFOX(MarionetteDriver.class),
 
     /** Simple & headless browser. This is the default driver. */
     HTMLUNITDRIVER(HtmlUnitDriver.class);
@@ -74,14 +73,24 @@ public enum WebBrowser {
      *          If the instantiation of the driver failed.
      */
     public WebDriver getWebDriver() throws Exception {
+        Settings settings = new SettingsDAOImpl().get();
+
         try {
-            if (this == HTMLUNITDRIVER) {
-                HtmlUnitDriver driver = (HtmlUnitDriver) webDriverClass.getConstructor(BrowserVersion.class)
-                        .newInstance(BrowserVersion.INTERNET_EXPLORER_11);
-                enableJavaScript(driver);
-                return driver;
-            } else {
-                return (WebDriver) webDriverClass.getConstructor().newInstance();
+            switch (this) {
+                case HTMLUNITDRIVER:
+                    HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.BEST_SUPPORTED);
+                    enableJavaScript(driver);
+                    return driver;
+                case CHROME:
+                    System.setProperty("webdriver.chrome.driver", settings.getDriverSettings().getChrome());
+                    DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
+                    return new ChromeDriver(chromeCapabilities);
+                case FIREFOX:
+                    System.setProperty("webdriver.gecko.driver", settings.getDriverSettings().getFirefox());
+                    DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
+                    return new MarionetteDriver(firefoxCapabilities);
+                default:
+                    throw new Exception();
             }
         } catch (Exception e) {
             LOGGER.warn("Could not create a WebDriver.", e);

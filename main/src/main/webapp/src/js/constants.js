@@ -22,9 +22,8 @@ const learnAlgorithm = {
 };
 
 const webBrowser = {
-    FIREFOX: 'firefox',
     CHROME: 'chrome',
-    IE: 'ie',
+    FIREFOX: 'firefox',
     HTMLUNITDRIVER: 'htmlunitdriver'
 };
 

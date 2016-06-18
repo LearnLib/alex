@@ -39,6 +39,13 @@
             <div class="sidebar-group-title">
                 <strong>Admin</strong>
             </div>
+            <a ui-sref="settings" class="sidebar-group-item" uib-tooltip="App Settings" tooltip-placement="right"
+               ng-class="{'active':vm.isState('settings')}">
+                <div class="sidebar-group-item-icon">
+                    <i class="fa fa-fw fa-gears"></i>
+                </div>
+                <div class="sidebar-group-item-label">App Settings</div>
+            </a>
             <a ui-sref="adminUsers" class="sidebar-group-item" uib-tooltip="User Management" tooltip-placement="right"
                ng-class="{'active':vm.isState('adminUsers')}">
                 <div class="sidebar-group-item-icon">

@@ -28,11 +28,12 @@ class LearnSetupSettingsModalController {
      * Constructor
      * @param $uibModalInstance
      * @param modalData
-     * @param ToastService
-     * @param EventBus
-     * @param EqOracleService
+     * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
+     * @param {EqOracleService} EqOracleService
+     * @param {SettingsResource} SettingsResource
      */
-    constructor($uibModalInstance, modalData, ToastService, EventBus, EqOracleService) {
+    constructor($uibModalInstance, modalData, ToastService, EventBus, EqOracleService, SettingsResource) {
         this.$uibModalInstance = $uibModalInstance;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
@@ -55,7 +56,22 @@ class LearnSetupSettingsModalController {
         /**
          * The web driver enum
          */
-        this.webBrowser = webBrowser;
+        this.webBrowser = null;
+
+        SettingsResource.get().then(settings => {
+            let supportedBrowsers = {
+                HTMLUNITDRIVER: 'htmlunitdriver'
+            };
+            
+            for (let key in webBrowser) {
+                if (key === 'HTMLUNITDRIVER') continue;
+                if (settings.driver[webBrowser[key]].trim() !== "") {
+                    supportedBrowsers[key] = webBrowser[key];
+                }
+            }
+
+            this.webBrowser = supportedBrowsers;
+        });
 
         /**
          * The LearnConfiguration to be edited

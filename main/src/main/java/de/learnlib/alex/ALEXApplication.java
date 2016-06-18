@@ -16,7 +16,9 @@
 
 package de.learnlib.alex;
 
+import de.learnlib.alex.core.dao.SettingsDAO;
 import de.learnlib.alex.core.dao.UserDAO;
+import de.learnlib.alex.core.entities.Settings;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.rest.CounterResource;
@@ -25,6 +27,7 @@ import de.learnlib.alex.rest.IFrameProxyResource;
 import de.learnlib.alex.rest.LearnerResource;
 import de.learnlib.alex.rest.LearnerResultResource;
 import de.learnlib.alex.rest.ProjectResource;
+import de.learnlib.alex.rest.SettingsResource;
 import de.learnlib.alex.rest.SymbolGroupResource;
 import de.learnlib.alex.rest.SymbolResource;
 import de.learnlib.alex.rest.UserResource;
@@ -37,6 +40,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
+import javax.xml.bind.ValidationException;
 
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
@@ -55,6 +59,10 @@ public class ALEXApplication extends ResourceConfig {
     @Inject
     private UserDAO userDAO;
 
+    /** The SettingsDAO to create the settings object if needed. */
+    @Inject
+    private SettingsDAO settingsDAO;
+
     /**
      * Constructor where the magic happens.
      */
@@ -66,6 +74,7 @@ public class ALEXApplication extends ResourceConfig {
         register(LearnerResource.class);
         register(LearnerResultResource.class);
         register(ProjectResource.class);
+        register(SettingsResource.class);
         register(SymbolGroupResource.class);
         register(SymbolResource.class);
         register(UserResource.class);
@@ -91,4 +100,19 @@ public class ALEXApplication extends ResourceConfig {
         }
     }
 
+    /**
+     * Create the settings object if needed.
+     */
+    @PostConstruct
+    public void createSettingsIfNeeded() {
+        if (settingsDAO.get() == null) {
+            try {
+                Settings settings = new Settings();
+                settingsDAO.create(settings);
+            } catch (ValidationException e) {
+                e.printStackTrace();
+                System.exit(0);
+            }
+        }
+    }
 }
