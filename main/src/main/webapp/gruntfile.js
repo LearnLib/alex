@@ -164,9 +164,20 @@ module.exports = function (grunt) {
                     'laxbreak': true,
                     '-W053': true
                 }
+            },
+
+            copy: {
+                fonts: {
+                    expand: true,
+                    cwd: 'node_modules/font-awesome/fonts',
+                    src: '*',
+                    dest: 'assets/fonts',
+                    filter: 'isFile'
+                }
             }
         });
 
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -182,6 +193,6 @@ module.exports = function (grunt) {
     grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify:app']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
-    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'build-css']);
+    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css']);
     grunt.registerTask('test', ['karma:unit']);
 };

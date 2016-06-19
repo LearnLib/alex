@@ -59,7 +59,7 @@ Password: *admin*
 
 Make sure you have Java 8 installed on your system.
 
-1. Download the latest version. [Download](https://github.com/LearnLib/alex/releases/download/v1.0/ALEX-1.0.war)
+1. Download the latest version. [Download](https://github.com/LearnLib/alex/releases/download/v1.1/ALEX-1.1.war)
 2. Open a terminal and start the war archive using `java -jar ALEX.war [--port=XXXX]`
 3. Open *http://localhost:8000* in a web browser
 
