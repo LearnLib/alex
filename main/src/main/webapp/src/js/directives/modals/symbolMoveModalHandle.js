@@ -20,8 +20,7 @@ import {events} from '../../constants';
 /**
  * The controller that handles the moving of symbols into another group.
  */
-// @ngInject
-class SymbolMoveModalController {
+export class SymbolMoveModalController {
 
     /**
      * Constructor
@@ -33,6 +32,7 @@ class SymbolMoveModalController {
      * @param ToastService
      * @param EventBus
      */
+    // @ngInject
     constructor($uibModalInstance, modalData, SymbolResource, SymbolGroupResource, SessionService, ToastService,
                 EventBus) {
 
@@ -118,7 +118,7 @@ class SymbolMoveModalController {
  * @returns {{scope: {symbols: string}, link: link}}
  */
 // @ngInject
-function symbolMoveModalHandle($uibModal) {
+export function symbolMoveModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -142,5 +142,3 @@ function symbolMoveModalHandle($uibModal) {
         });
     }
 }
-
-export default symbolMoveModalHandle;

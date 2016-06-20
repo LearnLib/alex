@@ -21,7 +21,6 @@ import {events, userRole} from '../../constants';
  * The controller for the modal window that handles editing a user.
  * This should only be called by an admin.
  */
-// @ngInject
 class UserEditModalController {
 
     /**
@@ -35,6 +34,7 @@ class UserEditModalController {
      * @param {EventBus} EventBus
      * @param {SessionService} SessionService
      */
+    // @ngInject
     constructor($state, $uibModalInstance, modalData, UserResource, ToastService, PromptService, EventBus, SessionService) {
         this.$state = $state;
         this.$uibModalInstance = $uibModalInstance;

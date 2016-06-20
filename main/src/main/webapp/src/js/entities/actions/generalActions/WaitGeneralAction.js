@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Wait for a certain amount of time before executing the next action */
-class WaitGeneralAction extends Action {
+export class WaitGeneralAction extends Action {
 
     /**
      * Constructor
@@ -42,5 +42,3 @@ class WaitGeneralAction extends Action {
         return 'Wait for ' + this.duration + 'ms';
     }
 }
-
-export default WaitGeneralAction;

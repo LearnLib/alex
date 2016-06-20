@@ -1,4 +1,4 @@
-import Action from '../../../../src/js/entities/actions/Action';
+import {Action} from '../../../../src/js/entities/actions/Action';
 
 describe('Action', () => {
     const type = 'someType';

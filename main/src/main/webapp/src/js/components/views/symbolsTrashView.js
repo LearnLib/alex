@@ -15,21 +15,20 @@
  */
 
 import _ from 'lodash';
-import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
  * of these symbols. By default, recovered symbols will be moved in the default group with the id 0.
  */
-// @ngInject
 class SymbolsTrashView {
 
     /**
-     * Constructor
-     * @param SessionService
-     * @param SymbolResource
-     * @param ToastService
+     * Constructor.
+     * @param {SessionService} SessionService
+     * @param {SymbolResource} SymbolResource
+     * @param {ToastService} ToastService
      */
+    // @ngInject
     constructor(SessionService, SymbolResource, ToastService) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;

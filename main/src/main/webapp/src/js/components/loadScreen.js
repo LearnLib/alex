@@ -17,7 +17,6 @@
 /**
  * The components of the load screen
  */
-// @ngInject
 class LoadScreen {
 
     /**
@@ -25,6 +24,7 @@ class LoadScreen {
      * @param $scope
      * @param $http
      */
+    // @ngInject
     constructor($scope, $http) {
 
         /**
@@ -41,8 +41,7 @@ class LoadScreen {
     }
 }
 
-// the component definition
-const loadScreen = {
+export const loadScreen = {
     controller: LoadScreen,
     controllerAs: 'vm',
     template: `
@@ -52,5 +51,3 @@ const loadScreen = {
         </div>
     `
 };
-
-export default loadScreen;

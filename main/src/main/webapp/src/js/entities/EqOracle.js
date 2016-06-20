@@ -17,7 +17,7 @@
 import {eqOracleType} from '../constants';
 
 /** The model for the random eq oracle */
-class RandomEqOracle {
+export class RandomEqOracle {
 
     /**
      * Constructor
@@ -34,7 +34,7 @@ class RandomEqOracle {
 }
 
 /** The model for the complete eq oracle */
-class CompleteEqOracle {
+export class CompleteEqOracle {
 
     /**
      * Constructor
@@ -49,7 +49,7 @@ class CompleteEqOracle {
 }
 
 /** The model for the sample eq oracle */
-class SampleEqOracle {
+export class SampleEqOracle {
 
     /**
      * Constructor
@@ -62,7 +62,7 @@ class SampleEqOracle {
 }
 
 /** The model the the wmethod eq oracle */
-class WMethodEqOracle {
+export class WMethodEqOracle {
 
     /**
      * Constructor
@@ -73,5 +73,3 @@ class WMethodEqOracle {
         this.maxDepth = maxDepth;
     }
 }
-
-export {RandomEqOracle, CompleteEqOracle, WMethodEqOracle, SampleEqOracle};

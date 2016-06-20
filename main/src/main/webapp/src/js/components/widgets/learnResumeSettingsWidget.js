@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
 import {eqOracleType} from '../../constants';
 
 /**
@@ -28,13 +27,13 @@ import {eqOracleType} from '../../constants';
  *          <learn-resume-settings-widget learn-configuration="..."></learn-resume-settings-widget>
  *      </widget>
  */
-// @ngInject
 class LearnResumeSettingsWidget {
 
     /**
-     * Constructor
-     * @param EqOracleService
+     * Constructor.
+     * @param {EqOracleService} EqOracleService
      */
+    // @ngInject
     constructor(EqOracleService) {
         this.EqOracleService = EqOracleService;
 
@@ -57,7 +56,7 @@ class LearnResumeSettingsWidget {
     }
 }
 
-const learnResumeSettingsWidget = {
+export const learnResumeSettingsWidget = {
     bindings: {
         configuration: '='
     },
@@ -65,5 +64,3 @@ const learnResumeSettingsWidget = {
     controllerAs: 'vm',
     templateUrl: 'html/components/learn-resume-settings-widget.html'
 };
-
-export default learnResumeSettingsWidget;

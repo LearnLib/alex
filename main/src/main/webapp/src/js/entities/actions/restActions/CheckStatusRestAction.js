@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Checks for the status code (e.g. 404) in an HTTP response */
-class CheckStatusRestAction extends Action {
+export class CheckStatusRestAction extends Action {
 
     /**
      * Constructor
@@ -43,5 +43,3 @@ class CheckStatusRestAction extends Action {
         return 'Check HTTP response status to be "' + this.status + '"';
     }
 }
-
-export default CheckStatusRestAction;

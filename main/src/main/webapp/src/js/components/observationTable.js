@@ -86,7 +86,7 @@ class ObservationTable {
     }
 }
 
-const observationTable = {
+export const observationTable = {
     template: `
         <table class="table table-condensed observation-table">
             <thead>
@@ -110,5 +110,3 @@ const observationTable = {
         data: '='
     }
 };
-
-export {observationTable};

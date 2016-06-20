@@ -44,7 +44,6 @@ const STYLE = {
  * Attribute 'layoutSettings' is optional.
  *
  * Use: <hypothesis data="..." is-selectable="true|false" layout-settings="..."></hypothesis> */
-// @ngInject
 class HypothesisComponent {
 
     /**
@@ -53,6 +52,7 @@ class HypothesisComponent {
      * @param $element
      * @param {EventBus} EventBus
      */
+    // @ngInject
     constructor($scope, $element, EventBus) {
         this.$scope = $scope;
         this.$element = $element;

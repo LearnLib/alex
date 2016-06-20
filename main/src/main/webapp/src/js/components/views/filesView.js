@@ -15,7 +15,6 @@
  */
 
 /** The controller of the files page */
-// @ngInject
 class FilesView {
 
     /**
@@ -25,6 +24,7 @@ class FilesView {
      * @param {SessionService} SessionService
      * @param {FileResource} FileResource
      */
+    // @ngInject
     constructor(Upload, ToastService, SessionService, FileResource) {
         this.Upload = Upload;
         this.ToastService = ToastService;

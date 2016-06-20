@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Searches for a piece of text or a regular expression in the HTML document */
-class CheckPageTitleAction extends Action {
+export class CheckPageTitleAction extends Action {
 
     /**
      * Constructor
@@ -52,5 +52,3 @@ class CheckPageTitleAction extends Action {
         }
     }
 }
-
-export default CheckPageTitleAction;

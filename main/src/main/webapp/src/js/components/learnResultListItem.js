@@ -25,7 +25,7 @@
 class LearnResultListItem {
 }
 
-const learnResultListItem = {
+export const learnResultListItem = {
     template: `
         <div class="learn-result-list-item">
             <checkbox model="vm.result" class="pull-left" selection-model-ignore></checkbox>
@@ -58,5 +58,3 @@ const learnResultListItem = {
         linkTo: '@'
     }
 };
-
-export {learnResultListItem};

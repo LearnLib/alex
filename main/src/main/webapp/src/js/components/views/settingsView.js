@@ -20,7 +20,6 @@ import SettingsResource from '../../resources/SettingsResource';
  * The component for the about page.
  * Usage: <settings-view></settings-view>.
  */
-// @ngInject
 class SettingsView {
 
     /**
@@ -28,6 +27,7 @@ class SettingsView {
      * @param {SettingsResource} SettingsResource
      * @param {ToastService} ToastService
      */
+    // @ngInject
     constructor(SettingsResource, ToastService) {
         this.SettingsResource = SettingsResource;
         this.ToastService = ToastService;
@@ -38,6 +38,9 @@ class SettingsView {
             .then(settings => this.settings = settings);
     }
 
+    /**
+     * Updates the settings.
+     */
     updateSettings() {
         this.SettingsResource.update(this.settings)
             .then(() => {

@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import SetVariableByJsonAttributeGeneralAction from '../../../../../src/js/entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {SetVariableByJsonAttributeGeneralAction} from '../../../../../src/js/entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('SetVariableByJsonAttributeGeneralAction', () => {

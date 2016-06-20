@@ -17,13 +17,13 @@
 /**
  * The resource that handles http calls to the API to do CRUD operations on projects.
  */
-// @ngInject
-class SettingsResource {
+export class SettingsResource {
 
     /**
      * Constructor.
      * @param $http
      */
+    // @ngInject
     constructor($http) {
         this.$http = $http;
     }
@@ -47,5 +47,3 @@ class SettingsResource {
             .then(response => angular.fromJson(response.data));
     }
 }
-
-export default SettingsResource;

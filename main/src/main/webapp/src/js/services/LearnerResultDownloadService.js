@@ -15,14 +15,14 @@
  */
 
 /** The Service that is used to download learn results as csv */
-// @ngInject
-class LearnerResultDownloadService {
+export class LearnerResultDownloadService {
 
     /**
      * Constructor
      * @param {DownloadService} DownloadService
      * @param {PromptService} PromptService
      */
+    // @ngInject
     constructor(DownloadService, PromptService) {
         this.DownloadService = DownloadService;
         this.PromptService = PromptService;
@@ -58,5 +58,3 @@ class LearnerResultDownloadService {
             });
     }
 }
-
-export default LearnerResultDownloadService;

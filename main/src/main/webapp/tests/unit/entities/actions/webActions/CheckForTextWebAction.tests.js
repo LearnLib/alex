@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import CheckForTextWebAction from '../../../../../src/js/entities/actions/webActions/CheckForTextWebAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {CheckForTextWebAction} from '../../../../../src/js/entities/actions/webActions/CheckForTextWebAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckForTextWebAction', () => {

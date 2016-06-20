@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Sets a variable to a specific value and implicitly initializes it if it has not been created before */
-class SetCounterGeneralAction extends Action {
+export class SetCounterGeneralAction extends Action {
 
     /**
      * Constructor
@@ -48,5 +48,3 @@ class SetCounterGeneralAction extends Action {
         return 'Set counter "' + this.name + '" to "' + this.value + '"';
     }
 }
-
-export default SetCounterGeneralAction;

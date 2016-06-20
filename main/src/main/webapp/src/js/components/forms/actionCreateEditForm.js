@@ -49,7 +49,7 @@ class ActionCreateEditForm {
     }
 }
 
-const actionCreateEditForm = {
+export const actionCreateEditForm = {
     bindings: {
         action: '=',
         symbols: '='
@@ -80,5 +80,3 @@ const actionCreateEditForm = {
         </div>
     `
 };
-
-export default actionCreateEditForm;

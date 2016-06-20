@@ -15,15 +15,15 @@
  */
 
 /** The controller of the user settings page */
-// @ngInject
 class UsersSettingsView {
 
     /**
-     * Constructor
-     * @param UserResource
-     * @param SessionService
-     * @param ToastService
+     * Constructor.
+     * @param {UserResource} UserResource
+     * @param {SessionService} SessionService
+     * @param {ToastService} ToastService
      */
+    // @ngInject
     constructor(UserResource, SessionService, ToastService) {
 
         // the user from the jwt

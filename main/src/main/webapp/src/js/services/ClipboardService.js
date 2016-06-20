@@ -15,7 +15,7 @@
  */
 
 /** The factory for the Clipboard */
-class ClipboardService {
+export class ClipboardService {
 
     /** Constructor */
     constructor() {
@@ -69,5 +69,3 @@ class ClipboardService {
         }
     }
 }
-
-export default ClipboardService;

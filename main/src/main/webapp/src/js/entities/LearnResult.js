@@ -17,7 +17,7 @@
 /**
  * The model for a learner result
  */
-class LearnResult {
+export class LearnResult {
 
     /**
      * Constructor
@@ -108,5 +108,3 @@ class LearnResult {
         }
     }
 }
-
-export {LearnResult};

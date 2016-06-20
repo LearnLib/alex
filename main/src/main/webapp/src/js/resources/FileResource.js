@@ -17,13 +17,13 @@
 /**
  * The resource that handles API calls concerning the management of files.
  */
-// @ngInject
-class FileResource {
+export class FileResource {
 
     /**
      * Constructor
      * @param $http
      */
+    // @ngInject
     constructor($http) {
         this.$http = $http;
     }
@@ -49,5 +49,3 @@ class FileResource {
         return this.$http.delete(`rest/projects/${projectId}/files/${encodedFileName}`);
     }
 }
-
-export default FileResource;

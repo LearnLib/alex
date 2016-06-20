@@ -18,7 +18,7 @@ import {learnAlgorithm, webBrowser} from '../constants';
 import {RandomEqOracle} from '../entities/EqOracle';
 
 /** The model for a learn configuration */
-class LearnConfiguration {
+export class LearnConfiguration {
 
     /**
      * Constructor
@@ -85,5 +85,3 @@ class LearnConfiguration {
         this.resetSymbol = symbol.getIdRevisionPair();
     }
 }
-
-export {LearnConfiguration};

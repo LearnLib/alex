@@ -19,17 +19,17 @@ import _ from 'lodash';
 /**
  * The controller for listing all final test results.
  */
-// @ngInject
 class ResultsView {
 
     /**
-     * Constructor
+     * Constructor.
      * @param $state
-     * @param SessionService
-     * @param LearnResultResource
-     * @param PromptService
-     * @param ToastService
+     * @param {SessionService} SessionService
+     * @param {LearnResultResource} LearnResultResource
+     * @param {PromptService} PromptService
+     * @param {ToastService} ToastService
      */
+    // @ngInject
     constructor($state, SessionService, LearnResultResource, PromptService, ToastService) {
         this.$state = $state;
         this.PromptService = PromptService;

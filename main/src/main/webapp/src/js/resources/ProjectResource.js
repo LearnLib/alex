@@ -19,13 +19,13 @@ import {Project} from '../entities/Project';
 /**
  * The resource that handles http calls to the API to do CRUD operations on projects
  */
-// @ngInject
-class ProjectResource {
+export class ProjectResource {
 
     /**
      * Constructor
      * @param $http
      */
+    // @ngInject
     constructor($http) {
         this.$http = $http;
     }
@@ -78,5 +78,3 @@ class ProjectResource {
         return this.$http.delete(`rest/projects/${project.id}`);
     }
 }
-
-export default ProjectResource;

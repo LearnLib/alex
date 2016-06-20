@@ -33,7 +33,7 @@ class Widget {
     }
 }
 
-const widget = {
+export const widget = {
     controller: Widget,
     controllerAs: 'vm',
     bindings: {
@@ -49,6 +49,3 @@ const widget = {
       </div>
    `
 };
-
-
-export default widget;

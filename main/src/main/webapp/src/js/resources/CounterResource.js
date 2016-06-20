@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import Counter from '../entities/Counter';
+import {Counter} from '../entities/Counter';
 
 /**
  * The service that communicates with the API in order to read and delete counters.
  */
-// @ngInject
-class CounterResource {
+export class CounterResource {
 
     /**
      * Constructor
      * @param $http
      */
+    // @ngInject
     constructor($http) {
         this.$http = $http;
     }
@@ -64,5 +64,3 @@ class CounterResource {
         return this.$http.delete(`rest/projects/${projectId}/counters/batch/${names}`);
     }
 }
-
-export default CounterResource;

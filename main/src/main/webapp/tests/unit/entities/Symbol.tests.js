@@ -1,5 +1,5 @@
 import {AlphabetSymbol} from '../../../src/js/entities/AlphabetSymbol';
-import Action from '../../../src/js/entities/actions/Action';
+import {Action} from '../../../src/js/entities/actions/Action';
 
 describe('AlphabetSymbol', () => {
     let ActionService;

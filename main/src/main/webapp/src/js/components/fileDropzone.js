@@ -22,15 +22,15 @@ import {events} from '../constants';
  *
  * Use: '<file-dropzone>some text to display</file-dropzone>'
  */
-// @ngInject
 class FileDropzone {
 
     /**
      * Constructor
      * @param $scope
      * @param $element
-     * @param EventBus
+     * @param {EventBus} EventBus
      */
+    // @ngInject
     constructor($scope, $element, EventBus) {
         this.$scope = $scope;
         this.$element = $element;

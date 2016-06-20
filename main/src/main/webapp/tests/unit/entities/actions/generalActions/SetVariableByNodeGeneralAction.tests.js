@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import SetVariableByNodeGeneralAction from '../../../../../src/js/entities/actions/generalActions/SetVariableByNodeGeneralAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {SetVariableByNodeGeneralAction} from '../../../../../src/js/entities/actions/generalActions/SetVariableByNodeGeneralAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('SetVariableByNodeGeneralAction', () => {

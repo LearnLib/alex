@@ -15,13 +15,13 @@
  */
 
 /** The event bus */
-// @ngInject
-class EventBus {
+export class EventBus {
 
     /**
      * Constructor
      * @param $rootScope
      */
+    // @ngInject
     constructor($rootScope) {
         this.$rootScope = $rootScope;
     }
@@ -46,5 +46,3 @@ class EventBus {
         this.$rootScope.$emit(eventName, data);
     }
 }
-
-export default EventBus;

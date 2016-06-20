@@ -19,7 +19,6 @@ import _ from 'lodash';
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
  */
-// @ngInject
 class CountersView {
 
     /**
@@ -28,6 +27,7 @@ class CountersView {
      * @param CounterResource
      * @param ToastService
      */
+    // @ngInject
     constructor(SessionService, CounterResource, ToastService) {
         this.CounterResource = CounterResource;
         this.ToastService = ToastService;

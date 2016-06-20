@@ -31,7 +31,7 @@ class ViewHeader {
     }
 }
 
-const viewHeader = {
+export const viewHeader = {
     bindings: {
         title: '@'
     },
@@ -47,5 +47,3 @@ const viewHeader = {
         </div>
     `
 };
-
-export default viewHeader;

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Clicks on a link with a specific text value */
-class ClickLinkByTextWebAction extends Action {
+export class ClickLinkByTextWebAction extends Action {
 
     /**
      * Constructor
@@ -43,5 +43,3 @@ class ClickLinkByTextWebAction extends Action {
         return `Click on link with text "${this.value}"`;
     }
 }
-
-export default ClickLinkByTextWebAction;

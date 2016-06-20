@@ -31,7 +31,7 @@ class Checkbox {
     }
 }
 
-const checkbox = {
+export const checkbox = {
     bindings: {
         model: '='
     },
@@ -76,7 +76,7 @@ class CheckboxMultiple {
     }
 }
 
-const checkboxMultiple = {
+export const checkboxMultiple = {
     bindings: {
         model: '=',
         modelFn: '&'
@@ -89,5 +89,3 @@ const checkboxMultiple = {
         </span>
     `
 };
-
-export {checkbox, checkboxMultiple};

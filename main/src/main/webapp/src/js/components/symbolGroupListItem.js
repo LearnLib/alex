@@ -22,13 +22,13 @@
  * Set attribute 'editable' to 'true' so that an icon to edit the group is displayed. Omit it
  * otherwise.
  */
-// @ngInject
 class SymbolGroupListItem {
 
     /**
      * Constructor
      * @param $attrs
      */
+    // @ngInject
     constructor($attrs) {
 
         /**
@@ -39,7 +39,7 @@ class SymbolGroupListItem {
     }
 }
 
-const symbolGroupListItem = {
+export const symbolGroupListItem = {
     template: `
         <div class="symbol-group-list-item">
             <div class="symbol-group-list-item-header">
@@ -69,5 +69,3 @@ const symbolGroupListItem = {
         group: '='
     }
 };
-
-export {symbolGroupListItem};

@@ -18,8 +18,7 @@ import {events} from '../../constants';
 import {SymbolGroup} from '../../entities/SymbolGroup';
 
 /** The controller for the modal dialog that handles the creation of a new symbol group. */
-// @ngInject
-class SymbolGroupCreateModalController {
+export class SymbolGroupCreateModalController {
 
     /**
      * Constructor
@@ -29,6 +28,7 @@ class SymbolGroupCreateModalController {
      * @param ToastService
      * @param EventBus
      */
+    // @ngInject
     constructor($uibModalInstance, SessionService, SymbolGroupResource, ToastService, EventBus) {
         this.$uibModalInstance = $uibModalInstance;
         this.SymbolGroupResource = SymbolGroupResource;
@@ -89,7 +89,7 @@ class SymbolGroupCreateModalController {
  * @returns {{restrict: string, link: link}}
  */
 // @ngInject
-function symbolGroupCreateModalHandle($uibModal) {
+export function symbolGroupCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
         link: link
@@ -105,5 +105,3 @@ function symbolGroupCreateModalHandle($uibModal) {
         });
     }
 }
-
-export {SymbolGroupCreateModalController, symbolGroupCreateModalHandle};

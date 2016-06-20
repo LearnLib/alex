@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import ActionService from '../services/ActionService';
+import {ActionService} from '../services/ActionService';
 
 const actionService = new ActionService();
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Extracts the text content value of an element and saves it value in a variable */
-class SetVariableByJsonAttributeGeneralAction extends Action {
+export class SetVariableByJsonAttributeGeneralAction extends Action {
 
     /**
      * Constructor
@@ -48,5 +48,3 @@ class SetVariableByJsonAttributeGeneralAction extends Action {
         return 'Set variable "' + this.name + '" to the value of the JSON attribute "' + this.value + '"';
     }
 }
-
-export default SetVariableByJsonAttributeGeneralAction;

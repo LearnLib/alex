@@ -18,7 +18,7 @@
  * Define application routes
  */
 // @ngInject
-function config($stateProvider, $urlRouterProvider) {
+export function config($stateProvider, $urlRouterProvider) {
 
     // redirect to the start page when no other route fits
     $urlRouterProvider.otherwise("/home");
@@ -135,7 +135,7 @@ function config($stateProvider, $urlRouterProvider) {
  * Validate routes on state change
  */
 // @ngInject
-function run($rootScope, $state, SessionService, ToastService) {
+export function run($rootScope, $state, SessionService, ToastService) {
 
     // route validation
     $rootScope.$on("$stateChangeStart", stateChangeStart);
@@ -159,8 +159,3 @@ function run($rootScope, $state, SessionService, ToastService) {
         }
     }
 }
-
-export const routes = {
-    config: config,
-    run: run
-};

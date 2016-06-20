@@ -17,45 +17,45 @@
 import {actionType} from '../constants';
 
 // web actions
-import SelectWebAction from '../entities/actions/webActions/SelectWebAction';
-import SubmitWebAction from '../entities/actions/webActions/SubmitWebAction';
-import GoToWebAction from '../entities/actions/webActions/GoToWebAction';
-import ExecuteScriptAction from '../entities/actions/webActions/ExecuteScriptAction';
-import FillWebAction from '../entities/actions/webActions/FillWebAction';
-import ClickWebAction from '../entities/actions/webActions/ClickWebAction';
-import ClickLinkByTextWebAction from '../entities/actions/webActions/ClickLinkByTextWebAction';
-import ClearWebAction from '../entities/actions/webActions/ClearWebAction';
-import CheckPageTitleAction from '../entities/actions/webActions/CheckPageTitleAction';
-import CheckForTextWebAction from '../entities/actions/webActions/CheckForTextWebAction';
-import CheckForNodeWebAction from '../entities/actions/webActions/CheckForNodeWebAction';
-import MoveMouseAction from '../entities/actions/webActions/MoveMouseAction';
-import WaitForTitleAction from '../entities/actions/webActions/WaitForTitleAction';
-import WaitForNodeAction from '../entities/actions/webActions/WaitForNodeAction';
+import {SelectWebAction} from '../entities/actions/webActions/SelectWebAction';
+import {SubmitWebAction} from '../entities/actions/webActions/SubmitWebAction';
+import {GoToWebAction} from '../entities/actions/webActions/GoToWebAction';
+import {ExecuteScriptAction} from '../entities/actions/webActions/ExecuteScriptAction';
+import {FillWebAction} from '../entities/actions/webActions/FillWebAction';
+import {ClickWebAction} from '../entities/actions/webActions/ClickWebAction';
+import {ClickLinkByTextWebAction} from '../entities/actions/webActions/ClickLinkByTextWebAction';
+import {ClearWebAction} from '../entities/actions/webActions/ClearWebAction';
+import {CheckPageTitleAction} from '../entities/actions/webActions/CheckPageTitleAction';
+import {CheckForTextWebAction} from '../entities/actions/webActions/CheckForTextWebAction';
+import {CheckForNodeWebAction} from '../entities/actions/webActions/CheckForNodeWebAction';
+import {MoveMouseAction} from '../entities/actions/webActions/MoveMouseAction';
+import {WaitForTitleAction} from '../entities/actions/webActions/WaitForTitleAction';
+import {WaitForNodeAction} from '../entities/actions/webActions/WaitForNodeAction';
 
 // rest actions
-import CallRestAction from '../entities/actions/restActions/CallRestAction';
-import CheckAttributeExistsRestAction from '../entities/actions/restActions/CheckAttributeExistsRestAction';
-import CheckAttributeTypeRestAction from '../entities/actions/restActions/CheckAttributeTypeRestAction';
-import CheckAttributeValueRestAction from '../entities/actions/restActions/CheckAttributeValueRestAction';
-import CheckHeaderFieldRestAction from '../entities/actions/restActions/CheckHeaderFieldRestAction';
-import CheckHTTPBodyTextRestAction from '../entities/actions/restActions/CheckHTTPBodyTextRestAction';
-import CheckStatusRestAction from '../entities/actions/restActions/CheckStatusRestAction';
+import {CallRestAction} from '../entities/actions/restActions/CallRestAction';
+import {CheckAttributeExistsRestAction} from '../entities/actions/restActions/CheckAttributeExistsRestAction';
+import {CheckAttributeTypeRestAction} from '../entities/actions/restActions/CheckAttributeTypeRestAction';
+import {CheckAttributeValueRestAction} from '../entities/actions/restActions/CheckAttributeValueRestAction';
+import {CheckHeaderFieldRestAction} from '../entities/actions/restActions/CheckHeaderFieldRestAction';
+import {CheckHTTPBodyTextRestAction} from '../entities/actions/restActions/CheckHTTPBodyTextRestAction';
+import {CheckStatusRestAction} from '../entities/actions/restActions/CheckStatusRestAction';
 
 // general actions
-import ExecuteSymbolGeneralAction from '../entities/actions/generalActions/ExecuteSymbolGeneralAction';
-import AssertCounterAction from '../entities/actions/generalActions/AssertCounterAction';
-import AssertVariableAction from '../entities/actions/generalActions/AssertVariableAction';
-import IncrementCounterGeneralAction from '../entities/actions/generalActions/IncrementCounterGeneralAction';
-import SetCounterGeneralAction from '../entities/actions/generalActions/SetCounterGeneralAction';
-import SetVariableByCookieAction from '../entities/actions/generalActions/SetVariableByCookieAction';
-import SetVariableByJsonAttributeGeneralAction from '../entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
-import SetVariableByNodeGeneralAction from '../entities/actions/generalActions/SetVariableByNodeGeneralAction';
-import SetVariableByNodeAttributeGeneralAction from '../entities/actions/generalActions/SetVariableByNodeAttributeGeneralAction';
-import SetVariableGeneralAction from '../entities/actions/generalActions/SetVariableGeneralAction';
-import WaitGeneralAction from '../entities/actions/generalActions/WaitGeneralAction';
+import {ExecuteSymbolGeneralAction} from '../entities/actions/generalActions/ExecuteSymbolGeneralAction';
+import {AssertCounterAction} from '../entities/actions/generalActions/AssertCounterAction';
+import {AssertVariableAction} from '../entities/actions/generalActions/AssertVariableAction';
+import {IncrementCounterGeneralAction} from '../entities/actions/generalActions/IncrementCounterGeneralAction';
+import {SetCounterGeneralAction} from '../entities/actions/generalActions/SetCounterGeneralAction';
+import {SetVariableByCookieAction} from '../entities/actions/generalActions/SetVariableByCookieAction';
+import {SetVariableByJsonAttributeGeneralAction} from '../entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
+import {SetVariableByNodeGeneralAction} from '../entities/actions/generalActions/SetVariableByNodeGeneralAction';
+import {SetVariableByNodeAttributeGeneralAction} from '../entities/actions/generalActions/SetVariableByNodeAttributeGeneralAction';
+import {SetVariableGeneralAction} from '../entities/actions/generalActions/SetVariableGeneralAction';
+import {WaitGeneralAction} from '../entities/actions/generalActions/WaitGeneralAction';
 
 /** The service that is used to create new actions */
-class ActionService {
+export class ActionService {
 
     /**
      * Creates an action from a given object
@@ -146,5 +146,3 @@ class ActionService {
         return this.create({type: type});
     }
 }
-
-export default ActionService;

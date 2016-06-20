@@ -17,7 +17,6 @@
 import {events} from '../../constants';
 
 /** The controller for the admin users page */
-// @ngInject
 class AdminUsersView {
 
     /**
@@ -28,6 +27,7 @@ class AdminUsersView {
      * @param {SessionService} SessionService
      * @param {ToastService} ToastService
      */
+    // @ngInject
     constructor($scope, UserResource, EventBus, SessionService, ToastService) {
         this.UserResource = UserResource;
         this.ToastService = ToastService;

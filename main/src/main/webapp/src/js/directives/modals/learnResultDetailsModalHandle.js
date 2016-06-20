@@ -21,14 +21,14 @@
  *
  * @constructor
  */
-// @ngInject
-class LearnResultDetailsModalController {
+export class LearnResultDetailsModalController {
 
     /**
      * Constructor
      * @param $uibModalInstance
      * @param modalData
      */
+    // @ngInject
     constructor($uibModalInstance, modalData) {
         this.$uibModalInstance = $uibModalInstance;
 
@@ -77,7 +77,7 @@ class LearnResultDetailsModalController {
  * @returns {{restrict: string, scope: {result: string}, link: link}}
  */
 // @ngInject
-function learnResultDetailsModalHandle($uibModal) {
+export function learnResultDetailsModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -105,5 +105,3 @@ function learnResultDetailsModalHandle($uibModal) {
         });
     }
 }
-
-export default learnResultDetailsModalHandle;

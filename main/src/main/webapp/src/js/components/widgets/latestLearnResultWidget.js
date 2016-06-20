@@ -18,14 +18,14 @@
  * The class for the learn result widget
  * Use: <latest-learn-result-widget></latest-learn-result-widget>
  */
-// @ngInject
 class LatestLearnResultWidget {
 
     /**
-     * Constructor
-     * @param SessionService
-     * @param LearnResultResource
+     * Constructor.
+     * @param {SessionService} SessionService
+     * @param {LearnResultResource} LearnResultResource
      */
+    // @ngInject
     constructor(SessionService, LearnResultResource) {
 
         /**
@@ -49,7 +49,7 @@ class LatestLearnResultWidget {
     }
 }
 
-const latestLearnResultWidget = {
+export const latestLearnResultWidget = {
     controller: LatestLearnResultWidget,
     controllerAs: 'vm',
     template: `
@@ -74,5 +74,3 @@ const latestLearnResultWidget = {
         </widget>
     `
 };
-
-export default latestLearnResultWidget;

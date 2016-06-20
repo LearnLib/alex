@@ -19,17 +19,17 @@ import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 /**
  * The controller for the page where the revision history if a symbol is listed and old revisions can be restored
  */
-// @ngInject
 class SymbolsHistoryView {
 
     /**
      * Constructor
      * @param $stateParams
-     * @param SymbolResource
-     * @param SessionService
-     * @param ToastService
-     * @param ErrorService
+     * @param {SymbolResource} SymbolResource
+     * @param {SessionService} SessionService
+     * @param {ToastService} ToastService
+     * @param {ErrorService} ErrorService
      */
+    // @ngInject
     constructor($stateParams, SymbolResource, SessionService, ToastService, ErrorService) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;

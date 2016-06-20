@@ -18,7 +18,6 @@ import {events} from '../../constants';
 import {User} from '../../entities/User';
 
 /** The component controller for the user login form */
-// @ngInject
 class UserLoginForm {
 
     /**
@@ -30,6 +29,7 @@ class UserLoginForm {
      * @param {SessionService} SessionService
      * @param {EventBus} EventBus
      */
+    // @ngInject
     constructor($state, UserResource, jwtHelper, ToastService, SessionService, EventBus) {
         this.$state = $state;
         this.UserResource = UserResource;
@@ -76,7 +76,7 @@ class UserLoginForm {
     }
 }
 
-const userLoginForm = {
+export const userLoginForm = {
     controller: UserLoginForm,
     controllerAs: 'vm',
     template: `
@@ -108,5 +108,3 @@ const userLoginForm = {
         </form>
     `
 };
-
-export default userLoginForm;

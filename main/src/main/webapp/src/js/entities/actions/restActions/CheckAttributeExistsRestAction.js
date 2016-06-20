@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /**
  * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.
  * E.g. object.attribute.anotherAttribute
  */
-class CheckAttributeExistsRestAction extends Action {
+export class CheckAttributeExistsRestAction extends Action {
 
     /**
      * Constructor
@@ -46,5 +46,3 @@ class CheckAttributeExistsRestAction extends Action {
         return 'Check if the JSON of a HTTP response has attribute "' + this.attribute + '"';
     }
 }
-
-export default CheckAttributeExistsRestAction;

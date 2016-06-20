@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import WaitGeneralAction from '../../../../../src/js/entities/actions/generalActions/WaitGeneralAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {WaitGeneralAction} from '../../../../../src/js/entities/actions/generalActions/WaitGeneralAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('WaitGeneralAction', () => {

@@ -22,7 +22,7 @@
  * @param $httpProvider
  */
 // @ngInject
-function config(selectionModelOptionsProvider, jwtInterceptorProvider, $httpProvider, toastrConfig) {
+export function config(selectionModelOptionsProvider, jwtInterceptorProvider, $httpProvider, toastrConfig) {
 
     // default options for selection model
     selectionModelOptionsProvider.set({
@@ -62,7 +62,3 @@ function config(selectionModelOptionsProvider, jwtInterceptorProvider, $httpProv
         });
     }
 }
-
-export const configuration = {
-    config: config
-};

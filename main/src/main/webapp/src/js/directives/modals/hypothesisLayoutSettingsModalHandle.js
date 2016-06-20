@@ -17,8 +17,7 @@
 import {events} from '../../constants';
 
 /** The controller that handles the modal dialog for changing the layout settings of a hypothesis */
-// @ngInject
-class HypothesisLayoutSettingsController {
+export class HypothesisLayoutSettingsController {
 
     /**
      * Constructor
@@ -26,6 +25,7 @@ class HypothesisLayoutSettingsController {
      * @param modalData
      * @param EventBus
      */
+    // @ngInject
     constructor($uibModalInstance, modalData, EventBus) {
         this.$uibModalInstance = $uibModalInstance;
         this.EventBus = EventBus;
@@ -82,7 +82,7 @@ class HypothesisLayoutSettingsController {
  * @returns {{restrict: string, scope: {layoutSettings: string}, link: link}}
  */
 // @ngInject
-function hypothesisLayoutSettingsModalHandle($uibModal) {
+export function hypothesisLayoutSettingsModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -108,5 +108,3 @@ function hypothesisLayoutSettingsModalHandle($uibModal) {
         });
     }
 }
-
-export default hypothesisLayoutSettingsModalHandle;

@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import CheckHeaderFieldRestAction from '../../../../../src/js/entities/actions/restActions/CheckHeaderFieldRestAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {CheckHeaderFieldRestAction} from '../../../../../src/js/entities/actions/restActions/CheckHeaderFieldRestAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckHeaderFieldRestAction', () => {

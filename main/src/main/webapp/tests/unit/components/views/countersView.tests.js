@@ -1,4 +1,4 @@
-import Counter from '../../../../src/js/entities/Counter';
+import {Counter} from '../../../../src/js/entities/Counter';
 import {Project} from '../../../../src/js/entities/Project';
 
 describe('CountersController', () => {

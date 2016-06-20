@@ -21,20 +21,20 @@ import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 /**
  * The controller that handles CRUD operations on symbols and symbol groups.
  */
-// @ngInject
 class SymbolsView {
 
     /**
-     * Constructor
+     * Constructor.
      * @param $scope
      * @param {SessionService} SessionService
-     * @param SymbolResource
-     * @param SymbolGroupResource
-     * @param ToastService
+     * @param {SymbolResource} SymbolResource
+     * @param {SymbolGroupResource} SymbolGroupResource
+     * @param {ToastService} ToastService
      * @param {DownloadService} DownloadService
-     * @param EventBus
+     * @param {EventBus} EventBus
      * @param {PromptService} PromptService
      */
+    // @ngInject
     constructor($scope, SessionService, SymbolResource, SymbolGroupResource, ToastService, DownloadService,
                 EventBus, PromptService) {
 

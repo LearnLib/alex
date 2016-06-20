@@ -18,8 +18,7 @@ import {events} from '../../constants';
 import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /** The controller for the modal window to create a new symbol */
-// @ngInject
-class SymbolCreateModalController {
+export class SymbolCreateModalController {
 
     /**
      * Constructor
@@ -30,6 +29,7 @@ class SymbolCreateModalController {
      * @param SessionService
      * @param EventBus
      */
+    // @ngInject
     constructor($uibModalInstance, SymbolResource, SymbolGroupResource, ToastService, SessionService, EventBus) {
         this.$uibModalInstance = $uibModalInstance;
         this.SymbolResource = SymbolResource;
@@ -130,7 +130,7 @@ class SymbolCreateModalController {
  * @returns {{restrict: string, scope: {}, link: link}}
  */
 // @ngInject
-function symbolCreateModalHandle($uibModal) {
+export function symbolCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {},
@@ -147,5 +147,3 @@ function symbolCreateModalHandle($uibModal) {
         });
     }
 }
-
-export {SymbolCreateModalController, symbolCreateModalHandle};

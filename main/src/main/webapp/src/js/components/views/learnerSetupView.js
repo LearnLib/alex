@@ -21,8 +21,20 @@ import {LearnConfiguration} from '../../entities/LearnConfiguration';
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
  */
-// @ngInject
 class LearnerSetupView {
+
+    /**
+     * Constructor.
+     * @param $scope
+     * @param $state
+     * @param SymbolGroupResource
+     * @param SessionService
+     * @param LearnerResource
+     * @param ToastService
+     * @param LearnResultResource
+     * @param EventBus
+     */
+    // @ngInject
     constructor($scope, $state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
                 EventBus) {
 

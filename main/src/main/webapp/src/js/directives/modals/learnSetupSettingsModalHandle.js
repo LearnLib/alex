@@ -21,7 +21,6 @@ import {events, webBrowser, learnAlgorithm, eqOracleType} from '../../constants'
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
  * Passes the edited instance of a LearnConfiguration on success.
  */
-// @ngInject
 class LearnSetupSettingsModalController {
 
     /**
@@ -33,6 +32,7 @@ class LearnSetupSettingsModalController {
      * @param {EqOracleService} EqOracleService
      * @param {SettingsResource} SettingsResource
      */
+    // @ngInject
     constructor($uibModalInstance, modalData, ToastService, EventBus, EqOracleService, SettingsResource) {
         this.$uibModalInstance = $uibModalInstance;
         this.ToastService = ToastService;
@@ -88,7 +88,7 @@ class LearnSetupSettingsModalController {
 
     /** Close the modal dialog and pass the edited learn configuration instance. */
     ok() {
-        this.ToastService.success('Learn coniguration updated');
+        this.ToastService.success('Learn configuration updated');
         this.EventBus.emit(events.LEARN_CONFIG_UPDATED, {
             learnConfiguration: this.learnConfiguration
         });
@@ -112,7 +112,7 @@ class LearnSetupSettingsModalController {
  * @returns {{restrict: string, scope: {learnConfiguration: string}, link: link}}
  */
 // @ngInject
-function learnSetupSettingsModalHandle($uibModal) {
+export function learnSetupSettingsModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -138,5 +138,3 @@ function learnSetupSettingsModalHandle($uibModal) {
         });
     }
 }
-
-export default learnSetupSettingsModalHandle;

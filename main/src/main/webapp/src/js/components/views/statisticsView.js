@@ -17,7 +17,6 @@
 import {chartMode} from '../../constants';
 
 /** The controller for the statistics page. */
-// @ngInject
 class StatisticsView {
 
     /**
@@ -28,6 +27,7 @@ class StatisticsView {
      * @param $state
      * @param {LearnerResultDownloadService} LearnerResultDownloadService
      */
+    // @ngInject
     constructor(SessionService, LearnResultResource, ToastService, $state, LearnerResultDownloadService) {
         this.LearnResultResource = LearnResultResource;
         this.ToastService = ToastService;

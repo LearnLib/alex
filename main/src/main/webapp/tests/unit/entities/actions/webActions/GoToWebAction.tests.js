@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import GoToWebAction from '../../../../../src/js/entities/actions/webActions/GoToWebAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {GoToWebAction} from '../../../../../src/js/entities/actions/webActions/GoToWebAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('GoToWebAction', () => {

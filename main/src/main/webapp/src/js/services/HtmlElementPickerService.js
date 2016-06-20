@@ -21,6 +21,10 @@ let instance = null;
  * The service fot the html element picker
  */
 export class HtmlElementPickerService {
+
+    /**
+     * Constructor.
+     */
     constructor() {
         if (instance !== null) return instance;
         

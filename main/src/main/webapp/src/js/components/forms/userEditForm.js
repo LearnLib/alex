@@ -21,7 +21,6 @@
  *
  * Expects attribute 'user' to be a user object from the API
  */
-// @ngInject
 class UserEditForm {
 
     /**
@@ -32,6 +31,7 @@ class UserEditForm {
      * @param {UserResource} UserResource
      * @param {PromptService} PromptService
      */
+    // @ngInject
     constructor($state, SessionService, ToastService, UserResource, PromptService) {
         this.$state = $state;
         this.SessionService = SessionService;
@@ -118,7 +118,7 @@ class UserEditForm {
     }
 }
 
-const userEditForm = {
+export const userEditForm = {
     bindings: {
         user: '='
     },
@@ -164,5 +164,3 @@ const userEditForm = {
         </div>
     `
 };
-
-export default userEditForm;

@@ -20,8 +20,7 @@ import {events} from '../../constants';
 /**
  * The controller of the modal window for editing a project
  */
-// @ngInject
-class ProjectSettingsModalController {
+export class ProjectSettingsModalController {
 
     /**
      * Constructor
@@ -31,6 +30,7 @@ class ProjectSettingsModalController {
      * @param ToastService
      * @param EventBus
      */
+    // @ngInject
     constructor($uibModalInstance, modalData, ProjectResource, ToastService, EventBus) {
         this.$uibModalInstance = $uibModalInstance;
         this.ProjectResource = ProjectResource;
@@ -78,9 +78,8 @@ class ProjectSettingsModalController {
     }
 }
 
-
 // @ngInject
-function projectSettingsModalHandle($uibModal, LearnerResource, ToastService) {
+export function projectSettingsModalHandle($uibModal, LearnerResource, ToastService) {
     return {
         restrict: 'A',
         scope: {
@@ -114,5 +113,3 @@ function projectSettingsModalHandle($uibModal, LearnerResource, ToastService) {
         });
     }
 }
-
-export {ProjectSettingsModalController, projectSettingsModalHandle};

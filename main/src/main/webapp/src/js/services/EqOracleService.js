@@ -18,7 +18,7 @@ import {eqOracleType} from '../constants';
 import {RandomEqOracle, CompleteEqOracle, SampleEqOracle, WMethodEqOracle} from '../entities/EqOracle';
 
 /** The service to create new eq oracles */
-class EqOracleService {
+export class EqOracleService {
 
     /**
      * Creates an eqOracle from a given type
@@ -49,5 +49,3 @@ class EqOracleService {
         return this.create({type: type});
     }
 }
-
-export default EqOracleService;

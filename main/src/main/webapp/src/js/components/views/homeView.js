@@ -17,7 +17,6 @@
 /**
  * The controller of the index page.
  */
-// @ngInject
 class HomeView {
 
     /**
@@ -25,6 +24,7 @@ class HomeView {
      * @param $state
      * @param {SessionService} SessionService
      */
+    // @ngInject
     constructor($state, SessionService) {
 
         /**

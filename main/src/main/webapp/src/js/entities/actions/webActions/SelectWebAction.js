@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Selects an entry from a select box */
-class SelectWebAction extends Action {
+export class SelectWebAction extends Action {
 
     /**
      * Constructor
@@ -55,5 +55,3 @@ class SelectWebAction extends Action {
         return 'Select value "' + this.value + '" from select input "' + this.node + '"';
     }
 }
-
-export default SelectWebAction;

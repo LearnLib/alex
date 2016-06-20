@@ -1,4 +1,4 @@
-import Counter from '../../../src/js/entities/Counter';
+import {Counter} from '../../../src/js/entities/Counter';
 
 describe('Counter', () => {
     beforeEach(angular.mock.module('ALEX'));

@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import SetCounterGeneralAction from '../../../../../src/js/entities/actions/generalActions/SetCounterGeneralAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {SetCounterGeneralAction} from '../../../../../src/js/entities/actions/generalActions/SetCounterGeneralAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('SetCounterGeneralAction', () => {

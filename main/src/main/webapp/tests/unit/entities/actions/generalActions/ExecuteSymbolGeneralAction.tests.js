@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import ExecuteSymbolGeneralAction from '../../../../../src/js/entities/actions/generalActions/ExecuteSymbolGeneralAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {ExecuteSymbolGeneralAction} from '../../../../../src/js/entities/actions/generalActions/ExecuteSymbolGeneralAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('ExecuteSymbolGeneralAction', () => {

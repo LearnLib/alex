@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Searches for a string value in the body of an HTTP response */
-class CheckHTTPBodyTextRestAction extends Action {
+export class CheckHTTPBodyTextRestAction extends Action {
 
     /**
      * Constructor
@@ -53,5 +53,3 @@ class CheckHTTPBodyTextRestAction extends Action {
         }
     }
 }
-
-export default CheckHTTPBodyTextRestAction;

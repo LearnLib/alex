@@ -19,13 +19,13 @@ import {User} from '../entities/User';
 /**
  * The resource to handle actions with users over the API
  */
-// @ngInject
-class UserResource {
+export class UserResource {
 
     /**
      * Constructor
      * @param $http
      */
+    // @ngInject
     constructor($http) {
         this.$http = $http;
     }
@@ -148,5 +148,3 @@ class UserResource {
             .then(response => new User(response.data));
     }
 }
-
-export default UserResource;

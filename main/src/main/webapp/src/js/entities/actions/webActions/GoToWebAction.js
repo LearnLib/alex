@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Opens a URL */
-class GoToWebAction extends Action {
+export class GoToWebAction extends Action {
 
     /**
      * Constructor
@@ -49,5 +49,3 @@ class GoToWebAction extends Action {
         return `Open URL "${this.url}"`;
     }
 }
-
-export default GoToWebAction;

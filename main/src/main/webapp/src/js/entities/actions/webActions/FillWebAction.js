@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Fills an input element with a value */
-class FillWebAction extends Action {
+export class FillWebAction extends Action {
 
     /**
      * Constructor
@@ -49,5 +49,3 @@ class FillWebAction extends Action {
         return `Fill input "${this.node}" with "${this.value}"`;
     }
 }
-
-export default FillWebAction;

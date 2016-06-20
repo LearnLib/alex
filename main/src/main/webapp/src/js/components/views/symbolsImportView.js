@@ -21,7 +21,6 @@ import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 /**
  * The controller that handles the import of symbols from a *.json file.
  */
-// @ngInject
 class SymbolsImportView {
 
     /**
@@ -32,6 +31,7 @@ class SymbolsImportView {
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
      */
+    // @ngInject
     constructor($scope, SessionService, SymbolResource, ToastService, EventBus) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;

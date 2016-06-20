@@ -19,13 +19,13 @@ import {SymbolGroup} from '../entities/SymbolGroup';
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbol groups
  */
-// @ngInject
-class SymbolGroupResource {
+export class SymbolGroupResource {
 
     /**
      * Constructor
      * @param $http
      */
+    // @ngInject
     constructor($http) {
         this.$http = $http;
     }
@@ -77,5 +77,3 @@ class SymbolGroupResource {
         return this.$http.delete(`rest/projects/${group.project}/groups/${group.id}`);
     }
 }
-
-export default SymbolGroupResource;

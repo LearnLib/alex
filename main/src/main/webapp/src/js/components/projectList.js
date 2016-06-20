@@ -21,7 +21,6 @@ import {events} from '../constants';
  *
  * Usage: <project-list projects="..."></project-list> where property 'projects' expects an array of projects.
  */
-// @ngInject
 class ProjectList {
 
     /**
@@ -35,6 +34,7 @@ class ProjectList {
      * @param {EventBus} EventBus
      * @param {DownloadService} DownloadService
      */
+    // @ngInject
     constructor($state, ProjectResource, SymbolGroupResource, ToastService, SessionService, PromptService, EventBus,
                 DownloadService) {
         this.$state = $state;
@@ -104,7 +104,7 @@ class ProjectList {
     }
 }
 
-const projectList = {
+export const projectList = {
     bindings: {
         projects: '='
     },
@@ -156,5 +156,3 @@ const projectList = {
         </div>
     `
 };
-
-export default projectList;
