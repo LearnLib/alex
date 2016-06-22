@@ -43,7 +43,7 @@ public class SettingsResourceTest extends JerseyTest {
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
 
-        ALEXTestApplication testApplication = new ALEXTestApplication(SettingsDAO.class);
+        ALEXTestApplication testApplication = new ALEXTestApplication(userDAO, SettingsResource.class);
         admin = testApplication.getAdmin();
         adminToken = testApplication.getAdminToken();
         testApplication.register(new AbstractBinder() {
@@ -77,14 +77,14 @@ public class SettingsResourceTest extends JerseyTest {
         given(settingsDAO.get()).willReturn(settings);
 
         Response response = target("/settings")
-                .request()
-                .header("Authorization", adminToken)
-                .get();
+                                .request()
+                                .header("Authorization", adminToken)
+                                .get();
 
-        String json = response.readEntity(String.class);
-        String expectedJSON = "{\"id\":1,\"driver\":{\"chrome\":\"\",\"firefox\":\"\"}}";
-        assertEquals(expectedJSON, json);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        String json = response.readEntity(String.class);
+        String expectedJSON = "{\"driver\":{\"chrome\":\"\",\"firefox\":\"\"},\"id\":1}";
+        assertEquals(expectedJSON, json);
     }
 
     @Test
@@ -92,9 +92,9 @@ public class SettingsResourceTest extends JerseyTest {
         given(settingsDAO.get()).willReturn(null);
 
         Response response = target("/settings")
-                .request()
-                .header("Authorization", adminToken)
-                .get();
+                                .request()
+                                .header("Authorization", adminToken)
+                                .get();
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
@@ -104,9 +104,9 @@ public class SettingsResourceTest extends JerseyTest {
         String json = "{\"id\":1,\"driver\":{\"chrome\":\"\",\"firefox\":\"\"}}";
 
         Response response = target("/settings")
-                .request()
-                .header("Authorization", adminToken)
-                .put(Entity.json(json));
+                                .request()
+                                .header("Authorization", adminToken)
+                                .put(Entity.json(json));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         verify(settingsDAO).update(settings);
@@ -114,12 +114,12 @@ public class SettingsResourceTest extends JerseyTest {
 
     @Test
     public void shouldNotUpdateTheSettingsIfSettingsAreNotValid() throws Exception {
-        String json = "{\"id\":1,\"driver\":{\"chrome\":\"\",\"firefox\":\"\"}}";
+        String json = "{\"id\":1,\"driver\":{\"chrome\":\"NOT VALID\",\"firefox\":\"THIS IS WRONG!\"}}";
 
         Response response = target("/settings")
-                .request()
-                .header("Authorization", adminToken)
-                .put(Entity.json(json));
+                                .request()
+                                .header("Authorization", adminToken)
+                                .put(Entity.json(json));
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         verify(settingsDAO, never()).update(settings);
@@ -130,11 +130,11 @@ public class SettingsResourceTest extends JerseyTest {
         String json = "{\"id\":1,\"driver\":{\"chrome\":\"\",\"firefox\":\"\"}}";
 
         Response response = target("/settings")
-                .request()
-                .header("Authorization", userToken)
-                .put(Entity.json(json));
+                                .request()
+                                .header("Authorization", userToken)
+                                .put(Entity.json(json));
 
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
         verify(settingsDAO, never()).update(settings);
     }
 }
