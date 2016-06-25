@@ -3,8 +3,7 @@ import {events} from '../../constants';
 /**
  * The controller for the modal that displays a selectable list of results.
  */
-// @ngInject
-class ResultListModalController {
+export class ResultListModalController {
 
     /**
      * Constructor
@@ -12,6 +11,7 @@ class ResultListModalController {
      * @param $uibModalInstance
      * @param {EventBus} EventBus
      */
+    // @ngInject
     constructor(modalData, $uibModalInstance, EventBus) {
         this.results = modalData.results;
         this.$uibModalInstance = $uibModalInstance;
@@ -36,7 +36,7 @@ class ResultListModalController {
 }
 
 // @ngInject
-function resultListModalHandle($uibModal) {
+export function resultListModalHandle($uibModal) {
     return {
         scope: {
             results: '='
@@ -80,5 +80,3 @@ function resultListModalHandle($uibModal) {
         });
     }
 }
-
-export {resultListModalHandle, ResultListModalController};

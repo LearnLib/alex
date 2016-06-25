@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Executes another symbol before continuing with other actions */
-class ExecuteSymbolGeneralAction extends Action {
+export class ExecuteSymbolGeneralAction extends Action {
 
     /**
      * Constructor
@@ -94,5 +94,3 @@ class ExecuteSymbolGeneralAction extends Action {
         }
     }
 }
-
-export default ExecuteSymbolGeneralAction;

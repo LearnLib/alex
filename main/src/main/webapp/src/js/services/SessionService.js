@@ -23,9 +23,13 @@ import {Project} from '../entities/Project';
  * between page refreshes in the same tab. So the project doesn't have to be fetched from the server every time the
  * page refreshes
  */
-// @ngInject
-class SessionService {
+export class SessionService {
 
+    /**
+     * Constructor.
+     * @param {EventBus} EventBus
+     */
+    // @ngInject
     constructor(EventBus) {
         this.EventBus = EventBus;
     }
@@ -76,5 +80,3 @@ class SessionService {
         sessionStorage.removeItem('jwt');
     }
 }
-
-export default SessionService;

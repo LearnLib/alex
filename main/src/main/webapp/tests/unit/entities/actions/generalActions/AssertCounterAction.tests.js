@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import AssertCounterAction from '../../../../../src/js/entities/actions/generalActions/AssertCounterAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {AssertCounterAction} from '../../../../../src/js/entities/actions/generalActions/AssertCounterAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('AssertCounterAction', () => {

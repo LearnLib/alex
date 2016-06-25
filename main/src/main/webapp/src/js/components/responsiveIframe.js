@@ -21,7 +21,6 @@
  *
  * Use: <responsive-iframe></responsive-iframe>
  */
-// @ngInject
 class ResponsiveIframe {
 
     /**
@@ -30,6 +29,7 @@ class ResponsiveIframe {
      * @param $element
      * @param $scope
      */
+    // @ngInject
     constructor($window, $element, $scope) {
 
         /** The iframe node element */
@@ -59,10 +59,8 @@ class ResponsiveIframe {
     }
 }
 
-const responsiveIframe = {
+export const responsiveIframe = {
     template: '<iframe></iframe>',
     controller: ResponsiveIframe,
     controllerAs: 'vm'
 };
-
-export {responsiveIframe};

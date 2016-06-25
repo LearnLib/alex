@@ -17,7 +17,6 @@
 import {events} from '../constants';
 
 /** The controller for the sidebar */
-// @ngInject
 class Sidebar {
 
     /**
@@ -28,6 +27,7 @@ class Sidebar {
      * @param {SessionService} SessionService
      * @param {EventBus} EventBus
      */
+    // @ngInject
     constructor($scope, $document, $state, SessionService, EventBus) {
         this.$state = $state;
         this.SessionService = SessionService;
@@ -104,10 +104,8 @@ class Sidebar {
     }
 }
 
-const sidebar = {
+export const sidebar = {
     controller: Sidebar,
     controllerAs: 'vm',
     templateUrl: 'html/components/sidebar.html'
 };
-
-export {sidebar};

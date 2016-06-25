@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import CheckForNodeWebAction from '../../../../../src/js/entities/actions/webActions/CheckForNodeWebAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {CheckForNodeWebAction} from '../../../../../src/js/entities/actions/webActions/CheckForNodeWebAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckForNodeWebAction', () => {

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Submits a form. Can also be applied to an input element of a form */
-class ClickWebAction extends Action {
+export class ClickWebAction extends Action {
 
     /**
      * Constructor
@@ -53,5 +53,3 @@ class ClickWebAction extends Action {
         }
     }
 }
-
-export default ClickWebAction;

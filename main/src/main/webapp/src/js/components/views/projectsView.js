@@ -20,18 +20,18 @@ import {events} from '../../constants';
 /**
  * The controller that shows the page to manage projects
  */
-// @ngInject
 class ProjectsView {
 
     /**
      * Constructor
      * @param $scope
      * @param $state
-     * @param SessionService
-     * @param ProjectResource
-     * @param EventBus
-     * @param ToastService
+     * @param {SessionService} SessionService
+     * @param {ProjectResource} ProjectResource
+     * @param {EventBus} EventBus
+     * @param {ToastService} ToastService
      */
+    // @ngInject
     constructor($scope, $state, SessionService, ProjectResource, EventBus, ToastService) {
 
         /**

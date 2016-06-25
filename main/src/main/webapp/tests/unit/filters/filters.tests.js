@@ -49,9 +49,6 @@ describe('formatWebBrowser', () => {
 
         result = $filter('formatWebBrowser')(webBrowser.CHROME);
         expect(result).toEqual('Chrome');
-
-        result = $filter('formatWebBrowser')(webBrowser.IE);
-        expect(result).toEqual('Internet Explorer');
     });
 
     it('should leave the input as it is if no web browser is found', () => {

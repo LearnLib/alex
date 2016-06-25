@@ -31,7 +31,6 @@ import {learnAlgorithm, events} from '../constants';
  *
  * Use it like '<learn-result-panel results="..." index="..."> ... </learn-result-panel>'
  */
-// @ngInject
 class LearnResultPanel {
 
     /**
@@ -42,6 +41,7 @@ class LearnResultPanel {
      * @param {EventBus} EventBus
      * @param {PromptService} PromptService
      */
+    // @ngInject
     constructor($scope, $element, DownloadService, EventBus, PromptService) {
         this.DownloadService = DownloadService;
         this.PromptService = PromptService;
@@ -198,7 +198,7 @@ class LearnResultPanel {
     }
 }
 
-const learnResultPanel = {
+export const learnResultPanel = {
     templateUrl: 'html/components/learn-result-panel.html',
     transclude: true,
     controller: LearnResultPanel,
@@ -209,5 +209,3 @@ const learnResultPanel = {
         from: '@'
     }
 };
-
-export {learnResultPanel};

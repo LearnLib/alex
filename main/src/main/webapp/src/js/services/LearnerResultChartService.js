@@ -19,7 +19,7 @@ import _ from 'lodash';
 /**
  * The service that helps transforming learn results into chart data that is required by n3-line-chart
  */
-class LearnerResultChartService {
+export class LearnerResultChartService {
 
     /**
      * Creates chart data for a single final result
@@ -267,5 +267,3 @@ class LearnerResultChartService {
         };
     }
 }
-
-export default LearnerResultChartService;

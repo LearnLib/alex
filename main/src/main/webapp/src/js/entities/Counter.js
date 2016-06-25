@@ -15,7 +15,7 @@
  */
 
 /** The counter model */
-class Counter {
+export class Counter {
 
     /**
      * Constructor
@@ -48,5 +48,3 @@ class Counter {
         this.project = obj.project;
     }
 }
-
-export default Counter;

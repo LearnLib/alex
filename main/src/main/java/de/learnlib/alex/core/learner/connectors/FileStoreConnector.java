@@ -59,6 +59,7 @@ public class FileStoreConnector implements Connector {
      * @param fileName The name of the file.
      * @return The absolute path to the file.
      * @throws IllegalStateException
+     *          If no file with 'fileName' has been uploaded.
      */
     public String getAbsoluteFileLocation(Long userId, Long projectId, String fileName) throws IllegalStateException {
         try {

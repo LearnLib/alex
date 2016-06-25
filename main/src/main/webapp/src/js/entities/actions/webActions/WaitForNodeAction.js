@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /**
  * Wait an element of the page to change
  **/
-class WaitForNodeAction extends Action {
+export class WaitForNodeAction extends Action {
 
     /**
      * Constructor
@@ -75,5 +75,3 @@ class WaitForNodeAction extends Action {
         return text;
     }
 }
-
-export default WaitForNodeAction;

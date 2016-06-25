@@ -15,14 +15,14 @@
  */
 
 /** The controller for the user register form component */
-// @ngInject
 class UserRegisterFrom {
 
     /**
-     * Constructor
-     * @param UserResource
-     * @param ToastService
+     * Constructor.
+     * @param {UserResource} UserResource
+     * @param {ToastService} ToastService
      */
+    // @ngInject
     constructor(UserResource, ToastService) {
         this.UserResource = UserResource;
         this.ToastService = ToastService;
@@ -58,7 +58,7 @@ class UserRegisterFrom {
     }
 }
 
-const userRegisterForm = {
+export const userRegisterForm = {
     controller: UserRegisterFrom,
     controllerAs: 'vm',
     template: `
@@ -90,5 +90,3 @@ const userRegisterForm = {
         </form>
     `
 };
-
-export default userRegisterForm;

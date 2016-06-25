@@ -31,7 +31,6 @@ const STYLE = {
  *
  * Use it like: '<discrimination-tree data="...."></discrimination-tree>'
  */
-// @ngInject
 class DiscriminationTreeComponent {
 
     /**
@@ -39,6 +38,7 @@ class DiscriminationTreeComponent {
      * @param $scope
      * @param $element
      */
+    // @ngInject
     constructor($scope, $element) {
 
         // the svg where the discrimination tree is drawn into

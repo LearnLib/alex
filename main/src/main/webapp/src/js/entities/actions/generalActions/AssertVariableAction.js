@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Action to check if the value of a variable equals or matches a specific string value */
-class AssertVariableAction extends Action {
+export class AssertVariableAction extends Action {
 
     /**
      * Constructor
@@ -58,5 +58,3 @@ class AssertVariableAction extends Action {
         }
     }
 }
-
-export default AssertVariableAction;

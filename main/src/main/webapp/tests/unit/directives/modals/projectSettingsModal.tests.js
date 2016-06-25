@@ -2,7 +2,6 @@ import {Project} from '../../../../src/js/entities/Project';
 import {events} from '../../../../src/js/constants';
 import {ProjectSettingsModalController} from '../../../../src/js/directives/modals/projectSettingsModalHandle';
 
-
 describe('ProjectSettingsModalController', () => {
     let ProjectResource, LearnerResource, $controller, EventBus, ToastService, scope, $uibModal, $compile, $q;
 

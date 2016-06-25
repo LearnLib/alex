@@ -19,13 +19,13 @@ import {LearnResult} from '../entities/LearnResult';
 /**
  * The resource that handles http request to the API to do CRUD operations on learn results
  */
-// @ngInject
-class LearnResultResource {
+export class LearnResultResource {
 
     /**
      * Constructor
      * @param $http
      */
+    // @ngInject
     constructor($http) {
         this.$http = $http;
     }
@@ -70,5 +70,3 @@ class LearnResultResource {
         return this.$http.delete(`rest/projects/${projectId}/results/${testNos}`, {});
     }
 }
-
-export default LearnResultResource;

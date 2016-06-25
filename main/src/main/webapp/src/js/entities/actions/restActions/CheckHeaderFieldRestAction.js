@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Checks a value in the header fields of an HTTP response */
-class CheckHeaderFieldRestAction extends Action {
+export class CheckHeaderFieldRestAction extends Action {
 
     /**
      * Constructor
@@ -59,5 +59,3 @@ class CheckHeaderFieldRestAction extends Action {
         }
     }
 }
-
-export default CheckHeaderFieldRestAction;

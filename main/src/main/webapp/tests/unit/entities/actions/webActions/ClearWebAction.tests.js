@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import ClearWebAction from '../../../../../src/js/entities/actions/webActions/ClearWebAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {ClearWebAction} from '../../../../../src/js/entities/actions/webActions/ClearWebAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('ClearWebAction', () => {

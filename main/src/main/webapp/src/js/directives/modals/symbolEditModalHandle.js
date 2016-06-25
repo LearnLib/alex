@@ -20,8 +20,7 @@ import {events} from '../../constants';
 /**
  * Handles the behaviour of the modal to edit an existing symbol and updates the edited symbol on the server.
  */
-// @ngInject
-class SymbolEditModalController {
+export class SymbolEditModalController {
 
     /**
      * Constructor
@@ -31,6 +30,7 @@ class SymbolEditModalController {
      * @param ToastService
      * @param EventBus
      */
+    // @ngInject
     constructor($uibModalInstance, modalData, SymbolResource, ToastService, EventBus) {
         this.$uibModalInstance = $uibModalInstance;
         this.modalData = modalData;
@@ -99,7 +99,7 @@ class SymbolEditModalController {
  * @returns {{restrict: string, scope: {symbol: string, updateOnServer: string}, link: link}}
  */
 // @ngInject
-function symbolEditModalHandle($uibModal) {
+export function symbolEditModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -127,5 +127,3 @@ function symbolEditModalHandle($uibModal) {
         });
     }
 }
-
-export {symbolEditModalHandle, SymbolEditModalController};

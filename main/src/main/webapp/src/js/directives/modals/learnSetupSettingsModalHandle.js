@@ -21,18 +21,19 @@ import {events, webBrowser, learnAlgorithm, eqOracleType} from '../../constants'
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
  * Passes the edited instance of a LearnConfiguration on success.
  */
-// @ngInject
 class LearnSetupSettingsModalController {
 
     /**
      * Constructor
      * @param $uibModalInstance
      * @param modalData
-     * @param ToastService
-     * @param EventBus
-     * @param EqOracleService
+     * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
+     * @param {EqOracleService} EqOracleService
+     * @param {SettingsResource} SettingsResource
      */
-    constructor($uibModalInstance, modalData, ToastService, EventBus, EqOracleService) {
+    // @ngInject
+    constructor($uibModalInstance, modalData, ToastService, EventBus, EqOracleService, SettingsResource) {
         this.$uibModalInstance = $uibModalInstance;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
@@ -55,7 +56,22 @@ class LearnSetupSettingsModalController {
         /**
          * The web driver enum
          */
-        this.webBrowser = webBrowser;
+        this.webBrowser = null;
+
+        SettingsResource.get().then(settings => {
+            let supportedBrowsers = {
+                HTMLUNITDRIVER: 'htmlunitdriver'
+            };
+            
+            for (let key in webBrowser) {
+                if (key === 'HTMLUNITDRIVER') continue;
+                if (settings.driver[webBrowser[key]].trim() !== "") {
+                    supportedBrowsers[key] = webBrowser[key];
+                }
+            }
+
+            this.webBrowser = supportedBrowsers;
+        });
 
         /**
          * The LearnConfiguration to be edited
@@ -72,7 +88,7 @@ class LearnSetupSettingsModalController {
 
     /** Close the modal dialog and pass the edited learn configuration instance. */
     ok() {
-        this.ToastService.success('Learn coniguration updated');
+        this.ToastService.success('Learn configuration updated');
         this.EventBus.emit(events.LEARN_CONFIG_UPDATED, {
             learnConfiguration: this.learnConfiguration
         });
@@ -96,7 +112,7 @@ class LearnSetupSettingsModalController {
  * @returns {{restrict: string, scope: {learnConfiguration: string}, link: link}}
  */
 // @ngInject
-function learnSetupSettingsModalHandle($uibModal) {
+export function learnSetupSettingsModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -122,5 +138,3 @@ function learnSetupSettingsModalHandle($uibModal) {
         });
     }
 }
-
-export default learnSetupSettingsModalHandle;

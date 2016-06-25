@@ -14,5 +14,9 @@
 	<suppress checks="JavadocType" files="src\\test\\.*\.java" />
 	<suppress checks="JavadocVariable" files="src/test/.*\.java" />
 	<suppress checks="JavadocVariable" files="src\\test\\.*\.java" />
+	<suppress checks="MagicNumber" files="src/test/.*\.java" />
+	<suppress checks="MagicNumber" files="src\\test\\.*\.java" />
+	<suppress checks="StaticVariableName" files="src/test/.*\.java" />
+	<suppress checks="StaticVariableName" files="src\\test\\.*\.java" />
 
 </suppressions>

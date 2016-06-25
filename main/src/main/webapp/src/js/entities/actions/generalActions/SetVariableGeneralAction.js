@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Sets a variable to a specific value and implicitly initializes it if it has not been created before */
-class SetVariableGeneralAction extends Action {
+export class SetVariableGeneralAction extends Action {
 
     /**
      * Constructor
@@ -48,5 +48,3 @@ class SetVariableGeneralAction extends Action {
         return 'Set variable "' + this.name + '" to "' + this.value + '"';
     }
 }
-
-export default SetVariableGeneralAction;

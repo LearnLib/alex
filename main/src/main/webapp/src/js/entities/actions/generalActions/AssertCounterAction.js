@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Action to compare the value of a counter to another integer value */
-class AssertCounterAction extends Action {
+export class AssertCounterAction extends Action {
 
     /**
      * Constructor
@@ -77,5 +77,3 @@ class AssertCounterAction extends Action {
         return 'Check if counter "' + this.name + '" is ' + s + ' ' + this.value;
     }
 }
-
-export default AssertCounterAction;

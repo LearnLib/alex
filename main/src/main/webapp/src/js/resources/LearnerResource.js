@@ -19,13 +19,13 @@ import {LearnResult} from '../entities/LearnResult';
 /**
  * The service for interacting with the learner
  */
-// @ngInject
-class LearnerResource {
+export class LearnerResource {
 
     /**
      * Constructor
      * @param $http
      */
+    // @ngInject
     constructor($http) {
         this.$http = $http;
     }
@@ -101,5 +101,3 @@ class LearnerResource {
         }).then(response => response.data);
     }
 }
-
-export default LearnerResource;

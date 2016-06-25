@@ -11,6 +11,7 @@ hs_err_pid*
 main/src/main/webapp/node_modules
 main/src/main/webapp/dist
 main/src/main/webapp/tests/coverage
+main/src/main/webapp/assets/fonts
 
 # Auto Generated Swagger Doc
 main/src/main/webapp/restdocs/docs

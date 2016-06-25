@@ -22,8 +22,8 @@
  *
  * @param SessionService - The SessionService
  */
-// @ngInject
 class HtmlElementPickerComponent {
+    
     /**
      * Constructor.
      * @param {SessionService} SessionService
@@ -31,6 +31,7 @@ class HtmlElementPickerComponent {
      * @param $element
      * @param $scope
      */
+    // @ngInject
     constructor(SessionService, HtmlElementPickerService, $element, $scope) {
         this.SessionService = SessionService;
         this.HtmlElementPickerService = HtmlElementPickerService;

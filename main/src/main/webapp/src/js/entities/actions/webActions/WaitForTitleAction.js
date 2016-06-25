@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /**
  * Wait for the title of the page to have changed
  **/
-class WaitForTitleAction extends Action {
+export class WaitForTitleAction extends Action {
 
     /**
      * Constructor
@@ -61,5 +61,3 @@ class WaitForTitleAction extends Action {
         }
     }
 }
-
-export default WaitForTitleAction;

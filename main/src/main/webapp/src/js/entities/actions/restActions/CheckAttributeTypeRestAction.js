@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 
 /** Checks if a property of the JSON of a HTTP response has a specific type */
-class CheckAttributeTypeRestAction extends Action {
+export class CheckAttributeTypeRestAction extends Action {
 
     /**
      * Constructor
@@ -50,5 +50,3 @@ class CheckAttributeTypeRestAction extends Action {
         return 'Check the JSON attribute "' + this.attribute + '" is type of "' + this.jsonType + '"';
     }
 }
-
-export default CheckAttributeTypeRestAction;

@@ -1,5 +1,5 @@
 import {Project} from '../../../../src/js/entities/Project';
-import {actionType, events} from '../../../../src/js/constants';
+import {actionType} from '../../../../src/js/constants';
 import {ActionCreateModalController} from '../../../../src/js/directives/modals/actionCreateModalHandle';
 
 describe('ActionCreateModalController', () => {

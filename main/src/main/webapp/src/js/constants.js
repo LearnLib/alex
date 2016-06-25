@@ -14,33 +14,32 @@
  * limitations under the License.
  */
 
-const learnAlgorithm = {
+export const learnAlgorithm = {
     LSTAR: 'LSTAR',
     DHC: 'DHC',
     DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
     TTT: 'TTT'
 };
 
-const webBrowser = {
-    FIREFOX: 'firefox',
+export const webBrowser = {
     CHROME: 'chrome',
-    IE: 'ie',
+    FIREFOX: 'firefox',
     HTMLUNITDRIVER: 'htmlunitdriver'
 };
 
-const eqOracleType = {
+export const eqOracleType = {
     RANDOM: 'random_word',
     COMPLETE: 'complete',
     SAMPLE: 'sample',
     WMETHOD: 'wmethod'
 };
 
-const userRole = {
+export const userRole = {
     ADMIN: 'ADMIN',
     REGISTERED: 'REGISTERED'
 };
 
-const events = {
+export const events = {
 
     // project related events
     PROJECT_CREATED: 'project:created',
@@ -81,12 +80,12 @@ const events = {
     RESULT_SELECTED: 'result:selected'
 };
 
-const chartMode = {
+export const chartMode = {
     CUMULATED: 'cumulated',
     COMPLETE: 'complete'
 };
 
-const actionType = {
+export const actionType = {
 
     // web actions
     WEB_CHECK_NODE: 'web_checkForNode',
@@ -127,5 +126,3 @@ const actionType = {
     GENERAL_SET_VARIABLE: 'setVariable',
     WAIT: 'wait'
 };
-
-export {learnAlgorithm, webBrowser, userRole, eqOracleType, events, chartMode, actionType};

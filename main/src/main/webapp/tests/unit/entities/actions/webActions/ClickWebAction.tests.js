@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import ClickWebAction from '../../../../../src/js/entities/actions/webActions/ClickWebAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {ClickWebAction} from '../../../../../src/js/entities/actions/webActions/ClickWebAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('ClickWebAction', () => {

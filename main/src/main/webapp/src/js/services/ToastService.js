@@ -15,13 +15,13 @@
  */
 
 /** A service that is used as a wrapper around the toastr module. */
-// @ngInject
-class ToastService {
+export class ToastService {
 
     /**
      * Constructor
      * @param toastr - The toastr service
      */
+    // @ngInject
     constructor(toastr) {
         this.toastr = toastr;
     }
@@ -53,5 +53,3 @@ class ToastService {
         this.toastr.info(message);
     }
 }
-
-export default ToastService;

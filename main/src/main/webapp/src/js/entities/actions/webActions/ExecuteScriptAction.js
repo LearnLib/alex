@@ -15,12 +15,12 @@
  */
 
 import {actionType} from "../../../constants";
-import Action from "../Action";
+import {Action} from "../Action";
 
 /**
  * The action to execute a piece of JavaScript in the web browser.
  */
-export default class ExecuteScriptAction extends Action {
+export class ExecuteScriptAction extends Action {
 
     /**
      * Constructor.

@@ -17,8 +17,7 @@
 import {events} from '../../constants';
 
 /** The controller for the modal dialog that handles the editing of an action. */
-// @ngInject
-class ActionEditModalController {
+export class ActionEditModalController {
 
     /**
      * Constructor
@@ -29,6 +28,7 @@ class ActionEditModalController {
      * @param SessionService
      * @param EventBus
      */
+    // @ngInject
     constructor($uibModalInstance, modalData, ActionService, SymbolResource, SessionService, EventBus) {
         this.$uibModalInstance = $uibModalInstance;
         this.ActionService = ActionService;
@@ -83,7 +83,7 @@ class ActionEditModalController {
  * @returns {{restrict: string, scope: {action: string}, link: link}}
  */
 // @ngInject
-function actionEditModalHandle($uibModal, ActionService) {
+export function actionEditModalHandle($uibModal, ActionService) {
     return {
         restrict: 'A',
         scope: {
@@ -115,5 +115,3 @@ function actionEditModalHandle($uibModal, ActionService) {
         });
     }
 }
-
-export {ActionEditModalController, actionEditModalHandle};

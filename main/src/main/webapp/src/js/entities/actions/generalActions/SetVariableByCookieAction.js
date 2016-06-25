@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Sets a variable to a specific value and implicitly initializes it if it has not been created before */
-class SetVariableByCookieAction extends Action {
+export class SetVariableByCookieAction extends Action {
 
     /**
      * Constructor
@@ -54,5 +54,3 @@ class SetVariableByCookieAction extends Action {
         return 'Set variable "' + this.name + '" to the value of the cookie: "' + this.value + '"';
     }
 }
-
-export default SetVariableByCookieAction;

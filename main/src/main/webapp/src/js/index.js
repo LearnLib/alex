@@ -23,41 +23,42 @@ import uiRouter from "angular-ui-router";
 import toastr from "angular-toastr";
 import ngAnimate from "angular-animate";
 import ngMessages from "angular-messages";
-import {configuration} from "./config";
-import {routes} from "./routes";
+import * as config from "./config";
+import * as routes from "./routes";
 import * as constant from "./constants";
-import CounterResource from "./resources/CounterResource";
-import FileResource from "./resources/FileResource";
-import LearnerResource from "./resources/LearnerResource";
-import LearnResultResource from "./resources/LearnResultResource";
-import ProjectResource from "./resources/ProjectResource";
-import SymbolGroupResource from "./resources/SymbolGroupResource";
-import SymbolResource from "./resources/SymbolResource";
-import UserResource from "./resources/UserResource";
-import ActionService from "./services/ActionService";
-import ClipboardService from "./services/ClipboardService";
-import ErrorService from "./services/ErrorService";
-import EventBus from "./services/EventBus";
-import EqOracleService from "./services/EqOracleService";
+import {CounterResource} from "./resources/CounterResource";
+import {FileResource} from "./resources/FileResource";
+import {LearnerResource} from "./resources/LearnerResource";
+import {LearnResultResource} from "./resources/LearnResultResource";
+import {ProjectResource} from "./resources/ProjectResource";
+import {SettingsResource} from "./resources/SettingsResource";
+import {SymbolGroupResource} from "./resources/SymbolGroupResource";
+import {SymbolResource} from "./resources/SymbolResource";
+import {UserResource} from "./resources/UserResource";
+import {ActionService} from "./services/ActionService";
+import {ClipboardService} from "./services/ClipboardService";
+import {ErrorService} from "./services/ErrorService";
+import {EventBus} from "./services/EventBus";
+import {EqOracleService} from "./services/EqOracleService";
 import {DownloadService} from "./services/DownloadService";
-import LearnerResultChartService from "./services/LearnerResultChartService";
+import {LearnerResultChartService} from "./services/LearnerResultChartService";
 import {PromptService} from "./services/PromptService";
-import SessionService from "./services/SessionService";
-import ToastService from "./services/ToastService";
-import LearnerResultDownloadService from "./services/LearnerResultDownloadService";
+import {SessionService} from "./services/SessionService";
+import {ToastService} from "./services/ToastService";
+import {LearnerResultDownloadService} from "./services/LearnerResultDownloadService";
 import {HtmlElementPickerService} from "./services/HtmlElementPickerService";
-import * as filter from "./filters";
+import {formatAlgorithm, formatEqOracle, formatMilliseconds, formatUserRole, formatWebBrowser} from "./filters";
 import {actionCreateModalHandle} from "./directives/modals/actionCreateModalHandle";
 import {actionEditModalHandle} from "./directives/modals/actionEditModalHandle";
-import hypothesisLayoutSettingsModalHandle from "./directives/modals/hypothesisLayoutSettingsModalHandle";
-import learnResultDetailsModalHandle from "./directives/modals/learnResultDetailsModalHandle";
-import learnSetupSettingsModalHandle from "./directives/modals/learnSetupSettingsModalHandle";
+import {hypothesisLayoutSettingsModalHandle} from "./directives/modals/hypothesisLayoutSettingsModalHandle";
+import {learnResultDetailsModalHandle} from "./directives/modals/learnResultDetailsModalHandle";
+import {learnSetupSettingsModalHandle} from "./directives/modals/learnSetupSettingsModalHandle";
 import {projectSettingsModalHandle} from "./directives/modals/projectSettingsModalHandle";
 import {symbolCreateModalHandle} from "./directives/modals/symbolCreateModalHandle";
 import {symbolEditModalHandle} from "./directives/modals/symbolEditModalHandle";
 import {symbolGroupCreateModalHandle} from "./directives/modals/symbolGroupCreateModalHandle";
 import {symbolGroupEditModalHandle} from "./directives/modals/symbolGroupEditModalHandle";
-import symbolMoveModalHandle from "./directives/modals/symbolMoveModalHandle";
+import {symbolMoveModalHandle} from "./directives/modals/symbolMoveModalHandle";
 import {userEditModalHandle} from "./directives/modals/userEditModalHandle";
 import {resultListModalHandle} from "./directives/modals/resultListModalHandle";
 import {dropdownHover} from "./directives/dropdownHover";
@@ -74,6 +75,7 @@ import {projectsView} from "./components/views/projectsView";
 import {projectsDashboardView} from "./components/views/projectsDashboardView";
 import {resultsCompareView} from "./components/views/resultsCompareView";
 import {resultsView} from "./components/views/resultsView";
+import {settingsView} from "./components/views/settingsView";
 import {statisticsCompareView} from "./components/views/statisticsCompareView";
 import {statisticsView} from "./components/views/statisticsView";
 import {symbolsActionsView} from "./components/views/symbolsActionsView";
@@ -82,25 +84,25 @@ import {symbolsHistoryView} from "./components/views/symbolsHistoryView";
 import {symbolsImportView} from "./components/views/symbolsImportView";
 import {symbolsTrashView} from "./components/views/symbolsTrashView";
 import {usersSettingsView} from "./components/views/usersSettingsView";
-import actionCreateEditForm from "./components/forms/actionCreateEditForm";
-import projectCreateForm from "./components/forms/projectCreateForm";
-import userEditForm from "./components/forms/userEditForm";
-import userLoginForm from "./components/forms/userLoginForm";
-import userRegisterForm from "./components/forms/userRegisterForm";
-import widget from "./components/widgets/widget";
-import projectDetailsWidget from "./components/widgets/projectDetailsWidget";
-import learnResumeSettingsWidget from "./components/widgets/learnResumeSettingsWidget";
-import learnerStatusWidget from "./components/widgets/learnerStatusWidget";
-import latestLearnResultWidget from "./components/widgets/latestLearnResultWidget";
-import counterexamplesWidget from "./components/widgets/counterexamplesWidget";
-import alex from "./components/alex";
+import {actionCreateEditForm} from "./components/forms/actionCreateEditForm";
+import {projectCreateForm} from "./components/forms/projectCreateForm";
+import {userEditForm} from "./components/forms/userEditForm";
+import {userLoginForm} from "./components/forms/userLoginForm";
+import {userRegisterForm} from "./components/forms/userRegisterForm";
+import {widget} from "./components/widgets/widget";
+import {projectDetailsWidget} from "./components/widgets/projectDetailsWidget";
+import {learnResumeSettingsWidget} from "./components/widgets/learnResumeSettingsWidget";
+import {learnerStatusWidget} from "./components/widgets/learnerStatusWidget";
+import {latestLearnResultWidget} from "./components/widgets/latestLearnResultWidget";
+import {counterexamplesWidget} from "./components/widgets/counterexamplesWidget";
+import {alex} from "./components/alex";
 import {actionBar} from "./components/actionBar";
 import {checkbox, checkboxMultiple} from "./components/checkbox";
 import {fileDropzone} from "./components/fileDropzone";
-import loadScreen from "./components/loadScreen";
-import projectList from "./components/projectList";
+import {loadScreen} from "./components/loadScreen";
+import {projectList} from "./components/projectList";
 import {sidebar} from "./components/sidebar";
-import viewHeader from "./components/viewHeader";
+import {viewHeader} from "./components/viewHeader";
 import {responsiveIframe} from "./components/responsiveIframe";
 import {learnResultPanel} from "./components/learnResultPanel";
 import {observationTable} from "./components/observationTable";
@@ -129,7 +131,7 @@ angular
 
         'ALEX.templates'
     ])
-    .config(configuration.config)
+    .config(config.config)
     .config(routes.config)
     .run(routes.run)
 
@@ -142,11 +144,11 @@ angular
     .constant('chartMode', constant.chartMode)
 
     // filters
-    .filter('formatEqOracle', filter.formatEqOracle)
-    .filter('formatAlgorithm', filter.formatAlgorithm)
-    .filter('formatMilliseconds', filter.formatMilliseconds)
-    .filter('formatUserRole', filter.formatUserRole)
-    .filter('formatWebBrowser', filter.formatWebBrowser)
+    .filter('formatEqOracle', formatEqOracle)
+    .filter('formatAlgorithm', formatAlgorithm)
+    .filter('formatMilliseconds', formatMilliseconds)
+    .filter('formatUserRole', formatUserRole)
+    .filter('formatWebBrowser', formatWebBrowser)
 
     // resources
     .service('CounterResource', CounterResource)
@@ -154,6 +156,7 @@ angular
     .service('LearnerResource', LearnerResource)
     .service('LearnResultResource', LearnResultResource)
     .service('ProjectResource', ProjectResource)
+    .service('SettingsResource', SettingsResource)
     .service('SymbolGroupResource', SymbolGroupResource)
     .service('SymbolResource', SymbolResource)
     .service('UserResource', UserResource)
@@ -202,6 +205,7 @@ angular
     .component('projectsDashboardView', projectsDashboardView)
     .component('resultsCompareView', resultsCompareView)
     .component('resultsView', resultsView)
+    .component('settingsView', settingsView)
     .component('statisticsCompareView', statisticsCompareView)
     .component('statisticsView', statisticsView)
     .component('symbolsActionsView', symbolsActionsView)

@@ -24,14 +24,14 @@ let instance = null;
  * @returns {{getErrorMessage: getErrorMessage, setErrorMessage: setErrorMessage}}
  * @constructor
  */
-// @ngInject
-class ErrorService {
+export class ErrorService {
 
     /**
      * Constructor
      * @param $state - The ui.router $state service
      * @returns {*}
      */
+    // @ngInject
     constructor($state) {
         // return the instance if available
         if (instance !== null) return instance;
@@ -62,5 +62,3 @@ class ErrorService {
         this.$state.go('error');
     }
 }
-
-export default ErrorService;

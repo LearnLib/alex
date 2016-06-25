@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Remove all inputs from an element */
-class ClearWebAction extends Action {
+export class ClearWebAction extends Action {
 
     /**
      * Constructor
@@ -43,5 +43,3 @@ class ClearWebAction extends Action {
         return `Clear input "${this.node}"`;
     }
 }
-
-export default ClearWebAction;

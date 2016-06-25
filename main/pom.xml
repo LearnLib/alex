@@ -149,7 +149,7 @@
             <version>${learnlib.version}</version>
         </dependency>
 
-        <!-- we need the selenium webdriver for selenium testing/learning -->
+        <!-- we need the uum webdriver for selenium testing/learning -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -157,9 +157,15 @@
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-htmlunit-driver</artifactId>
-            <version>2.52.0</version>
+            <artifactId>htmlunit-driver</artifactId>
+            <version>2.21</version>
         </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-chrome-driver</artifactId>
+            <version>2.53.0</version>
+        </dependency>
+
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>

@@ -19,7 +19,6 @@ import {events} from '../../constants';
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
  */
-// @ngInject
 class ResultsCompareView {
 
     /**
@@ -33,6 +32,7 @@ class ResultsCompareView {
      * @param {ErrorService} ErrorService
      * @param {EventBus} EventBus
      */
+    // @ngInject
     constructor($timeout, $scope, $uibModal, $stateParams, SessionService, LearnResultResource, ErrorService, EventBus) {
         this.$timeout = $timeout;
         this.$uibModal = $uibModal;

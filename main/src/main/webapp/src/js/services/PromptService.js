@@ -15,14 +15,14 @@
  */
 
 /** The controller of the prompt dialog */
-// @ngInject
-class PromptDialogController {
+export class PromptDialogController {
 
     /**
      * Constructor
      * @param $uibModalInstance
      * @param modalData
      */
+    // @ngInject
     constructor($uibModalInstance, modalData) {
         this.$uibModalInstance = $uibModalInstance;
 
@@ -49,14 +49,14 @@ class PromptDialogController {
 
 
 /** The controller that handles the confirm modal dialog. */
-// @ngInject
-class ConfirmDialogController {
+export class ConfirmDialogController {
 
     /**
      * Constructor
      * @param $uibModalInstance
      * @param modalData
      */
+    // @ngInject
     constructor($uibModalInstance, modalData) {
         this.$uibModalInstance = $uibModalInstance;
 
@@ -80,13 +80,13 @@ class ConfirmDialogController {
 
 
 /** The service for handling promt and confirm dialogs */
-// @ngInject
-class PromptService {
+export class PromptService {
 
     /**
      * Constructor
      * @param $uibModal
      */
+    // @ngInject
     constructor($uibModal) {
         this.$uibModal = $uibModal;
     }
@@ -131,5 +131,3 @@ class PromptService {
         }).result;
     }
 }
-
-export {PromptDialogController, ConfirmDialogController, PromptService};

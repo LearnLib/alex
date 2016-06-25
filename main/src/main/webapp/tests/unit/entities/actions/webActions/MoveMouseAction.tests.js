@@ -1,5 +1,5 @@
-import Action from "../../../../../src/js/entities/actions/Action";
-import MoveMouseAction from "../../../../../src/js/entities/actions/webActions/MoveMouseAction";
+import {Action} from "../../../../../src/js/entities/actions/Action";
+import {MoveMouseAction} from "../../../../../src/js/entities/actions/webActions/MoveMouseAction";
 import {actionType} from "../../../../../src/js/constants";
 
 describe('MoveMouseAction', () => {

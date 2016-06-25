@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import ExecuteScriptAction from '../../../../../src/js/entities/actions/webActions/ExecuteScriptAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {ExecuteScriptAction} from '../../../../../src/js/entities/actions/webActions/ExecuteScriptAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('ExecuteScriptAction', () => {

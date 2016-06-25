@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import CheckHTTPBodyTextRestAction from '../../../../../src/js/entities/actions/restActions/CheckHTTPBodyTextRestAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {CheckHTTPBodyTextRestAction} from '../../../../../src/js/entities/actions/restActions/CheckHTTPBodyTextRestAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckHTTPBodyTextRestAction', () => {

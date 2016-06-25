@@ -22,7 +22,7 @@
  *
  * @type {{template: string}}
  */
-const alex = {
+export const alex = {
     template: `
         <div id="alex">
             <load-screen></load-screen>
@@ -31,5 +31,3 @@ const alex = {
         </div>
     `
 };
-
-export default alex;

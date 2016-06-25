@@ -24,19 +24,19 @@ import {events} from '../../constants';
  *
  * Use: <counterexamples-widget counterexamples="..."></counterexamples-widget>
  */
-// @ngInject
 class CounterexamplesWidget {
 
     /**
-     * Constructor
+     * Constructor.
      * @param $scope
-     * @param LearnerResource
-     * @param ToastService
-     * @param SymbolResource
+     * @param {LearnerResource} LearnerResource
+     * @param {ToastService} ToastService
+     * @param {SymbolResource} SymbolResource
      * @param $q
-     * @param EventBus
+     * @param {EventBus} EventBus
      * @param dragulaService
      */
+    // @ngInject
     constructor($scope, LearnerResource, ToastService, SymbolResource, $q, EventBus, dragulaService) {
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
@@ -168,7 +168,7 @@ class CounterexamplesWidget {
     }
 }
 
-const counterexamplesWidget = {
+export const counterexamplesWidget = {
     bindings: {
         counterexamples: '=',
         result: '='
@@ -210,5 +210,3 @@ const counterexamplesWidget = {
         </widget>
     `
 };
-
-export default counterexamplesWidget;

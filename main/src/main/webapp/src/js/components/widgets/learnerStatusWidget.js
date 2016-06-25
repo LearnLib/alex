@@ -21,14 +21,14 @@
  *          <learner-status-widget></learner-status-widget>
  *      </widget>
  */
-// @ngInject
 class LearnerStatusWidget {
 
     /**
-     * Constructor
-     * @param LearnerResource
-     * @param ToastService
+     * Constructor.
+     * @param {LearnerResource} LearnerResource
+     * @param {ToastService} ToastService
      */
+    // @ngInject
     constructor(LearnerResource, ToastService) {
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
@@ -74,7 +74,7 @@ class LearnerStatusWidget {
     }
 }
 
-const learnerStatusWidget = {
+export const learnerStatusWidget = {
     controller: LearnerStatusWidget,
     controllerAs: 'vm',
     template: `
@@ -95,5 +95,3 @@ const learnerStatusWidget = {
         </widget>
     `
 };
-
-export default learnerStatusWidget;

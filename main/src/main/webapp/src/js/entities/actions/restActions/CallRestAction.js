@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /**
  * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.
  * E.g. object.attribute.anotherAttribute
  */
-class CallRestAction extends Action {
+export class CallRestAction extends Action {
 
     /**
      * Constructor
@@ -118,5 +118,3 @@ class CallRestAction extends Action {
         return 'Make a ' + this.method + ' request to "' + this.url + '"';
     }
 }
-
-export default CallRestAction;

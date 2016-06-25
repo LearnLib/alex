@@ -21,17 +21,17 @@ import {events} from '../../constants';
  *
  * Use: <project-details-widget></project-details-widget>
  */
-// @ngInject
 class ProjectDetailsWidget {
 
     /**
-     * Constructor
+     * Constructor.
      * @param $scope
-     * @param SessionService
-     * @param SymbolGroupResource
-     * @param LearnResultResource
-     * @param EventBus
+     * @param {SessionService} SessionService
+     * @param {SymbolGroupResource} SymbolGroupResource
+     * @param {LearnResultResource} LearnResultResource
+     * @param {EventBus} EventBus
      */
+    // @ngInject
     constructor($scope, SessionService, SymbolGroupResource, LearnResultResource, EventBus) {
 
         /**
@@ -79,7 +79,7 @@ class ProjectDetailsWidget {
     }
 }
 
-const projectDetailsWidget = {
+export const projectDetailsWidget = {
     controller: ProjectDetailsWidget,
     controllerAs: 'vm',
     template: `
@@ -114,5 +114,3 @@ const projectDetailsWidget = {
         </widget>
     `
 };
-
-export default projectDetailsWidget;

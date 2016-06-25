@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Searches for an element with a specific selector in the HTML document */
-class CheckForNodeWebAction extends Action {
+export class CheckForNodeWebAction extends Action {
 
     /**
      * Constructor
@@ -43,5 +43,3 @@ class CheckForNodeWebAction extends Action {
         return 'Search for element "' + this.value + '"';
     }
 }
-
-export default CheckForNodeWebAction;

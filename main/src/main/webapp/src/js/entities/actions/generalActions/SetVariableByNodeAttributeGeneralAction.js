@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /** Extracts the text content value of an element and saves it value in a variable */
-class SetVariableByNodeAttributeGeneralAction extends Action {
+export class SetVariableByNodeAttributeGeneralAction extends Action {
 
     /**
      * Constructor
@@ -54,5 +54,3 @@ class SetVariableByNodeAttributeGeneralAction extends Action {
         return `Set variable "${this.name}" to the value of the attribute "${this.attribute}" of the element "${this.node}"`;
     }
 }
-
-export default SetVariableByNodeAttributeGeneralAction;

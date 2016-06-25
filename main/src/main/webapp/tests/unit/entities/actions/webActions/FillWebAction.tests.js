@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import FillWebAction from '../../../../../src/js/entities/actions/webActions/FillWebAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {FillWebAction} from '../../../../../src/js/entities/actions/webActions/FillWebAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('FillWebAction', () => {

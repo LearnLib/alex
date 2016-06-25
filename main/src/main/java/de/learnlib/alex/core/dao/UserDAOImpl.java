@@ -116,7 +116,8 @@ public class UserDAOImpl implements UserDAO {
     @Transactional
     public void delete(IdsList ids) throws NotFoundException {
         for (Long id: ids) {
-            userRepository.delete(id);
+            User user = getById(id);
+            userRepository.delete(user);
         }
     }
 

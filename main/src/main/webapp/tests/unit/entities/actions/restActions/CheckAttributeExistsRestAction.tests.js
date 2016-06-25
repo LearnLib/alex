@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import CheckAttributeExistsRestAction from '../../../../../src/js/entities/actions/restActions/CheckAttributeExistsRestAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {CheckAttributeExistsRestAction} from '../../../../../src/js/entities/actions/restActions/CheckAttributeExistsRestAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckAttributeExistsRestAction', () => {

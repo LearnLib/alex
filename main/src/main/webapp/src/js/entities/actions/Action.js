@@ -15,7 +15,7 @@
  */
 
 /** The action model all other actions should extend from */
-class Action {
+export class Action {
 
     /**
      * Constructor
@@ -57,5 +57,3 @@ class Action {
         return 'There is no string representation available for type "' + this.type + '"';
     }
 }
-
-export default Action;

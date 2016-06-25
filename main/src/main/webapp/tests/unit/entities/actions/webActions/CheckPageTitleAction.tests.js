@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import CheckPageTitleAction from '../../../../../src/js/entities/actions/webActions/CheckPageTitleAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {CheckPageTitleAction} from '../../../../../src/js/entities/actions/webActions/CheckPageTitleAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('CheckPageTitleAction', () => {

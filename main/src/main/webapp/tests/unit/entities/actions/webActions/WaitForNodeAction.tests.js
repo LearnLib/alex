@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import WaitForNodeAction from '../../../../../src/js/entities/actions/webActions/WaitForNodeAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {WaitForNodeAction} from '../../../../../src/js/entities/actions/webActions/WaitForNodeAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('WaitForNodeAction', () => {

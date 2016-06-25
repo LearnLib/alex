@@ -17,13 +17,13 @@
 /**
  * The controller of the component for the project dashboard.
  */
-// @ngInject
 class ProjectsDashboardView {
 
     /**
      * Constructor
-     * @param SessionService
+     * @param {SessionService} SessionService
      */
+    // @ngInject
     constructor(SessionService) {
 
         /**

@@ -18,7 +18,6 @@ import {events} from '../../constants';
 import {Project} from '../../entities/Project';
 
 /** The class of the project create form component */
-// @ngInject
 class ProjectCreateForm {
 
     /**
@@ -28,6 +27,7 @@ class ProjectCreateForm {
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
      */
+    // @ngInject
     constructor($scope, ProjectResource, ToastService, EventBus) {
         this.ProjectResource = ProjectResource;
         this.ToastService = ToastService;
@@ -83,10 +83,8 @@ class ProjectCreateForm {
     }
 }
 
-const projectCreateForm = {
+export const projectCreateForm = {
     controller: ProjectCreateForm,
     controllerAs: 'vm',
     templateUrl: 'html/components/project-create-form.html'
 };
-
-export default projectCreateForm;

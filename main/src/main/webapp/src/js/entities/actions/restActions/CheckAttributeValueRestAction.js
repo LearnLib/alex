@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import Action from '../Action';
+import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
 /**
  * Checks if a property of a JSON object in a HTTP response body has a specific value or matches a regular
  * expression
  */
-class CheckAttributeValueRestAction extends Action {
+export class CheckAttributeValueRestAction extends Action {
 
     /**
      * Constructor
@@ -62,5 +62,3 @@ class CheckAttributeValueRestAction extends Action {
         }
     }
 }
-
-export default CheckAttributeValueRestAction;

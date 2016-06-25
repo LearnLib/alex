@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import Action from "../Action";
+import {Action} from "../Action";
 import {actionType} from "../../../constants";
 
 /**
  * Action to move the mouse to an element or a screen position, e.g. in order to make
  * invisible elements visible or to scroll on the page.
  */
-class MoveMouseAction extends Action {
+export class MoveMouseAction extends Action {
 
     /**
      * Constructor.
@@ -61,5 +61,3 @@ class MoveMouseAction extends Action {
         }
     }
 }
-
-export default MoveMouseAction;

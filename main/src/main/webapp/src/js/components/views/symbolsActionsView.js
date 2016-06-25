@@ -22,24 +22,24 @@ import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
  * manages has to be defined in the url by its id.
  */
-// @ngInject
 class SymbolsActionsView {
 
     /**
      * Constructor
      * @param $scope
      * @param $stateParams
-     * @param SymbolResource
-     * @param SessionService
-     * @param ToastService
-     * @param ErrorService
-     * @param ActionService
-     * @param ClipboardService
+     * @param {SymbolResource} SymbolResource
+     * @param {SessionService} SessionService
+     * @param {ToastService} ToastService
+     * @param {ErrorService} ErrorService
+     * @param {ActionService} ActionService
+     * @param {ClipboardService} ClipboardService
      * @param $state
-     * @param PromptService
-     * @param EventBus
+     * @param {PromptService} PromptService
+     * @param {EventBus} EventBus
      * @param dragulaService
      */
+    // @ngInject
     constructor($scope, $stateParams, SymbolResource, SessionService, ToastService, ErrorService,
                 ActionService, ClipboardService, $state, PromptService, EventBus, dragulaService) {
 

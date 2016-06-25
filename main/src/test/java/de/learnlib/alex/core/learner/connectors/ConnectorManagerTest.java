@@ -17,7 +17,6 @@ package de.learnlib.alex.core.learner.connectors;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -28,7 +27,7 @@ public class ConnectorManagerTest {
     public void shouldDisposeAllConnectors() {
         Connector connector1 = mock(Connector.class);
         Connector connector2 = mock(Connector.class);
-        //
+
         ConnectorManager manager = new ConnectorManager();
         manager.addConnector(VariableStoreConnector.class, connector1);
         manager.addConnector(CounterStoreConnector.class, connector2);
@@ -38,5 +37,4 @@ public class ConnectorManagerTest {
         verify(connector1).dispose();
         verify(connector2).dispose();
     }
-
 }

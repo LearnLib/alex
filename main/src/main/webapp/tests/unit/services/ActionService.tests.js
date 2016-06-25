@@ -1,37 +1,37 @@
 // web actions
-import SelectWebAction from '../../../src/js/entities/actions/webActions/SelectWebAction';
-import SubmitWebAction from '../../../src/js/entities/actions/webActions/SubmitWebAction';
-import GoToWebAction from '../../../src/js/entities/actions/webActions/GoToWebAction';
-import FillWebAction from '../../../src/js/entities/actions/webActions/FillWebAction';
-import ClickWebAction from '../../../src/js/entities/actions/webActions/ClickWebAction';
-import ClickLinkByTextWebAction from '../../../src/js/entities/actions/webActions/ClickLinkByTextWebAction';
-import ClearWebAction from '../../../src/js/entities/actions/webActions/ClearWebAction';
-import CheckPageTitleAction from '../../../src/js/entities/actions/webActions/CheckPageTitleAction';
-import CheckForTextWebAction from '../../../src/js/entities/actions/webActions/CheckForTextWebAction';
-import CheckForNodeWebAction from '../../../src/js/entities/actions/webActions/CheckForNodeWebAction';
-import WaitForNodeAction from '../../../src/js/entities/actions/webActions/WaitForNodeAction';
-import WaitForTitleAction from '../../../src/js/entities/actions/webActions/WaitForTitleAction';
+import {SelectWebAction} from '../../../src/js/entities/actions/webActions/SelectWebAction';
+import {SubmitWebAction} from '../../../src/js/entities/actions/webActions/SubmitWebAction';
+import {GoToWebAction} from '../../../src/js/entities/actions/webActions/GoToWebAction';
+import {FillWebAction} from '../../../src/js/entities/actions/webActions/FillWebAction';
+import {ClickWebAction} from '../../../src/js/entities/actions/webActions/ClickWebAction';
+import {ClickLinkByTextWebAction} from '../../../src/js/entities/actions/webActions/ClickLinkByTextWebAction';
+import {ClearWebAction} from '../../../src/js/entities/actions/webActions/ClearWebAction';
+import {CheckPageTitleAction} from '../../../src/js/entities/actions/webActions/CheckPageTitleAction';
+import {CheckForTextWebAction} from '../../../src/js/entities/actions/webActions/CheckForTextWebAction';
+import {CheckForNodeWebAction} from '../../../src/js/entities/actions/webActions/CheckForNodeWebAction';
+import {WaitForNodeAction} from '../../../src/js/entities/actions/webActions/WaitForNodeAction';
+import {WaitForTitleAction} from '../../../src/js/entities/actions/webActions/WaitForTitleAction';
 
 // rest actions
-import CallRestAction from '../../../src/js/entities/actions/restActions/CallRestAction';
-import CheckAttributeExistsRestAction from '../../../src/js/entities/actions/restActions/CheckAttributeExistsRestAction';
-import CheckAttributeTypeRestAction from '../../../src/js/entities/actions/restActions/CheckAttributeTypeRestAction';
-import CheckAttributeValueRestAction from '../../../src/js/entities/actions/restActions/CheckAttributeValueRestAction';
-import CheckHeaderFieldRestAction from '../../../src/js/entities/actions/restActions/CheckHeaderFieldRestAction';
-import CheckHTTPBodyTextRestAction from '../../../src/js/entities/actions/restActions/CheckHTTPBodyTextRestAction';
-import CheckStatusRestAction from '../../../src/js/entities/actions/restActions/CheckStatusRestAction';
+import {CallRestAction} from '../../../src/js/entities/actions/restActions/CallRestAction';
+import {CheckAttributeExistsRestAction} from '../../../src/js/entities/actions/restActions/CheckAttributeExistsRestAction';
+import {CheckAttributeTypeRestAction} from '../../../src/js/entities/actions/restActions/CheckAttributeTypeRestAction';
+import {CheckAttributeValueRestAction} from '../../../src/js/entities/actions/restActions/CheckAttributeValueRestAction';
+import {CheckHeaderFieldRestAction} from '../../../src/js/entities/actions/restActions/CheckHeaderFieldRestAction';
+import {CheckHTTPBodyTextRestAction} from '../../../src/js/entities/actions/restActions/CheckHTTPBodyTextRestAction';
+import {CheckStatusRestAction} from '../../../src/js/entities/actions/restActions/CheckStatusRestAction';
 
 // general actions
-import ExecuteSymbolGeneralAction from '../../../src/js/entities/actions/generalActions/ExecuteSymbolGeneralAction';
-import AssertCounterAction from '../../../src/js/entities/actions/generalActions/AssertCounterAction';
-import AssertVariableAction from '../../../src/js/entities/actions/generalActions/AssertVariableAction';
-import IncrementCounterGeneralAction from '../../../src/js/entities/actions/generalActions/IncrementCounterGeneralAction';
-import SetCounterGeneralAction from '../../../src/js/entities/actions/generalActions/SetCounterGeneralAction';
-import SetVariableByCookieAction from '../../../src/js/entities/actions/generalActions/SetVariableByCookieAction';
-import SetVariableByJsonAttributeGeneralAction from '../../../src/js/entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
-import SetVariableByNodeGeneralAction from '../../../src/js/entities/actions/generalActions/SetVariableByNodeGeneralAction';
-import SetVariableGeneralAction from '../../../src/js/entities/actions/generalActions/SetVariableGeneralAction';
-import WaitGeneralAction from '../../../src/js/entities/actions/generalActions/WaitGeneralAction';
+import {ExecuteSymbolGeneralAction} from '../../../src/js/entities/actions/generalActions/ExecuteSymbolGeneralAction';
+import {AssertCounterAction} from '../../../src/js/entities/actions/generalActions/AssertCounterAction';
+import {AssertVariableAction} from '../../../src/js/entities/actions/generalActions/AssertVariableAction';
+import {IncrementCounterGeneralAction} from '../../../src/js/entities/actions/generalActions/IncrementCounterGeneralAction';
+import {SetCounterGeneralAction} from '../../../src/js/entities/actions/generalActions/SetCounterGeneralAction';
+import {SetVariableByCookieAction} from '../../../src/js/entities/actions/generalActions/SetVariableByCookieAction';
+import {SetVariableByJsonAttributeGeneralAction} from '../../../src/js/entities/actions/generalActions/SetVariableByJsonAttributeGeneralAction';
+import {SetVariableByNodeGeneralAction} from '../../../src/js/entities/actions/generalActions/SetVariableByNodeGeneralAction';
+import {SetVariableGeneralAction} from '../../../src/js/entities/actions/generalActions/SetVariableGeneralAction';
+import {WaitGeneralAction} from '../../../src/js/entities/actions/generalActions/WaitGeneralAction';
 
 describe('ActionService', () => {
     let ActionService;

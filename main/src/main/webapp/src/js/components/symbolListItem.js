@@ -17,13 +17,13 @@
 /**
  * Use: <symbol-list-item symbol="..."></symbol-list-item>
  */
-// @ngInject
 class SymbolListItem {
 
     /**
      * Constructor
      * @param $attrs
      */
+    // @ngInject
     constructor($attrs) {
 
         /**
@@ -47,7 +47,7 @@ class SymbolListItem {
     }
 }
 
-const symbolListItem = {
+export const symbolListItem = {
     templateUrl: 'html/components/symbol-list-item.html',
     controller: SymbolListItem,
     controllerAs: 'vm',
@@ -56,5 +56,3 @@ const symbolListItem = {
         symbol: '='
     }
 };
-
-export {symbolListItem};

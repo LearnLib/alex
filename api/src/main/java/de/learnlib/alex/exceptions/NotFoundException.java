@@ -16,15 +16,28 @@
 
 package de.learnlib.alex.exceptions;
 
+/**
+ * An alternative to the default NotFoundException.
+ */
 public class NotFoundException extends Exception {
 
+    /** Constructor. */
     public NotFoundException() {
     }
 
+    /**
+     * Constructor.
+     * @param message The message of the exception.
+     */
     public NotFoundException(String message) {
         super(message);
     }
 
+    /**
+     * Constructor.
+     * @param message The message of the exception.
+     * @param cause The cause of the exception.
+     */
     public NotFoundException(String message, Throwable cause) {
         super(message, cause);
     }

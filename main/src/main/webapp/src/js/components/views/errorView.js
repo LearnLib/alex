@@ -15,7 +15,6 @@
  */
 
 /** The controller of the error page */
-// @ngInject
 class ErrorView {
 
     /**
@@ -23,6 +22,7 @@ class ErrorView {
      * @param $state
      * @param ErrorService
      */
+    // @ngInject
     constructor($state, ErrorService) {
 
         /**

@@ -1,5 +1,11 @@
 # ALEX v1.2
 
+## Breaking Changes
+
+* Dropped support for IE web driver
+* Firefox and Chrome drivers are not supported by default any longer.
+  Instead, you have specify the paths to the driver executables.
+
 ## Features
 
 * New action: Move mouse

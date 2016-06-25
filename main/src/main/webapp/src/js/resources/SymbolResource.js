@@ -19,13 +19,13 @@ import {AlphabetSymbol} from '../entities/AlphabetSymbol';
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbols
  */
-// @ngInject
-class SymbolResource {
+export class SymbolResource {
 
     /**
      * Constructor
      * @param $http
      */
+    // @ngInject
     constructor($http) {
         this.$http = $http;
     }
@@ -173,5 +173,3 @@ class SymbolResource {
         return this.$http.post(`rest/projects/${project}/symbols/batch/${ids}/show`, {});
     }
 }
-
-export default SymbolResource;

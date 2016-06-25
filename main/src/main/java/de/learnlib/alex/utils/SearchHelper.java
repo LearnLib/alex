@@ -92,16 +92,19 @@ public final class SearchHelper {
      */
     public static String insertVariableValues(ConnectorManager connector, Long userId, Long projectId, String text)
                          throws IllegalStateException {
+        final int endPosOffset = -2;  // because ...}}
+        final int startPosOffset = 3; // because {{$...
+
         StringBuilder result = new StringBuilder();
         int variableStartPos = text.indexOf("{{");
-        int variableEndPos = -2; // because of the length of '}}' we will always +2 to the endPos,
+        int variableEndPos = endPosOffset; // because of the length of '}}' we will always +2 to the endPos,
                                  // so this is a start at 0
 
         while (variableStartPos > -1) {
             result.append(text.substring(variableEndPos + 2, variableStartPos)); // add everything before the variable.
 
             variableEndPos = text.indexOf("}}", variableStartPos);
-            String variableName = text.substring(variableStartPos + 3, variableEndPos);
+            String variableName = text.substring(variableStartPos + startPosOffset, variableEndPos);
 
             String variableValue;
             switch (text.charAt(variableStartPos + 2)) {

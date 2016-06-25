@@ -1,5 +1,5 @@
-import Action from '../../../../../src/js/entities/actions/Action';
-import SetVariableByCookieAction from '../../../../../src/js/entities/actions/generalActions/SetVariableByCookieAction';
+import {Action} from '../../../../../src/js/entities/actions/Action';
+import {SetVariableByCookieAction} from '../../../../../src/js/entities/actions/generalActions/SetVariableByCookieAction';
 import {actionType} from '../../../../../src/js/constants';
 
 describe('SetVariableByCookieAction', () => {

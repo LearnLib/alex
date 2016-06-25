@@ -21,8 +21,7 @@ import {events} from '../../constants';
  * The controller that handles the modal dialog for deleting and updating a symbol group. The modal data that is
  * passed must have an property 'group' whose value should be an instance of SymbolGroup
  */
-// @ngInject
-class SymbolGroupEditModalController {
+export class SymbolGroupEditModalController {
 
     /**
      * Constructor
@@ -32,6 +31,7 @@ class SymbolGroupEditModalController {
      * @param ToastService
      * @param EventBus
      */
+    // @ngInject
     constructor($uibModalInstance, modalData, SymbolGroupResource, ToastService, EventBus) {
         this.$uibModalInstance = $uibModalInstance;
         this.SymbolGroupResource = SymbolGroupResource;
@@ -50,8 +50,7 @@ class SymbolGroupEditModalController {
          */
         this.errorMsg = null;
     }
-
-
+    
     /** Updates the symbol group under edit and closes the modal dialog on success */
     updateGroup() {
         this.errorMsg = null;
@@ -105,7 +104,7 @@ class SymbolGroupEditModalController {
  * @returns {{scope: {group: string}, link: link}}
  */
 // @ngInject
-function symbolGroupEditModalHandle($uibModal) {
+export function symbolGroupEditModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -129,5 +128,3 @@ function symbolGroupEditModalHandle($uibModal) {
         });
     }
 }
-
-export {SymbolGroupEditModalController, symbolGroupEditModalHandle};

@@ -51,6 +51,9 @@ public class ClickAction extends WebSymbolAction {
     @Column(columnDefinition = "CLOB")
     private String node;
 
+    /**
+     * If a double click is executed.
+     */
     @NotNull
     private boolean doubleClick;
 

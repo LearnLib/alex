@@ -15,13 +15,11 @@
  */
 
 import _ from 'lodash';
-import {LearnConfiguration} from '../../entities/LearnConfiguration';
 
 /**
  * The controller for showing a load screen during the learning and shows all learn results from the current test
  * in the intermediate steps.
  */
-// @ngInject
 class LearnerStartView {
 
     /**
@@ -34,6 +32,7 @@ class LearnerStartView {
      * @param ToastService
      * @param ErrorService
      */
+    // @ngInject
     constructor($scope, $interval, SessionService, LearnerResource, LearnResultResource, ToastService, ErrorService) {
         this.$interval = $interval;
         this.LearnerResource = LearnerResource;
@@ -145,8 +144,6 @@ class LearnerStartView {
 
     /** Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample' */
     resumeLearning() {
-        const lastStep = this.result.steps[this.result.steps.length - 1];
-
         this.LearnerResource.resume(this.project.id, this.result.testNo, this.resumeConfig)
             .then(() => {
                 this.poll();
