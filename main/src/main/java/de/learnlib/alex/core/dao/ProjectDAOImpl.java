@@ -94,7 +94,8 @@ public class ProjectDAOImpl implements ProjectDAO {
                 });
             }
 
-            projectRepository.save(project);
+            Project createdProject = projectRepository.save(project);
+            project.setId(createdProject.getId());
         // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Project creation failed:", e);

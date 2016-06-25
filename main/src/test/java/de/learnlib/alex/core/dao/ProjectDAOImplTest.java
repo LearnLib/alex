@@ -67,12 +67,15 @@ public class ProjectDAOImplTest {
     @Test
     public void shouldCreateAValidEmptyProject() {
         Project project = new Project();
+        Project createdProject = new Project();
+        createdProject.setId(1L);
         //
-        given(projectRepository.save(project)).willReturn(project);
+        given(projectRepository.save(project)).willReturn(createdProject);
 
         projectDAO.create(project);
 
         verify(projectRepository).save(project);
+        assertThat(project.getId(), is(equalTo(1L)));
         assertNotNull(project.getDefaultGroup());
     }
 
