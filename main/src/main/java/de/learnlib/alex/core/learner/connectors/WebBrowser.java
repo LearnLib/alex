@@ -73,8 +73,6 @@ public enum WebBrowser {
      *          If the instantiation of the driver failed.
      */
     public WebDriver getWebDriver() throws Exception {
-        Settings settings = new SettingsDAOImpl().get();
-
         try {
             switch (this) {
                 case HTMLUNITDRIVER:
@@ -82,11 +80,9 @@ public enum WebBrowser {
                     enableJavaScript(driver);
                     return driver;
                 case CHROME:
-                    System.setProperty("webdriver.chrome.driver", settings.getDriverSettings().getChrome());
                     DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
                     return new ChromeDriver(chromeCapabilities);
                 case FIREFOX:
-                    System.setProperty("webdriver.gecko.driver", settings.getDriverSettings().getFirefox());
                     DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
                     return new MarionetteDriver(firefoxCapabilities);
                 default:

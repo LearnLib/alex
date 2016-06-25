@@ -39,8 +39,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import javax.ws.rs.ApplicationPath;
-import javax.xml.bind.ValidationException;
 
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.

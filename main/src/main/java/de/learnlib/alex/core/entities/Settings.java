@@ -40,8 +40,8 @@ public class Settings implements Serializable {
 
     /** The id of the settings object in the database. */
     @Id
-    @GeneratedValue
-    private Long id;
+//    @GeneratedValue
+    private Long id = 1L;
 
     /** The settings regarding available web drivers. */
     @Embedded
