@@ -82,6 +82,7 @@ public class ALEXApplication extends ResourceConfig {
         register(MultiPartFeature.class);
         register(AuthenticationFilter.class);
         register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
+        register(JacksonConfiguration.class);
     }
 
     /**
