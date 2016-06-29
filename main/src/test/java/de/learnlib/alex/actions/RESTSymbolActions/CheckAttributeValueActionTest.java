@@ -86,6 +86,36 @@ public class CheckAttributeValueActionTest {
     }
 
     @Test
+    public void shouldReturnOkIfPathExistsOnJsonArray() throws Exception {
+        CheckAttributeValueAction action = new CheckAttributeValueAction();
+        action.setUser(user);
+        action.setProject(project);
+        action.setAttribute("[0].id");
+        action.setValue("0");
+        action.setRegexp(false);
+
+        given(connector.getBody()).willReturn("[{\"id\": 0}]");
+
+        ExecuteResult result = action.execute(connector);
+        assertEquals(ExecuteResult.OK, result);
+    }
+
+    @Test
+    public void shouldReturnNullIfThePathIsInvalidOnJsonArray() throws Exception {
+        CheckAttributeValueAction action = new CheckAttributeValueAction();
+        action.setUser(user);
+        action.setProject(project);
+        action.setAttribute("[0].id");
+        action.setValue("0");
+        action.setRegexp(false);
+
+        given(connector.getBody()).willReturn("[{\"id\": 6}]");
+
+        ExecuteResult result = action.execute(connector);
+        assertEquals(ExecuteResult.FAILED, result);
+    }
+
+    @Test
     public void shouldReturnOkIfAttributeWithRightValueExists() {
         given(connector.getBody()).willReturn("{\"awesome_field\": \"Hello World!\"}");
 

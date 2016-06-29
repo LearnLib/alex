@@ -147,9 +147,9 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         String body = target.getBody();
-        JsonNodeType typeInBody = JSONHelpers.getAttributeType(body, getAttributeWithVariableValues());
+        JsonType typeInBody = JSONHelpers.getAttributeType(body, getAttributeWithVariableValues());
 
-        if (typeInBody != null && typeInBody.equals(jsonType.getRelatedType())) {
+        if (typeInBody != null && typeInBody.equals(jsonType)) {
             return getSuccessOutput();
         } else {
             return  getFailedOutput();

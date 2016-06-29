@@ -122,6 +122,13 @@
             <version>1.9.2</version>
         </dependency>
 
+        <!-- JsonPath -->
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
         <!-- LearnLib -->
         <dependency>
             <groupId>de.learnlib</groupId>
