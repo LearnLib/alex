@@ -1,4 +1,4 @@
-# ALEX v1.2
+# ALEX v1.1.2
 
 ## Breaking Changes
 
@@ -6,17 +6,22 @@
 * Firefox and Chrome drivers are not supported by default any longer.
   Instead, you have specify the paths to the driver executables.
 
+## Bug Fixes
+
+* Fixed the parsing of JSON paths in various REST actions.
+
 ## Features
 
 * New action: Move mouse
 * Click action supports double click
 
-# ALEX v1.1
+# ALEX v1.1 (and hidden ALEX v1.1.1)
 
 ## Bug Fixes
 
 * Allow symbol groups to be edited via the frontend again
 * Properly close connectors after finished learning
+* ALEX v1.1.1 fixed a problem with the fonts.
 
 ## Features
 
