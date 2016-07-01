@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.utils;
 
+import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckAttributeTypeAction.JsonType;
@@ -54,8 +55,8 @@ public final class JSONHelpers {
             LOGGER.info("The attribute '" + attribute + "' has the value '" + value + "' "
                             + " in the body '" + json + "'.");
             return value;
-        } catch (IllegalArgumentException e) {
-            LOGGER.info("JSON body was empty.", e);
+        } catch (InvalidJsonException e) {
+            LOGGER.info("JSON was not valid, e.g. the body was empty.", e);
             return null;
         } catch (InvalidPathException e) {
             LOGGER.info("Could not parse the JSON to get the value of an attribute.", e);
@@ -91,8 +92,8 @@ public final class JSONHelpers {
                 LOGGER.info("Unsupported JSON type.");
                 return null;
             }
-        } catch (IllegalArgumentException e) {
-            LOGGER.info("JSON body was empty.", e);
+        } catch (InvalidJsonException e) {
+            LOGGER.info("JSON was not valid, e.g. the body was empty.", e);
             return null;
         } catch (InvalidPathException e) {
             LOGGER.info("Could not parse the JSON to get the type of an attribute.", e);
@@ -101,13 +102,13 @@ public final class JSONHelpers {
     }
 
     private static Object getParsedAttributeValue(String json, String attribute)
-            throws IllegalArgumentException, InvalidPathException {
+            throws InvalidJsonException, InvalidPathException {
         if (json.startsWith("[")) {
             return JsonPath.read(json, "$" + attribute);
         } else if (json.startsWith("{")) {
             return JsonPath.read(json, "$." + attribute);
         } else {
-            throw new IllegalArgumentException();
+            throw new InvalidJsonException();
         }
     }
 }

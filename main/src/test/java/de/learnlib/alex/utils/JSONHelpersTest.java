@@ -20,8 +20,11 @@ package de.learnlib.alex.utils;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckAttributeTypeAction.JsonType;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 public class JSONHelpersTest {
 
@@ -40,8 +43,23 @@ public class JSONHelpersTest {
     }
 
     @Test
+    public void shouldReturnCorrectValueIfJSONIsNotStrictJSONOnGetValue() {
+        assertThat(JSONHelpers.getAttributeValue("{field: Test}", "field"), is(equalTo("Test")));
+    }
+
+    @Test
     public void shouldReturnNullIfJSONIsEmptyOnGetValue() {
         assertNull(JSONHelpers.getAttributeValue("", "field"));
+    }
+
+    @Test
+    public void shouldReturnNullIfJSONIsInvalidOnGetValue() {
+        assertNull(JSONHelpers.getAttributeValue("{\"foo\": \"bar\" \"field\": \"Test\"}", "field"));
+    }
+
+    @Test
+    public void shouldReturnNullIfJSONIsNotEvenCloseToProperJSONOnGetValue() {
+        assertNull(JSONHelpers.getAttributeValue("this is not real json", "field"));
     }
 
     @Test
@@ -50,29 +68,79 @@ public class JSONHelpersTest {
     }
 
     @Test
-    public void shouldAlwaysGetTheCorrectAttributeType() {
-        String jsonString = "{\"field\": \"stringggg\"}";
-        String jsonNumber1 = "{\"field\": 1}";
-        String jsonNumber2 = "{\"field\": 1.2}";
-        String jsonBoolean1 = "{\"field\": true}";
-        String jsonBoolean2 = "{\"field\": false}";
-        String jsonObject = "{\"field\": {}}";
-        String jsonArray = "{\"field\": []}";
-        String jsonNull = "{\"field\": null}";
+    public void shouldGetTheTypeStringCorrectly() {
+        String json = "{\"field\": \"stringggg\"}";
 
-        assertEquals(JSONHelpers.getAttributeType(jsonString, "field"), JsonType.STRING);
-        assertEquals(JSONHelpers.getAttributeType(jsonNumber1, "field"), JsonType.INTEGER);
-        assertEquals(JSONHelpers.getAttributeType(jsonNumber2, "field"), JsonType.INTEGER);
-        assertEquals(JSONHelpers.getAttributeType(jsonBoolean1, "field"), JsonType.BOOLEAN);
-        assertEquals(JSONHelpers.getAttributeType(jsonBoolean2, "field"), JsonType.BOOLEAN);
-        assertEquals(JSONHelpers.getAttributeType(jsonObject, "field"), JsonType.OBJECT);
-        assertEquals(JSONHelpers.getAttributeType(jsonArray, "field"), JsonType.ARRAY);
-        assertEquals(JSONHelpers.getAttributeType(jsonNull, "field"), JsonType.NULL);
+        assertEquals(JSONHelpers.getAttributeType(json, "field"), JsonType.STRING);
+    }
+
+    @Test
+    public void shouldGetTheTypeNumberCorrectly1() {
+        String json = "{\"field\": 1}";
+
+        assertEquals(JSONHelpers.getAttributeType(json, "field"), JsonType.INTEGER);
+    }
+
+    @Test
+    public void shouldGetTheTypeNumberCorrectly2() {
+        String json = "{\"field\": 1.2}";
+
+        assertEquals(JSONHelpers.getAttributeType(json, "field"), JsonType.INTEGER);
+    }
+
+    @Test
+    public void shouldGetTheTypeTrueCorrectly() {
+        String json = "{\"field\": true}";
+
+        assertEquals(JSONHelpers.getAttributeType(json, "field"), JsonType.BOOLEAN);
+    }
+
+    @Test
+    public void shouldGetTheTypeFalseCorrectly() {
+        String json = "{\"field\": false}";
+
+        assertEquals(JSONHelpers.getAttributeType(json, "field"), JsonType.BOOLEAN);
+    }
+
+    @Test
+    public void shouldGetTheTypeObjectCorrectly1() {
+        String json = "{\"field\": {}}";
+
+        assertEquals(JSONHelpers.getAttributeType(json, "field"), JsonType.OBJECT);
+    }
+
+    @Test
+    public void shouldGetTheTypeArrayCorrectly1() {
+        String json = "{\"field\": []}";
+
+        assertEquals(JSONHelpers.getAttributeType(json, "field"), JsonType.ARRAY);
+    }
+
+    @Test
+    public void shouldGetTheTypeNullCorrectly1() {
+        String json = "{\"field\": null}";
+
+        assertEquals(JSONHelpers.getAttributeType(json, "field"), JsonType.NULL);
+    }
+
+    @Test
+    public void shouldReturnCorrectTypeIfJSONIsNotStrictJSONOnGetType() {
+        assertThat(JSONHelpers.getAttributeType("{field: Test}", "field"), is(equalTo(JsonType.STRING)));
     }
 
     @Test
     public void shouldReturnNullIfJSONIsEmptyOnGetType() {
         assertNull(JSONHelpers.getAttributeType("", "field"));
+    }
+
+    @Test
+    public void shouldReturnNullIfJSONIsNotEvenCloseToProperJSONOnGetType() {
+        assertNull(JSONHelpers.getAttributeType("this is not real json", "field"));
+    }
+
+    @Test
+    public void shouldReturnNullIfJSONIsInvalidOnGetType() {
+        assertNull(JSONHelpers.getAttributeType("{\"foo\": \"bar\" \"field\": \"Test\"}", "field"));
     }
 
     @Test
