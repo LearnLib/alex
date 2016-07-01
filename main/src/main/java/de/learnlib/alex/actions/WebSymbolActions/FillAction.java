@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -5,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.utils.CSSUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -23,6 +41,9 @@ public class FillAction extends WebSymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = 8595076806577663223L;
+
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /**
      * The node to look for.
@@ -101,12 +122,16 @@ public class FillAction extends WebSymbolAction {
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
+        String nodeWithVariables = getNodeWithVariableValues();
+        String valueWithVariables = getValueWithVariableValues();
         try {
-            WebElement element = connector.getElement(CSSUtils.escapeSelector(getNodeWithVariableValues()));
+            WebElement element = connector.getElement(CSSUtils.escapeSelector(nodeWithVariables));
             element.clear();
-            element.sendKeys(getValueWithVariableValues());
+            element.sendKeys(valueWithVariables);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
+            LOGGER.info("Could not find the element '" + nodeWithVariables + "' to fill it with '"
+                                + valueWithVariables + "'.", e);
             return getFailedOutput();
         }
     }

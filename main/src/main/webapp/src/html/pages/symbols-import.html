@@ -1,0 +1,54 @@
+<div id="view-symbols-import">
+    <view-header title="Import Symbols"></view-header>
+
+    <action-bar>
+        <div ng-if="vm.symbols.length > 0">
+            <checkbox-multiple model="vm.symbols" class="pull-left"></checkbox-multiple>
+
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-primary" ng-click="vm.uploadSelectedSymbols()">
+                    <i class="fa fa-upload fa-fw"></i> Upload
+                </button>
+                <div class="btn-group btn-group-sm" uib-dropdown>
+                    <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle>
+                        <i class="fa fa-gear"></i>
+                    </button>
+                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
+                        <li>
+                            <a href="" ng-click="vm.adjustReferences = !vm.adjustReferences">
+                                <i class="fa fa-fw" ng-class="vm.adjustReferences ? 'fa-check' : 'fa-close'"></i>
+                                Adjust References
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <button class="btn btn-sm btn-default" ng-click="vm.removeSelectedSymbols()">
+                Remove
+            </button>
+        </div>
+    </action-bar>
+
+    <div class="view-body has-sub-nav">
+        <div class="alx-container-fluid">
+
+            <file-dropzone ng-if="vm.symbols.length === 0">
+                Drag and drop *.json file here or click to upload
+            </file-dropzone>
+
+            <div class="symbol-list">
+                <symbol-list-item ng-repeat="symbol in vm.symbols" symbol="symbol"
+                                  selection-model selection-model-selected-items="vm.selectedSymbols">
+
+                    <button class="btn btn-xs btn-default btn-icon pull-right"
+                            symbol-edit-modal-handle symbol="symbol" update-on-server="false">
+                        <i class="fa fa-edit"></i> Edit
+                    </button>
+
+                </symbol-list-item>
+            </div>
+
+        </div>
+    </div>
+</div>

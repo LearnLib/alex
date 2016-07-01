@@ -6,7 +6,24 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Root level="info">
+		<!-- Loggers of the dependencies. -->
+		<Logger name="com.gargoylesoftware.htmlunit" level="warn"/>
+		<Logger name="hsqldb.db" level="warn"/>
+		<Logger name="org.hibernate" level="warn"/>
+		<!--<Logger name="org.jvnet.mimepull" level="warn"/>-->
+		<Logger name="org.glassfish" level="info"/>
+		<Logger name="com.sun" level="info"/>
+
+		<!-- Change the level of the following 2 Loggers to 'all' to get an inside view of Hibernates work,
+             or to 'off' to keep the output clean. -->
+		<Logger name="org.hibernate.SQL" level="off"/>
+		<Logger name="org.hibernate.type.descriptor.sql" level="off"/>
+
+		<!-- Our own logger. -->
+		<Logger name="learner" level="trace" />
+		<Logger name="server" level="trace" />
+
+		<Root level="debug">
 			<AppenderRef ref="Console" />
 		</Root>
 	</Loggers>

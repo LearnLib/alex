@@ -1,84 +1,70 @@
 package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
-import de.learnlib.alex.core.entities.LearnerConfiguration;
+import de.learnlib.alex.core.dao.LearnerResultDAOImpl;
 import de.learnlib.alex.core.entities.LearnerResult;
-import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
-import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.api.LearningAlgorithm;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * Factory to create a {@link LearnerThread} for the given Symbols.
+ * Class to create a learner thread.
+ * This is a helper class to make the testing of the Learner class more easily.
  */
+@Service
 public class LearnerThreadFactory {
 
-    /** The DAO to receive and save the results. */
+    /** The LearnerResultDAO to use. */
     private LearnerResultDAO learnerResultDAO;
 
     /**
-     * Constructor to set the factory up.
+     * Default constructor. This will create a new LearnerResultDAO for internal use.
+     */
+    public LearnerThreadFactory() {
+        this(new LearnerResultDAOImpl());
+    }
+
+    /**
+     * Constructor that sets the LearnerResultDAO.
      *
      * @param learnerResultDAO
-     *         The DAO to access and store the results.
+     *         The LearnerResultDAO to use.
      */
     public LearnerThreadFactory(LearnerResultDAO learnerResultDAO) {
         this.learnerResultDAO = learnerResultDAO;
     }
 
     /**
-     * Create a LearnerThread suitable for the given parameter.
+     * Create a brand new LearnThread.
      *
+     * @param learnerResult
+     *         The newly created LearnResult with the configuration.
      * @param contextHandler
-     *         The current ContextHandler to use.
-     * @param project
-     *         The Project of the test run.
-     * @param configuration
-     *         The LearnerConfiguration to use for the learning.
-     * @return A new thread ready to use for learning.
+     *         The Connectors to use.
+     * @return A brand new learn thread. You have to start it by calling the .run() method on it.
      */
-    public LearnerThread createThread(ConnectorContextHandler contextHandler, Project project,
-                                      LearnerConfiguration configuration) {
-        if (configuration.getSymbols().isEmpty()) {
-            throw new IllegalArgumentException("No Symbols found.");
-        }
-
-        LearnerResult learnerResult = createLearnerResult(project, configuration);
-        contextHandler.setResetSymbol(configuration.getResetSymbol());
-
+    public LearnerThread createThread(LearnerResult learnerResult, ConnectorContextHandler contextHandler) {
         return new LearnerThread(learnerResultDAO, learnerResult, contextHandler);
     }
 
     /**
-     * Create a LearnerThread suitable for the given parameter.
+     * Create a new LearnThread based on a previous thread, i.e. if you want to resume a learn process.
      *
-     * @param thread
-     *         The previous LearnerThread to copy information from.
-     * @param newConfiguration
-     *         The resume configuration to use for the next learning steps.
-     * @return A new thread ready to use for learning.
+     * @param previousThread
+     *         The previous thread which provides the actual algorithm and other properties.
+     * @param learnerResult
+     *         The learner result with the new configuration in the current last step.
+     * @return The new LearnerThread. You have to start it by calling the .run() method on it.
      */
-    public LearnerThread updateThread(LearnerThread thread, LearnerResumeConfiguration newConfiguration) {
-        LearnerResult learnerResult = thread.getResult();
-
-        learnerResult.getConfiguration().updateConfiguration(newConfiguration);
-        List<? extends Symbol> symbolsList = thread.getSymbols();
-
-        LearningAlgorithm.MealyLearner<String, String> learner = thread.getLearner();
+    public LearnerThread createThread(LearnerThread previousThread, LearnerResult learnerResult) {
+        List<? extends Symbol> symbolsList = previousThread.getSymbols();
         Symbol[] symbols = symbolsList.toArray(new Symbol[symbolsList.size()]);
+        LearningAlgorithm.MealyLearner<String, String> learner = previousThread.getLearner();
 
-        return new LearnerThread(learnerResultDAO, learnerResult, thread.getCachedSUL(), learner, symbols);
-    }
-
-    private LearnerResult createLearnerResult(Project project, LearnerConfiguration configuration) {
-        LearnerResult learnerResult = new LearnerResult();
-        learnerResult.setConfiguration(configuration);
-        learnerResult.setProject(project);
-
-        return learnerResult;
+        return new LearnerThread(learnerResultDAO, learnerResult, previousThread.getCachedSUL(), learner, symbols);
     }
 
 }

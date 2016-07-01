@@ -1,0 +1,37 @@
+<div id="view-symbols-trash">
+    <view-header title="Symbol Trash"></view-header>
+
+    <action-bar>
+        <div ng-if="vm.symbols.length > 0">
+
+            <checkbox-multiple model="vm.symbols" class="pull-left"></checkbox-multiple>
+
+            <div class="pull-left">
+                <button class="btn btn-sm btn-primary" ng-click="vm.recoverSelectedSymbols()">
+                    <i class="fa fa-rotate-left fa-fw"></i> Recover
+                </button>
+            </div>
+        </div>
+    </action-bar>
+
+    <div class="view-body has-sub-nav">
+        <div class="alx-container-fluid">
+
+            <div class="alert alert-info" ng-if="vm.symbols.length === 0">
+                There aren't any deleted symbols.
+            </div>
+
+            <div class="symbol-list">
+                <symbol-list-item ng-repeat="symbol in vm.symbols | orderBy:'-name':true" symbol="symbol"
+                                  selection-model selection-model-selected-items="vm.selectedSymbols">
+
+                    <a class="btn btn-default btn-icon" ng-click="vm.recoverSymbol(symbol)">
+                        <i class="fa fa-rotate-left fa-fw"></i> Recover
+                    </a>
+
+                </symbol-list-item>
+            </div>
+
+        </div>
+    </div>
+</div>

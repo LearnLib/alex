@@ -1,44 +1,29 @@
 module.exports = function (grunt) {
 
-    var scripts = [
-        'app/modules/init.js',
-
-        // core module
-        'app/modules/core/init.js',
-        'app/modules/core/constants.js',
-        'app/modules/core/routes.js',
-        'app/modules/core/controllers/*.js',
-        'app/modules/core/directives/*.js',
-        'app/modules/core/filters/*.js',
-        'app/modules/core/models/*.js',
-        'app/modules/core/resources/*.js',
-        'app/modules/core/services/*.js',
-
-        // actions module
-        'app/modules/actions/init.js',
-        'app/modules/actions/constants.js',
-        'app/modules/actions/directives/**/*.js',
-        'app/modules/actions/services/**/*.js',
-        'app/modules/actions/models/**/*.js',
-
-        // modals module
-        'app/modules/modals/init.js',
-        'app/modules/modals/controllers/*.js',
-        'app/modules/modals/directives/*.js',
-        'app/modules/modals/services/*.js'
+    var libraries = [
+        'node_modules/ace-builds/src/ace.js',
+        'node_modules/ace-builds/src/theme-eclipse.js',
+        'node_modules/ace-builds/src/mode-json.js',
+        'node_modules/ace-builds/src/mode-javascript.js',
+        'node_modules/angular/angular.js',
+        'node_modules/angular-ui-ace/src/ui-ace.js',
+        'node_modules/n3-charts/build/LineChart.js',
+        'node_modules/selection-model/dist/selection-model.js'
     ];
 
     grunt
         .initConfig({
-            pkg: grunt.file.readJSON('bower.json'),
+            pkg: grunt.file.readJSON('package.json'),
 
             uglify: {
-                options: {
-                    banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-                },
                 app: {
                     files: {
-                        './app/app.min.js': ['./app/app.js']
+                        './dist/alex.min.js': ['./dist/alex.js']
+                    }
+                },
+                libs: {
+                    files: {
+                        './dist/libs.min.js': ['./dist/libs.js']
                     }
                 }
             },
@@ -47,70 +32,53 @@ module.exports = function (grunt) {
                 options: {
                     separator: ';\n'
                 },
-                app: {
-                    src: ['app/templates.js', scripts],
-                    dest: './app/app.js'
-                },
                 libs: {
-                    src: [
-                        'bower_components/angular/angular.min.js',
-                        'bower_components/angular-ui-router/release/angular-ui-router.min.js',
-                        'bower_components/angular-animate/angular-animate.min.js',
-                        'bower_components/lodash/lodash.min.js',
-                        'bower_components/angular-selection-model/dist/selection-model.min.js',
-                        'bower_components/angular-ui-ace/ui-ace.min.js',
-                        'bower_components/ace-builds/src-min/ace.js',
-                        'bower_components/ace-builds/src-min/theme-eclipse.js',
-                        'bower_components/ace-builds/src-min/mode-json.js',
-                        'bower_components/ngtoast/dist/ngToast.min.js',
-                        'bower_components/angular-sanitize/angular-sanitize.min.js',
-                        'bower_components/angular-bootstrap/ui-bootstrap.min.js',
-                        'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
-                        'bower_components/d3/d3.min.js',
-                        'bower_components/graphlib/dist/graphlib.core.min.js',
-                        'bower_components/dagre/dist/dagre.core.min.js',
-                        'bower_components/dagre-d3/dist/dagre-d3.core.min.js',
-                        'bower_components/n3-line-chart/build/line-chart.min.js',
-                        'bower_components/Sortable/Sortable.min.js',
-                        'bower_components/Sortable/ng-sortable.js',
-                        'bower_components/ng-file-upload/ng-file-upload.min.js'
-                    ],
-                    dest: 'app/libs.min.js'
+                    src: libraries,
+                    dest: 'dist/libs.js'
                 }
             },
 
             html2js: {
                 options: {
                     useStrict: true,
-                    base: '../webapp'
+                    base: '../webapp/src',
+                    module: 'ALEX.templates',
+                    singleModule: true,
+                    htmlmin: {
+                        collapseBooleanAttributes: false,
+                        collapseWhitespace: true,
+                        removeAttributeQuotes: false,
+                        removeComments: true,
+                        removeEmptyAttributes: false,
+                        removeRedundantAttributes: false,
+                        removeScriptTypeAttributes: false,
+                        removeStyleLinkTypeAttributes: false
+                    }
                 },
                 all: {
-                    src: [
-                        'app/modules/core/views/**/*.html',
-                        'app/modules/actions/views/*.html',
-                        'app/modules/modals/views/*.html'],
-                    dest: 'app/templates.js'
+                    src: ['src/html/**/*.html'],
+                    dest: 'dist/alex.templates.js'
                 }
             },
 
             watch: {
                 scripts: {
-                    files: ['app/modules/**/*.js'],
+                    files: ['src/js/**/*.js'],
                     tasks: ['build-js'],
                     options: {
                         spawn: false
                     }
                 },
                 sass: {
-                    files: ['app/stylesheets/**/*.scss'],
+                    files: ['src/scss/**/*.scss'],
                     tasks: ['build-css'],
                     options: {
                         spawn: false
                     }
                 },
                 html: {
-                    files: ['app/modules/**/*.html'],
-                    tasks: ['build-js'],
+                    files: ['src/html/**/*.html'],
+                    tasks: ['build-html'],
                     options: {
                         spawn: false
                     }
@@ -123,73 +91,93 @@ module.exports = function (grunt) {
                 },
                 dist: {
                     files: {
-                        'app/stylesheets/style.css': 'app/stylesheets/style.scss'
+                        'dist/style.css': 'src/scss/style.scss'
                     }
-                }
-            },
-
-            karma: {
-                unit: {
-                    configFile: 'tests/unit/karma.conf.js'
                 }
             },
 
             cssmin: {
                 target: {
                     files: {
-                        'app/style.min.css': [
-                            'bower_components/ngtoast/dist/ngToast.min.css',
-                            'bower_components/codemirror/lib/codemirror.css',
-                            'app/stylesheets/style.css'
+                        'dist/style.min.css': [
+                            'node_modules/n3-charts/build/LineChart.css',
+                            'node_modules/angular-dragula/dist/dragula.min.css',
+                            'node_modules/angular-toastr/dist/angular-toastr.min.css',
+                            'dist/style.css'
                         ]
                     }
                 }
             },
 
-            clean: {
-                js: ["app/templates.js"]
-            },
-
-            bower: {
-                install: {
-                    options: {
-                        targetDir: './bower_components/',
-                        verbose: true,
-                        copy: false
-                    }
-                }
-            },
-
-            copy: {
-                fonts: {
-                    files: [
-                        {
-                            expand: true,
-                            flatten: true,
-                            src: ['bower_components/font-awesome/fonts/**'],
-                            dest: 'app/fonts',
-                            filter: 'isFile'
-                        }
-                    ]
-                }
-            },
-
             postcss: {
-                options:  {
+                options: {
                     map: false,
-
-                    processors : [
-                        require('autoprefixer-core')({
+                    processors: [
+                        require('autoprefixer')({
                             browsers: 'last 2 versions'
                         })
                     ]
                 },
                 dist: {
-                    src: 'app/stylesheets/style.css'
+                    src: 'dist/style.css'
+                }
+            },
+
+            ngAnnotate: {
+                options: {
+                    singleQuotes: true
+                },
+                dist: {
+                    files: {
+                        'dist/alex.js': ['dist/alex.js']
+                    }
+                }
+            },
+
+            browserify: {
+                dist: {
+                    files: {
+                        'dist/alex.js': ['src/js/index.js']
+                    },
+                    options: {
+                        transform: [['babelify', {
+                            sourceMap: false,
+                            presets: ['es2015'],
+                            compact: false
+                        }]]
+                    }
+                }
+            },
+
+            karma: {
+                unit: {
+                    configFile: 'tests/karma.conf.unit.js'
+                }
+            },
+
+            jshint: {
+                dist: {
+                    src: ['src/js/**/*.js']
+                },
+                options: {
+                    'esnext': true,
+                    'laxbreak': true,
+                    '-W053': true
+                }
+            },
+
+            copy: {
+                fonts: {
+                    expand: true,
+                    cwd: 'node_modules/font-awesome/fonts',
+                    src: '*',
+                    dest: 'assets/fonts',
+                    filter: 'isFile'
                 }
             }
         });
 
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -197,13 +185,14 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-bower-task');
-    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-postcss');
+    grunt.loadNpmTasks('grunt-ng-annotate');
+    grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
-    grunt.registerTask('build-js', ['html2js', 'concat', 'uglify', 'clean']);
-    grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin', 'copy:fonts']);
-    grunt.registerTask('default', ['build-js', 'build-css']);
-    grunt.registerTask('test-unit', ['karma']);
+    grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify:app']);
+    grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin']);
+    grunt.registerTask('build-html', ['html2js']);
+    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css']);
+    grunt.registerTask('test', ['karma:unit']);
 };

@@ -1,9 +1,24 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import de.learnlib.alex.actions.StoreSymbolActions.*;
 import de.learnlib.alex.actions.ExecuteSymbolAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CallAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckAttributeExistsAction;
@@ -13,6 +28,15 @@ import de.learnlib.alex.actions.RESTSymbolActions.CheckHeaderFieldAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckStatusAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.alex.actions.RESTSymbolActions.RESTSymbolAction;
+import de.learnlib.alex.actions.StoreSymbolActions.AssertCounterAction;
+import de.learnlib.alex.actions.StoreSymbolActions.AssertVariableAction;
+import de.learnlib.alex.actions.StoreSymbolActions.IncrementCounterAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetCounterAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByCookieAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByHTMLElementAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
+import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByNodeAttributeAction;
 import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckPageTitleAction;
@@ -20,10 +44,14 @@ import de.learnlib.alex.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.alex.actions.WebSymbolActions.ClearAction;
 import de.learnlib.alex.actions.WebSymbolActions.ClickAction;
 import de.learnlib.alex.actions.WebSymbolActions.ClickLinkAction;
+import de.learnlib.alex.actions.WebSymbolActions.ExecuteScriptAction;
 import de.learnlib.alex.actions.WebSymbolActions.FillAction;
 import de.learnlib.alex.actions.WebSymbolActions.GotoAction;
+import de.learnlib.alex.actions.WebSymbolActions.MoveMouseAction;
 import de.learnlib.alex.actions.WebSymbolActions.SelectAction;
 import de.learnlib.alex.actions.WebSymbolActions.SubmitAction;
+import de.learnlib.alex.actions.WebSymbolActions.WaitForNodeAction;
+import de.learnlib.alex.actions.WebSymbolActions.WaitForTitleAction;
 import de.learnlib.alex.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.utils.SearchHelper;
@@ -65,6 +93,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "setVariableByJSON", value = SetVariableByJSONAttributeAction.class),
         @JsonSubTypes.Type(name = "setVariableByHTML", value = SetVariableByHTMLElementAction.class),
         @JsonSubTypes.Type(name = "setVariableByCookie", value = SetVariableByCookieAction.class),
+        @JsonSubTypes.Type(name = "setVariableByNodeAttribute", value = SetVariableByNodeAttributeAction.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
         @JsonSubTypes.Type(name = "web_checkForNode", value = CheckNodeAction.class),
@@ -73,10 +102,14 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web_clear", value = ClearAction.class),
         @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
         @JsonSubTypes.Type(name = "web_clickLinkByText", value = ClickLinkAction.class),
+        @JsonSubTypes.Type(name = "web_executeScript", value = ExecuteScriptAction.class),
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
+        @JsonSubTypes.Type(name = "web_moveMouse", value = MoveMouseAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
         @JsonSubTypes.Type(name = "web_select", value = SelectAction.class),
+        @JsonSubTypes.Type(name = "web_waitForTitle", value = WaitForTitleAction.class),
+        @JsonSubTypes.Type(name = "web_waitForNode", value = WaitForNodeAction.class),
         // REST Actions
         @JsonSubTypes.Type(name = "rest", value = RESTSymbolAction.class),
         @JsonSubTypes.Type(name = "rest_call", value = CallAction.class),
@@ -94,6 +127,13 @@ public abstract class SymbolAction implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE)
     @JsonIgnore
     protected Long id;
+
+    /** The user the actions belongs to. */
+    @NaturalId
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    @JsonIgnore
+    protected User user;
 
     /** The project the actions belongs to. */
     @NaturalId
@@ -145,6 +185,25 @@ public abstract class SymbolAction implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * The user of the action.
+     *
+     * @return The related user.
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Set a new user as 'parent' of teh action.
+     *
+     * @param user
+     *         The new related user.
+     */
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
@@ -257,7 +316,9 @@ public abstract class SymbolAction implements Serializable {
      * @param disabled
      *          true if the action should be executed, false if should be skipped
      */
-    public void setDisabled(boolean disabled) { this.disabled = disabled; }
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 
     /**
      * Execute the action.
@@ -281,10 +342,24 @@ public abstract class SymbolAction implements Serializable {
      */
     protected abstract ExecuteResult execute(ConnectorManager connector);
 
+    /**
+     * Checks the given text for any occurrences of a variable and replaces this part with the actual value.
+     * The input string will not be modified.
+     *
+     * @param text
+     *         The text to check for variables, which than will be replaced by the real value.
+     * @return The input string with all variables inserted.
+     */
     protected final String insertVariableValues(String text) {
-        return SearchHelper.insertVariableValues(connectorManager, project.getId(), text);
+        return SearchHelper.insertVariableValues(connectorManager, user.getId(), project.getId(), text);
     }
 
+    /**
+     * Get the proper return value for a successful action.
+     * This method checks the 'negated' field and should be used by all actions if no failure / error occurred.
+     *
+     * @return OK if 'negated' is false; FALSE if 'negated' is true.
+     */
     protected final ExecuteResult getSuccessOutput() {
         if (negated) {
             return ExecuteResult.FAILED;
@@ -293,6 +368,12 @@ public abstract class SymbolAction implements Serializable {
         }
     }
 
+    /**
+     * Get the proper return value for a failed action.
+     * This method checks the 'negated' field and should be used by all actions if an failure / error occurred.
+     *
+     * @return FAILED if 'negated' is false; OK if 'negated' is true.
+     */
     protected final ExecuteResult getFailedOutput() {
         if (negated) {
             return ExecuteResult.OK;

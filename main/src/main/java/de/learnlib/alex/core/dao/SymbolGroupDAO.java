@@ -1,6 +1,23 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
@@ -11,11 +28,17 @@ import java.util.List;
  */
 public interface SymbolGroupDAO {
 
+    /**
+     * Enum to selecct which fields should be not only referenced but directly be included, i.e. loaded from the DB.
+     */
     enum EmbeddableFields {
+        /** Fetch all fields. */
         ALL,
 
+        /** Fetch all the symbols with all actions. */
         COMPLETE_SYMBOLS,
 
+        /** Fetch the symbols. */
         SYMBOLS;
 
         /**
@@ -51,6 +74,8 @@ public interface SymbolGroupDAO {
     /**
      * Get a list of all groups withing one project.
      *
+     * @param userId
+     *         The id of the owner of the group
      * @param projectId
      *         The project the groups should belong to.
      * @param embedFields
@@ -59,11 +84,13 @@ public interface SymbolGroupDAO {
      * @throws NotFoundException
      *         If no project with the given id was found.
      */
-    List<SymbolGroup> getAll(long projectId, EmbeddableFields... embedFields) throws NotFoundException;
+    // TODO: most of the others methods use a User object. So, should this method be changed to use objects as well?
+    List<SymbolGroup> getAll(long userId, long projectId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Get one group.
      *
+     * @param user The owner of the group
      * @param projectId
      *         The project the group belongs to.
      * @param groupId
@@ -74,7 +101,7 @@ public interface SymbolGroupDAO {
      * @throws NotFoundException
      *         If the Project or the Group could not be found.
      */
-    SymbolGroup get(long projectId, Long groupId, EmbeddableFields... embedFields) throws NotFoundException;
+    SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Update a group.
@@ -91,6 +118,7 @@ public interface SymbolGroupDAO {
     /**
      * Delete a group.
      *
+     * @param user The owner of the group
      * @param projectId
      *         The project the group belongs to.
      * @param groupId
@@ -100,6 +128,6 @@ public interface SymbolGroupDAO {
      * @throws NotFoundException
      *         If The project or group could not be found.
      */
-    void delete(long projectId, Long groupId) throws IllegalArgumentException, NotFoundException;
+    void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException;
 
 }

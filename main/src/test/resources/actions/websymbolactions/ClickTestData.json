@@ -1,4 +1,5 @@
 {
     "type": "web_click",
-    "node": "#node"
+    "node": "#node",
+    "doubleClick": false
 }

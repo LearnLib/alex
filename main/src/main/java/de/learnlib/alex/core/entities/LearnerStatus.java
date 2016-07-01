@@ -1,12 +1,27 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.core.learner.Learner;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 /**
  * Class to provide information about the current learn process.
@@ -15,53 +30,86 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerStatus {
 
-    /**
-     * The learn process to observe.
-     */
-    @JsonIgnore
-    private final Learner learner;
+    /** Is the Learner active? */
+    private final boolean active;
+
+    /** The ID of the Project this test status belongs to. */
+    private final Long projectId;
+
+    /** The current test no. */
+    private final Long testNo;
+
+    /** The statistics of the learner. */
+    private final LearnerStatusStatistics statistics;
 
     /**
-     * Statistics Class for the learner status
+     * Statistics Class for the learner status.
      */
     @JsonPropertyOrder(alphabetic = true)
-    private class LearnerStatusStatistics {
+    public static class LearnerStatusStatistics {
 
-        private Long startTime;
+        /** When the learning started. */
+        private final ZonedDateTime startDate;
 
-        private Long mqsUsed;
+        /** How many MQ where issued. */
+        private final Long mqsUsed;
 
-        public LearnerStatusStatistics(Long startTime, Long mqsUsed) {
-            this.startTime = startTime;
+        /**
+         * @param startDate When the learning was started.
+         * @param mqsUsed How many MQ where issued during the learning.
+         */
+        public LearnerStatusStatistics(ZonedDateTime startDate, Long mqsUsed) {
+            this.startDate = startDate;
             this.mqsUsed = mqsUsed;
         }
 
-        public Long getStartTime() {
-            return startTime;
+        /**
+         * @return When the learning was started.
+         */
+        @JsonIgnore
+        public ZonedDateTime getStartDate() {
+            return startDate;
         }
 
+        /**
+         * @return When the learning was started as nice ISO 8160 string, including milliseconds and zone.
+         */
+        @JsonProperty("startDate")
+        public String getStartDateAsString() {
+            return startDate.format(Statistics.DATE_TIME_FORMATTER);
+        }
+
+        /**
+         * @return How many MQ where issued during the learning.
+         */
         public Long getMqsUsed() {
             return mqsUsed;
         }
     }
 
     /**
-     * Constructor.
-     *
-     * @param learner The learner to get the information from.
+     * Constructor for a status of an incative thread.
      */
-    public LearnerStatus(Learner learner) {
-        this.learner = learner;
+    public LearnerStatus() {
+        this.active = false;
+        this.projectId = null;
+        this.testNo = null;
+        this.statistics = null;
     }
 
     /**
-     * Get the learner which is observed.
+     * Constructor for a status of an active thread.
      *
-     * @return The current learner.
+     * @param learnerResult
+     *         The result that contain the interesting statistics and information for the status..
      */
-    @JsonIgnore
-    public Learner getLearner() {
-        return learner;
+    public LearnerStatus(LearnerResult learnerResult) {
+        this.active = true;
+
+        this.projectId = learnerResult.getProjectId();
+        this.testNo = learnerResult.getTestNo();
+        this.statistics = new LearnerStatusStatistics(learnerResult.getStatistics().getStartDate(),
+                                                      learnerResult.getStatistics().getMqsUsed());
     }
 
     /**
@@ -69,9 +117,8 @@ public class LearnerStatus {
      *
      * @return true if the learn process is active; false otherwise
      */
-    @JsonProperty
     public boolean isActive() {
-        return learner.isActive();
+        return active;
     }
 
     /**
@@ -82,15 +129,7 @@ public class LearnerStatus {
      */
     @JsonProperty("project")
     public Long getProjectId() {
-        if (isActive()) {
-            LearnerResult result = learner.getResult();
-            if (result == null) {
-                return 0L;
-            }
-            return result.getProjectId();
-        } else {
-            return null;
-        }
+        return projectId;
     }
 
     /**
@@ -99,25 +138,17 @@ public class LearnerStatus {
      *
      * @return The active test no in the project.
      */
-    @JsonProperty
     public Long getTestNo() {
-        if (isActive()) {
-            LearnerResult result = learner.getResult();
-            if (result == null) {
-                return 0L;
-            }
-            return result.getTestNo();
-        } else {
-            return null;
-        }
+        return testNo;
     }
 
-    @JsonProperty
+    /**
+     * Additional Statistics of the learn process.
+     * Only included if the learner is active.
+     *
+     * @return Additional statistics, e.g. the start date.
+     */
     public LearnerStatusStatistics getStatistics() {
-        if (!learner.isActive()) {
-            return null;
-        } else {
-            return new LearnerStatusStatistics(learner.getStartTime(), learner.getMQsUsed());
-        }
+        return statistics;
     }
 }

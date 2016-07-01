@@ -1,4 +1,22 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.learner;
+
+import de.learnlib.alex.actions.Credentials;
 
 /**
  * Class to mange a URL and get URL based on this.
@@ -46,6 +64,26 @@ public class BaseUrlManager {
      */
     public String getAbsoluteUrl(String path) {
         return combineUrls(baseUrl, path);
+    }
+
+    /**
+     * Get the absolute URL of a path, i.e. based on the base url (base url + '/' + path'), as String
+     * and insert the credentials if possible.
+     *
+     * @param path
+     *         The path to append on the base url.
+     * @param credentials
+     *         The credentials to insert into the URL.
+     * @return An absolute URL as String
+     */
+    public String getAbsoluteUrl(String path, Credentials credentials) {
+        String url = combineUrls(baseUrl, path);
+        if (credentials != null && credentials.areValid()) {
+            url = url.replaceFirst("^(http[s]?://)", "$1"
+                    + credentials.getName() + ":"
+                    + credentials.getPassword() + "@");
+        }
+        return url;
     }
 
     /**

@@ -1,0 +1,24 @@
+<h4><strong>Assert Counter</strong></h4>
+
+<p class="text-muted">
+    Compare the value of a counter with another integer value
+</p>
+<hr>
+<div class="form-group">
+    <label>Name</label>
+    <input type="text" class="form-control" ng-model="vm.action.name"
+           placeholder="The name of the counter">
+</div>
+<div class="form-group">
+    <label>Operator</label>
+    <select class="form-control"
+            ng-options="m for m in ['LESS_THAN', 'LESS_OR_EQUAL', 'EQUAL', 'GREATER_OR_EQUAL', 'GREATER_THAN']"
+            ng-model="vm.action.operator">
+        <option value="" disabled>Select an operator</option>
+    </select>
+</div>
+<div class="form-group">
+    <label>Value</label>
+    <input type="number" class="form-control" ng-model="vm.action.value"
+           placeholder="The integer to compare to">
+</div>

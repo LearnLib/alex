@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.learner.connectors;
 
 import de.learnlib.alex.core.learner.BaseUrlManager;
@@ -36,7 +52,7 @@ public class WebServiceConnector implements Connector {
     /** The response body of the last call done by the connection. */
     private String body;
 
-    /** The cookies from th last call done by the connection */
+    /** The cookies from th last call done by the connection. */
     private Map<String, NewCookie> cookies;
 
     /**
@@ -132,6 +148,12 @@ public class WebServiceConnector implements Connector {
         return body;
     }
 
+    /**
+     * Get the cookies.
+     * @return The cookies.
+     * @throws IllegalStateException
+     *          If no request was done before the method call.
+     */
     public Map<String, NewCookie> getCookies() throws  IllegalStateException {
         if (!init) {
             throw new IllegalStateException();
@@ -146,11 +168,11 @@ public class WebServiceConnector implements Connector {
      *         The path to send the request to.
      * @param requestHeaders
      *         The headers to send with the request.
-     * @param cookies
+     * @param requestCookies
      *         The cookies to send with the request.
      */
-    public void get(String path, Map<String, String> requestHeaders, Set<Cookie> cookies) {
-        Response response = getRequestObject(path, requestHeaders, cookies).get();
+    public void get(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies) {
+        Response response = getRequestObject(path, requestHeaders, requestCookies).get();
         rememberResponseComponents(response);
     }
 
@@ -161,13 +183,14 @@ public class WebServiceConnector implements Connector {
      *         The path to send the request to.
      * @param requestHeaders
      *         The headers to send with the request.
-     * @param cookies
+     * @param requestCookies
      *         The cookies to send with the request.
      * @param jsonData
      *         The data to send with the request.
      */
-    public void post(String path, Map<String, String> requestHeaders, Set<Cookie> cookies, String jsonData) {
-        Response response = getRequestObject(path, requestHeaders, cookies).post(Entity.json(jsonData));
+    public void post(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies,
+                     String jsonData) {
+        Response response = getRequestObject(path, requestHeaders, requestCookies).post(Entity.json(jsonData));
         rememberResponseComponents(response);
     }
 
@@ -178,13 +201,14 @@ public class WebServiceConnector implements Connector {
      *         The path to send the request to.
      * @param requestHeaders
      *         The headers to send with the request.
-     * @param cookies
+     * @param requestCookies
      *         The cookies to send with the request.
      * @param jsonData
      *         The data to send with the request.
      */
-    public void put(String path, Map<String, String> requestHeaders, Set<Cookie> cookies, String jsonData) {
-        Response response = getRequestObject(path, requestHeaders, cookies).put(Entity.json(jsonData));
+    public void put(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies,
+                    String jsonData) {
+        Response response = getRequestObject(path, requestHeaders, requestCookies).put(Entity.json(jsonData));
         rememberResponseComponents(response);
     }
 
@@ -195,11 +219,11 @@ public class WebServiceConnector implements Connector {
      *         The path to send the request to.
      * @param requestHeaders
      *         The headers to send with the request.
-     * @param cookies
+     * @param requestCookies
      *         The cookies to send with the request.
      */
-    public void delete(String path, Map<String, String> requestHeaders, Set<Cookie> cookies) {
-        Response response = getRequestObject(path, requestHeaders, cookies).delete();
+    public void delete(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies) {
+        Response response = getRequestObject(path, requestHeaders, requestCookies).delete();
         rememberResponseComponents(response);
     }
 
@@ -238,7 +262,16 @@ public class WebServiceConnector implements Connector {
         return baseUrl.getBaseUrl();
     }
 
-    private Invocation.Builder getRequestObject(String path, Map<String, String> requestHeaders, Set<Cookie> cookies) {
+    /**
+     * Creates a request object that is passed to further REST actions.
+     *
+     * @param path The URI that is called.
+     * @param requestHeaders The HTTP headers of the request.
+     * @param requestCookies The cookies of the request.
+     * @return The request object.
+     */
+    private Invocation.Builder getRequestObject(String path, Map<String, String> requestHeaders,
+                                                Set<Cookie> requestCookies) {
         String[] splitedPath = path.split("\\?");
 
         WebTarget tmpTarget = target.path(splitedPath[0]);
@@ -258,7 +291,7 @@ public class WebServiceConnector implements Connector {
             builder = builder.header(h.getKey(), h.getValue());
         }
 
-        for (Cookie c : cookies) {
+        for (Cookie c : requestCookies) {
             builder = builder.cookie(c);
         }
 

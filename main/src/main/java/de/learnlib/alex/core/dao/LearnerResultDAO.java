@@ -1,6 +1,25 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.LearnerResultStep;
+import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
@@ -22,101 +41,98 @@ public interface LearnerResultDAO {
     void create(LearnerResult learnerResult) throws ValidationException;
 
     /**
-     * Get a list of JSON data containing all the LearnerResults, that are the latest of any test run for a given
-     * Project. This LearnerResult are most likely the final results of each test run.
+     * Get a list of all the LearnerResults for a given
+     * Project.
      *
+     * @param userId
+     *         The user of the LearnerResult
      * @param projectId
      *         The project id of the test run.
-     * @return A list of LearnerResults as JSON data.
+     * @param includeSteps
+     *         Should all steps be included?
+     * @return A list of LearnerResults.
      * @throws NotFoundException
      *         If the project id was invalid.
      */
-    List<String> getAllAsJSON(Long projectId) throws NotFoundException;
+    List<LearnerResult> getAll(Long userId, Long projectId, boolean includeSteps) throws NotFoundException;
 
     /**
-     * Get a list of JSON data containing all the steps of a given TestRun for a given Project.
+     * Get a list of LearnResults with given testNos for a given Project.
      *
-     * @param projectId
-     *         The project id if the test run.
-     * @param testNo
-     *         The test no. of the test run.
-     * @return A list of LearnerResults as JSON data.
-     * @throws NotFoundException
-     *         If the project id or test no. was invalid.
-     */
-    List<String> getAllAsJSON(Long projectId, Long testNo) throws NotFoundException;
-
-    /**
-     * Get a list of lists of JSON data containing all the steps of a given TestRun for a given Project.
-     *
+     * @param userId
+     *         The user of the LearnerResult
      * @param projectId
      *         The project id if the test run.
      * @param testNos
-     *         The list of test nos. of the test runs.
-     * @return A list of list containing LearnerResults as JSON data.
+     *         The list of test nos. of the LearnResults.
+     * @param includeSteps
+     *         Should all steps be included?
+     * @return A list of LearnerResults.
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    List<List<String>> getAllAsJson(Long projectId, List<Long> testNos) throws NotFoundException;
+    List<LearnerResult> getAll(Long userId, Long projectId, Long[] testNos, boolean includeSteps)
+            throws NotFoundException;
 
     /**
-     * Get a the last / final LearnerResult of one test run.
+     * Get a single LearnResult.
      *
+     * @param userId
+     *         The user of the LearnerResult
      * @param projectId
      *         The project id if the test run.
-     * @param testRunNo
-     *         The test no. of the test run.
-     * @return The LearnerResult you are looking for, if it exists.
+     * @param testNos
+     *         The list of test nos. of the LearnResults.
+     * @param includeSteps
+     *         Should all steps be included?
+     * @return The LearnResult you are looking for.
      * @throws NotFoundException
-     *         If the project id or test no. was invalid.
+     *         If the given LearnerResult was invalid.
      */
-    LearnerResult get(Long projectId, Long testRunNo) throws NotFoundException;
+    LearnerResult get(Long userId, Long projectId, Long testNos, boolean includeSteps) throws NotFoundException;
 
     /**
-     * Get the latest LearnerResult of a given test run as JSON data, e.g. the final result.
+     * Create a new step for a LearnResult based on the latest step within the result.
      *
-     * @param projectId
-     *         The project id of the test run.
-     * @param testNo
-     *         The test no. of the test run.
-     * @return The latest LearnerResult, i.e. the one with the highest step no., for the given test run.
-     * @throws NotFoundException
-     *         If the project id or test no. was invalid.
+     * @param result
+     *         The result that the new step will be added to.
+     * @return A new step.
+     * @throws ValidationException
+     *         If the requested result could not be found.
      */
-    String getAsJSON(Long projectId, Long testNo) throws NotFoundException;
+    LearnerResultStep createStep(LearnerResult result) throws ValidationException;
 
     /**
-     * Get a specific LearnerResult as JSON data.
+     * Create a new step for a LearnResult based on the given configuration.
      *
-     * @param projectId
-     *         The project id of the test run / LearnerResult.
-     * @param testNo
-     *         The test non. of the test run / LearnerResult.
-     * @param stepNo
-     *         The step no. of the test run / LearnerResult.
-     * @return The LearnerResult as JSON data.
-     * @throws NotFoundException
-     *         If the project id, test no. or step no. was invalid.
-     */
-    String getAsJSON(Long projectId, Long testNo, Long stepNo) throws NotFoundException;
-
-    /**
-     * Update a given LearnResult. Update means here, to save a new LearnerResult with an increased step no.
-     * The previous steps of one test run should not change.
-     * This method must also verify that the given result is valid.
-     *
-     * @param learnerResult
-     *         The LearnerResult to update.
+     * @param result
+     *         The result that the new step will be added to.
+     * @param configuration
+     *         The configuration to set the step up.
+     * @return A new step.
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
-     * @throws NotFoundException
-     *         If the project id or test no. was invalid.
      */
-    void update(LearnerResult learnerResult) throws NotFoundException, ValidationException;
+    LearnerResultStep createStep(LearnerResult result, LearnerResumeConfiguration configuration)
+            throws ValidationException;
+
+    /**
+     * Save / Update a step.
+     *
+     * @param result
+     *         The result that the step is part of.
+     * @param step
+     *         The step the should be saved / updated.
+     * @throws ValidationException
+     *         If the given LearnerResult was invalid.
+     */
+    void saveStep(LearnerResult result, LearnerResultStep step) throws ValidationException;
 
     /**
      * Remove a complete test run of a project.
      *
+     * @param user
+     *         The user of the LearnerResult
      * @param projectId
      *         The project id.
      * @param testNo
@@ -124,5 +140,5 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    void delete(Long projectId, Long... testNo) throws  NotFoundException;
+    void delete(User user, Long projectId, Long... testNo) throws  NotFoundException;
 }

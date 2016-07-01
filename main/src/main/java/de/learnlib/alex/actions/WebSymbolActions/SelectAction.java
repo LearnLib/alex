@@ -1,5 +1,22 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.actions.WebSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
@@ -20,8 +37,38 @@ import javax.persistence.Entity;
 @JsonTypeName("web_select")
 public class SelectAction extends FillAction {
 
-    private enum SelectByType {
-        VALUE, TEXT, INDEX;
+    /**
+     * Enum to choose how to interact with the selection input.
+     */
+    public enum SelectByType {
+        /** Select by the value attribute. */
+        VALUE,
+
+        /** Select by the option text. */
+        TEXT,
+
+        /** Select simply by using the index starting at 0. */
+        INDEX;
+
+        /**
+         * Parser function to handle the enum names case insensitive.
+         *
+         * @param name
+         *         The enum name.
+         * @return The corresponding SelectByType.
+         * @throws IllegalArgumentException
+         *         If the name could not be parsed.
+         */
+        @JsonCreator
+        public static SelectByType fromString(String name) throws IllegalArgumentException {
+            return SelectByType.valueOf(name.toUpperCase());
+        }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+
     }
 
     /**
@@ -30,6 +77,20 @@ public class SelectAction extends FillAction {
      * @requiredField
      */
     private SelectByType selectBy;
+
+    /**
+     * @return How to do the selection of the node.
+     */
+    public SelectByType getSelectBy() {
+        return selectBy;
+    }
+
+    /**
+     * @param selectBy The new method to select the value in the node.
+     */
+    public void setSelectBy(SelectByType selectBy) {
+        this.selectBy = selectBy;
+    }
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
@@ -51,16 +112,9 @@ public class SelectAction extends FillAction {
                     break;
             }
             return getSuccessOutput();
-        } catch (NoSuchElementException | UnexpectedTagNameException e) {
+        } catch (NoSuchElementException | NumberFormatException | UnexpectedTagNameException e) {
             return getFailedOutput();
         }
     }
 
-    public SelectByType getSelectBy() {
-        return selectBy;
-    }
-
-    public void setSelectBy(SelectByType selectBy) {
-        this.selectBy = selectBy;
-    }
 }

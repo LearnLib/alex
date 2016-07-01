@@ -1,0 +1,5 @@
+{
+  "type": "web_checkPageTitle",
+  "title": "Awesome Title No. {{#title}}",
+  "regexp": true
+}

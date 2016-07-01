@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.hibernate.service.ServiceRegistry;
 
 /**
@@ -110,7 +111,7 @@ public final class HibernateUtil {
      * @return true if there is any transaction active; false otherwise.
      */
     public static boolean transactionIsActive() {
-        return getSession().getTransaction().isActive();
+        return getSession().getTransaction().getStatus() == TransactionStatus.ACTIVE;
     }
 
 }

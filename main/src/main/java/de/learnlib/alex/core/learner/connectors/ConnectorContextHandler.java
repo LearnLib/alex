@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.learner.connectors;
 
 import de.learnlib.alex.core.entities.ExecuteResult;
@@ -45,7 +61,13 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
     @Override
     public ConnectorManager createContext() throws LearnerException {
-        connectors.forEach(Connector::reset);
+        for (Connector connector : connectors) {
+            try {
+                connector.reset();
+            } catch (Exception e) {
+                throw new LearnerException(e.getMessage(), e);
+            }
+        }
 
         executeResetSymbol();
 
@@ -61,13 +83,14 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
         }
 
         if (resetResult.equals(ExecuteResult.FAILED)) {
-            throw new LearnerException("The execution of the reset symbol failed.");
+            throw new LearnerException("The execution of the reset symbol failed on step "
+                                               + resetResult.getFailedActionNumber() + ".");
         }
     }
 
     @Override
     public void disposeContext(ConnectorManager connector) {
-        connectors.forEach(Connector::dispose);
+        connectors.dispose();
     }
 
 }

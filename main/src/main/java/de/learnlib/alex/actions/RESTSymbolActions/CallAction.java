@@ -1,13 +1,33 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.actions.RESTSymbolActions;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.actions.Credentials;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
@@ -23,13 +43,14 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue("rest_call")
 @JsonTypeName("rest_call")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CallAction extends RESTSymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = 7971257988991996022L;
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /**
      * Enumeration to specify the HTTP method.
@@ -64,6 +85,12 @@ public class CallAction extends RESTSymbolAction {
     private HashMap<String, String> headers;
 
     /**
+     * Optional credentials to authenticate via HTTP basic auth.
+     */
+    @Embedded
+    private Credentials credentials;
+
+    /**
      * Map to store cookies, that will be send with the request.
      * Cookies are a normal header field, but this should make things easier.
      */
@@ -71,8 +98,12 @@ public class CallAction extends RESTSymbolAction {
     private HashMap<String, String> cookies; // OM NOM NOM NOM!!!
 
     /** Optional data to sent with a POST or PUT request. */
+    @Column(columnDefinition = "CLOB")
     private String data;
 
+    /**
+     * Default constructor that just initializes the internal data structures.
+     */
     public CallAction() {
         this.headers = new HashMap<>();
         this.cookies = new HashMap<>();
@@ -159,6 +190,40 @@ public class CallAction extends RESTSymbolAction {
     }
 
     /**
+     * Get the credentials to authenticate.
+     *
+     * @return The credentials to use for authentication.
+     */
+    public Credentials getCredentials() {
+        return credentials;
+    }
+
+    /**
+     * Like {@link #getCredentials()}, but the name and password will have all variables and counters inserted.
+     *
+     * @return The credentials to use, with the actual values of counters and variables in their values.
+     */
+    private Credentials getCredentialsWithVariableValues() {
+        if (credentials == null) {
+            return new Credentials();
+        }
+
+        String name     = insertVariableValues(credentials.getName());
+        String password = insertVariableValues(credentials.getPassword());
+
+        return new Credentials(name, password);
+    }
+
+    /**
+     * Set the credentials to use for authentication.
+     *
+     * @param credentials The new credentials to use.
+     */
+    public void setCredentials(Credentials credentials) {
+        this.credentials = credentials;
+    }
+
+    /**
      * Get the map of cookies that will be used for the requests.
      *
      * @return The map of cookies.
@@ -221,6 +286,9 @@ public class CallAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         try {
+            LOGGER.info("Do REST request '" + method + " " + url + "' "
+                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+
             doRequest(target);
             return getSuccessOutput();
         } catch (Exception e) {
@@ -230,25 +298,30 @@ public class CallAction extends RESTSymbolAction {
     }
 
     private void doRequest(WebServiceConnector target) {
+        Map<String, String> requestHeaders = getHeadersWithVariableValues();
+        if (credentials != null) {
+            requestHeaders.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
+        }
+
         switch (method) {
             case GET:
-                target.get(getUrlWithVariableValues(), getHeadersWithVariableValues(),
+                target.get(getUrlWithVariableValues(), requestHeaders,
                            getCookiesWithVariableValues());
                 break;
             case POST:
-                target.post(getUrlWithVariableValues(), getHeadersWithVariableValues(),
+                target.post(getUrlWithVariableValues(), requestHeaders,
                             getCookiesWithVariableValues(), getDataWithVariableValues());
                 break;
             case PUT:
-                target.put(getUrlWithVariableValues(), getHeadersWithVariableValues(),
+                target.put(getUrlWithVariableValues(), requestHeaders,
                            getCookiesWithVariableValues(), getDataWithVariableValues());
                 break;
             case DELETE:
-                target.delete(getUrlWithVariableValues(), getHeadersWithVariableValues(),
+                target.delete(getUrlWithVariableValues(), requestHeaders,
                               getCookiesWithVariableValues());
                 break;
             default:
-                LOGGER.info("tried to make a call to a REST API with an unknown method '" + method.name() + "'.");
+                LOGGER.warn("tried to make a call to a REST API with an unknown method '" + method.name() + "'.");
         }
     }
 

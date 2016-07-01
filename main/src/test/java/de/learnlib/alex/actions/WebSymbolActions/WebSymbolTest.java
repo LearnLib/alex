@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -95,11 +111,13 @@ public class WebSymbolTest {
     @Test
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
-                    + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"node\":null},"
-                    + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"value\":\"F[oO0]+\","
-                        + "\"regexp\":true},"
-                    + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"duration\":" + ONE_SECOND + "}"
-                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":0,\"revision\":null}";
+                    + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
+                            + "\"node\":null,\"doubleClick\":false},"
+                    + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
+                        + "\"value\":\"F[oO0]+\",\"regexp\":true},"
+                    + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
+                        + "\"duration\":" + ONE_SECOND + "}"
+                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":0,\"revision\":null,\"user\":0}";
         symbol.setProject(null);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -116,14 +134,14 @@ public class WebSymbolTest {
     @Test
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
         String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
-                                    + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                                        + "\"node\":null},"
-                                    + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                                        + "\"value\":\"F[oO0]+\",\"regexp\":true},"
+                                    + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,"
+                                        + "\"ignoreFailure\":false,\"node\":null,\"doubleClick\":false},"
+                                    + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,"
+                                        + "\"ignoreFailure\":false,\"value\":\"F[oO0]+\",\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
                                         + "\"duration\":" + ONE_SECOND + "}"
                                 + "],\"group\":2,\"hidden\":false,\"id\":null,\"name\":\"WebSymbol\",\"project\":1,"
-                                + "\"revision\":null}";
+                                + "\"revision\":null,\"user\":0}";
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symbol);
 

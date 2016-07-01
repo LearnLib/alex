@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -7,6 +23,8 @@ import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
+import java.io.Serializable;
+
 /**
  * Proxy around a CompleteExplorationEQOracle.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
@@ -14,7 +32,10 @@ import net.automatalib.words.Word;
  * @see de.learnlib.eqtests.basic.CompleteExplorationEQOracle
  */
 @JsonTypeName("complete")
-public class CompleteExplorationEQOracleProxy extends AbstractEquivalenceOracleProxy {
+public class CompleteExplorationEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
+
+    /** to be serializable. */
+    private static final long serialVersionUID = 8363769818889990904L;
 
     /** The minimal depth to explore, i.e. minimal length of words to test. */
     private int minDepth;

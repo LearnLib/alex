@@ -1,0 +1,49 @@
+<h4><strong>Wait for an element</strong></h4>
+
+<p class="text-muted">
+    Wait until the state of an element changes
+</p>
+<hr>
+
+<label>Wait until an element</label>
+<div class="radio">
+    <label>
+        <input type="radio" name="waitType" value="VISIBLE" ng-model="vm.action.waitCriterion">
+        is visible
+    </label>
+</div>
+<div class="radio">
+    <label>
+        <input type="radio" name="waitType" value="INVISIBLE" ng-model="vm.action.waitCriterion">
+        is invisible
+    </label>
+</div>
+<div class="radio">
+    <label>
+        <input type="radio" name="waitType" value="ADDED" ng-model="vm.action.waitCriterion">
+        is added to the DOM
+    </label>
+</div>
+<div class="radio">
+    <label>
+        <input type="radio" name="waitType" value="REMOVED" ng-model="vm.action.waitCriterion">
+        is removed from the DOM
+    </label>
+</div>
+
+<label>Element</label>
+<div class="form-group">
+    <input class="form-control" type="text" placeholder="The selector of the element" ng-model="vm.action.node">
+</div>
+
+<div class="form-group">
+    <a class="btn btn-default btn-sm" html-element-picker-handle model="vm.action.node">
+        <i class="fa fa-magic fa-fw"></i>&nbsp; Element Picker
+    </a>
+</div>
+
+<label>Max. wait time (seconds)</label>
+<div class="form-group">
+    <input class="form-control" type="number" min="0" placeholder="The maximum time to wait for a change"
+           ng-model="vm.action.maxWaitTime">
+</div>

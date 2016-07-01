@@ -1,7 +1,24 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.After;
 import org.junit.Before;
@@ -16,31 +33,45 @@ import static org.junit.Assert.fail;
 
 public class CounterDAOImplTest {
 
+    public static final Long USER_ID = 3L;
     public static final String   COUNTER_NAME  = "CounterNo1";
     private static final Integer COUNTER_VALUE = 42;
     private static final int AMOUNT_OF_COUNTERS = 10;
 
+    private static UserDAO userDAO;
+    private static SymbolDAOImpl symbolDAO;
     private static ProjectDAO projectDAO;
     private static CounterDAO counterDAO;
 
+    private User user;
     private Project project;
     private Counter counter;
 
     @BeforeClass
     public static void beforeClass() {
-        projectDAO = new ProjectDAOImpl();
+        userDAO = new UserDAOImpl();
+        symbolDAO = new SymbolDAOImpl();
+        projectDAO = new ProjectDAOImpl(symbolDAO);
         counterDAO = new CounterDAOImpl();
     }
 
     @Before
     public void setUp() {
+        user = new User();
+        user.setId(USER_ID);
+        user.setEmail("CounterDAOImplTest@alex.example");
+        user.setEncryptedPassword("alex");
+        userDAO.create(user);
+
         // create project
         project = new Project();
         project.setName("SymbolDAO - Test Project");
         project.setBaseUrl("http://example.com/");
+        project.setUser(user);
         projectDAO.create(project);
 
         counter = new Counter();
+        counter.setUser(user);
         counter.setProject(project);
         counter.setName(COUNTER_NAME);
         counter.setValue(COUNTER_VALUE);
@@ -48,7 +79,7 @@ public class CounterDAOImplTest {
 
     @After
     public void tearDown() throws NotFoundException {
-        projectDAO.delete(project.getId());
+        userDAO.delete(user.getId());
     }
 
     @Test
@@ -78,34 +109,35 @@ public class CounterDAOImplTest {
     public void getAllCountersOfOneProject() throws NotFoundException {
         for (int i = 0; i < AMOUNT_OF_COUNTERS; i++) {
             Counter tmpCounter = new Counter();
+            tmpCounter.setUser(user);
             tmpCounter.setProject(project);
             tmpCounter.setName("CounterNo" + i);
             tmpCounter.setValue(i);
             counterDAO.create(tmpCounter);
         }
 
-        List<Counter> counters = counterDAO.getAll(project.getId());
+        List<Counter> counters = counterDAO.getAll(user.getId(), project.getId());
 
         assertEquals(AMOUNT_OF_COUNTERS, counters.size());
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionWhenFetchingAllCountersOfANotExistingProject() throws NotFoundException {
-        counterDAO.getAll(-1L); // should fail
+        counterDAO.getAll(user.getId(), -1L); // should fail
     }
 
     @Test
     public void shouldGetTheRightCounter() throws NotFoundException {
         counterDAO.create(counter);
 
-        Counter counterInDB = counterDAO.get(project.getId(), COUNTER_NAME);
+        Counter counterInDB = counterDAO.get(user.getId(), project.getId(), COUNTER_NAME);
 
         assertEquals(counter, counterInDB);
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionWhenAskingForANonExistingCounter() throws NotFoundException {
-        counterDAO.get(project.getId(), COUNTER_NAME); // should fail
+        counterDAO.get(user.getId(), project.getId(), COUNTER_NAME); // should fail
     }
 
     @Test
@@ -147,21 +179,19 @@ public class CounterDAOImplTest {
     public void shouldDeleteACounter() throws NotFoundException {
         counterDAO.create(counter);
 
-        counterDAO.delete(project.getId(), counter.getName());
+        counterDAO.delete(user.getId(), project.getId(), counter.getName());
 
-        Counter resultCounter = null;
         try {
-            resultCounter = counterDAO.get(project.getId(), counter.getName());
+            counterDAO.get(user.getId(), project.getId(), counter.getName());
             fail("Counter was not completely removed.");
         } catch (NotFoundException e) {
             // success
-            assertEquals(null, resultCounter);
         }
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionWhenDeletingANonExistingCounter() throws NotFoundException {
-        counterDAO.delete(project.getId(), "This counter does not exists!"); // should fail
+        counterDAO.delete(user.getId(), project.getId(), "This counter does not exists!"); // should fail
     }
 
 }

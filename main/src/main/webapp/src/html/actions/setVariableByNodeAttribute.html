@@ -1,0 +1,29 @@
+<h4><strong>Set Variable by Node Attribute</strong></h4>
+
+<p class="text-muted">
+    Set a variable to the value of an attribute of an HTML element
+</p>
+<hr>
+<label>Name</label>
+
+<div class="form-group">
+    <input type="text" class="form-control" ng-model="vm.action.name"
+           placeholder="The name of the variable">
+</div>
+<label>Selector</label>
+
+<div class="form-group">
+    <input class="form-control" ng-model="vm.action.node" placeholder="The CSS3 selector to the element">
+</div>
+
+<div class="form-group">
+    <a class="btn btn-default btn-sm" html-element-picker-handle model="vm.action.value">
+        <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
+    </a>
+</div>
+
+<label>Attribute</label>
+
+<div class="form-group">
+    <input class="form-control" ng-model="vm.action.attribute" placeholder="The name of the attribute">
+</div>

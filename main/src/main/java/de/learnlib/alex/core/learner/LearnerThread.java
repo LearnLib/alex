@@ -1,10 +1,30 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.LearnAlgorithms;
 import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.LearnerResultStep;
+import de.learnlib.alex.core.entities.Statistics;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
+import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -23,12 +43,12 @@ import de.learnlib.oracles.SymbolCounterSUL;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests.
@@ -37,14 +57,14 @@ import java.util.List;
 public class LearnerThread extends Thread {
 
     /**
-     * Use the logger for the server part.
+     * Use the learner logger.
      */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /**
      * Is the thread still running?
      */
-    private boolean active;
+    private boolean finished;
 
     /**
      * Mapper to match the Alphabet to the right symbols.
@@ -82,6 +102,11 @@ public class LearnerThread extends Thread {
     private final LearnerResult result;
 
     /**
+     * The current step of the learn result.
+     */
+    private LearnerResultStep currentStep;
+
+    /**
      * The learner to use during the learning.
      */
     private final MealyLearner<String, String> learner;
@@ -99,32 +124,37 @@ public class LearnerThread extends Thread {
     /**
      * Constructor to set the LearnerThread up.
      *
-     * @param learnerResultDAO The DAO to persists the results.
-     * @param result           The result to update, including the proper configuration.
-     * @param context          The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
+     * @param learnerResultDAO
+     *         The DAO to persists the results.
+     * @param result
+     *         The result to update, including the proper configuration.
+     * @param context
+     *         The context of the SUL. If this context is a counter, the 'amountOfResets' field will be set correctly.
      */
-    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result,
-                         ConnectorContextHandler context) {
-        this.active = false;
+    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, ConnectorContextHandler context) {
+        this.finished = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
+        this.currentStep = result.getSteps().get(result.getSteps().size() - 1); // get the latest step
 
         Symbol[] symbolsArray = readSymbolArray(); // use the symbols in the result to create the symbol array.
         this.symbolMapper = new SymbolMapper(symbolsArray);
         this.sigma = symbolMapper.getAlphabet();
-        this.result.setSigma(sigma);
+        this.result.setSigma(AlphabetProxy.createFrom(sigma));
 
-        ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult, ConnectorManager> ceiSUL;
-        ceiSUL = new ContextExecutableInputSUL<>(context);
+        ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>,
+                                  ExecuteResult,
+                                  ConnectorManager>
+                ceiSUL = new ContextExecutableInputSUL<>(context);
         SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
         this.cachedSUL = SULCaches.createCache(this.sigma, mappedSUL);
-        resetCounterSUL = new ResetCounterSUL<>("reset counter", this.cachedSUL);
-        symbolCounterSUL = new SymbolCounterSUL<>("symbol counter", resetCounterSUL);
+        this.resetCounterSUL = new ResetCounterSUL<>("resets", this.cachedSUL);
+        this.symbolCounterSUL = new SymbolCounterSUL<>("symbols used", resetCounterSUL);
         this.sul = symbolCounterSUL;
 
         this.mqOracle = new SULOracle<>(sul);
 
-        LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
+        LearnAlgorithms algorithm = result.getAlgorithm();
         this.learner = algorithm.createLearner(sigma, mqOracle);
     }
 
@@ -140,17 +170,22 @@ public class LearnerThread extends Thread {
      */
     public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, SULCache<String, String> existingSUL,
                          MealyLearner<String, String> learner, Symbol... symbols) {
-        this.active = false;
+        this.finished = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
+        this.currentStep = result.getSteps().get(result.getSteps().size() - 1); // get the latest step
 
         this.symbolMapper = new SymbolMapper(symbols);
         this.sigma = symbolMapper.getAlphabet();
-        result.setSigma(sigma);
+        result.setSigma(AlphabetProxy.createFrom(sigma));
 
         this.cachedSUL = existingSUL;
-        resetCounterSUL = new ResetCounterSUL<>("reset counter", this.cachedSUL);
-        symbolCounterSUL = new SymbolCounterSUL<>("symbol counter", resetCounterSUL);
+        this.resetCounterSUL = new ResetCounterSUL<>("resets", this.cachedSUL);
+        this.resetCounterSUL.getStatisticalData().increment(result.getStatistics().getMqsUsed());
+
+        this.symbolCounterSUL = new SymbolCounterSUL<>("symbols used", resetCounterSUL);
+        this.symbolCounterSUL.getStatisticalData().increment(result.getStatistics().getSymbolsUsed());
+
         this.sul = symbolCounterSUL;
 
         this.mqOracle = new SULOracle<>(sul);
@@ -159,7 +194,7 @@ public class LearnerThread extends Thread {
     }
 
     private Symbol[] readSymbolArray() {
-        List<Symbol> symbols = result.getConfiguration().getSymbols();
+        Set<Symbol> symbols = result.getSymbols();
         return symbols.toArray(new Symbol[symbols.size()]);
     }
 
@@ -168,8 +203,8 @@ public class LearnerThread extends Thread {
      *
      * @return true, if the Thread is still active; false otherwise.
      */
-    public boolean isActive() {
-        return active;
+    public boolean isFinished() {
+        return finished;
     }
 
     /**
@@ -210,24 +245,30 @@ public class LearnerThread extends Thread {
 
     @Override
     public void run() {
-        active = true;
+        LOGGER.trace("LearnThread.run() - enter");
+
         try {
             learn();
         } catch (Exception e) {
             LOGGER.warn("Something in the LearnerThread went wrong:", e);
-            result.setErrorText(e.getMessage());
-            try {
-                learnerResultDAO.update(result);
-            } catch (NotFoundException nfe) {
-                LOGGER.log(Level.FATAL, "Something in the LearnerThread went wrong and the result could not be saved!",
-                        e);
+
+            String message = e.getMessage();
+            if (message == null) {
+                message = e.getClass().getName();
             }
+            currentStep.setErrorText(message);
+            learnerResultDAO.saveStep(result, currentStep);
+
+            sul.post();
+        } finally {
+            LOGGER.trace("LearnThread.run() - exit");
+            finished = true;
+
         }
-        active = false;
     }
 
     /**
-     * Get the ResetCounterSUL
+     * Get the ResetCounterSUL.
      *
      * @return The active ResetCounterSUL
      */
@@ -236,34 +277,21 @@ public class LearnerThread extends Thread {
     }
 
     private void learn() throws NotFoundException {
-        long maxStepNo = calculateCurrentStepNo() + result.getConfiguration().getMaxAmountOfStepsToLearn();
-
         do {
             learnOneStep();
-        } while (continueLearning(maxStepNo));
+        } while (continueLearning());
     }
 
-    private long calculateCurrentStepNo() {
-        if (result.getStepNo() == null) {
-            return 0L;
-        } else {
-            return result.getStepNo();
-        }
-    }
-
-    private boolean continueLearning(long maxStepNo) {
-        int maxAmountOfStepsToLearn = result.getConfiguration().getMaxAmountOfStepsToLearn();
-        return result.getCounterExample() != null
-                && (maxAmountOfStepsToLearn == 0 || result.getStepNo() < maxStepNo)
+    private boolean continueLearning() {
+        return currentStep.getCounterExample() != null
+                && (currentStep.getStepsToLearn() > 0 || currentStep.getStepsToLearn() == -1)
                 && !Thread.interrupted();
     }
 
     private void learnOneStep() throws NotFoundException {
-        LearnerResult.Statistics statistics = result.getStatistics();
-        statistics.setStartTime(new Date());
-        statistics.setEqsUsed(0L);
+        LOGGER.trace("LearnerThread.learnOneStep()");
 
-        if (result.getStepNo() == null || result.getStepNo().equals(0L)) {
+        if (result.getStatistics().getDuration() == 0L) {
             learnFirstStep();
         } else {
             learnSuccessiveStep();
@@ -273,22 +301,41 @@ public class LearnerThread extends Thread {
     }
 
     private void learnFirstStep() {
-        learnerResultDAO.create(result);
+        LOGGER.trace("LearnerThread.learnFirstStep()");
+        Statistics statistics = currentStep.getStatistics();
+        statistics.setStartDate(ZonedDateTime.now());
+        statistics.setStartTime(System.nanoTime());
+        statistics.setDuration(0L);
+        statistics.setEqsUsed(0L);
+        result.getStatistics().setStartDate(statistics.getStartDate());
         learner.startLearning();
         result.createHypothesisFrom(learner.getHypothesisModel());
         findAndRememberCounterExample();
     }
 
-    private void learnSuccessiveStep() {
+    private void learnSuccessiveStep() throws NotFoundException {
+        // If the learning is resumed, a new step with the new configuration, will already exists.
+        // Otherwise we have to create a new step based on the previous one.
+        if (currentStep.getStatistics().getDuration() > 0) {
+            currentStep = learnerResultDAO.createStep(result);
+        }
+
+        // set the start date and the start time:
+        // - The start date acts as timestamp and is public.
+        // - The start time is more accurate (nanoseconds) and will be only used internally to calculate the duration.
+        Statistics statistics = currentStep.getStatistics();
+        statistics.setStartDate(ZonedDateTime.now());
+        statistics.setStartTime(System.nanoTime());
+
         // if the previous step didn't yield any counter example, try again
         // (maybe more luck this time or configuration has changed)
-        if (result.getCounterExample() == null) {
+        if (currentStep.getCounterExample() == null) {
             findAndRememberCounterExample();
         }
 
         // if a there is a counter example refine the hypothesis
-        if (result.getCounterExample() != null) {
-            refineHypothesis();
+        if (currentStep.getCounterExample() != null) {
+            learner.refineHypothesis(currentStep.getCounterExample().createDefaultProxy());
             findAndRememberCounterExample();
         }
     }
@@ -296,42 +343,49 @@ public class LearnerThread extends Thread {
     private void findAndRememberCounterExample() {
         // find
         EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
-        eqOracle = result.getConfiguration().getEqOracle().createEqOracle(mqOracle);
+        eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle);
         DefaultQuery<String, Word<String>> newCounterExample;
         newCounterExample = eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
 
         // remember
-        result.getStatistics().setEqsUsed(result.getStatistics().getEqsUsed() + 1);
-        result.setCounterExample(newCounterExample);
-    }
-
-    private void refineHypothesis() {
-        learner.refineHypothesis(result.getCounterExample());
-        result.createHypothesisFrom(learner.getHypothesisModel());
+        currentStep.getStatistics().setEqsUsed(currentStep.getStatistics().getEqsUsed() + 1);
+        if (newCounterExample == null) {
+            currentStep.setCounterExample(null);
+        } else {
+            currentStep.setCounterExample(DefaultQueryProxy.createFrom(newCounterExample));
+        }
+        LOGGER.info("The new counter example is '" + newCounterExample + "'.");
     }
 
     private void rememberMetaData() throws NotFoundException {
         // statistics
-        LearnerResult.Statistics statistics = result.getStatistics();
+        Statistics statistics = currentStep.getStatistics();
 
-        long startTime = statistics.getStartTime().getTime();
-        long currentTime = new Date().getTime();
+        long startTime = statistics.getStartTime();
+        long currentTime = System.nanoTime();
+
+        currentStep.createHypothesisFrom(learner.getHypothesisModel());
 
         statistics.setDuration(currentTime - startTime);
-        statistics.setMqsUsed(Math.abs(resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed()));
-        statistics.setSymbolsUsed(Math.abs(symbolCounterSUL.getStatisticalData().getCount() - statistics.getSymbolsUsed()));
+        LOGGER.debug("Duration of the learning: " + statistics.getDuration() + " "
+                     + "(start: " + startTime + ", end: " + currentTime + ").");
+
+        long mqUsedDiff = resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed();
+        statistics.setMqsUsed(mqUsedDiff);
+        long symbolUsedDiff = symbolCounterSUL.getStatisticalData().getCount() - statistics.getSymbolsUsed();
+        statistics.setSymbolsUsed(symbolUsedDiff);
 
         // algorithm information
-        LearnAlgorithms algorithm = result.getConfiguration().getAlgorithm();
+        LearnAlgorithms algorithm = result.getAlgorithm();
         String algorithmInformation;
         try {
             algorithmInformation = algorithm.getInternalData(learner);
         } catch (IllegalStateException e) { // algorithm has no internal data to show
             algorithmInformation = "";
         }
-        result.setAlgorithmInformation(algorithmInformation);
+        currentStep.setAlgorithmInformation(algorithmInformation);
 
         // done
-        learnerResultDAO.update(result);
+        learnerResultDAO.saveStep(result, currentStep);
     }
 }

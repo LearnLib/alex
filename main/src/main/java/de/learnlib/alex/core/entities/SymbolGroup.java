@@ -1,8 +1,25 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.learnlib.alex.core.entities.validators.UniqueSymbolGroupName;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NaturalId;
@@ -18,14 +35,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entity to organize symbols.
  */
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@UniqueSymbolGroupName
 public class SymbolGroup implements Serializable {
 
     /** to be serializable. */
@@ -36,6 +54,13 @@ public class SymbolGroup implements Serializable {
     @GeneratedValue(strategy = GenerationType.TABLE)
     @JsonIgnore
     private Long groupId;
+
+    /** The User that owns this SymbolGroup. */
+    @NaturalId
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "userId")
+    @JsonIgnore
+    private User user;
 
     /** The related project. */
     @NaturalId
@@ -58,8 +83,8 @@ public class SymbolGroup implements Serializable {
 
     /** The Symbols manged by this group. */
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE })
-    private Set<Symbol> symbols;
+    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.DELETE })
+    private List<Symbol> symbols;
 
     /**
      * Default constructor.
@@ -67,7 +92,47 @@ public class SymbolGroup implements Serializable {
     public SymbolGroup() {
         this.groupId = 0L;
         this.id = 0L;
-        this.symbols = new HashSet<>();
+        this.symbols = new ArrayList<>();
+    }
+
+    /**
+     * Set the user.
+     * @param user The user.
+     */
+    @JsonIgnore
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * Get the user.
+     * @return The user.
+     */
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Get the id of the user.
+     * @return The id of the user.
+     */
+    @JsonProperty("user")
+    public Long getUserId() {
+        if (user == null) {
+            return 0L;
+        } else {
+            return user.getId();
+        }
+    }
+
+    /**
+     * Set the id of the user.
+     * @param userId The id of the user.
+     */
+    @JsonProperty("user")
+    public void setUserId(Long userId) {
+        user = new User(userId);
     }
 
     /**
@@ -156,7 +221,7 @@ public class SymbolGroup implements Serializable {
      *
      * @return The related symbols.
      */
-    public Set<Symbol> getSymbols() {
+    public List<Symbol> getSymbols() {
         return symbols;
     }
 
@@ -179,7 +244,7 @@ public class SymbolGroup implements Serializable {
      * @param symbols
      *         The new set of related symbols.
      */
-    public void setSymbols(Set<Symbol> symbols) {
+    public void setSymbols(List<Symbol> symbols) {
         this.symbols = symbols;
     }
 
@@ -225,6 +290,6 @@ public class SymbolGroup implements Serializable {
 
     @Override
     public String toString() {
-        return "SymbolGroup[" + groupId + "] (" + project + ", " + id + "): " + name;
+        return "SymbolGroup[" + groupId + "]: " + user + ", " + project + ", " + id + ", " + name;
     }
 }
