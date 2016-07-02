@@ -299,7 +299,7 @@ public class CallAction extends RESTSymbolAction {
 
     private void doRequest(WebServiceConnector target) {
         Map<String, String> requestHeaders = getHeadersWithVariableValues();
-        if (credentials != null) {
+        if (credentials != null && credentials.areValid()) {
             requestHeaders.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
         }
 
