@@ -33,17 +33,17 @@ export class SettingsResource {
      */
     get() {
         return this.$http.get(`rest/settings`)
-            .then(response => angular.fromJson(response.data));
+            .then(response => response.data);
     }
 
     /**
      * Update application specific settings.
-     * 
+     *
      * @param {Object} settings - The updated settings object.
      * @returns {*}
      */
     update(settings) {
         return this.$http.put(`rest/settings`, settings)
-            .then(response => angular.fromJson(response.data));
+            .then(response => response.data);
     }
 }

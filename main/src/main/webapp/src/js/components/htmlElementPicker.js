@@ -168,7 +168,7 @@ class HtmlElementPickerComponent {
      * @param e - js event
      */
     handleClick(e) {
-        if (angular.isDefined(e)) {
+        if (typeof e !== "undefined") {
             e.preventDefault();
             e.stopPropagation();
         }

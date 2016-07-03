@@ -62,7 +62,7 @@ export class SymbolEditModalController {
         this.errorMsg = null;
 
         // do not update on server
-        if (angular.isDefined(this.modalData.updateOnServer) && !this.modalData.updateOnServer) {
+        if ((typeof this.modalData.updateOnServer !== "undefined") && !this.modalData.updateOnServer) {
             this.EventBus.emit(events.SYMBOL_UPDATED, {
                 newSymbol: this.symbol,
                 oldSymbol: this.symbolCopy

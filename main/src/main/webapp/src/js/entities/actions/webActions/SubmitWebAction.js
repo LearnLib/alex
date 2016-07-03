@@ -17,13 +17,12 @@
 import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
-/** Submits a form. Can also be applied to an input element of a form */
+/** Submits a form. Can also be applied to an input element of a form. */
 export class SubmitWebAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WEB_SUBMIT, obj);
@@ -36,7 +35,7 @@ export class SubmitWebAction extends Action {
     }
 
     /**
-     * A string presentation of the actions
+     * A string presentation of the action.
      * @returns {string}
      */
     toString() {

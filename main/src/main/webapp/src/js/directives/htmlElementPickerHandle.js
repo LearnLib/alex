@@ -53,10 +53,10 @@ export function htmlElementPickerHandle($document, $compile, $q, HtmlElementPick
                 .then(data => {
 
                     // copy the selected selector and .textContent value to the scopes models
-                    if (angular.isDefined(scope.selectorModel)) {
+                    if (typeof scope.selectorModel !== "undefined") {
                         scope.selectorModel = data.selector;
                     }
-                    if (angular.isDefined(scope.textModel)) {
+                    if (typeof scope.textModel !== "undefined") {
                         scope.textModel = data.textContent;
                     }
                 })

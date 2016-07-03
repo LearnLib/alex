@@ -17,13 +17,12 @@
 import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
-/** Searches for an element with a specific selector in the HTML document */
+/** Searches for an element with a specific selector in the HTML document. */
 export class CheckForNodeWebAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WEB_CHECK_NODE, obj);
@@ -36,7 +35,7 @@ export class CheckForNodeWebAction extends Action {
     }
 
     /**
-     * A string presentation of the actions
+     * A string presentation of the action.
      * @returns {string}
      */
     toString() {

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import {LearnResult} from '../entities/LearnResult';
+import {LearnResult} from "../entities/LearnResult";
 
 /**
- * The resource that handles http request to the API to do CRUD operations on learn results
+ * The resource that handles http request to the API to do CRUD operations on learn results.
  */
 export class LearnResultResource {
 
     /**
-     * Constructor
+     * Constructor.
      * @param $http
      */
     // @ngInject
@@ -31,9 +31,9 @@ export class LearnResultResource {
     }
 
     /**
-     * Gets all final steps of all learn results
+     * Gets all final steps of all learn results.
      *
-     * @param {number} projectId - The id of the project whose final learn results should be fetched
+     * @param {number} projectId - The id of the project whose final learn results should be fetched.
      * @returns {*}
      */
     getAll(projectId) {
@@ -42,10 +42,10 @@ export class LearnResultResource {
     }
 
     /**
-     * Gets the final learn result of a test run
+     * Gets the final learn result of a test run.
      *
-     * @param {number} projectId - The id of the project
-     * @param {number} testNo - The number of the test run
+     * @param {number} projectId - The id of the project.
+     * @param {number} testNo - The number of the test run.
      * @returns {*}
      */
     get(projectId, testNo) {
@@ -54,19 +54,22 @@ export class LearnResultResource {
     }
 
     /**
-     * Deletes a list of learn results
+     * Deletes a learn result.
      *
-     * @param {LearnResult|LearnResult[]} results
+     * @param {LearnResult} result - The learn result to delete.
      */
-    remove(results) {
-        let testNos, projectId;
-        if (angular.isArray(results)) {
-            testNos = results.map(r => r.testNo).join(',');
-            projectId = results[0].project;
-        } else {
-            testNos = results.testNo;
-            projectId = results.project;
-        }
+    remove(result) {
+        return this.$http.delete(`rest/projects/${result.project}/results/${result.testNo}`, {});
+    }
+
+    /**
+     * Deletes a list of learn results.
+     *
+     * @param {LearnResult[]} results - The learn results to delete.
+     */
+    removeMany(results) {
+        const testNos = results.map(r => r.testNo).join(',');
+        const projectId = results[0].project;
         return this.$http.delete(`rest/projects/${projectId}/results/${testNos}`, {});
     }
 }

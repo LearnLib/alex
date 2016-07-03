@@ -62,7 +62,7 @@ describe('LearnResultResource', () => {
         spyOn($http, 'delete').and.callThrough();
 
         $httpBackend.whenDELETE(uri).respond(200, null);
-        const promise = LearnResultResource.remove(results);
+        const promise = LearnResultResource.removeMany(results);
         $httpBackend.flush();
 
         expect(LearnResultResource.$http.delete).toHaveBeenCalledWith(uri, {});

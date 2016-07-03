@@ -19,14 +19,13 @@ import {actionType} from '../../../constants';
 
 /**
  * Checks if a property of a JSON object in a HTTP response body has a specific value or matches a regular
- * expression
+ * expression.
  */
 export class CheckAttributeValueRestAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.REST_CHECK_ATTRIBUTE_VALUE, obj);
@@ -51,7 +50,7 @@ export class CheckAttributeValueRestAction extends Action {
     }
 
     /**
-     * A string presentation of the actions
+     * A string presentation of the action..
      * @returns {string}
      */
     toString() {

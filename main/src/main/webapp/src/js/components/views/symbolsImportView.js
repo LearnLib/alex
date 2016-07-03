@@ -78,7 +78,7 @@ class SymbolsImportView {
      */
     fileLoaded(data) {
         try {
-            this.symbols = angular.fromJson(data).map(s => {
+            this.symbols = JSON.parse(data).map(s => {
                 s.id = _.uniqueId();
                 return new AlphabetSymbol(s);
             });

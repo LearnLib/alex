@@ -17,13 +17,12 @@
 import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
-/** Checks for the status code (e.g. 404) in an HTTP response */
+/** Checks for the status code (e.g. 404) in an HTTP response. */
 export class CheckStatusRestAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.REST_CHECK_STATUS, obj);
@@ -36,7 +35,7 @@ export class CheckStatusRestAction extends Action {
     }
 
     /**
-     * A string presentation of the actions
+     * A string presentation of the action.
      * @returns {string}
      */
     toString() {

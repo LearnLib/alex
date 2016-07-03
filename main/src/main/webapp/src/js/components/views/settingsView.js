@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import SettingsResource from '../../resources/SettingsResource';
-
 /**
  * The component for the about page.
  * Usage: <settings-view></settings-view>.
@@ -57,4 +55,3 @@ export const settingsView = {
     controllerAs: 'vm',
     templateUrl: 'html/pages/settings.html'
 };
-

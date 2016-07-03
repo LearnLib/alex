@@ -17,13 +17,12 @@
 import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
-/** Remove all inputs from an element */
+/** Remove all inputs from an element. */
 export class ClearWebAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WEB_CLEAR, obj);
@@ -36,7 +35,7 @@ export class ClearWebAction extends Action {
     }
 
     /**
-     * A string presentation of the actions
+     * A string presentation of the actions.
      * @returns {string}
      */
     toString() {

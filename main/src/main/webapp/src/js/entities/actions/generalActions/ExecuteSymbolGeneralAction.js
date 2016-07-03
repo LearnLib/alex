@@ -45,7 +45,7 @@ export class ExecuteSymbolGeneralAction extends Action {
             maxRevision: null
         };
 
-        if (angular.isDefined(obj.getModel)) {
+        if (typeof obj.getModel !== "undefined") {
             model = obj.getModel();
         }
 

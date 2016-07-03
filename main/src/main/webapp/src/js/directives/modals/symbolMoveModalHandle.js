@@ -79,7 +79,7 @@ export class SymbolMoveModalController {
             symbolsToMove.forEach(s => {s.group = this.selectedGroup.id;});
 
             this.SymbolResource.moveMany(symbolsToMove, this.selectedGroup)
-                .success(() => {
+                .then(() => {
                     this.ToastService.success('Symbols move to group <strong>' + this.selectedGroup.name + '</strong>');
                     this.EventBus.emit(events.SYMBOLS_MOVED, {
                         symbols: this.symbols,

@@ -190,7 +190,7 @@ class SymbolsView {
      */
     deleteSymbol(symbol) {
         this.SymbolResource.remove(symbol)
-            .success(() => {
+            .then(() => {
                 this.ToastService.success('Symbol <strong>' + symbol.name + '</strong> deleted');
                 this.removeSymbols([symbol]);
             })
@@ -204,7 +204,7 @@ class SymbolsView {
      */
     deleteSelectedSymbols() {
         this.SymbolResource.removeMany(this.selectedSymbols)
-            .success(() => {
+            .then(() => {
                 this.ToastService.success('Symbols deleted');
                 this.removeSymbols(this.selectedSymbols);
             })
