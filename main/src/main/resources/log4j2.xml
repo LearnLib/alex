@@ -4,6 +4,23 @@
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
 		</Console>
+		<Routing name="LearnerAppender">
+			<Routes pattern="$${ctx:userId}">
+				<Route>
+					<RollingFile name="LearnerFile-${ctx:userId}" fileName="logs/learn-${ctx:userId}.log"
+								 filePattern="logs/$${date:yyyy-MM}/learn-${ctx:userId}-%d{MM-dd-yyyy}-%i.log.gz">
+						<PatternLayout alwaysWriteExceptions="false">
+							<pattern>%d{HH:mm:ss.SSS} Test No. %X-4{testNo} [%-5level]: %msg%n</pattern>
+						</PatternLayout>
+						<Policies>
+							<OnStartupTriggeringPolicy />
+							<SizeBasedTriggeringPolicy size="250 MB"/>
+						</Policies>
+						<DefaultRolloverStrategy max="5"/>
+					</RollingFile>
+				</Route>
+			</Routes>
+		</Routing>
 	</Appenders>
 	<Loggers>
         <!-- Loggers of the dependencies. -->
@@ -18,7 +35,9 @@
         <Logger name="org.hibernate.type.descriptor.sql" level="off"/>
 
         <!-- Our own logger. -->
-        <Logger name="learner" level="trace" />
+        <Logger name="learner" level="trace">
+			<AppenderRef ref="LearnerAppender" />
+		</Logger>
         <Logger name="server" level="info" />
 
 		<Root level="info">

@@ -121,6 +121,10 @@ public class CounterStoreConnector implements Connector {
         try {
             Counter counter;
             counter = counterDAO.get(userId, projectId, name);
+
+            LOGGER.debug("Got the counter '" + name + "' in the project <" + projectId + "> "
+                            + "of user <" + userId + "> with the value '" + counter.getValue() + "'.");
+
             return counter.getValue();
         } catch (NotFoundException e) {
             throw new IllegalStateException("The counter '" + name + "' was not set and has no value!");

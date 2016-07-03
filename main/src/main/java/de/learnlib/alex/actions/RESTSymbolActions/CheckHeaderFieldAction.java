@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.SearchHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -37,6 +39,9 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = -7234083244640666736L;
+
+    /** Use the learner logger. */
+    private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /** The key of the header field to check for the value. */
     @NotBlank

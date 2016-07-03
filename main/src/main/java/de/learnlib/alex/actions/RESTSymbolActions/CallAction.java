@@ -286,13 +286,13 @@ public class CallAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         try {
-            LOGGER.info("Do REST request '" + method + " " + url + "' "
-                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+            LOGGER.info("    Doing REST request '{} {}' (ignoreFailure : {}, negated: {}).",
+                        method, url, ignoreFailure, negated);
 
             doRequest(target);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info("Could not call " + getUrlWithVariableValues(), e);
+            LOGGER.info("        Could not call {}.", getUrlWithVariableValues(), e);
             return getFailedOutput();
         }
     }
@@ -300,6 +300,7 @@ public class CallAction extends RESTSymbolAction {
     private void doRequest(WebServiceConnector target) {
         Map<String, String> requestHeaders = getHeadersWithVariableValues();
         if (credentials != null && credentials.areValid()) {
+            LOGGER.info("    Using credentials '{}'.", credentials);
             requestHeaders.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
         }
 
@@ -321,7 +322,7 @@ public class CallAction extends RESTSymbolAction {
                               getCookiesWithVariableValues());
                 break;
             default:
-                LOGGER.warn("tried to make a call to a REST API with an unknown method '" + method.name() + "'.");
+                LOGGER.warn("        Tried to make a call to a REST API with an unknown method '{}'.", method.name());
         }
     }
 

@@ -45,6 +45,7 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -245,6 +246,8 @@ public class LearnerThread extends Thread {
 
     @Override
     public void run() {
+        ThreadContext.put("userId", String.valueOf(result.getUserId()));
+        ThreadContext.put("testNo", String.valueOf(result.getTestNo()));
         LOGGER.trace("LearnThread.run() - enter");
 
         try {

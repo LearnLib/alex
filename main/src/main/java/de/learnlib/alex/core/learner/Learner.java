@@ -33,6 +33,9 @@ import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.oracles.ResetCounterSUL;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -61,6 +64,9 @@ public class Learner {
 
     /** How many concurrent threads the system can handle. */
     private static final int MAX_CONCURRENT_THREADS = 2;
+
+    /** Use the learner logger. */
+    private static final Logger LEARN_LOGGER = LogManager.getLogger("learner");
 
     /** The SymbolDAO to use. */
     @Inject
@@ -440,6 +446,10 @@ public class Learner {
      */
     public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols)
             throws LearnerException {
+        ThreadContext.put("userId", String.valueOf(user.getId()));
+        ThreadContext.put("testNo", "readOutputs");
+        LEARN_LOGGER.trace("Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
+
         if (contextHandler == null) {
             // todo: remove hardcoded browser
             contextHandler = contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER);

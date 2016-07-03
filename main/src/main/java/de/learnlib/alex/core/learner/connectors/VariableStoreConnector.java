@@ -88,6 +88,9 @@ public class VariableStoreConnector implements Connector {
         if (result == null) {
             throw new IllegalStateException("The variable '" + name + "' was not set and has no value!");
         }
+
+        LOGGER.debug("Got the variable '" + name + "' with the value '" + result + "'.");
+
         return result;
     }
 }

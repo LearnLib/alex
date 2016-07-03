@@ -64,8 +64,8 @@ public class CheckStatusAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         int returnedStatus = target.getStatus();
-        LOGGER.info("check if the returned status code '" + returnedStatus + " is equal to '" + status + "' "
-                    + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+        LOGGER.info("    Checking if the returned status code '{}' is equal to '{}' (ignoreFailure: {}, negated: {}).",
+                    returnedStatus, status, ignoreFailure, negated );
 
         if (this.status == returnedStatus) {
             return getSuccessOutput();

@@ -46,9 +46,7 @@ public class ExecuteSymbolAction extends SymbolAction {
      */
     private static final long serialVersionUID = 3143716533295082498L;
 
-    /**
-     * Use the learner logger.
-     */
+    /** Use the learner logger. */
     private static final Logger LOGGER = LogManager.getLogger("learner");
 
     /**
@@ -150,15 +148,16 @@ public class ExecuteSymbolAction extends SymbolAction {
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         if (symbolToExecute == null) {
-            LOGGER.info("No other Symbol to execute was set "
-                    + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+            LOGGER.info("    No other Symbol to execute was set (ignoreFailure : {}, negated: {}).",
+                        ignoreFailure, negated);
             return getFailedOutput();
         }
+        LOGGER.info("    Executing other Symbol <{}:{}> (ignoreFailure: {}, negated: {}).",
+                    symbolToExecute.getId(), symbolToExecute.getRevision(), ignoreFailure, negated);
 
         ExecuteResult symbolResult = symbolToExecute.execute(connector);
-        LOGGER.info("Executed other Symbol <" + symbolToExecute.getId() + ":" + symbolToExecute.getRevision() + "> "
-                + " with the result of '" + symbolResult + "' "
-                + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+        LOGGER.info("    Executed other Symbol <{}:{}> with the result of '{}' (ignoreFailure: {}, negated: {}).",
+                    symbolToExecute.getId(), symbolToExecute.getRevision(), symbolResult , ignoreFailure, negated);
 
         if (symbolResult == ExecuteResult.OK) {
             return getSuccessOutput();
