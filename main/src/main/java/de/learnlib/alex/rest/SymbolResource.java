@@ -65,8 +65,8 @@ import java.util.Set;
 @RolesAllowed({"REGISTERED"})
 public class SymbolResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** The logger to use. */
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Context information about the URI. */
     @Context
@@ -101,7 +101,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createSymbol(@PathParam("project_id") Long projectId, Symbol symbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.createSymbol(" + projectId + ", " + symbol + ") for user " + user + ".");
+        LOGGER.traceEntry("createSymbol({}, {}) for user {}.", projectId, symbol, user);
 
         try {
             checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
@@ -113,17 +113,23 @@ public class SymbolResource {
 
                 String symbolURL = uri.getBaseUri() + "projects/" + symbol.getProjectId()
                                         + "/symbols/" + symbol.getId();
+
+                LOGGER.traceExit(symbol);
                 return Response.status(Status.CREATED).header("Location", symbolURL).entity(symbol).build();
             } else {
                 throw new UnauthorizedException("The user may not create a symbol in this project");
             }
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
         } catch (ValidationException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.NOT_FOUND, e);
         } catch (UnauthorizedException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.UNAUTHORIZED, e);
         }
     }
@@ -146,7 +152,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response batchCreateSymbols(@PathParam("project_id") Long projectId, List<Symbol> symbols) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.batchCreateSymbols(" + projectId + ", " + symbols + ") for user " + user + ".");
+        LOGGER.traceEntry("batchCreateSymbols({}, {}) for user {}.", projectId, symbols, user);
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);
@@ -157,19 +163,24 @@ public class SymbolResource {
                 }
                 symbolDAO.create(symbols);
 
+                LOGGER.traceExit(symbols);
                 return ResponseHelper.renderList(symbols, Status.CREATED);
             } else {
                 throw new UnauthorizedException("The user may not create the symbols in this project");
             }
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
                                                                Status.BAD_REQUEST, e);
         } catch (ValidationException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
                                                                Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.NOT_FOUND, e);
         } catch (UnauthorizedException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.UNAUTHORIZED, e);
         }
     }
@@ -201,7 +212,7 @@ public class SymbolResource {
     public Response getAll(@PathParam("project_id") Long projectId,
                            @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.getAll(" + projectId + ", " + visibilityLevel + ") for user " + user + ".");
+        LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, visibilityLevel, user);
 
         List<Symbol> symbols;
         try {
@@ -210,6 +221,7 @@ public class SymbolResource {
             symbols = new LinkedList<>();
         }
 
+        LOGGER.traceExit(symbols);
         return ResponseHelper.renderList(symbols, Status.OK);
     }
 
@@ -232,19 +244,20 @@ public class SymbolResource {
     public Response getByIdRevisionPairs(@PathParam("project_id") Long projectId,
                                          @PathParam("idRevisionPairs") IdRevisionPairList idRevisionPairs) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.getByIdRevisionPairs(" + projectId + ", " + idRevisionPairs + ") "
-                     + "for user " + user + ".");
+        LOGGER.traceEntry("getByIdRevisionPairs({}, {}) for user {}.", projectId, idRevisionPairs, user);
 
         try {
             List<Symbol> symbols = symbolDAO.getAll(user, projectId, idRevisionPairs);
+
+            LOGGER.traceExit(symbols);
             return ResponseHelper.renderList(symbols, Status.OK);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getByIdRevisionPairs",
                     Status.NOT_FOUND,
                     null);
         }
     }
-
 
     /**
      * Get a Symbol by its ID.
@@ -264,12 +277,15 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.get(" + projectId + ", " + id + ")  for user " + user + ".");
+        LOGGER.traceEntry("get({}, {})  for user {}.", projectId, id, user);
 
         try {
             Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
+
+            LOGGER.traceExit(symbol);
             return Response.ok(symbol).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.get", Status.NOT_FOUND, null);
         }
     }
@@ -292,12 +308,15 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getComplete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.getComplete(" + projectId + ", " + id + ")  for user " + user + ".");
+        LOGGER.traceEntry("getComplete({}, {})  for user {}.", projectId, id, user);
 
         try {
             List<Symbol> symbols = symbolDAO.getWithAllRevisions(user, projectId, id);
+
+            LOGGER.traceExit(symbols);
             return ResponseHelper.renderList(symbols, Status.OK);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getComplete", Status.NOT_FOUND, null);
         }
     }
@@ -323,13 +342,15 @@ public class SymbolResource {
                                     @PathParam("id") Long id,
                                     @PathParam("revision") long revision) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.getWithRevision(" + projectId + ", " + id + ", " + revision + ") "
-                     + "for user " + user + ".");
+        LOGGER.traceEntry("getWithRevision({}, {}, {}) for user {}.", projectId, id, revision, user);
 
         try {
             Symbol symbol = symbolDAO.get(user, projectId, id, revision);
+
+            LOGGER.traceExit(symbol);
             return Response.ok(symbol).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getWithRevision",
                                                                Status.NOT_FOUND,
                                                                null);
@@ -357,21 +378,27 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("project_id") Long projectId, @PathParam("id") Long id, Symbol symbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.update(" + projectId + ", " + id + ", " + symbol + ") for user " + user + ".");
+        LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, symbol, user);
 
         if (!Objects.equals(id, symbol.getId())
                 || !Objects.equals(projectId, symbol.getProjectId())
                 || (symbol.getUserId() != 0L && !user.equals(symbol.getUser()))) {
+
+            LOGGER.traceExit();
             return  Response.status(Status.BAD_REQUEST).build();
         }
         symbol.setUser(user);
 
         try {
             symbolDAO.update(symbol);
+
+            LOGGER.traceExit(symbol);
             return Response.ok(symbol).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.NOT_FOUND, e);
         } catch (ValidationException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.BAD_REQUEST, e);
         }
     }
@@ -399,23 +426,27 @@ public class SymbolResource {
                                 @PathParam("ids") IdsList ids,
                                 List<Symbol> symbols) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.batchUpdate(" + projectId + ", " + ids + ", " + symbols + ") "
-                     + "for user " + user + ".");
+        LOGGER.traceEntry("batchUpdate({}, {}, {}) for user {}.", projectId, ids, symbols, user);
 
         Set idsSet = new HashSet<>(ids);
         for (Symbol symbol : symbols) {
             if (!idsSet.contains(symbol.getId())
                     || !Objects.equals(projectId, symbol.getProjectId())
                     || !symbol.getUserId().equals(user.getId())) {
+                LOGGER.traceExit();
                 return Response.status(Status.BAD_REQUEST).build();
             }
         }
         try {
             symbolDAO.update(symbols);
+
+            LOGGER.traceExit(symbols);
             return ResponseHelper.renderList(symbols, Status.OK);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchUpdate", Status.NOT_FOUND, e);
         } catch (ValidationException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchUpdate", Status.BAD_REQUEST, e);
         }
     }
@@ -435,17 +466,19 @@ public class SymbolResource {
     @Path("/{symbol_id}/moveTo/{group_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response moveSymbolToAnotherGroup(@PathParam("project_id") Long projectId,
-                                             @PathParam("symbol_id") Long symbolId,
-                                             @PathParam("group_id") Long groupId) {
+                                             @PathParam("symbol_id")  Long symbolId,
+                                             @PathParam("group_id")   Long groupId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.moveSymbolToAnotherGroup(" + projectId + ", " + symbolId + ", " + groupId + ") "
-                     + "for user " + user + ".");
+        LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolId, groupId, user);
 
         try {
             Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, symbolId);
             symbolDAO.move(symbol, groupId);
+
+            LOGGER.traceExit(symbol);
             return Response.ok(symbol).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.moveSymbolToAnotherGroup",
                                                                Status.NOT_FOUND, e);
         }
@@ -469,16 +502,17 @@ public class SymbolResource {
                                              @PathParam("symbol_ids") IdsList symbolIds,
                                              @PathParam("group_id") Long groupId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.moveSymbolToAnotherGroup(" + projectId + ", " + symbolIds + ", " + groupId + ") "
-                     + "for user " + user + ".");
+        LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolIds, groupId, user);
 
         try {
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId,
                                                                         symbolIds.toArray(new Long[symbolIds.size()]));
             symbolDAO.move(symbols, groupId);
 
+            LOGGER.traceExit(symbols);
             return Response.ok(symbols).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.moveSymbolToAnotherGroup",
                                                                Status.NOT_FOUND, e);
         }
@@ -500,20 +534,24 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response hide(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.hide(" + projectId + ", " + id + ") for user " + user + ".");
+        LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, id, user);
 
         try {
             Symbol s = symbolDAO.getWithLatestRevision(user, projectId, id);
             if (s.getUser().equals(user)) {
                 symbolDAO.hide(user.getId(), projectId, id);
                 Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
+
+                LOGGER.traceExit(symbol);
                 return Response.ok(symbol).build();
             } else {
                 throw new UnauthorizedException("The symbol does not belong to the user");
             }
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
         } catch (UnauthorizedException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.UNAUTHORIZED, e);
         }
     }
@@ -534,14 +572,17 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response hide(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.hide(" + projectId + ", " + ids + ") for user " + user + ".");
+        LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, ids, user);
 
         try {
             Long[] idsArray = ids.toArray(new Long[ids.size()]);
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId, idsArray);
             symbolDAO.hide(user.getId(), projectId, idsArray);
+
+            LOGGER.traceExit(symbols);
             return ResponseHelper.renderList(symbols, Status.OK);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
         }
     }
@@ -562,13 +603,16 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response show(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.show(" + projectId + ", " + id + ") for user " + user + ".");
+        LOGGER.traceEntry("show({}, {}) for user {}.", projectId, id, user);
 
         try {
             symbolDAO.show(user.getId(), projectId, id);
             Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
+
+            LOGGER.traceExit(symbol);
             return Response.ok(symbol).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
         }
     }
@@ -589,15 +633,17 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response show(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("SymbolResource.show(" + projectId + ", " + ids + ") for user " + user + ".");
+        LOGGER.traceEntry("show({}, {}) for user {}.", projectId, ids, user);
 
         try {
             Long[] idsArray = ids.toArray(new Long[ids.size()]);
             symbolDAO.show(user.getId(), projectId, idsArray);
             List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId, idsArray);
 
+            LOGGER.traceExit(symbols);
             return ResponseHelper.renderList(symbols, Status.OK);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
         }
     }

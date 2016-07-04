@@ -55,8 +55,8 @@ import java.util.List;
 @RolesAllowed({"REGISTERED"})
 public class ProjectResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    /** The logger to use. */
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Context information about the URI. */
     @Context
@@ -85,11 +85,13 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(Project project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.create(" + project + ") for user " + user + ".");
+        LOGGER.traceEntry("create({}) for user {}.", project, user);
 
         // make sure that if an user for a project is given, it the correct user id.
         if (project.getUser() != null && !user.equals(project.getUser())) {
-            throw new ValidationException("The given user id does not belong to the current user!");
+            ValidationException e = new ValidationException("The given user id does not belong to the current user!");
+            LOGGER.traceExit(e);
+            throw e;
         }
 
         project.setUser(user);
@@ -97,8 +99,10 @@ public class ProjectResource {
         try {
             projectDAO.create(project);
             String projectURL = uri.getBaseUri() + "projects/" + project.getId();
+            LOGGER.traceExit(project);
             return Response.status(Status.CREATED).header("Location", projectURL).entity(project).build();
         } catch (ValidationException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
         }
     }
@@ -118,16 +122,19 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.getAll(" + embed + ") for user " + user + ".");
+        LOGGER.traceEntry("getAll({}) for user {}.", embed, user);
 
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
             embeddableFields = parseEmbeddableFields(embed);
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
         }
 
         List<Project> projects = projectDAO.getAll(user, embeddableFields);
+
+        LOGGER.traceExit(projects);
         return ResponseHelper.renderList(projects, Status.OK);
     }
 
@@ -150,7 +157,7 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.get(" + projectId + ", " + embed + ") for user " + user + ".");
+        LOGGER.traceEntry("get({}, {}) for user {}.", projectId, embed, user);
 
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
@@ -158,15 +165,19 @@ public class ProjectResource {
             Project project = projectDAO.getByID(user.getId(), projectId, embeddableFields);
 
             if (project.getUser().equals(user)) {
+                LOGGER.traceExit(project);
                 return Response.ok(project).build();
             } else {
                 throw new UnauthorizedException("You are not allowed to view this project");
             }
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.NOT_FOUND, null);
         } catch (UnauthorizedException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.UNAUTHORIZED, e);
         }
     }
@@ -190,23 +201,28 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") long id, Project project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.update(" + id + ", " + project + ") for user " + user + ".");
+        LOGGER.traceEntry("update({}, {}) for user {}.", id, project, user);
 
         if (id != project.getId()) {
+            LOGGER.traceExit("Wrong Project ID");
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             try {
                 if (project.getUser() == null || user.equals(project.getUser())) {
                     projectDAO.update(project);
+                    LOGGER.traceExit(project);
                     return Response.ok(project).build();
                 } else {
                     throw new UnauthorizedException("You are not allowed to update this project");
                 }
             } catch (NotFoundException e) {
+                LOGGER.traceExit(e);
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.NOT_FOUND, e);
             } catch (ValidationException e) {
+                LOGGER.traceExit(e);
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.BAD_REQUEST, e);
             } catch (UnauthorizedException e) {
+                LOGGER.traceExit(e);
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.UNAUTHORIZED, e);
             }
         }
@@ -226,19 +242,22 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("id") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.delete(" + projectId + ") for user " + user + ".");
+        LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);
             if (project.getUser().equals(user)) {
                 projectDAO.delete(user.getId(), projectId);
+                LOGGER.traceExit("Project {} deleted", projectId);
                 return Response.status(Status.NO_CONTENT).build();
             } else {
                 throw new UnauthorizedException("You are not allowed to delete this project");
             }
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.NOT_FOUND, e);
         } catch (UnauthorizedException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.UNAUTHORIZED, e);
         }
     }
