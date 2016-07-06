@@ -49,8 +49,7 @@ import java.util.List;
 @Path("/projects/{project_id}/results")
 public class LearnerResultResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The {@link de.learnlib.alex.core.dao.LearnerResultDAO} to use. */
     @Inject
@@ -86,9 +85,11 @@ public class LearnerResultResource {
             List<LearnerResult> results = learnerResultDAO.getAll(user.getId(), projectId, includeSteps);
             return ResponseHelper.renderList(results, Response.Status.OK);
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
                                                                Response.Status.BAD_REQUEST,  e);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllFinalResults",
                                                                 Response.Status.NOT_FOUND, e);
         }
@@ -133,9 +134,11 @@ public class LearnerResultResource {
                 return ResponseHelper.renderList(result, Response.Status.OK);
             }
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
                                                                Response.Status.BAD_REQUEST,  e);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
                                                                Response.Status.NOT_FOUND,  e);
         }
@@ -168,9 +171,11 @@ public class LearnerResultResource {
             return Response.status(Response.Status.NO_CONTENT).build();
 
         }  catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.deleteResultSet",
                                                                 Response.Status.NOT_FOUND,  e);
         } catch (ValidationException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.deleteResultSet",
                                                                 Response.Status.BAD_REQUEST, e);
         }

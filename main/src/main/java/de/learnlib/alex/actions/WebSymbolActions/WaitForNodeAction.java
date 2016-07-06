@@ -7,6 +7,8 @@ import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.utils.CSSUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -31,8 +33,9 @@ public class WaitForNodeAction extends WebSymbolAction {
      */
     private static final long serialVersionUID = 4029222122474954117L;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enumeration to specify the wait criterion.
@@ -180,7 +183,8 @@ public class WaitForNodeAction extends WebSymbolAction {
             }
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info("Waiting on the node '" + selector + "' (criterion: '" + waitCriterion + "') timed out.");
+            LOGGER.info(LEARNER_MARKER, "Waiting on the node '{}' (criterion: '') timed out.",
+                        selector, waitCriterion);
             return getFailedOutput();
         }
 

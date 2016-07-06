@@ -35,6 +35,8 @@ import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.oracles.ResetCounterSUL;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -65,8 +67,9 @@ public class Learner {
     /** How many concurrent threads the system can handle. */
     private static final int MAX_CONCURRENT_THREADS = 2;
 
-    /** Use the learner logger. */
-    private static final Logger LEARN_LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The SymbolDAO to use. */
     @Inject
@@ -448,7 +451,9 @@ public class Learner {
             throws LearnerException {
         ThreadContext.put("userId", String.valueOf(user.getId()));
         ThreadContext.put("testNo", "readOutputs");
-        LEARN_LOGGER.trace("Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
+        ThreadContext.put("indent", "");
+        LOGGER.traceEntry();
+        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
 
         if (contextHandler == null) {
             // todo: remove hardcoded browser
@@ -462,9 +467,13 @@ public class Learner {
             List<String> output = symbols.stream().map(s ->
                     s.execute(connectors).toString()).collect(Collectors.toList());
             connectors.dispose();
+
+            LOGGER.traceExit(output);
             return output;
         } catch (Exception e) {
             connectors.dispose();
+
+            LOGGER.traceExit(e);
             throw new LearnerException("Could not read the outputs", e);
         }
     }

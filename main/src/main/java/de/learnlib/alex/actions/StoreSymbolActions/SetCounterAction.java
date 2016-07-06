@@ -21,6 +21,10 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -37,6 +41,10 @@ public class SetCounterAction extends SymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = -6023597222318880440L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The name of the counter to set a new value to. */
     @NotBlank
@@ -78,6 +86,9 @@ public class SetCounterAction extends SymbolAction {
     public ExecuteResult execute(ConnectorManager connector) {
         CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
         storeConnector.set(getUser().getId(), project.getId(), name, counterValue);
+
+        LOGGER.info(LEARNER_MARKER, "Set the counter '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
+                    name, counterValue, ignoreFailure, negated);
         return getSuccessOutput();
     }
 }

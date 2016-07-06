@@ -18,6 +18,8 @@ package de.learnlib.alex.rest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,8 +54,11 @@ import java.util.Map;
 @Path("proxy")
 public class IFrameProxyResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker REST_MARKER     = MarkerManager.getMarker("REST");
+    private static final Marker RESOURCE_MARKER = MarkerManager.getMarker("IFRAME_PROXY_RESOURCE")
+                                                                    .setParents(REST_MARKER);
 
     /** Get the UriInfo from the Context. */
     @Context
@@ -71,21 +76,22 @@ public class IFrameProxyResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response doGetProxy(@QueryParam("url") String url, @HeaderParam("Cookie") String cookies) {
-        LOGGER.trace("IFrameProxyResource.doGetProxy(" + url + ", " + cookies + ").");
+        LOGGER.traceEntry("doGetProxy({}, {}).", url, cookies);
 
         try {
             Connection connection = Jsoup.connect(url);
             connection = parseAndProcessCookies(connection, cookies);
             connection = connection.method(Connection.Method.GET);
 
+            LOGGER.traceExit(connection);
             return createResponse(connection);
         } catch (IllegalArgumentException e) { // Java 1.6 has no multi catch
-            LOGGER.info("Bad URL: {}", url);
-            LOGGER.info(e);
+            LOGGER.info(RESOURCE_MARKER, "Bad URL: {}", url);
+            LOGGER.traceExit(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown URL").build();
         } catch (IOException e) {
-            LOGGER.info("Bad request type: {}", url);
-            LOGGER.info(e);
+            LOGGER.info(RESOURCE_MARKER, "Bad request type: {}", url);
+            LOGGER.traceExit(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown request type").build();
         }
     }
@@ -107,7 +113,7 @@ public class IFrameProxyResource {
     public Response doPostProxy(@QueryParam("url") String url,
                                 @HeaderParam("Cookie") String cookies,
                                 MultivaluedMap<String, String> body) {
-        LOGGER.trace("IFrameProxyResource.doPostProxy(" + url + ", " + cookies + ", " + body + ").");
+        LOGGER.traceEntry("doPostProxy({}, {}, {}).", url, cookies, body);
 
         try {
             Connection connection = Jsoup.connect(url);
@@ -115,14 +121,15 @@ public class IFrameProxyResource {
             connection = parseAndProcessFormData(connection, body);
             connection = connection.method(Connection.Method.POST);
 
+            LOGGER.traceExit(connection);
             return createResponse(connection);
         } catch (IllegalArgumentException e) {
-            LOGGER.info("Bad URL: {}", url);
-            LOGGER.info(e);
+            LOGGER.info(RESOURCE_MARKER, "Bad URL: {}", url);
+            LOGGER.traceExit(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown URL").build();
         } catch (IOException e) {
-            LOGGER.info("Bad request type: {}", url);
-            LOGGER.info(e);
+            LOGGER.info(RESOURCE_MARKER, "Bad request type: {}", url);
+            LOGGER.traceExit(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown request type").build();
         }
     }

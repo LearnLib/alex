@@ -47,8 +47,7 @@ import java.util.List;
 @Path("/projects/{project_id}/counters")
 public class CounterResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The CounterDAO to use. */
     @Inject
@@ -71,12 +70,15 @@ public class CounterResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCounters(@PathParam("project_id") Long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("CounterResource.getAllCounters(" + projectId + ") for user " + user.toString() + ".");
+        LOGGER.traceEntry("getAllCounters({}) for user {}.", projectId, user);
 
         try {
             List<Counter> counters = counterDAO.getAll(user.getId(), projectId);
+
+            LOGGER.traceExit(counters);
             return ResponseHelper.renderList(counters, Response.Status.OK);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("CounterResource.getAll", Response.Status.NOT_FOUND, e);
         }
     }
@@ -96,12 +98,15 @@ public class CounterResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("CounterResource.deleteCounter(" + projectId + ", " + name +  ") for user " + user + ".");
+        LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, name, user);
 
         try {
             counterDAO.delete(user.getId(), projectId, name);
+
+            LOGGER.traceExit("Counter {} deleted.", name);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("CounterResource.deleteCounter",
                                                                Response.Status.NOT_FOUND,
                                                                e);
@@ -124,12 +129,15 @@ public class CounterResource {
     public Response deleteCounter(@PathParam("project_id") Long projectId,
                                   @PathParam("counter_names") StringList names) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("CounterResource.deleteCounter(" + projectId + ", " + names +  ") for user " + user + ".");
+        LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, names, user);
 
         try {
             counterDAO.delete(user.getId(), projectId, names.toArray(new String[names.size()]));
+
+            LOGGER.traceExit("Counter(s) {} deleted.", names);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("CounterResource.deleteCounter",
                                                                Response.Status.NOT_FOUND,
                                                                e);

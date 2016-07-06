@@ -31,8 +31,7 @@ import java.util.LinkedHashMap;
  */
 public final class JSONHelpers {
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Disabled default constructor, this is only a utility class with static methods.
@@ -52,8 +51,7 @@ public final class JSONHelpers {
     public static String getAttributeValue(String json, String attribute) {
         try {
             String value = String.valueOf(getParsedAttributeValue(json, attribute));
-            LOGGER.info("The attribute '" + attribute + "' has the value '" + value + "' "
-                            + " in the body '" + json + "'.");
+            LOGGER.info("The attribute '{}' has the value '{}' in the body '{}'.", attribute, value, json);
             return value;
         } catch (InvalidJsonException e) {
             LOGGER.info("JSON was not valid, e.g. the body was empty.", e);

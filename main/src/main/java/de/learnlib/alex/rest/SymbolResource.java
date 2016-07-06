@@ -65,7 +65,6 @@ import java.util.Set;
 @RolesAllowed({"REGISTERED"})
 public class SymbolResource {
 
-    /** The logger to use. */
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** Context information about the URI. */

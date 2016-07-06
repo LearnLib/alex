@@ -27,6 +27,8 @@ import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jose4j.json.internal.json_simple.JSONObject;
@@ -59,8 +61,12 @@ import java.util.List;
 @Path("/users")
 public class UserResource {
 
-    /** The logger to use. */
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker USER_MARKER     = MarkerManager.getMarker("USER");
+    private static final Marker REST_MARKER     = MarkerManager.getMarker("REST");
+    private static final Marker RESOURCE_MARKER = MarkerManager.getMarker("USER_RESOURCE")
+                                                                    .setParents(USER_MARKER, REST_MARKER);
 
     /** The UserDAO to user. */
     @Inject
@@ -181,7 +187,7 @@ public class UserResource {
     @RolesAllowed({"REGISTERED"})
     public Response changePassword(@PathParam("id") Long userId, JSONObject json) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("changePassword({}, {}) for user {}.", userId , json, user);
+        LOGGER.traceEntry("changePassword({}, {}) for user {}.", userId, json, user);
 
         if (!user.getId().equals(userId)) {
             LOGGER.traceExit("Only the user is allowed to change his own password.");
@@ -303,7 +309,7 @@ public class UserResource {
             User userToPromote = userDAO.getById(userId);
             userToPromote.setRole(UserRole.ADMIN);
             userDAO.update(userToPromote);
-            LOGGER.info("User {} promoted.", user);
+            LOGGER.info(RESOURCE_MARKER, "User {} promoted.", user);
 
             LOGGER.traceExit(userToPromote);
             return Response.ok(userToPromote).build();

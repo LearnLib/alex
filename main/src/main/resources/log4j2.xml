@@ -13,13 +13,13 @@
 					<RollingFile name="LearnerFile-${ctx:userId}" fileName="logs/learn-${ctx:userId}.log"
 								 filePattern="logs/$${date:yyyy-MM}/learn-${ctx:userId}-%d{MM-dd-yyyy}-%i.log.gz">
 						<PatternLayout alwaysWriteExceptions="false">
-							<pattern>%d{HH:mm:ss.SSS} Test No. %X-4{testNo} [%-5level]: %msg%n</pattern>
+							<pattern>%d{HH:mm:ss.SSS} Test No. %4X{testNo} [%-5level]: %X{indent}%msg%n</pattern>
 						</PatternLayout>
 						<Policies>
 							<OnStartupTriggeringPolicy />
 							<SizeBasedTriggeringPolicy size="250 MB"/>
 						</Policies>
-						<DefaultRolloverStrategy max="5"/>
+						<DefaultRolloverStrategy max="2"/>
 					</RollingFile>
 				</Route>
 			</Routes>
@@ -42,11 +42,16 @@
         <Logger name="org.hibernate.type.descriptor.sql" level="off"/>
 
         <!-- Our own logger. -->
-        <Logger name="learner" level="trace">
+        <Logger name="de.learnlib.alex" level="trace">
+			<Filters>
+				<MarkerFilter marker="FLOW"    onMatch="DENY"   onMismatch="NEUTRAL"/>
+				<MarkerFilter marker="LEARNER" onMatch="ACCEPT" onMismatch="DENY"/>
+			</Filters>
 			<AppenderRef ref="LearnerAppender" />
 		</Logger>
-        <Logger name="server" level="info" />
-		<Logger name="de.learnlib.alex.rest" level="trace">
+
+		<Logger name="de.learnlib.alex.rest">
+			<MarkerFilter marker="FLOW" onMatch="ACCEPT" onMismatch="DENY"/>
 			<AppenderRef ref="Tracer" />
 		</Logger>
 	</Loggers>

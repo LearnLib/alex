@@ -23,6 +23,8 @@ import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.NoSuchElementException;
 
 import javax.persistence.DiscriminatorValue;
@@ -39,8 +41,9 @@ public class SetVariableByHTMLElementAction extends SetVariableAction {
     /** to be serializable. */
     private static final long serialVersionUID = -7654754471208209824L;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
@@ -50,9 +53,15 @@ public class SetVariableByHTMLElementAction extends SetVariableAction {
         try {
             String valueInTheNode = webSiteConnector.getElement(value).getText();
             storeConnector.set(name, valueInTheNode);
+
+            LOGGER.info(LEARNER_MARKER, "Set the variable '{}' to the value '{}' of the HTML node '{}' "
+                                + "(ignoreFailure: {}, negated: {}).",
+                        name, valueInTheNode, value, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info("Could not set the variable '" + name + "' to the value of the  HTML node '" + value + "'.");
+            LOGGER.info(LEARNER_MARKER, "Could not set the variable '{}' to the value of the HTML node '{}' "
+                                            + "(ignoreFailure: {}, negated: {}).",
+                        name, value, ignoreFailure, negated);
             return getFailedOutput();
         }
     }

@@ -21,6 +21,10 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -37,6 +41,10 @@ public class SetVariableAction extends SymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = 1935478771410953466L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The name of the variable to set a new value to. */
     @NotBlank
@@ -78,6 +86,9 @@ public class SetVariableAction extends SymbolAction {
     public ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         storeConnector.set(name, insertVariableValues(value));
+
+        LOGGER.info(LEARNER_MARKER, "Set the variable '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
+                    name, value, ignoreFailure, negated);
         return getSuccessOutput();
     }
 }

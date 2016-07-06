@@ -23,6 +23,8 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
@@ -49,8 +51,9 @@ public class CallAction extends RESTSymbolAction {
     /** to be serializable. */
     private static final long serialVersionUID = 7971257988991996022L;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enumeration to specify the HTTP method.
@@ -286,13 +289,13 @@ public class CallAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         try {
-            LOGGER.info("    Doing REST request '{} {}' (ignoreFailure : {}, negated: {}).",
+            LOGGER.info(LEARNER_MARKER, "Doing REST request '{} {}' (ignoreFailure: {}, negated: {}).",
                         method, url, ignoreFailure, negated);
 
             doRequest(target);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info("        Could not call {}.", getUrlWithVariableValues(), e);
+            LOGGER.info(LEARNER_MARKER, "Could not call {}.", getUrlWithVariableValues(), e);
             return getFailedOutput();
         }
     }
@@ -300,7 +303,7 @@ public class CallAction extends RESTSymbolAction {
     private void doRequest(WebServiceConnector target) {
         Map<String, String> requestHeaders = getHeadersWithVariableValues();
         if (credentials != null && credentials.areValid()) {
-            LOGGER.info("    Using credentials '{}'.", credentials);
+            LOGGER.info(LEARNER_MARKER, "Using credentials '{}'.", credentials);
             requestHeaders.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
         }
 
@@ -322,7 +325,8 @@ public class CallAction extends RESTSymbolAction {
                               getCookiesWithVariableValues());
                 break;
             default:
-                LOGGER.warn("        Tried to make a call to a REST API with an unknown method '{}'.", method.name());
+                LOGGER.error(LEARNER_MARKER, "Tried to make a call to a REST API with an unknown method '{}'.",
+                             method.name());
         }
     }
 

@@ -21,6 +21,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.utils.SearchHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.WebDriver;
 
@@ -34,6 +38,10 @@ import javax.persistence.Entity;
 @DiscriminatorValue("web_checkPageTitle")
 @JsonTypeName("web_checkPageTitle")
 public class CheckPageTitleAction extends WebSymbolAction {
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The title of the web page. */
     @NotBlank
@@ -87,7 +95,12 @@ public class CheckPageTitleAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         WebDriver driver = connector.getDriver();
-        if (SearchHelper.search(getTitleWithVariableValues(), driver.getTitle(), regexp)) {
+        boolean result = SearchHelper.search(getTitleWithVariableValues(), driver.getTitle(), regexp);
+
+        LOGGER.info(LEARNER_MARKER, "Check if the current pages has the title '{}' => {} "
+                                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+                    title, result, regexp, ignoreFailure, negated);
+        if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();

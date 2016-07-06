@@ -24,6 +24,8 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
@@ -41,8 +43,9 @@ public class GotoAction extends WebSymbolAction {
     /** to be serializable. */
     private static final long serialVersionUID = -9158530821188611940L;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The URL of the site. */
     private String url;
@@ -121,10 +124,12 @@ public class GotoAction extends WebSymbolAction {
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
             connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues());
-            LOGGER.info("Could goto '" + url + "'.");
+            LOGGER.info(LEARNER_MARKER, "Could goto '{}' (ignoreFailure: {}, negated: {}).",
+                        url, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info("Could not goto '" + url + "'.", e);
+            LOGGER.info(LEARNER_MARKER, "Could not goto '{}' (ignoreFailure: {}, negated: {}).",
+                        url, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

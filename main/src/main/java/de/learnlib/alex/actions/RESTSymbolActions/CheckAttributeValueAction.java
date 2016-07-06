@@ -22,6 +22,10 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.JSONHelpers;
 import de.learnlib.alex.utils.SearchHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -37,6 +41,10 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = -3411541294360335382L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The name of the attribute to check for. */
     @NotBlank
@@ -133,7 +141,13 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
         String body = target.getBody();
         String valueInTheBody = JSONHelpers.getAttributeValue(body, getAttributeWithVariableValues());
 
-        if (valueInTheBody != null && SearchHelper.search(getValueWithVariableValues(), valueInTheBody, regexp)) {
+        boolean result = valueInTheBody != null
+                            && SearchHelper.search(getValueWithVariableValues(), valueInTheBody, regexp);
+
+        LOGGER.info(LEARNER_MARKER, "Check if the attribute '{}' has the value '{}' in '{}' => {} "
+                                        + "(regexp: {}, ignoreFailure: {}, negated: {}).",
+                    attribute, value, body, result, regexp, ignoreFailure, negated);
+        if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();

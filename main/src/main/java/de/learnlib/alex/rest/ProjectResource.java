@@ -55,7 +55,6 @@ import java.util.List;
 @RolesAllowed({"REGISTERED"})
 public class ProjectResource {
 
-    /** The logger to use. */
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** Context information about the URI. */

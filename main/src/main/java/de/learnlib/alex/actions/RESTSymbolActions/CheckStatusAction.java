@@ -21,6 +21,8 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -36,8 +38,9 @@ public class CheckStatusAction extends RESTSymbolAction {
     /** to be serializable. */
     private static final long serialVersionUID = -4444604521120530087L;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The status code to check. */
     private int status;
@@ -64,10 +67,13 @@ public class CheckStatusAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         int returnedStatus = target.getStatus();
-        LOGGER.info("    Checking if the returned status code '{}' is equal to '{}' (ignoreFailure: {}, negated: {}).",
-                    returnedStatus, status, ignoreFailure, negated );
 
-        if (this.status == returnedStatus) {
+        boolean result = this.status == returnedStatus;
+
+        LOGGER.info(LEARNER_MARKER, "Checked if the returned status code '{}' is equal to '{}' => {}"
+                                        + "(ignoreFailure: {}, negated: {}).",
+                    returnedStatus, status, result, ignoreFailure, negated);
+        if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();

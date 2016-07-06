@@ -22,10 +22,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.entities.validators.UniqueSymbolAbbreviation;
 import de.learnlib.alex.core.entities.validators.UniqueSymbolName;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.utils.LoggerUtil;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
@@ -61,8 +65,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The maximum lenght of the abbreviation. */
     public static final int MAX_ABBREVIATION_LENGTH = 15;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER  = MarkerManager.getMarker("LEARNER");
 
     /** The ID of the Symbol in the DB. */
     @Id
@@ -427,6 +432,11 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) throws SULException {
+        LOGGER.info(LEARNER_MARKER, "Executing Symbol {} ({})...", idRevisionPair.toString(), name);
+        if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
+            LoggerUtil.increaseIndent();
+        }
+
         ExecuteResult result = ExecuteResult.OK;
         for (int i = 0; i < actions.size() && result == ExecuteResult.OK; i++) {
             SymbolAction action = actions.get(i);
@@ -440,8 +450,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             }
         }
 
-        LOGGER.info("Executed the Symbol " + idRevisionPair.toString() + " (" + name + ") "
-                    + "which returned '" + result + "'.");
+        if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
+            LoggerUtil.decreaseIndent();
+        }
+        LOGGER.info(LEARNER_MARKER, "Executed the Symbol {} ({}) => {}.", idRevisionPair.toString(), name, result);
         return result;
     }
 
@@ -449,7 +461,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         try {
             return action.executeAction(connector);
         } catch (Exception e) {
-            LOGGER.info("Error while executing the action '" + action + "' in the symbol '" + this + "':", e);
+            LOGGER.info(LEARNER_MARKER, "Error while executing the action '{}' in the symbol '{}':", action, this, e);
             return ExecuteResult.FAILED;
         }
     }
