@@ -9,14 +9,14 @@
         <div class="form-group">
             <label>Choose a symbol</label>
             <input class="form-control" list="symbolsList" type="text" placeholder="The name of the symbol"
-                   ng-model="vm.map.name" ng-change="vm.action.setSymbol(vm.map.name, vm.symbols)">
+                   ng-model="vm.name" ng-change="vm.action.setSymbol(vm.name, vm.symbols)">
             <datalist id="symbolsList">
                 <option ng-repeat="symbol in vm.symbols" value="{{symbol.name}}"></option>
             </datalist>
         </div>
     </div>
     <div class="col-xs-4">
-        <div class="form-group" ng-if="vm.map.name">
+        <div class="form-group" ng-if="vm.name">
             <label>Rev.</label>
             <input class="form-control" type="number" min="1" ng-model="vm.action.symbolToExecute.revision"
                    max="{{vm.action.getModel().maxRevision}}">
