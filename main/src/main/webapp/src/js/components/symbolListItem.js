@@ -36,7 +36,7 @@ class SymbolListItem {
          * Flag that indicates if the checkbox should be displayed.
          * @type {boolean}
          */
-        this.isSelectable = angular.isDefined($attrs.selectionModel);
+        this.isSelectable = typeof $attrs.selectionModel !== "undefined";
     }
 
     /**

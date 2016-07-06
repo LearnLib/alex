@@ -27,6 +27,8 @@ import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jose4j.json.internal.json_simple.JSONObject;
@@ -59,8 +61,12 @@ import java.util.List;
 @Path("/users")
 public class UserResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker USER_MARKER     = MarkerManager.getMarker("USER");
+    private static final Marker REST_MARKER     = MarkerManager.getMarker("REST");
+    private static final Marker RESOURCE_MARKER = MarkerManager.getMarker("USER_RESOURCE")
+                                                                    .setParents(USER_MARKER, REST_MARKER);
 
     /** The UserDAO to user. */
     @Inject
@@ -84,7 +90,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(User user) {
-        LOGGER.trace("UserResource.create(" + user + ").");
+        LOGGER.traceEntry("create({}).", user);
         try {
             // validate email address
             if (!new EmailValidator().isValid(user.getEmail(), null)) {
@@ -95,8 +101,10 @@ public class UserResource {
 
             // create user
             userDAO.create(user);
+            LOGGER.traceExit(user);
             return Response.status(Status.CREATED).entity(user).build();
         } catch (ValidationException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.BAD_REQUEST, e);
         }
     }
@@ -119,16 +127,19 @@ public class UserResource {
     @RolesAllowed({"REGISTERED"})
     public Response get(@PathParam("id") Long userId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("UserResource.get(" + userId + ") for user " + user + ".");
+        LOGGER.traceEntry("get({}) for user {}.", userId, user);
 
-        // only the user itself or an admin should be allow to view this
         if (!user.getRole().equals(UserRole.ADMIN) && !user.getId().equals(userId)) {
+            LOGGER.traceExit("only the user itself or an admin should be allowed to the account information.");
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", Status.FORBIDDEN, null);
         }
 
         try {
-            return Response.ok(userDAO.getById(userId)).build();
+            User userById = userDAO.getById(userId);
+            LOGGER.traceExit(userById);
+            return Response.ok(userById).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", Status.NOT_FOUND, e);
         }
     }
@@ -145,7 +156,12 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"ADMIN"})
     public Response getAll() {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("getAll() for user {}.", user);
+
         List<User> users = userDAO.getAll();
+
+        LOGGER.traceExit(users);
         return ResponseHelper.renderList(users, Status.OK);
     }
 
@@ -171,10 +187,10 @@ public class UserResource {
     @RolesAllowed({"REGISTERED"})
     public Response changePassword(@PathParam("id") Long userId, JSONObject json) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("UserResource.changePassword(" + userId + ", " + json + ") for user " + user + ".");
+        LOGGER.traceEntry("changePassword({}, {}) for user {}.", userId, json, user);
 
-        // only the user is allowed to change his own password
         if (!user.getId().equals(userId)) {
+            LOGGER.traceExit("Only the user is allowed to change his own password.");
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN, null);
         }
 
@@ -191,11 +207,15 @@ public class UserResource {
 
             realUser.setEncryptedPassword(newPassword);
             userDAO.update(realUser);
+
+            LOGGER.traceExit(realUser);
             return Response.ok(user).build();
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN, e);
         } catch (NotFoundException e) {
             // This should never happen!
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.NOT_FOUND, e);
         }
     }
@@ -224,10 +244,10 @@ public class UserResource {
     @RolesAllowed({"REGISTERED"})
     public Response changeEmail(@PathParam("id") Long userId, JSONObject json) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("UserResource.changeEmail(" + userId + ", " + json + ") for user " + user + ".");
+        LOGGER.traceEntry("changeEmail({}, {}) for user {}.", userId, json, user);
 
-        // only the user or an admin is allowed to change the email
         if (!user.getId().equals(userId) && !user.getRole().equals(UserRole.ADMIN)) {
+            LOGGER.traceExit("Only the user or an admin is allowed to change the email.");
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN, null);
         }
 
@@ -253,10 +273,13 @@ public class UserResource {
             realUser.setEmail(email);
             userDAO.update(realUser);
 
+            LOGGER.traceExit(realUser);
             return Response.ok(realUser).build();
         } catch (ValidationException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeEmail", Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeEmail", Status.NOT_FOUND, e);
         }
     }
@@ -280,15 +303,18 @@ public class UserResource {
     @RolesAllowed({"ADMIN"})
     public Response promoteUser(@PathParam("id") Long userId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("UserResource.promoteUser(" + userId + ") for user " + user + ".");
+        LOGGER.traceEntry("promoteUser({}) for user {}.", userId, user);
 
         try {
             User userToPromote = userDAO.getById(userId);
             userToPromote.setRole(UserRole.ADMIN);
             userDAO.update(userToPromote);
-            System.out.println("user promoted");
+            LOGGER.info(RESOURCE_MARKER, "User {} promoted.", user);
+
+            LOGGER.traceExit(userToPromote);
             return Response.ok(userToPromote).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.promoteUser", Status.NOT_FOUND, e);
         }
     }
@@ -328,10 +354,14 @@ public class UserResource {
             User userToDemote = userDAO.getById(userId);
             userToDemote.setRole(UserRole.REGISTERED);
             userDAO.update(userToDemote);
+
+            LOGGER.traceExit(userToDemote);
             return Response.ok(userToDemote).build();
         } catch (BadRequestException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.demoteUser", Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.demoteUser", Status.NOT_FOUND, e);
         }
     }
@@ -354,17 +384,21 @@ public class UserResource {
     @RolesAllowed({"REGISTERED"})
     public Response delete(@PathParam("id") long userId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("UserResource.delete(" + userId + ") for user " + user + ".");
+        LOGGER.traceEntry("delete({}) for user {}.", userId, user);
 
         if (!user.getId().equals(userId) && !user.getRole().equals(UserRole.ADMIN)) {
             UnauthorizedException e = new UnauthorizedException("You are not allowed to delete this user");
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.FORBIDDEN, e);
         }
 
         try {
             userDAO.delete(userId);
+
+            LOGGER.traceExit("User {} deleted.", userId);
             return Response.status(Status.NO_CONTENT).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.NOT_FOUND, e);
         }
     }
@@ -387,17 +421,21 @@ public class UserResource {
     @RolesAllowed({"ADMIN"})
     public Response delete(@PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("UserResource.delete(" + ids + ").");
+        LOGGER.traceEntry("delete({}) for user {}.", ids, user);
 
         if (ids.contains(user.getId())) {
             Exception e = new Exception("You cannot delete your own account this way.");
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.BAD_REQUEST, e);
         }
 
         try {
             userDAO.delete(ids);
+
+            LOGGER.traceExit("User(s) {} deleted.", ids);
             return Response.status(Status.NO_CONTENT).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.NOT_FOUND, e);
         }
     }
@@ -420,7 +458,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/login")
     public Response login(User user) {
-        LOGGER.trace("UserResource.login(" + user + ").");
+        LOGGER.traceEntry("login({}).", user);
 
         try {
             User realUser = userDAO.getByEmail(user.getEmail());
@@ -431,12 +469,17 @@ public class UserResource {
             }
 
             String json = "{\"token\": \"" + JWTHelper.generateJWT(realUser) + "\"}";
+
+            LOGGER.traceExit(json);
             return Response.ok(json).build();
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.UNAUTHORIZED, e);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.NOT_FOUND, e);
         } catch (JoseException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.INTERNAL_SERVER_ERROR, e);
         }
     }

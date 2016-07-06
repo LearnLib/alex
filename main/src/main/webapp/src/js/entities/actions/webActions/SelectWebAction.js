@@ -17,13 +17,12 @@
 import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
-/** Selects an entry from a select box */
+/** Selects an entry from a select box. */
 export class SelectWebAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WEB_SELECT, obj);
@@ -48,7 +47,7 @@ export class SelectWebAction extends Action {
     }
 
     /**
-     * Get the string representation of the action
+     * Get the string representation of the action.
      * @returns {string}
      */
     toString() {

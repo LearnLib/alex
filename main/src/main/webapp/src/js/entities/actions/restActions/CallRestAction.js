@@ -19,14 +19,13 @@ import {actionType} from '../../../constants';
 
 /**
  * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.
- * E.g. object.attribute.anotherAttribute
+ * E.g. object.attribute.anotherAttribute.
  */
 export class CallRestAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.REST_CALL, obj);
@@ -69,49 +68,49 @@ export class CallRestAction extends Action {
     }
 
     /**
-     * Adds a cookie to the action
+     * Adds a cookie to the action.
      *
-     * @param {string} key - The cookie key
-     * @param {string} value - The cookie value
+     * @param {string} key - The cookie key.
+     * @param {string} value - The cookie value.
      */
     addCookie(key, value) {
         this.cookies[key] = value;
     }
 
     /**
-     * Removes a cookie from the action
+     * Removes a cookie from the action.
      *
-     * @param {string} key - The key of the cookie
+     * @param {string} key - The key of the cookie.
      */
     removeCookie(key) {
-        if (angular.isDefined(this.cookies[key])) {
+        if (typeof this.cookies[key] !== "undefined") {
             delete this.cookies[key];
         }
     }
 
     /**
-     * Adds a header field entry to the action
+     * Adds a header field entry to the action.
      *
-     * @param {string} key - The Http header field name
-     * @param {string} value - The Http header field value
+     * @param {string} key - The Http header field name.
+     * @param {string} value - The Http header field value.
      */
     addHeader(key, value) {
         this.headers[key] = value;
     }
 
     /**
-     * Removes a header field entry
+     * Removes a header field entry.
      *
-     * @param {string} key - The key of the Http header entry
+     * @param {string} key - The key of the Http header entry.
      */
     removeHeader(key) {
-        if (angular.isDefined(this.headers[key])) {
+        if (typeof this.headers[key] !== "undefined") {
             delete this.headers[key];
         }
     }
 
     /**
-     * A string presentation of the actions
+     * A string presentation of the actions.
      * @returns {string}
      */
     toString() {

@@ -17,13 +17,12 @@
 import {Action} from '../Action';
 import {actionType} from '../../../constants';
 
-/** Fills an input element with a value */
+/** Fills an input element with a value. */
 export class FillWebAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WEB_FILL, obj);
@@ -42,7 +41,7 @@ export class FillWebAction extends Action {
     }
 
     /**
-     * The string representation of the action
+     * The string representation of the action.
      * @returns {string}
      */
     toString() {

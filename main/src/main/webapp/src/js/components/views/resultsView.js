@@ -86,7 +86,7 @@ class ResultsView {
         if (this.selectedResults.length > 0) {
             this.PromptService.confirm("Do you want to permanently delete theses results? Changes cannot be undone.")
                 .then(() => {
-                    this.LearnResultResource.remove(this.selectedResults)
+                    this.LearnResultResource.removeMany(this.selectedResults)
                         .then(() => {
                             this.ToastService.success('Learn results deleted');
                             this.selectedResults.forEach(result => {

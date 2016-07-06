@@ -157,9 +157,9 @@ class SymbolsActionsView {
      */
     updateAction(updatedAction) {
         const action = this.symbol.actions.find(a => a._id === updatedAction._id);
-        _.forIn(action, (v, k) => {
-            action[k] = updatedAction[k];
-        });
+        for (let prop in action) {
+            action[prop] = updatedAction[prop];
+        }
         this.ToastService.success('Action updated');
         this.hasChanged = true;
     }

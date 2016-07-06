@@ -36,6 +36,8 @@ import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -62,8 +64,12 @@ import java.util.List;
 @RolesAllowed({"REGISTERED"})
 public class LearnerResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER  = MarkerManager.getMarker("LEARNER");
+    private static final Marker REST_MARKER     = MarkerManager.getMarker("REST");
+    private static final Marker RESOURCE_MARKER = MarkerManager.getMarker("LEARNER_RESOURCE")
+                                                                    .setParents(LEARNER_MARKER, REST_MARKER);
 
     /** The {@link ProjectDAO} to use. */
     @Inject
@@ -105,7 +111,7 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("LearnerResource.start(" + projectId + ", " + configuration +  ") for user " + user + ".");
+        LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
 
         try {
             if (
@@ -120,12 +126,17 @@ public class LearnerResource {
 
             learner.start(user, project, configuration);
             LearnerStatus status = learner.getStatus(user);
+
+            LOGGER.traceExit(status);
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.NOT_MODIFIED, e);
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.NOT_FOUND, e);
         }
     }
@@ -155,33 +166,39 @@ public class LearnerResource {
     public Response resume(@PathParam("project_id") long projectId, @PathParam("test_run") long testRunNo,
                            LearnerResumeConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("LearnerResource.resume(" + projectId + ", " + testRunNo + ", " + configuration +  ") "
-                     + "for user " + user + ".");
+        LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testRunNo, configuration, user);
 
         try {
             projectDAO.getByID(user.getId(), projectId); // check if project exists
 
             LearnerResult lastResult = learner.getResult(user);
             if (lastResult == null) {
+                LOGGER.traceExit("No last result to resume found!");
                 return Response.status(Status.NOT_FOUND).build();
             }
 
             if (lastResult.getProjectId() != projectId || lastResult.getTestNo() != testRunNo) {
-                LOGGER.info("could not resume the learner of another project or with an wrong test run.");
+                LOGGER.info(RESOURCE_MARKER,
+                            "could not resume the learner of another project or with an wrong test run.");
                 throw new IllegalArgumentException("The given project id or test no does not match "
                                                            + "with the latest learn result!");
             }
 
             learner.resume(user, configuration);
             LearnerStatus status = learner.getStatus(user);
+
+            LOGGER.traceExit(status);
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
-            LOGGER.info("tried to restart the learning while the learner is running.");
+            LOGGER.info(RESOURCE_MARKER, "tried to restart the learning while the learner is running.");
+            LOGGER.traceExit(e);
             LearnerStatus status = learner.getStatus(user);
             return Response.status(Status.NOT_MODIFIED).entity(status).build();
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.resume", Status.BAD_REQUEST, e);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.NOT_FOUND, e);
         }
     }
@@ -201,14 +218,16 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response stop() {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("LearnerResource.stop() for user " + user + ".");
+        LOGGER.traceEntry("stop() for user {}.", user);
 
         if (learner.isActive(user)) {
             learner.stop(user); // Hammer Time
         } else {
-            LOGGER.info("tried to stop the learning again.");
+            LOGGER.info(RESOURCE_MARKER, "tried to stop the learning again.");
         }
         LearnerStatus status = learner.getStatus(user);
+
+        LOGGER.traceExit(status);
         return Response.ok(status).build();
     }
 
@@ -224,9 +243,11 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response isActive() {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("LearnerResource.isActive() for user " + user + ".");
+        LOGGER.traceEntry("isActive() for user {}.", user);
 
         LearnerStatus status = learner.getStatus(user);
+
+        LOGGER.traceExit(status);
         return Response.ok(status).build();
     }
 
@@ -243,11 +264,12 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getResult() {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("LearnerResource.getResult() for user " + user + ".");
+        LOGGER.traceEntry("getResult() for user {}.", user);
 
         LearnerResult resultInThread = learner.getResult(user);
         if (resultInThread == null) {
             IllegalStateException e = new IllegalStateException("No result was learned in this instance of ALEX.");
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.status", Status.NOT_FOUND, e);
         }
 
@@ -256,9 +278,11 @@ public class LearnerResource {
                                  resultInThread.getTestNo(), false);
         } catch (NotFoundException nfe) {
             IllegalArgumentException e = new IllegalArgumentException("The last learned result was deleted.");
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.status", Status.NOT_FOUND, e);
         }
 
+        LOGGER.traceExit(resultInThread);
         return Response.ok(resultInThread).build();
     }
 
@@ -282,7 +306,7 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("LearnerResource.readOutput(" + projectId + ", " + symbolSet + ") for user " + user + ".");
+        LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, symbolSet, user);
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);
@@ -299,10 +323,13 @@ public class LearnerResource {
 
             List<String> results = learner.readOutputs(user, project, resetSymbol, symbols);
 
+            LOGGER.traceExit(results);
             return ResponseHelper.renderList(results, Status.OK);
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.NOT_FOUND, e);
         } catch (LearnerException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
         }
     }

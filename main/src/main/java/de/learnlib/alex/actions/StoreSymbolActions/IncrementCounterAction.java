@@ -21,6 +21,10 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -33,6 +37,10 @@ import javax.persistence.Entity;
 @DiscriminatorValue("incrementCounter")
 @JsonTypeName("incrementCounter")
 public class IncrementCounterAction extends SymbolAction {
+
+    private static final Logger LOGGER = LogManager.getLogger("learner");
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The name of the counter to increment. */
     @NotBlank
@@ -61,6 +69,9 @@ public class IncrementCounterAction extends SymbolAction {
     public ExecuteResult execute(ConnectorManager connector) {
         CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
         storeConnector.increment(user.getId(), project.getId(), name);
+
+        LOGGER.info(LEARNER_MARKER, "Incremented counter '{}' (ignoreFailure: {}, negated: {}).",
+                    name, ignoreFailure, negated);
         return getSuccessOutput();
     }
 }

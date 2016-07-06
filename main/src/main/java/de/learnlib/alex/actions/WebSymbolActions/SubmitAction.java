@@ -21,6 +21,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.utils.CSSUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -38,6 +42,10 @@ public class SubmitAction extends WebSymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = 3054489976413991003L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The information to identify the element. */
     @NotBlank
@@ -78,8 +86,13 @@ public class SubmitAction extends WebSymbolAction {
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
             connector.getElement(CSSUtils.escapeSelector(getNodeWithVariableValues())).submit();
+
+            LOGGER.info(LEARNER_MARKER, "Submitted '{}' (ignoreFailure: {}, negated: {}).",
+                        node, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
+            LOGGER.info(LEARNER_MARKER, "Could not submit '{}' (ignoreFailure: {}, negated: {}).",
+                        node, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

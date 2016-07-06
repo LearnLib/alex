@@ -57,7 +57,7 @@ class DiscriminationTreeComponent {
         // render the new discrimination tree when property 'data' changes
         $scope.$watch('vm.data', data => {
             if (data) {
-                const graph = this.createGraph(angular.fromJson(data));
+                const graph = this.createGraph(JSON.parse(data));
                 this.layout(graph);
                 this.render();
             }

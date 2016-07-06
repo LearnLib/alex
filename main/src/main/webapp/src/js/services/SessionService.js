@@ -40,7 +40,7 @@ export class SessionService {
      */
     getProject() {
         const project = sessionStorage.getItem('project');
-        return project === null ? null : new Project(angular.fromJson(project));
+        return project === null ? null : new Project(JSON.parse(project));
     }
 
     /**
@@ -48,7 +48,7 @@ export class SessionService {
      * @param {Project} project
      */
     saveProject(project) {
-        sessionStorage.setItem('project', angular.toJson(project));
+        sessionStorage.setItem('project', JSON.stringify(project));
         this.EventBus.emit(events.PROJECT_OPENED, {project: project});
     }
 
@@ -60,7 +60,7 @@ export class SessionService {
     /** Gets the instance of the user that is logged in **/
     getUser() {
         const user = sessionStorage.getItem('user');
-        return user === null ? null : new User(angular.fromJson(user));
+        return user === null ? null : new User(JSON.parse(user));
     }
 
     /**
@@ -69,7 +69,7 @@ export class SessionService {
      * @param {object|null} jwt
      */
     saveUser(user, jwt = null) {
-        sessionStorage.setItem('user', angular.toJson(user));
+        sessionStorage.setItem('user', JSON.stringify(user));
         if (jwt) sessionStorage.setItem('jwt', jwt);
         this.EventBus.emit(events.USER_LOGGED_IN, {user: user});
     }

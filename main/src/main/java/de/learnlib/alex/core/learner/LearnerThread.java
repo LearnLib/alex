@@ -45,6 +45,9 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+import org.apache.logging.log4j.ThreadContext;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -56,10 +59,9 @@ import java.util.Set;
  */
 public class LearnerThread extends Thread {
 
-    /**
-     * Use the learner logger.
-     */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Is the thread still running?
@@ -245,12 +247,16 @@ public class LearnerThread extends Thread {
 
     @Override
     public void run() {
-        LOGGER.trace("LearnThread.run() - enter");
+        ThreadContext.put("userId", String.valueOf(result.getUserId()));
+        ThreadContext.put("testNo", String.valueOf(result.getTestNo()));
+        ThreadContext.put("indent", "");
+        LOGGER.traceEntry();
+        LOGGER.info(LEARNER_MARKER, "Started a learn thread.");
 
         try {
             learn();
         } catch (Exception e) {
-            LOGGER.warn("Something in the LearnerThread went wrong:", e);
+            LOGGER.warn(LEARNER_MARKER, "Something in the LearnerThread went wrong:", e);
 
             String message = e.getMessage();
             if (message == null) {
@@ -261,9 +267,9 @@ public class LearnerThread extends Thread {
 
             sul.post();
         } finally {
-            LOGGER.trace("LearnThread.run() - exit");
             finished = true;
-
+            LOGGER.info(LEARNER_MARKER, "The learn thread has finished.");
+            LOGGER.traceExit();
         }
     }
 
@@ -277,9 +283,11 @@ public class LearnerThread extends Thread {
     }
 
     private void learn() throws NotFoundException {
+        LOGGER.traceEntry();
         do {
             learnOneStep();
         } while (continueLearning());
+        LOGGER.traceExit();
     }
 
     private boolean continueLearning() {
@@ -289,7 +297,7 @@ public class LearnerThread extends Thread {
     }
 
     private void learnOneStep() throws NotFoundException {
-        LOGGER.trace("LearnerThread.learnOneStep()");
+        LOGGER.traceEntry();
 
         if (result.getStatistics().getDuration() == 0L) {
             learnFirstStep();
@@ -298,10 +306,13 @@ public class LearnerThread extends Thread {
         }
 
         rememberMetaData();
+
+        LOGGER.traceExit();
     }
 
     private void learnFirstStep() {
-        LOGGER.trace("LearnerThread.learnFirstStep()");
+        LOGGER.traceEntry();
+
         Statistics statistics = currentStep.getStatistics();
         statistics.setStartDate(ZonedDateTime.now());
         statistics.setStartTime(System.nanoTime());
@@ -311,6 +322,8 @@ public class LearnerThread extends Thread {
         learner.startLearning();
         result.createHypothesisFrom(learner.getHypothesisModel());
         findAndRememberCounterExample();
+
+        LOGGER.traceExit();
     }
 
     private void learnSuccessiveStep() throws NotFoundException {
@@ -354,7 +367,7 @@ public class LearnerThread extends Thread {
         } else {
             currentStep.setCounterExample(DefaultQueryProxy.createFrom(newCounterExample));
         }
-        LOGGER.info("The new counter example is '" + newCounterExample + "'.");
+        LOGGER.info(LEARNER_MARKER, "The new counter example is '{}'.", newCounterExample);
     }
 
     private void rememberMetaData() throws NotFoundException {
@@ -367,8 +380,8 @@ public class LearnerThread extends Thread {
         currentStep.createHypothesisFrom(learner.getHypothesisModel());
 
         statistics.setDuration(currentTime - startTime);
-        LOGGER.debug("Duration of the learning: " + statistics.getDuration() + " "
-                     + "(start: " + startTime + ", end: " + currentTime + ").");
+        LOGGER.info(LEARNER_MARKER, "Duration of the learning: {} (start: {}, end: {}).",
+                    statistics.getDuration(), startTime, currentTime);
 
         long mqUsedDiff = resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed();
         statistics.setMqsUsed(mqUsedDiff);

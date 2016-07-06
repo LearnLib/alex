@@ -20,7 +20,7 @@
 export class DownloadService {
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param $document
      */
@@ -32,10 +32,9 @@ export class DownloadService {
     /**
      * Downloads a file.
      *
-     * @param {string} filename - The name of the file
-     * @param {string} fileExtension - The file extension of the file
-     * @param {string} href - The contents of the href attribute which holds the data of the file
-     * @private
+     * @param {string} filename - The name of the file.
+     * @param {string} fileExtension - The file extension of the file.
+     * @param {string} href - The contents of the href attribute which holds the data of the file.
      */
     download(filename, fileExtension, href) {
 
@@ -55,11 +54,11 @@ export class DownloadService {
     /**
      * Downloads a javascript object as a json file.
      *
-     * @param {object} obj - The javascript object or array
-     * @param {string} filename - The name of the file to download
+     * @param {object} obj - The javascript object or array.
+     * @param {string} filename - The name of the file to download.
      */
     downloadObject(obj, filename) {
-        const href = 'data:text/json;charset=utf-8,' + encodeURIComponent(angular.toJson(obj));
+        const href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj));
         this.download(filename, 'json', href);
     }
 
@@ -67,8 +66,8 @@ export class DownloadService {
      * Downloads the table given by the selector. The selector can also be a parent element of the table.
      * It is then searched for child elements that are table elements.
      *
-     * @param {string} selector - The selector of a table or a parent of a table
-     * @param {string} filename - The name of the file to download
+     * @param {string} selector - The selector of a table or a parent of a table.
+     * @param {string} filename - The name of the file to download.
      */
     downloadTable(selector, filename) {
         let table = null;
@@ -109,8 +108,8 @@ export class DownloadService {
     /**
      * Downloads csv formatted data.
      *
-     * @param {string} data - The csv formatted data
-     * @param {string} filename - The name of the file
+     * @param {string} data - The csv formatted data.
+     * @param {string} filename - The name of the file.
      */
     downloadCsv(data, filename) {
         const href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(data);
@@ -121,9 +120,9 @@ export class DownloadService {
      * Downloads the svg given as the selector. The selector can also be a parent element of the svg.
      * It is then searched for child elements that are svg elements.
      *
-     * @param {string} selector - The selector of the svg or an parent of the svg
-     * @param {boolean} adjustSize - If the svg content should be resized to the svg element dimensions
-     * @param {string} filename - The name of the file to download
+     * @param {string} selector - The selector of the svg or an parent of the svg.
+     * @param {boolean} adjustSize - If the svg content should be resized to the svg element dimensions.
+     * @param {string} filename - The name of the file to download.
      */
     downloadSvg(selector, adjustSize, filename) {
         let svg = null;

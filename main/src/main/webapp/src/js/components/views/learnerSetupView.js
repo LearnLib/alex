@@ -155,7 +155,7 @@ class LearnerSetupView {
 
                 // start learning
                 this.LearnerResource.start(this.project.id, this.learnConfiguration)
-                    .success(() => {
+                    .then(() => {
                         this.ToastService.success('Learn process started successfully.');
                         this.$state.go('learnerStart');
                     })

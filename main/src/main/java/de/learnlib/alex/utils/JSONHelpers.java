@@ -16,21 +16,22 @@
 
 package de.learnlib.alex.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.jayway.jsonpath.InvalidJsonException;
+import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.actions.RESTSymbolActions.CheckAttributeTypeAction.JsonType;
+import net.minidev.json.JSONArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
+import java.util.LinkedHashMap;
 
 /**
  * Helper class for some JSON stuff.
  */
 public final class JSONHelpers {
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Disabled default constructor, this is only a utility class with static methods.
@@ -49,19 +50,14 @@ public final class JSONHelpers {
      */
     public static String getAttributeValue(String json, String attribute) {
         try {
-            JsonNode node = getNodeByAttribute(json, attribute);
-            if (node == null) {
-                LOGGER.info("Could not extract the value of the attribute '" + attribute + "' "
-                            + "in the body '" + json + "'.");
-                return  null;
-            } else {
-                String value = node.asText();
-                LOGGER.info("The attribute '" + attribute + "' has the value '" + value + "' "
-                            + " in the body '" + json + "'.");
-                return value;
-            }
-        } catch (IOException e) {
-            LOGGER.info("Could not pares the JSON to get the value of an attribute.", e);
+            String value = String.valueOf(getParsedAttributeValue(json, attribute));
+            LOGGER.info("The attribute '{}' has the value '{}' in the body '{}'.", attribute, value, json);
+            return value;
+        } catch (InvalidJsonException e) {
+            LOGGER.info("JSON was not valid, e.g. the body was empty.", e);
+            return null;
+        } catch (InvalidPathException e) {
+            LOGGER.info("Could not parse the JSON to get the value of an attribute.", e);
             return null;
         }
     }
@@ -75,50 +71,42 @@ public final class JSONHelpers {
      *         The attribute to search for.
      * @return The type of the attribute or null.
      */
-    public static JsonNodeType getAttributeType(String json, String attribute) {
+    public static JsonType getAttributeType(String json, String attribute) {
         try {
-            JsonNode node = getNodeByAttribute(json, attribute);
-            if (node == null) {
-                LOGGER.info("Could not extract the type of the attribute '" + attribute + "' "
-                            + "in the body '" + json + "'.");
-                return  null;
+            Object o = getParsedAttributeValue(json, attribute);
+            if (o == null) {
+                return JsonType.NULL;
+            } else if (o instanceof String) {
+                return JsonType.STRING;
+            } else if (o instanceof Integer || o instanceof Double) {
+                return JsonType.INTEGER;
+            } else if (o instanceof JSONArray) {
+                return JsonType.ARRAY;
+            } else if (o instanceof LinkedHashMap) {
+                return JsonType.OBJECT;
+            } else if (o instanceof Boolean) {
+                return JsonType.BOOLEAN;
             } else {
-                JsonNodeType nodeType = node.getNodeType();
-                LOGGER.info("The attribute '" + attribute + "' has the type '" + nodeType + "' "
-                                    + " in the body '" + json + "'.");
-                return nodeType;
+                LOGGER.info("Unsupported JSON type.");
+                return null;
             }
-        } catch (IOException e) {
-            LOGGER.info("Could not pares the JSON to get the type of an attribute.", e);
+        } catch (InvalidJsonException e) {
+            LOGGER.info("JSON was not valid, e.g. the body was empty.", e);
+            return null;
+        } catch (InvalidPathException e) {
+            LOGGER.info("Could not parse the JSON to get the type of an attribute.", e);
             return null;
         }
     }
 
-    private static JsonNode getNodeByAttribute(String json, String attribute) throws IOException {
-        if (!isValidJSONPath(attribute)) {
-            throw new IllegalArgumentException("The attribute '" + attribute + "' is not a valid JSON path!");
+    private static Object getParsedAttributeValue(String json, String attribute)
+            throws InvalidJsonException, InvalidPathException {
+        if (json.startsWith("[")) {
+            return JsonPath.read(json, "$" + attribute);
+        } else if (json.startsWith("{")) {
+            return JsonPath.read(json, "$." + attribute);
+        } else {
+            throw new InvalidJsonException();
         }
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode current = mapper.readTree(json);
-
-        // split on field separators ('.') and array indexes ('[')
-        String[] attributes = attribute.split("\\.|\\["); // "\\" is required because it uses regex
-
-        for (int i = 0; i < attributes.length && current != null; i++) {
-            if (attributes[i].endsWith("]")) { // array index
-                int arrayIndex = Integer.parseInt(attributes[i].substring(0, attributes[i].length() - 1));
-                current = current.get(arrayIndex);
-            } else { // simple attribute name
-                current = current.get(attributes[i]);
-            }
-        }
-
-        return current;
     }
-
-    private static boolean isValidJSONPath(String attribute) {
-        return attribute.matches("^[a-zA-Z0-9-_]+(\\[[0-9]+\\])*(\\.[a-zA-Z0-9-_]+(\\[[0-9]+\\])*)*$");
-    }
-
 }

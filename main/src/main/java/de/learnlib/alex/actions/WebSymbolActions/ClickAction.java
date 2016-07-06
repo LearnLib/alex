@@ -21,6 +21,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.utils.CSSUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -43,6 +47,10 @@ public class ClickAction extends WebSymbolAction {
      * to be serializable.
      */
     private static final long serialVersionUID = -9158530821188611940L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * The information to identify the element.
@@ -113,8 +121,15 @@ public class ClickAction extends WebSymbolAction {
             } else {
                 element.click();
             }
+
+            LOGGER.info(LEARNER_MARKER, "Clicked on the element '{}' "
+                                            + "(doubleClick: {}, ignoreFailure: {}, negated: {}).",
+                        node, doubleClick, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
+            LOGGER.info(LEARNER_MARKER, "Could not click on the element '{}' "
+                                            + "(doubleClick: {}, ignoreFailure: {}, negated: {}).",
+                        node, doubleClick, ignoreFailure, negated);
             return getFailedOutput();
         }
     }

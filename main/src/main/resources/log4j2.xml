@@ -4,8 +4,32 @@
 		<Console name="Console" target="SYSTEM_OUT">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
 		</Console>
+		<Console name="Tracer" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %C.%M (%L) - %msg%n" />
+		</Console>
+		<Routing name="LearnerAppender">
+			<Routes pattern="$${ctx:userId}">
+				<Route>
+					<RollingFile name="LearnerFile-${ctx:userId}" fileName="logs/learn-${ctx:userId}.log"
+								 filePattern="logs/$${date:yyyy-MM}/learn-${ctx:userId}-%d{MM-dd-yyyy}-%i.log.gz">
+						<PatternLayout alwaysWriteExceptions="false">
+							<pattern>%d{HH:mm:ss.SSS} Test No. %4X{testNo} [%-5level]: %X{indent}%msg%n</pattern>
+						</PatternLayout>
+						<Policies>
+							<OnStartupTriggeringPolicy />
+							<SizeBasedTriggeringPolicy size="250 MB"/>
+						</Policies>
+						<DefaultRolloverStrategy max="2"/>
+					</RollingFile>
+				</Route>
+			</Routes>
+		</Routing>
 	</Appenders>
 	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="Console" />
+		</Root>
+
         <!-- Loggers of the dependencies. -->
         <Logger name="com.gargoylesoftware.htmlunit" level="warn"/>
         <Logger name="hsqldb.db" level="warn"/>
@@ -18,11 +42,17 @@
         <Logger name="org.hibernate.type.descriptor.sql" level="off"/>
 
         <!-- Our own logger. -->
-        <Logger name="learner" level="trace" />
-        <Logger name="server" level="info" />
+        <Logger name="de.learnlib.alex" level="trace">
+			<Filters>
+				<MarkerFilter marker="FLOW"    onMatch="DENY"   onMismatch="NEUTRAL"/>
+				<MarkerFilter marker="LEARNER" onMatch="ACCEPT" onMismatch="DENY"/>
+			</Filters>
+			<AppenderRef ref="LearnerAppender" />
+		</Logger>
 
-		<Root level="info">
-			<AppenderRef ref="Console" />
-		</Root>
+		<Logger name="de.learnlib.alex.rest">
+			<MarkerFilter marker="FLOW" onMatch="ACCEPT" onMismatch="DENY"/>
+			<AppenderRef ref="Tracer" />
+		</Logger>
 	</Loggers>
 </Configuration>

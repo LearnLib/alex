@@ -27,7 +27,6 @@ export class MoveMouseAction extends Action {
      * Constructor.
      *
      * @param {object} obj - The object to create the action from.
-     * @constructor
      */
     constructor(obj) {
         super(actionType.WEB_MOUSE_MOVE, obj);
@@ -50,7 +49,7 @@ export class MoveMouseAction extends Action {
     }
 
     /**
-     * Get the string representation of the action
+     * Get the string representation of the action.
      * @returns {string}
      */
     toString() {
