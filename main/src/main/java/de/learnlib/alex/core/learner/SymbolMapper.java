@@ -38,8 +38,7 @@ import java.util.Map;
 public class SymbolMapper
         implements Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Map to manage the symbols according to their name in the Alphabet. */
     private Map<String, Symbol> symbols;

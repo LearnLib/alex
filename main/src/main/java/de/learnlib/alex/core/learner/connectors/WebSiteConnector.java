@@ -43,8 +43,7 @@ public class WebSiteConnector implements Connector {
     /** Max. time to wait for JavaScript to load before aborting */
     private static final int JAVASCRIPT_LOADING_THRESHOLD = 5000; // 5 seconds
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("leaner");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The browser to use. */
     private WebBrowser browser;

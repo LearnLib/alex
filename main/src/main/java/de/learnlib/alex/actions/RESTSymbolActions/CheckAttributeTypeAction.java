@@ -22,6 +22,10 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.JSONHelpers;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -38,6 +42,10 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = 6962742356381266855L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enumeration to refer to a type of a JSON field.
@@ -149,7 +157,12 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
         String body = target.getBody();
         JsonType typeInBody = JSONHelpers.getAttributeType(body, getAttributeWithVariableValues());
 
-        if (typeInBody != null && typeInBody.equals(jsonType)) {
+        boolean result = typeInBody != null && typeInBody.equals(jsonType);
+
+        LOGGER.info(LEARNER_MARKER, "Check if the attribute '{}' has the type '{}' in '{}' => {} "
+                            + "(ignoreFailure: {}, negated: {}).",
+                    attribute, jsonType, body, result, ignoreFailure, negated);
+        if (result) {
             return getSuccessOutput();
         } else {
             return  getFailedOutput();

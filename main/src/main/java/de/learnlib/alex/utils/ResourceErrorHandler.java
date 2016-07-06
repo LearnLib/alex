@@ -95,8 +95,7 @@ public final class ResourceErrorHandler {
 
     }
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Deactivated constructor because this is a helper class.

@@ -21,6 +21,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.SearchHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -36,6 +40,10 @@ public class CheckTextRestAction extends RESTSymbolAction {
 
     /** to be serializable. */
     private static final long serialVersionUID = -681951086735590790L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The expected text in the response body of the last request. */
     @NotBlank
@@ -95,7 +103,13 @@ public class CheckTextRestAction extends RESTSymbolAction {
 
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
-        if (SearchHelper.search(getValueWithVariableValues(), target.getBody(), regexp)) {
+        String body = target.getBody();
+        boolean result = SearchHelper.search(getValueWithVariableValues(), body, regexp);
+
+        LOGGER.info(LEARNER_MARKER, "Check if the value '{}' is in '{}' => {} "
+                                        + "(regexp: {}, ignoreFailure: {}, negated: {}).",
+                    value, value, body, result, regexp, ignoreFailure, negated);
+        if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();

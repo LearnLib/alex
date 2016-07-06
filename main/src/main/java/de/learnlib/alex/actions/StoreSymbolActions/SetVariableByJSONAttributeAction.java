@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.actions.StoreSymbolActions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
@@ -25,10 +24,11 @@ import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.JSONHelpers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 
 /**
  * Action to set a variable to a value received from an element of the current (JSON) body.
@@ -38,10 +38,9 @@ import javax.persistence.Transient;
 @JsonTypeName("setVariableByJSON")
 public class SetVariableByJSONAttributeAction extends SetVariableAction {
 
-    /** Use the learner logger. */
-    @Transient
-    @JsonIgnore
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
@@ -52,9 +51,9 @@ public class SetVariableByJSONAttributeAction extends SetVariableAction {
         String valueInTheBody = JSONHelpers.getAttributeValue(body, value);
 
         if (valueInTheBody == null) {
-            LOGGER.info("Could not set the variable '" + name + "' to the value of the "
-                        + "JSON attribute '" + value + "' in the body '" + body + "' "
-                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+            LOGGER.info(LEARNER_MARKER, "Could not set the variable '{}' to the value of the  JSON attribute '{}' "
+                            + "in the body '{}' (ignoreFailure: {}, negated: {}).",
+                        name, value, ignoreFailure, negated);
             return getFailedOutput();
         }
 

@@ -27,8 +27,7 @@ import java.util.Map;
  */
 public class VariableStoreConnector implements Connector {
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The variable store. */
     private Map<String, String> store;
@@ -60,7 +59,7 @@ public class VariableStoreConnector implements Connector {
      */
     public void set(String name, String value) {
         store.put(name, value);
-        LOGGER.debug("Set the variable '" + name + "' to the value '" + value + "'.");
+        LOGGER.debug("Set the variable '{}' to the value '{}'.", name, value);
     }
 
     /**
@@ -89,7 +88,7 @@ public class VariableStoreConnector implements Connector {
             throw new IllegalStateException("The variable '" + name + "' was not set and has no value!");
         }
 
-        LOGGER.debug("Got the variable '" + name + "' with the value '" + result + "'.");
+        LOGGER.debug("Got the variable '{}' with the value '{}'.", name, result);
 
         return result;
     }

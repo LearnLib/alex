@@ -53,8 +53,7 @@ import java.util.List;
 @RolesAllowed({"REGISTERED"})
 public class FileResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The security context containing the user of the request. */
     @Context
@@ -79,8 +78,7 @@ public class FileResource {
                                @FormDataParam("file") InputStream uploadedInputStream,
                                @FormDataParam("file") FormDataContentDisposition fileDetail) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("FileResource.uploadFile(" + projectId + ", " + uploadedInputStream + ", " + fileDetail + ") "
-                     + "for user " + user + ".");
+        LOGGER.traceEntry("uploadFile({}, {}, {}) for user {}.", projectId, uploadedInputStream, fileDetail, user);
 
         try {
             fileDAO.create(user.getId(), projectId, uploadedInputStream, fileDetail);
@@ -89,13 +87,17 @@ public class FileResource {
             result.setName(fileDetail.getFileName());
             result.setProjectId(projectId);
 
+            LOGGER.traceExit(result);
             return Response.ok(result).build();
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", Response.Status.NOT_FOUND, e);
         } catch (IOException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile",
                                                                Response.Status.INTERNAL_SERVER_ERROR, e);
         } catch (IllegalStateException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile",
                                                                Response.Status.BAD_REQUEST, e);
         }
@@ -111,12 +113,15 @@ public class FileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllFiles(@PathParam("project_id") Long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("FileResource.getAllFiles(" + projectId + ") for user " + user + ".");
+        LOGGER.traceEntry("getAllFiles({}) for user {}.", projectId, user);
 
         try {
             List<UploadableFile> allFiles = fileDAO.getAll(user.getId(), projectId);
+
+            LOGGER.traceExit(allFiles);
             return Response.ok(allFiles).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("FileResource.getAllFiles",
                                                                Response.Status.NOT_FOUND, e);
         }
@@ -134,12 +139,15 @@ public class FileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteOneFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String fileName) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("FileResource.deleteOneFile(" + projectId + ", " + fileName + ") for user " + user + ".");
+        LOGGER.traceEntry("deleteOneFile({}, {}) for user {}.", projectId, fileName, user);
 
         try {
             fileDAO.delete(user.getId(), projectId, fileName);
+
+            LOGGER.traceExit("File deleted.");
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", Response.Status.NOT_FOUND, e);
         }
     }

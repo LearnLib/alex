@@ -24,8 +24,12 @@ import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.utils.LoggerUtil;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -46,8 +50,9 @@ public class ExecuteSymbolAction extends SymbolAction {
      */
     private static final long serialVersionUID = 3143716533295082498L;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Reference to the Symbol that will be executed.
@@ -148,17 +153,23 @@ public class ExecuteSymbolAction extends SymbolAction {
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         if (symbolToExecute == null) {
-            LOGGER.info("    No other Symbol to execute was set (ignoreFailure : {}, negated: {}).",
+            LOGGER.info(LEARNER_MARKER, "No other Symbol to execute was set (ignoreFailure: {}, negated: {}).",
                         ignoreFailure, negated);
             return getFailedOutput();
         }
-        LOGGER.info("    Executing other Symbol <{}:{}> (ignoreFailure: {}, negated: {}).",
+        LOGGER.info(LEARNER_MARKER, "Executing other Symbol <{}:{}> (ignoreFailure: {}, negated: {}).",
                     symbolToExecute.getId(), symbolToExecute.getRevision(), ignoreFailure, negated);
+        if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
+            LoggerUtil.increaseIndent();
+        }
 
         ExecuteResult symbolResult = symbolToExecute.execute(connector);
-        LOGGER.info("    Executed other Symbol <{}:{}> with the result of '{}' (ignoreFailure: {}, negated: {}).",
-                    symbolToExecute.getId(), symbolToExecute.getRevision(), symbolResult , ignoreFailure, negated);
 
+        if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
+            LoggerUtil.decreaseIndent();
+        }
+        LOGGER.info(LEARNER_MARKER, "Executed other Symbol <{}:{}> => {} (ignoreFailure: {}, negated: {}).",
+                    symbolToExecute.getId(), symbolToExecute.getRevision(), symbolResult, ignoreFailure, negated);
         if (symbolResult == ExecuteResult.OK) {
             return getSuccessOutput();
         } else {

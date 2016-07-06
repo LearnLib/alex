@@ -151,4 +151,9 @@ public class LearnerStatus {
     public LearnerStatusStatistics getStatistics() {
         return statistics;
     }
+
+    @Override
+    public String toString() {
+        return "LearnerStatus for Project " + projectId + " and Test No. " + testNo + ": " + active;
+    }
 }

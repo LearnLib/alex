@@ -31,8 +31,7 @@ public enum WebBrowser {
     HTMLUNITDRIVER(HtmlUnitDriver.class);
 
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("leaner");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The connected WebDriver class. */
     private Class webDriverClass;
