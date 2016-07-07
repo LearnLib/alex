@@ -130,7 +130,7 @@ export function symbolMoveModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/symbol-move-modal.html',
+                templateUrl: 'html/directives/modals/symbol-move-modal.html',
                 controller: SymbolMoveModalController,
                 controllerAs: 'vm',
                 resolve: {

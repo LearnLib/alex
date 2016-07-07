@@ -37,5 +37,5 @@ class ProjectsDashboardView {
 export const projectsDashboardView = {
     controller: ProjectsDashboardView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/projects-dashboard.html'
+    templateUrl: 'html/components/views/projects-dashboard.html'
 };

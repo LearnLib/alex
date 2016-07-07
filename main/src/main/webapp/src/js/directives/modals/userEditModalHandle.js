@@ -179,7 +179,7 @@ function userEditModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/user-edit-modal.html',
+                templateUrl: 'html/directives/modals/user-edit-modal.html',
                 controller: UserEditModalController,
                 controllerAs: 'vm',
                 resolve: {

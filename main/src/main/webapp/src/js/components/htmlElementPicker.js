@@ -180,7 +180,7 @@ class HtmlElementPickerComponent {
 
         angular.element(this.iframe.contents()[0].body).off('mousemove', this.mouseMoveHandler);
         angular.element(this.iframe.contents()[0].body).off('click', this.clickHandler);
-        angular.element(document.body).off('keyup', this.keyUpHandler);
+        document.body.removeEventListener('keyup', this.keyUpHandler);
     }
 
     /**
@@ -242,7 +242,7 @@ class HtmlElementPickerComponent {
 
             iframeBody.on('mousemove', this.mouseMoveHandler);
             iframeBody.one('click', this.clickHandler);
-            angular.element(document.body).on('keyup', this.keyUpHandler);
+            document.body.addEventListener('keyup', this.keyUpHandler, false);
         } else {
             this.handleClick();
             this.selector = null;

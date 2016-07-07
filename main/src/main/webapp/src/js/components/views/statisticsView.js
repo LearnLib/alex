@@ -118,5 +118,5 @@ class StatisticsView {
 export const statisticsView = {
     controller: StatisticsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/statistics.html'
+    templateUrl: 'html/components/views/statistics.html'
 };

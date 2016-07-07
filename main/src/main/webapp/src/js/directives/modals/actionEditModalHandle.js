@@ -95,7 +95,7 @@ export function actionEditModalHandle($uibModal, ActionService) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/action-edit-modal.html',
+                templateUrl: 'html/directives/modals/action-edit-modal.html',
                 controller: ActionEditModalController,
                 controllerAs: 'vm',
                 resolve: {

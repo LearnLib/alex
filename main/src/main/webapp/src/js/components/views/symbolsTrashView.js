@@ -93,5 +93,5 @@ class SymbolsTrashView {
 export const symbolsTrashView = {
     controller: SymbolsTrashView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/symbols-trash.html'
+    templateUrl: 'html/components/views/symbols-trash.html'
 };

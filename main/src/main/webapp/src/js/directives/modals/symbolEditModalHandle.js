@@ -112,7 +112,7 @@ export function symbolEditModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/symbol-edit-modal.html',
+                templateUrl: 'html/directives/modals/symbol-edit-modal.html',
                 controller: SymbolEditModalController,
                 controllerAs: 'vm',
                 resolve: {

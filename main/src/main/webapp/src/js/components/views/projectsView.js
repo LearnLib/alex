@@ -77,5 +77,5 @@ class ProjectsView {
 export const projectsView = {
     controller: ProjectsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/projects.html'
+    templateUrl: 'html/components/views/projects.html'
 };

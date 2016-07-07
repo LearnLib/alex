@@ -88,7 +88,7 @@ export function learnResultDetailsModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/learn-result-details-modal.html',
+                templateUrl: 'html/directives/modals/learn-result-details-modal.html',
                 controller: LearnResultDetailsModalController,
                 controllerAs: 'vm',
                 resolve: {

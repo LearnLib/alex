@@ -235,5 +235,5 @@ class SymbolsActionsView {
 export const symbolsActionsView = {
     controller: SymbolsActionsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/symbols-actions.html'
+    templateUrl: 'html/components/views/symbols-actions.html'
 };

@@ -101,7 +101,7 @@ export function actionCreateModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/action-create-modal.html',
+                templateUrl: 'html/directives/modals/action-create-modal.html',
                 size: 'lg',
                 controller: ActionCreateModalController,
                 controllerAs: 'vm'

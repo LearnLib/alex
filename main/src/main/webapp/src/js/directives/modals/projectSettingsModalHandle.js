@@ -99,7 +99,7 @@ export function projectSettingsModalHandle($uibModal, LearnerResource, ToastServ
                         ToastService.info('You cannot edit this project because a learning process is still active.');
                     } else {
                         $uibModal.open({
-                            templateUrl: 'html/modals/project-settings-modal.html',
+                            templateUrl: 'html/directives/modals/project-settings-modal.html',
                             controller: ProjectSettingsModalController,
                             controllerAs: 'vm',
                             resolve: {

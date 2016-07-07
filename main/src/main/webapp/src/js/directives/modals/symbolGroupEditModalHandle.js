@@ -116,7 +116,7 @@ export function symbolGroupEditModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/symbol-group-edit-modal.html',
+                templateUrl: 'html/directives/modals/symbol-group-edit-modal.html',
                 controller: SymbolGroupEditModalController,
                 controllerAs: 'vm',
                 resolve: {

@@ -124,7 +124,7 @@ export function learnSetupSettingsModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/learn-setup-settings-modal.html',
+                templateUrl: 'html/directives/modals/learn-setup-settings-modal.html',
                 controller: LearnSetupSettingsModalController,
                 controllerAs: 'vm',
                 resolve: {

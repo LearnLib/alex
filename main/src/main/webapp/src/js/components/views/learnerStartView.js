@@ -170,5 +170,5 @@ class LearnerStartView {
 export const learnerStartView = {
     controller: LearnerStartView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/learner-start.html'
+    templateUrl: 'html/components/views/learner-start.html'
 };

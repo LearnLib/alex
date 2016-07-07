@@ -140,7 +140,7 @@ export function symbolCreateModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/symbol-create-modal.html',
+                templateUrl: 'html/directives/modals/symbol-create-modal.html',
                 controller: SymbolCreateModalController,
                 controllerAs: 'vm'
             });

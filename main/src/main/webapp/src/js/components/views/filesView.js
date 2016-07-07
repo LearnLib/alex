@@ -137,5 +137,5 @@ class FilesView {
 export const filesView = {
     controller: FilesView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/files.html'
+    templateUrl: 'html/components/views/files.html'
 };

@@ -192,5 +192,5 @@ class LearnerSetupView {
 export const learnerSetupView = {
     controller: LearnerSetupView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/learner-setup.html'
+    templateUrl: 'html/components/views/learner-setup.html'
 };

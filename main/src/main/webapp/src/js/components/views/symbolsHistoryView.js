@@ -88,5 +88,5 @@ class SymbolsHistoryView {
 export const symbolsHistoryView = {
     controller: SymbolsHistoryView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/symbols-history.html'
+    templateUrl: 'html/components/views/symbols-history.html'
 };

@@ -24,6 +24,6 @@ class AboutView {
 export const aboutView = {
     controller: AboutView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/about.html'
+    templateUrl: 'html/components/views/about.html'
 };
 

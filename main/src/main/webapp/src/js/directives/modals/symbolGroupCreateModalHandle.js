@@ -98,7 +98,7 @@ export function symbolGroupCreateModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/symbol-group-create-modal.html',
+                templateUrl: 'html/directives/modals/symbol-group-create-modal.html',
                 controller: SymbolGroupCreateModalController,
                 controllerAs: 'vm'
             });

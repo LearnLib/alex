@@ -94,7 +94,7 @@ export function hypothesisLayoutSettingsModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/hypothesis-layout-settings-modal.html',
+                templateUrl: 'html/directives/modals/hypothesis-layout-settings-modal.html',
                 controller: HypothesisLayoutSettingsController,
                 controllerAs: 'vm',
                 resolve: {

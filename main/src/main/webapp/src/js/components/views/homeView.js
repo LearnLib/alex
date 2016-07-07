@@ -52,5 +52,5 @@ class HomeView {
 export const homeView = {
     controller: HomeView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/home.html'
+    templateUrl: 'html/components/views/home.html'
 };

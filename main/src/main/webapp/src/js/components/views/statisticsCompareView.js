@@ -198,5 +198,5 @@ class StatisticsCompareView {
 export const statisticsCompareView = {
     controller: StatisticsCompareView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/statistics-compare.html'
+    templateUrl: 'html/components/views/statistics-compare.html'
 };

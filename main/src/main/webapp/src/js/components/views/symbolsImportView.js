@@ -168,5 +168,5 @@ class SymbolsImportView {
 export const symbolsImportView = {
     controller: SymbolsImportView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/symbols-import.html'
+    templateUrl: 'html/components/views/symbols-import.html'
 };
