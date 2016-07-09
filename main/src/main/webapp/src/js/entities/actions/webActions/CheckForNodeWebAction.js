@@ -14,28 +14,32 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Searches for an element with a specific selector in the HTML document. */
+/**
+ * Searches for an element with a specific selector in the HTML document.
+ */
 export class CheckForNodeWebAction extends Action {
 
     /**
      * Constructor.
+     *
      * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WEB_CHECK_NODE, obj);
 
         /**
-         * The selector of the node to search
+         * The selector of the node to search.
          * @type {string}
          */
         this.value = obj.value || '';
     }
 
     /**
-     * A string presentation of the action.
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

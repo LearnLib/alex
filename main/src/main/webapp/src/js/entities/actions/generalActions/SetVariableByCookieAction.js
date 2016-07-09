@@ -14,40 +14,44 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Sets a variable to a specific value and implicitly initializes it if it has not been created before */
+/**
+ * Sets a variable to a specific value and implicitly initializes it if it has not been created before.
+ */
 export class SetVariableByCookieAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.GENERAL_SET_VARIABLE_BY_COOKIE, obj);
 
         /**
-         * The name of the variable
+         * The name of the variable.
          * @type {*|string}
          */
         this.name = obj.name || '';
 
         /**
-         * The value of the variable
+         * The value of the variable.
          * @type {*|string}
          */
         this.value = obj.value || '';
 
         /**
-         * The type of the cookie (REST|WEB)
+         * The type of the cookie (REST|WEB).
          * @type {string}
          */
         this.cookieType = obj.cookieType || 'WEB';
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

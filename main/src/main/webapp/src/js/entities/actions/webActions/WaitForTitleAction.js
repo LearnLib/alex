@@ -14,43 +14,45 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
 /**
- * Wait for the title of the page to have changed
- **/
+ * Wait for the title of the page to have changed.
+ */
 export class WaitForTitleAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WAIT_FOR_TITLE, obj);
 
         /**
-         * For what event should be waited
-         * Can be 'IS' or 'CONTAINS'
+         * For what event should be waited.
+         * Can be 'IS' or 'CONTAINS'.
          * @type {string}
          */
         this.waitCriterion = obj.waitCriterion || 'IS';
 
         /**
-         * The value of the title
+         * The value of the title.
          * @type {*|string}
          */
         this.value = obj.value || '';
 
         /**
-         * The time to wait for the change at max
+         * The time to wait for the change at max.
          * @type {number}
          */
         this.maxWaitTime = obj.maxWaitTime || 10;
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

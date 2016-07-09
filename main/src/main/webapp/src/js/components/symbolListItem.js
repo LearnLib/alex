@@ -15,12 +15,13 @@
  */
 
 /**
- * Use: <symbol-list-item symbol="..."></symbol-list-item>
+ * Use: <symbol-list-item symbol="..."></symbol-list-item>.
  */
 class SymbolListItem {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $attrs
      */
     // @ngInject

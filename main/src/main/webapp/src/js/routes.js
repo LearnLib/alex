@@ -15,7 +15,7 @@
  */
 
 /**
- * Define application routes
+ * Define application routes.
  */
 // @ngInject
 export function config($stateProvider, $urlRouterProvider) {
@@ -42,7 +42,7 @@ export function config($stateProvider, $urlRouterProvider) {
         .state('projects', {
             url: '/projects',
             template: '<projects-view></projects-view>',
-            data: {roles: ['REGISTERED', 'ADMIN'], title : 'Projects'}
+            data: {roles: ['REGISTERED', 'ADMIN'], title: 'Projects'}
         })
         .state('projectsDashboard', {
             url: '/projects/dashboard',
@@ -132,7 +132,12 @@ export function config($stateProvider, $urlRouterProvider) {
 }
 
 /**
- * Validate routes on state change
+ * Validate routes on state change.
+ *
+ * @param $rootScope
+ * @param $state
+ * @param {SessionService} SessionService
+ * @param {ToastService} ToastService
  */
 // @ngInject
 export function run($rootScope, $state, SessionService, ToastService) {

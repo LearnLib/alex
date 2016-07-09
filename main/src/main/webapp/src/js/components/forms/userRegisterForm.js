@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-/** The controller for the user register form component */
+/**
+ * The controller for the user register form component.
+ */
 class UserRegisterFrom {
 
     /**
      * Constructor.
+     *
      * @param {UserResource} UserResource
      * @param {ToastService} ToastService
      */
@@ -29,18 +32,21 @@ class UserRegisterFrom {
 
 
         /**
-         * The email of the user
+         * The email of the user.
          * @type {string}
          */
         this.email = null;
 
         /**
-         * The password of the user
+         * The password of the user.
          * @type {string}
          */
         this.password = null;
     }
 
+    /**
+     * Creates a new user.
+     */
     register() {
         if (this.email && this.password) {
             this.UserResource.create(this.email, this.password)

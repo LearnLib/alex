@@ -1,4 +1,4 @@
-import {events} from '../../constants';
+import {events} from "../../constants";
 
 /**
  * The controller for the modal that displays a selectable list of results.
@@ -6,7 +6,8 @@ import {events} from '../../constants';
 export class ResultListModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param modalData
      * @param $uibModalInstance
      * @param {EventBus} EventBus

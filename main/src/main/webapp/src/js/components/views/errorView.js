@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-/** The controller of the error page */
+/**
+ * The controller of the error page.
+ */
 class ErrorView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $state
-     * @param ErrorService
+     * @param {ErrorService} ErrorService
      */
     // @ngInject
     constructor($state, ErrorService) {
 
         /**
-         * The error message
+         * The error message.
          * @type{string|null}
          */
         this.errorMessage = null;

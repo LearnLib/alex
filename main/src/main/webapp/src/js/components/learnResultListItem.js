@@ -15,7 +15,7 @@
  */
 
 /**
- * The component that displays a learn result list item
+ * The component that displays a learn result list item.
  *
  * Use: <learn-result-list-item result="..."></learn-result-list-item> where
  * 'result' should be a learn result object.

@@ -20,7 +20,8 @@
 class ProjectsDashboardView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param {SessionService} SessionService
      */
     // @ngInject

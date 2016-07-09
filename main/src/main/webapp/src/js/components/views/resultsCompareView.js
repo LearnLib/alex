@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
+import {events} from "../../constants";
 
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
@@ -22,7 +22,8 @@ import {events} from '../../constants';
 class ResultsCompareView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $timeout
      * @param $scope
      * @param $uibModal
@@ -41,25 +42,25 @@ class ResultsCompareView {
         this.EventBus = EventBus;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * All final learn results from all tests that were made for a project
+         * All final learn results from all tests that were made for a project.
          * @type {LearnResult[]}
          */
         this.results = [];
 
         /**
-         * The list of active panels where each panel contains a complete learn result set
+         * The list of active panels where each panel contains a complete learn result set.
          * @type {LearnResult[][]}
          */
         this.panels = [];
 
         /**
-         * The list of layout settings for the current hypothesis that is shown in a panel
+         * The list of layout settings for the current hypothesis that is shown in a panel.
          * @type {Object[]}
          */
         this.layoutSettings = [];
@@ -87,18 +88,19 @@ class ResultsCompareView {
     }
 
     /**
-     * Loads a complete learn result set from a learn result in the panel with a given index
+     * Loads a complete learn result set from a learn result in the panel with a given index.
      *
-     * @param {LearnResult} result - The learn result whose complete set should be loaded in a panel
-     * @param {number} index - The index of the panel the complete set should be displayed in
+     * @param {LearnResult} result - The learn result whose complete set should be loaded in a panel.
+     * @param {number} index - The index of the panel the complete set should be displayed in.
      */
     fillPanel(result, index) {
         this.panels[index] = result;
     }
 
     /**
-     * Removes a panel by a given index
-     * @param {number} index - The index of the panel to remove
+     * Removes a panel by a given index.
+     *
+     * @param {number} index - The index of the panel to remove.
      */
     closePanel(index) {
         this.panels[index] = null;

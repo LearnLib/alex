@@ -14,40 +14,44 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Extracts the text content value of an element and saves it value in a variable */
+/**
+ * Extracts the text content value of an element and saves it value in a variable.
+ */
 export class SetVariableByNodeAttributeGeneralAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE, obj);
 
         /**
-         * The name of the variable
+         * The name of the variable.
          * @type {*|string}
          */
         this.name = obj.name || '';
 
         /**
-         * The selector of the node
+         * The selector of the node.
          * @type {*|string}
          */
         this.node = obj.node || '';
 
         /**
-         * The attribute of the element
+         * The attribute of the element.
          * @type {string}
          */
         this.attribute = obj.attribute || '';
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

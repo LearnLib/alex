@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
 /**
  * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.
@@ -25,37 +25,38 @@ export class CallRestAction extends Action {
 
     /**
      * Constructor.
+     *
      * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.REST_CALL, obj);
 
         /**
-         * The HTTP method in {GET,POST,PUT,DELETE}
+         * The HTTP method in {GET,POST,PUT,DELETE}.
          * @type {*|string}
          */
         this.method = obj.method || 'GET';
 
         /**
-         * The URL the request is send to
+         * The URL the request is send to.
          * @type {*|string}
          */
         this.url = obj.url || '';
 
         /**
-         * The body data for POST and PUT requests
+         * The body data for POST and PUT requests.
          * @type {*|null}
          */
         this.data = obj.data || null;
 
         /**
-         * The cookies to send with the request
+         * The cookies to send with the request.
          * @type {{}}
          */
         this.cookies = obj.cookies || {};
 
         /**
-         * The HTTP headers of the request
+         * The HTTP headers of the request.
          * @type {*|{}}
          */
         this.headers = obj.headers || {};
@@ -110,7 +111,8 @@ export class CallRestAction extends Action {
     }
 
     /**
-     * A string presentation of the actions.
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-/** The Service that is used to download learn results as csv */
+/**
+ * The Service that is used to download learn results as csv.
+ */
 export class LearnerResultDownloadService {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param {DownloadService} DownloadService
      * @param {PromptService} PromptService
      */
@@ -29,8 +32,9 @@ export class LearnerResultDownloadService {
     }
 
     /**
-     * Downloads learn results as csv
-     * @param {LearnResult[]} results
+     * Downloads learn results as csv.
+     *
+     * @param {LearnResult[]} results - The learn results to download as csv.
      */
     download(results) {
         let csv = 'Project;Test No;Start Time;Step No;Algorithm;Eq Oracle;|Sigma|;#MQs;#EQs;#Symbol Calls;Duration (ms)\n';

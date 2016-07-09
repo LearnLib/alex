@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Counter} from '../entities/Counter';
+import {Counter} from "../entities/Counter";
 
 /**
  * The service that communicates with the API in order to read and delete counters.
@@ -22,7 +22,8 @@ import {Counter} from '../entities/Counter';
 export class CounterResource {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $http
      */
     // @ngInject
@@ -31,10 +32,10 @@ export class CounterResource {
     }
 
     /**
-     * Fetches all counters from the server
+     * Fetches all counters from the server.
      *
-     * @param {number} projectId - The id of a project
-     * @returns angular promise object of the request
+     * @param {number} projectId - The id of a project.
+     * @returns angular promise object of the request.
      */
     getAll(projectId) {
         return this.$http.get(`rest/projects/${projectId}/counters`)
@@ -42,11 +43,11 @@ export class CounterResource {
     }
 
     /**
-     * Deletes a single file from the server
+     * Deletes a single file from the server.
      *
-     * @param {number} projectId - The id of a project
-     * @param {Counter} counter - The counter to delete
-     * @returns angular promise object of the request
+     * @param {number} projectId - The id of a project.
+     * @param {Counter} counter - The counter to delete.
+     * @returns angular promise object of the request.
      */
     remove(projectId, counter) {
         return this.$http.delete(`rest/projects/${projectId}/counters/${counter.name}`);
@@ -55,9 +56,9 @@ export class CounterResource {
     /**
      * Deletes multiple files from the server.
      *
-     * @param {number} projectId - The id of a project
-     * @param {Counter[]} counters - A list of counters to delete
-     * @returns angular promise object of the request
+     * @param {number} projectId - The id of a project.
+     * @param {Counter[]} counters - A list of counters to delete.
+     * @returns angular promise object of the request.
      */
     removeMany(projectId, counters) {
         const names = counters.map(c => c.name).join(',');

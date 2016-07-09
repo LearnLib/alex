@@ -24,10 +24,10 @@ export const actionFormCall = {
         this.cookie = {name: null, value: null};
         this.header = {name: null, value: null};
         this.aceOptions = {
-            useWrapMode : true, 
-            showGutter: true, 
-            theme:'eclipse', 
-            mode: 'json', 
+            useWrapMode: true,
+            showGutter: true,
+            theme: 'eclipse',
+            mode: 'json',
             workerPath: '/node_modules/ace-builds/src-min/'
         };
 
@@ -41,7 +41,7 @@ export const actionFormCall = {
             this.action.addCookie(this.cookie.name, this.cookie.value);
             this.header.name = null;
             this.header.value = null;
-        }
+        };
     }
 };
 

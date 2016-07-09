@@ -14,43 +14,46 @@
  * limitations under the License.
  */
 
-/** The action model all other actions should extend from */
+/**
+ * The action model all other actions should extend from.
+ */
 export class Action {
 
     /**
-     * Constructor
-     * @param {string} type - The type of the action
-     * @param {object} obj - The object to create an action from
+     * Constructor.
+     *
+     * @param {string} type - The type of the action.
+     * @param {object} obj - The object to create an action from.
      */
     constructor(type, obj) {
 
         /**
-         * The unique action type
+         * The unique action type.
          * @type {String}
          */
         this.type = type || '';
 
         /**
-         * Whether the outcome is negated
+         * Whether the outcome is negated.
          * @type {boolean}
          */
         this.negated = obj.negated || false;
 
         /**
-         * Whether the learner continues despite failure
+         * Whether the learner continues despite failure.
          * @type {boolean}
          */
         this.ignoreFailure = obj.ignoreFailure || false;
 
         /**
-         * Whether the execution of the action should be skipped
+         * Whether the execution of the action should be skipped.
          * @type {boolean}
          */
         this.disabled = obj.disabled || false;
     }
 
     /**
-     * Get a string representation of the action
+     * Get a string representation of the action.
      * @returns {string}
      */
     toString() {

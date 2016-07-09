@@ -22,14 +22,13 @@
  */
 class ActionForm {
 
-    /** 
+    /**
      * Constructor.
      */
     constructor() {
 
         /**
          * If the advanced options are visible.
-         * 
          * @type {boolean}
          */
         this.showOptions = false;

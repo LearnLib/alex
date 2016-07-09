@@ -29,12 +29,13 @@ const STYLE = {
  * The component for displaying a discrimination tree in an svg element.
  * Expects another property 'data' which holds the string representation of the discrimination tree.
  *
- * Use it like: '<discrimination-tree data="...."></discrimination-tree>'
+ * Use it like: '<discrimination-tree data="...."></discrimination-tree>'.
  */
 class DiscriminationTreeComponent {
 
     /**
      * Constructor.
+     *
      * @param $scope
      * @param $element
      */
@@ -80,10 +81,10 @@ class DiscriminationTreeComponent {
     }
 
     /**
-     * Creates a graph structure from a discrimination tree in order to layout it with the given dagreD3 library
+     * Creates a graph structure from a discrimination tree in order to layout it with the given dagreD3 library.
      *
-     * @param {Object} dt - The discrimination tree
-     * @returns {{nodes: Array, edges: Array}} - The tree as graph representation
+     * @param {Object} dt - The discrimination tree.
+     * @returns {{nodes: Array, edges: Array}} - The tree as graph representation.
      */
     createGraph(dt) {
         const nodes = [];
@@ -140,9 +141,9 @@ class DiscriminationTreeComponent {
     }
 
     /**
-     * Creates positions for nodes and edges of the discrimination tree that can be rendered with dagreD3
+     * Creates positions for nodes and edges of the discrimination tree that can be rendered with dagreD3.
      *
-     * @param {Object} graph - The discrimination tree as graph
+     * @param {Object} graph - The discrimination tree as graph.
      */
     layout(graph) {
 

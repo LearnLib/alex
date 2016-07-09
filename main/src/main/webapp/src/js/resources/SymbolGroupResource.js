@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import {SymbolGroup} from '../entities/SymbolGroup';
+import {SymbolGroup} from "../entities/SymbolGroup";
 
 /**
- * The resource that handles http requests to the API to do CRUD operations on symbol groups
+ * The resource that handles http requests to the API to do CRUD operations on symbol groups.
  */
 export class SymbolGroupResource {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $http
      */
     // @ngInject
@@ -31,10 +32,10 @@ export class SymbolGroupResource {
     }
 
     /**
-     * Fetches all symbol groups from the server
+     * Fetches all symbol groups from the server.
      *
-     * @param {number} projectId - The id of the project whose projects should be fetched
-     * @param {boolean} includeSymbols - If the symbols should be included
+     * @param {number} projectId - The id of the project whose projects should be fetched.
+     * @param {boolean} includeSymbols - If the symbols should be included.
      * @returns {*}
      */
     getAll(projectId, includeSymbols = false) {
@@ -45,10 +46,10 @@ export class SymbolGroupResource {
     }
 
     /**
-     * Creates a new symbol group
+     * Creates a new symbol group.
      *
-     * @param {number} projectId - The id of the project of the symbol group
-     * @param {SymbolGroup} group - The object of the symbol group that should be created
+     * @param {number} projectId - The id of the project of the symbol group.
+     * @param {SymbolGroup} group - The object of the symbol group that should be created.
      * @returns {*}
      */
     create(projectId, group) {
@@ -57,9 +58,9 @@ export class SymbolGroupResource {
     }
 
     /**
-     * Updates an existing symbol group
+     * Updates an existing symbol group.
      *
-     * @param {SymbolGroup} group - The symbol group that should be updated
+     * @param {SymbolGroup} group - The symbol group that should be updated.
      * @returns {*}
      */
     update(group) {
@@ -68,10 +69,10 @@ export class SymbolGroupResource {
     }
 
     /**
-     * Deletes a symbol group
+     * Deletes a symbol group.
      *
-     * @param {SymbolGroup} group - The symbol group that should be deleted
-     * @returns {*} - An angular promise
+     * @param {SymbolGroup} group - The symbol group that should be deleted.
+     * @returns {*} - An angular promise.
      */
     remove(group) {
         return this.$http.delete(`rest/projects/${group.project}/groups/${group.id}`);

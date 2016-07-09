@@ -19,12 +19,13 @@
  * behaviour by passing the value 'true' to the parameter bindResize so that every time the window resizes,
  * the dimensions of the element will be updated.
  *
- * Use: <responsive-iframe></responsive-iframe>
+ * Use: <responsive-iframe></responsive-iframe>.
  */
 class ResponsiveIframe {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $window
      * @param $element
      * @param $scope
@@ -32,13 +33,19 @@ class ResponsiveIframe {
     // @ngInject
     constructor($window, $element, $scope) {
 
-        /** The iframe node element */
+        /**
+         * The iframe node element.
+         */
         this.iframe = $element.find('iframe')[0];
 
-        /** The container of the iframe which is used to fit the iframes size to */
+        /**
+         * The container of the iframe which is used to fit the iframes size to.
+         */
         this.container = $element[0].parentNode;
 
-        /** The resize handler */
+        /**
+         * The resize handler.
+         */
         this.resizeHandler = this.fitToParent.bind(this);
 
         $window.addEventListener('resize', this.resizeHandler, false);
@@ -51,7 +58,7 @@ class ResponsiveIframe {
     }
 
     /**
-     * Adjusts the size of the iframe to the size of the container element
+     * Adjusts the size of the iframe to the size of the container element.
      */
     fitToParent() {
         this.iframe.setAttribute('height', this.container.offsetHeight);

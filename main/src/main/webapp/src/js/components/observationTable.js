@@ -15,17 +15,17 @@
  */
 
 /**
- * The component that displays an observation table
+ * The component that displays an observation table.
  */
 class ObservationTable {
 
     /**
-     * Constructor
+     * Constructor.
      */
     constructor() {
 
         /**
-         * The data structure of the table
+         * The data structure of the table.
          * @type {{header: Array, body: {s1: Array, s2: Array}}}
          */
         this.table = {
@@ -40,7 +40,7 @@ class ObservationTable {
     }
 
     /**
-     * Build the structure for the observation table
+     * Build the structure for the observation table.
      */
     build() {
         const rows = this.data.split('\n');  // the rows of the table

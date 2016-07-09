@@ -17,13 +17,15 @@
 const PROPERTY_NAME = '_selected';
 
 /**
- * The controller of the checkbox
+ * The controller of the checkbox.
  * Use: <checkbox model="..."></checkbox> where
- * 'model' should be an object
+ * 'model' should be an object.
  */
 class Checkbox {
 
-    /** select the item given via the model attribute */
+    /**
+     * select the item given via the model attribute.
+     */
     toggleSelectItem() {
         if (this.model) {
             this.model[PROPERTY_NAME] = !this.model[PROPERTY_NAME];
@@ -45,25 +47,30 @@ export const checkbox = {
 };
 
 /**
- * The controller of the checkbox for selecting multiple items
+ * The controller of the checkbox for selecting multiple items.
+ *
  * Use: <checkbox-multiple model="..." model-fn="..."></checkbox-multiple> where
  * 'model' should be a list of objects
- * 'modeFn' should be a function that returns a list of objects
- * Only one attribute should be given at a time
+ * 'modeFn' should be a function that returns a list of objects.
+ * Only one attribute should be given at a time.
  */
 class CheckboxMultiple {
 
-    /** Constructor */
+    /**
+     * Constructor.
+     */
     constructor() {
 
         /**
-         * The status of the items
+         * The status of the items.
          * @type {boolean}
          */
         this.checked = false;
     }
 
-    /** Selects or deselects all items */
+    /**
+     * Selects or deselects all items.
+     */
     toggleSelectItems() {
         this.checked = !this.checked;
 

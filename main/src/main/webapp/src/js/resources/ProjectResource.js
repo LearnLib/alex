@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import {Project} from '../entities/Project';
+import {Project} from "../entities/Project";
 
 /**
- * The resource that handles http calls to the API to do CRUD operations on projects
+ * The resource that handles http calls to the API to do CRUD operations on projects.
  */
 export class ProjectResource {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $http
      */
     // @ngInject
@@ -31,8 +32,9 @@ export class ProjectResource {
     }
 
     /**
-     * Get a project by its id
-     * @param {number} projectId
+     * Get a project by its id.
+     *
+     * @param {number} projectId - The id of the project to get.
      * @returns {*}
      */
     get(projectId) {
@@ -41,7 +43,8 @@ export class ProjectResource {
     }
 
     /**
-     * Get all projects of a user
+     * Get all projects of a user.
+     *
      * @returns {*}
      */
     getAll() {
@@ -50,8 +53,9 @@ export class ProjectResource {
     }
 
     /**
-     * Creates a new project
-     * @param {Project} project - The project to create
+     * Creates a new project.
+     *
+     * @param {Project} project - The project to create.
      * @returns {*}
      */
     create(project) {
@@ -60,8 +64,9 @@ export class ProjectResource {
     }
 
     /**
-     * Updates a single project
-     * @param {Project} project - The updated project
+     * Updates a single project.
+     *
+     * @param {Project} project - The updated project.
      * @returns {*}
      */
     update(project) {
@@ -70,8 +75,9 @@ export class ProjectResource {
     }
 
     /**
-     * Deletes a single project from the server
-     * @param {Project} project - The project to delete
+     * Deletes a single project from the server.
+     *
+     * @param {Project} project - The project to delete.
      * @returns {*}
      */
     remove(project) {

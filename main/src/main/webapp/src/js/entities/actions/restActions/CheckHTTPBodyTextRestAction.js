@@ -14,34 +14,38 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Searches for a string value in the body of an HTTP response. */
+/**
+ * Searches for a string value in the body of an HTTP response.
+ */
 export class CheckHTTPBodyTextRestAction extends Action {
 
     /**
      * Constructor.
+     *
      * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.REST_CHECK_FOR_TEXT, obj);
 
         /**
-         * The string that is searched for
+         * The string that is searched for.
          * @type {*|string}
          */
         this.value = obj.value || '';
 
         /**
-         * Whether the value is interpreted as regular expression
+         * Whether the value is interpreted as regular expression.
          * @type {*|boolean}
          */
         this.regexp = obj.regexp || false;
     }
 
     /**
-     * A string presentation of the action.
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

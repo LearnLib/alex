@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
+import {events} from "../../constants";
 
 /**
  * The directive for the content of the counterexample widget that is used to create and test counterexamples.
  * Should be included into a <widget></widget> directive for visual appeal.
  *
  * Attribute 'counterexamples' {array} should be the model where the created counterexamples are put into.
- *
- * Use: <counterexamples-widget counterexamples="..."></counterexamples-widget>
  */
 class CounterexamplesWidget {
 
     /**
      * Constructor.
+     *
      * @param $scope
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
@@ -44,19 +43,19 @@ class CounterexamplesWidget {
         this.$q = $q;
 
         /**
-         * The symbols
+         * The symbols.
          * @type {AlphabetSymbol[]}
          */
         this.symbols = [];
 
         /**
-         * The array of input output pairs of the shared counterexample
+         * The array of input output pairs of the shared counterexample.
          * @type {Array}
          */
         this.counterExample = [];
 
         /**
-         * A list of counterexamples for editing purposes without manipulation the actual model
+         * A list of counterexamples for editing purposes without manipulation the actual model.
          * @type {Object[]}
          */
         this.tmpCounterExamples = [];
@@ -74,21 +73,24 @@ class CounterexamplesWidget {
         });
     }
 
-    /** Updates the model of the result */
+    /**
+     * Updates the model of the result.
+     */
     renewCounterexamples() {
         this.counterexamples = this.tmpCounterExamples;
     }
 
     /**
      * Removes a input output pair from the temporary counterexamples array.
-     * @param {number} i - The index of the pair to remove
+     *
+     * @param {number} i - The index of the pair to remove.
      */
     removeInputOutputAt(i) {
         this.counterExample.splice(i, 1);
     }
 
     /**
-     * Adds a new counterexample to the scope and the model
+     * Adds a new counterexample to the scope and the model.
      */
     testAndAddCounterExample() {
         this.testCounterExample()
@@ -106,9 +108,9 @@ class CounterexamplesWidget {
     }
 
     /**
-     * Removes a counterexample from the temporary and the model
+     * Removes a counterexample from the temporary and the model.
      *
-     * @param {number} i - the index of the pair in the temporary list of counterexamples
+     * @param {number} i - the index of the pair in the temporary list of counterexamples.
      */
     removeCounterExampleAt(i) {
         this.tmpCounterExamples.splice(i, 1);

@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import {User} from '../entities/User';
+import {User} from "../entities/User";
 
 /**
- * The resource to handle actions with users over the API
+ * The resource to handle actions with users over the API.
  */
 export class UserResource {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $http
      */
     // @ngInject
@@ -31,12 +32,12 @@ export class UserResource {
     }
 
     /**
-     * Changes the password of a user
+     * Changes the password of a user.
      *
-     * @param {User} user - The user whose password should be changed
-     * @param {string} oldPassword - The old password
-     * @param {string} newPassword - The new password
-     * @returns {*} - A promise
+     * @param {User} user - The user whose password should be changed.
+     * @param {string} oldPassword - The old password.
+     * @param {string} newPassword - The new password.
+     * @returns {*} - A promise.
      */
     changePassword(user, oldPassword, newPassword) {
         return this.$http.put(`rest/users/${user.id}/password`, {
@@ -46,24 +47,24 @@ export class UserResource {
     }
 
     /**
-     * Changes the email of a user
+     * Changes the email of a user.
      *
-     * @param {User} user - The user whose email should be changed
-     * @param {string} email - The new email
-     * @returns {*} - A promise
+     * @param {User} user - The user whose email should be changed.
+     * @param {string} email - The new email.
+     * @returns {*} - A promise.
      */
     changeEmail(user, email) {
         return this.$http.put(`rest/users/${user.id}/email`, {
-                email: email
-            })
+            email: email
+        })
             .then(response => new User(response.data));
     }
 
     /**
-     * Gets a single user by its id
+     * Gets a single user by its id.
      *
-     * @param {number} userId - The id of the user to get
-     * @returns {*} - A promise
+     * @param {number} userId - The id of the user to get.
+     * @returns {*} - A promise.
      */
     get(userId) {
         return this.$http.get(`rest/users/${userId}`)
@@ -73,7 +74,7 @@ export class UserResource {
     /**
      * Gets a list of all users. Should only be called by admins.
      *
-     * @returns {*} - A promise
+     * @returns {*} - A promise.
      */
     getAll() {
         return this.$http.get('rest/users')
@@ -83,9 +84,9 @@ export class UserResource {
     /**
      * Creates a new user.
      *
-     * @param {string} email
-     * @param {string} password
-     * @returns {*} - A promise
+     * @param {string} email - The email of the user.
+     * @param {string} password - The password of the user.
+     * @returns {*} - A promise.
      */
     create(email, password) {
         return this.$http.post('rest/users', {
@@ -95,11 +96,11 @@ export class UserResource {
     }
 
     /**
-     * Logs in a user
+     * Logs in a user.
      *
-     * @param {string} email
-     * @param {string} password
-     * @returns {*} - A promise
+     * @param {string} email - The email of the user.
+     * @param {string} password - The password of the user.
+     * @returns {*} - A promise.
      */
     login(email, password) {
         return this.$http.post('rest/users/login', {
@@ -109,27 +110,28 @@ export class UserResource {
     }
 
     /**
-     * Removes a user
+     * Removes a user.
      *
-     * @param {User} user - the user to remove
-     * @returns {*} - A promise
+     * @param {User} user - the user to remove.
+     * @returns {*} - A promise.
      */
     remove(user) {
         return this.$http.delete(`rest/users/${user.id}`, {});
     }
 
     /**
-     * Deletes the users with the specified ids
-     * @param {number[]} userIds
+     * Deletes the users with the specified ids.
+     *
+     * @param {number[]} userIds - The ids of the users to delete.
      */
     removeManyUsers(userIds) {
         return this.$http.delete(`rest/users/batch/${userIds.join(',')}`);
     }
 
     /**
-     * Gives a registered user admin rights
+     * Gives a registered user admin rights.
      *
-     * @param {User} user - The user to promote
+     * @param {User} user - The user to promote.
      * @returns {*}
      */
     promote(user) {
@@ -138,9 +140,9 @@ export class UserResource {
     }
 
     /**
-     * Takes the admin rights of a user
+     * Takes the admin rights of a user.
      *
-     * @param {User} user - The user to demote
+     * @param {User} user - The user to demote.
      * @returns {*}
      */
     demote(user) {

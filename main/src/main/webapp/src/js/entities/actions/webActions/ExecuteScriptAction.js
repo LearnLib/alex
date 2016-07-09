@@ -24,6 +24,7 @@ export class ExecuteScriptAction extends Action {
 
     /**
      * Constructor.
+     *
      * @param obj {*} - The object to create the action from.
      */
     constructor(obj) {
@@ -38,6 +39,7 @@ export class ExecuteScriptAction extends Action {
 
     /**
      * The string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

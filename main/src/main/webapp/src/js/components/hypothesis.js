@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
-import {graphlib, dagre, render as Renderer} from 'dagre-d3';
-import d3 from 'd3/d3';
-
-import {events} from '../constants';
+import _ from "lodash";
+import {graphlib, dagre, render as Renderer} from "dagre-d3";
+import d3 from "d3/d3";
+import {events} from "../constants";
 
 // various styles used to style the hypothesis
 const STYLE = {
@@ -39,15 +38,17 @@ const STYLE = {
  * The component that is used to display hypotheses.
  *
  * Attribute 'isSelectable' should only be true if it should be possible to select input output pairs from the
- * hypothesis
+ * hypothesis.
  *
  * Attribute 'layoutSettings' is optional.
  *
- * Use: <hypothesis data="..." is-selectable="true|false" layout-settings="..."></hypothesis> */
+ * Use: <hypothesis data="..." is-selectable="true|false" layout-settings="..."></hypothesis>.
+ */
 class HypothesisComponent {
 
     /**
      * Constructor.
+     *
      * @param $scope
      * @param $element
      * @param {EventBus} EventBus
@@ -86,7 +87,7 @@ class HypothesisComponent {
         $scope.$on('$destroy', () => {
             window.removeEventListener('resize', this.resizeHandler);
         });
-        
+
         // do this whole stuff so that the size of the svg adjusts to the window
         window.addEventListener('resize', this.resizeHandler);
 

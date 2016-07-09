@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-/** The event bus */
+/**
+ * The event bus.
+ */
 export class EventBus {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $rootScope
      */
     // @ngInject
@@ -27,10 +30,11 @@ export class EventBus {
     }
 
     /**
-     * Listen on an event with automatic event destructor
-     * @param {string} eventName - The event to emit
-     * @param fn - The callback function
-     * @param scope - The related scope
+     * Listen on an event with automatic event destructor.
+     *
+     * @param {string} eventName - The event to emit.
+     * @param fn - The callback function.
+     * @param scope - The related scope.
      */
     on(eventName, fn, scope = null) {
         const off = this.$rootScope.$on(eventName, fn);
@@ -38,9 +42,10 @@ export class EventBus {
     }
 
     /**
-     * Emits an event on the rootScope
-     * @param {string} eventName - The eventName
-     * @param {*} data - The data to pass
+     * Emits an event on the rootScope.
+     *
+     * @param {string} eventName - The eventName.
+     * @param {*} data - The data to pass.
      */
     emit(eventName, data) {
         this.$rootScope.$emit(eventName, data);

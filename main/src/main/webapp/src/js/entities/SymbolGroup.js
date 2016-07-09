@@ -14,45 +14,46 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from './AlphabetSymbol';
+import {AlphabetSymbol} from "./AlphabetSymbol";
 
 /**
- * The model for symbol group
+ * The model for symbol group.
  */
 export class SymbolGroup {
 
     /**
-     * Constructor
-     * @param {*} obj - The object to create the symbol group from
+     * Constructor.
+     *
+     * @param {*} obj - The object to create the symbol group from.
      */
     constructor(obj = {}) {
 
         /**
-         * The name of the group
+         * The name of the group.
          * @type {string}
          */
         this.name = obj.name || null;
 
         /**
-         * The id of the group
+         * The id of the group.
          * @type {number}
          */
         this.id = obj.id;
 
         /**
-         * The id of the user the group belongs to
+         * The id of the user the group belongs to.
          * @type {number}
          */
         this.user = obj.user;
 
         /**
-         * The id of the project the group belongs to
+         * The id of the project the group belongs to.
          * @type {number}
          */
         this.project = obj.project;
 
         /**
-         * The visible symbols of the group
+         * The visible symbols of the group.
          * @type {AlphabetSymbol[]}
          */
         this.symbols = obj.symbols ? obj.symbols.filter(s => !s.hidden).map(s => new AlphabetSymbol(s)) : [];

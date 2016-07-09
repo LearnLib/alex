@@ -23,7 +23,7 @@
  * @param SessionService - The SessionService
  */
 class HtmlElementPickerComponent {
-    
+
     /**
      * Constructor.
      * @param {SessionService} SessionService
@@ -120,7 +120,6 @@ class HtmlElementPickerComponent {
      *
      * @param el  - The element to get the unique css path from
      * @returns {String} - The unique css path ot the element
-     * @private
      */
     getCssPath(el) {
         var names = [];

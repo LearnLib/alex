@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import {events} from '../constants';
+import {events} from "../constants";
 
 /**
  * This component makes any element a place to drop files from the local pc. Currently this directive only
  * supports to read files as a text.
  *
- * Use: '<file-dropzone>some text to display</file-dropzone>'
+ * Use: '<file-dropzone>some text to display</file-dropzone>'.
  */
 class FileDropzone {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param $element
      * @param {EventBus} EventBus
@@ -49,9 +50,10 @@ class FileDropzone {
     }
 
     /**
-     * Is called whem the file has been loaded.
-     * Emits the loaded files to the EventBus
-     * @param e - The event
+     * Is called when the file has been loaded.
+     * Emits the loaded files to the EventBus.
+     *
+     * @param e - The event.
      */
     onLoad(e) {
         this.$scope.$apply(() => {
@@ -62,8 +64,9 @@ class FileDropzone {
     }
 
     /**
-     * Open a file dialog on a click on the component
-     * @param e - The event
+     * Open a file dialog on a click on the component.
+     *
+     * @param e - The event.
      */
     onClick(e) {
         const input = document.createElement('input');
@@ -75,8 +78,9 @@ class FileDropzone {
     }
 
     /**
-     * Handle dragover event
-     * @param e - The event
+     * Handle dragover event.
+     *
+     * @param e - The event.
      */
     onDragover(e) {
         e.preventDefault();
@@ -85,8 +89,9 @@ class FileDropzone {
     }
 
     /**
-     * Handle drop event
-     * @param e - The event
+     * Handle drop event.
+     *
+     * @param e - The event.
      */
     onDrop(e) {
         e.preventDefault();
@@ -97,7 +102,8 @@ class FileDropzone {
 
     /**
      * Read all uploaded files as text.
-     * @param files
+     *
+     * @param files - The files to upload.
      */
     readFiles(files) {
         for (let i = 0; i < files.length; i++) {

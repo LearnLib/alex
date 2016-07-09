@@ -14,28 +14,32 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Checks for the status code (e.g. 404) in an HTTP response. */
+/**
+ * Checks for the status code (e.g. 404) in an HTTP response.
+ */
 export class CheckStatusRestAction extends Action {
 
     /**
      * Constructor.
+     *
      * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.REST_CHECK_STATUS, obj);
 
         /**
-         * The status code
+         * The status code.
          * @type {*|number}
          */
         this.status = obj.status || 200;
     }
 
     /**
-     * A string presentation of the action.
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

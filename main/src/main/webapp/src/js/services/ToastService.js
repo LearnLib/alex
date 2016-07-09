@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-/** A service that is used as a wrapper around the toastr module. */
+/**
+ * A service that is used as a wrapper around the toastr module.
+ */
 export class ToastService {
 
     /**
-     * Constructor
-     * @param toastr - The toastr service
+     * Constructor.
+     *
+     * @param toastr - The toastr service.
      */
     // @ngInject
     constructor(toastr) {
@@ -27,8 +30,9 @@ export class ToastService {
     }
 
     /**
-     * Create a success toast message
-     * @param {String} message - The message to display
+     * Create a success toast message.
+     *
+     * @param {String} message - The message to display.
      */
     success(message) {
         this.toastr.clear();
@@ -36,8 +40,9 @@ export class ToastService {
     }
 
     /**
-     * Create an error / danger toast message
-     * @param {String} message - The message display
+     * Create an error / danger toast message.
+     *
+     * @param {String} message - The message display.
      */
     danger(message) {
         this.toastr.clear();
@@ -45,8 +50,9 @@ export class ToastService {
     }
 
     /**
-     * Create an info toast message
-     * @param {String} message - The message to display
+     * Create an info toast message.
+     *
+     * @param {String} message - The message to display.
      */
     info(message) {
         this.toastr.clear();

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from '../constants';
+import {events} from "../constants";
 
 /**
  * The directive that displays a list of projects.
@@ -24,7 +24,8 @@ import {events} from '../constants';
 class ProjectList {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $state
      * @param {ProjectResource} ProjectResource
      * @param {SymbolGroupResource} SymbolGroupResource
@@ -48,8 +49,9 @@ class ProjectList {
     }
 
     /**
-     * Save a project into the sessionStorage and redirect to its dashboard
-     * @param {Project} project - The project to work on
+     * Save a project into the sessionStorage and redirect to its dashboard.
+     *
+     * @param {Project} project - The project to work on.
      */
     openProject(project) {
         this.SessionService.saveProject(project);
@@ -58,8 +60,9 @@ class ProjectList {
     }
 
     /**
-     * Deletes a project
-     * @param {Project} project - The project to delete
+     * Deletes a project.
+     *
+     * @param {Project} project - The project to delete.
      */
     deleteProject(project) {
         this.PromptService.confirm('Do you really want to delete this project? All related data will be lost.')
@@ -77,7 +80,8 @@ class ProjectList {
 
     /**
      * Downloads the project in an importable format.
-     * @param {Project} project
+     *
+     * @param {Project} project.
      */
     exportProject(project) {
         this.ProjectResource.get(project.id).then(project => {

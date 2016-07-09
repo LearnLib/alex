@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../entities/AlphabetSymbol';
+import {AlphabetSymbol} from "../entities/AlphabetSymbol";
 
 /**
- * The resource that handles http requests to the API to do CRUD operations on symbols
+ * The resource that handles http requests to the API to do CRUD operations on symbols.
  */
 export class SymbolResource {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $http
      */
     // @ngInject
@@ -31,10 +32,10 @@ export class SymbolResource {
     }
 
     /**
-     * Gets a single symbol by its id
+     * Gets a single symbol by its id.
      *
-     * @param {number} projectId - The id of the project the symbol belongs to
-     * @param {number} symbolId - The id of the symbol that should be fetched
+     * @param {number} projectId - The id of the project the symbol belongs to.
+     * @param {number} symbolId - The id of the symbol that should be fetched.
      */
     get(projectId, symbolId) {
         return this.$http.get(`rest/projects/${projectId}/symbols/${symbolId}`)
@@ -42,10 +43,10 @@ export class SymbolResource {
     }
 
     /**
-     * Get all symbols of a project
+     * Get all symbols of a project.
      *
-     * @param {number} projectId - The id of the project the symbols belong to
-     * @param {boolean} includeHiddenSymbols - If hidden symbols should be included or not
+     * @param {number} projectId - The id of the project the symbols belong to.
+     * @param {boolean} includeHiddenSymbols - If hidden symbols should be included or not.
      * @returns {*}
      */
     getAll(projectId, includeHiddenSymbols = false) {
@@ -55,11 +56,10 @@ export class SymbolResource {
     }
 
     /**
-     * Gets a list of symbols by a list of id/revision pairs
-     * {id_1}:{rev_1},...,{id_n}:{rev_n}
+     * Gets a list of symbols by a list of id/revision pairs.
      *
-     * @param {number} projectId - The id of the project
-     * @param {{id:number,revision:number}[]} idRevisionPairs - The list of id/revision pairs
+     * @param {number} projectId - The id of the project.
+     * @param {{id:number,revision:number}[]} idRevisionPairs - The list of id/revision pairs.
      * @returns {*}
      */
     getManyByIdRevisionPairs(projectId, idRevisionPairs) {
@@ -69,11 +69,10 @@ export class SymbolResource {
     }
 
     /**
-     * Make a GET request to rest/projects/{projectId}/symbols/{symbolId}/complete in order to fetch all revisions.
-     * of a symbol
+     * Fetch all revisions of a symbol.
      *
-     * @param {number} projectId - The id of the project the symbol belongs to
-     * @param {number} symbolId - The id of the symbol whose revisions should be fetched
+     * @param {number} projectId - The id of the project the symbol belongs to.
+     * @param {number} symbolId - The id of the symbol whose revisions should be fetched.
      * @returns {*}
      */
     getRevisions(projectId, symbolId) {
@@ -82,10 +81,10 @@ export class SymbolResource {
     }
 
     /**
-     * Creates a new symbol
+     * Creates a new symbol.
      *
-     * @param {number} projectId - The id of the project the symbol should belong to
-     * @param {AlphabetSymbol} symbol - The symbol that should be created
+     * @param {number} projectId - The id of the project the symbol should belong to.
+     * @param {AlphabetSymbol} symbol - The symbol that should be created.
      */
     create(projectId, symbol) {
         return this.$http.post(`rest/projects/${projectId}/symbols`, symbol)
@@ -93,10 +92,10 @@ export class SymbolResource {
     }
 
     /**
-     * Creates many new symbols
+     * Creates many new symbols.
      *
-     * @param {number} projectId - The id of the project
-     * @param {AlphabetSymbol[]} symbols - The symbols to create
+     * @param {number} projectId - The id of the project.
+     * @param {AlphabetSymbol[]} symbols - The symbols to create.
      * @returns {*}
      */
     createMany(projectId, symbols) {
@@ -105,12 +104,11 @@ export class SymbolResource {
     }
 
     /**
-     * Makes a PUT request to rest/projects/{projectId}/symbols[/batch]/{symbolId[s]}/moveTo/{groupId} in order to
-     * move [a] symbol[s] to another group without creating a new revision
+     * Move symbols to another group without creating a new revision.
      *
-     * @param {AlphabetSymbol|AlphabetSymbol[]} symbols - The symbol[s] to be moved to another group
-     * @param {SymbolGroup} group - The id of the symbol group
-     * @returns {HttpPromise}
+     * @param {AlphabetSymbol|AlphabetSymbol[]} symbols - The symbol[s] to be moved to another group.
+     * @param {SymbolGroup} group - The id of the symbol group.
+     * @returns {*}
      */
     moveMany(symbols, group) {
         const ids = symbols.map(s => s.id).join(',');
@@ -119,9 +117,9 @@ export class SymbolResource {
     }
 
     /**
-     * Updates a single symbol and increments its revision number
+     * Updates a single symbol and increments its revision number.
      *
-     * @param {AlphabetSymbol} symbol - The symbol to be updated
+     * @param {AlphabetSymbol} symbol - The symbol to be updated.
      * @returns {*}
      */
     update(symbol) {
@@ -130,9 +128,9 @@ export class SymbolResource {
     }
 
     /**
-     * Deletes a single symbol
+     * Deletes a single symbol.
      *
-     * @param {AlphabetSymbol} symbol - The the symbol that should be deleted
+     * @param {AlphabetSymbol} symbol - The the symbol that should be deleted.
      * @returns {*}
      */
     remove(symbol) {
@@ -140,9 +138,9 @@ export class SymbolResource {
     }
 
     /**
-     * Removes many symbols
+     * Removes many symbols.
      *
-     * @param {AlphabetSymbol[]} symbols
+     * @param {AlphabetSymbol[]} symbols - The symbols to delete.
      * @returns {*}
      */
     removeMany(symbols) {
@@ -152,9 +150,9 @@ export class SymbolResource {
     }
 
     /**
-     * Recovers a single symbol by setting its property 'visible' to true
+     * Recovers a single symbol by setting its property 'visible' to true.
      *
-     * @param {AlphabetSymbol} symbol - The symbol to recover
+     * @param {AlphabetSymbol} symbol - The symbol to recover.
      * @returns {*}
      */
     recover(symbol) {
@@ -162,9 +160,9 @@ export class SymbolResource {
     }
 
     /**
-     * Recovers many symbols by setting their property 'visible' to true
+     * Recovers many symbols by setting their property 'visible' to true.
      *
-     * @param {AlphabetSymbol[]} symbols - The symbols to recover
+     * @param {AlphabetSymbol[]} symbols - The symbols to recover.
      * @returns {*}
      */
     recoverMany(symbols) {

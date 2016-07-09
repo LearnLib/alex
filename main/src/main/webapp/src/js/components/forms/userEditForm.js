@@ -15,16 +15,13 @@
  */
 
 /**
- * The directive for the form to edit the password and the email of a user or to delete the user.
- *
- * Use: <user-edit-form user="..."></user-edit-form>
- *
- * Expects attribute 'user' to be a user object from the API
+ * The component for the form to edit the password and the email of a user or to delete the user.
  */
 class UserEditForm {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $state
      * @param {SessionService} SessionService
      * @param {ToastService} ToastService
@@ -40,25 +37,27 @@ class UserEditForm {
         this.PromptService = PromptService;
 
         /**
-         * The model for the input of the old password
+         * The model for the input of the old password.
          * @type {string}
          */
         this.oldPassword = '';
 
         /**
-         * The model for the input of the new password
+         * The model for the input of the new password.
          * @type {string}
          */
         this.newPassword = '';
 
         /**
-         * The model for the input of the users mail
+         * The model for the input of the users mail.
          * @type {string}
          */
         this.email = this.user.email;
     }
 
-    /** Changes the email of the user */
+    /**
+     * Changes the email of the user.
+     */
     changeEmail() {
         if (this.email !== '') {
             this.UserResource.changeEmail(this.user, this.email)
@@ -76,7 +75,9 @@ class UserEditForm {
         }
     }
 
-    /** Changes the password of the user */
+    /**
+     * Changes the password of the user.
+     */
     changePassword() {
         if (this.oldPassword === '' || this.newPassword === '') {
             this.ToastService.info('Both passwords have to be entered');
@@ -99,7 +100,9 @@ class UserEditForm {
             });
     }
 
-    /** Deletes the user, removes the jwt on success and redirects to the index page */
+    /**
+     * Deletes the user, removes the jwt on success and redirects to the index page.
+     */
     deleteUser() {
         this.PromptService.confirm("Do you really want to delete this profile? All data will be permanently deleted.")
             .then(() => {

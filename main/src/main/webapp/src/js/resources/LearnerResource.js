@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import {LearnResult} from '../entities/LearnResult';
+import {LearnResult} from "../entities/LearnResult";
 
 /**
- * The service for interacting with the learner
+ * The service for interacting with the learner.
  */
 export class LearnerResource {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $http
      */
     // @ngInject
@@ -31,10 +32,10 @@ export class LearnerResource {
     }
 
     /**
-     * Start the server side learning process of a project
+     * Start the server side learning process of a project.
      *
-     * @param {number} projectId
-     * @param {LearnConfiguration} learnConfiguration
+     * @param {number} projectId - The id of the project of the test.
+     * @param {LearnConfiguration} learnConfiguration - The configuration to learn with.
      * @return {*}
      */
     start(projectId, learnConfiguration) {
@@ -43,7 +44,7 @@ export class LearnerResource {
 
     /**
      * Try to force stop a running learning process of a project. May not necessarily work due to difficulties
-     * with the thread handling
+     * with the thread handling.
      *
      * @return {*}
      */
@@ -53,11 +54,11 @@ export class LearnerResource {
 
     /**
      * Resume a paused learning process where the eqOracle was 'sample' and the learn process was interrupted
-     * so that the ongoing process parameters could be defined
+     * so that the ongoing process parameters could be defined.
      *
-     * @param {number} projectId
-     * @param {number} testNo
-     * @param {LearnConfiguration} learnConfiguration
+     * @param {number} projectId - The id of the test to resume with.
+     * @param {number} testNo - The test number of the test to resume.
+     * @param {LearnConfiguration} learnConfiguration - The configuration to resume with.
      * @return {*}
      */
     resume(projectId, testNo, learnConfiguration) {
@@ -66,7 +67,7 @@ export class LearnerResource {
 
     /**
      * Gets the learner result that includes the hypothesis. make sure isActive() returns true before calling this
-     * function
+     * function.
      *
      * @return {*}
      */
@@ -77,7 +78,7 @@ export class LearnerResource {
     }
 
     /**
-     * Check if the server is finished learning a project
+     * Check if the server is finished learning a project.
      *
      * @return {*}
      */
@@ -87,11 +88,11 @@ export class LearnerResource {
     }
 
     /**
-     * Verifies a possible counterexample
+     * Verifies a possible counterexample.
      *
-     * @param {number} projectId
-     * @param {{id: number, revision: number}} resetSymbol - The id/revision pair of the reset symbol
-     * @param {{id: number, revision: number}[]} symbols - The list of id/revision pairs of symbols
+     * @param {number} projectId - The project id.
+     * @param {{id: number, revision: number}} resetSymbol - The id/revision pair of the reset symbol.
+     * @param {{id: number, revision: number}[]} symbols - The list of id/revision pairs of symbols.
      * @returns {*}
      */
     isCounterexample(projectId, resetSymbol, symbols) {

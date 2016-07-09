@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-import {User} from '../../entities/User';
+import {events} from "../../constants";
+import {User} from "../../entities/User";
 
-/** The component controller for the user login form */
+/**
+ * The component controller for the user login form.
+ */
 class UserLoginForm {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $state
      * @param {UserResource} UserResource
      * @param jwtHelper
@@ -39,18 +42,21 @@ class UserLoginForm {
         this.EventBus = EventBus;
 
         /**
-         * The email of the user
+         * The email of the user.
          * @type {string}
          */
         this.email = null;
 
         /**
-         * The password of the user
+         * The password of the user.
          * @type {string}
          */
         this.password = null;
     }
 
+    /**
+     * Logs in the user.
+     */
     login() {
         if (this.email && this.password) {
             this.UserResource.login(this.email, this.password)

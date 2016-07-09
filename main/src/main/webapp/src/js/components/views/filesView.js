@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-/** The controller of the files page */
+/**
+ * The controller of the files page.
+ */
 class FilesView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param Upload
      * @param {ToastService} ToastService
      * @param {SessionService} SessionService
@@ -32,31 +35,31 @@ class FilesView {
         this.FileResource = FileResource;
 
         /**
-         * The project that is in the session
-         * @type{Project}
+         * The project that is in the session.
+         * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * All project related files
+         * All project related files.
          * @type {{name: string, project: number}[]}
          */
         this.files = [];
 
         /**
-         * The selected files
+         * The selected files.
          * @type {{name: string, project: number}[]}
          */
         this.selectedFiles = [];
 
         /**
-         * The progress in percent of the current uploading file
+         * The progress in percent of the current uploading file.
          * @type {number}
          */
         this.progress = 0;
 
         /**
-         * The list of files to upload
+         * The list of files to upload.
          * @type {null|File[]}
          */
         this.filesToUpload = null;
@@ -74,8 +77,9 @@ class FilesView {
     }
 
     /**
-     * Remove a single file from the server and the list
-     * @param {string} file - The name of the file to delete
+     * Remove a single file from the server and the list.
+     *
+     * @param {string} file - The name of the file to delete.
      */
     deleteFile(file) {
         this.FileResource.remove(this.project.id, file)
@@ -87,7 +91,9 @@ class FilesView {
             });
     }
 
-    /** Upload all chosen files piece by piece and add successfully deleted files to the list */
+    /**
+     * Upload all chosen files piece by piece and add successfully deleted files to the list.
+     */
     upload() {
         let error = false;
         const countFiles = this.files.length;
@@ -126,7 +132,9 @@ class FilesView {
         next();
     }
 
-    /** Batch delete selected files */
+    /**
+     * Batch delete selected files.
+     */
     deleteSelectedFiles() {
         this.selectedFiles.forEach(file => {
             this.deleteFile(file);

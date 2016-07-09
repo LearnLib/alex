@@ -127,7 +127,7 @@ import {
     actionFormSubmit,
     actionFormWaitForNode,
     actionFormWaitForTitle
-} from './components/forms/actions/webActionForms';
+} from "./components/forms/actions/webActionForms";
 import {
     actionFormCall,
     actionFormCheckAttributeExists,
@@ -136,7 +136,7 @@ import {
     actionFormCheckHeaderField,
     actionFormCheckHttpBody,
     actionFormCheckStatus
-} from './components/forms/actions/restActionForms';
+} from "./components/forms/actions/restActionForms";
 import {
     actionFormAssertCounter,
     actionFormAssertVariable,
@@ -149,7 +149,7 @@ import {
     actionFormSetVariableByJson,
     actionFormSetVariableByNodeAttribute,
     actionFormWait
-} from './components/forms/actions/generalActionForms';
+} from "./components/forms/actions/generalActionForms";
 
 angular
     .module('ALEX', [
