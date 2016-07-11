@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from '../constants';
+import {eqOracleType} from "../constants";
 
-/** The model for the random eq oracle */
+/**
+ * The model for the random eq oracle.
+ */
 export class RandomEqOracle {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param {number} minLength
      * @param {number} maxLength
      * @param {number} maxNoOfTests
@@ -33,11 +36,14 @@ export class RandomEqOracle {
     }
 }
 
-/** The model for the complete eq oracle */
+/**
+ * The model for the complete eq oracle.
+ */
 export class CompleteEqOracle {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param {number} minDepth
      * @param {number} maxDepth
      */
@@ -48,11 +54,14 @@ export class CompleteEqOracle {
     }
 }
 
-/** The model for the sample eq oracle */
+/**
+ * The model for the sample eq oracle.
+ */
 export class SampleEqOracle {
 
     /**
      * Constructor
+     *
      * @param {Array} counterExamples
      */
     constructor(counterExamples = []) {
@@ -61,11 +70,14 @@ export class SampleEqOracle {
     }
 }
 
-/** The model the the wmethod eq oracle */
+/**
+ * The model the the wmethod eq oracle.
+ */
 export class WMethodEqOracle {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param {number} maxDepth
      */
     constructor(maxDepth = 1) {

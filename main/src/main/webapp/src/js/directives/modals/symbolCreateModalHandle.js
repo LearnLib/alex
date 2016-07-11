@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
+import {events} from "../../constants";
+import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 
-/** The controller for the modal window to create a new symbol */
+/**
+ * The controller for the modal window to create a new symbol.
+ */
 export class SymbolCreateModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
-     * @param SymbolResource
-     * @param SymbolGroupResource
-     * @param ToastService
-     * @param SessionService
-     * @param EventBus
+     * @param {SymbolResource} SymbolResource
+     * @param {SymbolGroupResource} SymbolGroupResource
+     * @param {ToastService} ToastService
+     * @param {SessionService} SessionService
+     * @param {EventBus} EventBus
      */
     // @ngInject
     constructor($uibModalInstance, SymbolResource, SymbolGroupResource, ToastService, SessionService, EventBus) {
@@ -37,31 +40,31 @@ export class SymbolCreateModalController {
         this.EventBus = EventBus;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * The model of the symbol that will be created
+         * The model of the symbol that will be created.
          * @type {AlphabetSymbol}
          */
         this.symbol = new AlphabetSymbol();
 
         /**
-         * The list of available symbol groups where the new symbol could be created in
+         * The list of available symbol groups where the new symbol could be created in.
          * @type {SymbolGroup[]}
          */
         this.groups = [];
 
         /**
-         * The symbol group that is selected
+         * The symbol group that is selected.
          * @type {null|SymbolGroup}
          */
         this.selectedGroup = null;
 
         /**
-         * An error message that can be displayed in the template
+         * An error message that can be displayed in the template.
          * @type {String|null}
          */
         this.error = null;
@@ -73,7 +76,8 @@ export class SymbolCreateModalController {
     }
 
     /**
-     * Creates a new symbol but does not close the modal windown
+     * Creates a new symbol but does not close the modal window.
+     *
      * @returns {*}
      */
     createSymbolAndContinue() {
@@ -110,7 +114,7 @@ export class SymbolCreateModalController {
     }
 
     /**
-     * Closes the modal dialog
+     * Closes the modal dialog.
      */
     close() {
         this.$uibModalInstance.dismiss();
@@ -126,7 +130,7 @@ export class SymbolCreateModalController {
  * project and an attribute 'on-created' which expects a callback function from the directives parent controller.
  * The callback function should have one parameter that will be the newly created symbol.
  *
- * @param $uibModal - The $modal service
+ * @param $uibModal - The $modal service.
  * @returns {{restrict: string, scope: {}, link: link}}
  */
 // @ngInject
@@ -140,7 +144,7 @@ export function symbolCreateModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/symbol-create-modal.html',
+                templateUrl: 'html/directives/modals/symbol-create-modal.html',
                 controller: SymbolCreateModalController,
                 controllerAs: 'vm'
             });

@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-import {Project} from '../../entities/Project';
-import {events} from '../../constants';
+import {Project} from "../../entities/Project";
+import {events} from "../../constants";
 
 /**
- * The controller of the modal window for editing a project
+ * The controller of the modal window for editing a project.
  */
 export class ProjectSettingsModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
      * @param modalData
-     * @param ProjectResource
-     * @param ToastService
-     * @param EventBus
+     * @param {ProjectResource} ProjectResource
+     * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
      */
     // @ngInject
     constructor($uibModalInstance, modalData, ProjectResource, ToastService, EventBus) {
@@ -37,24 +38,28 @@ export class ProjectSettingsModalController {
         this.ToastService = ToastService;
         this.EventBus = EventBus;
 
-        /** The form object */
+        /**
+         * The form object.
+         */
         this.form = null;
 
         /**
-         * The project to edit
+         * The project to edit.
          * @type {Project}
          */
         this.project = modalData.project;
 
         /**
-         * An error message that is displayed on a failed updated
+         * An error message that is displayed on a failed updated.
          * @type {null|string}
          */
         this.error = null;
     }
 
-    /** Updates the project. Closes the modal window on success. */
-    updateProject () {
+    /**
+     * Updates the project. Closes the modal window on success.
+     */
+    updateProject() {
         this.error = null;
 
         this.ProjectResource.update(this.project)
@@ -72,8 +77,10 @@ export class ProjectSettingsModalController {
             });
     }
 
-    /** Closes the modal window */
-    close () {
+    /**
+     * Closes the modal window.
+     */
+    close() {
         this.$uibModalInstance.dismiss();
     }
 }
@@ -99,7 +106,7 @@ export function projectSettingsModalHandle($uibModal, LearnerResource, ToastServ
                         ToastService.info('You cannot edit this project because a learning process is still active.');
                     } else {
                         $uibModal.open({
-                            templateUrl: 'html/modals/project-settings-modal.html',
+                            templateUrl: 'html/directives/modals/project-settings-modal.html',
                             controller: ProjectSettingsModalController,
                             controllerAs: 'vm',
                             resolve: {

@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
+import _ from "lodash";
 
 /**
- * The service that helps transforming learn results into chart data that is required by n3-line-chart
+ * The service that helps transforming learn results into chart data that is required by n3-line-chart.
  */
 export class LearnerResultChartService {
 
     /**
-     * Creates chart data for a single final result
+     * Creates chart data for a single final result.
+     *
      * @param {LearnResult} result
      * @returns {{context, options, data}|*}
      */
@@ -33,7 +34,6 @@ export class LearnerResultChartService {
     }
 
     /**
-     *
      * @param {LearnResult} result
      */
     createDataSingleComplete(result) {
@@ -202,8 +202,20 @@ export class LearnerResultChartService {
             }
         };
 
-        const data = {eqs: {dataset: []}, mqs: {dataset: []}, symbols: {dataset: []}, sigma: {dataset: []}, duration: {dataset: []}};
-        const values = {eqs: {dataset: []}, mqs: {dataset: []}, symbols: {dataset: []}, sigma: {dataset: []}, duration: {dataset: []}};
+        const data = {
+            eqs: {dataset: []},
+            mqs: {dataset: []},
+            symbols: {dataset: []},
+            sigma: {dataset: []},
+            duration: {dataset: []}
+        };
+        const values = {
+            eqs: {dataset: []},
+            mqs: {dataset: []},
+            symbols: {dataset: []},
+            sigma: {dataset: []},
+            duration: {dataset: []}
+        };
 
         results.forEach((result, i) => {
 

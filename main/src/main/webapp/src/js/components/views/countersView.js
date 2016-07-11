@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
+import _ from "lodash";
 
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
@@ -22,10 +22,11 @@ import _ from 'lodash';
 class CountersView {
 
     /**
-     * Constructor
-     * @param SessionService
-     * @param CounterResource
-     * @param ToastService
+     * Constructor.
+     *
+     * @param {SessionService} SessionService
+     * @param {CounterResource} CounterResource
+     * @param {ToastService} ToastService
      */
     // @ngInject
     constructor(SessionService, CounterResource, ToastService) {
@@ -33,19 +34,19 @@ class CountersView {
         this.ToastService = ToastService;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * The counters of the project
+         * The counters of the project.
          * @type {Counter[]}
          */
         this.counters = [];
 
         /**
-         * The selected counters objects
+         * The selected counters objects.
          * @type {Counter[]}
          */
         this.selectedCounters = [];
@@ -58,9 +59,9 @@ class CountersView {
 
 
     /**
-     * Delete a counter from the server and on success from scope
+     * Delete a counter from the server and on success from scope.
      *
-     * @param {Counter} counter - The counter that should be deleted
+     * @param {Counter} counter - The counter that should be deleted.
      */
     deleteCounter(counter) {
         this.CounterResource.remove(this.project.id, counter)
@@ -74,7 +75,7 @@ class CountersView {
     }
 
     /**
-     * Delete all selected counters from the server and on success from scope
+     * Delete all selected counters from the server and on success from scope.
      */
     deleteSelectedCounters() {
         if (this.selectedCounters.length > 0) {
@@ -95,5 +96,5 @@ class CountersView {
 export const countersView = {
     controller: CountersView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/counters.html'
+    templateUrl: 'html/components/views/counters.html'
 };

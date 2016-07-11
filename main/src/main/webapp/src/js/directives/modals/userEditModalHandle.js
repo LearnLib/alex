@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {User} from '../../entities/User';
-import {events, userRole} from '../../constants';
+import {User} from "../../entities/User";
+import {events, userRole} from "../../constants";
 
 /**
  * The controller for the modal window that handles editing a user.
@@ -24,7 +24,8 @@ import {events, userRole} from '../../constants';
 class UserEditModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $state
      * @param $uibModalInstance
      * @param modalData
@@ -45,25 +46,25 @@ class UserEditModalController {
         this.SessionService = SessionService;
 
         /**
-         * The error message in case the update goes wrong
+         * The error message in case the update goes wrong.
          * @type {null|string}
          */
         this.error = null;
 
         /**
-         * The user role dictionary
+         * The user role dictionary.
          * @type {object}
          */
         this.userRole = userRole;
 
         /**
-         * The user to edit
+         * The user to edit.
          * @type {User}
          */
         this.user = modalData.user;
 
         /**
-         * The model for the input of the users mail
+         * The model for the input of the users mail.
          * @type {string}
          */
         this.email = this.user.email;
@@ -129,7 +130,7 @@ class UserEditModalController {
     }
 
     /**
-     * Deletes a user
+     * Deletes a user.
      */
     deleteUser() {
         this.error = null;
@@ -161,7 +162,7 @@ class UserEditModalController {
  * The directive should only be used as an attribute.
  *
  * Usage: <a href="" user-edit-modal-handle user="..."></a>
- * where attribute 'user' expects a user object
+ * where attribute 'user' expects a user object.
  *
  * @param $uibModal
  * @returns {{scope: {user: string}, restrict: string, link: link}}
@@ -179,7 +180,7 @@ function userEditModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/user-edit-modal.html',
+                templateUrl: 'html/directives/modals/user-edit-modal.html',
                 controller: UserEditModalController,
                 controllerAs: 'vm',
                 resolve: {

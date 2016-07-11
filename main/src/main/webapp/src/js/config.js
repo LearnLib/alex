@@ -15,7 +15,8 @@
  */
 
 /**
- * Configure some third party libraries and set the http interceptor to send the jwt with each request
+ * Configure some third party libraries and set the http interceptor to send the jwt with each request.
+ *
  * @param toastrConfig
  * @param selectionModelOptionsProvider
  * @param jwtInterceptorProvider

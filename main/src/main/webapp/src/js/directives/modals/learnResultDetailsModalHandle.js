@@ -22,7 +22,8 @@
 export class LearnResultDetailsModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
      * @param modalData
      */
@@ -31,19 +32,19 @@ export class LearnResultDetailsModalController {
         this.$uibModalInstance = $uibModalInstance;
 
         /**
-         * The result to display information from
+         * The result to display information from.
          * @type {LearnResult[]}
          */
         this.result = modalData.result;
 
         /**
-         * The index of the current step
+         * The index of the current step.
          * @type {number}
          */
         this.current = modalData.current;
 
         /**
-         * The data of the tabs that are displayed
+         * The data of the tabs that are displayed.
          * @type {*[]}
          */
         this.tabs = [
@@ -57,7 +58,9 @@ export class LearnResultDetailsModalController {
         }
     }
 
-    /** Close the modal window  */
+    /**
+     * Close the modal window.
+     */
     ok() {
         this.$uibModalInstance.dismiss();
     }
@@ -69,9 +72,9 @@ export class LearnResultDetailsModalController {
  * an attribute and expects a second attribute 'result' which should be the LearnResult whose details should be
  * shown. Attaches a click event on the element that opens the modal.
  *
- * Use it like this: '<button learn-result-details-modal-handle result="...">Click me!</button>'
+ * Use it like this: '<button learn-result-details-modal-handle result="...">Click me!</button>'.
  *
- * @param $uibModal - The modal service
+ * @param $uibModal - The modal service.
  * @returns {{restrict: string, scope: {result: string}, link: link}}
  */
 // @ngInject
@@ -88,7 +91,7 @@ export function learnResultDetailsModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/learn-result-details-modal.html',
+                templateUrl: 'html/directives/modals/learn-result-details-modal.html',
                 controller: LearnResultDetailsModalController,
                 controllerAs: 'vm',
                 resolve: {

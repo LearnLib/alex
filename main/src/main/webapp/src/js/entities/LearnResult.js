@@ -15,87 +15,91 @@
  */
 
 /**
- * The model for a learner result
+ * The model for a learner result.
  */
 export class LearnResult {
 
     /**
-     * Constructor
-     * @param obj - The object to create a learn result from
+     * Constructor.
+     *
+     * @param obj - The object to create a learn result from.
      */
     constructor(obj) {
 
         /**
-         * The algorithm that is used
+         * The algorithm that is used.
          * @type {string}
          */
         this.algorithm = obj.algorithm;
 
         /**
-         * The browser that is used
+         * The browser that is used.
          * @type {string}
          */
         this.browser = obj.browser;
 
         /**
-         * The hypothesis
+         * The hypothesis.
          * @type {object}
          */
         this.hypothesis = obj.hypothesis;
 
         /**
-         * The project id of the learn result
+         * The project id of the learn result.
          * @type{number}
          */
         this.project = obj.project;
 
         /**
-         * The id revision pair of the reset symbol
+         * The id revision pair of the reset symbol.
+         * @type {*}
          */
         this.resetSymbol = obj.resetSymbol;
 
         /**
-         * The alphabet the process has been learned with
+         * The alphabet the process has been learned with.
          * @type {{id:number,revision:number}[]}
          */
         this.sigma = obj.sigma;
 
         /**
-         * The cumulated statistics
+         * The cumulated statistics.
+         * @type {*}
          */
         this.statistics = obj.statistics;
 
         /**
-         * The steps of the learn process
+         * The steps of the learn process.
          * @type {{eqOracle:Object, stepNo:number, statistics:Object, hypothesis:Object}}
          */
         this.steps = obj.steps;
 
         /**
-         * Sigma
+         * Sigma.
+         * @type {*}
          */
         this.symbols = obj.symbols;
 
         /**
-         * The test number
+         * The test number.
          * @type {number}
          */
         this.testNo = obj.testNo;
 
         /**
-         * The id of the user
+         * The id of the user.
          * @type {number}
          */
         this.user = obj.user;
 
         /**
-         * If the learner encounted an error
+         * If the learner encountered an error.
          * @type {boolean}
          */
         this.error = obj.error;
 
         /**
-         * The description of the error that occurred
+         * The description of the error that occurred.
          * @type {string}
          */
         this.errorText = obj.errorText;

@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
+import {events} from "../../constants";
 
 /**
  * The directive for the dashboard widget that displays information about the current project.
- *
- * Use: <project-details-widget></project-details-widget>
  */
 class ProjectDetailsWidget {
 
     /**
      * Constructor.
+     *
      * @param $scope
      * @param {SessionService} SessionService
      * @param {SymbolGroupResource} SymbolGroupResource
@@ -35,25 +34,25 @@ class ProjectDetailsWidget {
     constructor($scope, SessionService, SymbolGroupResource, LearnResultResource, EventBus) {
 
         /**
-         * The project in sessionStorage
+         * The project in sessionStorage.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * The number of symbol groups of the project
+         * The number of symbol groups of the project.
          * @type {null|number}
          */
         this.numberOfGroups = null;
 
         /**
-         * The number of visible symbols of the project
+         * The number of visible symbols of the project.
          * @type {null|number}
          */
         this.numberOfSymbols = null;
 
         /**
-         * The number of persisted test runs in the database
+         * The number of persisted test runs in the database.
          * @type {null|number}
          */
         this.numberOfTests = null;

@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
+import {events} from "../../constants";
 
 /**
- * The controller that shows the page to manage projects
+ * The controller that shows the page to manage projects.
  */
 class ProjectsView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param $state
      * @param {SessionService} SessionService
@@ -34,7 +35,7 @@ class ProjectsView {
     constructor($scope, $state, SessionService, ProjectResource, EventBus, ToastService) {
 
         /**
-         * The list of all projects
+         * The list of all projects.
          * @type {Project[]}
          */
         this.projects = [];
@@ -77,5 +78,5 @@ class ProjectsView {
 export const projectsView = {
     controller: ProjectsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/projects.html'
+    templateUrl: 'html/components/views/projects.html'
 };

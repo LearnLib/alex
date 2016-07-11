@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-/** The controller of the user settings page */
+/**
+ * The controller of the user settings page.
+ */
 class UsersSettingsView {
 
     /**
      * Constructor.
+     *
      * @param {UserResource} UserResource
      * @param {SessionService} SessionService
      * @param {ToastService} ToastService
@@ -30,7 +33,7 @@ class UsersSettingsView {
         const user = SessionService.getUser();
 
         /**
-         * The user to edit
+         * The user to edit.
          * @type {null|User}
          */
         this.user = null;
@@ -49,5 +52,5 @@ class UsersSettingsView {
 export const usersSettingsView = {
     controller: UsersSettingsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/users-settings.html'
+    templateUrl: 'html/components/views/users-settings.html'
 };

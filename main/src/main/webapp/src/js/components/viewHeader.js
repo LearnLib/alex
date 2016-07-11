@@ -15,16 +15,18 @@
  */
 
 /**
- * The controller for the view header component that is displayed in almost all views
- * Use it like '<view-heading title="..."> ... </view-heading>' where 'title' should be a string
+ * The controller for the view header component that is displayed in almost all views.
+ * Use it like '<view-heading title="..."> ... </view-heading>' where 'title' should be a string.
  */
 class ViewHeader {
 
-    /** Constructor */
+    /**
+     * Constructor.
+     */
     constructor() {
 
         /**
-         * The title that is displayed in the header
+         * The title that is displayed in the header.
          * @type {null|string}
          */
         this.title = null;

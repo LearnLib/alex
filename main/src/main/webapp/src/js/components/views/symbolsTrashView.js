@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
+import _ from "lodash";
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
@@ -24,6 +24,7 @@ class SymbolsTrashView {
 
     /**
      * Constructor.
+     *
      * @param {SessionService} SessionService
      * @param {SymbolResource} SymbolResource
      * @param {ToastService} ToastService
@@ -34,19 +35,19 @@ class SymbolsTrashView {
         this.ToastService = ToastService;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * The list of deleted symbols
+         * The list of deleted symbols.
          * @type {AlphabetSymbol[]}
          */
         this.symbols = [];
 
         /**
-         * The list of selected symbols
+         * The list of selected symbols.
          * @type {AlphabetSymbol[]}
          */
         this.selectedSymbols = [];
@@ -58,8 +59,9 @@ class SymbolsTrashView {
     }
 
     /**
-     * Recovers a deleted symbol by calling the API and removes the recovered symbol from the symbol list on success
-     * @param {AlphabetSymbol} symbol - The symbol that should be recovered from the trash
+     * Recovers a deleted symbol by calling the API and removes the recovered symbol from the symbol list on success.
+     *
+     * @param {AlphabetSymbol} symbol - The symbol that should be recovered from the trash.
      */
     recoverSymbol(symbol) {
         this.SymbolResource.recover(symbol)
@@ -72,7 +74,9 @@ class SymbolsTrashView {
             });
     }
 
-    /** Recovers all symbols that were selected and calls $scope.recoverSymbol for each one */
+    /**
+     * Recovers all symbols that were selected and calls $scope.recoverSymbol for each one.
+     */
     recoverSelectedSymbols() {
         if (this.selectedSymbols.length > 0) {
             this.SymbolResource.recoverMany(this.selectedSymbols)
@@ -93,5 +97,5 @@ class SymbolsTrashView {
 export const symbolsTrashView = {
     controller: SymbolsTrashView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/symbols-trash.html'
+    templateUrl: 'html/components/views/symbols-trash.html'
 };

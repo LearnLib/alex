@@ -23,7 +23,7 @@
  * @param SessionService - The SessionService
  */
 class HtmlElementPickerComponent {
-    
+
     /**
      * Constructor.
      * @param {SessionService} SessionService
@@ -120,7 +120,6 @@ class HtmlElementPickerComponent {
      *
      * @param el  - The element to get the unique css path from
      * @returns {String} - The unique css path ot the element
-     * @private
      */
     getCssPath(el) {
         var names = [];
@@ -180,7 +179,7 @@ class HtmlElementPickerComponent {
 
         angular.element(this.iframe.contents()[0].body).off('mousemove', this.mouseMoveHandler);
         angular.element(this.iframe.contents()[0].body).off('click', this.clickHandler);
-        angular.element(document.body).off('keyup', this.keyUpHandler);
+        document.body.removeEventListener('keyup', this.keyUpHandler);
     }
 
     /**
@@ -242,7 +241,7 @@ class HtmlElementPickerComponent {
 
             iframeBody.on('mousemove', this.mouseMoveHandler);
             iframeBody.one('click', this.clickHandler);
-            angular.element(document.body).on('keyup', this.keyUpHandler);
+            document.body.addEventListener('keyup', this.keyUpHandler, false);
         } else {
             this.handleClick();
             this.selector = null;

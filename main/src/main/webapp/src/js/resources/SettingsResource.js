@@ -21,6 +21,7 @@ export class SettingsResource {
 
     /**
      * Constructor.
+     *
      * @param $http
      */
     // @ngInject

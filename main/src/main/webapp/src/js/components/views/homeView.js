@@ -20,7 +20,8 @@
 class HomeView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $state
      * @param {SessionService} SessionService
      */
@@ -28,13 +29,13 @@ class HomeView {
     constructor($state, SessionService) {
 
         /**
-         * The current user
+         * The current user.
          * @type {User}
          */
         this.user = SessionService.getUser();
 
         /**
-         * The current project
+         * The current project.
          * @type {Project}
          */
         this.project = SessionService.getProject();
@@ -52,5 +53,5 @@ class HomeView {
 export const homeView = {
     controller: HomeView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/home.html'
+    templateUrl: 'html/components/views/home.html'
 };

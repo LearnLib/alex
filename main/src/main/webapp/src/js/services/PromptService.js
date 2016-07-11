@@ -14,45 +14,14 @@
  * limitations under the License.
  */
 
-/** The controller of the prompt dialog */
+/**
+ * The controller of the prompt dialog.
+ */
 export class PromptDialogController {
 
     /**
-     * Constructor
-     * @param $uibModalInstance
-     * @param modalData
-     */
-    // @ngInject
-    constructor($uibModalInstance, modalData) {
-        this.$uibModalInstance = $uibModalInstance;
-
-        /** The model for the input field for the user input **/
-        this.userInput = null;
-
-        /** The text to display **/
-        this.text = modalData.text;
-
-        /** The regex the user input has to match **/
-        this.inputPattern = /^[a-zA-Z0-9\.\-,_]+$/;
-    }
-
-    /** Close the modal dialog and pass the user input */
-    ok() {
-        this.$uibModalInstance.close(this.userInput);
-    }
-
-    /** Close the modal dialog */
-    close() {
-        this.$uibModalInstance.dismiss();
-    }
-}
-
-
-/** The controller that handles the confirm modal dialog. */
-export class ConfirmDialogController {
-
-    /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
      * @param modalData
      */
@@ -61,29 +30,83 @@ export class ConfirmDialogController {
         this.$uibModalInstance = $uibModalInstance;
 
         /**
-         * The text to display
-         * @type {string}
+         * The model for the input field for the user input.
          */
-        this.text = modalData.text || null;
+        this.userInput = null;
+
+        /**
+         * The text to display.
+         */
+        this.text = modalData.text;
+
+        /**
+         * The regex the user input has to match.
+         */
+        this.inputPattern = /^[a-zA-Z0-9\.\-,_]+$/;
     }
 
-    /** Close the modal dialog */
+    /**
+     * Close the modal dialog and pass the user input.
+     */
     ok() {
-        this.$uibModalInstance.close();
+        this.$uibModalInstance.close(this.userInput);
     }
 
-    /** Close the modal dialog */
+    /**
+     * Close the modal dialog.
+     */
     close() {
         this.$uibModalInstance.dismiss();
     }
 }
 
 
-/** The service for handling promt and confirm dialogs */
+/**
+ * The controller that handles the confirm modal dialog.
+ */
+export class ConfirmDialogController {
+
+    /**
+     * Constructor.
+     *
+     * @param $uibModalInstance
+     * @param modalData
+     */
+    // @ngInject
+    constructor($uibModalInstance, modalData) {
+        this.$uibModalInstance = $uibModalInstance;
+
+        /**
+         * The text to display.
+         * @type {string}
+         */
+        this.text = modalData.text || null;
+    }
+
+    /**
+     * Close the modal dialog.
+     */
+    ok() {
+        this.$uibModalInstance.close();
+    }
+
+    /**
+     * Close the modal dialog.
+     */
+    close() {
+        this.$uibModalInstance.dismiss();
+    }
+}
+
+
+/**
+ * The service for handling promt and confirm dialogs.
+ */
 export class PromptService {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModal
      */
     // @ngInject
@@ -94,8 +117,8 @@ export class PromptService {
     /**
      * Opens the prompt dialog.
      *
-     * @param {string} text - The text to display
-     * @return {*} - The modal result promise
+     * @param {string} text - The text to display.
+     * @return {*} - The modal result promise.
      */
     prompt(text) {
         return this.$uibModal.open({
@@ -113,10 +136,10 @@ export class PromptService {
     }
 
     /**
-     * Opens the confirm dialog
+     * Opens the confirm dialog.
      *
-     * @param {string} text - The text to be displayed in the confirm dialog
-     * @returns {*} - The modal result promise
+     * @param {string} text - The text to be displayed in the confirm dialog.
+     * @returns {*} - The modal result promise.
      */
     confirm(text) {
         return this.$uibModal.open({

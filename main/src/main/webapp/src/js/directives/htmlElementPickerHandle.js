@@ -19,10 +19,10 @@
  * event to the source element that opens the picker. On first start, it loads the page that is defined in the
  * projects baseUrl. On following calls the last visited page is loaded.
  *
- * Attribute 'model' is the model for the XPath
- * Attribute 'text' is the model for the .textContent value of the selected element
+ * Attribute 'model' is the model for the XPath.
+ * Attribute 'text' is the model for the .textContent value of the selected element.
  *
- * Use: '<button html-element-picker model="..." text="...">Click Me!</button>'
+ * Use: '<button html-element-picker model="..." text="...">Click Me!</button>'.
  *
  * @param $document
  * @param $compile

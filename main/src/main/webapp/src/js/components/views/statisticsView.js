@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import {chartMode} from '../../constants';
+import {chartMode} from "../../constants";
 
-/** The controller for the statistics page. */
+/**
+ * The controller for the statistics page.
+ */
 class StatisticsView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param {SessionService} SessionService
      * @param {LearnResultResource} LearnResultResource
      * @param {ToastService} ToastService
@@ -35,19 +38,19 @@ class StatisticsView {
         this.LearnerResultDownloadService = LearnerResultDownloadService;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * All final Learn Results from the project
+         * All final Learn Results from the project.
          * @type {LearnResult[]}
          */
         this.results = [];
 
         /**
-         * The list of selected learn results
+         * The list of selected learn results.
          * @type {LearnResult[]}
          */
         this.selectedResults = [];
@@ -59,7 +62,9 @@ class StatisticsView {
             });
     }
 
-    /** Gathers the testNos of selected results and redirects to the compare view */
+    /**
+     * Gathers the testNos of selected results and redirects to the compare view.
+     */
     createChartSelectedFinalResults() {
         if (this.selectedResults.length > 0) {
             const testNos = this.selectedResults.map(r => r.testNo).join(',');
@@ -70,7 +75,9 @@ class StatisticsView {
         }
     }
 
-    /** Gathers the testNos of selected results and redirects to the compare view */
+    /**
+     * Gathers the testNos of selected results and redirects to the compare view.
+     */
     createChartSelectedCompleteResults() {
         if (this.selectedResults.length > 0) {
             const testNos = this.selectedResults.map(r => r.testNo).join(',');
@@ -81,7 +88,9 @@ class StatisticsView {
         }
     }
 
-    /** Redirects to the compare view */
+    /**
+     * Redirects to the compare view.
+     */
     createChartCompleteResult(result) {
         this.$state.go('statisticsCompare', {
             testNos: result.testNo,
@@ -89,7 +98,9 @@ class StatisticsView {
         });
     }
 
-    /** Redirects to the compare view */
+    /**
+     * Redirects to the compare view.
+     */
     createChartFinalResult(result) {
         this.$state.go('statisticsCompare', {
             testNos: result.testNo,
@@ -98,15 +109,18 @@ class StatisticsView {
     }
 
     /**
-     * Exports the statistics and some other attributes from a given learn result into csv
-     * @param {LearnResult} result
+     * Exports the statistics and some other attributes from a given learn result into csv.
+     *
+     * @param {LearnResult} result - The learn result to download as csv.
      */
     exportAsCSV(result) {
         this.LearnerResultDownloadService.download([result]);
         this.ToastService.success('The result has been exported.');
     }
 
-    /** Exports selected learn results into a csv file */
+    /**
+     * Exports selected learn results into a csv file.
+     */
     exportSelectedAsCSV() {
         if (this.selectedResults.length > 0) {
             this.LearnerResultDownloadService.download(this.selectedResults);
@@ -118,5 +132,5 @@ class StatisticsView {
 export const statisticsView = {
     controller: StatisticsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/statistics.html'
+    templateUrl: 'html/components/views/statistics.html'
 };

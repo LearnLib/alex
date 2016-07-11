@@ -16,47 +16,47 @@
 
 /**
  * The component that is used for the sticky sub navigation that mostly contains call to action buttons for the
- * current view
- *
- * Use: '<action-bar></action-bar>'
+ * current view.
  */
 // @ngInject
 class ActionBar {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
-     * @param $window
      * @param $element
      */
-    constructor($scope, $window, $element) {
-        this.$window = $window;
+    constructor($scope, $element) {
 
-        /** The document.body */
-        this.body = angular.element(document.body);
+        /**
+         * The root element of the component.
+         */
+        this.rootEl = $element.children()[0];
 
-        /** The root element of the component */
-        this.rootEl = angular.element($element.children()[0]);
-
-        /** The scroll handler */
+        /**
+         * The scroll handler.
+         */
         this.scrollHandler = this.handleResize.bind(this);
 
-        $window.addEventListener('scroll', this.scrollHandler, false);
+        window.addEventListener('scroll', this.scrollHandler, false);
 
         $scope.$on('$destroy', () => {
-            $window.removeEventListener('scroll', this.scrollHandler, false);
-            this.body.removeClass('has-fixed-action-bar');
+            window.removeEventListener('scroll', this.scrollHandler, false);
+            document.body.classList.remove('has-fixed-action-bar');
         });
     }
 
-    /** Depending on the scroll y value, toggles classes for fixing the action bar on the top */
+    /**
+     * Depending on the scroll y value, toggles classes for fixing the action bar on the top.
+     */
     handleResize() {
         if (this.$window.scrollY >= 42) {
-            this.rootEl.addClass('fixed');
-            this.body.addClass('has-fixed-action-bar');
+            this.rootEl.classList.add('fixed');
+            document.body.classList.add('has-fixed-action-bar');
         } else {
-            this.rootEl.removeClass('fixed');
-            this.body.removeClass('has-fixed-action-bar');
+            this.rootEl.classList.remove('fixed');
+            document.body.classList.remove('has-fixed-action-bar');
         }
     }
 }

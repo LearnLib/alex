@@ -14,41 +14,44 @@
  * limitations under the License.
  */
 
-/** The api result model for a Project */
+/**
+ * The api result model for a project.
+ */
 export class Project {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create a project from
+     * Constructor.
+     *
+     * @param {object} obj - The object to create a project from.
      */
     constructor(obj = {}) {
 
         /**
-         * The name of the project
+         * The name of the project.
          * @type {string}
          */
         this.name = obj.name || null;
 
         /**
-         * The base URL of the project
+         * The base URL of the project.
          * @type {string}
          */
         this.baseUrl = obj.baseUrl || null;
 
         /**
-         * The description of the project
+         * The description of the project.
          * @type {string}
          */
         this.description = obj.description || null;
 
         /**
-         * The id of the project
+         * The id of the project.
          * @type {number}
          */
         this.id = obj.id;
 
         /**
-         * The id of the user the project belongs to
+         * The id of the user the project belongs to.
          * @type{number}
          */
         this.user = obj.user;

@@ -23,6 +23,7 @@ export class LearnResultResource {
 
     /**
      * Constructor.
+     *
      * @param $http
      */
     // @ngInject

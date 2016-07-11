@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Checks a value in the header fields of an HTTP response. */
+/**
+ * Checks a value in the header fields of an HTTP response.
+ */
 export class CheckHeaderFieldRestAction extends Action {
 
     /**
      * Constructor.
+     *
      * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.REST_CHECK_HEADER_FIELD, obj);
 
         /**
-         * The key of the header field .
+         * The key of the header field.
          * @type {*|string}
          */
         this.key = obj.key || '';
@@ -47,7 +50,8 @@ export class CheckHeaderFieldRestAction extends Action {
     }
 
     /**
-     * A string presentation of the action.
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

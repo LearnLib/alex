@@ -16,7 +16,6 @@
 
 /**
  * The component for the about page.
- * Usage: <about-view></about-view>.
  */
 class AboutView {
 }
@@ -24,6 +23,6 @@ class AboutView {
 export const aboutView = {
     controller: AboutView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/about.html'
+    templateUrl: 'html/components/views/about.html'
 };
 

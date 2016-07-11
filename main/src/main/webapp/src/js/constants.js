@@ -94,7 +94,6 @@ export const actionType = {
     WEB_CLEAR: 'web_clear',
     WEB_CLICK_LINK_BY_TEXT: 'web_clickLinkByText',
     WEB_CLICK: 'web_click',
-    WEB_CONFIRM_DIALOG: 'web_confirmDialog',
     WEB_EXECUTE_SCRIPT: 'web_executeScript',
     WEB_FILL: 'web_fill',
     WEB_GO_TO: 'web_goto',

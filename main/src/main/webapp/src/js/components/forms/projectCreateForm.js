@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-import {Project} from '../../entities/Project';
+import {events} from "../../constants";
+import {Project} from "../../entities/Project";
 
-/** The class of the project create form component */
+/**
+ * The class of the project create form component.
+ */
 class ProjectCreateForm {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param {ProjectResource} ProjectResource
      * @param {ToastService} ToastService
@@ -34,13 +37,13 @@ class ProjectCreateForm {
         this.EventBus = EventBus;
 
         /**
-         * The empty project model that is used for the form
+         * The empty project model that is used for the form.
          * @type {Project}
          */
         this.project = new Project();
 
         /**
-         * The project that should be imported
+         * The project that should be imported.
          * @type {Project}
          */
         this.projectToImport = null;
@@ -50,7 +53,9 @@ class ProjectCreateForm {
         }, $scope);
     }
 
-    /** Creates a new project */
+    /**
+     * Creates a new project.
+     */
     createProject() {
         this.ProjectResource.create(this.project)
             .then(createdProject => {
@@ -67,7 +72,9 @@ class ProjectCreateForm {
             });
     }
 
-    /** Imports a project **/
+    /**
+     * Imports a project.
+     */
     importProject() {
         if (this.projectToImport !== null) {
             this.ProjectResource.create(this.projectToImport)

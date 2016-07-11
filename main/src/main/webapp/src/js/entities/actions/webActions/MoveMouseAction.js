@@ -39,17 +39,20 @@ export class MoveMouseAction extends Action {
 
         /**
          * The amount in px to move the mouse in x direction from the current position.
+         * @type {number}
          */
         this.offsetX = obj.offsetX || 0;
 
         /**
          * The amount in px to move the mouse in y direction from the current position.
+         * @type {number}
          */
         this.offsetY = obj.offsetY || 0;
     }
 
     /**
      * Get the string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Executes another symbol before continuing with other actions */
+/**
+ * Executes another symbol before continuing with other actions.
+ */
 export class ExecuteSymbolGeneralAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.GENERAL_EXECUTE_SYMBOL, obj);
 
         /**
-         * idRevisionPair
+         * idRevisionPair.
          * @type {*|{id: null, revision: null}}
          */
         this.symbolToExecute = obj.symbolToExecute || {id: null, revision: null};
@@ -53,7 +56,8 @@ export class ExecuteSymbolGeneralAction extends Action {
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {
@@ -65,8 +69,9 @@ export class ExecuteSymbolGeneralAction extends Action {
     }
 
     /**
-     * Update the revision of the symbol to execute
-     * @param {AlphabetSymbol[]} symbols
+     * Update the revision of the symbol to execute.
+     *
+     * @param {AlphabetSymbol[]} symbols - The available symbols in the scope.
      */
     updateRevision(symbols) {
         for (let i = 0; i < symbols.length; i++) {
@@ -78,9 +83,10 @@ export class ExecuteSymbolGeneralAction extends Action {
     }
 
     /**
-     * Sets the symbol to execute
-     * @param {string} name - The name of the symbol to execute
-     * @param {AlphabetSymbol[]} symbols
+     * Sets the symbol to execute.
+     *
+     * @param {string} name - The name of the symbol to execute.
+     * @param {AlphabetSymbol[]} symbols - The available symbols in the scope.
      */
     setSymbol(name, symbols) {
         this.getModel().maxRevision = null;

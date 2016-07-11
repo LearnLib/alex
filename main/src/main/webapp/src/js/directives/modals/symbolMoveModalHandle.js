@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
-import {events} from '../../constants';
+import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
+import {events} from "../../constants";
 
 /**
  * The controller that handles the moving of symbols into another group.
@@ -23,14 +23,15 @@ import {events} from '../../constants';
 export class SymbolMoveModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
      * @param modalData
-     * @param SymbolResource
-     * @param SymbolGroupResource
-     * @param SessionService
-     * @param ToastService
-     * @param EventBus
+     * @param {SymbolResource} SymbolResource
+     * @param {SymbolGroupResource} SymbolGroupResource
+     * @param {SessionService} SessionService
+     * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
      */
     // @ngInject
     constructor($uibModalInstance, modalData, SymbolResource, SymbolGroupResource, SessionService, ToastService,
@@ -45,19 +46,19 @@ export class SymbolMoveModalController {
         const project = SessionService.getProject();
 
         /**
-         * The list of symbols that should be moved
+         * The list of symbols that should be moved.
          * @type {AlphabetSymbol[]}
          */
         this.symbols = modalData.symbols;
 
         /**
-         * The list of existing symbol groups
+         * The list of existing symbol groups.
          * @type {SymbolGroup[]}
          */
         this.groups = [];
 
         /**
-         * The symbol group the symbols should be moved into
+         * The symbol group the symbols should be moved into.
          * @type {SymbolGroup|null}
          */
         this.selectedGroup = null;
@@ -70,13 +71,15 @@ export class SymbolMoveModalController {
 
     /**
      * Moves the symbols into the selected group by changing the group property of each symbol and then batch
-     * updating them on the server
+     * updating them on the server.
      */
     moveSymbols() {
         if (this.selectedGroup !== null) {
 
             const symbolsToMove = this.symbols.map(s => new AlphabetSymbol(s));
-            symbolsToMove.forEach(s => {s.group = this.selectedGroup.id;});
+            symbolsToMove.forEach(s => {
+                s.group = this.selectedGroup.id;
+            });
 
             this.SymbolResource.moveMany(symbolsToMove, this.selectedGroup)
                 .then(() => {
@@ -94,14 +97,17 @@ export class SymbolMoveModalController {
     }
 
     /**
-     * Selects the group where the symbols should be moved into
-     * @param {SymbolGroup} group
+     * Selects the group where the symbols should be moved into.
+     *
+     * @param {SymbolGroup} group - The group to select.
      */
     selectGroup(group) {
         this.selectedGroup = this.selectedGroup === group ? null : group;
     }
 
-    /** Close the modal dialog */
+    /**
+     * Close the modal dialog.
+     */
     close() {
         this.$uibModalInstance.dismiss();
     }
@@ -112,7 +118,7 @@ export class SymbolMoveModalController {
  * The directive for handling the opening of the modal for moving symbols into another group. Can only be used as
  * an attribute and attaches a click event to its source element.
  *
- * Use: '<button symbol-move-modal-handle symbols="...">Click Me!</button>'
+ * Use: '<button symbol-move-modal-handle symbols="...">Click Me!</button>'.
  *
  * @param $uibModal - The ui.bootstrap $modal service
  * @returns {{scope: {symbols: string}, link: link}}
@@ -130,7 +136,7 @@ export function symbolMoveModalHandle($uibModal) {
     function link(scope, el) {
         el.on('click', () => {
             $uibModal.open({
-                templateUrl: 'html/modals/symbol-move-modal.html',
+                templateUrl: 'html/directives/modals/symbol-move-modal.html',
                 controller: SymbolMoveModalController,
                 controllerAs: 'vm',
                 resolve: {

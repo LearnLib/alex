@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm, events} from '../constants';
+import {learnAlgorithm, events} from "../constants";
 
 /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation
@@ -34,7 +34,8 @@ import {learnAlgorithm, events} from '../constants';
 class LearnResultPanel {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param $element
      * @param {DownloadService} DownloadService
@@ -47,7 +48,7 @@ class LearnResultPanel {
         this.PromptService = PromptService;
 
         /**
-         * The enum for what is displayed in the panel
+         * The enum for what is displayed in the panel.
          * @type {{HYPOTHESIS: number, OBSERVATION_TABLE: number, DISCRIMINATION_TREE: number}}
          */
         this.modes = {
@@ -57,25 +58,25 @@ class LearnResultPanel {
         };
 
         /**
-         * Available learn algorithms. Needed for access in the template
+         * Available learn algorithms. Needed for access in the template.
          * @type {Object}
          */
         this.learnAlgorithms = learnAlgorithm;
 
         /**
-         * The layout settings for the displayed hypothesis
+         * The layout settings for the displayed hypothesis.
          * @type {null|Object}
          */
         this.layoutSettings = null;
 
         /**
-         * The mode that is used
+         * The mode that is used.
          * @type {number}
          */
         this.mode = this.modes.HYPOTHESIS;
 
         /**
-         * The index of the step from the results that should be shown
+         * The index of the step from the results that should be shown.
          * @type {number}
          */
         this.pointer = this.result.steps.length - 1;
@@ -99,7 +100,8 @@ class LearnResultPanel {
 
     /**
      * Checks if the property 'algorithmInformation' is define which holds the internal data structure
-     * for the algorithm of a learn result
+     * for the algorithm of a learn result.
+     *
      * @returns {boolean|*}
      */
     hasInternalDataStructure() {
@@ -107,7 +109,7 @@ class LearnResultPanel {
     }
 
     /**
-     * Switches the mode to the one to display the internal data structure
+     * Switches the mode to the one to display the internal data structure.
      */
     showInternalDataStructure() {
         switch (this.result.algorithm) {
@@ -123,7 +125,7 @@ class LearnResultPanel {
     }
 
     /**
-     * Downloads the visible hypothesis as json
+     * Downloads the visible hypothesis as json.
      */
     exportHypothesisAsJson() {
         this.PromptService.prompt("Enter a name for the json file")
@@ -133,15 +135,16 @@ class LearnResultPanel {
     }
 
     /**
-     * Switches the mode to the one to display the hypothesis
+     * Switches the mode to the one to display the hypothesis.
      */
     showHypothesis() {
         this.mode = this.modes.HYPOTHESIS;
     }
 
     /**
-     * Downloads an observation table
-     * @param {string} selector - The selector of the observation table
+     * Downloads an observation table.
+     *
+     * @param {string} selector - The selector of the observation table.
      */
     downloadObservationTable(selector) {
         this.PromptService.prompt("Enter a name for the csv file")
@@ -151,8 +154,9 @@ class LearnResultPanel {
     }
 
     /**
-     * Downloads the discrimination tree or the hypothesis
-     * @param {string} selector - The selector of the dt pr hypothesis
+     * Downloads the discrimination tree or the hypothesis.
+     *
+     * @param {string} selector - The selector of the dt pr hypothesis.
      */
     downloadSvg(selector) {
         this.PromptService.prompt("Enter a name for the svg file")
@@ -162,14 +166,14 @@ class LearnResultPanel {
     }
 
     /**
-     * Shows the first result of the test process
+     * Shows the first result of the test process.
      */
     firstStep() {
         this.pointer = 0;
     }
 
     /**
-     * Shows the previous result of the test process or the last if the first one is displayed
+     * Shows the previous result of the test process or the last if the first one is displayed.
      */
     previousStep() {
         if (this.pointer - 1 < 0) {
@@ -180,7 +184,7 @@ class LearnResultPanel {
     }
 
     /**
-     * Shows the next result of the test process or the first if the last one is displayed
+     * Shows the next result of the test process or the first if the last one is displayed.
      */
     nextStep() {
         if (this.pointer + 1 > this.result.steps.length - 1) {
@@ -191,7 +195,7 @@ class LearnResultPanel {
     }
 
     /**
-     * Shows the last result of the test process
+     * Shows the last result of the test process.
      */
     lastStep() {
         this.pointer = this.result.steps.length - 1;

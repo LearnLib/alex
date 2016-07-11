@@ -26,9 +26,9 @@ let instance = null;
 export class ErrorService {
 
     /**
-     * Constructor
-     * @param $state - The ui.router $state service
-     * @returns {*}
+     * Constructor.
+     *
+     * @param $state - The ui.router $state service.
      */
     // @ngInject
     constructor($state) {
@@ -44,6 +44,7 @@ export class ErrorService {
 
     /**
      * Gets the error message and removes it from the service.
+     *
      * @returns {string|null}
      */
     getErrorMessage() {
@@ -54,6 +55,7 @@ export class ErrorService {
 
     /**
      * Sets the error message.
+     *
      * @param {string} message - The message to display.
      */
     setErrorMessage(message) {

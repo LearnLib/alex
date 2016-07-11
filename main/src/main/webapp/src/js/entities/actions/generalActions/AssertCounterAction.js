@@ -14,40 +14,44 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Action to compare the value of a counter to another integer value */
+/**
+ * Action to compare the value of a counter to another integer value.
+ */
 export class AssertCounterAction extends Action {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param {object} obj - The object to create the action from
      */
     constructor(obj) {
         super(actionType.GENERAL_ASSERT_COUNTER, obj);
 
         /**
-         * The name of the counter
+         * The name of the counter.
          * @type {*|string}
          */
         this.name = obj.name || '';
 
         /**
-         * The value to compare the content with
+         * The value to compare the content with.
          * @type {*|string}
          */
         this.value = obj.value || '';
 
         /**
-         * The operator to compare two integer values
+         * The operator to compare two integer values.
          * @type {*|string}
          */
         this.operator = obj.operator || 'EQUAL';
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

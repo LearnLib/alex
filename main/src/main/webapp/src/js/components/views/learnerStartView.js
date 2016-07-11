@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
+import _ from "lodash";
 
 /**
  * The controller for showing a load screen during the learning and shows all learn results from the current test
@@ -23,14 +23,15 @@ import _ from 'lodash';
 class LearnerStartView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param $interval
-     * @param SessionService
-     * @param LearnerResource
-     * @param LearnResultResource
-     * @param ToastService
-     * @param ErrorService
+     * @param {SessionService} SessionService
+     * @param {LearnerResource} LearnerResource
+     * @param {LearnResultResource} LearnResultResource
+     * @param {ToastService} ToastService
+     * @param {ErrorService} ErrorService
      */
     // @ngInject
     constructor($scope, $interval, SessionService, LearnerResource, LearnResultResource, ToastService, ErrorService) {
@@ -41,43 +42,49 @@ class LearnerStartView {
         this.ErrorService = ErrorService;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
-        // The interval object
+        /**
+         * The interval that is used for polling.
+         * @type {null|number}
+         */
         this.interval = null;
 
-        // The time for the polling interval in ms
+        /**
+         * The interval time for polling.
+         * @type {number}
+         */
         this.intervalTime = 5000;
 
         /**
-         * The complete learn result until the most recent learned one
+         * The complete learn result until the most recent learned one.
          * @type {LearnResult[]}
          */
         this.result = null;
 
         /**
-         * Indicates if polling the server for a test result is still active
+         * Indicates if polling the server for a test result is still active.
          * @type {boolean}
          */
         this.active = false;
 
         /**
-         * Flag for showing or hiding the sidebar
+         * Flag for showing or hiding the sidebar.
          * @type {boolean}
          */
         this.showSidebar = false;
 
         /**
-         * The amount of executed MQs in the active learn process
+         * The amount of executed MQs in the active learn process.
          * @type {number}
          */
         this.mqsUsed = null;
 
         /**
-         * The time it took to learn
+         * The time it took to learn.
          * @type {number}
          */
         this.duration = 0;
@@ -92,7 +99,9 @@ class LearnerStartView {
         this.poll();
     }
 
-    /** Checks every x seconds if the server has finished learning and sets the test if he did */
+    /**
+     * Checks every x seconds if the server has finished learning and sets the test if he did.
+     */
     poll() {
         this.active = true;
         this.interval = this.$interval(() => {
@@ -134,15 +143,17 @@ class LearnerStartView {
 
     /**
      * Update the configuration for the continuing test when choosing eqOracle 'sample' and showing an intermediate
-     * hypothesis
+     * hypothesis.
      *
-     * @param {LearnConfiguration} config
+     * @param {LearnConfiguration} config - The updated configuration.
      */
     updateLearnConfiguration(config) {
         this.test.configuration = config;
     }
 
-    /** Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample' */
+    /**
+     * Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample'.
+     */
     resumeLearning() {
         this.LearnerResource.resume(this.project.id, this.result.testNo, this.resumeConfig)
             .then(() => {
@@ -153,7 +164,9 @@ class LearnerStartView {
             });
     }
 
-    /** Tell the learner to stop learning at the next possible time, when the next hypothesis is generated */
+    /**
+     * Tell the learner to stop learning at the next possible time, when the next hypothesis is generated.
+     */
     abort() {
         if (this.active) {
             this.ToastService.info('The learner will stop with the next hypothesis');
@@ -161,7 +174,9 @@ class LearnerStartView {
         }
     }
 
-    /** Shows or hides the sidebar */
+    /**
+     * Shows or hides the sidebar.
+     */
     toggleSidebar() {
         this.showSidebar = !this.showSidebar;
     }
@@ -170,5 +185,5 @@ class LearnerStartView {
 export const learnerStartView = {
     controller: LearnerStartView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/learner-start.html'
+    templateUrl: 'html/components/views/learner-start.html'
 };

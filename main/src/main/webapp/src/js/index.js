@@ -84,7 +84,7 @@ import {symbolsHistoryView} from "./components/views/symbolsHistoryView";
 import {symbolsImportView} from "./components/views/symbolsImportView";
 import {symbolsTrashView} from "./components/views/symbolsTrashView";
 import {usersSettingsView} from "./components/views/usersSettingsView";
-import {actionCreateEditForm} from "./components/forms/actionCreateEditForm";
+import {actionForm} from "./components/forms/actions/actionForm";
 import {projectCreateForm} from "./components/forms/projectCreateForm";
 import {userEditForm} from "./components/forms/userEditForm";
 import {userLoginForm} from "./components/forms/userLoginForm";
@@ -112,6 +112,44 @@ import {learnResultListItem} from "./components/learnResultListItem";
 import {hypothesis} from "./components/hypothesis";
 import {discriminationTree} from "./components/discriminationTree";
 import {htmlElementPicker} from "./components/htmlElementPicker";
+import {
+    actionFormCheckForNode,
+    actionFormCheckForText,
+    actionFormCheckPageTitle,
+    actionFormClearInput,
+    actionFormClick,
+    actionFormClickLinkByText,
+    actionFormExecuteScript,
+    actionFormMoveMouse,
+    actionFormOpen,
+    actionFormSelect,
+    actionFormSendKeys,
+    actionFormSubmit,
+    actionFormWaitForNode,
+    actionFormWaitForTitle
+} from "./components/forms/actions/webActionForms";
+import {
+    actionFormCall,
+    actionFormCheckAttributeExists,
+    actionFormCheckAttributeType,
+    actionFormCheckAttributeValue,
+    actionFormCheckHeaderField,
+    actionFormCheckHttpBody,
+    actionFormCheckStatus
+} from "./components/forms/actions/restActionForms";
+import {
+    actionFormAssertCounter,
+    actionFormAssertVariable,
+    actionFormExecuteSymbol,
+    actionFormIncrementCounter,
+    actionFormSetCounter,
+    actionFormSetVariable,
+    actionFormSetVariableByCookie,
+    actionFormSetVariableByHtml,
+    actionFormSetVariableByJson,
+    actionFormSetVariableByNodeAttribute,
+    actionFormWait
+} from "./components/forms/actions/generalActionForms";
 
 angular
     .module('ALEX', [
@@ -216,7 +254,7 @@ angular
     .component('usersSettingsView', usersSettingsView)
 
     // forms components
-    .component('actionCreateEditForm', actionCreateEditForm)
+    .component('actionForm', actionForm)
     .component('projectCreateForm', projectCreateForm)
     .component('userEditForm', userEditForm)
     .component('userLoginForm', userLoginForm)
@@ -229,6 +267,44 @@ angular
     .component('learnerStatusWidget', learnerStatusWidget)
     .component('latestLearnResultWidget', latestLearnResultWidget)
     .component('projectDetailsWidget', projectDetailsWidget)
+
+    // web action forms
+    .component('actionFormCheckForNode', actionFormCheckForNode)
+    .component('actionFormCheckForText', actionFormCheckForText)
+    .component('actionFormCheckPageTitle', actionFormCheckPageTitle)
+    .component('actionFormClearInput', actionFormClearInput)
+    .component('actionFormClick', actionFormClick)
+    .component('actionFormClickLinkByText', actionFormClickLinkByText)
+    .component('actionFormExecuteScript', actionFormExecuteScript)
+    .component('actionFormMoveMouse', actionFormMoveMouse)
+    .component('actionFormOpen', actionFormOpen)
+    .component('actionFormSelect', actionFormSelect)
+    .component('actionFormSendKeys', actionFormSendKeys)
+    .component('actionFormSubmit', actionFormSubmit)
+    .component('actionFormWaitForNode', actionFormWaitForNode)
+    .component('actionFormWaitForTitle', actionFormWaitForTitle)
+
+    // rest action forms
+    .component('actionFormCall', actionFormCall)
+    .component('actionFormCheckAttributeExists', actionFormCheckAttributeExists)
+    .component('actionFormCheckAttributeType', actionFormCheckAttributeType)
+    .component('actionFormCheckAttributeValue', actionFormCheckAttributeValue)
+    .component('actionFormCheckHeaderField', actionFormCheckHeaderField)
+    .component('actionFormCheckHttpBody', actionFormCheckHttpBody)
+    .component('actionFormCheckStatus', actionFormCheckStatus)
+
+    // general action forms
+    .component('actionFormAssertCounter', actionFormAssertCounter)
+    .component('actionFormAssertVariable', actionFormAssertVariable)
+    .component('actionFormExecuteSymbol', actionFormExecuteSymbol)
+    .component('actionFormIncrementCounter', actionFormIncrementCounter)
+    .component('actionFormSetCounter', actionFormSetCounter)
+    .component('actionFormSetVariable', actionFormSetVariable)
+    .component('actionFormSetVariableByCookie', actionFormSetVariableByCookie)
+    .component('actionFormSetVariableByHtml', actionFormSetVariableByHtml)
+    .component('actionFormSetVariableByJson', actionFormSetVariableByJson)
+    .component('actionFormSetVariableByNodeAttribute', actionFormSetVariableByNodeAttribute)
+    .component('actionFormWait', actionFormWait)
 
     // misc components
     .component('alex', alex)

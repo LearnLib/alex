@@ -17,8 +17,7 @@
 <div class="form-group">
     <label>Data</label>
 
-    <div ng-model="vm.action.data"
-         ui-ace="{useWrapMode : true, showGutter: true, theme:'eclipse', mode: 'json', workerPath: '/node_modules/ace-builds/src-min/'}"></div>
+    <div ng-model="vm.action.data" ui-ace="vm.aceOptions"></div>
 </div>
 
 <uib-tabset>
@@ -29,14 +28,13 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-5 no-padding-right">
-                    <input class="form-control" type="text" ng-model="vm.map.headerName" placeholder="Header Name">
+                    <input class="form-control" type="text" ng-model="vm.header.name" placeholder="Header Name">
                 </div>
                 <div class="col-xs-5 no-padding-right">
-                    <input class="form-control" type="text" ng-model="vm.map.headerValue" placeholder="Header Value">
+                    <input class="form-control" type="text" ng-model="vm.header.value" placeholder="Header Value">
                 </div>
                 <div class="col-xs-2">
-                    <a class="btn btn-default btn-block btn-sm"
-                       ng-click="vm.action.addHeader(vm.map.headerName, vm.map.headerValue); vm.map = {}">
+                    <a class="btn btn-default btn-block btn-sm" ng-click="vm.addHeader()">
                         <i class="fa fa-plus"></i>
                     </a>
                 </div>
@@ -52,7 +50,6 @@
 
     </uib-tab>
     <uib-tab heading="Authentication">
-
         <br>
 
         <div class="form-group">
@@ -66,20 +63,18 @@
 
     </uib-tab>
     <uib-tab heading="Cookies">
-
         <br>
 
         <div class="form-group">
             <div class="row">
                 <div class="col-xs-5 no-padding-right">
-                    <input class="form-control" type="text" ng-model="vm.map.cookieName" placeholder="Cookie Name">
+                    <input class="form-control" type="text" ng-model="vm.cookie.name" placeholder="Cookie Name">
                 </div>
                 <div class="col-xs-5 no-padding-right">
-                    <input class="form-control" type="text" ng-model="vm.map.cookieValue" placeholder="Cookie Value">
+                    <input class="form-control" type="text" ng-model="vm.cookie.value" placeholder="Cookie Value">
                 </div>
                 <div class="col-xs-2">
-                    <a class="btn btn-default btn-block btn-sm"
-                       ng-click="vm.action.addCookie(vm.map.cookieName, vm.map.cookieValue); vm.map = {}">
+                    <a class="btn btn-default btn-block btn-sm" ng-click="vm.addCookie()">
                         <i class="fa fa-plus"></i>
                     </a>
                 </div>

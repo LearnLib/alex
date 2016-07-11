@@ -24,20 +24,12 @@
 export function dropdownHover() {
     return {
         require: '^uibDropdown',
-        link: link
-    };
-
-    /**
-     * @param scope
-     * @param el
-     * @param attrs
-     * @param ctrl - the ui.bootstrap dropdown controller
-     */
-    function link(scope, el, attrs, ctrl) {
-        el.on('mouseenter', () => {
-            scope.$apply(() => {
-                ctrl.toggle(true);
+        link: function (scope, el, attrs, ctrl) {
+            el.on('mouseenter', () => {
+                scope.$apply(() => {
+                    ctrl.toggle(true);
+                });
             });
-        });
-    }
+        }
+    };
 }
