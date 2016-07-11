@@ -1,6 +1,7 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Settings;
+import de.learnlib.alex.core.repositories.SettingsRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +63,7 @@ public class SettingsDAOImplTest {
         settingsDAO.create(settings);
 
         assertThat(System.getProperty("webdriver.chrome.driver"), is(equalTo(PATH_TO_CHROME)));
-        assertThat(System.getProperty("webdriver.gecko.driver") , is(equalTo(PATH_TO_FIREFOX)));
+        assertThat(System.getProperty("webdriver.gecko.driver"),  is(equalTo(PATH_TO_FIREFOX)));
     }
 
     @Test
@@ -108,7 +109,7 @@ public class SettingsDAOImplTest {
         settingsDAO.update(settings);
 
         assertThat(System.getProperty("webdriver.chrome.driver"), is(equalTo("new/" + PATH_TO_CHROME)));
-        assertThat(System.getProperty("webdriver.gecko.driver") , is(equalTo("new/" + PATH_TO_FIREFOX)));
+        assertThat(System.getProperty("webdriver.gecko.driver"),  is(equalTo("new/" + PATH_TO_FIREFOX)));
     }
 
 }

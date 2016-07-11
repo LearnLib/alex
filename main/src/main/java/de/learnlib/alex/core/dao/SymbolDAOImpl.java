@@ -24,6 +24,9 @@ import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolGroupRepository;
+import de.learnlib.alex.core.repositories.SymbolRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.apache.logging.log4j.LogManager;
@@ -45,22 +48,35 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Implementation of a SymbolDAO using Hibernate.
+ * Implementation of a SymbolDAO using Spring Data.
  */
 @Service
 public class SymbolDAOImpl implements SymbolDAO {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("data");
+    private static final Logger LOGGER = LogManager.getLogger();
 
+    /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
 
+    /** The SymbolGroupRepository to use. Will be injected. */
     private SymbolGroupRepository symbolGroupRepository;
 
+    /** The SymbolRepository to use. Will be injected. */
     private SymbolRepository symbolRepository;
 
+    /**
+     * Creates a new SymbolDAO.
+     *
+     * @param projectRepository
+     *         The ProjectRepository to use.
+     * @param symbolGroupRepository
+     *         The SymbolGroupRepository to use.
+     * @param symbolRepository
+     *         The SymbolRepository to use.
+     */
     @Inject
-    public SymbolDAOImpl(ProjectRepository projectRepository, SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository) {
+    public SymbolDAOImpl(ProjectRepository projectRepository, SymbolGroupRepository symbolGroupRepository,
+                         SymbolRepository symbolRepository) {
         this.projectRepository = projectRepository;
         this.symbolGroupRepository = symbolGroupRepository;
         this.symbolRepository = symbolRepository;
@@ -69,6 +85,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Override
     @Transactional
     public void create(Symbol symbol) throws ValidationException {
+        LOGGER.traceEntry("create({})", symbol);
         try {
             // create the symbol
             createOne(symbol);
@@ -100,6 +117,7 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new ValidationException("Could not create a symbol because it has a reference to another"
                                                   + " unknown symbol.", e);
         }
+        LOGGER.traceExit(symbol);
     }
 
     @Override
@@ -150,7 +168,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     private void createOne(Symbol symbol) {
         // new symbols should have a project, not an id and not a revision
-        if (symbol.getProject() == null) {
+        if (symbol.getProjectId() == null && symbol.getProject() == null) {
             throw new ValidationException("To create a symbols it must have a Project.");
         }
 
@@ -158,7 +176,19 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new ValidationException("To create a symbols it must not haven an ID or and revision");
         }
 
-        Project project = projectRepository.findOne(symbol.getProjectId());
+        Long userId    = symbol.getUserId();
+        Long projectId = symbol.getProjectId();
+        Long groupId   = symbol.getGroupId();
+
+        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
+        if (project == null) {
+            throw new ValidationException("The Project was not found and thus the Symbol was not created.");
+        }
+
+        SymbolGroup group = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(userId, projectId, groupId);
+        if (group == null) {
+            throw new ValidationException("The specified group was not found and thus the Symbol was not created.");
+        }
 
         // get the current highest symbol id in the project and add 1 for the next id
         long id = project.getNextSymbolId();
@@ -168,17 +198,11 @@ public class SymbolDAOImpl implements SymbolDAO {
         // set id, project id and revision and save the symbol
         symbol.setId(id);
         symbol.setRevision(1L);
+
         project.addSymbol(symbol);
 
         // add the symbol to its group
-        SymbolGroup group = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
-                                                                                     symbol.getProjectId(),
-                                                                                     symbol.getGroupId());
-        if (group == null) {
-            throw new ValidationException("The specified group was not found and thus the Symbol was not created.");
-        }
         group.addSymbol(symbol);
-        symbolGroupRepository.save(group);
 
         beforeSymbolSave(symbol);
 
@@ -230,11 +254,15 @@ public class SymbolDAOImpl implements SymbolDAO {
     public List<Symbol> getAllWithLatestRevision(User user, Long projectId,
                                                  Long groupId, SymbolVisibilityLevel visibilityLevel)
             throws NotFoundException {
-        List<Symbol> symbols = symbolRepository.findAllWithHighestRevision(user.getId(), projectId, groupId, visibilityLevel.getCriterion());
+        List<Symbol> symbols = symbolRepository.findAllWithHighestRevision(user.getId(), projectId,
+                                                                           groupId, visibilityLevel.getCriterion());
 
         if (symbols.isEmpty()) {
             return new LinkedList<>();
         }
+
+        symbols.forEach(s -> Hibernate.initialize(s.getActions()));
+
         return symbols;
     }
 
@@ -520,7 +548,8 @@ public class SymbolDAOImpl implements SymbolDAO {
     /**
      * Sets references to related entities to all actions of a symbol.
      *
-     * @param symbol The symbol.
+     * @param symbol
+     *         The symbol.
      */
     public void beforeSymbolSave(Symbol symbol) {
         for (int i = 0; i < symbol.getActions().size(); i++) {
@@ -567,8 +596,9 @@ public class SymbolDAOImpl implements SymbolDAO {
      * Use Hibernate to populate all fields of a Symbol, including all references to other entities.
      *
      * @param symbolDAO
+     *         The SymbolDAO to use.
      * @param symbol
- *         The Symbol to populate.
+     *         The Symbol to populate.
      */
     public static void loadLazyRelations(SymbolDAO symbolDAO, Symbol symbol) {
         Hibernate.initialize(symbol.getUser());

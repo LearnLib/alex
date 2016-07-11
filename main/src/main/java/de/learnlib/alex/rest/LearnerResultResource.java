@@ -56,6 +56,7 @@ public class LearnerResultResource {
     @Inject
     private LearnerResultDAO learnerResultDAO;
 
+    /** The Learner to check if a result is not active before deletion. */
     @Inject
     private Learner learner;
 

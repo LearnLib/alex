@@ -1,6 +1,6 @@
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.dao.SettingsRepository;
+import de.learnlib.alex.core.repositories.SettingsRepository;
 import de.learnlib.alex.core.entities.Settings;
 import org.junit.Test;
 

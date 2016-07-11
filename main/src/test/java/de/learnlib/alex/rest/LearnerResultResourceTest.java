@@ -251,7 +251,8 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnInvalidTestNo() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID,
+                                                                          RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
                             .request().header("Authorization", adminToken).delete();
@@ -272,7 +273,8 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatNoTestNumberToDeleteIsHandledProperly() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID,
+                                                                          RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/,,,,")
                             .request().header("Authorization", adminToken).delete();
@@ -282,7 +284,8 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatANotValidTestNumberStringOnDeletionIsHandledProperly() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID,
+                                                                          RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/foobar")
                             .request().header("Authorization", adminToken).delete();

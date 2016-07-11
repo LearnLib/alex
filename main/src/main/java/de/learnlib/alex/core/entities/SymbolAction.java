@@ -152,7 +152,9 @@ public abstract class SymbolAction implements Serializable {
 
     /** The position the action has in the actions list of the Symbol. */
     @GeneratedValue(generator = "symbol_action_number_generator")
-    @GenericGenerator(name = "symbol_action_number_generator", strategy = "de.learnlib.alex.core.entities.validators.SymbolActionNumberGenerator")
+    @GenericGenerator(
+            name = "symbol_action_number_generator",
+            strategy = "de.learnlib.alex.core.entities.validators.SymbolActionNumberGenerator")
     @JsonIgnore
     protected int number;
 

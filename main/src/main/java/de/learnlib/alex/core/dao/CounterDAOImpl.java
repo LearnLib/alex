@@ -18,6 +18,8 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.repositories.CounterRepository;
+import de.learnlib.alex.core.repositories.ProjectRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.apache.logging.log4j.LogManager;
@@ -38,13 +40,22 @@ import java.util.List;
 @Service
 public class CounterDAOImpl implements CounterDAO {
 
-    /** Use the logger for the data part. */
-    private static final Logger LOGGER = LogManager.getLogger("data");
+    private static final Logger LOGGER = LogManager.getLogger();
 
+    /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
 
+    /** The CounterRepository to use. Will be injected. */
     private CounterRepository counterRepository;
 
+    /**
+     * Creates a new CounterDAO.
+     *
+     * @param projectRepository
+     *         The ProjectRepository to use.
+     * @param counterRepository
+     *         The CounterRepository to use.
+     */
     @Inject
     public CounterDAOImpl(ProjectRepository projectRepository, CounterRepository counterRepository) {
         this.projectRepository = projectRepository;
@@ -113,7 +124,7 @@ public class CounterDAOImpl implements CounterDAO {
     @Transactional
     public void update(Counter counter) throws NotFoundException, ValidationException {
         try {
-            get_( counter.getUserId(), counter.getProjectId(), counter.getName()); // check if the counter exists
+            get_(counter.getUserId(), counter.getProjectId(), counter.getName()); // check if the counter exists
             counterRepository.save(counter);
 
         // error handling

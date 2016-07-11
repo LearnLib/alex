@@ -16,11 +16,12 @@
 
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.dao.UserRepository;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.orm.jpa.JpaSystemException;
 
@@ -81,7 +82,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         userRepository.save(user); // should fail
     }
 
-    @Test(expected = JpaSystemException.class)
+    @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailOnUserSavingIfTheEMailIsAlreadyUsed() {
         User user1 = createUser("test_user@test.example");
         user1 = userRepository.save(user1);

@@ -54,5 +54,10 @@
 			<MarkerFilter marker="FLOW" onMatch="ACCEPT" onMismatch="DENY"/>
 			<AppenderRef ref="Tracer" />
 		</Logger>
+
+		<Logger name="de.learnlib.alex.core">
+			<MarkerFilter marker="FLOW" onMatch="ACCEPT" onMismatch="DENY"/>
+			<AppenderRef ref="Tracer" />
+		</Logger>
 	</Loggers>
 </Configuration>

@@ -16,10 +16,10 @@
 
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.dao.LearnerResultRepository;
-import de.learnlib.alex.core.dao.LearnerResultStepRepository;
-import de.learnlib.alex.core.dao.ProjectRepository;
-import de.learnlib.alex.core.dao.UserRepository;
+import de.learnlib.alex.core.repositories.LearnerResultRepository;
+import de.learnlib.alex.core.repositories.LearnerResultStepRepository;
+import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResultStep;
 import de.learnlib.alex.core.entities.Project;

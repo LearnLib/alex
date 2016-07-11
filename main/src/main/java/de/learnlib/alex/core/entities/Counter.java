@@ -70,10 +70,16 @@ public class Counter implements Serializable {
     @NotNull
     private Integer value;
 
+    /**
+     * Create a new counter with a default value of 0.
+     */
     public Counter() {
         value = 0;
     }
 
+    /**
+     * @return The internal ID used by the database.
+     */
     public Long getCounterId() {
         return counterId;
     }

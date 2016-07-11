@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
+package de.learnlib.alex.core.repositories;
+
+import de.learnlib.alex.core.entities.LearnerResultStep;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 /**
- * This package contains the high level bridge between ALEX and the DB.
- * The DAO utilize the repositories to persist and manage our data.
+ * Repository to persist LearnerResultSteps.
  */
-package de.learnlib.alex.core.dao;
+@Repository
+public interface LearnerResultStepRepository extends JpaRepository<LearnerResultStep, Long> {
+}

@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.dao.ProjectRepository;
-import de.learnlib.alex.core.dao.SymbolGroupRepository;
-import de.learnlib.alex.core.dao.UserRepository;
+import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolGroupRepository;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.User;
@@ -182,9 +182,11 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         //
         SymbolGroup group1 = createGroup(user, project, 1L, "Test Group");
         symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(user, project, 1L, "Test Group");
+        SymbolGroup group2 = createGroup(user, project, 2L, "Test Group");
 
         symbolGroupRepository.save(group2); // should fail
+
+        System.out.println(symbolGroupRepository.findAll());
     }
 
     @Test
@@ -237,9 +239,13 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group 1");
         symbolGroupRepository.save(group);
 
-        SymbolGroup groupFromDB = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(user.getId(), project.getId(), group.getId());
+        SymbolGroup groupFromDB = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(user.getId(),
+                                                                                           project.getId(),
+                                                                                           group.getId());
 
-        assertThat(groupFromDB, is(equalTo(group)));
+        assertThat(groupFromDB.getUser(), is(equalTo(user)));
+        assertThat(groupFromDB.getProject(), is(equalTo(project)));
+        assertThat(groupFromDB.getId(), is(equalTo(1L)));
     }
 
     @Test
@@ -250,7 +256,9 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
-        SymbolGroup groupFromDB = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(user.getId(), project.getId(), -1L);
+        SymbolGroup groupFromDB = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(user.getId(),
+                                                                                           project.getId(),
+                                                                                           -1L);
 
         assertNull(groupFromDB);
     }

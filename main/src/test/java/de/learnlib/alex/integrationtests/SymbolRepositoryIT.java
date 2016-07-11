@@ -16,10 +16,10 @@
 
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.dao.ProjectRepository;
-import de.learnlib.alex.core.dao.SymbolGroupRepository;
-import de.learnlib.alex.core.dao.SymbolRepository;
-import de.learnlib.alex.core.dao.UserRepository;
+import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolGroupRepository;
+import de.learnlib.alex.core.repositories.SymbolRepository;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
@@ -242,22 +242,22 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1_0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_0);
-        Symbol symbol1_1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_1);
-        Symbol symbol2_0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_0);
-        Symbol symbol2_1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_1);
+        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev0);
+        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev1);
+        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev0);
+        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev1);
 
-        List<Symbol> symbolsFromDB = symbolRepository.findOne(user.getId(), project.getId(), symbol1_0.getId());
+        List<Symbol> symbolsFromDB = symbolRepository.findOne(user.getId(), project.getId(), symbol1rev0.getId());
 
         assertThat(symbolsFromDB.size(), is(equalTo(2)));
-        assertThat(symbolsFromDB, hasItem(equalTo(symbol1_0)));
-        assertThat(symbolsFromDB, hasItem(equalTo(symbol1_1)));
-        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2_0))));
-        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2_1))));
+        assertThat(symbolsFromDB, hasItem(equalTo(symbol1rev0)));
+        assertThat(symbolsFromDB, hasItem(equalTo(symbol1rev1)));
+        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2rev0))));
+        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2rev1))));
     }
 
     @Test
@@ -271,18 +271,18 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1_0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_0);
-        Symbol symbol1_1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_1);
-        Symbol symbol2_0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_0);
-        Symbol symbol2_1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_1);
+        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev0);
+        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev1);
+        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev0);
+        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev1);
 
         Symbol symbolFromDB = symbolRepository.findOne(user.getId(), project.getId(), 0L, 0L);
 
-        assertThat(symbolFromDB, is(equalTo(symbol1_0)));
+        assertThat(symbolFromDB, is(equalTo(symbol1rev0)));
     }
 
     @Test
@@ -296,24 +296,25 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1_0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_0);
-        Symbol symbol1_1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_1);
-        Symbol symbol2_0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_0);
-        Symbol symbol2_1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_1);
+        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev0);
+        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev1);
+        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev0);
+        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev1);
         //
-        List<IdRevisionPair> idRevisionPairs = Arrays.asList(symbol1_0.getIdRevisionPair(), symbol2_1.getIdRevisionPair());
+        List<IdRevisionPair> idRevisionPairs = Arrays.asList(symbol1rev0.getIdRevisionPair(),
+                                                             symbol2rev1.getIdRevisionPair());
 
         List<Symbol> symbolsFromDB = symbolRepository.findAll(user.getId(), project.getId(), idRevisionPairs);
 
         assertThat(symbolsFromDB.size(), is(equalTo(2)));
-        assertThat(symbolsFromDB, hasItem(equalTo(symbol1_0)));
-        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol1_1))));
-        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2_0))));
-        assertThat(symbolsFromDB, hasItem(equalTo(symbol2_1)));
+        assertThat(symbolsFromDB, hasItem(equalTo(symbol1rev0)));
+        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol1rev1))));
+        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2rev0))));
+        assertThat(symbolsFromDB, hasItem(equalTo(symbol2rev1)));
     }
 
     @Test
@@ -327,22 +328,24 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1_0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_0);
-        Symbol symbol1_1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_1);
-        Symbol symbol2_0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_0);
-        Symbol symbol2_1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_1);
+        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev0);
+        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev1);
+        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev0);
+        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev1);
 
-        List<Symbol> symbolsFromDB = symbolRepository.findAllWithHighestRevision(user.getId(), project.getId(), new Boolean[] {false, true});
+        List<Symbol> symbolsFromDB = symbolRepository.findAllWithHighestRevision(user.getId(),
+                                                                                 project.getId(),
+                                                                                 new Boolean[] {false, true});
 
         assertThat(symbolsFromDB.size(), is(equalTo(2)));
-        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol1_0))));
-        assertThat(symbolsFromDB, hasItem(equalTo(symbol1_1)));
-        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2_0))));
-        assertThat(symbolsFromDB, hasItem(equalTo(symbol2_1)));
+        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol1rev0))));
+        assertThat(symbolsFromDB, hasItem(equalTo(symbol1rev1)));
+        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2rev0))));
+        assertThat(symbolsFromDB, hasItem(equalTo(symbol2rev1)));
     }
 
     @Test
@@ -356,22 +359,25 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1_0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_0);
-        Symbol symbol1_1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_1);
-        Symbol symbol2_0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_0);
-        Symbol symbol2_1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_1);
+        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev0);
+        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev1);
+        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev0);
+        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev1);
 
-        List<Symbol> symbolsFromDB = symbolRepository.findAllWithHighestRevision(user.getId(), project.getId(), group.getId(), new Boolean[] {false, true});
+        List<Symbol> symbolsFromDB = symbolRepository.findAllWithHighestRevision(user.getId(),
+                                                                                 project.getId(),
+                                                                                 group.getId(),
+                                                                                 new Boolean[] {false, true});
 
         assertThat(symbolsFromDB.size(), is(equalTo(2)));
-        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol1_0))));
-        assertThat(symbolsFromDB, hasItem(equalTo(symbol1_1)));
-        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2_0))));
-        assertThat(symbolsFromDB, hasItem(equalTo(symbol2_1)));
+        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol1rev0))));
+        assertThat(symbolsFromDB, hasItem(equalTo(symbol1rev1)));
+        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2rev0))));
+        assertThat(symbolsFromDB, hasItem(equalTo(symbol2rev1)));
     }
 
     @Test
@@ -385,26 +391,30 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1_0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_0);
-        Symbol symbol1_1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1_1);
-        Symbol symbol2_0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_0);
-        Symbol symbol2_1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2_1);
+        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev0);
+        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, 1L, "Test Symbol 1", "test1");
+        symbolRepository.save(symbol1rev1);
+        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev0);
+        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, 1L, "Test Symbol 2", "test2");
+        symbolRepository.save(symbol2rev1);
 
-        List<Symbol> symbolsFromDB = symbolRepository.findAllWithHighestRevision(user.getId(), project.getId(), group.getId(), 0L, 1L);
+        List<Symbol> symbolsFromDB = symbolRepository.findAllWithHighestRevision(user.getId(),
+                                                                                 project.getId(),
+                                                                                 group.getId(),
+                                                                                 0L, 1L);
 
         assertThat(symbolsFromDB.size(), is(equalTo(2)));
-        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol1_0))));
-        assertThat(symbolsFromDB, hasItem(equalTo(symbol1_1)));
-        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2_0))));
-        assertThat(symbolsFromDB, hasItem(equalTo(symbol2_1)));
+        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol1rev0))));
+        assertThat(symbolsFromDB, hasItem(equalTo(symbol1rev1)));
+        assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2rev0))));
+        assertThat(symbolsFromDB, hasItem(equalTo(symbol2rev1)));
     }
 
 
-    private Symbol createSymbol(User user, Project project, SymbolGroup group, Long id, Long revision, String name, String abbreviation) {
+    private Symbol createSymbol(User user, Project project, SymbolGroup group, Long id, Long revision,
+                                String name, String abbreviation) {
         Symbol symbol = new Symbol();
         symbol.setUser(user);
         symbol.setProject(project);

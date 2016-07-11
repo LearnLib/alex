@@ -32,74 +32,93 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * Entity to organize symbols.
  */
 @Entity
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"userId", "projectId", "id"}),
                 @UniqueConstraint(columnNames = {"userId", "projectId", "name"})
         }
 )
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SymbolGroup implements Serializable {
 
     /** to be serializable. */
     private static final long serialVersionUID = 4986838799404559274L;
 
     /** The ID of the SymbolGroup in the DB. */
-    @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
-    @JsonIgnore
     private Long groupId;
 
     /** The User that owns this SymbolGroup. */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "userId")
-    @JsonIgnore
     private User user;
 
+    /** The plain ID of the User to be used in the JSON. */
+    private Long userId;
+
     /** The related project. */
-    @ManyToOne(
-            fetch = FetchType.EAGER,
-            optional = false//,
-//            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
-    )
-    @JoinColumn(name = "projectId")
-    @JsonIgnore
     private Project project;
 
+    /** The plain ID of the Project to be used in the JSON. */
+    private Long projectId;
+
     /** The ID of the group within the project. */
-    @Column(nullable = false)
     private Long id;
 
     /**
      * The name of the group.
      * @requiredField
      */
-    @NotBlank
     private String name;
 
     /** The Symbols manged by this group. */
-    @OneToMany(
-            mappedBy = "group",
-            fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
-    )
     private Set<Symbol> symbols;
 
     /**
      * Default constructor.
      */
     public SymbolGroup() {
-        this.groupId = 0L;
-        this.id = 0L;
         this.symbols = new HashSet<>();
+
+        this.userId    = 0L;
+        this.projectId = 0L;
+    }
+
+    /**
+     * @return The internal ID of the SymbolGroup used by the database.
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.TABLE)
+    @JsonIgnore
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    /**
+     * @param groupId The new internal ID of the SymbolGroup used by the database.
+     */
+    @JsonIgnore
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    /**
+     * Get the user.
+     * @return The user.
+     */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "userId")
+    @JsonIgnore
+    public User getUser() {
+        return user;
     }
 
     /**
@@ -109,28 +128,21 @@ public class SymbolGroup implements Serializable {
     @JsonIgnore
     public void setUser(User user) {
         this.user = user;
-    }
-
-    /**
-     * Get the user.
-     * @return The user.
-     */
-    @JsonIgnore
-    public User getUser() {
-        return user;
+        if (user == null) {
+            this.userId = 0L;
+        } else {
+            this.userId = user.getId();
+        }
     }
 
     /**
      * Get the id of the user.
      * @return The id of the user.
      */
+    @Transient
     @JsonProperty("user")
     public Long getUserId() {
-        if (user == null) {
-            return 0L;
-        } else {
-            return user.getId();
-        }
+        return userId;
     }
 
     /**
@@ -139,7 +151,8 @@ public class SymbolGroup implements Serializable {
      */
     @JsonProperty("user")
     public void setUserId(Long userId) {
-        user = new User(userId);
+        this.user = null;
+        this.userId = userId;
     }
 
     /**
@@ -147,6 +160,9 @@ public class SymbolGroup implements Serializable {
      *
      * @return The project the group is a part of.
      */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false )
+    @JoinColumn(name = "projectId")
+    @JsonIgnore
     public Project getProject() {
         return project;
     }
@@ -157,8 +173,14 @@ public class SymbolGroup implements Serializable {
      * @param project
      *         The new project.
      */
+    @JsonIgnore
     public void setProject(Project project) {
         this.project = project;
+        if (project == null) {
+            this.projectId = 0L;
+        } else {
+            this.projectId = project.getId();
+        }
     }
 
     /**
@@ -166,12 +188,10 @@ public class SymbolGroup implements Serializable {
      *
      * @return The ID of the project the group belongs to or 0.
      */
+    @Transient
     @JsonProperty("project")
-    public long getProjectId() {
-        if (project == null) {
-            return 0L;
-        }
-        return project.getId();
+    public Long getProjectId() {
+        return projectId;
     }
 
     /**
@@ -181,8 +201,9 @@ public class SymbolGroup implements Serializable {
      *         The new project ID.
      */
     @JsonProperty("project")
-    public void setProjectId(long projectId) {
-        this.project = new Project(projectId);
+    public void setProjectId(Long projectId) {
+        this.project = null;
+        this.projectId = projectId;
     }
 
     /**
@@ -190,6 +211,8 @@ public class SymbolGroup implements Serializable {
      *
      * @return THe group id.
      */
+    @Column(nullable = false)
+    @JsonProperty("id")
     public Long getId() {
         return id;
     }
@@ -200,6 +223,7 @@ public class SymbolGroup implements Serializable {
      * @param id
      *         The new group ID.
      */
+    @JsonProperty("id")
     public void setId(Long id) {
         this.id = id;
     }
@@ -209,6 +233,8 @@ public class SymbolGroup implements Serializable {
      *
      * @return The group name.
      */
+    @NotBlank
+    @JsonProperty("name")
     public String getName() {
         return name;
     }
@@ -219,6 +245,7 @@ public class SymbolGroup implements Serializable {
      * @param name
      *         The new name.
      */
+    @JsonProperty("name")
     public void setName(String name) {
         this.name = name;
     }
@@ -228,6 +255,12 @@ public class SymbolGroup implements Serializable {
      *
      * @return The related symbols.
      */
+    @OneToMany(
+            mappedBy = "group",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
+    @JsonProperty("symbols")
     public Set<Symbol> getSymbols() {
         return symbols;
     }
@@ -237,6 +270,7 @@ public class SymbolGroup implements Serializable {
      *
      * @return The amount of related symbols.
      */
+    @Transient
     @JsonProperty("symbolAmount")
     public int getSymbolSize() {
         if (symbols == null) {
@@ -251,8 +285,13 @@ public class SymbolGroup implements Serializable {
      * @param symbols
      *         The new set of related symbols.
      */
+    @JsonProperty("symbols")
     public void setSymbols(Set<Symbol> symbols) {
-        this.symbols = symbols;
+        if (symbols == null) {
+            this.symbols = new HashSet<>();
+        } else {
+            this.symbols = symbols;
+        }
     }
 
     /**
@@ -261,64 +300,25 @@ public class SymbolGroup implements Serializable {
      * @param symbol
      *         The symbol to add.
      */
+    @JsonIgnore
     public void addSymbol(Symbol symbol) {
         this.symbols.add(symbol);
         symbol.setGroup(this);
     }
 
-    //CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber|NeedBraces - auto generated by Intellij IDEA
-    /*
     @Override
+    @SuppressWarnings("checkstyle:needbraces") // Auto generated by IntelliJ
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SymbolGroup)) return false;
-
-        SymbolGroup that = (SymbolGroup) o;
-
-        // new project created from json with multiple groups
-        if (project == null && that.getProject() == null
-                && id.equals(0L) && that.getId().equals(0L)
-                && !name.equals(that.getName())
-        ) {
-            return false;
-        }
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (project != null ? !project.equals(that.project) : that.project != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = project != null ? project.hashCode() : 0;
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        return result;
-    }
-    */
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SymbolGroup)) return false;
-
+        if (o == null || getClass() != o.getClass()) return false;
         SymbolGroup group = (SymbolGroup) o;
-
-        if (user != null ? !user.equals(group.getUser()) : group.getUser() != null) return false;
-        if (project != null ? !project.equals(group.getProject()) : group.getProject() != null) return false;
-        if (id != null ? !id.equals(group.getId()) : group.getId() != null) return false;
-        return name != null ? name.equals(group.getName()) : group.getName() == null;
+        return Objects.equals(groupId, group.groupId);
     }
 
     @Override
     public int hashCode() {
-        int result = user != null ? user.hashCode() : 0;
-        result = 31 * result + (project != null ? project.hashCode() : 0);
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
+        return Objects.hash(groupId);
     }
-
-    // CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber|NeedBraces
 
     @Override
     public String toString() {

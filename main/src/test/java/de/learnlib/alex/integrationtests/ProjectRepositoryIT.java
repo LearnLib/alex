@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.dao.ProjectRepository;
-import de.learnlib.alex.core.dao.SymbolGroupRepository;
-import de.learnlib.alex.core.dao.UserRepository;
+import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolGroupRepository;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
 import org.junit.After;
@@ -212,6 +212,9 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         //
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
+
+        assertThat(symbolGroupRepository.count(), is(equalTo(1L)));
+        assertTrue(project.getDefaultGroup().getGroupId() > 0);
 
         projectRepository.delete(project);
 

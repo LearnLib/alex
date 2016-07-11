@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.dao.LearnerResultRepository;
-import de.learnlib.alex.core.dao.ProjectRepository;
-import de.learnlib.alex.core.dao.UserRepository;
+import de.learnlib.alex.core.repositories.LearnerResultRepository;
+import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
@@ -88,7 +88,7 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         user = userRepository.save(user);
         //
         Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
+        projectRepository.save(project);
         //
         LearnerResult result = createLearnerResult(user, null, 0L);
 
@@ -155,7 +155,8 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         LearnerResult result2 = createLearnerResult(user, project, 1L);
         learnerResultRepository.save(result2);
 
-        List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(user.getId(), project.getId());
+        List<LearnerResult> results = learnerResultRepository
+                                             .findByUser_IdAndProject_IdOrderByTestNoAsc(user.getId(), project.getId());
 
         assertThat(results.size(), is(equalTo(2)));
         assertThat(results, hasItem(equalTo(result1)));
@@ -223,7 +224,9 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         LearnerResult result = createLearnerResult(user, project, 0L);
         learnerResultRepository.save(result);
 
-        Long deleteReturnValue = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user, project.getId(), 0L);
+        Long deleteReturnValue = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user,
+                                                                                              project.getId(),
+                                                                                              0L);
 
         assertThat(deleteReturnValue, is(equalTo(1L)));
         assertThat(learnerResultRepository.count(), is(equalTo(0L)));
@@ -237,7 +240,9 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
-        Long deleteReturnValue = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user, project.getId(), -1L);
+        Long deleteReturnValue = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user,
+                                                                                              project.getId(),
+                                                                                              -1L);
 
         assertThat(deleteReturnValue, is(equalTo(0L)));
     }

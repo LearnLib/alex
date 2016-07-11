@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package de.learnlib.alex.core.repositories;
 
-package de.learnlib.alex.core.dao;
-
-import de.learnlib.alex.core.entities.User;
-import de.learnlib.alex.core.entities.UserRole;
+import de.learnlib.alex.core.entities.Settings;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
+/**
+ * Repository to persist the Settings.
+ */
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface SettingsRepository extends JpaRepository<Settings, Long> {
 
-    @Transactional(readOnly = true)
-    List<User> findByRole(UserRole role);
-
-    @Transactional(readOnly = true)
-    User findOneByEmail(String email);
+    /**
+     * Get the settings.
+     * There will be alway only one settings object.
+     *
+     * @return The system settings.
+     */
+    @Query("SELECT s FROM Settings s WHERE s.id = 1")
+    Settings get();
 
 }

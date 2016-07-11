@@ -17,6 +17,7 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Settings;
+import de.learnlib.alex.core.repositories.SettingsRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
-import java.util.List;
 
 /**
  * Implementation of a SettingsDAO using Spring Data.
@@ -32,11 +32,17 @@ import java.util.List;
 @Service
 public class SettingsDAOImpl implements SettingsDAO {
 
-    /** Use the logger for the data part. */
-    private static final Logger LOGGER = LogManager.getLogger("data");
+    private static final Logger LOGGER = LogManager.getLogger();
 
+    /** The SettingsRepository to use. Will be injected. */
     private SettingsRepository settingsRepository;
 
+    /**
+     * Creates a new SettingsDAO.
+     *
+     * @param settingsRepository
+     *         The SettingsRepository to use.
+     */
     @Inject
     public SettingsDAOImpl(SettingsRepository settingsRepository) {
         this.settingsRepository = settingsRepository;

@@ -26,6 +26,8 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.core.repositories.LearnerResultRepository;
+import de.learnlib.alex.core.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -168,7 +170,8 @@ public class LearnerResultDAOImplTest {
     public void shouldGetAllResultsOfOneProject() throws NotFoundException {
         List<LearnerResult> results = createLearnerResultsList();
         //
-        given(learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(USER_ID, PROJECT_ID)).willReturn(results);
+        given(learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(USER_ID, PROJECT_ID))
+                                                                                                   .willReturn(results);
 
         List<LearnerResult> resultsFromDAO   = learnerResultDAO.getAll(USER_ID, PROJECT_ID, true);
 
@@ -180,7 +183,8 @@ public class LearnerResultDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingAllResultsThrowsAnExceptionIfNoLearnerResultCouldBeFound() throws NotFoundException {
-        given(learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(USER_ID, PROJECT_ID)).willReturn(Collections.emptyList());
+        given(learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(USER_ID, PROJECT_ID))
+                                                                                   .willReturn(Collections.emptyList());
 
         learnerResultDAO.getAll(USER_ID, PROJECT_ID, true); // should fail
     }
@@ -191,7 +195,8 @@ public class LearnerResultDAOImplTest {
         List<LearnerResult> results = createLearnerResultsList();
         Long[] testNos = new Long[] {0L, 1L, 2L};
         //
-        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos)).willReturn(results);
+        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos))
+                                                                                                   .willReturn(results);
 
         List<LearnerResult> resultsFromDAO   = learnerResultDAO.getAll(USER_ID, PROJECT_ID, testNos, true);
 
@@ -205,7 +210,8 @@ public class LearnerResultDAOImplTest {
     public void ensureThatGettingMultipleResultThrowsAnExceptionIfOneResultIdIsInvalid() throws NotFoundException {
         Long[] testNos = new Long[] {0L, 1L, 2L};
         //
-        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos)).willReturn(Collections.emptyList());
+        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos))
+                                                                                   .willReturn(Collections.emptyList());
 
         learnerResultDAO.getAll(USER_ID, PROJECT_ID, testNos, true); // should fail
     }
@@ -215,7 +221,8 @@ public class LearnerResultDAOImplTest {
         LearnerResult result = new LearnerResult();
         Long[] testNos = new Long[] {0L};
         //
-        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos[0])).willReturn(Collections.singletonList(result));
+        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos[0]))
+                                                                         .willReturn(Collections.singletonList(result));
 
         LearnerResult resultFromDAO = learnerResultDAO.get(USER_ID, PROJECT_ID, 0L, true);
 
@@ -226,7 +233,8 @@ public class LearnerResultDAOImplTest {
     public void ensureThatGettingANonExistingResultThrowsAnException() throws NotFoundException {
         Long[] testNos = new Long[] {0L};
         //
-        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos[0])).willReturn(Collections.emptyList());
+        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos[0]))
+                                                                                   .willReturn(Collections.emptyList());
 
         learnerResultDAO.get(USER_ID, PROJECT_ID, 0L, true); // should fail
     }

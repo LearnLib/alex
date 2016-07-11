@@ -19,10 +19,13 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.repositories.ProjectRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.Hibernate;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -44,19 +47,26 @@ import java.util.Set;
 @Service
 public class ProjectDAOImpl implements ProjectDAO {
 
-    /** Use the logger for the data part. */
-    private static final Logger LOGGER = LogManager.getLogger("data");
+    private static final Logger LOGGER = LogManager.getLogger();
 
+    private static final Marker PROJECT_MARKER = MarkerManager.getMarker("PROJECT");
+    private static final Marker DAO_MARKER     = MarkerManager.getMarker("DAO");
+    private static final Marker IMPL_MARKER    = MarkerManager.getMarker("PROJECT_DAO")
+                                                                .setParents(DAO_MARKER, PROJECT_MARKER);
+
+    /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
 
-    /** The SymbolDAO to use. */
+    /** The SymbolDAO to use. Will be injected. */
     private SymbolDAO symbolDAO;
 
     /**
-     * The constructor.
+     * Creates a new ProjectDAO.
      *
+     * @param projectRepository
+     *         The ProjectRepository to use.
      * @param symbolDAO
-     *         The SymbolDAOImpl to use.
+     *         The SymbolDAO to use.
      */
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository, SymbolDAO symbolDAO) {
@@ -67,6 +77,7 @@ public class ProjectDAOImpl implements ProjectDAO {
     @Override
     @Transactional
     public void create(final Project project) throws ValidationException {
+        LOGGER.traceEntry("create({})", project);
         try {
             if (project.getGroups().size() == 0) { // create new project without existing groups
                 SymbolGroup defaultGroup = new SymbolGroup();
@@ -98,13 +109,17 @@ public class ProjectDAOImpl implements ProjectDAO {
             project.setId(createdProject.getId());
         // error handling
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info("Project creation failed:", e);
+            LOGGER.info(IMPL_MARKER, "Project creation failed:", e);
+            LOGGER.traceExit(e);
             throw new javax.validation.ValidationException("Project could not be created.", e);
         } catch (TransactionSystemException e) {
-            LOGGER.info("Project creation failed:", e);
+            LOGGER.info(IMPL_MARKER, "Project creation failed:", e);
+            LOGGER.traceExit(e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not created:", cve);
         }
+
+        LOGGER.traceExit(project);
     }
 
     @Override
@@ -138,7 +153,8 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public Project getByName(Long userId, String projectName, EmbeddableFields... embedFields) throws NotFoundException {
+    public Project getByName(Long userId, String projectName, EmbeddableFields... embedFields)
+            throws NotFoundException {
         Project result = projectRepository.findOneByUser_IdAndName(userId, projectName);
 
         if (result == null) {
@@ -153,24 +169,29 @@ public class ProjectDAOImpl implements ProjectDAO {
     @Override
     @Transactional
     public void update(Project project) throws NotFoundException, ValidationException {
+        LOGGER.traceEntry("update({})", project);
         try {
             projectRepository.save(project);
 
         // error handling
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info("Project update failed:", e);
+            LOGGER.info(IMPL_MARKER, "Project update failed:", e);
             throw new javax.validation.ValidationException("Project could not be updated.", e);
         } catch (TransactionSystemException e) {
-            LOGGER.info("Project update failed:", e);
+            LOGGER.info(IMPL_MARKER, "Project update failed:", e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not updated.", cve);
         }
+        LOGGER.traceExit(project);
     }
 
     @Override
     @Transactional
     public void delete(Long userId, Long projectId) throws NotFoundException {
-        Project project = getByID(userId, projectId);
+        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
+        if (project == null) {
+            throw new NotFoundException("Could not delete the project with the id " + projectId + ".");
+        }
 
         projectRepository.delete(project);
     }

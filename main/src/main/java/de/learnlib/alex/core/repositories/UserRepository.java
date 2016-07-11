@@ -14,26 +14,40 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.core.dao;
+package de.learnlib.alex.core.repositories;
 
-import de.learnlib.alex.core.entities.Counter;
-import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Repository to persist Users.
+ */
 @Repository
-public interface CounterRepository extends JpaRepository<Counter, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
+    /**
+     * Find all users by their role.
+     *
+     * @param role
+     *         The role to look for.
+     * @return All users with that role.
+     */
     @Transactional(readOnly = true)
-    List<Counter> findByUser_IdAndProject(Long userId, Project project);
+    List<User> findByRole(UserRole role);
 
+    /**
+     * Find a User by its email.
+     *
+     * @param email
+     *         The email to look for.
+     * @return The users with that email or null.
+     */
     @Transactional(readOnly = true)
-    List<Counter> findAllByUser_IdAndProjectAndNameIn(Long userId, Project project, String... name);
-
-    @Transactional(readOnly = true)
-    Counter findByUser_IdAndProjectAndName(Long userId, Project project, String name);
+    User findOneByEmail(String email);
 
 }

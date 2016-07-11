@@ -42,11 +42,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Representation of a symbol for the learning process.
@@ -72,46 +74,39 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     private static final Marker LEARNER_MARKER  = MarkerManager.getMarker("LEARNER");
 
     /** The ID of the Symbol in the DB. */
-    @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
-    @JsonIgnore
     private Long symbolId;
 
     /** The User that owns the Symbol. */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "userId")
-    @JsonIgnore
     private User user;
 
+    /** The plain ID of the User to be used in the JSON. */
+    private Long userId;
+
     /** The Project the Symbol belongs to. */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "projectId")
-    @JsonIgnore
     private Project project;
 
+    /** The plain ID of the Project to be used in the JSON. */
+    private Long projectId;
+
     /** The group the symbol belongs to. */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JsonIgnore
     private SymbolGroup group;
 
+    /** The plain ID of the Group to be used in the JSON. */
+    private Long groupId;
+
     /** The ID and revision of the symbol. */
-    @Embedded
-    @JsonIgnore
     private IdRevisionPair idRevisionPair;
 
     /**
      * The name of the symbol.
      * @requiredField
      */
-    @NotBlank
     private String name;
 
     /**
      * An abbreviation for the symbol.
      * @requiredField
      */
-    @NotBlank
-    @Size(min = 1, max = MAX_ABBREVIATION_LENGTH)
     private String abbreviation;
 
     /**
@@ -121,8 +116,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     private boolean hidden;
 
     /** The actions to perform. */
-    @OneToMany(mappedBy = "symbol", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    @OrderBy("number ASC")
     private List<SymbolAction> actions;
 
     /**
@@ -131,6 +124,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     public Symbol() {
         this.idRevisionPair = new IdRevisionPair();
         this.actions = new LinkedList<>();
+
+        this.userId    = 0L;
+        this.projectId = 0L;
+        this.groupId   = 0L;
     }
 
     /**
@@ -138,6 +135,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      *
      * @return The internal ID.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.TABLE)
+    @JsonIgnore
     public Long getSymbolId() {
         return symbolId;
     }
@@ -147,6 +147,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      *
      * @param symbolId The new internal ID.
      */
+    @JsonIgnore
     public void setSymbolId(Long symbolId) {
         this.symbolId = symbolId;
     }
@@ -154,6 +155,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * @return The user that owns the project.
      */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "userId")
     @JsonIgnore
     public User getUser() {
         return user;
@@ -165,18 +168,20 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonIgnore
     public void setUser(User user) {
         this.user = user;
+        if (user == null) {
+            this.userId = 0L;
+        } else {
+            this.userId = user.getId();
+        }
     }
 
     /**
      * @return The ID of the user, which is needed for the JSON.
      */
+    @Transient
     @JsonProperty("user")
     public Long getUserId() {
-        if (user == null) {
-            return 0L;
-        } else {
-            return user.getId();
-        }
+        return userId;
     }
 
     /**
@@ -184,7 +189,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @JsonProperty("user")
     public void setUserId(Long userId) {
-        user = new User(userId);
+        this.user = null;
+        this.userId = userId;
     }
 
     /**
@@ -192,6 +198,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      *
      * @return The (parent) project.
      */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "projectId")
     @JsonIgnore
     public Project getProject() {
         return project;
@@ -206,6 +214,11 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonIgnore
     public void setProject(Project project) {
         this.project = project;
+        if (project == null) {
+            this.projectId = 0L;
+        } else {
+            this.projectId = project.getId();
+        }
     }
 
     /**
@@ -214,13 +227,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @return The parent Project.
      * @requiredField
      */
+    @Transient
     @JsonProperty("project")
     public Long getProjectId() {
-        if (project == null) {
-            return 0L;
-        } else {
-            return this.project.getId();
-        }
+        return projectId;
     }
 
     /**
@@ -231,7 +241,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
-        this.project = new Project(projectId);
+        this.project = null;
+        this.projectId = projectId;
     }
 
     /**
@@ -239,6 +250,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      *
      * @return The group the symbols is a part of.
      */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "groupId")
+    @JsonIgnore
     public SymbolGroup getGroup() {
         return group;
     }
@@ -249,8 +263,14 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param group
      *         The new group the symbols should be part of.
      */
+    @JsonIgnore
     public void setGroup(SymbolGroup group) {
         this.group = group;
+        if (group == null) {
+            this.groupId = 0L;
+        } else {
+            this.groupId = group.getId();
+        }
     }
 
     /**
@@ -258,13 +278,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      *
      * @return The ID of the group the symbol belongs to or 0L.
      */
+    @Transient
     @JsonProperty("group")
     public Long getGroupId() {
-        if (group == null) {
-            return 0L;
-        } else {
-            return this.group.getId();
-        }
+        return groupId;
     }
 
     /**
@@ -275,8 +292,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @JsonProperty("group")
     public void setGroupId(Long groupId) {
-        this.group = new SymbolGroup();
-        this.group.setId(groupId);
+        this.group = null;
+        this.groupId = groupId;
     }
 
     /**
@@ -284,6 +301,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      *
      * @return The current ID and revision pair.
      */
+    @Embedded
+    @JsonIgnore
     public IdRevisionPair getIdRevisionPair() {
         return idRevisionPair;
     }
@@ -294,6 +313,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param idRevisionPair
      *         The new ID and revision.
      */
+    @JsonIgnore
     public void setIdRevisionPair(IdRevisionPair idRevisionPair) {
         this.idRevisionPair = idRevisionPair;
     }
@@ -304,6 +324,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @return The ID.
      * @requiredField
      */
+    @Transient
     @JsonProperty("id")
     public Long getId() {
         return this.idRevisionPair.getId();
@@ -326,7 +347,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @return The revision.
      * @requiredField
      */
-    @JsonProperty("revision")
+    @Transient
+//    @JsonProperty("revision")
     public Long getRevision() {
         return this.idRevisionPair.getRevision();
     }
@@ -337,7 +359,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param revision
      *            The new revision.
      */
-    @JsonProperty("revision")
+//    @JsonProperty("revision")
     public void setRevision(Long revision) {
         this.idRevisionPair.setRevision(revision);
     }
@@ -347,6 +369,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      *
      * @return The name.
      */
+    @NotBlank
+//    @JsonProperty("name")
     public String getName() {
         return name;
     }
@@ -357,6 +381,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param name
      *            The new name.
      */
+//    @JsonProperty("name")
     public void setName(String name) {
         this.name = name;
     }
@@ -364,6 +389,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * @return the abbreviation
      */
+    @NotBlank
+    @Size(min = 1, max = MAX_ABBREVIATION_LENGTH)
+//    @JsonProperty("abbreviation")
     public String getAbbreviation() {
         return abbreviation;
     }
@@ -372,6 +400,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param abbreviation
      *            the abbreviation to set
      */
+//    @JsonProperty("abbreviation")
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
@@ -381,14 +410,14 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * 
      * @return true if the symbol should be considered hidden; false otherwise.
      */
-    @JsonProperty
+    @JsonProperty("hidden")
     public boolean isHidden() {
         return hidden;
     }
 
     /**
      * Mark the symbol as hidden or remove the hidden flag.
-     * 
+     *
      * @param hidden
      *            true if the symbol should be considered hidden; false otherwise.
      */
@@ -402,6 +431,12 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      *
      * @return The actions of this Symbol
      */
+    @OneToMany(
+            mappedBy = "symbol",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @OrderBy("number ASC")
+//    @JsonProperty("actions")
     public List<SymbolAction> getActions() {
         return actions;
     }
@@ -412,8 +447,13 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param actions
      *         The new list of SymbolActions
      */
+//    @JsonProperty("actions")
     public void setActions(List<SymbolAction> actions) {
-        this.actions = actions;
+        if (actions == null) {
+            this.actions = new LinkedList<>();
+        } else {
+            this.actions = actions;
+        }
     }
 
     /**
@@ -480,35 +520,25 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
     */
 
-    //CHECKSTYLE.OFF: AvoidInlineConditionals|LineLength|MagicNumber|NeedBraces - auto generated by IntelliJ IDEA
     @Override
+    @SuppressWarnings("checkstyle:needbraces") // Auto generated by IntelliJ
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Symbol)) return false;
-
+        if (o == null || getClass() != o.getClass()) return false;
         Symbol symbol = (Symbol) o;
-
-        if (project != null ? !project.equals(symbol.project) : symbol.project != null) return false;
-        return !(idRevisionPair != null ? !idRevisionPair.equals(symbol.idRevisionPair) : symbol.idRevisionPair != null);
+        return Objects.equals(symbolId, symbol.symbolId);
     }
 
     @Override
     public int hashCode() {
-        int result = project != null ? project.hashCode() : 0;
-        result = 31 * result + (idRevisionPair != null ? idRevisionPair.hashCode() : 0);
-        return result;
+        return Objects.hash(symbolId);
     }
-    // CHECKSTYLE.OFF: AvoidInlineConditionals|LineLength|MagicNumber|NeedBraces
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Symbol[" + symbolId + "] " + this.user + this.project + "/" + this.getId() + "/" + this.getRevision() + ", "
-                + name + "(" + abbreviation + ")";
+        int amountOfActions = actions == null ? 0 : actions.size();
+        return "Symbol[" + symbolId + "] " + this.user + this.project + "/" + this.getId() + "/" + this.getRevision()
+                + ", " + name + "(" + abbreviation + ") #actions: " + amountOfActions;
     }
 
 }

@@ -98,11 +98,11 @@ public class WebSymbolTest {
         String json = mapper.writeValueAsString(symbol);
 
         Symbol symbolFromMapper = mapper.readValue(json, Symbol.class);
-        assertEquals(symbol.getProject(), symbolFromMapper.getProject());
+        assertEquals(symbol.getProjectId(), symbolFromMapper.getProjectId());
         assertEquals(symbol.getIdRevisionPair(), symbolFromMapper.getIdRevisionPair());
         assertEquals(symbol.getAbbreviation(), symbolFromMapper.getAbbreviation());
         assertEquals(symbol.getName(), symbolFromMapper.getName());
-        assertEquals(symbol.getGroup().getId(), symbolFromMapper.getGroup().getId());
+        assertEquals(symbol.getGroupId(), symbolFromMapper.getGroupId());
     }
 
     @Test

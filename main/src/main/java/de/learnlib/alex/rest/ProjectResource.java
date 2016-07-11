@@ -46,6 +46,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * REST API to manage the projects.
@@ -85,12 +86,14 @@ public class ProjectResource {
     public Response create(Project project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create({}) for user {}.", project, user);
+        Response response;
 
         // make sure that if an user for a project is given, it the correct user id.
         if (project.getUser() != null && !user.equals(project.getUser())) {
             ValidationException e = new ValidationException("The given user id does not belong to the current user!");
-            LOGGER.traceExit(e);
-            throw e;
+            LOGGER.catching(e);
+            response = ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.FORBIDDEN, e);
+            return LOGGER.traceExit(response);
         }
 
         project.setUser(user);
@@ -98,12 +101,12 @@ public class ProjectResource {
         try {
             projectDAO.create(project);
             String projectURL = uri.getBaseUri() + "projects/" + project.getId();
-            LOGGER.traceExit(project);
-            return Response.status(Status.CREATED).header("Location", projectURL).entity(project).build();
+            response = Response.status(Status.CREATED).header("Location", projectURL).entity(project).build();
         } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
+            LOGGER.catching(e);
+            response = ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
         }
+        return LOGGER.traceExit(response);
     }
 
     /**
@@ -207,13 +210,14 @@ public class ProjectResource {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             try {
-                if (project.getUser() == null || user.equals(project.getUser())) {
-                    projectDAO.update(project);
-                    LOGGER.traceExit(project);
-                    return Response.ok(project).build();
-                } else {
+                if ((project.getUser() != null && !user.equals(project.getUser()))
+                        || (project.getUserId() != 0 && !Objects.equals(project.getUserId(), user.getId()))) {
                     throw new UnauthorizedException("You are not allowed to update this project");
                 }
+                project.setUser(user);
+                projectDAO.update(project);
+                LOGGER.traceExit(project);
+                return Response.ok(project).build();
             } catch (NotFoundException e) {
                 LOGGER.traceExit(e);
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.NOT_FOUND, e);
@@ -245,13 +249,15 @@ public class ProjectResource {
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);
-            if (project.getUser().equals(user)) {
-                projectDAO.delete(user.getId(), projectId);
-                LOGGER.traceExit("Project {} deleted", projectId);
-                return Response.status(Status.NO_CONTENT).build();
-            } else {
-                throw new UnauthorizedException("You are not allowed to delete this project");
+            if ((project.getUser() != null && !user.equals(project.getUser()))
+                    || (project.getUserId() != 0 && !Objects.equals(project.getUserId(), user.getId()))) {
+                throw new UnauthorizedException("You are not allowed to update this project");
             }
+
+            project.setUser(user);
+            projectDAO.delete(user.getId(), projectId);
+            LOGGER.traceExit("Project {} deleted", projectId);
+            return Response.status(Status.NO_CONTENT).build();
         } catch (NotFoundException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.NOT_FOUND, e);

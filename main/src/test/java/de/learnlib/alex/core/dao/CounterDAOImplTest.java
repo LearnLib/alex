@@ -19,6 +19,9 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.repositories.CounterRepository;
+import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
@@ -108,9 +111,12 @@ public class CounterDAOImplTest {
     public void shouldHandleTransactionSystemExceptionOnCounterCreationGracefully() {
         Counter counter = new Counter();
         //
-        ConstraintViolationException constraintViolationException = new ConstraintViolationException("Counter is not valid!", new HashSet<>());
+        ConstraintViolationException constraintViolationException;
+        constraintViolationException = new ConstraintViolationException("Counter is not valid!", new HashSet<>());
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException = new TransactionSystemException("Spring TransactionSystemException", rollbackException);
+        TransactionSystemException transactionSystemException;
+        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
+                                                                    rollbackException);
         given(counterRepository.save(counter)).willThrow(transactionSystemException);
 
         counterDAO.create(counter); // should fail
@@ -118,9 +124,6 @@ public class CounterDAOImplTest {
 
     @Test
     public void shouldGetAllCounterOfAProject() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-        //
         Project project = new Project();
         //
         List<Counter> counters = createCounterList();
@@ -233,9 +236,12 @@ public class CounterDAOImplTest {
         counter.setProject(project);
         counter.setName(COUNTER_NAME);
         //
-        ConstraintViolationException constraintViolationException = new ConstraintViolationException("Counter is not valid!", new HashSet<>());
+        ConstraintViolationException constraintViolationException;
+        constraintViolationException = new ConstraintViolationException("Counter is not valid!", new HashSet<>());
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException = new TransactionSystemException("Spring TransactionSystemException", rollbackException);
+        TransactionSystemException transactionSystemException;
+        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
+                                                                    rollbackException);
         //
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
         given(counterRepository.findByUser_IdAndProjectAndName(USER_ID, project, COUNTER_NAME)).willReturn(counter);
@@ -253,7 +259,8 @@ public class CounterDAOImplTest {
 
         //
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
-        given(counterRepository.findAllByUser_IdAndProjectAndNameIn(USER_ID, project, COUNTER_NAME)).willReturn(counterAsList);
+        given(counterRepository.findAllByUser_IdAndProjectAndNameIn(USER_ID, project, COUNTER_NAME))
+                                                                                             .willReturn(counterAsList);
 
         counterDAO.delete(USER_ID, PROJECT_ID, COUNTER_NAME);
 

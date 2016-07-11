@@ -23,6 +23,8 @@ import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Statistics;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.core.repositories.LearnerResultRepository;
+import de.learnlib.alex.core.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,13 +44,22 @@ import java.util.List;
 @Service
 public class LearnerResultDAOImpl implements LearnerResultDAO {
 
-    /** Use the logger for the data part. */
-    private static final Logger LOGGER = LogManager.getLogger("data");
+    private static final Logger LOGGER = LogManager.getLogger();
 
+    /** The LearnerResultRepository to use. Will be injected. */
     private LearnerResultRepository learnerResultRepository;
 
+    /** The LearnerResultStepRepository to use. Will be injected. */
     private LearnerResultStepRepository learnerResultStepRepository;
 
+    /**
+     * Creates a new LearnerResultDAO.
+     *
+     * @param learnerResultRepository
+     *         The LearnerResultRepository to use.
+     * @param learnerResultStepRepository
+     *         The LearnerResultStepRepository to use.
+     */
     @Inject
     public LearnerResultDAOImpl(LearnerResultRepository learnerResultRepository,
                                 LearnerResultStepRepository learnerResultStepRepository) {
@@ -196,7 +207,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
             throws NotFoundException, ValidationException {
         checkIfResultsCanBeDeleted(learner, user, projectId, testNo); // check before the session is opened
 
-        Long amountOfDeletedResults = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user, projectId, testNo);
+        Long amountOfDeletedResults = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user,
+                                                                                                   projectId,
+                                                                                                   testNo);
         if (amountOfDeletedResults != testNo.length) {
             throw new NotFoundException("Could not delete all results!");
         }
@@ -228,7 +241,8 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         }
     }
 
-    private void checkIfResultsCanBeDeleted(Learner learner, User user, Long projectId, Long... testNo) throws ValidationException {
+    private void checkIfResultsCanBeDeleted(Learner learner, User user, Long projectId, Long... testNo)
+            throws ValidationException {
         // don't delete the learnResult of the active learning process
         LearnerStatus status = learner.getStatus(user);
 

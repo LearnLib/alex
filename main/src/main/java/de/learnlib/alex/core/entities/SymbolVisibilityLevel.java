@@ -23,13 +23,13 @@ package de.learnlib.alex.core.entities;
 public enum SymbolVisibilityLevel {
 
     /** Show all symbols. */
-    ALL(new Boolean[] { true, false }),
+    ALL(new Boolean[] {true, false}),
 
     /** Show only visible ones. */
-    VISIBLE(new Boolean[] { false }),
+    VISIBLE(new Boolean[] {false}),
 
     /** Show only hidden ones. */
-    HIDDEN(new Boolean[] { true });
+    HIDDEN(new Boolean[] {true});
 
 
     /** A criterion/ expression related to the entry. */

@@ -14,33 +14,78 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.core.dao;
+package de.learnlib.alex.core.repositories;
 
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Repository to persist LearnerResults.
+ */
 @Repository
 public interface LearnerResultRepository extends JpaRepository<LearnerResult, Long> {
 
+    /**
+     * Find all LearnerResults in a Project.
+     *
+     * @param userId
+     *         The ID the User the LearnerResults belong to.
+     * @param projectId
+     *         The ID the Project the LearnerResults belong to.
+     * @return The LearnerResults.
+     */
     @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
     List<LearnerResult> findByUser_IdAndProject_IdOrderByTestNoAsc(Long userId, Long projectId);
 
+    /**
+     * Find all LearnerResults by their test no in a Project.
+     *
+     * @param userId
+     *         The ID the User the LearnerResults belong to.
+     * @param projectId
+     *         The ID the Project the LearnerResults belong to.
+     * @param testNos
+     *         The test no of the LearnResults to fetch.
+     * @return The LearnResults.
+     */
     @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
     List<LearnerResult> findByUser_IdAndProject_IdAndTestNoIn(Long userId, Long projectId, Long... testNos);
 
+    /**
+     * Get the highest / latest test no used in a Project.
+     *
+     * @param userId
+     *         The ID the User the Project belong to.
+     * @param projectId
+     *         The ID of the Project to check.
+     * @return The highest test no within that project.
+     */
     @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
     @Query("SELECT MAX(l.testNo) FROM LearnerResult l WHERE l.user.id = ?1 AND l.project.id = ?2")
     Long findHighestTestNo(Long userId, Long projectId);
 
-    @Modifying
+    /**
+     * Delete LearnResults by their test no in a Project.
+     *
+     * @param user
+     *         The ID the User the LearnResults belong to.
+     * @param projectId
+     *         The ID the Project the LearnerResults belong to.
+     * @param testNos
+     *         The test no of the LearnResults to delete.
+     * @return The amount of deleted LearnResults.
+     */
     @Transactional
+    @SuppressWarnings("checkstyle:methodname")
     Long deleteByUserAndProject_IdAndTestNoIn(User user, Long projectId, Long... testNos);
 
 }

@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.dao.CounterRepository;
-import de.learnlib.alex.core.dao.ProjectRepository;
-import de.learnlib.alex.core.dao.UserRepository;
+import de.learnlib.alex.core.repositories.CounterRepository;
+import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
@@ -178,7 +178,8 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Counter counter3 = createCounter(user, project, "TestCounter3");
         counter3 = counterRepository.save(counter3);
 
-        List<Counter> counters = counterRepository.findAllByUser_IdAndProjectAndNameIn(user.getId(), project, "TestCounter1", "TestCounter3");
+        List<Counter> counters = counterRepository.findAllByUser_IdAndProjectAndNameIn(user.getId(), project,
+                                                                                       "TestCounter1", "TestCounter3");
 
         assertThat(counters.size(), is(equalTo(2)));
         assertThat(counters, hasItem(equalTo(counter1)));

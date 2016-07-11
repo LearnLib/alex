@@ -27,6 +27,7 @@ import javax.inject.Inject;
 @Service
 public class ConnectorContextHandlerFactory {
 
+    /** The CounterStoreConnector to use. Will be injected. */
     @Inject
     private CounterStoreConnector counterStoreConnector;
 

@@ -18,6 +18,7 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.IdsList;
 import org.junit.Before;
@@ -25,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
 import javax.persistence.RollbackException;
@@ -71,9 +72,12 @@ public class UserDAOImplTest {
     @Test(expected = ValidationException.class)
     public void shouldHandleTransactionSystemExceptionsOnUserCreationGracefully() {
         User user = createUser();
-        ConstraintViolationException constraintViolationException = new ConstraintViolationException("User is not valid!", new HashSet<>());
+        ConstraintViolationException constraintViolationException;
+        constraintViolationException = new ConstraintViolationException("User is not valid!", new HashSet<>());
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException = new TransactionSystemException("Spring TransactionSystemException", rollbackException);
+        TransactionSystemException transactionSystemException;
+        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
+                                                                    rollbackException);
         given(userRepository.save(user)).willThrow(transactionSystemException);
 
         userDAO.create(user);
@@ -88,9 +92,9 @@ public class UserDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldHandleJpaSystemExceptionOnUserCreationGracefully() {
+    public void shouldHandleDataIntegrityViolationExceptionOnUserCreationGracefully() {
         User user = createUser();
-        given(userRepository.save(user)).willThrow(JpaSystemException.class);
+        given(userRepository.save(user)).willThrow(DataIntegrityViolationException.class);
 
         userDAO.create(user);
     }
@@ -182,9 +186,12 @@ public class UserDAOImplTest {
     @Test(expected = ValidationException.class)
     public void shouldHandleTransactionSystemExceptionsOnUserUpdateGracefully() {
         User user = createUser();
-        ConstraintViolationException constraintViolationException = new ConstraintViolationException("User is not valid!", new HashSet<>());
+        ConstraintViolationException constraintViolationException;
+        constraintViolationException = new ConstraintViolationException("User is not valid!", new HashSet<>());
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException = new TransactionSystemException("Spring TransactionSystemException", rollbackException);
+        TransactionSystemException transactionSystemException;
+        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
+                                                                    rollbackException);
         given(userRepository.save(user)).willThrow(transactionSystemException);
 
         userDAO.update(user);
@@ -199,9 +206,9 @@ public class UserDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldHandleJpaSystemExceptionOnUserUpdateGracefully() {
+    public void shouldHandleDataIntegrityViolationExceptionOnUserUpdateGracefully() {
         User user = createUser();
-        given(userRepository.save(user)).willThrow(JpaSystemException.class);
+        given(userRepository.save(user)).willThrow(DataIntegrityViolationException.class);
 
         userDAO.update(user);
     }

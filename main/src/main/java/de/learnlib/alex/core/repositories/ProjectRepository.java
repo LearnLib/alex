@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.core.dao;
+package de.learnlib.alex.core.repositories;
 
 import de.learnlib.alex.core.entities.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,16 +23,47 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Repository to persist Projects.
+ */
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
+    /**
+     * Find all projects of an User.
+     *
+     * @param userId
+     *         The ID the User the Projects belongs to.
+     * @return The Projects of the User.
+     */
     @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
     List<Project> findAllByUser_Id(Long userId);
 
+    /**
+     * Get a Project by the User and its ID.
+     *
+     * @param userId
+     *         The ID the User the Projects belongs to.
+     * @param id
+     *         The ID of the Project within the User space.
+     * @return The Project or null.
+     */
     @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
     Project findOneByUser_IdAndId(Long userId, Long id);
 
+    /**
+     * Get a Project by the User and its name.
+     *
+     * @param userId
+     *         The ID the User the Projects belongs to.
+     * @param name
+     *         The name of the Project.
+     * @return The Project or null.
+     */
     @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
     Project findOneByUser_IdAndName(Long userId, String name);
 
 }

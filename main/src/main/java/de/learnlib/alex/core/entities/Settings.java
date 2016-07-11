@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.ValidationException;
 import java.io.File;
@@ -40,7 +39,6 @@ public class Settings implements Serializable {
 
     /** The id of the settings object in the database. */
     @Id
-//    @GeneratedValue
     private Long id = 1L;
 
     /** The settings regarding available web drivers. */

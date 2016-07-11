@@ -19,6 +19,7 @@ package de.learnlib.alex.core.dao;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.repositories.ProjectRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
@@ -118,9 +119,12 @@ public class ProjectDAOImplTest {
     public void shouldHandleTransactionSystemExceptionOnProjectCreationGracefully() {
         Project project = new Project();
         //
-        ConstraintViolationException constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
+        ConstraintViolationException constraintViolationException;
+        constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException = new TransactionSystemException("Spring TransactionSystemException", rollbackException);
+        TransactionSystemException transactionSystemException;
+        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
+                                                                    rollbackException);
         given(projectRepository.save(project)).willThrow(transactionSystemException);
 
         projectDAO.create(project); // should fail
@@ -209,9 +213,12 @@ public class ProjectDAOImplTest {
     public void shouldHandleTransactionSystemExceptionOnProjectUpdateGracefully() throws NotFoundException {
         Project project = new Project();
         //
-        ConstraintViolationException constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
+        ConstraintViolationException constraintViolationException;
+        constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException = new TransactionSystemException("Spring TransactionSystemException", rollbackException);
+        TransactionSystemException transactionSystemException;
+        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
+                                                                    rollbackException);
         given(projectRepository.save(project)).willThrow(transactionSystemException);
 
         projectDAO.update(project); // should fail

@@ -18,12 +18,13 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,11 +40,16 @@ import java.util.List;
 @Service
 public class UserDAOImpl implements UserDAO {
 
-    /** Use the logger for the data part. */
-    private static final Logger LOGGER = LogManager.getLogger("data");
+    private static final Logger LOGGER = LogManager.getLogger();
 
+    /** The UserRepository to use. Will be injected. */
     private UserRepository userRepository;
 
+    /**
+     * Creates a new UserDAO.
+     *
+     * @param userRepository The UserRepository to use.
+     */
     @Inject
     public UserDAOImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -130,7 +136,7 @@ public class UserDAOImpl implements UserDAO {
             LOGGER.info("Saving a user failed:", e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("User was not created:", cve);
-        } catch (JpaSystemException e) {
+        } catch (DataIntegrityViolationException e) {
             LOGGER.info("Saving a user failed:", e);
             throw new ValidationException("The User was not created because it did not pass the validation!", e);
         }
