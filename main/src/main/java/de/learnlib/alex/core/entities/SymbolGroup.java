@@ -212,7 +212,6 @@ public class SymbolGroup implements Serializable {
      * @return THe group id.
      */
     @Column(nullable = false)
-    @JsonProperty("id")
     public Long getId() {
         return id;
     }
@@ -223,7 +222,6 @@ public class SymbolGroup implements Serializable {
      * @param id
      *         The new group ID.
      */
-    @JsonProperty("id")
     public void setId(Long id) {
         this.id = id;
     }
@@ -234,7 +232,6 @@ public class SymbolGroup implements Serializable {
      * @return The group name.
      */
     @NotBlank
-    @JsonProperty("name")
     public String getName() {
         return name;
     }
@@ -245,7 +242,6 @@ public class SymbolGroup implements Serializable {
      * @param name
      *         The new name.
      */
-    @JsonProperty("name")
     public void setName(String name) {
         this.name = name;
     }
@@ -260,7 +256,7 @@ public class SymbolGroup implements Serializable {
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
-    @JsonProperty("symbols")
+    @JsonProperty
     public Set<Symbol> getSymbols() {
         return symbols;
     }
@@ -285,7 +281,7 @@ public class SymbolGroup implements Serializable {
      * @param symbols
      *         The new set of related symbols.
      */
-    @JsonProperty("symbols")
+    @JsonProperty
     public void setSymbols(Set<Symbol> symbols) {
         if (symbols == null) {
             this.symbols = new HashSet<>();

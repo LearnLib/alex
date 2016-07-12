@@ -61,6 +61,7 @@ public class ALEXTestApplication extends ResourceConfig {
         register(MultiPartFeature.class);
         register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
         register(AuthenticationFilter.class);
+        register(JacksonConfiguration.class);
     }
 
     private void bindUserDAO(final UserDAO userDAO) {

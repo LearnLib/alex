@@ -218,7 +218,6 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
             try {
                 List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(user, group.getProjectId(), group.getId());
-                System.out.println("====> Found symbols " + symbols);
                 group.setSymbols(new HashSet<>(symbols));
             } catch (NotFoundException e) {
                 group.setSymbols(null);

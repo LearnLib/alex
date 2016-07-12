@@ -325,7 +325,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @requiredField
      */
     @Transient
-    @JsonProperty("id")
+    @JsonProperty
     public Long getId() {
         return this.idRevisionPair.getId();
     }
@@ -336,7 +336,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param id
      *            The new ID.
      */
-    @JsonProperty("id")
+    @JsonProperty
     public void setId(Long id) {
         this.idRevisionPair.setId(id);
     }
@@ -348,7 +348,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @requiredField
      */
     @Transient
-//    @JsonProperty("revision")
+    @JsonProperty
     public Long getRevision() {
         return this.idRevisionPair.getRevision();
     }
@@ -359,7 +359,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param revision
      *            The new revision.
      */
-//    @JsonProperty("revision")
+    @JsonProperty
     public void setRevision(Long revision) {
         this.idRevisionPair.setRevision(revision);
     }
@@ -370,7 +370,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @return The name.
      */
     @NotBlank
-//    @JsonProperty("name")
+    @JsonProperty
     public String getName() {
         return name;
     }
@@ -381,7 +381,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param name
      *            The new name.
      */
-//    @JsonProperty("name")
+    @JsonProperty
     public void setName(String name) {
         this.name = name;
     }
@@ -391,7 +391,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @NotBlank
     @Size(min = 1, max = MAX_ABBREVIATION_LENGTH)
-//    @JsonProperty("abbreviation")
+    @JsonProperty
     public String getAbbreviation() {
         return abbreviation;
     }
@@ -400,7 +400,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param abbreviation
      *            the abbreviation to set
      */
-//    @JsonProperty("abbreviation")
+    @JsonProperty
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
@@ -410,7 +410,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * 
      * @return true if the symbol should be considered hidden; false otherwise.
      */
-    @JsonProperty("hidden")
+    @JsonProperty
     public boolean isHidden() {
         return hidden;
     }
@@ -436,7 +436,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @OrderBy("number ASC")
-//    @JsonProperty("actions")
+    @JsonProperty
     public List<SymbolAction> getActions() {
         return actions;
     }
@@ -447,7 +447,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param actions
      *         The new list of SymbolActions
      */
-//    @JsonProperty("actions")
+    @JsonProperty
     public void setActions(List<SymbolAction> actions) {
         if (actions == null) {
             this.actions = new LinkedList<>();

@@ -1,6 +1,5 @@
 package de.learnlib.alex;
 
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
@@ -20,11 +19,11 @@ public class JacksonConfiguration implements ContextResolver<ObjectMapper> {
      * Default constructor, which creates the ObjectMapper and add the custom modules.
      */
     public JacksonConfiguration() {
+        Hibernate4Module hibernate4Module = new Hibernate4Module();
+        hibernate4Module.configure(Hibernate4Module.Feature.USE_TRANSIENT_ANNOTATION, false);
+
         mapper = new ObjectMapper();
-        mapper.registerModule(new Hibernate4Module());
-        mapper.configure(MapperFeature.AUTO_DETECT_GETTERS, true);
-        mapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, true);
-        mapper.configure(MapperFeature.AUTO_DETECT_SETTERS, true);
+        mapper.registerModule(hibernate4Module);
     }
 
     @Override
