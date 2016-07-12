@@ -421,7 +421,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param hidden
      *            true if the symbol should be considered hidden; false otherwise.
      */
-    @JsonIgnore
+//    @JsonIgnore
+    @JsonProperty
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }

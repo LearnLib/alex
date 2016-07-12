@@ -379,14 +379,12 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, symbol, user);
 
-        if (!Objects.equals(id, symbol.getId())
-                || !Objects.equals(projectId, symbol.getProjectId())
-                || (symbol.getUserId() != 0L && !user.equals(symbol.getUser()))) {
-
+        if (symbolDoesntMatchURLParameter(symbol, projectId, id, user)) {
             LOGGER.traceExit();
             return  Response.status(Status.BAD_REQUEST).build();
         }
         symbol.setUser(user);
+        symbol.setProjectId(projectId);
 
         try {
             symbolDAO.update(symbol);
@@ -400,6 +398,28 @@ public class SymbolResource {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.BAD_REQUEST, e);
         }
+    }
+
+    private boolean symbolDoesntMatchURLParameter(Symbol symbol, Long projectId, Long id, User user) {
+        if (symbol.getId() != null
+                && symbol.getId() != 0
+                && !Objects.equals(id, symbol.getId())) {
+            return true;
+        }
+
+        if (symbol.getProjectId() != null
+                && symbol.getProjectId() != 0L
+                && !Objects.equals(projectId, symbol.getProjectId())) {
+            return true;
+        }
+
+        if (symbol.getUserId() != null
+                && symbol.getUserId() != 0L
+                && !Objects.equals(user.getId(), symbol.getUserId())) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

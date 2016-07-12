@@ -240,7 +240,13 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new NotFoundException("Could not find the project with the id " + projectId + ".");
         }
 
-        return symbolRepository.findAllWithHighestRevision(user.getId(), projectId, visibilityLevel.getCriterion());
+        List<Symbol> result = symbolRepository.findAllWithHighestRevision(user.getId(),
+                                                                          projectId,
+                                                                          visibilityLevel.getCriterion());
+
+        result.forEach(s -> loadLazyRelations(this, s));
+
+        return result;
     }
 
     @Override
@@ -261,7 +267,7 @@ public class SymbolDAOImpl implements SymbolDAO {
             return new LinkedList<>();
         }
 
-        symbols.forEach(s -> Hibernate.initialize(s.getActions()));
+        symbols.forEach(s -> loadLazyRelations(this, s));
 
         return symbols;
     }
@@ -283,6 +289,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new NotFoundException("Could not find symbols in the project " + projectId
                                                      + " with the ids " + Arrays.toString(ids) + ".");
         }
+
+        result.forEach(s -> loadLazyRelations(this, s));
+
         return result;
     }
 
@@ -406,6 +415,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         Symbol symbolInDB;
         try {
             symbolInDB = getWithLatestRevision(symbol.getUser(), symbol.getProjectId(), symbol.getId());
+            symbol.setProject(symbolInDB.getProject());
         } catch (NotFoundException e) {
             throw new NotFoundException("Update failed: Could not find the symbols with the id " + symbol.getId()
                                                 + " in the project " + symbol.getProjectId() + ".");
@@ -602,6 +612,7 @@ public class SymbolDAOImpl implements SymbolDAO {
      */
     public static void loadLazyRelations(SymbolDAO symbolDAO, Symbol symbol) {
         Hibernate.initialize(symbol.getUser());
+        Hibernate.initialize(symbol.getProject());
         Hibernate.initialize(symbol.getGroup());
 
         Hibernate.initialize(symbol.getActions());

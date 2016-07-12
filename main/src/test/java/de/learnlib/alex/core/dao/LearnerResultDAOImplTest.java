@@ -88,6 +88,7 @@ public class LearnerResultDAOImplTest {
         result.setProject(project);
         //
         given(learnerResultRepository.findHighestTestNo(USER_ID, PROJECT_ID)).willReturn(1L);
+        given(learnerResultRepository.save(result)).willReturn(result);
 
         learnerResultDAO.create(result);
 
@@ -108,6 +109,7 @@ public class LearnerResultDAOImplTest {
         result.setProject(project);
         //
         given(learnerResultRepository.findHighestTestNo(USER_ID, PROJECT_ID)).willReturn(null);
+        given(learnerResultRepository.save(result)).willReturn(result);
 
         learnerResultDAO.create(result);
 
@@ -257,7 +259,7 @@ public class LearnerResultDAOImplTest {
 
         assertThat(step.getUser(), is(equalTo(user)));
         assertThat(step.getProject(), is(equalTo(project)));
-        assertThat(step.getStepNo(), is(equalTo(0L)));
+        assertThat(step.getStepNo(), is(equalTo(1L)));
         assertThat(step.getStepsToLearn(), is(equalTo(-1)));
     }
 
@@ -280,7 +282,7 @@ public class LearnerResultDAOImplTest {
 
         assertThat(newStep.getUser(), is(equalTo(user)));
         assertThat(newStep.getProject(), is(equalTo(project)));
-        assertThat(newStep.getStepNo(), is(equalTo(1L)));
+        assertThat(newStep.getStepNo(), is(equalTo(2L)));
         assertThat(newStep.getStepsToLearn(), is(equalTo(-1)));
     }
 

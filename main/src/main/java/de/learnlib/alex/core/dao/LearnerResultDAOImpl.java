@@ -68,6 +68,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
+    @Transactional
     public void create(LearnerResult learnerResult) throws ValidationException {
         // pre validation
         if (learnerResult.getUser() == null || learnerResult.getProject() == null) {
@@ -91,14 +92,17 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         learnerResult.setTestNo(nextTestNo);
 
         try {
-            learnerResultRepository.save(learnerResult);
+            LearnerResult learnerResultSaved = learnerResultRepository.save(learnerResult);
+            learnerResult.setId(learnerResultSaved.getId());
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("LearnerResult creation failed:", e);
             throw new ValidationException("LearnerResult could not be created.", e);
         }
+
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<LearnerResult> getAll(Long userId, Long projectId, boolean includeSteps) throws NotFoundException {
         List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(userId,
                                                                                                          projectId);
@@ -113,6 +117,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<LearnerResult> getAll(Long userId, Long projectId, Long[] testNos, boolean includeSteps)
             throws NotFoundException {
         List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(userId,
@@ -131,6 +136,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public LearnerResult get(Long userId, Long projectId, Long testNo, boolean includeSteps) throws NotFoundException {
         Long[] testNos = new Long[] {testNo};
         List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(userId,
@@ -149,6 +155,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
+    @Transactional
     public LearnerResultStep createStep(LearnerResult result)
             throws ValidationException {
         LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
@@ -157,7 +164,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         newStep.setUser(result.getUser());
         newStep.setProject(result.getProject());
         newStep.setResult(result);
+        result.getSteps().add(newStep);
         newStep.setStepNo(latestStep.getStepNo() + 1);
+
         newStep.setEqOracle(latestStep.getEqOracle());
         if (latestStep.getStepsToLearn() > 0) {
             newStep.setStepsToLearn(latestStep.getStepsToLearn() - 1);
@@ -167,14 +176,14 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
             throw new IllegalStateException("The previous step has a step to learn of 0 -> no new step can be crated!");
         }
 
-        result.getSteps().add(newStep);
+
         learnerResultStepRepository.save(newStep);
-        learnerResultRepository.save(result);
 
         return newStep;
     }
 
     @Override
+    @Transactional
     public LearnerResultStep createStep(LearnerResult result, LearnerResumeConfiguration configuration)
             throws ValidationException {
         // create the new step
@@ -182,18 +191,19 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         newStep.setUser(result.getUser());
         newStep.setProject(result.getProject());
         newStep.setResult(result);
+        result.getSteps().add(newStep);
         newStep.setStepNo((long) result.getSteps().size());
+
         newStep.setEqOracle(configuration.getEqOracle());
         newStep.setStepsToLearn(configuration.getMaxAmountOfStepsToLearn());
 
-        result.getSteps().add(newStep);
         learnerResultStepRepository.save(newStep);
-        learnerResultRepository.save(result);
 
         return newStep;
     }
 
     @Override
+    @Transactional
     public void saveStep(LearnerResult result, LearnerResultStep step) throws ValidationException {
         learnerResultStepRepository.save(step);
 
