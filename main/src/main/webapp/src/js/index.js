@@ -17,7 +17,6 @@
 import angularDragula from "angular-dragula";
 import ngFileUpload from "ng-file-upload";
 import angularJwt from "angular-jwt";
-import d3 from "d3/d3";
 import uiBootstrap from "angular-ui-bootstrap";
 import uiRouter from "angular-ui-router";
 import toastr from "angular-toastr";
@@ -327,5 +326,3 @@ angular
     .component('learnResultListItem', learnResultListItem);
 
 angular.bootstrap(document, ['ALEX']);
-
-window.d3 = d3;

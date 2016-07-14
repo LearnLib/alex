@@ -8,7 +8,8 @@ module.exports = function (grunt) {
         'node_modules/angular/angular.js',
         'node_modules/angular-ui-ace/src/ui-ace.js',
         'node_modules/n3-charts/build/LineChart.js',
-        'node_modules/selection-model/dist/selection-model.js'
+        'node_modules/selection-model/dist/selection-model.js',
+        'node_modules/d3/d3.js'
     ];
 
     grunt

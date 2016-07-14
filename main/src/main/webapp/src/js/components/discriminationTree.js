@@ -16,7 +16,6 @@
 
 import _ from "lodash";
 import {graphlib, dagre, render as Renderer} from "dagre-d3";
-import d3 from "d3/d3";
 
 const STYLE = {
     edgeLabel: 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 10px',
