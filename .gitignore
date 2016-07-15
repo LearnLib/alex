@@ -3,6 +3,7 @@
 *.iml
 
 # Java
+main/logs
 target
 *.class
 hs_err_pid*
