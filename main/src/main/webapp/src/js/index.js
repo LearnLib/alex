@@ -81,6 +81,7 @@ import {symbolsActionsView} from "./components/views/symbolsActionsView";
 import {symbolsView} from "./components/views/symbolsView";
 import {symbolsHistoryView} from "./components/views/symbolsHistoryView";
 import {symbolsImportView} from "./components/views/symbolsImportView";
+import {symbolsTestView} from './components/views/symbolsTestView';
 import {symbolsTrashView} from "./components/views/symbolsTrashView";
 import {usersSettingsView} from "./components/views/usersSettingsView";
 import {actionForm} from "./components/forms/actions/actionForm";
@@ -249,6 +250,7 @@ angular
     .component('symbolsView', symbolsView)
     .component('symbolsHistoryView', symbolsHistoryView)
     .component('symbolsImportView', symbolsImportView)
+    .component('symbolsTestView', symbolsTestView)
     .component('symbolsTrashView', symbolsTrashView)
     .component('usersSettingsView', usersSettingsView)
 

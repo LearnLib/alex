@@ -61,20 +61,8 @@ class LearnSetupSettingsModalController {
          */
         this.webBrowser = null;
 
-        SettingsResource.get().then(settings => {
-            let supportedBrowsers = {
-                HTMLUNITDRIVER: 'htmlunitdriver'
-            };
-
-            for (let key in webBrowser) {
-                if (key === 'HTMLUNITDRIVER') continue;
-                if (settings.driver[webBrowser[key]].trim() !== "") {
-                    supportedBrowsers[key] = webBrowser[key];
-                }
-            }
-
-            this.webBrowser = supportedBrowsers;
-        });
+        SettingsResource.getSupportedBrowserEnum().then(supportedBrowsers =>
+            this.webBrowser = supportedBrowsers);
 
         /**
          * The LearnConfiguration to be edited.

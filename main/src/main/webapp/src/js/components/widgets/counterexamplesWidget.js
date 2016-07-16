@@ -71,6 +71,8 @@ class CounterexamplesWidget {
         dragulaService.options($scope, 'ceList', {
             removeOnSpill: false
         });
+
+        $scope.$on('$destroy', () => dragulaService.destroy($scope, 'ceList'));
     }
 
     /**
@@ -139,7 +141,7 @@ class CounterexamplesWidget {
             const resetSymbol = this.result.resetSymbol;
 
             // actually test the counterexample
-            this.LearnerResource.isCounterexample(this.result.project, resetSymbol, testSymbols)
+            this.LearnerResource.readOutputs(this.result.project, resetSymbol, testSymbols)
                 .then(ce => {
                     let ceFound = false;
                     for (let i = 0; i < ce.length; i++) {

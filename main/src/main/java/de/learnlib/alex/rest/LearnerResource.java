@@ -42,16 +42,19 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -304,7 +307,8 @@ public class LearnerResource {
     @Path("/outputs/{project_id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet) {
+    public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet,
+                               @QueryParam("includeResetSymbol") @DefaultValue("false") boolean includeResetSymbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, symbolSet, user);
 
@@ -315,13 +319,20 @@ public class LearnerResource {
             if (resetSymbolAsIdRevisionPair == null) {
                 throw new NotFoundException("No reset symbol specified!");
             }
+
             Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsIdRevisionPair);
-            symbolSet.setResetSymbol(resetSymbol);
-
             List<Symbol> symbols = loadSymbols(user, projectId, symbolSet.getSymbolsAsIdRevisionPairs());
-            symbolSet.setSymbols(symbols);
 
-            List<String> results = learner.readOutputs(user, project, resetSymbol, symbols);
+            List<String> results;
+            if (includeResetSymbol) {
+                Symbol dummyResetSymbol = new Symbol();
+                ArrayList<Symbol> s = new ArrayList<>();
+                s.add(resetSymbol);
+                s.addAll(symbols);
+                results = learner.readOutputs(user, project, dummyResetSymbol, s);
+            } else {
+                results = learner.readOutputs(user, project, resetSymbol, symbols);
+            }
 
             LOGGER.traceExit(results);
             return ResponseHelper.renderList(results, Status.OK);
@@ -346,5 +357,4 @@ public class LearnerResource {
 
         return symbols;
     }
-
 }
