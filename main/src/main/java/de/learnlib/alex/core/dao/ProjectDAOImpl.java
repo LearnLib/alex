@@ -20,6 +20,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +39,7 @@ import javax.validation.ValidationException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -57,6 +59,9 @@ public class ProjectDAOImpl implements ProjectDAO {
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
 
+    /** The SymbolRepository to use. Will be injected. */
+    private SymbolRepository symbolRepository;
+
     /** The SymbolDAO to use. Will be injected. */
     private SymbolDAO symbolDAO;
 
@@ -65,12 +70,15 @@ public class ProjectDAOImpl implements ProjectDAO {
      *
      * @param projectRepository
      *         The ProjectRepository to use.
+     * @param symbolRepository
+     *         The SymbolRepository to use.
      * @param symbolDAO
      *         The SymbolDAO to use.
      */
     @Inject
-    public ProjectDAOImpl(ProjectRepository projectRepository, SymbolDAO symbolDAO) {
+    public ProjectDAOImpl(ProjectRepository projectRepository,  SymbolRepository symbolRepository, SymbolDAO symbolDAO) {
         this.projectRepository = projectRepository;
+        this.symbolRepository = symbolRepository;
         this.symbolDAO = symbolDAO;
     }
 
@@ -80,6 +88,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         LOGGER.traceEntry("create({})", project);
         try {
             if (project.getGroups().size() == 0) { // create new project without existing groups
+                LOGGER.info(IMPL_MARKER, "No groups, symbols, ... found for the project.");
                 SymbolGroup defaultGroup = new SymbolGroup();
                 defaultGroup.setId(0L);
                 defaultGroup.setName("Default Group");
@@ -90,19 +99,36 @@ public class ProjectDAOImpl implements ProjectDAO {
                 project.setDefaultGroup(defaultGroup);
                 project.setNextGroupId(1L);
             } else {
+                LOGGER.info(IMPL_MARKER, "The Project contains the following groups: {}", project.getGroups());
                 project.getGroups().forEach(group -> {
+                    group.setUser(project.getUser());
+
+                    group.setProject(project);
                     Long groupId = project.getNextGroupId();
                     group.setId(groupId);
                     project.setNextGroupId(groupId + 1);
 
-                    group.setProject(project);
-                    project.getGroups().add(group);
-                    if (groupId.equals(0L)) {  // just assume that the first group is the default one
-                        project.setDefaultGroup(group);
-                    }
-
                     SymbolGroupDAOImpl.beforePersistGroup(group);
                 });
+
+                // set execute symbols
+                SymbolDAOImpl.setExecuteToSymbols(symbolRepository, project.getSymbols());
+
+                // set a default group if none is provided
+                if (project.getDefaultGroup() == null) {
+                    Iterator<SymbolGroup> groups = project.getGroups().iterator();
+
+                    SymbolGroup newDefaultGroup = groups.next(); // just assume that the first group is the default one
+                    project.setDefaultGroup(newDefaultGroup);
+                } else {
+                    String defaultGroupName = project.getDefaultGroup().getName();
+                    for(SymbolGroup group : project.getGroups()) {
+                        if (defaultGroupName.equals(group.getName())) {
+                            project.setDefaultGroup(group);
+                            break;
+                        }
+                    }
+                }
             }
 
             Project createdProject = projectRepository.save(project);
@@ -110,6 +136,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info(IMPL_MARKER, "Project creation failed:", e);
+            e.printStackTrace();
             LOGGER.traceExit(e);
             throw new javax.validation.ValidationException("Project could not be created.", e);
         } catch (TransactionSystemException e) {
@@ -117,6 +144,9 @@ public class ProjectDAOImpl implements ProjectDAO {
             LOGGER.traceExit(e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not created:", cve);
+        } catch (NotFoundException e) {
+            // TODO
+            e.printStackTrace();
         }
 
         LOGGER.traceExit(project);
@@ -242,9 +272,6 @@ public class ProjectDAOImpl implements ProjectDAO {
             project.setTestResults(null);
             project.setCounters(null);
         }
-
-        // make sure that the "changes" of the project are never actually send to the db.
-//        session.evict(project);
     }
 
     private Set<EmbeddableFields> fieldsArrayToHashSet(EmbeddableFields[] embedFields) {

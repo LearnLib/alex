@@ -387,6 +387,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().header("Authorization", adminToken).put(Entity.json(symbol));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
+        symbol.setUser(admin); // the user is provided over the auth token.
         verify(symbolDAO).update(symbol);
     }
 

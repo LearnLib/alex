@@ -20,6 +20,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
@@ -56,13 +57,16 @@ public class ProjectDAOImplTest {
     private ProjectRepository projectRepository;
 
     @Mock
+    private SymbolRepository symbolRepository;
+
+    @Mock
     private SymbolDAOImpl symbolDAO;
 
     private ProjectDAO projectDAO;
 
     @Before
     public void setUp() {
-        projectDAO = new ProjectDAOImpl(projectRepository, symbolDAO);
+        projectDAO = new ProjectDAOImpl(projectRepository, symbolRepository, symbolDAO);
     }
 
     @Test

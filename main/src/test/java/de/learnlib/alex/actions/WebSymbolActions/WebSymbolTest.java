@@ -27,6 +27,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.PropertyFilterMixIn;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +57,9 @@ public class WebSymbolTest {
 
     @Before
     public void setUp() {
+        User user = new User();
+        user.setId(42L);
+
         Project project = new Project();
         project.setId(1L);
         project.setName("Web Symbol Test Project");
@@ -65,6 +69,7 @@ public class WebSymbolTest {
         group.setName("Web Symbol Test Project");
 
         symbol = new Symbol();
+        symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
         symbol.setName("WebSymbol");
@@ -114,7 +119,8 @@ public class WebSymbolTest {
                         + "\"value\":\"F[oO0]+\",\"regexp\":true},"
                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
                         + "\"duration\":" + ONE_SECOND + "}"
-                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":0,\"revision\":null,\"user\":0}";
+                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":null,\"revision\":null,\"user\":null}";
+        symbol.setUser(null);
         symbol.setProject(null);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -138,7 +144,7 @@ public class WebSymbolTest {
                                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
                                         + "\"duration\":" + ONE_SECOND + "}"
                                 + "],\"group\":2,\"hidden\":false,\"id\":null,\"name\":\"WebSymbol\",\"project\":1,"
-                                + "\"revision\":null,\"user\":0}";
+                                + "\"revision\":null,\"user\":42}";
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symbol);
 

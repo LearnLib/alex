@@ -46,7 +46,7 @@ describe('userEditModal', () => {
         });
 
         $uibModal.open({
-            templateUrl: 'html/modals/user-edit-modal.html',
+            templateUrl: 'html/directives/modals/user-edit-modal.html',
             controller: () => controller,
             controllerAs: 'vm',
             resolve: {

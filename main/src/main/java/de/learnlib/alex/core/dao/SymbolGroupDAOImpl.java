@@ -244,17 +244,29 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
      *         The Group to take care of its Symbols.
      */
     static void beforePersistGroup(SymbolGroup group) {
+        System.out.println("Persisting Group: " + group);
+
+        User user = group.getUser();
         Project project = group.getProject();
+
+        System.out.println("amount of symbols: " + group.getSymbolSize());
+
         group.getSymbols().forEach(symbol -> {
+            System.out.println(symbol);
+
             Long symbolId = project.getNextSymbolId();
-            symbol.setProject(project);
+//            user.addSymbol(symbol);
+            symbol.setUser(user);
+            project.addSymbol(symbol);
             symbol.setGroup(group);
+//            group.addSymbol(symbol);
             symbol.setRevision(0L);
             symbol.setId(symbolId);
             project.setNextSymbolId(symbolId + 1);
 
-            // TODO: Actions
-            // SymbolDAOImpl.beforePersistSymbol
+            SymbolDAOImpl.beforeSymbolSave(symbol);
         });
+
+        System.out.println("---------------------------------------------------");
     }
 }

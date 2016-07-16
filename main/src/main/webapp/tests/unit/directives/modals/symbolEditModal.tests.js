@@ -43,7 +43,7 @@ describe('symbolEditModal', () => {
         });
 
         $uibModal.open({
-            templateUrl: 'html/modals/symbol-edit-modal.html',
+            templateUrl: 'html/directives/modals/symbol-edit-modal.html',
             controller: () => controller,
             controllerAs: 'vm',
             resolve: {

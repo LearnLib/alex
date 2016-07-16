@@ -100,7 +100,7 @@ export class ConfirmDialogController {
 
 
 /**
- * The service for handling promt and confirm dialogs.
+ * The service for handling prompt and confirm dialogs.
  */
 export class PromptService {
 
@@ -122,7 +122,7 @@ export class PromptService {
      */
     prompt(text) {
         return this.$uibModal.open({
-            templateUrl: 'html/modals/prompt-dialog.html',
+            templateUrl: 'html/directives/modals/prompt-dialog.html',
             controller: PromptDialogController,
             controllerAs: 'vm',
             resolve: {
@@ -143,7 +143,7 @@ export class PromptService {
      */
     confirm(text) {
         return this.$uibModal.open({
-            templateUrl: 'html/modals/confirm-dialog.html',
+            templateUrl: 'html/directives/modals/confirm-dialog.html',
             controller: ConfirmDialogController,
             controllerAs: 'vm',
             resolve: {

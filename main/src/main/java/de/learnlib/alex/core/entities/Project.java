@@ -123,7 +123,7 @@ public class Project implements Serializable {
             mappedBy = "project",
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    @JsonProperty("symbols")
+    @JsonIgnore
     private Set<Symbol> symbols;
 
     /**
@@ -289,7 +289,6 @@ public class Project implements Serializable {
      *
      * @return The related groups.
      */
-    @JsonIgnore
     public Set<SymbolGroup> getGroups() {
         return groups;
     }
@@ -366,6 +365,7 @@ public class Project implements Serializable {
     /**
      * @param symbols the symbols to set
      */
+    @JsonIgnore
     public void setSymbols(Set<Symbol> symbols) {
         this.symbols = symbols;
     }
@@ -419,7 +419,7 @@ public class Project implements Serializable {
      *
      * @return The test results of the project.
      */
-    @JsonProperty("testResults")
+    @JsonProperty
     public Set<LearnerResult> getTestResults() {
         return testResults;
     }
@@ -437,7 +437,7 @@ public class Project implements Serializable {
     /**
      * @return All the counters of the Project.
      */
-    @JsonProperty("counters")
+    @JsonProperty
     public Set<Counter> getCounters() {
         return counters;
     }

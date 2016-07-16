@@ -41,6 +41,8 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,7 +91,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         try {
             // create the symbol
             createOne(symbol);
-            setExecuteToSymbols(symbol);
+            setExecuteToSymbols(symbolRepository, symbol);
 
         // error handling
         } catch (DataIntegrityViolationException e) {
@@ -128,11 +130,7 @@ public class SymbolDAOImpl implements SymbolDAO {
             symbols.forEach(this::createOne);
 
             // set execute symbols
-            Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
-            symbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
-            for (Symbol symbol : symbols) {
-                setExecuteToSymbols(symbol, symbolMap);
-            }
+            setExecuteToSymbols(symbolRepository, symbols);
 
         // error handling
         } catch (DataIntegrityViolationException e) {
@@ -180,6 +178,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         Long projectId = symbol.getProjectId();
         Long groupId   = symbol.getGroupId();
 
+        System.out.println("Group ID: " + groupId);
+
         Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
         if (project == null) {
             throw new ValidationException("The Project was not found and thus the Symbol was not created.");
@@ -187,7 +187,8 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         SymbolGroup group = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(userId, projectId, groupId);
         if (group == null) {
-            throw new ValidationException("The specified group was not found and thus the Symbol was not created.");
+            group = project.getDefaultGroup();
+            System.out.println("Using Default Group: " + group);
         }
 
         // get the current highest symbol id in the project and add 1 for the next id
@@ -197,7 +198,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         // set id, project id and revision and save the symbol
         symbol.setId(id);
-        symbol.setRevision(1L);
+        symbol.setRevision(0L);
 
         project.addSymbol(symbol);
 
@@ -337,7 +338,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         // update
         try {
             update_(symbol);
-            setExecuteToSymbols(symbol);
+            setExecuteToSymbols(symbolRepository, symbol);
 
         // error handling
         } catch (DataIntegrityViolationException e) {
@@ -368,7 +369,7 @@ public class SymbolDAOImpl implements SymbolDAO {
             Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
             symbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
             for (Symbol symbol : symbols) {
-                setExecuteToSymbols(symbol, symbolMap);
+                setExecuteToSymbols(symbolRepository, symbol, symbolMap);
             }
 
             // error handling
@@ -561,33 +562,46 @@ public class SymbolDAOImpl implements SymbolDAO {
      * @param symbol
      *         The symbol.
      */
-    public void beforeSymbolSave(Symbol symbol) {
+    public static void beforeSymbolSave(Symbol symbol) {
+        User user = symbol.getUser();
+        Project project = symbol.getProject();
+
         for (int i = 0; i < symbol.getActions().size(); i++) {
             SymbolAction action = symbol.getActions().get(i);
             action.setId(null);
-            action.setUser(symbol.getUser());
-            action.setProject(symbol.getProject());
+            action.setUser(user);
+            action.setProject(project);
             action.setSymbol(symbol);
             action.setNumber(i);
         }
     }
 
-    private void setExecuteToSymbols(Symbol symbol) throws NotFoundException {
+    private void setExecuteToSymbols(SymbolRepository symbolRepository, Symbol symbol) throws NotFoundException {
         Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
         symbolMap.put(symbol.getIdRevisionPair(), symbol);
-        setExecuteToSymbols(symbol, symbolMap);
+        setExecuteToSymbols(symbolRepository, symbol, symbolMap);
     }
 
-    private void setExecuteToSymbols(Symbol symbol, Map<IdRevisionPair, Symbol> allSymbols)
+    public static void setExecuteToSymbols(SymbolRepository symbolRepository, Collection<Symbol> symbols)
+            throws NotFoundException {
+        Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
+        symbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
+
+        for (Symbol symbol : symbols) {
+            SymbolDAOImpl.setExecuteToSymbols(symbolRepository, symbol, symbolMap);
+        }
+    }
+
+    private static void setExecuteToSymbols(SymbolRepository symbolRepository, Symbol symbol, Map<IdRevisionPair, Symbol> cachedSymbols)
             throws NotFoundException {
         for (SymbolAction action : symbol.getActions()) {
             if (action instanceof ExecuteSymbolAction) {
                 ExecuteSymbolAction executeSymbolAction = (ExecuteSymbolAction) action;
                 IdRevisionPair idAndRevision = executeSymbolAction.getSymbolToExecuteAsIdRevisionPair();
 
-                Symbol symbolToExecute = allSymbols.get(idAndRevision);
+                Symbol symbolToExecute = cachedSymbols.get(idAndRevision);
 
-                if (symbolToExecute == null) { // it was not in the set of all symbols
+                if (symbolToExecute == null) { // it was not in the set of cached symbols
                     symbolToExecute = symbolRepository.findOne(action.getUser().getId(), action.getProject().getId(),
                                                                idAndRevision.getId(), idAndRevision.getRevision());
                 }

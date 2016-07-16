@@ -114,6 +114,8 @@ public class ExecuteSymbolAction extends SymbolAction {
      * @param symbolToExecute The new Symbol which will be executed.
      */
     public void setSymbolToExecute(Symbol symbolToExecute) {
+        System.out.println("Set symbol to execute for " + this + " -> " + this.getSymbolToExecuteAsIdRevisionPair() + ": " + symbolToExecute);
+
         this.symbolToExecute = symbolToExecute;
     }
 

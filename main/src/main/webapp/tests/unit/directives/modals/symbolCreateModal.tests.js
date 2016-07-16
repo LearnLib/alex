@@ -51,7 +51,7 @@ describe('symbolCreateModal', () => {
         expect(controller.groups).toEqual([]);
 
         $uibModal.open({
-            templateUrl: 'html/modals/symbol-create-modal.html',
+            templateUrl: 'html/directives/modals/symbol-create-modal.html',
             controller: () => controller,
             controllerAs: 'vm'
         });

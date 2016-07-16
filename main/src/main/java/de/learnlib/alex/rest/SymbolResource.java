@@ -103,7 +103,7 @@ public class SymbolResource {
         LOGGER.traceEntry("createSymbol({}, {}) for user {}.", projectId, symbol, user);
 
         try {
-            checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
+            checkSymbolBeforeCreation(symbol, projectId); // can throw an IllegalArgumentException
 
             Project project = projectDAO.getByID(user.getId(), projectId);
             if (project.getUser().equals(user)) {
@@ -157,7 +157,7 @@ public class SymbolResource {
             Project project = projectDAO.getByID(user.getId(), projectId);
             if (project.getUser().equals(user)) {
                 for (Symbol symbol : symbols) {
-                    checkSymbolBeforeCreation(projectId, symbol); // can throw an IllegalArgumentException
+                    checkSymbolBeforeCreation(symbol, projectId); // can throw an IllegalArgumentException
                     symbol.setUser(user);
                 }
                 symbolDAO.create(symbols);
@@ -184,8 +184,8 @@ public class SymbolResource {
         }
     }
 
-    private void checkSymbolBeforeCreation(Long projectId, Symbol symbol) {
-        if (symbol.getProjectId() == 0L) {
+    private void checkSymbolBeforeCreation(Symbol symbol, Long projectId) {
+        if (symbol.getProjectId() == null) {
             symbol.setProjectId(projectId);
         } else if (!Objects.equals(symbol.getProjectId(), projectId)) {
             throw new IllegalArgumentException("The symbol should not have a project"

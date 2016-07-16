@@ -174,9 +174,9 @@ public class SymbolDAOImplTest {
         List<Symbol> symbols = createWebSymbolTestList(user, project, group);
         //
         List<IdRevisionPair> pairs = new LinkedList<>();
-        pairs.add(new IdRevisionPair(symbols.get(0).getId(), 1));
-        pairs.add(new IdRevisionPair(symbols.get(2).getId(), 1));
-        pairs.add(new IdRevisionPair(symbols.get(3).getId(), 2));
+        pairs.add(new IdRevisionPair(symbols.get(0).getId(), 1L));
+        pairs.add(new IdRevisionPair(symbols.get(2).getId(), 1L));
+        pairs.add(new IdRevisionPair(symbols.get(3).getId(), 2L));
         //
         given(symbolRepository.findAll(USER_ID, PROJECT_ID, pairs)).willReturn(symbols);
 
