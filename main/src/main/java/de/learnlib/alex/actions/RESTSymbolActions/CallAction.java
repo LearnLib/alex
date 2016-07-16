@@ -33,7 +33,11 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -330,4 +334,40 @@ public class CallAction extends RESTSymbolAction {
         }
     }
 
+    /**
+     * Execute an HTTP request without counters and variables.
+     *
+     * @param baseUrl The base url of the project.
+     * @return The response of the request.
+     */
+    public Response testRequest(String baseUrl) {
+        if (credentials != null && credentials.areValid()) {
+            headers.put("Authorization", "Basic " + credentials.toBase64());
+        }
+
+        final WebTarget target = ClientBuilder.newClient().target(baseUrl + url);
+        final Invocation.Builder builder = target.request();
+        headers.forEach(builder::header);
+        cookies.forEach(builder::cookie);
+
+        Response response;
+        switch (method) {
+            case GET:
+                response = builder.get();
+                break;
+            case POST:
+                response = builder.post(javax.ws.rs.client.Entity.json(data));
+                break;
+            case PUT:
+                response = builder.put(javax.ws.rs.client.Entity.json(data));
+                break;
+            case DELETE:
+                response = builder.delete();
+                break;
+            default:
+                return null;
+        }
+
+        return response;
+    }
 }

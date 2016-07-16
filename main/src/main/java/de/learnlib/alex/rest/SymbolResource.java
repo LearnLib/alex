@@ -16,10 +16,13 @@
 
 package de.learnlib.alex.rest;
 
+import com.google.gson.JsonObject;
+import de.learnlib.alex.actions.RESTSymbolActions.CallAction;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -130,6 +133,41 @@ public class SymbolResource {
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.UNAUTHORIZED, e);
+        }
+    }
+
+    /**
+     * Execute an action without creating a learning context.
+     *
+     * @param projectId The id of the project.
+     * @param action The action to test
+     * @return The result of the executed action.
+     */
+    @POST
+    @Path("/actions/test")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response testSymbolAction(@PathParam("project_id") Long projectId, SymbolAction action) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("testSymbolAction({}, {}) for user {}.", projectId, action, user);
+
+        try {
+            Project project = projectDAO.getByID(user.getId(), projectId);
+            if (action instanceof CallAction) { // other actions might be worth testing, too.
+                CallAction callAction = (CallAction) action;
+                Response response = callAction.testRequest(project.getBaseUrl());
+
+                JsonObject result = new JsonObject();
+                result.addProperty("status", response.getStatus());
+                result.addProperty("body", response.readEntity(String.class));
+
+                return Response.ok(result.toString()).build();
+            } else {
+                return Response.noContent().build();
+            }
+        } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.NOT_FOUND, e);
         }
     }
 

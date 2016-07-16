@@ -90,3 +90,26 @@
 
     </uib-tab>
 </uib-tabset>
+
+<hr>
+
+<p>
+    <a class="btn btn-default btn-sm" style="text-align: left" ng-click="vm.test()">
+        <strong>Test the action</strong><br>
+        <em>Variables and counters will not work</em>
+    </a>
+</p>
+
+<div class="panel panel-default" ng-if="vm.testResult !== null">
+    <div class="panel-body" style="padding: 10px">
+        <i class="fa fa-fw fa-close pull-right" ng-click="vm.testResult = null"></i>
+        <div style="margin-bottom: 5px">
+            <strong>Status</strong> <br>
+            {{vm.testResult.status}}
+        </div>
+        <div>
+            <strong>Body</strong> <br>
+            <pre ng-bind="vm.testResult.body" style="max-height: 200px;"></pre>
+        </div>
+    </div>
+</div>

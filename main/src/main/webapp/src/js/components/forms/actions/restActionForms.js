@@ -20,9 +20,13 @@ export const actionFormCall = {
         action: '='
     },
     controllerAs: 'vm',
-    controller: function () {
+
+    // @ngInject
+    controller($http, SessionService) {
+        this.project = SessionService.getProject();
         this.cookie = {name: null, value: null};
         this.header = {name: null, value: null};
+        this.testResult = null;
         this.aceOptions = {
             useWrapMode: true,
             showGutter: true,
@@ -42,6 +46,16 @@ export const actionFormCall = {
             this.header.name = null;
             this.header.value = null;
         };
+
+        this.test = function () {
+            this.testResult = null;
+            const action = angular.copy(this.action);
+            delete action._id;
+
+            $http.post(`rest/projects/${this.project.id}/symbols/actions/test`, action)
+                .then(res => this.testResult = res.data)
+                .catch(res => console.log(res))
+        }
     }
 };
 
