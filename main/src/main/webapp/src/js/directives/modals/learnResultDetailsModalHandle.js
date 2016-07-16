@@ -75,7 +75,7 @@ export class LearnResultDetailsModalController {
  * Use it like this: '<button learn-result-details-modal-handle result="...">Click me!</button>'.
  *
  * @param $uibModal - The modal service.
- * @returns {{restrict: string, scope: {result: string}, link: link}}
+ * @returns {{restrict: string, scope: {result: string}, link: Function}}
  */
 // @ngInject
 export function learnResultDetailsModalHandle($uibModal) {
@@ -85,24 +85,22 @@ export function learnResultDetailsModalHandle($uibModal) {
             result: '=',
             current: '='
         },
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/learn-result-details-modal.html',
-                controller: LearnResultDetailsModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {
-                            result: scope.result,
-                            current: scope.current
-                        };
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/learn-result-details-modal.html',
+                    controller: LearnResultDetailsModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                result: scope.result,
+                                current: scope.current
+                            };
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

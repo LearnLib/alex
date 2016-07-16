@@ -119,23 +119,21 @@ export class SymbolCreateModalController {
  * The callback function should have one parameter that will be the newly created symbol.
  *
  * @param $uibModal - The $modal service.
- * @returns {{restrict: string, scope: {}, link: link}}
+ * @returns {{restrict: string, scope: {}, link: Function}}
  */
 // @ngInject
 export function symbolCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {},
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/symbol-create-modal.html',
-                controller: SymbolCreateModalController,
-                controllerAs: 'vm'
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/symbol-create-modal.html',
+                    controller: SymbolCreateModalController,
+                    controllerAs: 'vm'
+                });
             });
-        });
-    }
+        }
+    };
 }

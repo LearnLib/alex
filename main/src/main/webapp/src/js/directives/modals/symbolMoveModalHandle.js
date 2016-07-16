@@ -121,7 +121,7 @@ export class SymbolMoveModalController {
  * Use: '<button symbol-move-modal-handle symbols="...">Click Me!</button>'.
  *
  * @param $uibModal - The ui.bootstrap $modal service
- * @returns {{scope: {symbols: string}, link: link}}
+ * @returns {{scope: {symbols: string}, link: Function}}
  */
 // @ngInject
 export function symbolMoveModalHandle($uibModal) {
@@ -130,21 +130,19 @@ export function symbolMoveModalHandle($uibModal) {
         scope: {
             symbols: '='
         },
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/symbol-move-modal.html',
-                controller: SymbolMoveModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {symbols: scope.symbols.map(s => new AlphabetSymbol(s))};
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/symbol-move-modal.html',
+                    controller: SymbolMoveModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {symbols: scope.symbols.map(s => new AlphabetSymbol(s))};
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

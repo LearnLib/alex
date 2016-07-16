@@ -87,7 +87,7 @@ export class ActionEditModalController {
  *
  * @param $uibModal - The modal service
  * @param ActionService - ActionService
- * @returns {{restrict: string, scope: {action: string}, link: link}}
+ * @returns {{restrict: string, scope: {action: string}, link: Function}}
  */
 // @ngInject
 export function actionEditModalHandle($uibModal, ActionService) {
@@ -96,29 +96,27 @@ export function actionEditModalHandle($uibModal, ActionService) {
         scope: {
             action: '='
         },
-        link: link
-    };
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/action-edit-modal.html',
+                    controller: ActionEditModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
 
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/action-edit-modal.html',
-                controller: ActionEditModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
+                            // copy the id because it gets lost otherwise
+                            const id = scope.action._id;
+                            const action = ActionService.create(scope.action);
+                            action._id = id;
 
-                        // copy the id because it gets lost otherwise
-                        const id = scope.action._id;
-                        const action = ActionService.create(scope.action);
-                        action._id = id;
-
-                        return {
-                            action: action
-                        };
+                            return {
+                                action: action
+                            };
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

@@ -101,7 +101,7 @@ export class SymbolEditModalController {
  * Use it as an attribute like 'symbol-edit-modal-handle'.
  *
  * @param $uibModal - The $modal service.
- * @returns {{restrict: string, scope: {symbol: string, updateOnServer: string}, link: link}}
+ * @returns {{restrict: string, scope: {symbol: string, updateOnServer: string}, link: Function}}
  */
 // @ngInject
 export function symbolEditModalHandle($uibModal) {
@@ -111,24 +111,22 @@ export function symbolEditModalHandle($uibModal) {
             symbol: '=',
             updateOnServer: '='
         },
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/symbol-edit-modal.html',
-                controller: SymbolEditModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {
-                            symbol: new AlphabetSymbol(scope.symbol),
-                            updateOnServer: scope.updateOnServer
-                        };
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/symbol-edit-modal.html',
+                    controller: SymbolEditModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                symbol: new AlphabetSymbol(scope.symbol),
+                                updateOnServer: scope.updateOnServer
+                            };
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

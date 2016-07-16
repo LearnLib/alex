@@ -19,12 +19,12 @@
  * trigger element of the menu with the mouse so you don't have to click on it. Place it as attribute 'dropdown-hover'
  * beside 'uib-dropdown-toggle' in order to work as expected.
  *
- * @return {{require: string, link: link}}
+ * @return {{require: string, link: Function}}
  */
 export function dropdownHover() {
     return {
         require: '^uibDropdown',
-        link: function (scope, el, attrs, ctrl) {
+        link(scope, el, attrs, ctrl) {
             el.on('mouseenter', () => {
                 scope.$apply(() => {
                     ctrl.toggle(true);

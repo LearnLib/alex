@@ -108,7 +108,7 @@ export class SymbolGroupEditModalController {
  * Use: '<button symbol-group-edit-modal group="..." on-updated="..." on-deleted="...">Click Me!</button>'.
  *
  * @param $uibModal - The ui.bootstrap $modal service.
- * @returns {{scope: {group: string}, link: link}}
+ * @returns {{scope: {group: string}, link: Function}}
  */
 // @ngInject
 export function symbolGroupEditModalHandle($uibModal) {
@@ -117,21 +117,19 @@ export function symbolGroupEditModalHandle($uibModal) {
         scope: {
             group: '='
         },
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/symbol-group-edit-modal.html',
-                controller: SymbolGroupEditModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {group: new SymbolGroup(scope.group)};
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/symbol-group-edit-modal.html',
+                    controller: SymbolGroupEditModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {group: new SymbolGroup(scope.group)};
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }
