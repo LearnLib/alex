@@ -94,6 +94,7 @@ public class SymbolResource {
      * @param symbol
      *            The symbol to add.
      * @return On success the added symbol (enhanced with information from the DB); An error message on failure.
+     * @throws NotFoundException If the related Project or Group could not be found.
      * @responseType de.learnlib.alex.core.entities.Symbol
      * @successResponse 201 created
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -101,7 +102,7 @@ public class SymbolResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSymbol(@PathParam("project_id") Long projectId, Symbol symbol) {
+    public Response createSymbol(@PathParam("project_id") Long projectId, Symbol symbol) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createSymbol({}, {}) for user {}.", projectId, symbol, user);
 
@@ -127,9 +128,6 @@ public class SymbolResource {
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.NOT_FOUND, e);
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.UNAUTHORIZED, e);
@@ -142,32 +140,29 @@ public class SymbolResource {
      * @param projectId The id of the project.
      * @param action The action to test
      * @return The result of the executed action.
+     * @throws NotFoundException If the related Project could not be found.
      */
     @POST
     @Path("/actions/test")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response testSymbolAction(@PathParam("project_id") Long projectId, SymbolAction action) {
+    public Response testSymbolAction(@PathParam("project_id") Long projectId, SymbolAction action)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("testSymbolAction({}, {}) for user {}.", projectId, action, user);
 
-        try {
-            Project project = projectDAO.getByID(user.getId(), projectId);
-            if (action instanceof CallAction) { // other actions might be worth testing, too.
-                CallAction callAction = (CallAction) action;
-                Response response = callAction.testRequest(project.getBaseUrl());
+        Project project = projectDAO.getByID(user.getId(), projectId);
+        if (action instanceof CallAction) { // other actions might be worth testing, too.
+            CallAction callAction = (CallAction) action;
+            Response response = callAction.testRequest(project.getBaseUrl());
 
-                JsonObject result = new JsonObject();
-                result.addProperty("status", response.getStatus());
-                result.addProperty("body", response.readEntity(String.class));
+            JsonObject result = new JsonObject();
+            result.addProperty("status", response.getStatus());
+            result.addProperty("body", response.readEntity(String.class));
 
-                return Response.ok(result.toString()).build();
-            } else {
-                return Response.noContent().build();
-            }
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.NOT_FOUND, e);
+            return Response.ok(result.toString()).build();
+        } else {
+            return Response.noContent().build();
         }
     }
 
@@ -178,7 +173,8 @@ public class SymbolResource {
      *            The ID of the project the symbol should belong to.
      * @param symbols
      *            The symbols to add.
-     * @return On success the added symbols (enhanced with information from the DB); An error message on failure.
+     * @return On success the added symbols (enhanced with information from the DB).
+     * @throws NotFoundException If the related Projects or Groups could not be found.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Symbol>
      * @successResponse 201 created
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -187,7 +183,8 @@ public class SymbolResource {
     @Path("/batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response batchCreateSymbols(@PathParam("project_id") Long projectId, List<Symbol> symbols) {
+    public Response batchCreateSymbols(@PathParam("project_id") Long projectId, List<Symbol> symbols)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("batchCreateSymbols({}, {}) for user {}.", projectId, symbols, user);
 
@@ -213,9 +210,6 @@ public class SymbolResource {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
                                                                Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.NOT_FOUND, e);
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.UNAUTHORIZED, e);
@@ -240,7 +234,7 @@ public class SymbolResource {
      *         Specify the visibility level of the symbols you want to get.
      *         Valid values are: 'all'/ 'unknown', 'visible', 'hidden'.
      *         Optional.
-     * @return A list of all Symbols belonging to the project.
+     * @return A list of all Symbols belonging to the project. This list can be empty.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Symbol>
      * @successResponse 200 OK
      */
@@ -270,7 +264,8 @@ public class SymbolResource {
      * @param idRevisionPairs
      *          The non empty list of id revision pairs.
      *          Pattern: id_1:rev_1,...,id_n,rev_n
-     * @return A list of the symbols whose id:revision pairs were given
+     * @return A list of the symbols whose id:revision pairs were given.
+     * @throws NotFoundException If the requested Symbols or the related Projects or Groups could not be found.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Symbol>
      * @successResponse 200 OK
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -279,21 +274,15 @@ public class SymbolResource {
     @Path("/batch/{idRevisionPairs}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getByIdRevisionPairs(@PathParam("project_id") Long projectId,
-                                         @PathParam("idRevisionPairs") IdRevisionPairList idRevisionPairs) {
+                                         @PathParam("idRevisionPairs") IdRevisionPairList idRevisionPairs)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getByIdRevisionPairs({}, {}) for user {}.", projectId, idRevisionPairs, user);
 
-        try {
-            List<Symbol> symbols = symbolDAO.getAll(user, projectId, idRevisionPairs);
+        List<Symbol> symbols = symbolDAO.getAll(user, projectId, idRevisionPairs);
 
-            LOGGER.traceExit(symbols);
-            return ResponseHelper.renderList(symbols, Status.OK);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getByIdRevisionPairs",
-                    Status.NOT_FOUND,
-                    null);
-        }
+        LOGGER.traceExit(symbols);
+        return ResponseHelper.renderList(symbols, Status.OK);
     }
 
     /**
@@ -305,6 +294,7 @@ public class SymbolResource {
      * @param id
      *            The ID of the symbol.
      * @return A Symbol matching the projectID & ID or a not found response.
+     * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
      * @responseType de.learnlib.alex.core.entities.Symbol
      * @successResponse 200 OK
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -312,19 +302,14 @@ public class SymbolResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
+    public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {})  for user {}.", projectId, id, user);
 
-        try {
-            Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
+        Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
 
-            LOGGER.traceExit(symbol);
-            return Response.ok(symbol).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.get", Status.NOT_FOUND, null);
-        }
+        LOGGER.traceExit(symbol);
+        return Response.ok(symbol).build();
     }
 
     /**
@@ -336,6 +321,7 @@ public class SymbolResource {
      * @param id
      *            The ID of the symbol.
      * @return A Symbol matching the projectID & ID or a not found response.
+     * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
      * @responseType    java.util.List<de.learnlib.alex.core.entities.Symbol>
      * @successResponse 200 OK
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -343,19 +329,15 @@ public class SymbolResource {
     @GET
     @Path("/{id}/complete")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getComplete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
+    public Response getComplete(@PathParam("project_id") Long projectId, @PathParam("id") Long id)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getComplete({}, {})  for user {}.", projectId, id, user);
 
-        try {
-            List<Symbol> symbols = symbolDAO.getWithAllRevisions(user, projectId, id);
+        List<Symbol> symbols = symbolDAO.getWithAllRevisions(user, projectId, id);
 
-            LOGGER.traceExit(symbols);
-            return ResponseHelper.renderList(symbols, Status.OK);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getComplete", Status.NOT_FOUND, null);
-        }
+        LOGGER.traceExit(symbols);
+        return ResponseHelper.renderList(symbols, Status.OK);
     }
 
     /**
@@ -368,6 +350,7 @@ public class SymbolResource {
      * @param revision
      *            The revision of the symbol.
      * @return A Symbol matching the projectID, ID & revision or a not found response.
+     * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
      * @responseType de.learnlib.alex.core.entities.Symbol
      * @successResponse 200 OK
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -377,21 +360,15 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getWithRevision(@PathParam("project_id") Long projectId,
                                     @PathParam("id") Long id,
-                                    @PathParam("revision") long revision) {
+                                    @PathParam("revision") long revision)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getWithRevision({}, {}, {}) for user {}.", projectId, id, revision, user);
 
-        try {
-            Symbol symbol = symbolDAO.get(user, projectId, id, revision);
+        Symbol symbol = symbolDAO.get(user, projectId, id, revision);
 
-            LOGGER.traceExit(symbol);
-            return Response.ok(symbol).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.getWithRevision",
-                                                               Status.NOT_FOUND,
-                                                               null);
-        }
+        LOGGER.traceExit(symbol);
+        return Response.ok(symbol).build();
     }
 
     /**
@@ -404,6 +381,7 @@ public class SymbolResource {
      * @param symbol
      *            The new symbol data.
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
+     * @throws NotFoundException If the given Symbol or the related Project or Groups could not be found.
      * @responseType de.learnlib.alex.core.entities.Symbol
      * @successResponse 200 OK
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -413,7 +391,8 @@ public class SymbolResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") Long projectId, @PathParam("id") Long id, Symbol symbol) {
+    public Response update(@PathParam("project_id") Long projectId, @PathParam("id") Long id, Symbol symbol)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, symbol, user);
 
@@ -431,9 +410,6 @@ public class SymbolResource {
 
             LOGGER.traceExit(symbol);
             return Response.ok(symbol).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.NOT_FOUND, e);
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.BAD_REQUEST, e);
@@ -450,6 +426,7 @@ public class SymbolResource {
      * @param symbols
      *            The new symbol data.
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
+     * @throws NotFoundException If the given Symbols or the related Projects or Groups could not be found.
      * @responseType de.learnlib.alex.core.entities.Symbol
      * @successResponse 200 OK
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -461,7 +438,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response batchUpdate(@PathParam("project_id") Long projectId,
                                 @PathParam("ids") IdsList ids,
-                                List<Symbol> symbols) {
+                                List<Symbol> symbols) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("batchUpdate({}, {}, {}) for user {}.", projectId, ids, symbols, user);
 
@@ -479,9 +456,6 @@ public class SymbolResource {
 
             LOGGER.traceExit(symbols);
             return ResponseHelper.renderList(symbols, Status.OK);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchUpdate", Status.NOT_FOUND, e);
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchUpdate", Status.BAD_REQUEST, e);
@@ -498,27 +472,23 @@ public class SymbolResource {
      * @param groupId
      *         The ID of the new group.
      * @return On success the moved symbol (enhanced with information from the DB); An error message on failure.
+     * @throws NotFoundException If the requested Symbols or the related Project or Groups could not be found.
      */
     @PUT
     @Path("/{symbol_id}/moveTo/{group_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response moveSymbolToAnotherGroup(@PathParam("project_id") Long projectId,
                                              @PathParam("symbol_id")  Long symbolId,
-                                             @PathParam("group_id")   Long groupId) {
+                                             @PathParam("group_id")   Long groupId)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolId, groupId, user);
 
-        try {
-            Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, symbolId);
-            symbolDAO.move(symbol, groupId);
+        Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, symbolId);
+        symbolDAO.move(symbol, groupId);
 
-            LOGGER.traceExit(symbol);
-            return Response.ok(symbol).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.moveSymbolToAnotherGroup",
-                                                               Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit(symbol);
+        return Response.ok(symbol).build();
     }
 
     /**
@@ -531,28 +501,24 @@ public class SymbolResource {
      * @param groupId
      *         The ID of the new group.
      * @return On success the moved symbols (enhanced with information from the DB); An error message on failure.
+     * @throws NotFoundException If the requested Symbols or the related Project or Groups could not be found.
      */
     @PUT
     @Path("/batch/{symbol_ids}/moveTo/{group_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response moveSymbolToAnotherGroup(@PathParam("project_id") Long projectId,
                                              @PathParam("symbol_ids") IdsList symbolIds,
-                                             @PathParam("group_id") Long groupId) {
+                                             @PathParam("group_id") Long groupId)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolIds, groupId, user);
 
-        try {
-            List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId,
-                                                                        symbolIds.toArray(new Long[symbolIds.size()]));
-            symbolDAO.move(symbols, groupId);
+        List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId,
+                                                                    symbolIds.toArray(new Long[symbolIds.size()]));
+        symbolDAO.move(symbols, groupId);
 
-            LOGGER.traceExit(symbols);
-            return Response.ok(symbols).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.moveSymbolToAnotherGroup",
-                                                               Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit(symbols);
+        return Response.ok(symbols).build();
     }
 
     /**
@@ -563,13 +529,14 @@ public class SymbolResource {
      * @param id
      *            The ID of the symbol to hide.
      * @return On success no content will be returned; an error message on failure.
+     * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/{id}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
+    public Response hide(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, id, user);
 
@@ -584,9 +551,6 @@ public class SymbolResource {
             } else {
                 throw new UnauthorizedException("The symbol does not belong to the user");
             }
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.UNAUTHORIZED, e);
@@ -601,27 +565,24 @@ public class SymbolResource {
      * @param ids
      *            The IDs of the symbols to hide.
      * @return On success no content will be returned; an error message on failure.
+     * @throws NotFoundException If the requested Symbols or the related Project or Groups could not be found.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/batch/{ids}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
+    public Response hide(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, ids, user);
 
-        try {
-            Long[] idsArray = ids.toArray(new Long[ids.size()]);
-            List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId, idsArray);
-            symbolDAO.hide(user.getId(), projectId, idsArray);
+        Long[] idsArray = ids.toArray(new Long[ids.size()]);
+        List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId, idsArray);
+        symbolDAO.hide(user.getId(), projectId, idsArray);
 
-            LOGGER.traceExit(symbols);
-            return ResponseHelper.renderList(symbols, Status.OK);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit(symbols);
+        return ResponseHelper.renderList(symbols, Status.OK);
     }
 
     /**
@@ -632,26 +593,22 @@ public class SymbolResource {
      * @param id
      *            The ID of the symbol to show.
      * @return On success no content will be returned; an error message on failure.
+     * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/{id}/show")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response show(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
+    public Response show(@PathParam("project_id") long projectId, @PathParam("id") Long id) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, id, user);
 
-        try {
-            symbolDAO.show(user.getId(), projectId, id);
-            Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
+        symbolDAO.show(user.getId(), projectId, id);
+        Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
 
-            LOGGER.traceExit(symbol);
-            return Response.ok(symbol).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit(symbol);
+        return Response.ok(symbol).build();
     }
 
     /**
@@ -662,27 +619,24 @@ public class SymbolResource {
      * @param ids
      *            The IDs of the symbols to show.
      * @return On success no content will be returned; an error message on failure.
+     * @throws NotFoundException If the requested Symbols or the related Project or Groups could not be found.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/batch/{ids}/show")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response show(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
+    public Response show(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, ids, user);
 
-        try {
-            Long[] idsArray = ids.toArray(new Long[ids.size()]);
-            symbolDAO.show(user.getId(), projectId, idsArray);
-            List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId, idsArray);
+        Long[] idsArray = ids.toArray(new Long[ids.size()]);
+        symbolDAO.show(user.getId(), projectId, idsArray);
+        List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId, idsArray);
 
-            LOGGER.traceExit(symbols);
-            return ResponseHelper.renderList(symbols, Status.OK);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.show", Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit(symbols);
+        return ResponseHelper.renderList(symbols, Status.OK);
     }
 
 }

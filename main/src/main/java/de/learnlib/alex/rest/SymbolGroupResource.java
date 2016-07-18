@@ -90,6 +90,7 @@ public class SymbolGroupResource {
      * @param group
      *         The group to create.
      * @return On success the added group (enhanced with information from the DB); an error message on failure.
+     * @throws NotFoundException If the related Project could not be found.
      * @responseType de.learnlib.alex.core.entities.SymbolGroup
      * @successResponse 201 created
      * @errorResponse 400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -97,7 +98,7 @@ public class SymbolGroupResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) {
+    public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroup({}, {}) for user {}.", projectId, group, user);
 
@@ -114,7 +115,7 @@ public class SymbolGroupResource {
             LOGGER.traceExit(group);
             String groupURL = uri.getBaseUri() + "projects/" + group.getProjectId() + "/groups/" + group.getId();
             return Response.status(Response.Status.CREATED).header("Location", groupURL).entity(group).build();
-        } catch (ValidationException | NotFoundException e) {
+        } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.create",
                                                                Response.Status.BAD_REQUEST, e);
@@ -129,6 +130,7 @@ public class SymbolGroupResource {
      * @param embed
      *         The properties to embed in the response.
      * @return All groups in a list. If the project contains no groups the list will be empty.
+     * @throws NotFoundException If the related Project could not be found.
      * @responseType java.util.List<de.learnlib.alex.core.entities.SymbolGroup>
      * @successResponse 200 OK
      * @errorResponse 400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -136,7 +138,8 @@ public class SymbolGroupResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
+    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, embed, user);
 
@@ -150,10 +153,6 @@ public class SymbolGroupResource {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
                                                                Response.Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
-                                                               Response.Status.NOT_FOUND, e);
         }
     }
 
@@ -166,7 +165,8 @@ public class SymbolGroupResource {
      *            The ID of the group within the project.
      * @param embed
      *         The properties to embed in the response.
-     * @return The project or an error message.
+     * @return The requested group.
+     * @throws NotFoundException If the related Project could not be found.
      * @responseType de.learnlib.alex.core.entities.SymbolGroup
      * @successResponse 200 OK
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -177,7 +177,8 @@ public class SymbolGroupResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") long projectId,
                         @PathParam("id") Long id,
-                        @QueryParam("embed") String embed) {
+                        @QueryParam("embed") String embed)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}, {}) for user {}.", projectId, id, embed, user);
 
@@ -191,9 +192,6 @@ public class SymbolGroupResource {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get",
                                                                Response.Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get", Response.Status.NOT_FOUND, e);
         }
     }
 
@@ -206,6 +204,7 @@ public class SymbolGroupResource {
      * @param id
      *         The ID of the group within the project.
      * @return The list of symbols within one group.
+     * @throws NotFoundException If the related Project or Group could not be found.
      * @successResponse 200 OK
      * @responseType java.util.List<de.learnlib.alex.core.entities.Symbol>
      * @errorResponse 404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -213,20 +212,15 @@ public class SymbolGroupResource {
     @GET
     @Path("/{id}/symbols")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
+    public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getSymbols({}, {}) for user {}.", projectId, id, user);
 
-        try {
-            List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(user, projectId, id);
+        List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(user, projectId, id);
 
-            LOGGER.traceExit(symbols);
-            return ResponseHelper.renderList(symbols, Response.Status.OK);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getSymbols",
-                                                               Response.Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit(symbols);
+        return ResponseHelper.renderList(symbols, Response.Status.OK);
     }
 
     /**
@@ -238,7 +232,8 @@ public class SymbolGroupResource {
      *         The ID of the group within the project.
      * @param group
      *         The new values
-     * @return On success the updated group (enhanced with information from the DB); an error message on failure.
+     * @return On success the updated group (enhanced with information from the DB).
+     * @throws NotFoundException If the related Project could not be found.
      * @responseType de.learnlib.alex.core.entities.SymbolGroup
      * @successResponse 200 OK
      * @errorResponse 400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -248,7 +243,8 @@ public class SymbolGroupResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group) {
+    public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, group, user);
 
@@ -261,10 +257,6 @@ public class SymbolGroupResource {
             } else {
                 throw new UnauthorizedException("You are not allowed to edit this group");
             }
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                                                               Response.Status.NOT_FOUND, e);
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
@@ -283,14 +275,16 @@ public class SymbolGroupResource {
      *         The ID of the project.
      * @param id
      *         The ID of the group within the project.
-     * @return On success no content will be returned; an error message on failure.
+     * @return On success no content will be returned.
+     * @throws NotFoundException If the related Project could not be found.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteAResultSet(@PathParam("project_id") long projectId,  @PathParam("id") Long id) {
+    public Response deleteAResultSet(@PathParam("project_id") long projectId,  @PathParam("id") Long id)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteAResultSet({}, {}) for user {}.", projectId, id, user);
 
@@ -309,10 +303,6 @@ public class SymbolGroupResource {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
                                                                Response.Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                                                               Response.Status.NOT_FOUND, e);
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",

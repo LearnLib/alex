@@ -113,7 +113,7 @@ public class ProjectResource {
      *         By default no related objects are included in the projects. However you can ask to include them with
      *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
      *         You can request multiple by just put a ',' between them.
-     * @return All projects in a list.
+     * @return All projects in a list. This list can be empty.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Project>
      * @successResponse 200 OK
      */
@@ -147,6 +147,7 @@ public class ProjectResource {
      *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
      *         You can request multiple by just put a ',' between them.
      * @return The project or an error message.
+     * @throws NotFoundException If the requested Project could not be found.
      * @responseType de.learnlib.alex.core.entities.Project
      * @successResponse 200 OK
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -154,7 +155,7 @@ public class ProjectResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) {
+    public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}) for user {}.", projectId, embed, user);
 
@@ -172,9 +173,6 @@ public class ProjectResource {
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.NOT_FOUND, null);
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.UNAUTHORIZED, e);
@@ -189,6 +187,7 @@ public class ProjectResource {
      * @param project
      *            The new values
      * @return On success the updated project (enhanced with information from the DB); an error message on failure.
+     * @throws NotFoundException If the given Project could not be found.
      * @responseType de.learnlib.alex.core.entities.Project
      * @successResponse 200 OK
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -198,7 +197,7 @@ public class ProjectResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id, Project project) {
+    public Response update(@PathParam("id") long id, Project project) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}) for user {}.", id, project, user);
 
@@ -214,9 +213,6 @@ public class ProjectResource {
                 } else {
                     throw new UnauthorizedException("You are not allowed to update this project");
                 }
-            } catch (NotFoundException e) {
-                LOGGER.traceExit(e);
-                return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.NOT_FOUND, e);
             } catch (ValidationException e) {
                 LOGGER.traceExit(e);
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.BAD_REQUEST, e);
@@ -233,13 +229,14 @@ public class ProjectResource {
      * @param projectId
      *            The ID of the project.
      * @return On success no content will be returned; an error message on failure.
+     * @throws NotFoundException If the given Project could not be found.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") long projectId) {
+    public Response delete(@PathParam("id") long projectId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
@@ -252,9 +249,6 @@ public class ProjectResource {
             } else {
                 throw new UnauthorizedException("You are not allowed to delete this project");
             }
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.NOT_FOUND, e);
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.UNAUTHORIZED, e);

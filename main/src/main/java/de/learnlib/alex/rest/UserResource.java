@@ -116,6 +116,7 @@ public class UserResource {
      * @param userId
      *         The ID of the user.
      * @return Detailed information about the user.
+     * @throws NotFoundException If the requested User could not be found.
      * @responseType de.learnlib.alex.core.entities.User
      * @successResponse 200 Ok
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -125,7 +126,7 @@ public class UserResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"REGISTERED"})
-    public Response get(@PathParam("id") Long userId) {
+    public Response get(@PathParam("id") Long userId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}) for user {}.", userId, user);
 
@@ -134,21 +135,16 @@ public class UserResource {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", Status.FORBIDDEN, null);
         }
 
-        try {
-            User userById = userDAO.getById(userId);
-            LOGGER.traceExit(userById);
-            return Response.ok(userById).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", Status.NOT_FOUND, e);
-        }
+        User userById = userDAO.getById(userId);
+        LOGGER.traceExit(userById);
+        return Response.ok(userById).build();
     }
 
     /**
      * Get all users.
      * This is only allowed for admins.
      *
-     * @return A list of all users.
+     * @return A list of all users. This list can be empty.
      * @responseType java.util.List<de.learnlib.alex.core.entities.User>
      * @successResponse 200 Ok
      */
@@ -171,8 +167,9 @@ public class UserResource {
      * @param userId
      *         The id of the user
      * @param json
-     *         The pair of oldPasswordn and newPassword as json
+     *         The pair of oldPassword and newPassword as json
      * @return The updated user.
+     * @throws NotFoundException If the requested User could not be found.
      *
      * @responseType de.learnlib.alex.core.entities.User
      * @successResponse 200 Ok
@@ -185,7 +182,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"REGISTERED"})
-    public Response changePassword(@PathParam("id") Long userId, JSONObject json) {
+    public Response changePassword(@PathParam("id") Long userId, JSONObject json) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("changePassword({}, {}) for user {}.", userId, json, user);
 
@@ -213,10 +210,6 @@ public class UserResource {
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN, e);
-        } catch (NotFoundException e) {
-            // This should never happen!
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.NOT_FOUND, e);
         }
     }
 
@@ -230,6 +223,7 @@ public class UserResource {
      * @param json
      *         the json with a property 'email'
      * @return The updated user.
+     * @throws NotFoundException If the requested User could not be found.
      *
      * @responseType de.learnlib.alex.core.entities.User
      * @successResponse 200 Ok
@@ -242,7 +236,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"REGISTERED"})
-    public Response changeEmail(@PathParam("id") Long userId, JSONObject json) {
+    public Response changeEmail(@PathParam("id") Long userId, JSONObject json) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("changeEmail({}, {}) for user {}.", userId, json, user);
 
@@ -278,9 +272,6 @@ public class UserResource {
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeEmail", Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeEmail", Status.NOT_FOUND, e);
         }
     }
 
@@ -291,6 +282,7 @@ public class UserResource {
      * @param userId
      *         The ID of the user to promote.
      * @return The account information of the new administrator.
+     * @throws NotFoundException If the given User could not be found.
      *
      * @responseType de.learnlib.alex.core.entities.User
      * @successResponse 200 Ok
@@ -301,22 +293,17 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"ADMIN"})
-    public Response promoteUser(@PathParam("id") Long userId) {
+    public Response promoteUser(@PathParam("id") Long userId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("promoteUser({}) for user {}.", userId, user);
 
-        try {
-            User userToPromote = userDAO.getById(userId);
-            userToPromote.setRole(UserRole.ADMIN);
-            userDAO.update(userToPromote);
-            LOGGER.info(RESOURCE_MARKER, "User {} promoted.", user);
+        User userToPromote = userDAO.getById(userId);
+        userToPromote.setRole(UserRole.ADMIN);
+        userDAO.update(userToPromote);
+        LOGGER.info(RESOURCE_MARKER, "User {} promoted.", user);
 
-            LOGGER.traceExit(userToPromote);
-            return Response.ok(userToPromote).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.promoteUser", Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit(userToPromote);
+        return Response.ok(userToPromote).build();
     }
 
     /**
@@ -327,6 +314,8 @@ public class UserResource {
      * @param userId
      *         The ID of the user to demote.
      * @return The account information of the formally administrator.
+     * @throws NotFoundException If the given User could not be found.
+     *
      * @responseType de.learnlib.alex.core.entities.User
      * @successResponse 200 Ok
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -337,7 +326,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"ADMIN"})
-    public Response demoteUser(@PathParam("id") Long userId) {
+    public Response demoteUser(@PathParam("id") Long userId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("UserResource.demoteUser(" + userId + ") for user " + user + ".");
 
@@ -360,9 +349,6 @@ public class UserResource {
         } catch (BadRequestException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.demoteUser", Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.demoteUser", Status.NOT_FOUND, e);
         }
     }
 
@@ -373,6 +359,7 @@ public class UserResource {
      * @param userId
      *         The ID of the user to delete.
      * @return Nothing if the user was deleted.
+     * @throws NotFoundException If the given User could not be found.
      *
      * @successResponse 204 No Content
      * @errorResponse 400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -382,7 +369,7 @@ public class UserResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"REGISTERED"})
-    public Response delete(@PathParam("id") long userId) {
+    public Response delete(@PathParam("id") long userId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", userId, user);
 
@@ -392,15 +379,10 @@ public class UserResource {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.FORBIDDEN, e);
         }
 
-        try {
-            userDAO.delete(userId);
+        userDAO.delete(userId);
 
-            LOGGER.traceExit("User {} deleted.", userId);
-            return Response.status(Status.NO_CONTENT).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit("User {} deleted.", userId);
+        return Response.status(Status.NO_CONTENT).build();
     }
 
     /**
@@ -410,6 +392,7 @@ public class UserResource {
      * @param ids
      *          The ids of the user to delete.
      * @return Nothing if the users have been deleted.
+     * @throws NotFoundException If the given Users could not be found.
      *
      * @successResponse 204 No Content
      * @errorResponse 400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -419,7 +402,7 @@ public class UserResource {
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"ADMIN"})
-    public Response delete(@PathParam("ids") IdsList ids) {
+    public Response delete(@PathParam("ids") IdsList ids) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", ids, user);
 
@@ -429,15 +412,10 @@ public class UserResource {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.BAD_REQUEST, e);
         }
 
-        try {
-            userDAO.delete(ids);
+        userDAO.delete(ids);
 
-            LOGGER.traceExit("User(s) {} deleted.", ids);
-            return Response.status(Status.NO_CONTENT).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit("User(s) {} deleted.", ids);
+        return Response.status(Status.NO_CONTENT).build();
     }
 
 
@@ -446,8 +424,8 @@ public class UserResource {
      *
      * @param user
      *         The user to login
-     * @return If the user was successfully logged in: a JSON Object with the authentication token as only field;
-     *         An error otherwise.
+     * @return If the user was successfully logged in: a JSON Object with the authentication token as only field.
+     * @throws NotFoundException If the given User could not be found.
      *
      * @successResponse 200 Ok
      * @errorResponse   401 unauthorized `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -457,7 +435,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/login")
-    public Response login(User user) {
+    public Response login(User user) throws NotFoundException {
         LOGGER.traceEntry("login({}).", user);
 
         try {
@@ -475,9 +453,6 @@ public class UserResource {
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.UNAUTHORIZED, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.NOT_FOUND, e);
         } catch (JoseException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.INTERNAL_SERVER_ERROR, e);

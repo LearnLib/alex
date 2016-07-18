@@ -102,6 +102,7 @@ public class LearnerResource {
      * @param configuration
      *         The configuration to customize the learning.
      * @return The status of the current learn process.
+     * @throws NotFoundException If the related Project could not be found.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.core.entities.LearnerStatus
      * @errorResponse   302 not modified `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -112,7 +113,8 @@ public class LearnerResource {
     @Path("/start/{project_id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration) {
+    public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
 
@@ -138,9 +140,6 @@ public class LearnerResource {
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.NOT_FOUND, e);
         }
     }
 
@@ -156,6 +155,7 @@ public class LearnerResource {
      * @param configuration
      *         The configuration to specify the settings for the next learning steps.
      * @return The status of the current learn process.
+     * @throws NotFoundException If the previous learn job or the related Project could not be found.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.core.entities.LearnerStatus
      * @errorResponse   302 not modified `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -166,8 +166,10 @@ public class LearnerResource {
     @Path("/resume/{project_id}/{test_run}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response resume(@PathParam("project_id") long projectId, @PathParam("test_run") long testRunNo,
-                           LearnerResumeConfiguration configuration) {
+    public Response resume(@PathParam("project_id") long projectId,
+                           @PathParam("test_run") long testRunNo,
+                           LearnerResumeConfiguration configuration)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testRunNo, configuration, user);
 
@@ -176,8 +178,7 @@ public class LearnerResource {
 
             LearnerResult lastResult = learner.getResult(user);
             if (lastResult == null) {
-                LOGGER.traceExit("No last result to resume found!");
-                return Response.status(Status.NOT_FOUND).build();
+                throw new NotFoundException("No last result to resume found!");
             }
 
             if (lastResult.getProjectId() != projectId || lastResult.getTestNo() != testRunNo) {
@@ -200,9 +201,6 @@ public class LearnerResource {
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.resume", Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.NOT_FOUND, e);
         }
     }
 
@@ -258,6 +256,7 @@ public class LearnerResource {
      * Get the parameters & (temporary) results of the learning.
      *
      * @return The information of the learning
+     * @throws NotFoundException If the previous learn job or the related Project could not be found.
      * @successResponse 200 OK
      * @responseType    de.learnlib.alex.core.entities.LearnerResult
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -265,25 +264,17 @@ public class LearnerResource {
     @GET
     @Path("/status")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getResult() {
+    public Response getResult() throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getResult() for user {}.", user);
 
         LearnerResult resultInThread = learner.getResult(user);
         if (resultInThread == null) {
-            IllegalStateException e = new IllegalStateException("No result was learned in this instance of ALEX.");
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.status", Status.NOT_FOUND, e);
+            throw new NotFoundException("No result was learned in this instance of ALEX.");
         }
 
-        try {
-            learnerResultDAO.get(resultInThread.getUserId(), resultInThread.getProjectId(),
-                                 resultInThread.getTestNo(), false);
-        } catch (NotFoundException nfe) {
-            IllegalArgumentException e = new IllegalArgumentException("The last learned result was deleted.");
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.status", Status.NOT_FOUND, e);
-        }
+        learnerResultDAO.get(resultInThread.getUserId(), resultInThread.getProjectId(),
+                             resultInThread.getTestNo(), false);
 
         LOGGER.traceExit(resultInThread);
         return Response.ok(resultInThread).build();
@@ -298,6 +289,7 @@ public class LearnerResource {
      * @param symbolSet
      *         The symbol/ input set which will be executed.
      * @return The observed output of the given input set.
+     * @throws NotFoundException If the related Project could not be found.
      * @successResponse 200 OK
      * @responseType    java.util.List<String>
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -308,7 +300,8 @@ public class LearnerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet,
-                               @QueryParam("includeResetSymbol") @DefaultValue("false") boolean includeResetSymbol) {
+                               @QueryParam("includeResetSymbol") @DefaultValue("false") boolean includeResetSymbol)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, symbolSet, user);
 
@@ -336,9 +329,6 @@ public class LearnerResource {
 
             LOGGER.traceExit(results);
             return ResponseHelper.renderList(results, Status.OK);
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.NOT_FOUND, e);
         } catch (LearnerException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
