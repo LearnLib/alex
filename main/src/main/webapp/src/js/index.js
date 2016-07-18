@@ -17,7 +17,6 @@
 import angularDragula from "angular-dragula";
 import ngFileUpload from "ng-file-upload";
 import angularJwt from "angular-jwt";
-import d3 from "d3/d3";
 import uiBootstrap from "angular-ui-bootstrap";
 import uiRouter from "angular-ui-router";
 import toastr from "angular-toastr";
@@ -82,6 +81,7 @@ import {symbolsActionsView} from "./components/views/symbolsActionsView";
 import {symbolsView} from "./components/views/symbolsView";
 import {symbolsHistoryView} from "./components/views/symbolsHistoryView";
 import {symbolsImportView} from "./components/views/symbolsImportView";
+import {symbolsTestView} from './components/views/symbolsTestView';
 import {symbolsTrashView} from "./components/views/symbolsTrashView";
 import {usersSettingsView} from "./components/views/usersSettingsView";
 import {actionForm} from "./components/forms/actions/actionForm";
@@ -250,6 +250,7 @@ angular
     .component('symbolsView', symbolsView)
     .component('symbolsHistoryView', symbolsHistoryView)
     .component('symbolsImportView', symbolsImportView)
+    .component('symbolsTestView', symbolsTestView)
     .component('symbolsTrashView', symbolsTrashView)
     .component('usersSettingsView', usersSettingsView)
 
@@ -327,5 +328,3 @@ angular
     .component('learnResultListItem', learnResultListItem);
 
 angular.bootstrap(document, ['ALEX']);
-
-window.d3 = d3;

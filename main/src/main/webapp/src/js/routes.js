@@ -59,6 +59,11 @@ export function config($stateProvider, $urlRouterProvider) {
             template: '<symbols-view></symbols-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols'}
         })
+        .state('symbolsTest', {
+            url: '/symbols/test',
+            template: '<symbols-test-view></symbols-test-view>',
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Test'}
+        })
         .state('symbolsTrash', {
             url: '/symbols/trash',
             template: '<symbols-trash-view></symbols-trash-view>',

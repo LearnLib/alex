@@ -38,31 +38,29 @@ export function htmlElementPickerHandle($document, $compile, $q, HtmlElementPick
             selectorModel: '=model',
             textModel: '=text'
         },
-        link: link
+        link(scope, el) {
+            el.on('click', () => {
+
+                // create a new element picker under the current scope and append to the body
+                const picker = $compile('<html-element-picker></html-element-picker>')(scope);
+                $document.find('body').prepend(picker);
+
+                HtmlElementPickerService.deferred = $q.defer();
+                HtmlElementPickerService.deferred.promise
+                    .then(data => {
+
+                        // copy the selected selector and .textContent value to the scopes models
+                        if (typeof scope.selectorModel !== "undefined") {
+                            scope.selectorModel = data.selector;
+                        }
+                        if (typeof scope.textModel !== "undefined") {
+                            scope.textModel = data.textContent;
+                        }
+                    })
+                    .finally(() => {
+                        picker.remove();
+                    });
+            });
+        }
     };
-
-    function link(scope, el) {
-        el.on('click', () => {
-
-            // create a new element picker under the current scope and append to the body
-            const picker = $compile('<html-element-picker></html-element-picker>')(scope);
-            $document.find('body').prepend(picker);
-
-            HtmlElementPickerService.deferred = $q.defer();
-            HtmlElementPickerService.deferred.promise
-                .then(data => {
-
-                    // copy the selected selector and .textContent value to the scopes models
-                    if (typeof scope.selectorModel !== "undefined") {
-                        scope.selectorModel = data.selector;
-                    }
-                    if (typeof scope.textModel !== "undefined") {
-                        scope.textModel = data.textContent;
-                    }
-                })
-                .finally(() => {
-                    picker.remove();
-                });
-        });
-    }
 }

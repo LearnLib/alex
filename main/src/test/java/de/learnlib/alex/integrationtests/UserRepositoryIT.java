@@ -23,7 +23,6 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.orm.jpa.JpaSystemException;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;

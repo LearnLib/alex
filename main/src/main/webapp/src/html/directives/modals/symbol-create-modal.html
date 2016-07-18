@@ -55,11 +55,9 @@
 
         <div class="form-group">
             <label>Group</label>
-            <input class="form-control" type="text" list="groupNames" ng-model="vm.selectedGroup"
-                   placeholder="Group name">
-            <datalist id="groupNames">
-                <option ng-repeat="group in vm.groups" value="{{group.name}}"></option>
-            </datalist>
+            <select class="form-control" ng-model="vm.symbol.group">
+                <option ng-repeat="group in vm.groups" value="{{group.id}}" ng-selected="group.id === 0">{{group.name}}</option>
+            </select>
         </div>
 
         <div class="alert alert-danger" ng-if="vm.errorMsg" ng-bind="vm.errorMsg"></div>

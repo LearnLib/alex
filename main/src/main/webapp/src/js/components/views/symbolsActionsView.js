@@ -121,6 +121,8 @@ class SymbolsActionsView {
         $scope.$on('actionList.drop-model', () => {
             this.hasChanged = true;
         });
+
+        $scope.$on('$destroy', () => dragulaService.destroy($scope, 'actionList'));
     }
 
     /**

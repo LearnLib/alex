@@ -21,16 +21,6 @@ import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.Settings;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
-import de.learnlib.alex.rest.CounterResource;
-import de.learnlib.alex.rest.FileResource;
-import de.learnlib.alex.rest.IFrameProxyResource;
-import de.learnlib.alex.rest.LearnerResource;
-import de.learnlib.alex.rest.LearnerResultResource;
-import de.learnlib.alex.rest.ProjectResource;
-import de.learnlib.alex.rest.SettingsResource;
-import de.learnlib.alex.rest.SymbolGroupResource;
-import de.learnlib.alex.rest.SymbolResource;
-import de.learnlib.alex.rest.UserResource;
 import de.learnlib.alex.security.AuthenticationFilter;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -68,16 +58,7 @@ public class ALEXApplication extends ResourceConfig {
      */
     public ALEXApplication() {
         // register REST resources classes
-        register(CounterResource.class);
-        register(FileResource.class);
-        register(IFrameProxyResource.class);
-        register(LearnerResource.class);
-        register(LearnerResultResource.class);
-        register(ProjectResource.class);
-        register(SettingsResource.class);
-        register(SymbolGroupResource.class);
-        register(SymbolResource.class);
-        register(UserResource.class);
+        packages(true, "de.learnlib.alex.rest");
 
         register(MultiPartFeature.class);
         register(AuthenticationFilter.class);

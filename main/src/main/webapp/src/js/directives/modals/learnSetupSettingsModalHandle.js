@@ -61,20 +61,8 @@ class LearnSetupSettingsModalController {
          */
         this.webBrowser = null;
 
-        SettingsResource.get().then(settings => {
-            let supportedBrowsers = {
-                HTMLUNITDRIVER: 'htmlunitdriver'
-            };
-
-            for (let key in webBrowser) {
-                if (key === 'HTMLUNITDRIVER') continue;
-                if (settings.driver[webBrowser[key]].trim() !== "") {
-                    supportedBrowsers[key] = webBrowser[key];
-                }
-            }
-
-            this.webBrowser = supportedBrowsers;
-        });
+        SettingsResource.getSupportedBrowserEnum().then(supportedBrowsers =>
+            this.webBrowser = supportedBrowsers);
 
         /**
          * The LearnConfiguration to be edited.
@@ -118,7 +106,7 @@ class LearnSetupSettingsModalController {
  * Attribute 'learnConfiguration' should be the model with a LearnConfiguration object instance.
  *
  * @param $uibModal - The ui.boostrap $modal service.
- * @returns {{restrict: string, scope: {learnConfiguration: string}, link: link}}
+ * @returns {{restrict: string, scope: {learnConfiguration: string}, link: Function}}
  */
 // @ngInject
 export function learnSetupSettingsModalHandle($uibModal) {
@@ -127,23 +115,21 @@ export function learnSetupSettingsModalHandle($uibModal) {
         scope: {
             learnConfiguration: '='
         },
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/learn-setup-settings-modal.html',
-                controller: LearnSetupSettingsModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {
-                            learnConfiguration: new LearnConfiguration(scope.learnConfiguration)
-                        };
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/learn-setup-settings-modal.html',
+                    controller: LearnSetupSettingsModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                learnConfiguration: new LearnConfiguration(scope.learnConfiguration)
+                            };
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

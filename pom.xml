@@ -78,8 +78,8 @@
         <tag>HEAD</tag>
     </scm>
     <issueManagement>
-        <system>Redmine</system>
-        <url>https://projekte.itmc.tu-dortmund.de/projects/learnlibweb/issues</url>
+        <system>GitHub</system>
+        <url>https://github.com/LearnLib/alex/issues</url>
     </issueManagement>
 
     <modules>

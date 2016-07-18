@@ -76,7 +76,8 @@ public class ProjectDAOImpl implements ProjectDAO {
      *         The SymbolDAO to use.
      */
     @Inject
-    public ProjectDAOImpl(ProjectRepository projectRepository,  SymbolRepository symbolRepository, SymbolDAO symbolDAO) {
+    public ProjectDAOImpl(ProjectRepository projectRepository,  SymbolRepository symbolRepository,
+                          SymbolDAO symbolDAO) {
         this.projectRepository = projectRepository;
         this.symbolRepository = symbolRepository;
         this.symbolDAO = symbolDAO;
@@ -122,7 +123,7 @@ public class ProjectDAOImpl implements ProjectDAO {
                     project.setDefaultGroup(newDefaultGroup);
                 } else {
                     String defaultGroupName = project.getDefaultGroup().getName();
-                    for(SymbolGroup group : project.getGroups()) {
+                    for (SymbolGroup group : project.getGroups()) {
                         if (defaultGroupName.equals(group.getName())) {
                             project.setDefaultGroup(group);
                             break;

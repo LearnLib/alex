@@ -108,23 +108,18 @@ public class FileResource {
      *
      * @param projectId The id of the project.
      * @return The list of all files of the project.
+     * @throws NotFoundException If the related Project could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllFiles(@PathParam("project_id") Long projectId) {
+    public Response getAllFiles(@PathParam("project_id") Long projectId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAllFiles({}) for user {}.", projectId, user);
 
-        try {
-            List<UploadableFile> allFiles = fileDAO.getAll(user.getId(), projectId);
+        List<UploadableFile> allFiles = fileDAO.getAll(user.getId(), projectId);
 
-            LOGGER.traceExit(allFiles);
-            return Response.ok(allFiles).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("FileResource.getAllFiles",
-                                                               Response.Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit(allFiles);
+        return Response.ok(allFiles).build();
     }
 
     /**
@@ -133,22 +128,19 @@ public class FileResource {
      * @param projectId The id of the project.
      * @param fileName The name of the file.
      * @return Status 204 No Content on success.
+     * @throws NotFoundException If the related Project could not be found.
      */
     @DELETE
     @Path("/{file_name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteOneFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String fileName) {
+    public Response deleteOneFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String fileName)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteOneFile({}, {}) for user {}.", projectId, fileName, user);
 
-        try {
-            fileDAO.delete(user.getId(), projectId, fileName);
+        fileDAO.delete(user.getId(), projectId, fileName);
 
-            LOGGER.traceExit("File deleted.");
-            return Response.status(Response.Status.NO_CONTENT).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", Response.Status.NOT_FOUND, e);
-        }
+        LOGGER.traceExit("File deleted.");
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 }

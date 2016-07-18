@@ -58,12 +58,6 @@ export class SymbolCreateModalController {
         this.groups = [];
 
         /**
-         * The symbol group that is selected.
-         * @type {null|SymbolGroup}
-         */
-        this.selectedGroup = null;
-
-        /**
          * An error message that can be displayed in the template.
          * @type {String|null}
          */
@@ -82,12 +76,6 @@ export class SymbolCreateModalController {
      */
     createSymbolAndContinue() {
         this.error = null;
-
-        const group = this.groups.find(g => g.name === this.selectedGroup);
-
-        // attach the new symbol to the default group in case none is specified
-        this.symbol.group = group ? group.id : 0;
-
         return this.SymbolResource.create(this.project.id, this.symbol)
             .then(symbol => {
                 this.ToastService.success(`Created symbol "${symbol.name}"`);
@@ -131,23 +119,21 @@ export class SymbolCreateModalController {
  * The callback function should have one parameter that will be the newly created symbol.
  *
  * @param $uibModal - The $modal service.
- * @returns {{restrict: string, scope: {}, link: link}}
+ * @returns {{restrict: string, scope: {}, link: Function}}
  */
 // @ngInject
 export function symbolCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {},
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/symbol-create-modal.html',
-                controller: SymbolCreateModalController,
-                controllerAs: 'vm'
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/symbol-create-modal.html',
+                    controller: SymbolCreateModalController,
+                    controllerAs: 'vm'
+                });
             });
-        });
-    }
+        }
+    };
 }

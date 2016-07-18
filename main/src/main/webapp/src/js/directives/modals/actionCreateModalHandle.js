@@ -97,24 +97,22 @@ export class ActionCreateModalController {
  * Can be used like this: '<button action-create-modal-handle>Click Me!</button>'.
  *
  * @param $uibModal - The modal service.
- * @returns {{restrict: string, scope: {}, link: link}}
+ * @returns {{restrict: string, scope: {}, link: Function}}
  */
 // @ngInject
 export function actionCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {},
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/action-create-modal.html',
-                size: 'lg',
-                controller: ActionCreateModalController,
-                controllerAs: 'vm'
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/action-create-modal.html',
+                    size: 'lg',
+                    controller: ActionCreateModalController,
+                    controllerAs: 'vm'
+                });
             });
-        });
-    }
+        }
+    };
 }

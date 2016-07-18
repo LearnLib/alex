@@ -21,7 +21,7 @@ import {events, userRole} from "../../constants";
  * The controller for the modal window that handles editing a user.
  * This should only be called by an admin.
  */
-class UserEditModalController {
+export class UserEditModalController {
 
     /**
      * Constructor.
@@ -165,32 +165,28 @@ class UserEditModalController {
  * where attribute 'user' expects a user object.
  *
  * @param $uibModal
- * @returns {{scope: {user: string}, restrict: string, link: link}}
+ * @returns {{scope: {user: string}, restrict: string, link: Function}}
  */
 // @ngInject
-function userEditModalHandle($uibModal) {
+export function userEditModalHandle($uibModal) {
     return {
         scope: {
             user: '='
         },
         restrict: 'A',
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/user-edit-modal.html',
-                controller: UserEditModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {user: new User(scope.user)};
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/user-edit-modal.html',
+                    controller: UserEditModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {user: new User(scope.user)};
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }
-
-export {userEditModalHandle, UserEditModalController};

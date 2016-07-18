@@ -42,7 +42,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -592,7 +591,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private static void setExecuteToSymbols(SymbolRepository symbolRepository, Symbol symbol, Map<IdRevisionPair, Symbol> cachedSymbols)
+    private static void setExecuteToSymbols(SymbolRepository symbolRepository, Symbol symbol,
+                                            Map<IdRevisionPair, Symbol> cachedSymbols)
             throws NotFoundException {
         for (SymbolAction action : symbol.getActions()) {
             if (action instanceof ExecuteSymbolAction) {

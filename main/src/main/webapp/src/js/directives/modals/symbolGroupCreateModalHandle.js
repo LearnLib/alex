@@ -93,22 +93,20 @@ export class SymbolGroupCreateModalController {
  * Use: '<button symbol-group-create-modal-handle>Click Me!</button>'.
  *
  * @param $uibModal - The ui.bootstrap $modal service.
- * @returns {{restrict: string, link: link}}
+ * @returns {{restrict: string, link: Function}}
  */
 // @ngInject
 export function symbolGroupCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/directives/modals/symbol-group-create-modal.html',
-                controller: SymbolGroupCreateModalController,
-                controllerAs: 'vm'
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/symbol-group-create-modal.html',
+                    controller: SymbolGroupCreateModalController,
+                    controllerAs: 'vm'
+                });
             });
-        });
-    }
+        }
+    };
 }

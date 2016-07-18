@@ -286,14 +286,8 @@ public class WebServiceConnector implements Connector {
             }
         }
         Invocation.Builder builder = tmpTarget.request();
-
-        for (Map.Entry<String, String> h : requestHeaders.entrySet()) {
-            builder = builder.header(h.getKey(), h.getValue());
-        }
-
-        for (Cookie c : requestCookies) {
-            builder = builder.cookie(c);
-        }
+        requestHeaders.forEach(builder::header);
+        requestCookies.forEach(builder::cookie);
 
         return builder;
     }

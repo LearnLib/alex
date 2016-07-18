@@ -160,7 +160,7 @@ public class SymbolGroup implements Serializable {
      *
      * @return The project the group is a part of.
      */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false )
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
     @JsonIgnore
     public Project getProject() {

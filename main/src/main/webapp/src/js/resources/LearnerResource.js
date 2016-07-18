@@ -93,12 +93,12 @@ export class LearnerResource {
      * @param {number} projectId - The project id.
      * @param {{id: number, revision: number}} resetSymbol - The id/revision pair of the reset symbol.
      * @param {{id: number, revision: number}[]} symbols - The list of id/revision pairs of symbols.
+     * @param {boolean} includeResetSymbol - If an output for the reset symbol should be generated, too.
      * @returns {*}
      */
-    isCounterexample(projectId, resetSymbol, symbols) {
-        return this.$http.post(`rest/learner/outputs/${projectId}`, {
-            resetSymbol: resetSymbol,
-            symbols: symbols
-        }).then(response => response.data);
+    readOutputs(projectId, resetSymbol, symbols, includeResetSymbol = false) {
+        let params = includeResetSymbol ? '?includeResetSymbol=true' : '';
+        return this.$http.post(`rest/learner/outputs/${projectId}` + params, {resetSymbol, symbols})
+            .then(response => response.data);
     }
 }

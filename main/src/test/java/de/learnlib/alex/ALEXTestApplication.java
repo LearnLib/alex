@@ -58,6 +58,8 @@ public class ALEXTestApplication extends ResourceConfig {
     }
 
     private void registerFeatures() {
+        packages("de.learnlib.alex.rest.exceptions");
+
         register(MultiPartFeature.class);
         register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
         register(AuthenticationFilter.class);

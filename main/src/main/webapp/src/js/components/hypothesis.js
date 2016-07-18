@@ -16,7 +16,6 @@
 
 import _ from "lodash";
 import {graphlib, dagre, render as Renderer} from "dagre-d3";
-import d3 from "d3/d3";
 import {events} from "../constants";
 
 // various styles used to style the hypothesis
