@@ -615,3 +615,14 @@ body {
     background: #f2f2f2;
   }
 }
+
+.table-rest-call-action {
+  display: block;
+  max-height: 200px;
+  overflow: auto;
+  width: 100%;
+
+  td, th {
+    min-width: 120px;
+  }
+}

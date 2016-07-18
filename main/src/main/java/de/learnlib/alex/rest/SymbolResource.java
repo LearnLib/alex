@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.rest;
 
-import com.google.gson.JsonObject;
 import de.learnlib.alex.actions.RESTSymbolActions.CallAction;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
@@ -61,6 +60,7 @@ import java.util.Set;
 
 /**
  * REST API to manage the symbols.
+ *
  * @resourcePath symbols
  * @resourceDescription Operations about symbols
  */
@@ -89,10 +89,8 @@ public class SymbolResource {
     /**
      * Create a new Symbol.
      *
-     * @param projectId
-     *            The ID of the project the symbol should belong to.
-     * @param symbol
-     *            The symbol to add.
+     * @param projectId The ID of the project the symbol should belong to.
+     * @param symbol    The symbol to add.
      * @return On success the added symbol (enhanced with information from the DB); An error message on failure.
      * @throws NotFoundException If the related Project or Group could not be found.
      * @responseType de.learnlib.alex.core.entities.Symbol
@@ -115,7 +113,7 @@ public class SymbolResource {
                 symbolDAO.create(symbol);
 
                 String symbolURL = uri.getBaseUri() + "projects/" + symbol.getProjectId()
-                                        + "/symbols/" + symbol.getId();
+                        + "/symbols/" + symbol.getId();
 
                 LOGGER.traceExit(symbol);
                 return Response.status(Status.CREATED).header("Location", symbolURL).entity(symbol).build();
@@ -138,7 +136,7 @@ public class SymbolResource {
      * Execute an action without creating a learning context.
      *
      * @param projectId The id of the project.
-     * @param action The action to test
+     * @param action    The action to test
      * @return The result of the executed action.
      * @throws NotFoundException If the related Project could not be found.
      */
@@ -154,13 +152,8 @@ public class SymbolResource {
         Project project = projectDAO.getByID(user.getId(), projectId);
         if (action instanceof CallAction) { // other actions might be worth testing, too.
             CallAction callAction = (CallAction) action;
-            Response response = callAction.testRequest(project.getBaseUrl());
-
-            JsonObject result = new JsonObject();
-            result.addProperty("status", response.getStatus());
-            result.addProperty("body", response.readEntity(String.class));
-
-            return Response.ok(result.toString()).build();
+            CallAction.TestResult result = callAction.testRequest(project.getBaseUrl());
+            return Response.ok(result).build();
         } else {
             return Response.noContent().build();
         }
@@ -169,11 +162,9 @@ public class SymbolResource {
     /**
      * Create a bunch of new Symbols.
      *
-     * @param projectId
-     *            The ID of the project the symbol should belong to.
-     * @param symbols
-     *            The symbols to add.
-     * @return On success the added symbols (enhanced with information from the DB).
+     * @param projectId The ID of the project the symbol should belong to.
+     * @param symbols   The symbols to add.
+     * @return On success the added symbols (enhanced with information from the DB); An error message on failure.
      * @throws NotFoundException If the related Projects or Groups could not be found.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Symbol>
      * @successResponse 201 created
@@ -221,19 +212,17 @@ public class SymbolResource {
             symbol.setProjectId(projectId);
         } else if (!Objects.equals(symbol.getProjectId(), projectId)) {
             throw new IllegalArgumentException("The symbol should not have a project"
-                        + " or at least the project id should be the one provided via the get parameter");
+                    + " or at least the project id should be the one provided via the get parameter");
         }
     }
 
     /**
      * Get all the Symbols of a specific Project.
      *
-     * @param projectId
-     *         The ID of the project.
-     * @param visibilityLevel
-     *         Specify the visibility level of the symbols you want to get.
-     *         Valid values are: 'all'/ 'unknown', 'visible', 'hidden'.
-     *         Optional.
+     * @param projectId       The ID of the project.
+     * @param visibilityLevel Specify the visibility level of the symbols you want to get.
+     *                        Valid values are: 'all'/ 'unknown', 'visible', 'hidden'.
+     *                        Optional.
      * @return A list of all Symbols belonging to the project. This list can be empty.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Symbol>
      * @successResponse 200 OK
@@ -259,12 +248,10 @@ public class SymbolResource {
     /**
      * Get Symbols by a list of id/revision pairs.
      *
-     * @param projectId
-     *          The ID of the project
-     * @param idRevisionPairs
-     *          The non empty list of id revision pairs.
-     *          Pattern: id_1:rev_1,...,id_n,rev_n
-     * @return A list of the symbols whose id:revision pairs were given.
+     * @param projectId       The ID of the project
+     * @param idRevisionPairs The non empty list of id revision pairs.
+     *                        Pattern: id_1:rev_1,...,id_n,rev_n
+     * @return A list of the symbols whose id:revision pairs were given
      * @throws NotFoundException If the requested Symbols or the related Projects or Groups could not be found.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Symbol>
      * @successResponse 200 OK
@@ -288,11 +275,9 @@ public class SymbolResource {
     /**
      * Get a Symbol by its ID.
      * This returns only the latest revision of the symbol.
-     * 
-     * @param projectId
-     *            The ID of the project.
-     * @param id
-     *            The ID of the symbol.
+     *
+     * @param projectId The ID of the project.
+     * @param id        The ID of the symbol.
      * @return A Symbol matching the projectID & ID or a not found response.
      * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
      * @responseType de.learnlib.alex.core.entities.Symbol
@@ -316,10 +301,8 @@ public class SymbolResource {
      * Get a Symbol by its ID.
      * This returns all revisions of a symbol
      *
-     * @param projectId
-     *            The ID of the project.
-     * @param id
-     *            The ID of the symbol.
+     * @param projectId The ID of the project.
+     * @param id        The ID of the symbol.
      * @return A Symbol matching the projectID & ID or a not found response.
      * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
      * @responseType    java.util.List<de.learnlib.alex.core.entities.Symbol>
@@ -342,13 +325,10 @@ public class SymbolResource {
 
     /**
      * Get a Symbol by its ID & revision.
-     * 
-     * @param projectId
-     *            The ID of the project.
-     * @param id
-     *            The ID of the symbol.
-     * @param revision
-     *            The revision of the symbol.
+     *
+     * @param projectId The ID of the project.
+     * @param id        The ID of the symbol.
+     * @param revision  The revision of the symbol.
      * @return A Symbol matching the projectID, ID & revision or a not found response.
      * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
      * @responseType de.learnlib.alex.core.entities.Symbol
@@ -373,13 +353,10 @@ public class SymbolResource {
 
     /**
      * Update a Symbol.
-     * 
-     * @param projectId
-     *            The ID of the project.
-     * @param id
-     *            The ID of the symbol.
-     * @param symbol
-     *            The new symbol data.
+     *
+     * @param projectId The ID of the project.
+     * @param id        The ID of the symbol.
+     * @param symbol    The new symbol data.
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
      * @throws NotFoundException If the given Symbol or the related Project or Groups could not be found.
      * @responseType de.learnlib.alex.core.entities.Symbol
@@ -401,7 +378,7 @@ public class SymbolResource {
                 || (symbol.getUserId() != 0L && !user.equals(symbol.getUser()))) {
 
             LOGGER.traceExit();
-            return  Response.status(Status.BAD_REQUEST).build();
+            return Response.status(Status.BAD_REQUEST).build();
         }
         symbol.setUser(user);
 
@@ -419,12 +396,9 @@ public class SymbolResource {
     /**
      * Update a bunch of Symbols.
      *
-     * @param projectId
-     *            The ID of the project.
-     * @param ids
-     *            The IDs of the symbols.
-     * @param symbols
-     *            The new symbol data.
+     * @param projectId The ID of the project.
+     * @param ids       The IDs of the symbols.
+     * @param symbols   The new symbol data.
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
      * @throws NotFoundException If the given Symbols or the related Projects or Groups could not be found.
      * @responseType de.learnlib.alex.core.entities.Symbol
@@ -465,12 +439,9 @@ public class SymbolResource {
     /**
      * Move a Symbol to a new group.
      *
-     * @param projectId
-     *         The ID of the project.
-     * @param symbolId
-     *         The ID of the symbol.
-     * @param groupId
-     *         The ID of the new group.
+     * @param projectId The ID of the project.
+     * @param symbolId  The ID of the symbol.
+     * @param groupId   The ID of the new group.
      * @return On success the moved symbol (enhanced with information from the DB); An error message on failure.
      * @throws NotFoundException If the requested Symbols or the related Project or Groups could not be found.
      */
@@ -494,12 +465,9 @@ public class SymbolResource {
     /**
      * Move a bunch of Symbols to a new group.
      *
-     * @param projectId
-     *         The ID of the project.
-     * @param symbolIds
-     *         The ID of the symbols.
-     * @param groupId
-     *         The ID of the new group.
+     * @param projectId The ID of the project.
+     * @param symbolIds The ID of the symbols.
+     * @param groupId   The ID of the new group.
      * @return On success the moved symbols (enhanced with information from the DB); An error message on failure.
      * @throws NotFoundException If the requested Symbols or the related Project or Groups could not be found.
      */
@@ -523,11 +491,9 @@ public class SymbolResource {
 
     /**
      * Mark one symbol as hidden.
-     * 
-     * @param projectId
-     *            The ID of the project.
-     * @param id
-     *            The ID of the symbol to hide.
+     *
+     * @param projectId The ID of the project.
+     * @param id        The ID of the symbol to hide.
      * @return On success no content will be returned; an error message on failure.
      * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
      * @successResponse 204 OK & no content
@@ -560,10 +526,8 @@ public class SymbolResource {
     /**
      * Mark a bunch of symbols as hidden.
      *
-     * @param projectId
-     *            The ID of the project.
-     * @param ids
-     *            The IDs of the symbols to hide.
+     * @param projectId The ID of the project.
+     * @param ids       The IDs of the symbols to hide.
      * @return On success no content will be returned; an error message on failure.
      * @throws NotFoundException If the requested Symbols or the related Project or Groups could not be found.
      * @successResponse 204 OK & no content
@@ -588,10 +552,8 @@ public class SymbolResource {
     /**
      * Remove the hidden flag from a symbol.
      *
-     * @param projectId
-     *            The ID of the project.
-     * @param id
-     *            The ID of the symbol to show.
+     * @param projectId The ID of the project.
+     * @param id        The ID of the symbol to show.
      * @return On success no content will be returned; an error message on failure.
      * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
      * @successResponse 204 OK & no content
@@ -614,10 +576,8 @@ public class SymbolResource {
     /**
      * Remove the hidden flag from a bunch of symbols.
      *
-     * @param projectId
-     *            The ID of the project.
-     * @param ids
-     *            The IDs of the symbols to show.
+     * @param projectId The ID of the project.
+     * @param ids       The IDs of the symbols to show.
      * @return On success no content will be returned; an error message on failure.
      * @throws NotFoundException If the requested Symbols or the related Project or Groups could not be found.
      * @successResponse 204 OK & no content
