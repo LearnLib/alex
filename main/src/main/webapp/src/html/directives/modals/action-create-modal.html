@@ -15,7 +15,7 @@
             <div class="col-xs-4">
 
                 <uib-accordion close-others="true" class="action-types-accordion">
-                    <uib-accordion-group>
+                    <div uib-accordion-group class="panel-default" is-open="true">
                         <uib-accordion-heading>
                             <div><strong>Web</strong></div>
                         </uib-accordion-heading>
@@ -34,9 +34,9 @@
                         <a href="" ng-click="vm.selectNewActionType('web_waitForTitle')">Wait for the title</a>
                         <a href="" ng-click="vm.selectNewActionType('web_waitForNode')">Wait for an element</a>
                         <a href="" ng-click="vm.selectNewActionType('web_executeScript')">Execute JavaScript</a>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group>
+                    <div uib-accordion-group class="panel-default">
                         <uib-accordion-heading>
                             <div><strong>REST</strong></div>
                         </uib-accordion-heading>
@@ -48,9 +48,9 @@
                         <a href="" ng-click="vm.selectNewActionType('rest_checkAttributeExists')">Check attribute</a>
                         <a href="" ng-click="vm.selectNewActionType('rest_checkAttributeValue')">Check attribute value</a>
                         <a href="" ng-click="vm.selectNewActionType('rest_checkAttributeType')">Check attribute type</a>
-                    </uib-accordion-group>
+                    </div>
 
-                    <uib-accordion-group>
+                    <div uib-accordion-group class="panel-default">
                         <uib-accordion-heading>
                             <div><strong>Misc</strong></div>
                         </uib-accordion-heading>
@@ -66,7 +66,7 @@
                         <a href="" ng-click="vm.selectNewActionType('setVariableByHTML')">Set variable by HTML</a>
                         <a href="" ng-click="vm.selectNewActionType('setVariableByNodeAttribute')">Set variable by node attribute</a>
                         <a href="" ng-click="vm.selectNewActionType('wait')">Wait</a>
-                    </uib-accordion-group>
+                    </div>
                 </uib-accordion>
 
             </div>
