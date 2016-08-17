@@ -47,7 +47,7 @@ describe('ProjectSettingsModalController', () => {
         });
 
         $uibModal.open({
-            templateUrl: 'html/modals/project-settings-modal.html',
+            templateUrl: 'html/directives/modals/project-settings-modal.html',
             controller: () => controller,
             controllerAs: 'vm',
             resolve: {
