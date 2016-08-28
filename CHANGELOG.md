@@ -1,3 +1,9 @@
+# ALEX v1.2
+
+## Features
+
+* new action: Press special keys like enter, ctrl, etc.
+
 # ALEX v1.1.2
 
 ## Breaking Changes

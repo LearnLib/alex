@@ -126,7 +126,8 @@ import {
     actionFormSendKeys,
     actionFormSubmit,
     actionFormWaitForNode,
-    actionFormWaitForTitle
+    actionFormWaitForTitle,
+actionFormPressKey
 } from "./components/forms/actions/webActionForms";
 import {
     actionFormCall,
@@ -284,6 +285,7 @@ angular
     .component('actionFormSubmit', actionFormSubmit)
     .component('actionFormWaitForNode', actionFormWaitForNode)
     .component('actionFormWaitForTitle', actionFormWaitForTitle)
+    .component('actionFormPressKey', actionFormPressKey)
 
     // rest action forms
     .component('actionFormCall', actionFormCall)

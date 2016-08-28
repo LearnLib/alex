@@ -48,6 +48,7 @@ import de.learnlib.alex.actions.WebSymbolActions.ExecuteScriptAction;
 import de.learnlib.alex.actions.WebSymbolActions.FillAction;
 import de.learnlib.alex.actions.WebSymbolActions.GotoAction;
 import de.learnlib.alex.actions.WebSymbolActions.MoveMouseAction;
+import de.learnlib.alex.actions.WebSymbolActions.PressKeyAction;
 import de.learnlib.alex.actions.WebSymbolActions.SelectAction;
 import de.learnlib.alex.actions.WebSymbolActions.SubmitAction;
 import de.learnlib.alex.actions.WebSymbolActions.WaitForNodeAction;
@@ -106,6 +107,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
         @JsonSubTypes.Type(name = "web_moveMouse", value = MoveMouseAction.class),
+        @JsonSubTypes.Type(name = "web_pressKey", value = PressKeyAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
         @JsonSubTypes.Type(name = "web_select", value = SelectAction.class),
         @JsonSubTypes.Type(name = "web_waitForTitle", value = WaitForTitleAction.class),

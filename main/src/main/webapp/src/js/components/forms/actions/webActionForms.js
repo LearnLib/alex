@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {supportedKeys} from '../../../constants';
+
 export const actionFormCheckForNode = {
     templateUrl: 'html/components/forms/actions/web/check-for-node.html',
     bindings: {
@@ -68,6 +70,17 @@ export const actionFormExecuteScript = {
         action: '='
     },
     controllerAs: 'vm'
+};
+
+export const actionFormPressKey = {
+    templateUrl: 'html/components/forms/actions/web/press-key.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm',
+    controller: function () {
+        this.keys = supportedKeys;
+    }
 };
 
 export const actionFormMoveMouse = {
