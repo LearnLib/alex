@@ -39,6 +39,7 @@ import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByJSONAttributeAct
 import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByNodeAttributeAction;
 import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
+import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAttributeValueAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckPageTitleAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.alex.actions.WebSymbolActions.ClearAction;
@@ -97,6 +98,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "setVariableByNodeAttribute", value = SetVariableByNodeAttributeAction.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
+        @JsonSubTypes.Type(name = "web_checkNodeAttributeValue", value = CheckNodeAttributeValueAction.class),
         @JsonSubTypes.Type(name = "web_checkForNode", value = CheckNodeAction.class),
         @JsonSubTypes.Type(name = "web_checkForText", value = CheckTextWebAction.class),
         @JsonSubTypes.Type(name = "web_checkPageTitle", value = CheckPageTitleAction.class),

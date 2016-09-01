@@ -2,7 +2,9 @@
 
 ## Features
 
-* new action: Press special keys like enter, ctrl, etc.
+* New actions:
+    * Press special keys like enter, ctrl, etc.
+    * Check the value of an elements attribute
 
 # ALEX v1.1.2
 

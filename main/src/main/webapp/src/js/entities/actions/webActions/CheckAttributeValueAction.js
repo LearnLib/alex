@@ -18,9 +18,9 @@ import {Action} from "../Action";
 import {actionType} from "../../../constants";
 
 /**
- * Action to press a key on the keyboard.
+ * Action to check the value of a nodes attribute.
  */
-export class PressKeyAction extends Action {
+export class CheckNodeAttributeValueAction extends Action {
 
     /**
      * Constructor.
@@ -28,27 +28,41 @@ export class PressKeyAction extends Action {
      * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
-        super(actionType.WEB_PRESS_KEY, obj);
+        super(actionType.WEB_CHECK_ATTRIBUTE_VALUE, obj);
 
         /**
-         * The CSS selector of an element.
-         * @type {*|string}
+         * The selector of the element.
+         * @type {string}
          */
-        this.node = obj.node || null;
+        this.node = obj.node || '';
 
         /**
-         * The unicode of the key to press.
-         * @type {*|string}
+         * The attribute name of the element to check.
+         * @type {string}
          */
-        this.key = obj.key || '';
+        this.attribute = obj.attribute || '';
+
+        /**
+         * The selector of the node to search.
+         * @type {string}
+         */
+        this.value = obj.value || '';
+
+        /**
+         * The method that is used to check the attribute value.
+         * @type {string}
+         */
+        this.checkMethod = obj.checkMethod || 'IS';
     }
 
     /**
-     * Get the string representation of the action.
+     * A string representation of the action.
      *
      * @returns {string}
      */
     toString() {
-        return 'Press a key';
+        return `
+            Check if the attribute "${this.attribute}" of the element "${this.node}" 
+            ${this.checkMethod.toLowerCase()} "${this.value}"`;
     }
 }

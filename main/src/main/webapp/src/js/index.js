@@ -81,7 +81,7 @@ import {symbolsActionsView} from "./components/views/symbolsActionsView";
 import {symbolsView} from "./components/views/symbolsView";
 import {symbolsHistoryView} from "./components/views/symbolsHistoryView";
 import {symbolsImportView} from "./components/views/symbolsImportView";
-import {symbolsTestView} from './components/views/symbolsTestView';
+import {symbolsTestView} from "./components/views/symbolsTestView";
 import {symbolsTrashView} from "./components/views/symbolsTrashView";
 import {usersSettingsView} from "./components/views/usersSettingsView";
 import {actionForm} from "./components/forms/actions/actionForm";
@@ -127,7 +127,8 @@ import {
     actionFormSubmit,
     actionFormWaitForNode,
     actionFormWaitForTitle,
-actionFormPressKey
+    actionFormPressKey,
+    actionFormCheckNodeAttributeValue
 } from "./components/forms/actions/webActionForms";
 import {
     actionFormCall,
@@ -271,6 +272,7 @@ angular
     .component('projectDetailsWidget', projectDetailsWidget)
 
     // web action forms
+    .component('actionFormCheckNodeAttributeValue', actionFormCheckNodeAttributeValue)
     .component('actionFormCheckForNode', actionFormCheckForNode)
     .component('actionFormCheckForText', actionFormCheckForText)
     .component('actionFormCheckPageTitle', actionFormCheckPageTitle)

@@ -103,6 +103,7 @@ export const actionType = {
     WEB_PRESS_KEY: 'web_pressKey',
     WAIT_FOR_NODE: 'web_waitForNode',
     WAIT_FOR_TITLE: 'web_waitForTitle',
+    WEB_CHECK_ATTRIBUTE_VALUE: 'web_checkNodeAttributeValue',
 
     // rest actions
     REST_CALL: 'rest_call',

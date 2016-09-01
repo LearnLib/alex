@@ -83,6 +83,17 @@ export const actionFormPressKey = {
     }
 };
 
+export const actionFormCheckNodeAttributeValue = {
+    templateUrl: 'html/components/forms/actions/web/check-node-attribute-value.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm',
+    controller: function() {
+        this.checkMethods = ['IS', 'CONTAINS', 'MATCHES'];
+    }
+};
+
 export const actionFormMoveMouse = {
     templateUrl: 'html/components/forms/actions/web/move-mouse.html',
     bindings: {
