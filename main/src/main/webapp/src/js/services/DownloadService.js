@@ -136,21 +136,21 @@ export class DownloadService {
 
         // copy svg to prevent the svg being clipped due to the window size
         const svgCopy = svg.cloneNode(true);
-        const g = svg.childNodes[0];
+        const g = svg.querySelector('g');
 
         // set proper xml attributes for downloadable file
         svgCopy.setAttribute('version', '1.1');
         svgCopy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
         if (adjustSize) {
-            const scale = g.getTransformToElement(svg).a;
-            const dimension = svg.childNodes[0].getBoundingClientRect();
+            const scale = g.getScreenCTM().inverse().multiply(svg.getScreenCTM()).a;
+            const dimension = g.getBoundingClientRect();
             const width = Math.ceil(dimension.width / scale) + 20;    // use 20px as offset
             const height = Math.ceil(dimension.height / scale) + 20;
 
             svgCopy.setAttribute('width', width);
             svgCopy.setAttribute('height', height);
-            svgCopy.childNodes[0].setAttribute('transform', 'translate(10,10)');
+            svgCopy.querySelector('g').setAttribute('transform', 'translate(10,10)');
         }
 
         // create serialized string from svg element and encode it in
