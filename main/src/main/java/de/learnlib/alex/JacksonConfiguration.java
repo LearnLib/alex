@@ -1,7 +1,22 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.learnlib.alex;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
@@ -19,11 +34,11 @@ public class JacksonConfiguration implements ContextResolver<ObjectMapper> {
      * Default constructor, which creates the ObjectMapper and add the custom modules.
      */
     public JacksonConfiguration() {
-        Hibernate4Module hibernate4Module = new Hibernate4Module();
-        hibernate4Module.configure(Hibernate4Module.Feature.USE_TRANSIENT_ANNOTATION, false);
+        Hibernate5Module hibernate5Module = new Hibernate5Module();
+        hibernate5Module.configure(Hibernate5Module.Feature.USE_TRANSIENT_ANNOTATION, false);
 
         mapper = new ObjectMapper();
-        mapper.registerModule(hibernate4Module);
+        mapper.registerModule(hibernate5Module);
     }
 
     @Override

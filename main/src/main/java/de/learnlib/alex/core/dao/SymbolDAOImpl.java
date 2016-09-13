@@ -310,6 +310,8 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new NotFoundException("Could not find a symbol in the project " + projectId + ","
                                                 + " the id " + id + " and the revision " + revision + ".");
         }
+        loadLazyRelations(this, result);
+
         return result;
     }
 
@@ -328,6 +330,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new NotFoundException("Could not find symbols in the project " + projectId
                                                      + " with the id " + id + ".");
         }
+
+        result.forEach(s -> loadLazyRelations(this, s));
+
         return result;
     }
 

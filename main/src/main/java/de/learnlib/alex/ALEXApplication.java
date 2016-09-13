@@ -83,18 +83,23 @@ public class ALEXApplication extends ResourceConfig {
     }
 
     /**
-     * Create the settings object if needed.
+     * Initialize system properties and create the settings object if needed.
      */
     @PostConstruct
-    public void createSettingsIfNeeded() {
-        if (settingsDAO.get() == null) {
+    public void initSettings() {
+        Settings settings = settingsDAO.get();
+        if (settings == null) {
             try {
-                Settings settings = new Settings();
+                settings = new Settings();
                 settingsDAO.create(settings);
             } catch (ValidationException e) {
                 e.printStackTrace();
                 System.exit(0);
             }
+        } else {
+            Settings.DriverSettings driverSettings = settings.getDriverSettings();
+            System.setProperty("webdriver.chrome.driver", driverSettings.getChrome());
+            System.setProperty("webdriver.gecko.driver",  driverSettings.getFirefox());
         }
     }
 }
