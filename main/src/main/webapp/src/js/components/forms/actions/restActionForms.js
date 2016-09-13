@@ -56,11 +56,10 @@ export const actionFormCall = {
 
             $http.post(`rest/projects/${this.project.id}/symbols/actions/test`, action)
                 .then(res => {
-                    this.testResult = res.data
-                    console.log(res.data)
+                    this.testResult = res.data;
                 })
-                .catch(res => this.error = res.data.message)
-        }
+                .catch(res => this.error = res.data.message);
+        };
     }
 };
 

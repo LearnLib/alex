@@ -79,7 +79,7 @@ public class WebSiteConnector implements Connector {
 
     @Override
     public void dispose() {
-        this.driver.close();
+        this.driver.quit();
     }
 
     /**

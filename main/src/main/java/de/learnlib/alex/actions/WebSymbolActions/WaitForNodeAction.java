@@ -183,7 +183,7 @@ public class WaitForNodeAction extends WebSymbolAction {
             }
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info(LEARNER_MARKER, "Waiting on the node '{}' (criterion: '') timed out.",
+            LOGGER.info(LEARNER_MARKER, "Waiting on the node '{}' (criterion: '{}') timed out.",
                         selector, waitCriterion);
             return getFailedOutput();
         }

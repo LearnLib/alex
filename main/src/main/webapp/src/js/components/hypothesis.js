@@ -190,10 +190,10 @@ class HypothesisComponent {
         const xCenterOffset = (this.svgContainer.clientWidth - this.graph.graph().width) / 2;
         this.svgGroup.setAttribute("transform", "translate(" + xCenterOffset + ", 100)");
 
-        // swap defs and paths children of .edgepaths because arrows are not shown
-        // on export otherwise <.<
-        _.forEach(this.svg.querySelectorAll('.edgePath'), edgePath => {
-            edgePath.insertBefore(edgePath.childNodes[1], edgePath.firstChild);
+        // adjust marker ids so that they are still visible after the export
+        _.forEach(this.svg.querySelectorAll('.path'), path => {
+            const markerId = "#" + path.getAttribute('marker-end').split(')')[0].split('#')[1];
+            path.setAttribute('marker-end', `url(${markerId})`);
         });
     }
 

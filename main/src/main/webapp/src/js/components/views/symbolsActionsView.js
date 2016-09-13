@@ -102,6 +102,16 @@ class SymbolsActionsView {
             }
         });
 
+        const keyDownHandler = (e) => {
+            if (e.ctrlKey && e.which === 83) {
+                e.preventDefault();
+                this.saveChanges();
+                return false;
+            }
+        };
+
+        document.addEventListener('keydown', keyDownHandler);
+
         // listen on action created event
         EventBus.on(events.ACTION_CREATED, (evt, data) => {
             this.addAction(data.action);
@@ -122,7 +132,10 @@ class SymbolsActionsView {
             this.hasChanged = true;
         });
 
-        $scope.$on('$destroy', () => dragulaService.destroy($scope, 'actionList'));
+        $scope.$on('$destroy', () => {
+            dragulaService.destroy($scope, 'actionList');
+            document.removeEventListener('keydown', keyDownHandler);
+        });
     }
 
     /**
@@ -170,6 +183,10 @@ class SymbolsActionsView {
      * Saves the changes that were made to the symbol by updating it on the server.
      */
     saveChanges() {
+        if (!this.hasChanged) {
+            this.ToastService.info('There are no changes to save.');
+            return;
+        }
 
         // make a copy of the symbol
         const symbolToUpdate = new AlphabetSymbol(this.symbol);

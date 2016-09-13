@@ -22,8 +22,10 @@ import {ExecuteScriptAction} from "../entities/actions/webActions/ExecuteScriptA
 import {FillWebAction} from "../entities/actions/webActions/FillWebAction";
 import {ClickWebAction} from "../entities/actions/webActions/ClickWebAction";
 import {ClickLinkByTextWebAction} from "../entities/actions/webActions/ClickLinkByTextWebAction";
+import {CheckNodeAttributeValueAction} from "../entities/actions/webActions/CheckAttributeValueAction";
 import {ClearWebAction} from "../entities/actions/webActions/ClearWebAction";
 import {CheckPageTitleAction} from "../entities/actions/webActions/CheckPageTitleAction";
+import {PressKeyAction} from "../entities/actions/webActions/PressKeyAction";
 import {CheckForTextWebAction} from "../entities/actions/webActions/CheckForTextWebAction";
 import {CheckForNodeWebAction} from "../entities/actions/webActions/CheckForNodeWebAction";
 import {MoveMouseAction} from "../entities/actions/webActions/MoveMouseAction";
@@ -47,12 +49,6 @@ import {SetVariableByNodeGeneralAction} from "../entities/actions/generalActions
 import {SetVariableByNodeAttributeGeneralAction} from "../entities/actions/generalActions/SetVariableByNodeAttributeGeneralAction";
 import {SetVariableGeneralAction} from "../entities/actions/generalActions/SetVariableGeneralAction";
 import {WaitGeneralAction} from "../entities/actions/generalActions/WaitGeneralAction";
-
-// web actions
-
-// rest actions
-
-// general actions
 
 /**
  * The service that is used to create new actions.
@@ -93,6 +89,10 @@ export class ActionService {
                 return new CheckForTextWebAction(data);
             case actionType.WEB_CHECK_NODE:
                 return new CheckForNodeWebAction(data);
+            case actionType.WEB_PRESS_KEY:
+                return new PressKeyAction(data);
+            case actionType.WEB_CHECK_ATTRIBUTE_VALUE:
+                return new CheckNodeAttributeValueAction(data);
 
             // rest actions
             case actionType.REST_CALL:

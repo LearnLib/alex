@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+const bodyClassName = 'has-fixed-action-bar';
+const actionBarClassName = 'fixed';
+
 /**
  * The component that is used for the sticky sub navigation that mostly contains call to action buttons for the
  * current view.
@@ -43,7 +46,7 @@ class ActionBar {
 
         $scope.$on('$destroy', () => {
             window.removeEventListener('scroll', this.scrollHandler, false);
-            document.body.classList.remove('has-fixed-action-bar');
+            document.body.classList.remove(bodyClassName);
         });
     }
 
@@ -51,12 +54,12 @@ class ActionBar {
      * Depending on the scroll y value, toggles classes for fixing the action bar on the top.
      */
     handleResize() {
-        if (this.$window.scrollY >= 42) {
-            this.rootEl.classList.add('fixed');
-            document.body.classList.add('has-fixed-action-bar');
+        if (window.scrollY >= 42) {
+            this.rootEl.classList.add(actionBarClassName);
+            document.body.classList.add(bodyClassName);
         } else {
-            this.rootEl.classList.remove('fixed');
-            document.body.classList.remove('has-fixed-action-bar');
+            this.rootEl.classList.remove(actionBarClassName);
+            document.body.classList.remove(bodyClassName);
         }
     }
 }

@@ -39,6 +39,7 @@ import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByJSONAttributeAct
 import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByNodeAttributeAction;
 import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
+import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAttributeValueAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckPageTitleAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.alex.actions.WebSymbolActions.ClearAction;
@@ -48,6 +49,7 @@ import de.learnlib.alex.actions.WebSymbolActions.ExecuteScriptAction;
 import de.learnlib.alex.actions.WebSymbolActions.FillAction;
 import de.learnlib.alex.actions.WebSymbolActions.GotoAction;
 import de.learnlib.alex.actions.WebSymbolActions.MoveMouseAction;
+import de.learnlib.alex.actions.WebSymbolActions.PressKeyAction;
 import de.learnlib.alex.actions.WebSymbolActions.SelectAction;
 import de.learnlib.alex.actions.WebSymbolActions.SubmitAction;
 import de.learnlib.alex.actions.WebSymbolActions.WaitForNodeAction;
@@ -100,6 +102,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "setVariableByNodeAttribute", value = SetVariableByNodeAttributeAction.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
+        @JsonSubTypes.Type(name = "web_checkNodeAttributeValue", value = CheckNodeAttributeValueAction.class),
         @JsonSubTypes.Type(name = "web_checkForNode", value = CheckNodeAction.class),
         @JsonSubTypes.Type(name = "web_checkForText", value = CheckTextWebAction.class),
         @JsonSubTypes.Type(name = "web_checkPageTitle", value = CheckPageTitleAction.class),
@@ -110,6 +113,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
         @JsonSubTypes.Type(name = "web_moveMouse", value = MoveMouseAction.class),
+        @JsonSubTypes.Type(name = "web_pressKey", value = PressKeyAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
         @JsonSubTypes.Type(name = "web_select", value = SelectAction.class),
         @JsonSubTypes.Type(name = "web_waitForTitle", value = WaitForTitleAction.class),
