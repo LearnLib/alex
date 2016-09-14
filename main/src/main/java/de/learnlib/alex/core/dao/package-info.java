@@ -15,6 +15,7 @@
  */
 
 /**
- * This package contains the actual bridge between the ALEX and the DB.
+ * This package contains the high level bridge between ALEX and the DB.
+ * The DAO utilize the repositories to persist and manage our data.
  */
 package de.learnlib.alex.core.dao;

@@ -108,13 +108,18 @@ public interface ProjectDAO {
 
     /**
      * Get a specific project by its ID.
+     *
      * @param userId
-     *          The ID of the user.
+     *         The ID of the user.
      * @param projectName
-     *          The name of the project.
+     *         The name of the project.
+     * @param embedFields
+     *         The fields to include in returned project. By default no additional data will be fetched from the DB.
      * @return The project with the name.
+     * @throws NotFoundException
+     *         If the project could not be found.
      */
-    Project getByName(Long userId, String projectName);
+    Project getByName(Long userId, String projectName, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Update a project.

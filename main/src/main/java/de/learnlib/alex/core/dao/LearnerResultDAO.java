@@ -20,6 +20,7 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResultStep;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
 
 import javax.validation.ValidationException;
@@ -140,5 +141,5 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    void delete(User user, Long projectId, Long... testNo) throws  NotFoundException;
+    void delete(Learner learner, User user, Long projectId, Long... testNo) throws  NotFoundException;
 }

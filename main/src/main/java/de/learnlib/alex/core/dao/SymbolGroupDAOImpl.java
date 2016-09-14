@@ -16,25 +16,27 @@
 
 package de.learnlib.alex.core.dao;
 
-import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
-import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolGroupRepository;
+import de.learnlib.alex.core.repositories.SymbolRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.alex.utils.HibernateUtil;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,185 +44,181 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Implementation of a SymbolGroupDAO using Hibernate.
+ * Implementation of a SymbolGroupDAO using Spring Data.
  */
-@Repository
+@Service
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker GROUP_MARKER = MarkerManager.getMarker("GROUP");
+    private static final Marker DAO_MARKER   = MarkerManager.getMarker("DAO");
+    private static final Marker IMPL_MARKER  = MarkerManager.getMarker("GROUP_DAO")
+                                                                .setParents(DAO_MARKER, GROUP_MARKER);
+
+    /** The ProjectRepository to use. Will be injected. */
+    private ProjectRepository projectRepository;
+
+    /** The SymbolGroupRepository to use. Will be injected. */
+    private SymbolGroupRepository symbolGroupRepository;
+
+    /** The SymbolRepository to use. Will be injected. */
+    private SymbolRepository symbolRepository;
 
     /** The SymbolDAO to use. */
-    private SymbolDAOImpl symbolDAO;
+    private SymbolDAO symbolDAO;
 
     /**
-     * The constructor.
+     * Creates a new SymbolGroupDAO.
      *
-     * @param symbolDAO
-     *         The SymbolDAOImpl to use.
+     * @param projectRepository
+     *         The ProjectRepository to use.
+     * @param symbolGroupRepository
+     *         The SymbolGroupRepository to use.
+     * @param symbolRepository
+     *         The SymbolRepository to use.
      */
     @Inject
-    public SymbolGroupDAOImpl(SymbolDAOImpl symbolDAO) {
-        this.symbolDAO = symbolDAO;
+    public SymbolGroupDAOImpl(ProjectRepository projectRepository, SymbolGroupRepository symbolGroupRepository,
+                              SymbolRepository symbolRepository) {
+        this.projectRepository = projectRepository;
+        this.symbolGroupRepository = symbolGroupRepository;
+        this.symbolRepository = symbolRepository;
+
+        this.symbolDAO = new SymbolDAOImpl(projectRepository, symbolGroupRepository, symbolRepository);
     }
 
     @Override
+    @Transactional
     public void create(SymbolGroup group) throws ValidationException {
-        // new groups should have a project and not have an id
-        if (group.getProject() == null || group.getId() > 0) {
-            throw new ValidationException(
-                    "To create a SymbolGroup it must have a Project but must not have an id.");
+        LOGGER.traceEntry("create({})", group);
+        /*
+        if (group.getProject() == null) {
+            throw new ValidationException("To create a SymbolGroup it must have a Project.");
         }
 
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+        if (group.getId() != null) {
+            throw new ValidationException("To create a SymbolGroup it must not have an id.");
+        }
+        */
 
         try {
-            Project project = session.load(Project.class, group.getProjectId());
+            Project project = projectRepository.findOneByUser_IdAndId(group.getUserId(), group.getProjectId());
 
             // get the current highest group id in the project and add 1 for the next id
             long id = project.getNextGroupId();
             project.setNextGroupId(id + 1);
-            session.update(project);
+            projectRepository.save(project);
 
             group.setId(id);
             project.addGroup(group);
 
-            session.save(group);
-            HibernateUtil.commitTransaction();
+            beforePersistGroup(group);
+            symbolGroupRepository.save(group);
         // error handling
-        } catch (ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
-            LOGGER.info("SymbolGroup creation failed:", e);
-            throw ValidationExceptionHelper.createValidationException("SymbolGroup was not created:", e);
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.info(IMPL_MARKER, "SymbolGroup creation failed:", e);
+            throw new ValidationException("SymbolGroup could not be created.", e);
+        } catch (TransactionSystemException e) {
+            LOGGER.info(IMPL_MARKER, "SymbolGroup creation failed:", e);
+            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
+            throw ValidationExceptionHelper.createValidationException("SymbolGroup was not created:", cve);
         }
+
+        LOGGER.traceExit(group);
     }
 
     @Override
-    public List<SymbolGroup> getAll(long userId, long projectId, EmbeddableFields... embedFields)
+    @Transactional(readOnly = true)
+    public List<SymbolGroup> getAll(User user, long projectId, EmbeddableFields... embedFields)
             throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        Project project = session.load(Project.class, projectId);
-        User user = session.load(User.class, userId);
-
+        Project project = projectRepository.findOneByUser_IdAndId(user.getId(), projectId);
         if (project == null) {
-            HibernateUtil.rollbackTransaction();
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
-        List<SymbolGroup> resultList = session.createCriteria(SymbolGroup.class)
-                                                .add(Restrictions.eq("user", user))
-                                                .add(Restrictions.eq("project", project))
-                                                .list();
+        // load lazy relations
+        List<SymbolGroup> resultList = symbolGroupRepository.findAllByUser_IdAndProject_Id(user.getId(), projectId);
 
         for (SymbolGroup group : resultList) {
-            initLazyRelations(session, user, group, embedFields);
+            initLazyRelations(user, group, embedFields);
         }
 
-        HibernateUtil.commitTransaction();
         return resultList;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields)
             throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        Project project = session.load(Project.class, projectId);
-        SymbolGroup result = session.byNaturalId(SymbolGroup.class)
-                                                    .using("user", user)
-                                                    .using("project", project)
-                                                    .using("id", groupId)
-                                                    .load();
+        SymbolGroup result = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(user.getId(), projectId, groupId);
 
         if (result == null) {
-            HibernateUtil.rollbackTransaction();
             throw new NotFoundException("Could not find a group with the id " + groupId
                                              + " in the project " + projectId + ".");
         }
 
-        initLazyRelations(session, user, result, embedFields);
+        initLazyRelations(user, result, embedFields);
 
-        HibernateUtil.commitTransaction();
         return result;
     }
 
     @Override
+    @Transactional
     public void update(SymbolGroup group) throws NotFoundException, ValidationException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+        SymbolGroup groupInDB = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(group.getUserId(),
+                                                                                         group.getProjectId(),
+                                                                                         group.getId());
 
-        SymbolGroup groupInDB = session.byNaturalId(SymbolGroup.class)
-                                                        .using("user", group.getUser())
-                                                        .using("project", group.getProject())
-                                                        .using("id", group.getId())
-                                                        .load();
         if (groupInDB == null) {
-            HibernateUtil.rollbackTransaction();
             throw new NotFoundException("You can only update existing groups!");
         }
 
         try {
             // apply changes
             groupInDB.setName(group.getName());
-            session.update(groupInDB);
-
-            HibernateUtil.commitTransaction();
+            symbolGroupRepository.save(groupInDB);
         // error handling
-        } catch (ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
-            LOGGER.info("SymbolGroup update failed:", e);
-            throw ValidationExceptionHelper.createValidationException("SymbolGroup was not updated:", e);
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.info(IMPL_MARKER, "SymbolGroup update failed:", e);
+            throw new ValidationException("SymbolGroup could not be updated.", e);
+        } catch (TransactionSystemException e) {
+            LOGGER.info(IMPL_MARKER, "SymbolGroup update failed:", e);
+            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
+            throw ValidationExceptionHelper.createValidationException("SymbolGroup was not updated:", cve);
         }
     }
 
     @Override
+    @Transactional
     public void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
         SymbolGroup group = get(user, projectId, groupId, EmbeddableFields.ALL);
 
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        Project project = session.load(Project.class, projectId);
+        Project project = projectRepository.findOneByUser_IdAndId(user.getId(), projectId);
 
         if (group.equals(project.getDefaultGroup())) {
-            HibernateUtil.rollbackTransaction();
             throw new IllegalArgumentException("You can not delete the default group of a project.");
         }
 
         for (Symbol symbol : group.getSymbols()) {
             symbol.setGroup(project.getDefaultGroup());
             symbol.setHidden(true);
-            session.update(symbol);
+            symbolRepository.save(symbol);
         }
 
         group.setSymbols(null);
-        session.delete(group);
-        HibernateUtil.commitTransaction();
+        symbolGroupRepository.delete(group);
     }
 
-    private void initLazyRelations(Session session, User user, SymbolGroup group, EmbeddableFields... embedFields) {
+    private void initLazyRelations(User user, SymbolGroup group, EmbeddableFields... embedFields) {
         Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
         if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
-            group.getSymbols().forEach(s -> symbolDAO.loadLazyRelations(session, s));
+            group.getSymbols().forEach(s -> SymbolDAOImpl.loadLazyRelations(symbolDAO, s));
         } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
             try {
-                List<IdRevisionPair> idRevisionPairs = symbolDAO.getIdRevisionPairs(session,
-                                                                                    group.getUserId(),
-                                                                                    group.getProjectId(),
-                                                                                    group.getId(),
-                                                                                    SymbolVisibilityLevel.ALL);
-                List<Symbol> symbols = symbolDAO.getAll(session, user, group.getProjectId(), idRevisionPairs);
-                group.setSymbols(new ArrayList<>(symbols));
+                List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(user, group.getProjectId(), group.getId());
+                group.setSymbols(new HashSet<>(symbols));
             } catch (NotFoundException e) {
                 group.setSymbols(null);
             }
@@ -237,5 +235,38 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             Collections.addAll(fieldsToLoad, embedFields);
         }
         return fieldsToLoad;
+    }
+
+    /**
+     * This method makes sure that all Symbols within the provided group will also be persisted.
+     *
+     * @param group
+     *         The Group to take care of its Symbols.
+     */
+    static void beforePersistGroup(SymbolGroup group) {
+        System.out.println("Persisting Group: " + group);
+
+        User user = group.getUser();
+        Project project = group.getProject();
+
+        System.out.println("amount of symbols: " + group.getSymbolSize());
+
+        group.getSymbols().forEach(symbol -> {
+            System.out.println(symbol);
+
+            Long symbolId = project.getNextSymbolId();
+//            user.addSymbol(symbol);
+            symbol.setUser(user);
+            project.addSymbol(symbol);
+            symbol.setGroup(group);
+//            group.addSymbol(symbol);
+            symbol.setRevision(0L);
+            symbol.setId(symbolId);
+            project.setNextSymbolId(symbolId + 1);
+
+            SymbolDAOImpl.beforeSymbolSave(symbol);
+        });
+
+        System.out.println("---------------------------------------------------");
     }
 }

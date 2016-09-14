@@ -170,9 +170,12 @@
 
         <module name="FileContentsHolder"/> <!-- hold file content for the SuppressionCommentFilter -->
 
+        <module name="SuppressWarningsHolder" />
+
     </module>
 
     <!-- allow to skip check -->
+    <module name="SuppressWarningsFilter" />
     <module name="SuppressionCommentFilter">
         <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
         <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>

@@ -119,10 +119,10 @@ public class ProjectResourceTest extends JerseyTest {
         p.setBaseUrl("http://abc");
         p.setName("Test Project");
 
-        willThrow(new ValidationException("Test Message")).given(projectDAO).create(project);
+        willThrow(new ValidationException("Test Message")).given(projectDAO).create(p);
 
         Response response = target("/projects").request().header("Authorization", adminToken)
-                                .post(Entity.json(project));
+                                .post(Entity.json(p));
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 

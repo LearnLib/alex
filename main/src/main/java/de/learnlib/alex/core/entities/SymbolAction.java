@@ -57,7 +57,7 @@ import de.learnlib.alex.actions.WebSymbolActions.WaitForTitleAction;
 import de.learnlib.alex.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.utils.SearchHelper;
-import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -66,6 +66,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -78,7 +79,10 @@ import java.io.Serializable;
  * Abstract super type of how a Action for Symbols should look & work like.
  */
 @Entity
-@Table(name = "ACTIONS")
+@Table(
+        name = "ACTIONS",
+        indexes = @Index(columnList = "userId, projectId, symbolId, number")
+)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("SUPER")
@@ -133,28 +137,28 @@ public abstract class SymbolAction implements Serializable {
     protected Long id;
 
     /** The user the actions belongs to. */
-    @NaturalId
     @ManyToOne
     @JoinColumn(name = "userId")
     @JsonIgnore
     protected User user;
 
     /** The project the actions belongs to. */
-    @NaturalId
     @ManyToOne
     @JoinColumn(name = "projectId")
     @JsonIgnore
     protected Project project;
 
     /** The symbol the action belongs to. */
-    @NaturalId
     @ManyToOne
     @JoinColumn(name = "symbolId")
     @JsonIgnore
     protected Symbol symbol;
 
     /** The position the action has in the actions list of the Symbol. */
-    @NaturalId
+    @GeneratedValue(generator = "symbol_action_number_generator")
+    @GenericGenerator(
+            name = "symbol_action_number_generator",
+            strategy = "de.learnlib.alex.core.entities.validators.SymbolActionNumberGenerator")
     @JsonIgnore
     protected int number;
 

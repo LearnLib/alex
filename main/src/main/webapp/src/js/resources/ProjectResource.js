@@ -42,6 +42,11 @@ export class ProjectResource {
             .then(response => new Project(response.data));
     }
 
+    getForExport(projectId) {
+        return this.$http.get(`rest/projects/${projectId}?embed=all`)
+                .then(response => response.data);
+    }
+
     /**
      * Get all projects of a user.
      *

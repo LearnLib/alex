@@ -24,23 +24,24 @@ import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolGroupRepository;
+import de.learnlib.alex.core.repositories.SymbolRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.alex.utils.HibernateUtil;
 import de.learnlib.alex.utils.ValidationExceptionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
-import org.springframework.stereotype.Repository;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,70 +49,93 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Implementation of a SymbolDAO using Hibernate.
+ * Implementation of a SymbolDAO using Spring Data.
  */
-@Repository
+@Service
 public class SymbolDAOImpl implements SymbolDAO {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    /** The ProjectRepository to use. Will be injected. */
+    private ProjectRepository projectRepository;
+
+    /** The SymbolGroupRepository to use. Will be injected. */
+    private SymbolGroupRepository symbolGroupRepository;
+
+    /** The SymbolRepository to use. Will be injected. */
+    private SymbolRepository symbolRepository;
+
+    /**
+     * Creates a new SymbolDAO.
+     *
+     * @param projectRepository
+     *         The ProjectRepository to use.
+     * @param symbolGroupRepository
+     *         The SymbolGroupRepository to use.
+     * @param symbolRepository
+     *         The SymbolRepository to use.
+     */
+    @Inject
+    public SymbolDAOImpl(ProjectRepository projectRepository, SymbolGroupRepository symbolGroupRepository,
+                         SymbolRepository symbolRepository) {
+        this.projectRepository = projectRepository;
+        this.symbolGroupRepository = symbolGroupRepository;
+        this.symbolRepository = symbolRepository;
+    }
 
     @Override
+    @Transactional
     public void create(Symbol symbol) throws ValidationException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+        LOGGER.traceEntry("create({})", symbol);
         try {
             // create the symbol
-            create(session, symbol);
-            setExecuteToSymbols(session, symbol);
-            HibernateUtil.commitTransaction();
+            createOne(symbol);
+            setExecuteToSymbols(symbolRepository, symbol);
 
         // error handling
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.info("Symbol creation failed:", e);
+            throw new ValidationException("Symbol could not be created.", e);
+        } catch (TransactionSystemException e) {
+            LOGGER.info("Symbol creation failed:", e);
+            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
+            throw ValidationExceptionHelper.createValidationException("Symbol was not created:", cve);
         } catch (javax.validation.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
             symbol.setId(null);
             symbol.setRevision(null);
             throw ValidationExceptionHelper.createValidationException("Symbol was not created:", e);
         } catch (org.hibernate.exception.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
             symbol.setId(null);
             symbol.setRevision(null);
             throw new ValidationException("Symbol was not created: " + e.getMessage(), e);
         } catch (IllegalStateException e) {
-            HibernateUtil.rollbackTransaction();
             symbol.setId(null);
             symbol.setRevision(null);
             throw new ValidationException("Could not create symbol because it was invalid.", e);
         } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
             symbol.setId(null);
             symbol.setRevision(null);
             throw new ValidationException("Could not create a symbol because it has a reference to another"
                                                   + " unknown symbol.", e);
         }
+        LOGGER.traceExit(symbol);
     }
 
     @Override
+    @Transactional
     public void create(List<Symbol> symbols) throws ValidationException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
         try {
             // create the symbol
-            symbols.forEach(s -> create(session, s));
+            symbols.forEach(this::createOne);
 
             // set execute symbols
-            Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
-            symbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
-            for (Symbol symbol : symbols) {
-                setExecuteToSymbols(session, symbol, symbolMap);
-            }
+            setExecuteToSymbols(symbolRepository, symbols);
 
-            HibernateUtil.commitTransaction();
         // error handling
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.info("Symbol creation failed:", e);
+            throw new ValidationException("Symbol could not be created.", e);
         } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
                 s.setRevision(null);
@@ -119,21 +143,18 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new ValidationException("Could not create a symbol because it has a reference to another"
                                                   + " unknown symbol.", e);
         } catch (javax.validation.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
                 s.setRevision(null);
             });
             throw ValidationExceptionHelper.createValidationException("Symbols were not created:", e);
         } catch (org.hibernate.exception.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
                 s.setRevision(null);
             });
             throw new ValidationException("Symbols were not created: " + e.getMessage(), e);
         } catch (IllegalStateException e) {
-            HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
                 s.setRevision(null);
@@ -142,86 +163,63 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private void create(Session session, Symbol symbol) {
+    private void createOne(Symbol symbol) {
         // new symbols should have a project, not an id and not a revision
-        if (symbol.getProject() == null || symbol.getId() != null || symbol.getRevision() != null) {
-            throw new ValidationException(
-                    "To create a symbols it must have a Project but not haven an ID or and revision");
+        if (symbol.getProjectId() == null && symbol.getProject() == null) {
+            throw new ValidationException("To create a symbols it must have a Project.");
         }
 
-        Project project = session.load(Project.class, symbol.getProjectId());
+        if (symbol.getId() != null || symbol.getRevision() != null) {
+            throw new ValidationException("To create a symbols it must not haven an ID or and revision");
+        }
+
+        Long userId    = symbol.getUserId();
+        Long projectId = symbol.getProjectId();
+        Long groupId   = symbol.getGroupId();
+
+        System.out.println("Group ID: " + groupId);
+
+        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
+        if (project == null) {
+            throw new ValidationException("The Project was not found and thus the Symbol was not created.");
+        }
+
+        SymbolGroup group = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(userId, projectId, groupId);
+        if (group == null) {
+            group = project.getDefaultGroup();
+            System.out.println("Using Default Group: " + group);
+        }
 
         // get the current highest symbol id in the project and add 1 for the next id
         long id = project.getNextSymbolId();
         project.setNextSymbolId(id + 1);
-        session.update(project);
+        projectRepository.save(project);
 
         // set id, project id and revision and save the symbol
         symbol.setId(id);
-        symbol.setRevision(1L);
+        symbol.setRevision(0L);
+
         project.addSymbol(symbol);
 
-        SymbolGroup group = session.byNaturalId(SymbolGroup.class)
-                                    .using("user", symbol.getUser())
-                                    .using("project", project)
-                                    .using("id", symbol.getGroupId())
-                                    .load();
-        if (group == null) {
-            throw new ValidationException("The specified group was not found and thus the Symbol was not created.");
-        }
+        // add the symbol to its group
         group.addSymbol(symbol);
 
         beforeSymbolSave(symbol);
 
-        session.save(symbol);
+        symbolRepository.save(symbol);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Symbol> getAll(User user, Long projectId, List<IdRevisionPair> idRevPairs) throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        List<Symbol> result = getAll(session, user, projectId, idRevPairs);
-
-        // done
-        HibernateUtil.commitTransaction();
-        return result;
-    }
-
-    /**
-     * Like {@link #getAll(User, Long, List)}, but use a given Hibernate session.
-     * @param session The session to use.
-     * @param user The owner of the Symbols.
-     * @param projectId The project the symbols should belong to.
-     * @param idRevPairs A list of pairs of an ID and revisions to specify the expected symbols.
-     * @return A list of symbols matching the project and list of IDs and revisions.
-     * @throws NotFoundException If the project or one of the symbols could not be found.
-     */
-    List<Symbol> getAll(Session session, User user, Long projectId, List<IdRevisionPair> idRevPairs)
-            throws NotFoundException {
         // no DB interaction if no symbols are requested
         if (idRevPairs.isEmpty()) {
             return new LinkedList<>();
         }
 
-        // prepare the subquerys for the id/ revision pairs
-        Disjunction symbolIdRestrictions = Restrictions.disjunction();
-        for (IdRevisionPair pair : idRevPairs) {
-            symbolIdRestrictions.add(Restrictions.eq("idRevisionPair", pair));
-        }
-        DetachedCriteria symbolIds = DetachedCriteria.forClass(Symbol.class)
-                                                        .add(Restrictions.eq("user.id", user.getId()))
-                                                        .add(Restrictions.eq("project.id", projectId))
-                                                        .add(symbolIdRestrictions)
-                                                        .setProjection(Projections.property("symbolId"));
-
         // get the symbols
         @SuppressWarnings("unchecked") // should return a list of Symbols
-        List<Symbol> result = session.createCriteria(Symbol.class)
-                                        .add(Subqueries.propertyIn("symbolId", symbolIds))
-                                        .addOrder(Order.asc("idRevisionPair.id"))
-                                        .list();
+                List<Symbol> result = symbolRepository.findAll(user.getId(), projectId, idRevPairs);
 
         if (result.isEmpty()) {
             throw new NotFoundException("Could not find symbols in the project " + projectId
@@ -229,324 +227,181 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
 
         // load the lazy relations
-        result.forEach(s -> loadLazyRelations(session, s));
+        result.forEach(s -> loadLazyRelations(this, s));
         return result;
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Symbol> getAllWithLatestRevision(User user, Long projectId, SymbolVisibilityLevel visibilityLevel)
+            throws NotFoundException {
+        Project project = projectRepository.findOneByUser_IdAndId(user.getId(), projectId);
+        if (project == null) {
+            throw new NotFoundException("Could not find the project with the id " + projectId + ".");
+        }
+
+        List<Symbol> result = symbolRepository.findAllWithHighestRevision(user.getId(),
+                                                                          projectId,
+                                                                          visibilityLevel.getCriterion());
+
+        result.forEach(s -> loadLazyRelations(this, s));
+
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Symbol> getAllWithLatestRevision(User user, Long projectId, Long groupId) throws NotFoundException {
         return getAllWithLatestRevision(user, projectId, groupId, SymbolVisibilityLevel.VISIBLE);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Symbol> getAllWithLatestRevision(User user, Long projectId,
                                                  Long groupId, SymbolVisibilityLevel visibilityLevel)
             throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+        List<Symbol> symbols = symbolRepository.findAllWithHighestRevision(user.getId(), projectId,
+                                                                           groupId, visibilityLevel.getCriterion());
 
-        List<IdRevisionPair> idRevPairs = getIdRevisionPairs(session, user.getId(), projectId,
-                                                             groupId, visibilityLevel);
-
-        HibernateUtil.commitTransaction();
-
-        if (idRevPairs.isEmpty()) {
-            return new LinkedList<>();
-        }
-        return getAll(user, projectId, idRevPairs);
-    }
-
-    /**
-     * Get a List of IdRevisionPairs that describes all Symbols within a specific group,
-     * using the given Hibernate session.
-     *
-     * @param session
-     *         The Session to use.
-     * @param userId
-     *         The owner of the Symbols.
-     * @param projectId
-     *         The Project that the Symbols are part of.
-     * @param groupId
-     *         The Group in which the Symbols are in.
-     * @param visibilityLevel
-     *         The visibility level of the Symbols.
-     * @return A List of IdRevisionPairs to represent the Symbols within a group.
-     * @throws NotFoundException
-     *         If the group could not be found.
-     */
-    List<IdRevisionPair> getIdRevisionPairs(Session session, Long userId, Long projectId,
-                                            Long groupId, SymbolVisibilityLevel visibilityLevel)
-            throws NotFoundException {
-        SymbolGroup group = (SymbolGroup) session.createCriteria(SymbolGroup.class)
-                                                    .add(Restrictions.eq("user.id", userId))
-                                                    .add(Restrictions.eq("project.id", projectId))
-                                                    .add(Restrictions.eq("id", groupId))
-                                                    .uniqueResult();
-
-        if (group == null) {
-            throw new NotFoundException("Could not find the group with the id " + groupId
-                                                + " in the project " + projectId + ". ");
-        }
-
-        // get latest revision
-        List<Object[]> idRevList = session.createCriteria(Symbol.class)
-                                            .add(Restrictions.eq("user.id", userId))
-                                            .add(Restrictions.eq("project.id", projectId))
-                                            .add(Restrictions.eq("group", group))
-                                            .add(visibilityLevel.getCriterion())
-                                            .setProjection(Projections.projectionList()
-                                                               .add(Projections.groupProperty("idRevisionPair.id"))
-                                                               .add(Projections.max("idRevisionPair.revision")))
-                                            .list();
-
-        if (idRevList.isEmpty()) {
+        if (symbols.isEmpty()) {
             return new LinkedList<>();
         }
 
-        return createIdRevisionPairList(idRevList);
-    }
+        symbols.forEach(s -> loadLazyRelations(this, s));
 
+        return symbols;
+    }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Symbol> getByIdsWithLatestRevision(User user, Long projectId, Long... ids) throws NotFoundException {
         return getByIdsWithLatestRevision(user, projectId, SymbolVisibilityLevel.ALL, ids);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Symbol> getByIdsWithLatestRevision(User user, Long projectId, SymbolVisibilityLevel visibilityLevel,
                                                    Long... ids) throws NotFoundException {
-        try {
-            // start session
-            Session session = HibernateUtil.getSession();
-            HibernateUtil.beginTransaction();
-
-            return getByIdsWithLatestRevision(session, user, projectId, visibilityLevel, ids);
-        } finally {
-            HibernateUtil.commitTransaction();
-        }
-    }
-
-    /**
-     * Get a list of Symbols, like {@link #getByIdsWithLatestRevision(User, Long, SymbolVisibilityLevel, Long...)},
-     * but use a given Hibernate session.
-     *
-     * @param session
-     *         The session to use.
-     * @param user
-     *         The owner of the Symbols.
-     * @param projectId
-     *         The Project the Symbols are part of.
-     * @param visibilityLevel
-     *         The visibility level to check.
-     * @param ids
-     *         The IDs of the Symbols to fetch.
-     * @return The List of Symbols fulfilling all the above criteria.
-     * @throws NotFoundException
-     *         If no symbol was found.
-     */
-    public List<Symbol> getByIdsWithLatestRevision(Session session, User user, Long projectId,
-                                                   SymbolVisibilityLevel visibilityLevel, Long... ids)
-            throws NotFoundException {
         // get latest revision
-        @SuppressWarnings("unchecked") // should return a list of objects arrays which contain 2 Long values.
-        List<Object[]> idRevList = session.createCriteria(Symbol.class)
-                                            .add(Restrictions.eq("user", user))
-                                            .add(Restrictions.eq("project.id", projectId))
-                                            .add(Restrictions.in("idRevisionPair.id", ids))
-                                            .add(visibilityLevel.getCriterion())
-                                            .setProjection(Projections.projectionList()
-                                                                   .add(Projections.groupProperty("idRevisionPair.id"))
-                                                                   .add(Projections.max("idRevisionPair.revision"))
-                                            ).list();
+        List<Symbol> result = symbolRepository.findAllWithHighestRevision(user.getId(), projectId, ids);
 
-        List<IdRevisionPair> idRevPairs = createIdRevisionPairList(idRevList);
-
-        if (idRevPairs.isEmpty()) {
+        if (result.isEmpty()) {
             throw new NotFoundException("Could not find symbols in the project " + projectId
                                                      + " with the ids " + Arrays.toString(ids) + ".");
         }
-        return getAll(session, user, projectId, idRevPairs);
-    }
 
-    @Override
-    public List<Symbol> getAllWithLatestRevision(User user, Long projectId, SymbolVisibilityLevel visibilityLevel)
-            throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+        result.forEach(s -> loadLazyRelations(this, s));
 
-        Project project = session.get(Project.class, projectId);
-        if (project == null) {
-            throw new NotFoundException("Could not find the project with the id " + projectId + ".");
-        }
-
-        @SuppressWarnings("unchecked") // should return a list of Symbols
-        List<Long> ids = session.createCriteria(Symbol.class)
-                                    .add(Restrictions.eq("project", project))
-                                    .add(Restrictions.eq("user", user))
-                                    .setProjection(Projections.property("idRevisionPair.id"))
-                                    .list();
-
-        HibernateUtil.commitTransaction();
-
-        if (ids.isEmpty()) {
-            return new LinkedList<>();
-        }
-        return getByIdsWithLatestRevision(user, projectId, visibilityLevel, ids.toArray(new Long[ids.size()]));
-    }
-
-    @Override
-    public Symbol get(User user, Long projectId, IdRevisionPair idRevisionPair) throws NotFoundException {
-        List<IdRevisionPair> idRevisionList =  new LinkedList<>();
-        idRevisionList.add(idRevisionPair);
-        List<Symbol> resultList = getAll(user, projectId, idRevisionList);
-
-        if (resultList.isEmpty()) {
-            throw new NotFoundException("Could not find a symbol in the project " + projectId
-                                                     + " with the id and revision " + idRevisionPair + ".");
-        }
-        return resultList.get(0);
-    }
-
-    @Override
-    public Symbol get(User user, Long projectId, Long id, Long revision) throws NotFoundException {
-        IdRevisionPair idRevisionPair = new IdRevisionPair(id, revision);
-        return get(user, projectId, idRevisionPair);
-    }
-
-    @Override
-    public Symbol getWithLatestRevision(User user, Long projectId, Long id) throws NotFoundException {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
-
-        Symbol result = getWithLatestRevision(session, user, projectId, id);
-
-        HibernateUtil.commitTransaction();
         return result;
     }
 
-    private Symbol getWithLatestRevision(Session session, User user, Long projectId, Long id) throws NotFoundException {
-        List<Symbol> resultList = getByIdsWithLatestRevision(session, user, projectId, SymbolVisibilityLevel.ALL, id);
-
-        if (resultList.isEmpty()) {
-            throw new NotFoundException("Could not find symbols in the project " + projectId
-                                                     + " with the id " + id + ".");
-        }
-        return resultList.get(0);
+    @Override
+    @Transactional(readOnly = true)
+    public Symbol get(User user, Long projectId, IdRevisionPair idRevisionPair) throws NotFoundException {
+        return get(user, projectId, idRevisionPair.getId(), idRevisionPair.getRevision());
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Symbol get(User user, Long projectId, Long id, Long revision) throws NotFoundException {
+        Symbol result = symbolRepository.findOne(user.getId(), projectId, id, revision);
+
+        if (result == null) {
+            throw new NotFoundException("Could not find a symbol in the project " + projectId + ","
+                                                + " the id " + id + " and the revision " + revision + ".");
+        }
+        loadLazyRelations(this, result);
+
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Symbol getWithLatestRevision(User user, Long projectId, Long id) throws NotFoundException {
+        return getByIdsWithLatestRevision(user, projectId, id).get(0);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Symbol> getWithAllRevisions(User user, Long projectId, Long id) throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
+        List<Symbol> result = symbolRepository.findOne(user.getId(), projectId, id);
 
-        @SuppressWarnings("unchecked") // should return a list of revisions (type: Long)
-        List<Long> revisions = session.createCriteria(Symbol.class)
-                                        .add(Restrictions.eq("project.id", projectId))
-                                        .add(Restrictions.eq("user", user))
-                                        .add(Restrictions.eq("idRevisionPair.id", id))
-                                        .setProjection(Projections.property("idRevisionPair.revision"))
-                                        .addOrder(Order.asc("idRevisionPair.revision"))
-                                        .list();
-
-        HibernateUtil.commitTransaction();
-
-        if (revisions.isEmpty()) {
+        if (result.isEmpty()) {
             throw new NotFoundException("Could not find symbols in the project " + projectId
                                                      + " with the id " + id + ".");
         }
 
-        List<IdRevisionPair> idRevisionList =  new LinkedList<>();
-        revisions.forEach(revision -> idRevisionList.add(new IdRevisionPair(id, revision)));
+        result.forEach(s -> loadLazyRelations(this, s));
 
-        return getAll(user, projectId, idRevisionList);
+        return result;
     }
 
     @Override
+    @Transactional
     public void update(Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
         // update
         try {
-            update(session, symbol);
-            setExecuteToSymbols(session, symbol);
-
-            HibernateUtil.commitTransaction();
+            update_(symbol);
+            setExecuteToSymbols(symbolRepository, symbol);
 
         // error handling
-        } catch (javax.validation.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
-            throw ValidationExceptionHelper.createValidationException("Symbol was not updated:", e);
-        } catch (org.hibernate.exception.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
-            throw new ValidationException("Symbol was not updated: " + e.getMessage(), e);
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.info("Symbol update failed:", e);
+            throw new ValidationException("Symbol could not be updated.", e);
+        } catch (TransactionSystemException e) {
+            LOGGER.info("Symbol update failed:", e);
+            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
+            throw ValidationExceptionHelper.createValidationException("Symbol could not be updated:", cve);
         } catch (IllegalStateException e) {
-            HibernateUtil.rollbackTransaction();
             throw new ValidationException("Could not update the Symbol because it is not valid.", e);
         } catch (IllegalArgumentException e) {
-            HibernateUtil.rollbackTransaction();
             throw e;
         } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
             throw new NotFoundException("Could not update the Symbol because it was nowhere to be found.", e);
         }
     }
 
     @Override
+    @Transactional
     public void update(List<Symbol> symbols) throws IllegalArgumentException, NotFoundException, ValidationException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
         // update
         try {
             for (Symbol symbol : symbols) {
-                update(session, symbol);
+                update_(symbol);
             }
 
             Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
             symbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
             for (Symbol symbol : symbols) {
-                setExecuteToSymbols(session, symbol, symbolMap);
+                setExecuteToSymbols(symbolRepository, symbol, symbolMap);
             }
-
-            HibernateUtil.commitTransaction();
 
             // error handling
         } catch (javax.validation.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
                 s.setRevision(null);
             });
             throw ValidationExceptionHelper.createValidationException("Symbols were not updated:", e);
         } catch (org.hibernate.exception.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
                 s.setRevision(null);
             });
             throw new ValidationException("Symbols were not updated: " + e.getMessage(), e);
         } catch (IllegalStateException e) {
-            HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
                 s.setRevision(null);
             });
             throw new ValidationException("Could not update the Symbols because one is not valid.", e);
         } catch (IllegalArgumentException e) {
-            HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
                 s.setRevision(null);
             });
             throw e;
         } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
             symbols.forEach(s -> {
                 s.setId(null);
                 s.setRevision(null);
@@ -555,7 +410,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private void update(Session session, Symbol symbol) throws IllegalArgumentException, NotFoundException {
+    private void update_(Symbol symbol) throws IllegalArgumentException, NotFoundException {
         // checks for valid symbol
         if (symbol.getProjectId() == null) {
             throw new NotFoundException("Update failed: Could not find the project with the id + "
@@ -564,7 +419,8 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         Symbol symbolInDB;
         try {
-            symbolInDB = getWithLatestRevision(session, symbol.getUser(), symbol.getProjectId(), symbol.getId());
+            symbolInDB = getWithLatestRevision(symbol.getUser(), symbol.getProjectId(), symbol.getId());
+            symbol.setProject(symbolInDB.getProject());
         } catch (NotFoundException e) {
             throw new NotFoundException("Update failed: Could not find the symbols with the id " + symbol.getId()
                                                 + " in the project " + symbol.getProjectId() + ".");
@@ -577,16 +433,13 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                        + symbol.getProjectId() + ".");
         }
 
-        SymbolGroup oldGroup = session.byNaturalId(SymbolGroup.class)
-                                        .using("user", symbol.getUser())
-                                        .using("project", symbol.getProject())
-                                        .using("id", symbolInDB.getGroupId())
-                                        .load();
-        SymbolGroup newGroup = session.byNaturalId(SymbolGroup.class)
-                                        .using("user", symbol.getUser())
-                                        .using("project", symbol.getProject())
-                                        .using("id", symbol.getGroupId())
-                                        .load();
+        SymbolGroup oldGroup = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
+                                                                                        symbol.getProjectId(),
+                                                                                        symbolInDB.getGroupId());
+
+        SymbolGroup newGroup = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
+                                                                                        symbol.getProjectId(),
+                                                                                        symbol.getGroupId());
 
         // count revision up
         symbol.setSymbolId(0L);
@@ -595,15 +448,13 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         beforeSymbolSave(symbol);
 
-        session.save(symbol);
+        symbolRepository.save(symbol);
 
         // update group
         if (!newGroup.equals(oldGroup)) {
-            List<Symbol> symbols = session.createCriteria(Symbol.class)
-                                            .add(Restrictions.eq("user", symbol.getUser()))
-                                            .add(Restrictions.eq("project", symbol.getProject()))
-                                            .add(Restrictions.eq("idRevisionPair.id", symbol.getId()))
-                                            .list();
+            List<Symbol> symbols = symbolRepository.findOne(symbol.getUserId(),
+                                                            symbol.getProjectId(),
+                                                            symbol.getId());
             symbols.remove(symbol);
 
             symbols.forEach(newGroup::addSymbol);
@@ -611,141 +462,96 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
+    @Transactional
     public void move(Symbol symbol, Long newGroupId) throws NotFoundException {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
-
         try {
-            move(session, symbol, newGroupId);
-
-            HibernateUtil.commitTransaction();
+            move_(symbol, newGroupId);
         } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
             throw e;
         }
     }
 
     @Override
+    @Transactional
     public void move(List<Symbol> symbols, Long newGroupId) throws NotFoundException  {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
-
         try {
             for (Symbol s : symbols) {
-                move(session, s, newGroupId);
+                move_(s, newGroupId);
             }
-            HibernateUtil.commitTransaction();
         } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
             throw e;
         }
     }
 
-    private void move(Session session, Symbol symbol, Long newGroupId) throws NotFoundException {
-        SymbolGroup oldGroup = session.byNaturalId(SymbolGroup.class)
-                                        .using("user", symbol.getUser())
-                                        .using("project", symbol.getProject())
-                                        .using("id", symbol.getGroupId())
-                                        .load();
-        SymbolGroup newGroup = session.byNaturalId(SymbolGroup.class)
-                                        .using("user", symbol.getUser())
-                                        .using("project", symbol.getProject())
-                                        .using("id", newGroupId)
-                                        .load();
+    private void move_(Symbol symbol, Long newGroupId) throws NotFoundException {
+        SymbolGroup oldGroup = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
+                                                                                        symbol.getProjectId(),
+                                                                                        symbol.getGroupId());
+
+        SymbolGroup newGroup = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
+                                                                                        symbol.getProjectId(),
+                                                                                        newGroupId);
 
         if (newGroup == null) {
             throw new NotFoundException("The group with the id " + newGroupId + " does not exist!");
         }
 
         if (!newGroup.equals(oldGroup)) {
-            List<Symbol> symbols = session.createCriteria(Symbol.class)
-                                            .add(Restrictions.eq("user", symbol.getUser()))
-                                            .add(Restrictions.eq("project", symbol.getProject()))
-                                            .add(Restrictions.eq("idRevisionPair.id", symbol.getId()))
-                                            .list();
+            List<Symbol> symbols = symbolRepository.findOne(symbol.getUserId(),
+                                                            symbol.getProjectId(),
+                                                            symbol.getId());
             symbols.forEach(newGroup::addSymbol);
         }
     }
 
     @Override
+    @Transactional
     public void hide(Long userId, Long projectId, Long... ids) throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
         // update
         try {
             for (Long id : ids) {
-                List<Symbol> symbols = getSymbols(session, userId, projectId, id);
+                List<Symbol> symbols = getSymbols(userId, projectId, id);
 
-                hideSymbols(session, symbols);
+                hideSymbols(symbols);
             }
         } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
             throw  e;
         }
-
-        // done
-        HibernateUtil.commitTransaction();
     }
 
-    private void hideSymbols(Session session, List<Symbol> symbols) {
+    private void hideSymbols(List<Symbol> symbols) {
         for (Symbol symbol : symbols) {
-            loadLazyRelations(session, symbol);
+            loadLazyRelations(this, symbol);
 
             symbol.setHidden(true);
-            session.update(symbol);
+            symbolRepository.save(symbol);
         }
     }
 
     @Override
+    @Transactional
     public void show(Long userId, Long projectId, Long... ids) throws NotFoundException {
-        // start session
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
         // update
         try {
             for (Long id : ids) {
-                List<Symbol> symbols = getSymbols(session, userId, projectId, id);
-                showSymbols(session, symbols);
+                List<Symbol> symbols = getSymbols(userId, projectId, id);
+                showSymbols(symbols);
             }
         } catch (IllegalArgumentException e) {
-            HibernateUtil.rollbackTransaction();
             throw  e;
         }
-
-        // done
-        HibernateUtil.commitTransaction();
     }
 
-    private void showSymbols(Session session, List<Symbol> symbols) {
+    private void showSymbols(List<Symbol> symbols) {
         for (Symbol symbol : symbols) {
             symbol.setHidden(false);
-            session.update(symbol);
+            symbolRepository.save(symbol);
         }
     }
 
-    private List<IdRevisionPair> createIdRevisionPairList(List<Object[]> idRevisionsFromDB) {
-        List<IdRevisionPair> idRevPairs = new LinkedList<>();
-        for (Object[] obj : idRevisionsFromDB) {
-            IdRevisionPair newPair = new IdRevisionPair();
-            newPair.setId((Long) obj[0]);
-            newPair.setRevision((Long) obj[1]);
-
-            idRevPairs.add(newPair);
-        }
-        return idRevPairs;
-    }
-
-    private List<Symbol> getSymbols(Session session, Long userId, Long projectId, Long symbolId)
+    private List<Symbol> getSymbols(Long userId, Long projectId, Long symbolId)
             throws NotFoundException {
-        @SuppressWarnings("should return a list of Symbols")
-        List<Symbol> symbols = session.createCriteria(Symbol.class)
-                                        .add(Restrictions.eq("user.id", userId))
-                                        .add(Restrictions.eq("project.id", projectId))
-                                        .add(Restrictions.eq("idRevisionPair.id", symbolId))
-                                        .list();
+        List<Symbol> symbols = symbolRepository.findOne(userId, projectId, symbolId);
 
         if (symbols.size() == 0) {
             throw new NotFoundException("Could not mark the symbol as hidden because it was not found.");
@@ -757,40 +563,52 @@ public class SymbolDAOImpl implements SymbolDAO {
     /**
      * Sets references to related entities to all actions of a symbol.
      *
-     * @param symbol The symbol.
+     * @param symbol
+     *         The symbol.
      */
-    public void beforeSymbolSave(Symbol symbol) {
+    public static void beforeSymbolSave(Symbol symbol) {
+        User user = symbol.getUser();
+        Project project = symbol.getProject();
+
         for (int i = 0; i < symbol.getActions().size(); i++) {
             SymbolAction action = symbol.getActions().get(i);
             action.setId(null);
-            action.setUser(symbol.getUser());
-            action.setProject(symbol.getProject());
+            action.setUser(user);
+            action.setProject(project);
             action.setSymbol(symbol);
             action.setNumber(i);
         }
     }
 
-    private void setExecuteToSymbols(Session session, Symbol symbol) throws NotFoundException {
+    private void setExecuteToSymbols(SymbolRepository symbolRepository, Symbol symbol) throws NotFoundException {
         Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
         symbolMap.put(symbol.getIdRevisionPair(), symbol);
-        setExecuteToSymbols(session, symbol, symbolMap);
+        setExecuteToSymbols(symbolRepository, symbol, symbolMap);
     }
 
-    private void setExecuteToSymbols(Session session, Symbol symbol, Map<IdRevisionPair, Symbol> allSymbols)
+    public static void setExecuteToSymbols(SymbolRepository symbolRepository, Collection<Symbol> symbols)
+            throws NotFoundException {
+        Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
+        symbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
+
+        for (Symbol symbol : symbols) {
+            SymbolDAOImpl.setExecuteToSymbols(symbolRepository, symbol, symbolMap);
+        }
+    }
+
+    private static void setExecuteToSymbols(SymbolRepository symbolRepository, Symbol symbol,
+                                            Map<IdRevisionPair, Symbol> cachedSymbols)
             throws NotFoundException {
         for (SymbolAction action : symbol.getActions()) {
             if (action instanceof ExecuteSymbolAction) {
                 ExecuteSymbolAction executeSymbolAction = (ExecuteSymbolAction) action;
                 IdRevisionPair idAndRevision = executeSymbolAction.getSymbolToExecuteAsIdRevisionPair();
 
-                Symbol symbolToExecute = allSymbols.get(idAndRevision);
+                Symbol symbolToExecute = cachedSymbols.get(idAndRevision);
 
-                if (symbolToExecute == null) { // it was not in the set of all symbols
-                    symbolToExecute = (Symbol) session.createCriteria(Symbol.class)
-                                                        .add(Restrictions.eq("user", action.getUser()))
-                                                        .add(Restrictions.eq("project", action.getProject()))
-                                                        .add(Restrictions.eq("idRevisionPair", idAndRevision))
-                                                        .uniqueResult();
+                if (symbolToExecute == null) { // it was not in the set of cached symbols
+                    symbolToExecute = symbolRepository.findOne(action.getUser().getId(), action.getProject().getId(),
+                                                               idAndRevision.getId(), idAndRevision.getRevision());
                 }
 
                 if (symbolToExecute == null) {
@@ -806,13 +624,14 @@ public class SymbolDAOImpl implements SymbolDAO {
     /**
      * Use Hibernate to populate all fields of a Symbol, including all references to other entities.
      *
-     * @param session
-     *         The Hibernate session to use to fetch symbols from the DB.
+     * @param symbolDAO
+     *         The SymbolDAO to use.
      * @param symbol
      *         The Symbol to populate.
      */
-    public void loadLazyRelations(Session session, Symbol symbol) {
+    public static void loadLazyRelations(SymbolDAO symbolDAO, Symbol symbol) {
         Hibernate.initialize(symbol.getUser());
+        Hibernate.initialize(symbol.getProject());
         Hibernate.initialize(symbol.getGroup());
 
         Hibernate.initialize(symbol.getActions());
@@ -821,7 +640,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
             if (action.isUseLatestRevision()) {
                 try {
-                    Symbol symbolToExecute = getWithLatestRevision(session, symbol.getUser(), symbol.getProjectId(),
+                    Symbol symbolToExecute = symbolDAO.getWithLatestRevision(symbol.getUser(), symbol.getProjectId(),
                                                                 action.getSymbolToExecuteAsIdRevisionPair().getId());
                     action.setSymbolToExecute(symbolToExecute);
                 } catch (NotFoundException e) {
@@ -838,7 +657,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                             || !Hibernate.isInitialized(symbolToExecute.getActions()))) {
                 Hibernate.initialize(symbolToExecute);
                 Hibernate.initialize(symbolToExecute.getActions());
-                loadLazyRelations(session, symbolToExecute);
+                loadLazyRelations(symbolDAO, symbolToExecute);
             }
         });
     }

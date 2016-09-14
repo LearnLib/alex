@@ -80,7 +80,8 @@ public class ProjectTest {
         assertEquals("http://example.com", p.getBaseUrl());
         assertEquals(LOREM_IPSUM, p.getDescription());
         assertTrue(p.getSymbols() != null);
-        assertEquals(1, p.getSymbolsSize());
+        // symbols are not included in the Project directly, instead they're parts of groups now
+        assertEquals(0, p.getSymbolsSize());
     }
 
     @Test

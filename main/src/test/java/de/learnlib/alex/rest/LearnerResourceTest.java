@@ -461,7 +461,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfOutputShouldBeCreatedWithForNotExistingSymbols() throws NotFoundException {
-        given(symbolDAO.get(admin, PROJECT_TEST_ID, new IdRevisionPair(2, 2))).willThrow(NotFoundException.class);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, new IdRevisionPair(2L, 2L))).willThrow(NotFoundException.class);
 
         String json = "{\"resetSymbol\":"
                         + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"

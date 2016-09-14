@@ -16,8 +16,6 @@
 
 package de.learnlib.alex.core.dao;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import de.learnlib.alex.core.entities.LearnAlgorithms;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResultStep;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
@@ -25,370 +23,360 @@ import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Statistics;
 import de.learnlib.alex.core.entities.User;
-import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
+import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.core.repositories.LearnerResultRepository;
+import de.learnlib.alex.core.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.alex.utils.HibernateUtil;
-import net.automatalib.automata.transout.impl.compact.CompactMealy;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.SimpleAlphabet;
-import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.validation.ValidationException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LearnerResultDAOImplTest {
 
-    private static final Long USER_ID = 4L;
-    private static final int RESULTS_AMOUNT = 5;
+    private static final long USER_ID    = 21L;
+    private static final long PROJECT_ID = 42L;
+    private static final int RESULTS_AMOUNT = 3;
     private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE = new MealyRandomWordsEQOracleProxy(1, 5, 10);
 
-    private static UserDAO userDAO;
-    private static ProjectDAO projectDAO;
-    private static LearnerResultDAO learnerResultDAO;
+    @Mock
+    private LearnerResultRepository learnerResultRepository;
 
-    private User user;
-    private Project project;
-
-    private LearnerResult learnerResult;
-    private LearnerResult learnerResult2;
+    @Mock
+    private LearnerResultStepRepository learnerResultStepRepository;
 
     @Mock
     private Learner learner;
 
-    @BeforeClass
-    public static void beforeClass() {
-        userDAO = new UserDAOImpl();
-        SymbolDAOImpl symbolDAO = new SymbolDAOImpl();
-        projectDAO = new ProjectDAOImpl(symbolDAO);
-        learnerResultDAO = new LearnerResultDAOImpl();
-    }
+    private LearnerResultDAO learnerResultDAO;
+
 
     @Before
     public void setUp() {
-        user = new User(USER_ID);
-        user.setEmail("LearnerResultDAOImplTest@alex-tests.example");
-        user.setEncryptedPassword("alex");
-        userDAO.create(user);
-
-        ((LearnerResultDAOImpl) learnerResultDAO).setLearner(learner);
-
-        project = new Project();
-        project.setName("LearnerResultDAO - Test Project");
-        project.setBaseUrl("http://example.com/");
-        project.setUser(user);
-        projectDAO.create(project);
-
-        learnerResult = new LearnerResult();
-        initLearnerResult(learnerResult);
-
-        learnerResult2 = new LearnerResult();
-        initLearnerResult(learnerResult2);
-    }
-
-    @After
-    public void tearDown() throws NotFoundException {
-        userDAO.delete(user.getId());
+        learnerResultDAO = new LearnerResultDAOImpl(learnerResultRepository, learnerResultStepRepository);
     }
 
     @Test
-    public void shouldSaveValidLearnResults() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
+    public void shouldSaveAValidLearnerResult() {
+        User user = new User();
+        user.setId(USER_ID);
+        //
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        //
+        LearnerResult result = new LearnerResult();
+        result.setUser(user);
+        result.setProject(project);
+        //
+        given(learnerResultRepository.findHighestTestNo(USER_ID, PROJECT_ID)).willReturn(1L);
+        given(learnerResultRepository.save(result)).willReturn(result);
 
-        assertTrue(learnerResult.getTestNo() > 0);
+        learnerResultDAO.create(result);
 
-        LearnerResult resultFromDB = learnerResultDAO.get(user.getId(), project.getId(),
-                                                          learnerResult.getTestNo(), true);
-
-        assertEquality(learnerResult, resultFromDB);
+        verify(learnerResultRepository).save(result);
+        assertThat(result.getTestNo(), is(equalTo(2L)));
     }
 
     @Test
-    public void shouldSaveTwoValidLearnResults() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
-        LearnerResult result2 = new LearnerResult();
-        initLearnerResult(result2);
-        learnerResultDAO.create(result2);
+    public void shouldSaveAValidLearnerResultWhenItIsTheFirstResult() {
+        User user = new User();
+        user.setId(USER_ID);
+        //
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        //
+        LearnerResult result = new LearnerResult();
+        result.setUser(user);
+        result.setProject(project);
+        //
+        given(learnerResultRepository.findHighestTestNo(USER_ID, PROJECT_ID)).willReturn(null);
+        given(learnerResultRepository.save(result)).willReturn(result);
 
-        /* check learnerResult 1 */
-        assertTrue(learnerResult.getTestNo() > 0);
-        LearnerResult resultFromDB = learnerResultDAO.get(user.getId(), project.getId(),
-                                                          learnerResult.getTestNo(), true);
-        assertEquality(learnerResult, resultFromDB);
+        learnerResultDAO.create(result);
 
-        /* check learnerResult 2 */
-        assertTrue(result2.getTestNo() > 0);
-        resultFromDB = learnerResultDAO.get(user.getId(), project.getId(), result2.getTestNo(), true);
-        assertEquality(result2, resultFromDB);
-
-        /* check relations */
-        assertFalse(learnerResult.getTestNo().equals(result2.getTestNo()));
+        verify(learnerResultRepository).save(result);
+        assertThat(result.getTestNo(), is(equalTo(0L)));
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotSaveALearnResultsWithoutAProject() {
-        learnerResult.setProject(null);
+    public void shouldHandleDataIntegrityViolationExceptionOnLearnerResultCreationGracefully() {
+        User user = new User();
+        user.setId(USER_ID);
+        //
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        //
+        LearnerResult result = new LearnerResult();
+        result.setUser(user);
+        result.setProject(project);
+        //
+        given(learnerResultRepository.save(result)).willThrow(DataIntegrityViolationException.class);
 
-        learnerResultDAO.create(learnerResult); // should fail
+        learnerResultDAO.create(result); // should fail
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotSaveALearnResultsWithAnId() {
-        learnerResult.setTestNo(1L);
+    public void shouldNotSaveALearnResultWithoutAnUser() {
+        Project project = new Project();
+        //
+        LearnerResult result = new LearnerResult();
+        result.setProject(project);
 
-        learnerResultDAO.create(learnerResult); // should fail
+        learnerResultDAO.create(result); // should fail
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldNotSaveALearnResultWithoutAProject() {
+        User user = new User();
+        //
+        LearnerResult result = new LearnerResult();
+        result.setUser(user);
+
+        learnerResultDAO.create(result); // should fail
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldNotSaveALearnerResultWithATestNo() {
+        User user = new User();
+        //
+        Project project = new Project();
+        //
+        LearnerResult result = new LearnerResult();
+        result.setUser(user);
+        result.setProject(project);
+        result.setTestNo(0L);
+
+        learnerResultDAO.create(result); // should fail
     }
 
     @Test
-    public void shouldGetAllResultsOfOneProject() throws NotFoundException, JsonProcessingException {
-        List<LearnerResult> expectedResults = createLearnerResultsList();
-        List<LearnerResult> resultsFromDB   = learnerResultDAO.getAll(user.getId(), project.getId(), true);
+    public void shouldGetAllResultsOfOneProject() throws NotFoundException {
+        List<LearnerResult> results = createLearnerResultsList();
+        //
+        given(learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(USER_ID, PROJECT_ID))
+                                                                                                   .willReturn(results);
 
-        assertEquals(expectedResults.size(), resultsFromDB.size());
-        for (int i = 0; i < expectedResults.size(); i++) {
-            LearnerResult expectedResult = expectedResults.get(i);
-            LearnerResult resultFromDB = resultsFromDB.get(i);
+        List<LearnerResult> resultsFromDAO   = learnerResultDAO.getAll(USER_ID, PROJECT_ID, true);
 
-            assertEquality(expectedResult, resultFromDB);
+        assertThat(results.size(), is(equalTo(resultsFromDAO.size())));
+        for (LearnerResult r : resultsFromDAO) {
+            assertTrue(results.contains(r));
         }
     }
 
     @Test(expected = NotFoundException.class)
-    public void ensureThatGettingAllResultsThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
-        learnerResultDAO.getAll(user.getId(), -1L, true); // should fail
+    public void ensureThatGettingAllResultsThrowsAnExceptionIfNoLearnerResultCouldBeFound() throws NotFoundException {
+        given(learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(USER_ID, PROJECT_ID))
+                                                                                   .willReturn(Collections.emptyList());
+
+        learnerResultDAO.getAll(USER_ID, PROJECT_ID, true); // should fail
     }
 
 
     @Test
     public void shouldGetMultipleResults() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
-        learnerResultDAO.create(learnerResult2);
-        Long[] testNos = {learnerResult.getTestNo(), learnerResult2.getTestNo()};
+        List<LearnerResult> results = createLearnerResultsList();
+        Long[] testNos = new Long[] {0L, 1L, 2L};
+        //
+        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos))
+                                                                                                   .willReturn(results);
 
-        List<LearnerResult> resultInDB = learnerResultDAO.getAll(user.getId(), project.getId(), testNos, true);
+        List<LearnerResult> resultsFromDAO   = learnerResultDAO.getAll(USER_ID, PROJECT_ID, testNos, true);
 
-        assertEquals(2, resultInDB.size());
-        assertEquals(learnerResult, resultInDB.get(0));
-        assertEquals(learnerResult2, resultInDB.get(1));
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void ensureThatGettingMultipleResultsThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
-        learnerResultDAO.create(learnerResult2);
-        Long[] testNos = {learnerResult.getTestNo(), learnerResult2.getTestNo()};
-
-        learnerResultDAO.getAll(user.getId(), -1L, testNos, true); // should fail
+        assertThat(results.size(), is(equalTo(resultsFromDAO.size())));
+        for (LearnerResult r : resultsFromDAO) {
+            assertTrue(results.contains(r));
+        }
     }
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingMultipleResultThrowsAnExceptionIfOneResultIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
-        Long[] testNos = {learnerResult.getTestNo(), -1L};
+        Long[] testNos = new Long[] {0L, 1L, 2L};
+        //
+        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos))
+                                                                                   .willReturn(Collections.emptyList());
 
-        learnerResultDAO.getAll(user.getId(), project.getId(), testNos, true); // should fail
+        learnerResultDAO.getAll(USER_ID, PROJECT_ID, testNos, true); // should fail
     }
 
     @Test
-    public void shouldGetOneResult() throws NotFoundException, JsonProcessingException {
-        learnerResultDAO.create(learnerResult);
+    public void shouldGetOneResult() throws NotFoundException {
+        LearnerResult result = new LearnerResult();
+        Long[] testNos = new Long[] {0L};
+        //
+        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos[0]))
+                                                                         .willReturn(Collections.singletonList(result));
 
-        LearnerResult resultFromDB = learnerResultDAO.get(user.getId(), project.getId(),
-                                                          learnerResult.getTestNo(), true);
+        LearnerResult resultFromDAO = learnerResultDAO.get(USER_ID, PROJECT_ID, 0L, true);
 
-        assertEquality(learnerResult, resultFromDB);
+        assertThat(resultFromDAO, is(equalTo(result)));
     }
 
     @Test(expected = NotFoundException.class)
-    public void ensureThatGettingOneResultThrowsAnExceptionIfTheUserIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
+    public void ensureThatGettingANonExistingResultThrowsAnException() throws NotFoundException {
+        Long[] testNos = new Long[] {0L};
+        //
+        given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos[0]))
+                                                                                   .willReturn(Collections.emptyList());
 
-        learnerResultDAO.get(-1L, project.getId(), learnerResult.getTestNo(), true); // should fail
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void ensureThatGettingOneResultThrowsAnExceptionIfTheProjectIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
-
-        learnerResultDAO.get(user.getId(), -1L, learnerResult.getTestNo(), true); // should fail
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void ensureThatGettingOneResultThrowsAnExceptionIfTheResultIdIsInvalid() throws NotFoundException {
-        learnerResultDAO.get(user.getId(), project.getId(), -1L, true); // should fail
+        learnerResultDAO.get(USER_ID, PROJECT_ID, 0L, true); // should fail
     }
 
     @Test
     public void shouldCreateAStepFromValidConfiguration() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
+        User user = new User();
+        //
+        Project project = new Project();
+        //
+        LearnerResult result = new LearnerResult();
+        result.setUser(user);
+        result.setProject(project);
+        //
         LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
         configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
         configuration.setMaxAmountOfStepsToLearn(-1);
 
-        LearnerResultStep step = learnerResultDAO.createStep(learnerResult, configuration);
+        LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
 
-        assertEquals(user, step.getUser());
-        assertEquals(project, step.getProject());
-        assertEquals(Long.valueOf(1L), step.getStepNo());
-        assertEquals(-1, step.getStepsToLearn());
+        assertThat(step.getUser(), is(equalTo(user)));
+        assertThat(step.getProject(), is(equalTo(project)));
+        assertThat(step.getStepNo(), is(equalTo(1L)));
+        assertThat(step.getStepsToLearn(), is(equalTo(-1)));
     }
 
     @Test
     public void shouldCreateAStepFromAPreviousStep() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
+        User user = new User();
+        //
+        Project project = new Project();
+        //
+        LearnerResult result = new LearnerResult();
+        result.setUser(user);
+        result.setProject(project);
+        //
+        LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
+        configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
+        configuration.setMaxAmountOfStepsToLearn(-1);
+        learnerResultDAO.createStep(result, configuration);
 
-        LearnerResultStep step = learnerResultDAO.createStep(learnerResult);
+        LearnerResultStep newStep = learnerResultDAO.createStep(result);
 
-        assertEquals(user, step.getUser());
-        assertEquals(project, step.getProject());
-        assertEquals(Long.valueOf(1L), step.getStepNo());
-        assertEquals(-1, step.getStepsToLearn());
+        assertThat(newStep.getUser(), is(equalTo(user)));
+        assertThat(newStep.getProject(), is(equalTo(project)));
+        assertThat(newStep.getStepNo(), is(equalTo(2L)));
+        assertThat(newStep.getStepsToLearn(), is(equalTo(-1)));
     }
 
     @Test
     public void shouldSaveAStep() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
-        LearnerResultStep step = learnerResultDAO.createStep(learnerResult);
+        User user = new User();
+        //
+        Project project = new Project();
+        //
+        LearnerResult result = new LearnerResult();
+        result.setUser(user);
+        result.setProject(project);
+        //
+        LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
+        configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
+        configuration.setMaxAmountOfStepsToLearn(-1);
+        LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
+        //
+        Statistics statistics = new Statistics();
+        statistics.setDuration(1L);
+        statistics.setEqsUsed(1L);
+        statistics.setMqsUsed(1L);
+        statistics.setSymbolsUsed(1L);
+        //
+        CompactMealyMachineProxy hypothesis = mock(CompactMealyMachineProxy.class);
+        step.setHypothesis(hypothesis);
+        step.setStatistics(statistics);
 
-        learnerResultDAO.saveStep(learnerResult, step);
+        learnerResultDAO.saveStep(result, step);
 
-        assertEquals(user, step.getUser());
-        assertEquals(project, step.getProject());
-        assertEquals(Long.valueOf(1L), step.getStepNo());
-        assertEquals(-1, step.getStepsToLearn());
+        verify(learnerResultStepRepository, times(2)).save(step);
+        assertThat(result.getHypothesis(), is(equalTo(hypothesis)));
+        assertThat(result.getStatistics().getDuration(), is(equalTo(1L)));
+        assertThat(result.getStatistics().getEqsUsed(), is(equalTo(1L)));
+        assertThat(result.getStatistics().getMqsUsed(), is(equalTo(1L)));
+        assertThat(result.getStatistics().getSymbolsUsed(), is(equalTo(1L)));
     }
-
 
     @Test
     public void shouldDeleteMultipleResults() throws NotFoundException {
+        User user = new User();
+        //
+        Long[] testNos = new Long[] {0L, 1L};
+        //
         LearnerStatus status = new LearnerStatus();
         given(learner.getStatus(user)).willReturn(status);
-        List<LearnerResult> learnerResults = createLearnerResultsList();
+        //
+        given(learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user, PROJECT_ID, testNos)).willReturn(2L);
 
-        Long[] ids = new Long[learnerResults.size()];
-        for (int i = 0; i < ids.length; i++) {
-            ids[i] = learnerResults.get(i).getTestNo();
-        }
+        learnerResultDAO.delete(learner, user, PROJECT_ID, testNos);
 
-        learnerResultDAO.delete(user, project.getId(), ids);
-
-        Session session = HibernateUtil.getSession();
-        HibernateUtil.beginTransaction();
-
-        Long resultCounter = (Long) session.createCriteria(LearnerResult.class)
-                                            .add(Restrictions.eq("user.id", user.getId()))
-                                            .add(Restrictions.eq("project.id", project.getId()))
-                                            .add(Restrictions.in("testNo", ids))
-                                            .setProjection(Projections.rowCount())
-                                            .uniqueResult();
-
-        HibernateUtil.commitTransaction();
-
-        assertEquals(0L, resultCounter.longValue());
+        verify(learnerResultRepository).deleteByUserAndProject_IdAndTestNoIn(user, PROJECT_ID, testNos);
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheTestResultToDeleteWasNotFound() throws NotFoundException {
+        User user = new User();
+        //
+        Long[] testNos = new Long[] {0L, 1L};
+        //
         LearnerStatus status = new LearnerStatus();
         given(learner.getStatus(user)).willReturn(status);
-        List<LearnerResult> learnerResults = createLearnerResultsList();
+        //
+        given(learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user, PROJECT_ID, testNos)).willReturn(1L);
 
-        Long[] ids = new Long[learnerResults.size()];
-        for (int i = 0; i < ids.length; i++) {
-            ids[i] = learnerResults.get(i).getTestNo();
-        }
-        ids[ids.length - 1] = -1L;
-
-        learnerResultDAO.delete(user, project.getId(), ids); // should fail
+        learnerResultDAO.delete(learner, user, PROJECT_ID, testNos);
     }
 
     @Test(expected = ValidationException.class)
     public void shouldThrowAnExceptionIfTheTestResultToDeleteIsActive() throws NotFoundException {
-        learnerResultDAO.create(learnerResult);
-        given(learner.isActive(user)).willReturn(true);
-        given(learner.getResult(user)).willReturn(learnerResult);
-        Statistics statistics = new Statistics();
-        learnerResult.setStatistics(statistics);
-        LearnerStatus status = new LearnerStatus(learnerResult);
-        given(learner.getStatus(user)).willReturn(status);
-
-        learnerResultDAO.delete(user, project.getId(), learnerResult.getTestNo()); // should fail
-    }
-
-    private void initLearnerResult(LearnerResult result) {
-        result.setUser(user);
+        User user = new User();
+        //
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        //
+        LearnerResult result = new LearnerResult();
         result.setProject(project);
-        result.setAlgorithm(LearnAlgorithms.TTT);
-        result.setComment("Test Comment");
+        result.setTestNo(0L);
+        Long[] testNos = new Long[] {0L, 1L};
+        //
+        LearnerStatus status = new LearnerStatus(result);
+        given(learner.getStatus(user)).willReturn(status);
+        //
+        given(learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user, PROJECT_ID, testNos)).willReturn(1L);
 
-        // add pseudo alphabet
-        Alphabet<String> sigma = new SimpleAlphabet<>();
-        sigma.add("0");
-        sigma.add("1");
-        result.setSigma(AlphabetProxy.createFrom(sigma));
-
-        // add pseudo hypothesis
-        CompactMealy<String, String> hypothesis = new CompactMealy<>(sigma);
-        int state0 = hypothesis.addInitialState();
-        int state1 = hypothesis.addState();
-
-        hypothesis.addTransition(state0, "0", state0, "OK");
-        hypothesis.addTransition(state0, "1", state1, "OK");
-        hypothesis.addTransition(state1, "1", state0, "OK");
-        hypothesis.addTransition(state1, "0", state1, "OK");
-
-        result.createHypothesisFrom(hypothesis);
-
-        // add pseudo step
-        LearnerResultStep step = new LearnerResultStep();
-        step.setUser(user);
-        step.setProject(project);
-        step.setResult(result);
-        step.setStepNo(0L);
-        step.setStepsToLearn(-1);
-        step.setEqOracle(EXAMPLE_EQ_ORACLE);
-        result.getSteps().add(step);
-    }
-
-    private void assertEquality(LearnerResult lr1, LearnerResult lr2) {
-        assertTrue(lr1.equals(lr2));
-        assertEquals(lr1.getSigma(), lr2.getSigma());
-        // TODO: assertEquals(lr1.getHypothesis(), lr2.getHypothesis());
-//        assertEquals(lr1.getCounterExample(), lr2.getCounterExample());
-        // TODO: assertEquals(lr1.getStatistics(), lr2.getStatistics());
-        // TODO: assertEquals(lr1.getConfiguration(), lr2.getConfiguration());
+        learnerResultDAO.delete(learner, user, PROJECT_ID, testNos); // should fail
     }
 
     private List<LearnerResult> createLearnerResultsList() throws NotFoundException {
         List<LearnerResult> results = new LinkedList<>();
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             LearnerResult r = new LearnerResult();
-            initLearnerResult(r);
-            r.setProject(project);
-            r.setUser(user);
-            learnerResultDAO.create(r);
-
             results.add(r);
         }
-
         return results;
     }
 

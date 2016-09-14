@@ -52,7 +52,7 @@ public class IdRevisionPair implements Serializable {
      * @param revision
      *         The revision.
      */
-    public IdRevisionPair(long id, long revision) {
+    public IdRevisionPair(Long id, Long revision) {
         this.id = id;
         this.revision = revision;
     }
@@ -64,8 +64,10 @@ public class IdRevisionPair implements Serializable {
      *         The symbol to copy the ID and Revision from..
      */
     public IdRevisionPair(Symbol symbol) {
-        this.id = symbol.getId();
-        this.revision = symbol.getRevision();
+        if (symbol != null) {
+            this.id = symbol.getId();
+            this.revision = symbol.getRevision();
+        }
     }
 
     /**

@@ -29,8 +29,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import javax.ws.rs.ApplicationPath;
-import javax.xml.bind.ValidationException;
 
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
@@ -63,6 +63,7 @@ public class ALEXApplication extends ResourceConfig {
         register(MultiPartFeature.class);
         register(AuthenticationFilter.class);
         register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
+        register(JacksonConfiguration.class);
     }
 
     /**
@@ -82,18 +83,23 @@ public class ALEXApplication extends ResourceConfig {
     }
 
     /**
-     * Create the settings object if needed.
+     * Initialize system properties and create the settings object if needed.
      */
     @PostConstruct
-    public void createSettingsIfNeeded() {
-        if (settingsDAO.get() == null) {
+    public void initSettings() {
+        Settings settings = settingsDAO.get();
+        if (settings == null) {
             try {
-                Settings settings = new Settings();
+                settings = new Settings();
                 settingsDAO.create(settings);
             } catch (ValidationException e) {
                 e.printStackTrace();
                 System.exit(0);
             }
+        } else {
+            Settings.DriverSettings driverSettings = settings.getDriverSettings();
+            System.setProperty("webdriver.chrome.driver", driverSettings.getChrome());
+            System.setProperty("webdriver.gecko.driver",  driverSettings.getFirefox());
         }
     }
 }

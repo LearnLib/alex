@@ -18,7 +18,7 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Settings;
 
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 
 /**
  * The interface to describe how settings are handled.
@@ -45,8 +45,6 @@ public interface SettingsDAO {
      * Update the application settings.
      *
      * @param settings The settings.
-     * @throws Exception
-     *          If the updated failed.
      */
-    void update(Settings settings) throws Exception;
+    void update(Settings settings);
 }

@@ -100,7 +100,7 @@ export class ConfirmDialogController {
 
 
 /**
- * The service for handling promt and confirm dialogs.
+ * The service for handling prompt and confirm dialogs.
  */
 export class PromptService {
 

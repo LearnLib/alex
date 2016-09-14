@@ -137,12 +137,12 @@ public class SetVariableByCookieAction extends SetVariableAction {
                 storeConnector.set(name, cookieValue);
                 LOGGER.info(LEARNER_MARKER, "Set the variable '{}' to the value '{}' of the cookie '{}:{}' "
                                                 + "(ignoreFailure: {}, negated: {}).",
-                            name, cookieValue, value, cookieType, ignoreFailure, negated);
+                            name, cookieValue, cookieType, value, ignoreFailure, negated);
                 return getSuccessOutput();
             } else {
                 LOGGER.info(LEARNER_MARKER, "Could not set the variable '{}' to the cookie '{}:{}' "
                                                 + "because the cookie was not found (ignoreFailure: {}, negated: {})!",
-                            name, cookieValue, value, ignoreFailure, negated);
+                            name, cookieType, value, ignoreFailure, negated);
                 return getFailedOutput();
             }
         } catch (IllegalStateException | NoSuchElementException e) {
