@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -186,9 +187,10 @@ public class WaitForNodeAction extends WebSymbolAction {
             LOGGER.info(LEARNER_MARKER, "Waiting on the node '{}' (criterion: '{}') timed out.",
                         selector, waitCriterion);
             return getFailedOutput();
+        } catch (NoSuchElementException e) {
+            LOGGER.info(LEARNER_MARKER, "The node with the selector {} (criterion: '{}') could not be found.",
+                    selector, waitCriterion);
+            return getFailedOutput();
         }
-
     }
-
-
 }
