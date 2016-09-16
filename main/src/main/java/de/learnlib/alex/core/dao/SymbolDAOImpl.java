@@ -177,8 +177,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         Long projectId = symbol.getProjectId();
         Long groupId   = symbol.getGroupId();
 
-        System.out.println("Group ID: " + groupId);
-
         Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
         if (project == null) {
             throw new ValidationException("The Project was not found and thus the Symbol was not created.");
@@ -187,7 +185,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         SymbolGroup group = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(userId, projectId, groupId);
         if (group == null) {
             group = project.getDefaultGroup();
-            System.out.println("Using Default Group: " + group);
         }
 
         // get the current highest symbol id in the project and add 1 for the next id

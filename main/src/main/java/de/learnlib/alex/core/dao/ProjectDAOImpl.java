@@ -202,6 +202,13 @@ public class ProjectDAOImpl implements ProjectDAO {
     public void update(Project project) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("update({})", project);
         try {
+            Project projectInDB = getByID(project.getUserId(), project.getId(), EmbeddableFields.ALL);
+
+            project.setDefaultGroup(projectInDB.getDefaultGroup());
+            project.setGroups(projectInDB.getGroups());
+            project.setNextGroupId(projectInDB.getNextGroupId());
+            project.setNextSymbolId(projectInDB.getNextSymbolId());
+
             projectRepository.save(project);
 
         // error handling
