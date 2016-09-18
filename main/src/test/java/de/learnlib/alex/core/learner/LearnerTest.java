@@ -29,6 +29,7 @@ import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
+import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -53,6 +54,9 @@ public class LearnerTest {
 
     private static final String FAKE_URL = "http://example.com";
     private static final int SYMBOL_AMOUNT = 5;
+
+    @Mock
+    private LearnAlgorithmService algorithmService;
 
     @Mock
     private ConnectorContextHandlerFactory contextHandlerFactory;
@@ -94,7 +98,8 @@ public class LearnerTest {
         given(learnerThreadFactory.createThread(any(LearnerThread.class), any(LearnerResult.class)))
                 .willReturn(learnerThread);
 
-        learner = new Learner(symbolDAO, learnerResultDAO, contextHandlerFactory, learnerThreadFactory);
+        learner = new Learner(symbolDAO, learnerResultDAO, algorithmService,
+                              contextHandlerFactory, learnerThreadFactory);
     }
 
     @Test

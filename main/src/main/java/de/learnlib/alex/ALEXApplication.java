@@ -16,15 +16,22 @@
 
 package de.learnlib.alex;
 
+import de.learnlib.alex.core.services.LearnAlgorithmService;
+import de.learnlib.alex.annotations.LearnAlgorithm;
 import de.learnlib.alex.core.dao.SettingsDAO;
 import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.Settings;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
 import de.learnlib.alex.security.AuthenticationFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -45,6 +52,8 @@ public class ALEXApplication extends ResourceConfig {
     /** The Password for the default admin, i.e. the admin that will be auto created if no other admin exists. */
     public static final String DEFAULT_ADMIN_PASSWORD = "admin";
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     /** The UserDOA to create an admin if needed. */
     @Inject
     private UserDAO userDAO;
@@ -52,6 +61,10 @@ public class ALEXApplication extends ResourceConfig {
     /** The SettingsDAO to create the settings object if needed. */
     @Inject
     private SettingsDAO settingsDAO;
+
+    /** The {@link LearnAlgorithmService} to use. */
+    @Inject
+    private LearnAlgorithmService algorithms;
 
     /**
      * Constructor where the magic happens.
@@ -101,5 +114,30 @@ public class ALEXApplication extends ResourceConfig {
             System.setProperty("webdriver.chrome.driver", driverSettings.getChrome());
             System.setProperty("webdriver.gecko.driver",  driverSettings.getFirefox());
         }
+    }
+
+    /**
+     * Search fo LearnAlgorithms in the class path and add them to our {@link LearnAlgorithmService}.
+     */
+    @PostConstruct
+    public void findAlgorithms() {
+        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(LearnAlgorithm.class));
+
+        LOGGER.info("Searching for LearnAlgorithms...");
+        for (BeanDefinition bd : scanner.findCandidateComponents("")) {
+            String beanClassName = bd.getBeanClassName();
+            LOGGER.info("Found LearnAlgorithm '{}'.", beanClassName);
+
+            try {
+                Class<?> clazz = Class.forName(beanClassName);
+                algorithms.addAlgorithm(clazz);
+            } catch (IllegalArgumentException e) {
+                LOGGER.warn("Can not use the LearnAlgorithm '{}'!", beanClassName, e);
+            } catch (ClassNotFoundException e) {
+                LOGGER.error("Could not find an already found class!", e);
+            }
+        }
+        LOGGER.info("{} LearnAlgorithms found.", algorithms.size());
     }
 }

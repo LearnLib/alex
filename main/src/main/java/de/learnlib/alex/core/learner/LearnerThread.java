@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.core.learner;
 
+import de.learnlib.alex.algorithms.LearnAlgorithmFactory;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.entities.ExecuteResult;
-import de.learnlib.alex.core.entities.LearnAlgorithms;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResultStep;
 import de.learnlib.alex.core.entities.Statistics;
@@ -156,7 +156,7 @@ public class LearnerThread extends Thread {
 
         this.mqOracle = new SULOracle<>(sul);
 
-        LearnAlgorithms algorithm = result.getAlgorithm();
+        LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
         this.learner = algorithm.createLearner(sigma, mqOracle);
     }
 
@@ -389,7 +389,7 @@ public class LearnerThread extends Thread {
         statistics.setSymbolsUsed(symbolUsedDiff);
 
         // algorithm information
-        LearnAlgorithms algorithm = result.getAlgorithm();
+        LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
         String algorithmInformation;
         try {
             algorithmInformation = algorithm.getInternalData(learner);

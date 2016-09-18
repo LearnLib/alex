@@ -20,9 +20,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import de.learnlib.alex.algorithms.LearnAlgorithmFactory;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
+import de.learnlib.alex.utils.AlgorithmDeserializer;
+import de.learnlib.alex.utils.AlgorithmSerializer;
 import net.automatalib.automata.transout.MealyMachine;
 
 import javax.persistence.CascadeType;
@@ -87,8 +92,11 @@ public class LearnerResult implements Serializable {
     /** The Alphabet used while learning. */
     private AlphabetProxy sigma;
 
-    /** The algorithm to use during the learning. */
-    private LearnAlgorithms algorithm;
+    /** The {@link Algorithm} to use during the learning. */
+    private Algorithm algorithm;
+
+    /** The {@link LearnAlgorithmFactory} corresponding to the algorithm field. */
+    private LearnAlgorithmFactory algorithmFactory;
 
     /** The browser to use during the learning. */
     private WebBrowser browser;
@@ -332,16 +340,35 @@ public class LearnerResult implements Serializable {
     /**
      * @return The algorithm to use during the learning.
      */
-    @Enumerated
-    public LearnAlgorithms getAlgorithm() {
+    @Embedded
+    @JsonSerialize(using = AlgorithmSerializer.class)
+    @JsonDeserialize(using = AlgorithmDeserializer.class)
+    public Algorithm getAlgorithm() {
         return algorithm;
     }
 
     /**
      * @param algorithm The new algorithm to use during the learning.
      */
-    public void setAlgorithm(LearnAlgorithms algorithm) {
-        this.algorithm = algorithm;
+    public void setAlgorithm(Algorithm algorithm) {
+        this.algorithm        = algorithm;
+        this.algorithmFactory = null;
+    }
+
+    /**
+     * @return Get the currently attached {@link LearnAlgorithmFactory}.
+     */
+    @Transient
+    @JsonIgnore
+    public LearnAlgorithmFactory getAlgorithmFactory() {
+        return algorithmFactory;
+    }
+
+    /**
+     * @param algorithmFactory Set a new {@link LearnAlgorithmFactory}.
+     */
+    public void setAlgorithmFactory(LearnAlgorithmFactory algorithmFactory) {
+        this.algorithmFactory = algorithmFactory;
     }
 
     /**

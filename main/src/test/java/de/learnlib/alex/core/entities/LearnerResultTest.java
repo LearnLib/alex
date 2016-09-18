@@ -44,6 +44,9 @@ public class LearnerResultTest {
     private static final Long ID = 3L;
     private static final ZonedDateTime TEST_DATE = ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00");
     private static final long TEST_DURATION = 9001;
+
+    private static final Algorithm TTT = new Algorithm("TTT", "");
+
     private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE = new MealyRandomWordsEQOracleProxy(1, 5, 10);
 
     @Test
@@ -74,7 +77,7 @@ public class LearnerResultTest {
         result.setUser(user);
         result.setProject(project);
         result.setTestNo(ID);
-        result.setAlgorithm(LearnAlgorithms.TTT);
+        result.setAlgorithm(TTT);
         result.setSigma(AlphabetProxy.createFrom(sigma));
         result.createHypothesisFrom(hypothesis);
         result.setStatistics(statistics);

@@ -30,6 +30,7 @@ import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
+import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.oracles.ResetCounterSUL;
@@ -79,6 +80,10 @@ public class Learner {
     @Inject
     private LearnerResultDAO learnerResultDAO;
 
+    /** The {@link LearnAlgorithmService} to use. */
+    @Inject
+    private LearnAlgorithmService algorithmService;
+
     /**
      * Factory to create a new ContextHandler.
      */
@@ -118,18 +123,21 @@ public class Learner {
      *         The SymbolDAO to use.
      * @param learnerResultDAO
      *         The LearnerResultDAO to use.
+     * @param algorithmService
+     *         The AlgorithmService to use.
      * @param contextHandlerFactory
      *         The factory that will be used to create new context handler.
      * @param learnerThreadFactory
      *         The factory to create the learner threads.
      */
-    Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
-                   ConnectorContextHandlerFactory contextHandlerFactory, LearnerThreadFactory learnerThreadFactory) {
+    Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO, LearnAlgorithmService algorithmService,
+            ConnectorContextHandlerFactory contextHandlerFactory, LearnerThreadFactory learnerThreadFactory) {
         this();
-        this.symbolDAO = symbolDAO;
-        this.learnerResultDAO = learnerResultDAO;
+        this.symbolDAO             = symbolDAO;
+        this.learnerResultDAO      = learnerResultDAO;
+        this.algorithmService      = algorithmService;
         this.contextHandlerFactory = contextHandlerFactory;
-        this.learnerThreadFactory = learnerThreadFactory;
+        this.learnerThreadFactory  = learnerThreadFactory;
     }
 
     /**
@@ -204,6 +212,7 @@ public class Learner {
 
         learnerResult.setBrowser(configuration.getBrowser());
         learnerResult.setAlgorithm(configuration.getAlgorithm());
+        learnerResult.setAlgorithmFactory(algorithmService.getLearnAlgorithm(configuration.getAlgorithm()));
         learnerResult.setComment(configuration.getComment());
         learnerResultDAO.create(learnerResult);
         learnerResultDAO.createStep(learnerResult, configuration);

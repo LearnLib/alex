@@ -18,8 +18,13 @@ package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
+import de.learnlib.alex.utils.AlgorithmDeserializer;
+import de.learnlib.alex.utils.AlgorithmSerializer;
 
+import javax.persistence.Embedded;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -53,7 +58,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * The algorithm to be used during the learning.
      * @requiredField
      */
-    private LearnAlgorithms algorithm;
+    private Algorithm algorithm;
 
     /** The browser to use during the learn process. */
     private WebBrowser browser;
@@ -66,7 +71,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     public LearnerConfiguration() {
         this.symbolsAsIdRevisionPairs = new HashSet<>();
-        this.algorithm = LearnAlgorithms.TTT;
+        this.algorithm = new Algorithm("TTT", "");
         this.comment = "";
     }
 
@@ -120,7 +125,10 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return The selected LearnerAlgorithm.
      */
-    public LearnAlgorithms getAlgorithm() {
+    @Embedded
+    @JsonSerialize(using = AlgorithmSerializer.class)
+    @JsonDeserialize(using = AlgorithmDeserializer.class)
+    public Algorithm getAlgorithm() {
         return algorithm;
     }
 
@@ -130,7 +138,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * @param algorithm
      *         The new algorithm to be used.
      */
-    public void setAlgorithm(LearnAlgorithms algorithm) {
+    public void setAlgorithm(Algorithm algorithm) {
         this.algorithm = algorithm;
     }
 
