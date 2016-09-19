@@ -23,19 +23,11 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Connector to communicate with a WebSite.
  * This is a facade around Seleniums {@link WebDriver}.
  */
 public class WebSiteConnector implements Connector {
-
-    /** How long we should wait before doing the next step. Introduced by Selenium. */
-    private static final int IMPLICITLY_WAIT_TIME = 1;
-
-    /** Max. time to wait for a request before timing out. Introduced by Selenium. */
-    private static final int PAGE_LOAD_TIMEOUT_TIME = 30;
 
     /** The browser to use. */
     private WebBrowser browser;
@@ -65,8 +57,6 @@ public class WebSiteConnector implements Connector {
     @Override
     public void reset() throws Exception {
         this.driver = browser.getWebDriver();
-        this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
-        this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
     }
 
     @Override
