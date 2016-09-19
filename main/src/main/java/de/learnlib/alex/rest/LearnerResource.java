@@ -214,7 +214,7 @@ public class LearnerResource {
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.core.entities.LearnerStatus
      */
-    @POST
+    @GET
     @Path("/stop")
     @Produces(MediaType.APPLICATION_JSON)
     public Response stop() {

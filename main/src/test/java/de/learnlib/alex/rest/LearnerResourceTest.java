@@ -292,7 +292,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldStopIfTheLearningIsActive() {
-        Response response = target("/learner/stop").request().header("Authorization", adminToken).post(Entity.json(""));
+        Response response = target("/learner/stop").request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
@@ -309,7 +309,7 @@ public class LearnerResourceTest extends JerseyTest {
         LearnerStatus learnerStatus = new LearnerStatus();
         given(learner.getStatus(admin)).willReturn(learnerStatus);
 
-        Response response = target("/learner/stop").request().header("Authorization", adminToken).post(Entity.json(""));
+        Response response = target("/learner/stop").request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":false}";
