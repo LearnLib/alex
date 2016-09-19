@@ -78,5 +78,4 @@ public class LearnAlgorithmServiceTest {
 
         service.addAlgorithm(LearnAlgorithmWithoutAnnotation.class);
     }
-
 }

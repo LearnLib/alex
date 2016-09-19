@@ -73,11 +73,11 @@
                 </tr>
                 <tr>
                     <td>Duration</td>
-                    <td ng-bind="(tab.result.statistics.duration | formatMilliseconds)"></td>
+                    <td>{{tab.result.statistics.duration.total | formatMilliseconds}} (Learner: {{tab.result.statistics.duration.learner | formatMilliseconds}}, EQ Oracle: {{tab.result.statistics.duration.eqOracle | formatMilliseconds}})</td>
                 </tr>
                 <tr>
                     <td>#Membership Queries</td>
-                    <td ng-bind="tab.result.statistics.mqsUsed"></td>
+                    <td>{{tab.result.statistics.mqsUsed.total}} (Learner: {{tab.result.statistics.mqsUsed.learner}}, EQ Oracle: {{tab.result.statistics.mqsUsed.eqOracle}})</td>
                 </tr>
                 <tr>
                     <td>#Equivalence Queries</td>
@@ -85,7 +85,7 @@
                 </tr>
                 <tr>
                     <td>#Symbol Calls</td>
-                    <td ng-bind="tab.result.statistics.symbolsUsed"></td>
+                    <td>{{tab.result.statistics.symbolsUsed.total}} (Learner: {{tab.result.statistics.symbolsUsed.learner}}, EQ Oracle: {{tab.result.statistics.symbolsUsed.eqOracle}})</td>
                 </tr>
 
             </table>

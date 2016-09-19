@@ -37,9 +37,7 @@ import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.Mappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.oracles.DefaultQuery;
-import de.learnlib.oracles.ResetCounterSUL;
 import de.learnlib.oracles.SULOracle;
-import de.learnlib.oracles.SymbolCounterSUL;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -76,22 +74,12 @@ public class LearnerThread extends Thread {
     /**
      * The System Under Learning used to do the learning on.
      */
-    private final SUL<String, String> sul;
+    private final AlexSUL<String, String> sul;
 
     /**
      * The actual System Under Learning put into a cache.
      */
     private SULCache<String, String> cachedSUL;
-
-    /**
-     * SUL that counts the resets/ mqs and will call the cachedSUL for the learning.
-     */
-    private final ResetCounterSUL<String, String> resetCounterSUL;
-
-    /**
-     * SUL that counts the amount of symbols used and will call the resetCounterSUL for the learning.
-     */
-    private final SymbolCounterSUL<String, String> symbolCounterSUL;
 
     /**
      * The DAO to remember the learn results.
@@ -150,9 +138,7 @@ public class LearnerThread extends Thread {
                 ceiSUL = new ContextExecutableInputSUL<>(context);
         SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
         this.cachedSUL = SULCaches.createCache(this.sigma, mappedSUL);
-        this.resetCounterSUL = new ResetCounterSUL<>("resets", this.cachedSUL);
-        this.symbolCounterSUL = new SymbolCounterSUL<>("symbols used", resetCounterSUL);
-        this.sul = symbolCounterSUL;
+        this.sul = new AlexSUL<>(cachedSUL);
 
         this.mqOracle = new SULOracle<>(sul);
 
@@ -182,13 +168,7 @@ public class LearnerThread extends Thread {
         result.setSigma(AlphabetProxy.createFrom(sigma));
 
         this.cachedSUL = existingSUL;
-        this.resetCounterSUL = new ResetCounterSUL<>("resets", this.cachedSUL);
-        this.resetCounterSUL.getStatisticalData().increment(result.getStatistics().getMqsUsed());
-
-        this.symbolCounterSUL = new SymbolCounterSUL<>("symbols used", resetCounterSUL);
-        this.symbolCounterSUL.getStatisticalData().increment(result.getStatistics().getSymbolsUsed());
-
-        this.sul = symbolCounterSUL;
+        this.sul = new AlexSUL<>(cachedSUL);
 
         this.mqOracle = new SULOracle<>(sul);
 
@@ -274,12 +254,12 @@ public class LearnerThread extends Thread {
     }
 
     /**
-     * Get the ResetCounterSUL.
+     * Get the {@link AlexSUL}.
      *
      * @return The active ResetCounterSUL
      */
-    public ResetCounterSUL getResetCounterSUL() {
-        return resetCounterSUL;
+    public AlexSUL<String, String> getSul() {
+        return sul;
     }
 
     private void learn() throws NotFoundException {
@@ -299,38 +279,51 @@ public class LearnerThread extends Thread {
     private void learnOneStep() throws NotFoundException {
         LOGGER.traceEntry();
 
-        if (result.getStatistics().getDuration() == 0L) {
+        if (result.getStatistics().getDuration().getTotal() == 0L) {
             learnFirstStep();
         } else {
             learnSuccessiveStep();
         }
-
-        rememberMetaData();
+        learnerResultDAO.saveStep(result, currentStep);
 
         LOGGER.traceExit();
     }
 
-    private void learnFirstStep() {
+    private void learnFirstStep() throws NotFoundException {
         LOGGER.traceEntry();
 
+        // init. statistics
         Statistics statistics = currentStep.getStatistics();
         statistics.setStartDate(ZonedDateTime.now());
         statistics.setStartTime(System.nanoTime());
-        statistics.setDuration(0L);
         statistics.setEqsUsed(0L);
+        statistics.setDuration(new Statistics.DetailedStatistics());
+        statistics.setMqsUsed(new Statistics.DetailedStatistics());
+        statistics.setSymbolsUsed(new Statistics.DetailedStatistics());
         result.getStatistics().setStartDate(statistics.getStartDate());
+
+        // learn
         learner.startLearning();
-        result.createHypothesisFrom(learner.getHypothesisModel());
-        findAndRememberCounterExample();
+        storeLearnerMetaData();
+
+        // search counter example
+        findCounterExample();
+        storeCounterExampleSearchMetaData();
 
         LOGGER.traceExit();
     }
 
     private void learnSuccessiveStep() throws NotFoundException {
-        // If the learning is resumed, a new step with the new configuration, will already exists.
-        // Otherwise we have to create a new step based on the previous one.
-        if (currentStep.getStatistics().getDuration() > 0) {
-            currentStep = learnerResultDAO.createStep(result);
+        LOGGER.traceEntry();
+
+        // When we continue to learn, we have to create a new step based on the previous one.
+        // Otherwise, if the learning is resumed, a new step with the new configuration, will already exists.
+        LearnerResultStep previousStep;
+        if (currentStep.getStatistics().getDuration().getTotal() > 0) {
+            previousStep = currentStep;
+            currentStep  = learnerResultDAO.createStep(result);
+        } else {
+            previousStep = result.getSteps().get((int) (currentStep.getStepNo() - 1));
         }
 
         // set the start date and the start time:
@@ -340,55 +333,37 @@ public class LearnerThread extends Thread {
         statistics.setStartDate(ZonedDateTime.now());
         statistics.setStartTime(System.nanoTime());
 
-        // if the previous step didn't yield any counter example, try again
-        // (maybe more luck this time or configuration has changed)
-        if (currentStep.getCounterExample() == null) {
-            findAndRememberCounterExample();
+        // Get the counter example from the previous step and use it to refine the hypothesis (if possible).
+        DefaultQueryProxy counterExample = previousStep.getCounterExample();
+        if (counterExample != null) {
+            learner.refineHypothesis(counterExample.createDefaultProxy());
+            storeLearnerMetaData();
         }
 
-        // if a there is a counter example refine the hypothesis
-        if (currentStep.getCounterExample() != null) {
-            learner.refineHypothesis(currentStep.getCounterExample().createDefaultProxy());
-            findAndRememberCounterExample();
-        }
+        // search counter example
+        findCounterExample();
+        storeCounterExampleSearchMetaData();
+
+        LOGGER.traceExit();
     }
 
-    private void findAndRememberCounterExample() {
-        // find
-        EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
-        eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle);
-        DefaultQuery<String, Word<String>> newCounterExample;
-        newCounterExample = eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
-
-        // remember
-        currentStep.getStatistics().setEqsUsed(currentStep.getStatistics().getEqsUsed() + 1);
-        if (newCounterExample == null) {
-            currentStep.setCounterExample(null);
-        } else {
-            currentStep.setCounterExample(DefaultQueryProxy.createFrom(newCounterExample));
-        }
-        LOGGER.info(LEARNER_MARKER, "The new counter example is '{}'.", newCounterExample);
-    }
-
-    private void rememberMetaData() throws NotFoundException {
+    private void storeLearnerMetaData() throws NotFoundException {
         // statistics
         Statistics statistics = currentStep.getStatistics();
 
         long startTime = statistics.getStartTime();
         long currentTime = System.nanoTime();
-
-        currentStep.createHypothesisFrom(learner.getHypothesisModel());
-
-        statistics.setDuration(currentTime - startTime);
+        statistics.getDuration().setLearner(currentTime - startTime);
         LOGGER.info(LEARNER_MARKER, "Duration of the learning: {} (start: {}, end: {}).",
                     statistics.getDuration(), startTime, currentTime);
 
-        long mqUsedDiff = resetCounterSUL.getStatisticalData().getCount() - statistics.getMqsUsed();
-        statistics.setMqsUsed(mqUsedDiff);
-        long symbolUsedDiff = symbolCounterSUL.getStatisticalData().getCount() - statistics.getSymbolsUsed();
-        statistics.setSymbolsUsed(symbolUsedDiff);
+        statistics.getMqsUsed().setLearner(sul.getResetCount());
+        statistics.getSymbolsUsed().setLearner(sul.getSymbolUsedCount());
+        sul.resetCounter();
 
         // algorithm information
+        currentStep.createHypothesisFrom(learner.getHypothesisModel());
+
         LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
         String algorithmInformation;
         try {
@@ -397,8 +372,38 @@ public class LearnerThread extends Thread {
             algorithmInformation = "";
         }
         currentStep.setAlgorithmInformation(algorithmInformation);
-
-        // done
-        learnerResultDAO.saveStep(result, currentStep);
     }
+
+    private void findCounterExample() {
+        EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
+        eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle);
+        DefaultQuery<String, Word<String>> newCounterExample;
+        newCounterExample = eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
+
+        // remember the counter example, if any
+        if (newCounterExample == null) {
+            currentStep.setCounterExample(null);
+        } else {
+            currentStep.setCounterExample(DefaultQueryProxy.createFrom(newCounterExample));
+        }
+        LOGGER.info(LEARNER_MARKER, "The new counter example is '{}'.", newCounterExample);
+    }
+
+    private void storeCounterExampleSearchMetaData() {
+        // statistics
+        Statistics statistics = currentStep.getStatistics();
+
+        statistics.setEqsUsed(currentStep.getStatistics().getEqsUsed() + 1);
+
+        long startTime = statistics.getStartTime();
+        long currentTime = System.nanoTime();
+        long duration = currentTime - startTime - statistics.getDuration().getLearner();
+        statistics.getDuration().setEqOracle(duration);
+        LOGGER.info(LEARNER_MARKER, "Duration of the eq oracle: {}.", duration);
+
+        statistics.getMqsUsed().setEqOracle(sul.getResetCount());
+        statistics.getSymbolsUsed().setEqOracle(sul.getSymbolUsedCount());
+        sul.resetCounter();
+    }
+
 }

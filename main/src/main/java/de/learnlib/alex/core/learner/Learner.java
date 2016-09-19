@@ -33,7 +33,6 @@ import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.oracles.ResetCounterSUL;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -44,7 +43,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -179,7 +177,7 @@ public class Learner {
 
         // get the sul here once so that the timer doesn't get '0' for .getStatisticalData.getCount() after continuing
         // a learning process
-        learnThread.getResetCounterSUL();
+        //learnThread.getResetCounterSUL();
     }
 
     private LearnerResult createLearnerResult(User user, Project project, LearnerConfiguration configuration)
@@ -403,41 +401,6 @@ public class Learner {
             return learnerThread.getResult();
         } else {
             return null;
-        }
-    }
-
-    /**
-     * Get the number of executed MQs in the current learn process.
-     *
-     * @param user
-     *         The User that wants to his MQs used.
-     * @return null if the learnThread has not been started or the number of executed MQs in the current learn process
-     */
-    public Long getMQsUsed(User user) {
-        LearnerThread learnerThread = userThreads.get(user);
-
-        if (learnerThread == null) {
-            return null;
-        } else {
-            ResetCounterSUL resetCounterSUL = learnerThread.getResetCounterSUL();
-            return resetCounterSUL.getStatisticalData().getCount();
-        }
-    }
-
-    /**
-     * Get the date and time when the learner started learning.
-     *
-     * @param user
-     *         The user that wants to see his latest start date.
-     * @return The date and time when the learner started learning.
-     */
-    public ZonedDateTime getStartDate(User user) {
-        LearnerThread learnerThread = userThreads.get(user);
-
-        if (learnerThread == null) {
-            return null;
-        } else {
-            return getResult(user).getStatistics().getStartDate();
         }
     }
 

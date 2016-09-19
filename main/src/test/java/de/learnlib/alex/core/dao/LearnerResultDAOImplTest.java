@@ -288,6 +288,8 @@ public class LearnerResultDAOImplTest {
 
     @Test
     public void shouldSaveAStep() throws NotFoundException {
+        Statistics.DetailedStatistics detailedStatistics = new Statistics.DetailedStatistics(1L, 1L);
+        //
         User user = new User();
         //
         Project project = new Project();
@@ -302,10 +304,10 @@ public class LearnerResultDAOImplTest {
         LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
         //
         Statistics statistics = new Statistics();
-        statistics.setDuration(1L);
         statistics.setEqsUsed(1L);
-        statistics.setMqsUsed(1L);
-        statistics.setSymbolsUsed(1L);
+        statistics.setDuration(detailedStatistics);
+        statistics.setMqsUsed(detailedStatistics);
+        statistics.setSymbolsUsed(detailedStatistics);
         //
         CompactMealyMachineProxy hypothesis = mock(CompactMealyMachineProxy.class);
         step.setHypothesis(hypothesis);
@@ -315,10 +317,10 @@ public class LearnerResultDAOImplTest {
 
         verify(learnerResultStepRepository, times(2)).save(step);
         assertThat(result.getHypothesis(), is(equalTo(hypothesis)));
-        assertThat(result.getStatistics().getDuration(), is(equalTo(1L)));
         assertThat(result.getStatistics().getEqsUsed(), is(equalTo(1L)));
-        assertThat(result.getStatistics().getMqsUsed(), is(equalTo(1L)));
-        assertThat(result.getStatistics().getSymbolsUsed(), is(equalTo(1L)));
+        assertThat(result.getStatistics().getDuration(), is(equalTo(detailedStatistics)));
+        assertThat(result.getStatistics().getMqsUsed(), is(equalTo(detailedStatistics)));
+        assertThat(result.getStatistics().getSymbolsUsed(), is(equalTo(detailedStatistics)));
     }
 
     @Test

@@ -105,10 +105,17 @@ export class LearnResult {
         this.errorText = obj.errorText;
 
         // convert ns to ms
-        this.statistics.duration = Math.ceil(this.statistics.duration / 1000000);
+        LearnResult.convertNsToMs(this.statistics.duration);
 
         if (this.steps) {
-            this.steps.forEach(step => step.statistics.duration = Math.ceil(step.statistics.duration / 1000000));
+            this.steps.forEach(step => LearnResult.convertNsToMs(step.statistics.duration));
         }
     }
+
+    static convertNsToMs(input) {
+        input.total    = Math.ceil(input.total    / 1000000);
+        input.learner  = Math.ceil(input.learner  / 1000000);
+        input.eqOracle = Math.ceil(input.eqOracle / 1000000);
+    }
+
 }

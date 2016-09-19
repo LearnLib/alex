@@ -22,16 +22,6 @@ public class LearnerThreadFactory {
     private LearnerResultDAO learnerResultDAO;
 
     /**
-     * Constructor that sets the LearnerResultDAO.
-     *
-     * @param learnerResultDAO
-     *         The LearnerResultDAO to use.
-     */
-//    public LearnerThreadFactory(LearnerResultDAO learnerResultDAO) {
-//        this.learnerResultDAO = learnerResultDAO;
-//    }
-
-    /**
      * Create a brand new LearnThread.
      *
      * @param learnerResult

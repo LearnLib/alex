@@ -232,10 +232,10 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         Statistics summaryStatistics = result.getStatistics();
         Statistics newStatistics     = step.getStatistics();
 
-        summaryStatistics.setDuration(summaryStatistics.getDuration() + newStatistics.getDuration());
-        summaryStatistics.setMqsUsed(summaryStatistics.getMqsUsed() + newStatistics.getMqsUsed());
-        summaryStatistics.setSymbolsUsed(summaryStatistics.getSymbolsUsed() + newStatistics.getSymbolsUsed());
         summaryStatistics.setEqsUsed(summaryStatistics.getEqsUsed() + newStatistics.getEqsUsed());
+        summaryStatistics.getDuration().increment(newStatistics.getDuration());
+        summaryStatistics.getMqsUsed().increment(newStatistics.getMqsUsed());
+        summaryStatistics.getSymbolsUsed().increment(newStatistics.getSymbolsUsed());
     }
 
     private void initializeLazyRelations(List<LearnerResult> results, boolean includeSteps) {

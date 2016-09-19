@@ -34,11 +34,23 @@
   },
   "sigma" : [ "0", "1" ],
   "statistics" : {
-    "duration" : 9001,
+    "duration" : {
+      "learner" : 0,
+      "eqOracle" : 0,
+      "total" : 0
+    },
     "eqsUsed" : 0,
-    "mqsUsed" : 0,
+    "mqsUsed" : {
+      "learner" : 0,
+      "eqOracle" : 0,
+      "total" : 0
+    },
     "startDate" : "1970-01-01T00:00:00.000+00:00",
-    "symbolsUsed" : 0
+    "symbolsUsed" : {
+      "learner" : 0,
+      "eqOracle" : 0,
+      "total" : 0
+    }
   },
   "steps" : [ {
     "counterExample" : "",
@@ -74,11 +86,23 @@
       } ]
     },
     "statistics" : {
-      "duration" : 9001,
+      "duration" : {
+        "learner" : 0,
+        "eqOracle" : 0,
+        "total" : 0
+      },
       "eqsUsed" : 0,
-      "mqsUsed" : 0,
+      "mqsUsed" : {
+        "learner" : 0,
+        "eqOracle" : 0,
+        "total" : 0
+      },
       "startDate" : "1970-01-01T00:00:00.000+00:00",
-      "symbolsUsed" : 0
+      "symbolsUsed" : {
+        "learner" : 0,
+        "eqOracle" : 0,
+        "total" : 0
+      }
     },
     "stepNo" : 0,
     "stepsToLearn" : 0

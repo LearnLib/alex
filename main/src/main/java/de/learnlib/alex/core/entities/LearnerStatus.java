@@ -109,7 +109,7 @@ public class LearnerStatus {
         this.projectId = learnerResult.getProjectId();
         this.testNo = learnerResult.getTestNo();
         this.statistics = new LearnerStatusStatistics(learnerResult.getStatistics().getStartDate(),
-                                                      learnerResult.getStatistics().getMqsUsed());
+                                                      learnerResult.getStatistics().getMqsUsed().getTotal());
     }
 
     /**

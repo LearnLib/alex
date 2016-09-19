@@ -43,7 +43,7 @@ public class LearnerResultTest {
     private static final Long PROJECT_ID = 3L;
     private static final Long ID = 3L;
     private static final ZonedDateTime TEST_DATE = ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00");
-    private static final long TEST_DURATION = 9001;
+    private static final Statistics.DetailedStatistics TEST_DURATION = new Statistics.DetailedStatistics();
 
     private static final Algorithm TTT = new Algorithm("TTT", "");
 
