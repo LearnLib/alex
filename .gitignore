@@ -13,8 +13,9 @@ main/src/main/webapp/node_modules
 main/src/main/webapp/dist
 main/src/main/webapp/tests/coverage
 main/src/main/webapp/assets/fonts
+main/src/main/webapp/assets/swagger-ui
 
 # Auto Generated Swagger Doc
-main/src/main/webapp/restdocs/docs
+main/src/main/webapp/restdocs
 
 main/uploads

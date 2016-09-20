@@ -174,6 +174,13 @@ module.exports = function (grunt) {
                     src: '*',
                     dest: 'assets/fonts',
                     filter: 'isFile'
+                },
+                swagger: {
+                    expand: true,
+                    cwd: 'node_modules/swagger-ui/dist',
+                    src: ['**/*.js', '**/*.css', '**/*.gif', '**/*.png', '**/*.ttf'],
+                    dest: 'assets/swagger-ui',
+                    filter: 'isFile'
                 }
             }
         });
@@ -194,6 +201,6 @@ module.exports = function (grunt) {
     grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify:app']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
-    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css']);
+    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css', 'copy:swagger']);
     grunt.registerTask('test', ['karma:unit']);
 };
