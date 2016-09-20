@@ -15,7 +15,7 @@
  */
 
 import {eqOracleType} from "../constants";
-import {RandomEqOracle, CompleteEqOracle, SampleEqOracle, WMethodEqOracle} from "../entities/EqOracle";
+import {RandomEqOracle, CompleteEqOracle, SampleEqOracle, WMethodEqOracle, HypothesisEqOracle} from "../entities/EqOracle";
 
 /**
  * The service to create new eq oracles.
@@ -38,6 +38,8 @@ export class EqOracleService {
                 return new SampleEqOracle(obj.counterExamples);
             case eqOracleType.WMETHOD:
                 return new WMethodEqOracle(obj.maxDepth);
+            case eqOracleType.HYPOTHESIS:
+                return new HypothesisEqOracle(obj.hypothesis);
             default:
                 return null;
         }

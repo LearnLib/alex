@@ -71,7 +71,7 @@ export class SampleEqOracle {
 }
 
 /**
- * The model the the wmethod eq oracle.
+ * The model for the wmethod eq oracle.
  */
 export class WMethodEqOracle {
 
@@ -83,5 +83,21 @@ export class WMethodEqOracle {
     constructor(maxDepth = 1) {
         this.type = eqOracleType.WMETHOD;
         this.maxDepth = maxDepth;
+    }
+}
+
+/**
+ * The model for the Hypothesis eq oracle.
+ */
+export class HypothesisEqOracle {
+
+    /**
+     * Constructor.
+     *
+     * @param {object} hypothesis
+     */
+    constructor(hypothesis = {}) {
+        this.type = eqOracleType.HYPOTHESIS;
+        this.hypothesis = hypothesis;
     }
 }

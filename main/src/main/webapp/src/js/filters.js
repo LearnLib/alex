@@ -32,6 +32,8 @@ export function formatEqOracle() {
                 return 'Sample';
             case  eqOracleType.WMETHOD:
                 return 'W-Method';
+            case  eqOracleType.HYPOTHESIS:
+                return 'Hypothesis';
             default:
                 return type;
         }

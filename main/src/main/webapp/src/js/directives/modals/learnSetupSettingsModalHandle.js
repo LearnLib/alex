@@ -34,7 +34,7 @@ class LearnSetupSettingsModalController {
      * @param {SettingsResource} SettingsResource
      */
     // @ngInject
-    constructor($uibModalInstance, modalData, ToastService, EventBus, EqOracleService, SettingsResource) {
+    constructor($scope, $uibModalInstance, modalData, ToastService, EventBus, EqOracleService, SettingsResource) {
         this.$uibModalInstance = $uibModalInstance;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
@@ -69,6 +69,23 @@ class LearnSetupSettingsModalController {
          * @type {LearnConfiguration}
          */
         this.learnConfiguration = modalData.learnConfiguration;
+
+        // listen on the file loaded event
+        EventBus.on(events.FILE_LOADED, (evt, data) => {
+            this.fileLoaded(data.file);
+        }, $scope);
+    }
+
+    fileLoaded(data) {
+        if (this.learnConfiguration.eqOracle.type !== this.eqOracles.HYPOTHESIS) {
+            return;
+        }
+
+        try {
+            this.learnConfiguration.eqOracle.hypothesis = JSON.parse(data);
+        } catch (e) {
+            this.ToastService.danger('<p><strong>Loading json file failed</strong></p> The file is not properly formatted');
+        }
     }
 
 

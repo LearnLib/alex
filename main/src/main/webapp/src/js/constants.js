@@ -31,7 +31,8 @@ export const eqOracleType = {
     RANDOM: 'random_word',
     COMPLETE: 'complete',
     SAMPLE: 'sample',
-    WMETHOD: 'wmethod'
+    WMETHOD: 'wmethod',
+    HYPOTHESIS: 'hypothesis'
 };
 
 export const userRole = {
