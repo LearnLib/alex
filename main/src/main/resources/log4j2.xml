@@ -2,12 +2,18 @@
 <Configuration>
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
+            <MarkerFilter marker="FLOW" onMatch="DENY" onMismatch="ACCEPT"/>
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
 		</Console>
 		<Console name="Tracer" target="SYSTEM_OUT">
+            <MarkerFilter marker="FLOW" onMatch="ACCEPT" onMismatch="DENY"/>
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %C.%M (%L) - %msg%n" />
 		</Console>
 		<Routing name="LearnerAppender">
+            <Filters>
+                <MarkerFilter marker="FLOW"    onMatch="DENY"   onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="LEARNER" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
 			<Routes pattern="$${ctx:userId}">
 				<Route>
 					<RollingFile name="LearnerFile-${ctx:userId}" fileName="logs/learn-${ctx:userId}.log"
@@ -26,10 +32,6 @@
 		</Routing>
 	</Appenders>
 	<Loggers>
-		<Root level="info">
-			<AppenderRef ref="Console" />
-		</Root>
-
         <!-- Loggers of the dependencies. -->
         <Logger name="com.gargoylesoftware.htmlunit" level="warn"/>
         <Logger name="hsqldb.db" level="warn"/>
@@ -42,22 +44,10 @@
         <Logger name="org.hibernate.type.descriptor.sql" level="off"/>
 
         <!-- Our own logger. -->
-        <Logger name="de.learnlib.alex" level="trace">
-			<Filters>
-				<MarkerFilter marker="FLOW"    onMatch="DENY"   onMismatch="NEUTRAL"/>
-				<MarkerFilter marker="LEARNER" onMatch="ACCEPT" onMismatch="DENY"/>
-			</Filters>
-			<AppenderRef ref="LearnerAppender" />
-		</Logger>
-
-		<Logger name="de.learnlib.alex.rest">
-			<MarkerFilter marker="FLOW" onMatch="ACCEPT" onMismatch="DENY"/>
-			<AppenderRef ref="Tracer" />
-		</Logger>
-
-		<Logger name="de.learnlib.alex.core">
-			<MarkerFilter marker="FLOW" onMatch="ACCEPT" onMismatch="DENY"/>
-			<AppenderRef ref="Tracer" />
-		</Logger>
+		<Root level="trace">
+			<AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="Tracer"/>
+            <AppenderRef ref="LearnerAppender"/>
+		</Root>
 	</Loggers>
 </Configuration>
