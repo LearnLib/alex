@@ -104,6 +104,13 @@ public class ALEXApplication extends ResourceConfig {
         if (settings == null) {
             try {
                 settings = new Settings();
+
+                String chromeDriverPath = System.getProperty("webdriver.chrome.driver", "");
+                String geckoDriverPath  = System.getProperty("webdriver.gecko.driver",  "");
+
+                Settings.DriverSettings driverSettings = new Settings.DriverSettings(chromeDriverPath, geckoDriverPath);
+                settings.setDriverSettings(driverSettings);
+
                 settingsDAO.create(settings);
             } catch (ValidationException e) {
                 e.printStackTrace();

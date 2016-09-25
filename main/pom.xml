@@ -361,10 +361,14 @@
                 <version>0.4.10</version>
                 <configuration>
                     <imageName>alex:${project.version}</imageName>
+                    <imageTags>
+                        <imageTag>${project.version}</imageTag>
+                        <imageTag>latest</imageTag>
+                    </imageTags>
                     <dockerDirectory>src/docker</dockerDirectory>
                     <resources>
                         <resource>
-                            <targetPath>.</targetPath>
+                            <targetPath>/</targetPath>
                             <directory>${project.build.directory}</directory>
                             <include>${project.build.finalName}.war</include>
                         </resource>
