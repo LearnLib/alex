@@ -39,7 +39,6 @@ import javax.persistence.Entity;
 @JsonTypeName("web_checkForNode")
 public class CheckNodeAction extends WebSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -3884454109124323412L;
 
     private static final Logger LOGGER = LogManager.getLogger();

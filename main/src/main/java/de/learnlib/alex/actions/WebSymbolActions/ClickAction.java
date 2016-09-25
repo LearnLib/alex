@@ -43,9 +43,6 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("web_click")
 public class ClickAction extends WebSymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = -9158530821188611940L;
 
     private static final Logger LOGGER = LogManager.getLogger();

@@ -37,7 +37,6 @@ import java.io.Serializable;
 @JsonTypeName("hypothesis")
 public class HypothesisEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -110995671060498443L;
 
     /** The Hypothesis to check against. */

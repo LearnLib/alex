@@ -38,7 +38,6 @@ import javax.persistence.Entity;
 @JsonTypeName("web_checkForText")
 public class CheckTextWebAction extends WebSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -1212555673698070996L;
 
     private static final Logger LOGGER = LogManager.getLogger();

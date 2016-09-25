@@ -38,7 +38,6 @@ import javax.persistence.Entity;
 @JsonTypeName("rest_checkAttributeExists")
 public class CheckAttributeExistsAction extends RESTSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 6739027451651950338L;
 
     private static final Logger LOGGER = LogManager.getLogger();

@@ -52,7 +52,6 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SymbolGroup implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 4986838799404559274L;
 
     /** The ID of the SymbolGroup in the DB. */

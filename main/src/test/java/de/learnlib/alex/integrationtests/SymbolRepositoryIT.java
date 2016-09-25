@@ -26,6 +26,7 @@ import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.User;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
@@ -142,6 +143,26 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test(expected = TransactionSystemException.class)
+    @Ignore
+    public void shouldFailToSaveASymbolsWithADuplicateNamesForOneUser() {
+        User user = createUser("alex@test.example");
+        user = userRepository.save(user);
+        //
+        Project project = createProject(user, "Test Project");
+        project = projectRepository.save(project);
+        //
+        SymbolGroup group = createGroup(user, project, 1L, "Test Group");
+        group = symbolGroupRepository.save(group);
+        //
+        Symbol symbol1 = createSymbol(user, project, group, 0L, 0L, "Test", "test_1");
+        Symbol symbol2 = createSymbol(user, project, group, 0L, 0L, "Test", "test_2");
+        //
+        symbolRepository.save(symbol1);
+
+        symbolRepository.save(symbol2); // should fail
+    }
+
+    @Test(expected = TransactionSystemException.class)
     public void shouldFailToSaveASymbolWithoutAnAbbreviation() {
         User user = createUser("alex@test.example");
         user = userRepository.save(user);
@@ -187,6 +208,26 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         Symbol symbol = createSymbol(user, project, group, 0L, 0L, "Test Symbol", "thisAbbreviationIsWayTooLong");
 
         symbolRepository.save(symbol); // should fail
+    }
+
+    @Test(expected = TransactionSystemException.class)
+    @Ignore
+    public void shouldFailToSaveASymbolsWithADuplicateAbbreviationsForOneUser() {
+        User user = createUser("alex@test.example");
+        user = userRepository.save(user);
+        //
+        Project project = createProject(user, "Test Project");
+        project = projectRepository.save(project);
+        //
+        SymbolGroup group = createGroup(user, project, 1L, "Test Group");
+        group = symbolGroupRepository.save(group);
+        //
+        Symbol symbol1 = createSymbol(user, project, group, 0L, 0L, "Test 1", "test");
+        Symbol symbol2 = createSymbol(user, project, group, 0L, 0L, "Test 2", "test");
+        //
+        symbolRepository.save(symbol1);
+
+        symbolRepository.save(symbol2); // should fail
     }
 
     @Test(expected = DataIntegrityViolationException.class)

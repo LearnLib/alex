@@ -32,8 +32,6 @@ import javax.validation.ValidationException;
 @Service
 public class SettingsDAOImpl implements SettingsDAO {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
     /** The SettingsRepository to use. Will be injected. */
     private SettingsRepository settingsRepository;
 

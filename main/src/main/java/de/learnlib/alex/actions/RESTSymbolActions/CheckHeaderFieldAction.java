@@ -39,7 +39,6 @@ import java.util.List;
 @JsonTypeName("rest_checkHeaderField")
 public class CheckHeaderFieldAction extends RESTSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -7234083244640666736L;
 
     private static final Logger LOGGER = LogManager.getLogger();

@@ -45,9 +45,6 @@ import javax.persistence.Transient;
 @JsonTypeName("executeSymbol")
 public class ExecuteSymbolAction extends SymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = 3143716533295082498L;
 
     private static final Logger LOGGER = LogManager.getLogger();

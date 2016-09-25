@@ -38,9 +38,6 @@ import javax.persistence.Entity;
 @JsonTypeName("web_executeScript")
 public class ExecuteScriptAction extends WebSymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = 6118333853615934954L;
 
     private static final Logger LOGGER = LogManager.getLogger();

@@ -53,7 +53,6 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerResultStep implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -6932946318109366918L;
 
     /** The id of the LearnerResult in the DB. */

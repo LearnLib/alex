@@ -26,7 +26,6 @@ import java.io.Serializable;
 @Embeddable
 public class IdRevisionPair implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -6906978252141016538L;
 
     /** The ID of a {@link Symbol}. */

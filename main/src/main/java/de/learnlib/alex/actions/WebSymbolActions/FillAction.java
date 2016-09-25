@@ -41,7 +41,6 @@ import javax.persistence.Entity;
 @JsonTypeName("web_fill")
 public class FillAction extends WebSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 8595076806577663223L;
 
     private static final Logger LOGGER = LogManager.getLogger();

@@ -5,13 +5,16 @@ import de.learnlib.alex.annotations.LearnAlgorithm;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * An entity representation of the {@link LearnAlgorithm} annotation.
  */
 @Embeddable
-public class Algorithm {
+public class Algorithm implements Serializable {
+
+    private static final long serialVersionUID = 6543691743731519994L;
 
     /** The internal name of the Algorithm. */
     private String name;

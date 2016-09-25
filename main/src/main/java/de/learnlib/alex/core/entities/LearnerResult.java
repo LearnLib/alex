@@ -65,7 +65,6 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerResult implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 4619722174562257862L;
 
     /** The id of the LearnerResult in the DB. */
@@ -96,7 +95,7 @@ public class LearnerResult implements Serializable {
     private Algorithm algorithm;
 
     /** The {@link LearnAlgorithmFactory} corresponding to the algorithm field. */
-    private LearnAlgorithmFactory algorithmFactory;
+    private transient LearnAlgorithmFactory algorithmFactory;
 
     /** The browser to use during the learning. */
     private WebBrowser browser;

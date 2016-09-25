@@ -85,7 +85,7 @@ public enum WebBrowser {
                 default:
                     throw new Exception();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.warn("Could not create a WebDriver.", e);
             throw e;
         }

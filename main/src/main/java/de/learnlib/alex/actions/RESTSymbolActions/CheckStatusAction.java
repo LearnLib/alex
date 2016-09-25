@@ -35,7 +35,6 @@ import javax.persistence.Entity;
 @JsonTypeName("rest_checkStatus")
 public class CheckStatusAction extends RESTSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -4444604521120530087L;
 
     private static final Logger LOGGER = LogManager.getLogger();

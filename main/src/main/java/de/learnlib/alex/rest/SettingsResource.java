@@ -44,10 +44,6 @@ public class SettingsResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** Context information about the URI. */
-    @Context
-    private UriInfo uri;
-
     /** The {@link SettingsDAO} to use. */
     @Inject
     private SettingsDAO settingsDAO;

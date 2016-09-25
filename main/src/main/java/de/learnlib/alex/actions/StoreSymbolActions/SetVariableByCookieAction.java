@@ -80,7 +80,6 @@ public class SetVariableByCookieAction extends SetVariableAction {
 
     }
 
-    /** to be serializable. */
     private static final long serialVersionUID = 5093001294341313128L;
 
     /**

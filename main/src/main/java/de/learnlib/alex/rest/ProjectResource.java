@@ -209,7 +209,8 @@ public class ProjectResource {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             try {
-                if ((project.getUser() != null && !user.equals(project.getUser()))
+                if (
+                        (project.getUser() != null && !user.equals(project.getUser()))
                         || (project.getUserId() != 0 && !Objects.equals(project.getUserId(), user.getId()))) {
                     throw new UnauthorizedException("You are not allowed to update this project");
                 }

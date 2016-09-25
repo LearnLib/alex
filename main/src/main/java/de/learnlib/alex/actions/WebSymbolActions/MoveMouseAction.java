@@ -43,9 +43,6 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("web_moveMouse")
 public class MoveMouseAction extends WebSymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = -3477841410719285695L;
 
     private static final Logger LOGGER = LogManager.getLogger();

@@ -80,7 +80,6 @@ public class AssertCounterAction extends SymbolAction {
 
     }
 
-    /** to be serializable. */
     private static final long serialVersionUID = -8210218030257177422L;
 
     private static final Logger LOGGER = LogManager.getLogger();

@@ -57,13 +57,12 @@ import java.util.Objects;
 @Entity
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"userId", "projectId", "id", "revision"}),
+                @UniqueConstraint(columnNames = {"userId", "projectId", "id", "revision"}, name = "Unique ID & Revision per User & project")
         }
 )
 @JsonPropertyOrder(alphabetic = true)
 public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorManager>, Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 7987585761829495962L;
 
     /** The maximum length of the abbreviation. */

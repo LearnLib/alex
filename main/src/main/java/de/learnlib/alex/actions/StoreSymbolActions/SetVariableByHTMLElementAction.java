@@ -38,7 +38,6 @@ import javax.persistence.Entity;
 @JsonTypeName("setVariableByHTML")
 public class SetVariableByHTMLElementAction extends SetVariableAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -7654754471208209824L;
 
     private static final Logger LOGGER = LogManager.getLogger();

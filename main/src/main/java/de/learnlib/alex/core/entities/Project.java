@@ -48,9 +48,6 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Project implements Serializable {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = -6760395646972200067L;
 
     /**

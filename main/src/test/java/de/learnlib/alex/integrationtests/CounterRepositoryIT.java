@@ -215,7 +215,6 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
         counterRepository.delete(counter.getCounterId());
 
-        System.out.println(counterRepository.findAll());
         assertThat(counterRepository.count(), is(equalTo(0L)));
     }
 

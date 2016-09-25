@@ -25,9 +25,6 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("web_waitForTitle")
 public class WaitForTitleAction extends WebSymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = -7416267361597106520L;
 
     private static final Logger LOGGER = LogManager.getLogger();

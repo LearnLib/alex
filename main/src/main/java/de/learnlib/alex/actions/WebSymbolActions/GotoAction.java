@@ -40,7 +40,6 @@ import javax.persistence.Entity;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GotoAction extends WebSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -9158530821188611940L;
 
     private static final Logger LOGGER = LogManager.getLogger();

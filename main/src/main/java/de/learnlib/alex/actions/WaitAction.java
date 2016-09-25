@@ -36,7 +36,6 @@ import javax.persistence.Entity;
 @JsonTypeName("wait")
 public class WaitAction extends WebSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 7122950041811279742L;
 
     private static final Logger LOGGER = LogManager.getLogger();

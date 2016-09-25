@@ -65,7 +65,7 @@ public class PressKeyAction extends WebSymbolAction {
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
         String unescapedKey = StringEscapeUtils.unescapeJava(this.key);
-        Keys key = Keys.getKeyFromUnicode((unescapedKey).toCharArray()[0]);
+        Keys key = Keys.getKeyFromUnicode(unescapedKey.toCharArray()[0]);
 
         try {
             WebElement element = connector.getElement(CSSUtils.escapeSelector(insertVariableValues(node)));

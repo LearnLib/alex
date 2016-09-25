@@ -39,7 +39,6 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("setVariable")
 public class SetVariableAction extends SymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 1935478771410953466L;
 
     private static final Logger LOGGER = LogManager.getLogger();

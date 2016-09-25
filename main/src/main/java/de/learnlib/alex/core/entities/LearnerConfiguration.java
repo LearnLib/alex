@@ -36,7 +36,6 @@ import java.util.Set;
 @JsonPropertyOrder(alphabetic = true)
 public class LearnerConfiguration extends LearnerResumeConfiguration implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -5130245647384793948L;
 
     /** The maximum length of a comment. */

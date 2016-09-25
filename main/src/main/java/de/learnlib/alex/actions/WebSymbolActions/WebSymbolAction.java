@@ -34,7 +34,6 @@ import javax.persistence.Entity;
 @JsonTypeName("web")
 public abstract class WebSymbolAction extends SymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -1990239222213631726L;
 
     @Override

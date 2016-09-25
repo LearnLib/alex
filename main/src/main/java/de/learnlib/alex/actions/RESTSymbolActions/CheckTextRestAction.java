@@ -38,7 +38,6 @@ import javax.persistence.Entity;
 @JsonTypeName("rest_checkForText")
 public class CheckTextRestAction extends RESTSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -681951086735590790L;
 
     private static final Logger LOGGER = LogManager.getLogger();

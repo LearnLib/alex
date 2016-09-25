@@ -40,7 +40,6 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("rest_checkAttributeType")
 public class CheckAttributeTypeAction extends  RESTSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 6962742356381266855L;
 
     private static final Logger LOGGER = LogManager.getLogger();

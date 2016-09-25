@@ -36,6 +36,7 @@ import org.jose4j.lang.JoseException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -50,7 +51,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
-import javax.xml.bind.ValidationException;
 import java.util.List;
 
 /**
@@ -256,12 +256,8 @@ public class UserResource {
                 throw new ValidationException("The email is the same as the current one!");
             }
 
-            // check if the new email is already taken
-            try {
-                userDAO.getByEmail(email);
+            if (emailIsAlreadyTaken(email)) {
                 throw new ValidationException("The email is already taken!");
-            } catch (NotFoundException e) {
-                // email is free, let's move on
             }
 
             realUser.setEmail(email);
@@ -272,6 +268,15 @@ public class UserResource {
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeEmail", Status.BAD_REQUEST, e);
+        }
+    }
+
+    private boolean emailIsAlreadyTaken(String email) {
+        try {
+            userDAO.getByEmail(email);
+            return true;
+        } catch (NotFoundException e) {
+            return false;
         }
     }
 

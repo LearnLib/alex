@@ -42,7 +42,6 @@ import java.io.Serializable;
 })
 public abstract class AbstractEquivalenceOracleProxy implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 6270462192160289890L;
 
     /**

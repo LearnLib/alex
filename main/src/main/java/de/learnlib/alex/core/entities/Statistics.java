@@ -22,7 +22,6 @@ import java.util.Objects;
 @JsonPropertyOrder(alphabetic = true)
 public class Statistics implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -5221139436025380739L;
 
     /** Standard DateTimeFormatter that will create a nice ISO 8160 string with milliseconds and a time zone. */
@@ -36,7 +35,9 @@ public class Statistics implements Serializable {
      * Sub Statistics class to store information by Learner and EqOracle.
      */
     @Embeddable
-    public static class DetailedStatistics {
+    public static class DetailedStatistics implements Serializable {
+
+        private static final long serialVersionUID = -2601019208764457063L;
 
         /** Data of the Learner. */
         private long learner;

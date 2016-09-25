@@ -34,7 +34,6 @@ import java.io.Serializable;
 @JsonTypeName("wmethod")
 public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 2016142289217760178L;
 
     /** The maximal depth to explore, i.e. minimal length of words to test. */

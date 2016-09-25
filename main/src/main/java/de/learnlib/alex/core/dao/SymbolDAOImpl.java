@@ -129,7 +129,11 @@ public class SymbolDAOImpl implements SymbolDAO {
             symbols.forEach(this::createOne);
 
             // set execute symbols
-            setExecuteToSymbols(symbolRepository, symbols);
+            Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
+            symbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
+            for (Symbol symbol : symbols) {
+                setExecuteToSymbols(symbolRepository, symbol, symbolMap);
+            }
 
         // error handling
         } catch (DataIntegrityViolationException e) {

@@ -237,6 +237,7 @@ public class LearnerThread extends Thread {
             learn();
         } catch (Exception e) {
             LOGGER.warn(LEARNER_MARKER, "Something in the LearnerThread went wrong:", e);
+            e.printStackTrace();
 
             String message = e.getMessage();
             if (message == null) {
@@ -348,6 +349,7 @@ public class LearnerThread extends Thread {
     }
 
     private void storeLearnerMetaData() throws NotFoundException {
+        LOGGER.traceEntry();
         // statistics
         Statistics statistics = currentStep.getStatistics();
 
@@ -372,9 +374,13 @@ public class LearnerThread extends Thread {
             algorithmInformation = "";
         }
         currentStep.setAlgorithmInformation(algorithmInformation);
+
+        LOGGER.traceExit();
     }
 
     private void findCounterExample() {
+        LOGGER.traceEntry();
+
         EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
         eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle);
         DefaultQuery<String, Word<String>> newCounterExample;
@@ -387,9 +393,12 @@ public class LearnerThread extends Thread {
             currentStep.setCounterExample(DefaultQueryProxy.createFrom(newCounterExample));
         }
         LOGGER.info(LEARNER_MARKER, "The new counter example is '{}'.", newCounterExample);
+
+        LOGGER.traceExit();
     }
 
     private void storeCounterExampleSearchMetaData() {
+        LOGGER.traceEntry();
         // statistics
         Statistics statistics = currentStep.getStatistics();
 
@@ -404,6 +413,8 @@ public class LearnerThread extends Thread {
         statistics.getMqsUsed().setEqOracle(sul.getResetCount());
         statistics.getSymbolsUsed().setEqOracle(sul.getSymbolUsedCount());
         sul.resetCounter();
+
+        LOGGER.traceExit();
     }
 
 }

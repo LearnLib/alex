@@ -30,7 +30,6 @@ import java.util.LinkedList;
  */
 public class AlphabetProxy extends LinkedList<String> {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 3404889779588414036L;
 
     /**

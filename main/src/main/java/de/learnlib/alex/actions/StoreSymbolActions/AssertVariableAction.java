@@ -39,7 +39,6 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("assertVariable")
 public class AssertVariableAction extends SymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 6363724455992504221L;
 
     private static final Logger LOGGER = LogManager.getLogger();

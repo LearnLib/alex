@@ -530,7 +530,6 @@ public class SymbolDAOImplTest {
                                                                                                     .willReturn(group2);
         //
         List<Symbol> symbols = createTestSymbolLists(user, project, group1);
-        System.out.println(symbols.size());
         //
         symbols.forEach(s -> {
             given(symbolRepository.findOne(USER_ID, PROJECT_ID, s.getId())).willReturn(Collections.singletonList(s));

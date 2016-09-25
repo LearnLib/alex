@@ -52,9 +52,6 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CallAction extends RESTSymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = 7971257988991996022L;
 
     private static final Logger LOGGER = LogManager.getLogger();

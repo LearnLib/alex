@@ -42,7 +42,6 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("setVariableByNodeAttribute")
 public class SetVariableByNodeAttributeAction extends SymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 8998187003156355834L;
 
     private static final Logger LOGGER = LogManager.getLogger();

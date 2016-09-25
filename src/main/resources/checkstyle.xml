@@ -62,7 +62,7 @@
             <property name="allowUnknownTags" value="true"/>
         </module>
         <module name="JavadocVariable">
-            <property name="ignoreNamePattern" value="LOGGER|.*_MARKER" />
+            <property name="ignoreNamePattern" value="LOGGER|.*_MARKER|serialVersionUID" />
         </module>
         <module name="JavadocStyle" />
 

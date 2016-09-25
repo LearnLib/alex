@@ -42,7 +42,6 @@ import java.io.Serializable;
 @JsonPropertyOrder(alphabetic = true)
 public class Counter implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 5495935413098569457L;
 
     /** The ID of the counter in the DB. */

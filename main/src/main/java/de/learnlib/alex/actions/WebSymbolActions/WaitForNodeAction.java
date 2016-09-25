@@ -29,9 +29,6 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("web_waitForNode")
 public class WaitForNodeAction extends WebSymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = 4029222122474954117L;
 
     private static final Logger LOGGER = LogManager.getLogger();

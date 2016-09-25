@@ -40,7 +40,6 @@ import javax.persistence.Entity;
 @JsonTypeName("web_submit")
 public class SubmitAction extends WebSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 3054489976413991003L;
 
     private static final Logger LOGGER = LogManager.getLogger();

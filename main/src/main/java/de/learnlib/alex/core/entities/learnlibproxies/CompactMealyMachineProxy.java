@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 @Embeddable
 public class CompactMealyMachineProxy implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -5155147869595906457L;
 
     /** Create one static ObjectMapper to (de-)serialize the Proxy for the DB. */

@@ -39,7 +39,6 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("setCounter")
 public class SetCounterAction extends SymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -6023597222318880440L;
 
     private static final Logger LOGGER = LogManager.getLogger();

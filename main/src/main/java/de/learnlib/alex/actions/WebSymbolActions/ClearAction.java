@@ -40,7 +40,6 @@ import javax.persistence.Entity;
 @JsonTypeName("web_clear")
 public class ClearAction extends WebSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -255670058811890900L;
 
     private static final Logger LOGGER = LogManager.getLogger();
