@@ -104,6 +104,12 @@ export class LearnResult {
          */
         this.errorText = obj.errorText;
 
+        /**
+         * The comment of the learn result.
+         * @type {string}
+         */
+        this.comment = obj.comment;
+
         // convert ns to ms
         LearnResult.convertNsToMs(this.statistics.duration);
 

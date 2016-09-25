@@ -27,6 +27,7 @@ import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,13 +92,17 @@ public class SymbolMapper
 
     /**
      * Get the alphabet for the learning process as required by the LearnLib.
+     * Sorted by key ascending.
      *
      * @return The alphabet.
      */
     public Alphabet<String> getAlphabet() {
         Alphabet<String> sigma = new SimpleAlphabet<>();
 
-        sigma.addAll(symbols.keySet());
+        // sort the alphabet for a more consistent learning behavior
+        List<String> sortedSymbolList = new ArrayList<>(symbols.keySet());
+        sortedSymbolList.sort(String::compareTo);
+        sigma.addAll(sortedSymbolList);
 
         return sigma;
     }
