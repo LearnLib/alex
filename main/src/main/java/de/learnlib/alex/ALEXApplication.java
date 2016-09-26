@@ -16,13 +16,13 @@
 
 package de.learnlib.alex;
 
-import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.annotations.LearnAlgorithm;
 import de.learnlib.alex.core.dao.SettingsDAO;
 import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.Settings;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
+import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.rest.CounterResource;
 import de.learnlib.alex.rest.FileResource;
 import de.learnlib.alex.rest.IFrameProxyResource;
@@ -41,14 +41,22 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 import javax.ws.rs.ApplicationPath;
+import java.io.IOException;
 
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
@@ -57,23 +65,33 @@ import javax.ws.rs.ApplicationPath;
 @ApplicationPath("rest")
 public class ALEXApplication extends ResourceConfig {
 
-    /** The E-Mail for the default admin, i.e. the admin that will be auto created if no other admin exists. */
+    /**
+     * The E-Mail for the default admin, i.e. the admin that will be auto created if no other admin exists.
+     */
     public static final String DEFAULT_ADMIN_EMAIL = "admin@alex.example";
 
-    /** The Password for the default admin, i.e. the admin that will be auto created if no other admin exists. */
+    /**
+     * The Password for the default admin, i.e. the admin that will be auto created if no other admin exists.
+     */
     public static final String DEFAULT_ADMIN_PASSWORD = "admin";
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The UserDOA to create an admin if needed. */
+    /**
+     * The UserDOA to create an admin if needed.
+     */
     @Inject
     private UserDAO userDAO;
 
-    /** The SettingsDAO to create the settings object if needed. */
+    /**
+     * The SettingsDAO to create the settings object if needed.
+     */
     @Inject
     private SettingsDAO settingsDAO;
 
-    /** The {@link LearnAlgorithmService} to use. */
+    /**
+     * The {@link LearnAlgorithmService} to use.
+     */
     @Inject
     private LearnAlgorithmService algorithms;
 
@@ -130,7 +148,7 @@ public class ALEXApplication extends ResourceConfig {
                 settings = new Settings();
 
                 String chromeDriverPath = System.getProperty("webdriver.chrome.driver", "");
-                String geckoDriverPath  = System.getProperty("webdriver.gecko.driver",  "");
+                String geckoDriverPath = System.getProperty("webdriver.gecko.driver", "");
 
                 Settings.DriverSettings driverSettings = new Settings.DriverSettings(chromeDriverPath, geckoDriverPath);
                 settings.setDriverSettings(driverSettings);
@@ -143,7 +161,7 @@ public class ALEXApplication extends ResourceConfig {
         } else {
             Settings.DriverSettings driverSettings = settings.getDriverSettings();
             System.setProperty("webdriver.chrome.driver", driverSettings.getChrome());
-            System.setProperty("webdriver.gecko.driver",  driverSettings.getFirefox());
+            System.setProperty("webdriver.gecko.driver", driverSettings.getFirefox());
         }
     }
 
@@ -170,5 +188,21 @@ public class ALEXApplication extends ResourceConfig {
             }
         }
         LOGGER.info("{} LearnAlgorithms found.", algorithms.size());
+    }
+
+    @Bean
+    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+        return new HiddenHttpMethodFilter() {
+            @Override
+            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain filterChain) throws ServletException, IOException {
+                if ("POST".equals(request.getMethod())
+                        && request.getContentType().equals(MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
+                    filterChain.doFilter(request, response);
+                } else {
+                    super.doFilterInternal(request, response, filterChain);
+                }
+            }
+        };
     }
 }

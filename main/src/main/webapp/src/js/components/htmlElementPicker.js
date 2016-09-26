@@ -106,7 +106,7 @@ class HtmlElementPickerComponent {
                         if (this.getAttribute('href') !== '' && this.getAttribute('href')[0] !== '#') {
                             self.$scope.$apply(() => {
                                 self.url = decodeURIComponent(_this.getAttribute('href'))
-                                    .replace(self.proxyUrl + self.project.baseUrl + '/', '');
+                                    .replace(window.location.origin + '/' + self.proxyUrl + self.project.baseUrl, '', '');
                             });
                         }
                     }
