@@ -45,7 +45,6 @@ export function htmlElementPickerHandle($document, $compile, $q, HtmlElementPick
                 const picker = $compile('<html-element-picker></html-element-picker>')(scope);
                 $document.find('body').prepend(picker);
 
-                HtmlElementPickerService.lastUrl = null;
                 HtmlElementPickerService.deferred = $q.defer();
                 HtmlElementPickerService.deferred.promise
                     .then(data => {

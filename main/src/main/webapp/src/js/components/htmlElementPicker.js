@@ -97,7 +97,7 @@ class HtmlElementPickerComponent {
     loadUrl() {
         const self = this;
 
-        this.iframe.attr('src', this.proxyUrl + this.project.baseUrl + '/' + (this.url === null ? '' : this.url));
+        this.iframe.attr('src', this.proxyUrl + this.project.baseUrl + (this.url === null ? '/' : this.url));
         this.iframe.on('load', () => {
             angular.element(this.iframe.contents()[0].body.getElementsByTagName('a'))
                 .on('click', function () {
