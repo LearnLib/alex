@@ -27,6 +27,7 @@ import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
@@ -337,8 +338,14 @@ public class LearnerThread extends Thread {
         // Get the counter example from the previous step and use it to refine the hypothesis (if possible).
         DefaultQueryProxy counterExample = previousStep.getCounterExample();
         if (counterExample != null) {
-            learner.refineHypothesis(counterExample.createDefaultProxy());
-            storeLearnerMetaData();
+            DefaultQuery<String, Word<String>> counterExampleDefaultProxy = counterExample.createDefaultProxy();
+            try {
+                learner.refineHypothesis(counterExampleDefaultProxy);
+            } catch (NullPointerException e) {
+                throw new LearnerException("Presumably the detected counterexample '" + counterExampleDefaultProxy + "' was not a real counterexample!");
+            } finally {
+                storeLearnerMetaData();
+            }
         }
 
         // search counter example
