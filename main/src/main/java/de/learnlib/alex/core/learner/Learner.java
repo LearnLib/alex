@@ -25,6 +25,8 @@ import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
+import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
@@ -33,6 +35,10 @@ import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
+import net.automatalib.automata.transout.impl.compact.CompactMealy;
+import net.automatalib.util.automata.Automata;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -448,6 +454,32 @@ public class Learner {
             LOGGER.traceExit(e);
             throw new LearnerException("Could not read the outputs", e);
         }
+    }
+
+    /**
+     * Compare two MealyMachines and calculate their separating word.
+     *
+     * @param mealy1
+     *         The first Mealy to compare.
+     * @param mealy2
+     *         The second Mealy to compare.
+     * @return If the machines are different: The corresponding separating word; otherwise: ""
+     */
+    public String compare(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
+        Alphabet alphabetProxy1 = mealy1.createAlphabet();
+        Alphabet alphabetProxy2 = mealy1.createAlphabet();
+
+        CompactMealy mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
+        CompactMealy mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
+
+        Word separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
+
+        String result = "";
+        if (separatingWord != null) {
+            result = separatingWord.toString();
+        }
+
+        return result;
     }
 
 }

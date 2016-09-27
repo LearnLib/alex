@@ -28,6 +28,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolSet;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -346,5 +347,33 @@ public class LearnerResource {
         }
 
         return symbols;
+    }
+
+    /**
+     * Test of two hypotheses are equal or not.
+     * If a difference was found the separating word will be returned.
+     * Otherwise, i.e. the hypotheses are equal,
+     *
+     * @param mealyMachineProxies
+     *         A List of two (!) hypotheses, which will be compared.
+     * @return '{"seperatingWord": "<seperating word, if any"}'
+     */
+    @POST
+    @Path("/compare/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response compareTwoUploaded(List<CompactMealyMachineProxy> mealyMachineProxies) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("compareTwoUploaded({}) for user {}.", mealyMachineProxies, user);
+
+        if (mealyMachineProxies.size() != 2) {
+            IllegalArgumentException e = new IllegalArgumentException("You need to specify exactly two hypothesis!");
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
+        }
+
+        String separatingWord = learner.compare(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
+
+        LOGGER.traceExit(separatingWord);
+        return Response.ok("{\"seperatingWord\": \"" + separatingWord + "\"}").build();
     }
 }
