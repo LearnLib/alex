@@ -89,6 +89,17 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
     List<Symbol> findAll(Long userId, Long projectId, List<IdRevisionPair> idRevisionPairs);
 
     /**
+     * Find all symbols of a user that contain to a specific project.
+     *
+     * @param userId
+     *      The ID of the user the symbols belong to.
+     * @param projectId
+     *      The ID of the project the symbol belongs to.
+     * @return The symbols.
+     */
+    List<Symbol> findAllByUser_IdAndProject_Id(Long userId, Long projectId);
+
+    /**
      * Find all highest / latest revisions of Symbols.
      *
      * @param userId

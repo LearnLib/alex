@@ -170,11 +170,22 @@ public class SymbolDAOImpl implements SymbolDAO {
     private void createOne(Symbol symbol) {
         // new symbols should have a project, not an id and not a revision
         if (symbol.getProjectId() == null && symbol.getProject() == null) {
-            throw new ValidationException("To create a symbols it must have a Project.");
+            throw new ValidationException("To create a symbol it must have a Project.");
         }
 
         if (symbol.getId() != null || symbol.getRevision() != null) {
-            throw new ValidationException("To create a symbols it must not haven an ID or and revision");
+            throw new ValidationException("To create a symbol it must not haven an ID or and revision");
+        }
+
+        // make sure the abbreviation or the name of the symbol is unique
+        List<Symbol> allSymbols = symbolRepository.findAllByUser_IdAndProject_Id(symbol.getUserId(), symbol.getProjectId());
+        for (Symbol s: allSymbols) {
+            if (s.getAbbreviation().equals(symbol.getAbbreviation())) {
+                throw new ValidationException("To create a symbol its abbreviation must be unique.");
+            }
+            if (s.getName().equals(symbol.getName())) {
+                throw new ValidationException("To create a symbol its name must be unique.");
+            }
         }
 
         Long userId    = symbol.getUserId();
