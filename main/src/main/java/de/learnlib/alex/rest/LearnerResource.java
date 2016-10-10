@@ -19,17 +19,10 @@ package de.learnlib.alex.rest;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.entities.IdRevisionPair;
-import de.learnlib.alex.core.entities.LearnerConfiguration;
-import de.learnlib.alex.core.entities.LearnerResult;
-import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
-import de.learnlib.alex.core.entities.LearnerStatus;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.SymbolSet;
-import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.*;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.UserPrincipal;
@@ -61,6 +54,7 @@ import java.util.List;
 
 /**
  * REST API to manage the learning.
+ *
  * @resourcePath learner
  * @resourceDescription Operations about the learning
  */
@@ -70,45 +64,53 @@ public class LearnerResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER  = MarkerManager.getMarker("LEARNER");
-    private static final Marker REST_MARKER     = MarkerManager.getMarker("REST");
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
+    private static final Marker REST_MARKER = MarkerManager.getMarker("REST");
     private static final Marker RESOURCE_MARKER = MarkerManager.getMarker("LEARNER_RESOURCE")
-                                                                    .setParents(LEARNER_MARKER, REST_MARKER);
+            .setParents(LEARNER_MARKER, REST_MARKER);
 
-    /** The {@link ProjectDAO} to use. */
+    /**
+     * The {@link ProjectDAO} to use.
+     */
     @Inject
     private ProjectDAO projectDAO;
 
-    /** The {@link SymbolDAO} to use. */
+    /**
+     * The {@link SymbolDAO} to use.
+     */
     @Inject
     private SymbolDAO symbolDAO;
 
-    /** The {@link LearnerResultDAO} to use. */
+    /**
+     * The {@link LearnerResultDAO} to use.
+     */
     @Inject
     private LearnerResultDAO learnerResultDAO;
 
-    /** The {@link Learner learner} to use. */
+    /**
+     * The {@link Learner learner} to use.
+     */
     @Inject
     private Learner learner;
 
-    /** The security context containing the user of the request. */
+    /**
+     * The security context containing the user of the request.
+     */
     @Context
     private SecurityContext securityContext;
 
     /**
      * Start the learning.
      *
-     * @param projectId
-     *         The project to learn.
-     * @param configuration
-     *         The configuration to customize the learning.
+     * @param projectId     The project to learn.
+     * @param configuration The configuration to customize the learning.
      * @return The status of the current learn process.
      * @throws NotFoundException If the related Project could not be found.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.core.entities.LearnerStatus
-     * @errorResponse   302 not modified `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   400 bad request  `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found    `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 302 not modified `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request  `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found    `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/start/{project_id}")
@@ -121,11 +123,11 @@ public class LearnerResource {
 
         try {
             if (
-                (configuration.getUserId() != null && !user.getId().equals(configuration.getUserId()))
-                    || (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))
-            ) {
+                    (configuration.getUserId() != null && !user.getId().equals(configuration.getUserId()))
+                            || (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))
+                    ) {
                 throw new IllegalArgumentException("If an user or a project is provided in the configuration, "
-                                                           + "they must match the parameters in the path!");
+                        + "they must match the parameters in the path!");
             }
 
             Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
@@ -149,19 +151,16 @@ public class LearnerResource {
      * The project id and the test no must be the same as the very last started learn process.
      * The server must not be restarted
      *
-     * @param projectId
-     *         The project to learn.
-     * @param testRunNo
-     *         The number of the test run which should be resumed.
-     * @param configuration
-     *         The configuration to specify the settings for the next learning steps.
+     * @param projectId     The project to learn.
+     * @param testRunNo     The number of the test run which should be resumed.
+     * @param configuration The configuration to specify the settings for the next learning steps.
      * @return The status of the current learn process.
      * @throws NotFoundException If the previous learn job or the related Project could not be found.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.core.entities.LearnerStatus
-     * @errorResponse   302 not modified `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   400 bad request  `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found    `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 302 not modified `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request  `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found    `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/resume/{project_id}/{test_run}")
@@ -184,9 +183,9 @@ public class LearnerResource {
 
             if (lastResult.getProjectId() != projectId || lastResult.getTestNo() != testRunNo) {
                 LOGGER.info(RESOURCE_MARKER,
-                            "could not resume the learner of another project or with an wrong test run.");
+                        "could not resume the learner of another project or with an wrong test run.");
                 throw new IllegalArgumentException("The given project id or test no does not match "
-                                                           + "with the latest learn result!");
+                        + "with the latest learn result!");
             }
 
             learner.resume(user, configuration);
@@ -259,8 +258,8 @@ public class LearnerResource {
      * @return The information of the learning
      * @throws NotFoundException If the previous learn job or the related Project could not be found.
      * @successResponse 200 OK
-     * @responseType    de.learnlib.alex.core.entities.LearnerResult
-     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @responseType de.learnlib.alex.core.entities.LearnerResult
+     * @errorResponse 404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/status")
@@ -275,7 +274,7 @@ public class LearnerResource {
         }
 
         learnerResultDAO.get(resultInThread.getUserId(), resultInThread.getProjectId(),
-                             resultInThread.getTestNo(), false);
+                resultInThread.getTestNo(), false);
 
         LOGGER.traceExit(resultInThread);
         return Response.ok(resultInThread).build();
@@ -285,24 +284,20 @@ public class LearnerResource {
      * Get the output of a (possible) counter example.
      * This output is generated by executing the symbols on the SUL.
      *
-     * @param projectId
-     *         The project id the counter example takes place in.
-     * @param symbolSet
-     *         The symbol/ input set which will be executed.
+     * @param projectId The project id the counter example takes place in.
+     * @param symbolSet The symbol/ input set which will be executed.
      * @return The observed output of the given input set.
      * @throws NotFoundException If the related Project could not be found.
      * @successResponse 200 OK
-     * @responseType    java.util.List<String>
-     * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @responseType java.util.List<String>
+     * @errorResponse 400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/outputs/{project_id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet,
-                               @QueryParam("includeResetSymbol") @DefaultValue("false") boolean includeResetSymbol)
-            throws NotFoundException {
+    public Response readOutput(@PathParam("project_id") Long projectId, SymbolSet symbolSet) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, symbolSet, user);
 
@@ -317,16 +312,43 @@ public class LearnerResource {
             Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsIdRevisionPair);
             List<Symbol> symbols = loadSymbols(user, projectId, symbolSet.getSymbolsAsIdRevisionPairs());
 
-            List<String> results;
-            if (includeResetSymbol) {
-                Symbol dummyResetSymbol = new Symbol();
-                ArrayList<Symbol> s = new ArrayList<>();
-                s.add(resetSymbol);
-                s.addAll(symbols);
-                results = learner.readOutputs(user, project, dummyResetSymbol, s);
-            } else {
-                results = learner.readOutputs(user, project, resetSymbol, symbols);
+            List<String> results = learner.readOutputs(user, project, resetSymbol, symbols);
+
+            LOGGER.traceExit(results);
+            return ResponseHelper.renderList(results, Status.OK);
+        } catch (LearnerException e) {
+            LOGGER.traceExit(e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
+        }
+    }
+
+    // TODO: create a new resource/dao for words and move this method there then.
+    @POST
+    @Path("/words/{project_id}/outputs")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response readWordOutput(@PathParam("project_id") Long projectId, ReadOutputConfig readOutputConfig)
+            throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("readOutput({}, {}) in browser {} for user {}.", projectId, readOutputConfig.getSymbols(),
+                readOutputConfig.getBrowser(), user);
+
+        try {
+            Project project = projectDAO.getByID(user.getId(), projectId);
+
+            IdRevisionPair resetSymbolAsIdRevisionPair = readOutputConfig.getSymbols().getResetSymbolAsIdRevisionPair();
+            if (resetSymbolAsIdRevisionPair == null) {
+                throw new NotFoundException("No reset symbol specified!");
             }
+
+            Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsIdRevisionPair);
+            List<Symbol> symbols = loadSymbols(user, projectId, readOutputConfig.getSymbols().getSymbolsAsIdRevisionPairs());
+
+            Symbol dummyResetSymbol = new Symbol();
+            ArrayList<Symbol> s = new ArrayList<>();
+            s.add(resetSymbol);
+            s.addAll(symbols);
+            List<String> results = learner.readOutputs(user, project, dummyResetSymbol, s, readOutputConfig);
 
             LOGGER.traceExit(results);
             return ResponseHelper.renderList(results, Status.OK);
@@ -354,8 +376,7 @@ public class LearnerResource {
      * If a difference was found the separating word will be returned.
      * Otherwise, i.e. the hypotheses are equal,
      *
-     * @param mealyMachineProxies
-     *         A List of two (!) hypotheses, which will be compared.
+     * @param mealyMachineProxies A List of two (!) hypotheses, which will be compared.
      * @return '{"seperatingWord": "<seperating word, if any"}'
      */
     @POST

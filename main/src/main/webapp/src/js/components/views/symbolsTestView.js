@@ -101,17 +101,22 @@ export const symbolsTestView = {
          * Executes the word that has been build.
          */
         executeWord() {
-            // TODO
-            // if (this.selectedBrowser === null) {
-            //     this.ToastService.info("Select a web driver.");
-            //     return;
-            // }
+            if (this.selectedBrowser === null) {
+                this.ToastService.info("Select a web driver.");
+                return;
+            }
 
             this.outputs = [];
             this.isExecuting = true;
             const symbols = this.word.map(s => s.getIdRevisionPair());
             const resetSymbol = symbols.shift();
-            this.LearnerResource.readOutputs(this.project.id, resetSymbol, symbols, true)
+
+            const readOutputConfig = {
+                symbols: {resetSymbol, symbols},
+                browser: this.selectedBrowser
+            };
+
+            this.LearnerResource.testWord(this.project.id, readOutputConfig)
                 .then(outputs => {
                     this.outputs = outputs;
                 })

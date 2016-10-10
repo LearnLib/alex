@@ -18,13 +18,7 @@ package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.entities.LearnerConfiguration;
-import de.learnlib.alex.core.entities.LearnerResult;
-import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
-import de.learnlib.alex.core.entities.LearnerStatus;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.*;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
@@ -44,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.ThreadContext;
+import org.apache.tomcat.util.descriptor.web.ContextHandler;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -433,14 +428,43 @@ public class Learner {
         LOGGER.traceEntry();
         LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
 
-        if (contextHandler == null) {
-            // todo: remove hardcoded browser
-            contextHandler = contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER);
-        }
         contextHandler.setResetSymbol(resetSymbol);
-
         ConnectorManager connectors = contextHandler.createContext();
 
+        return readOutputs(symbols, connectors);
+    }
+
+    /**
+     * Determine the output of the SUL by testing a sequence of input symbols.
+     *
+     * @param user
+     *         The user in which context the test should happen.
+     * @param project
+     *         The project in which context the test should happen.
+     * @param resetSymbol
+     *         The reset symbol to use.
+     * @param symbols
+     *         The symbol sequence to execute in order to generate the output sequence.
+     * @param readOutputConfig
+     *         The config for reading the outputs.
+     * @return The following output sequence.
+     * @throws LearnerException
+     *         If something went wrong while testing the symbols.
+     */
+    public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
+                                    ReadOutputConfig readOutputConfig)
+            throws LearnerException {
+        LOGGER.traceEntry();
+        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
+
+        ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(project, readOutputConfig.getBrowser());
+        contextHandler.setResetSymbol(resetSymbol);
+        ConnectorManager connectors = contextHandler.createContext();
+
+        return readOutputs(symbols, connectors);
+    }
+
+    private List<String> readOutputs(List<Symbol> symbols, ConnectorManager connectors) {
         try {
             List<String> output = symbols.stream().map(s ->
                     s.execute(connectors).toString()).collect(Collectors.toList());
@@ -481,5 +505,4 @@ public class Learner {
 
         return result;
     }
-
 }
