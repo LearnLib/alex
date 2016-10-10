@@ -120,11 +120,6 @@ public class SymbolDAOImplTest {
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
-        //
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
-        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
-                                                                                                     .willReturn(group);
-        given(symbolRepository.save(symbol)).willThrow(DataIntegrityViolationException.class);
 
         symbolDAO.create(symbol); // should fail
     }
@@ -151,11 +146,6 @@ public class SymbolDAOImplTest {
         TransactionSystemException transactionSystemException;
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
                                                                     rollbackException);
-        //
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
-        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
-                                                                                                     .willReturn(group);
-        given(symbolRepository.save(symbol)).willThrow(transactionSystemException);
 
         symbolDAO.create(symbol); // should fail
     }
@@ -381,7 +371,6 @@ public class SymbolDAOImplTest {
         symbol.setGroup(group);
         symbol.setRevision(0L);
         //
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
                                                                                                      .willReturn(group);
         given(symbolRepository.findAllWithHighestRevision(USER_ID, PROJECT_ID, symbol.getId()))
@@ -409,7 +398,6 @@ public class SymbolDAOImplTest {
         symbol.setGroup(group);
         symbol.setRevision(0L);
         //
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
                                                                                                      .willReturn(group);
         given(symbolRepository.findAllWithHighestRevision(USER_ID, PROJECT_ID, symbol.getId()))
@@ -443,7 +431,6 @@ public class SymbolDAOImplTest {
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
                                                                     rollbackException);
         //
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
                                                                                                      .willReturn(group);
         given(symbolRepository.findAllWithHighestRevision(USER_ID, PROJECT_ID, symbol.getId()))

@@ -174,7 +174,6 @@ public class SymbolGroupDAOImplTest {
         group.setUser(user);
         group.setProject(project);
         //
-        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
                                                                                                      .willReturn(group);
 

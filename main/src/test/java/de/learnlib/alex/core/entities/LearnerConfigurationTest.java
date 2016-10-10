@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.CompleteExplorationEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -38,7 +37,6 @@ public class LearnerConfigurationTest {
     private static final Algorithm ALGORITHM = new Algorithm("DHC", "");
 
     @Test
-    @Ignore
     public void shouldCreateTheCorrectDefaultJSON() throws JsonProcessingException {
         String expectedJSON = "{\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\",\"comment\":\"\",\"eqOracle\":"
                                     + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","

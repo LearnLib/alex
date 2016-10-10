@@ -48,8 +48,9 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -227,7 +228,7 @@ public class LearnerResourceTest extends JerseyTest {
                                     + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
                                 + "\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
-        verify(learner).resume(any(User.class), any(LearnerConfiguration.class));
+        verify(learner).resume(any(User.class), any(LearnerResumeConfiguration.class));
     }
 
     @Test
@@ -396,7 +397,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn400IfCreatingAnOutputFailed() throws NotFoundException {
-        given(learner.readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(List.class)))
+        given(learner.readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList()))
                 .willThrow(LearnerException.class);
 
         String json = "{\"resetSymbol\":"
@@ -425,7 +426,7 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(List.class));
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList());
     }
 
     @Test
@@ -443,7 +444,7 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(List.class));
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any());
     }
 
     @Test
@@ -456,7 +457,7 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(List.class));
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList());
     }
 
     @Test
@@ -473,7 +474,8 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(List.class));
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList());
     }
 
 }
+

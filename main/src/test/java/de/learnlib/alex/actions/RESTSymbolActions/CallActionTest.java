@@ -38,8 +38,9 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -104,45 +105,40 @@ public class CallActionTest {
 
     @Test
     public void shouldDoAValidGetCall() {
-        given(connector.getBaseUrl()).willReturn(TEST_BASE_URL);
-
         ExecuteResult result = c.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(connector).get(eq(TEST_API_PATH), any(MultivaluedMap.class), any(Set.class));
+        verify(connector).get(eq(TEST_API_PATH), any(), anySet());
     }
 
     @Test
     public void shouldDoAValidPostCall() {
-        given(connector.getBaseUrl()).willReturn(TEST_BASE_URL + "/");
         c.setMethod(CallAction.Method.POST);
 
         ExecuteResult result = c.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(connector).post(eq(TEST_API_PATH), any(MultivaluedMap.class), any(Set.class), eq("{}"));
+        verify(connector).post(eq(TEST_API_PATH), any(), anySet(), eq("{}"));
     }
 
     @Test
     public void shouldDoAValidPutCall() {
-        given(connector.getBaseUrl()).willReturn(TEST_BASE_URL);
         c.setMethod(CallAction.Method.PUT);
 
         ExecuteResult result = c.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(connector).put(eq(TEST_API_PATH), any(MultivaluedMap.class), any(Set.class), eq("{}"));
+        verify(connector).put(eq(TEST_API_PATH), any(), anySet(), eq("{}"));
     }
 
     @Test
     public void shouldDoAValidDeleteCall() {
-        given(connector.getBaseUrl()).willReturn(TEST_BASE_URL);
         c.setMethod(CallAction.Method.DELETE);
 
         ExecuteResult result = c.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(connector).delete(eq(TEST_API_PATH), any(MultivaluedMap.class), any(Set.class));
+        verify(connector).delete(eq(TEST_API_PATH), any(), anySet());
     }
 
 }

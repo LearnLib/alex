@@ -367,8 +367,6 @@ public class LearnerResultDAOImplTest {
         //
         LearnerStatus status = new LearnerStatus(result);
         given(learner.getStatus(user)).willReturn(status);
-        //
-        given(learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user, PROJECT_ID, testNos)).willReturn(1L);
 
         learnerResultDAO.delete(learner, user, PROJECT_ID, testNos); // should fail
     }

@@ -18,7 +18,6 @@ package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
@@ -32,8 +31,8 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -64,7 +63,6 @@ public class WebServiceConnectorTest {
     }
 
     @Test
-    @Ignore
     public void shouldGetASiteAndRememberTheResponse() {
         connector.get("/", requestHeaders, cookies);
 
@@ -75,7 +73,6 @@ public class WebServiceConnectorTest {
     }
 
     @Test
-    @Ignore
     public void shouldPostToASiteAndRememberTheResponse() {
         connector.post("/", requestHeaders, cookies, FAKE_MESSAGE);
 
@@ -86,7 +83,6 @@ public class WebServiceConnectorTest {
     }
 
     @Test
-    @Ignore
     public void shouldPutToASiteAndRememberTheResponse() {
         connector.put("/", requestHeaders, cookies, FAKE_MESSAGE);
 
@@ -98,7 +94,6 @@ public class WebServiceConnectorTest {
 
 
     @Test
-    @Ignore
     public void shouldDeleteToASiteAndRememberTheResponse() {
         connector.delete("/", requestHeaders, cookies);
 

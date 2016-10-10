@@ -150,9 +150,6 @@ public class UserDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheUserCanNotBeFoundByID() throws NotFoundException {
-        User user = createUser();
-        given(userRepository.findOne(user.getId())).willReturn(null);
-
         userDAO.getById((long) TEST_USER_COUNT);
     }
 

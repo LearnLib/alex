@@ -45,7 +45,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -89,13 +89,10 @@ public class LearnerTest {
 
     @Before
     public void setUp() {
-        given(project.getBaseUrl()).willReturn(FAKE_URL);
         given(learnerConfiguration.getBrowser()).willReturn(WebBrowser.HTMLUNITDRIVER);
         given(contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER))
                 .willReturn(contextHandler);
         given(learnerThreadFactory.createThread(any(LearnerResult.class), any(ConnectorContextHandler.class)))
-                .willReturn(learnerThread);
-        given(learnerThreadFactory.createThread(any(LearnerThread.class), any(LearnerResult.class)))
                 .willReturn(learnerThread);
 
         learner = new Learner(symbolDAO, learnerResultDAO, algorithmService,
@@ -147,7 +144,6 @@ public class LearnerTest {
     @Test
     public void shouldReadTheCorrectOutputOfSomeSymbols() {
         Symbol resetSymbol = mock(Symbol.class);
-        given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
         //
         List<Symbol> symbols = new LinkedList<>();
         for (int i = 0; i < SYMBOL_AMOUNT; i++) {
