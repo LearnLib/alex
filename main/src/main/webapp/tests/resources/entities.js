@@ -79,11 +79,23 @@ ENTITIES.learnResults = [{
     "resetSymbol": {"id": 1, "revision": 2},
     "sigma": ["s1"],
     "statistics": {
-        "duration": 8868,
+        "duration": {
+            "learner": 8868,
+            "eqOracle": 100,
+            "total": 8968
+        },
         "eqsUsed": 1,
-        "mqsUsed": 23,
+        "mqsUsed": {
+            "learner": 20,
+            "eqOracle": 3,
+            "total": 23
+        },
         "startDate": "2016-02-01T20:02:58.256+01:00",
-        "symbolsUsed": 112
+        "symbolsUsed": {
+            "learner": 500,
+            "eqOracle": 500,
+            "total": 1000
+        }
     },
     "steps": [{
         "algorithmInformation": "+====+====+\n|    | s1 |\n+====+====+\n| ε  | OK |\n+====+====+\n| s1 | OK |\n+====+====+\n",
@@ -91,11 +103,23 @@ ENTITIES.learnResults = [{
         "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20},
         "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
         "statistics": {
-            "duration": 8868,
+            "duration": {
+                "learner": 8868,
+                "eqOracle": 100,
+                "total": 8968
+            },
             "eqsUsed": 1,
-            "mqsUsed": 23,
+            "mqsUsed": {
+                "learner": 20,
+                "eqOracle": 3,
+                "total": 23
+            },
             "startDate": "2016-02-01T20:02:58.256+01:00",
-            "symbolsUsed": 112
+            "symbolsUsed": {
+                "learner": 500,
+                "eqOracle": 500,
+                "total": 1000
+            }
         },
         "stepNo": 0,
         "stepsToLearn": -1
@@ -105,11 +129,23 @@ ENTITIES.learnResults = [{
         "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20},
         "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
         "statistics": {
-            "duration": 8868,
+            "duration": {
+                "learner": 8868,
+                "eqOracle": 100,
+                "total": 8968
+            },
             "eqsUsed": 1,
-            "mqsUsed": 23,
+            "mqsUsed": {
+                "learner": 20,
+                "eqOracle": 3,
+                "total": 23
+            },
             "startDate": "2016-02-01T20:02:58.256+01:00",
-            "symbolsUsed": 112
+            "symbolsUsed": {
+                "learner": 500,
+                "eqOracle": 500,
+                "total": 1000
+            }
         },
         "stepNo": 1,
         "stepsToLearn": -1
@@ -125,11 +161,23 @@ ENTITIES.learnResults = [{
     "resetSymbol": {"id": 1, "revision": 2},
     "sigma": ["s1"],
     "statistics": {
-        "duration": 7719,
-        "eqsUsed": 2,
-        "mqsUsed": 43,
-        "startDate": "2016-02-04T13:43:15.984+01:00",
-        "symbolsUsed": 220
+        "duration": {
+            "learner": 8868,
+            "eqOracle": 100,
+            "total": 8968
+        },
+        "eqsUsed": 1,
+        "mqsUsed": {
+            "learner": 20,
+            "eqOracle": 3,
+            "total": 23
+        },
+        "startDate": "2016-02-01T20:02:58.256+01:00",
+        "symbolsUsed": {
+            "learner": 500,
+            "eqOracle": 500,
+            "total": 1000
+        }
     },
     "steps": [{
         "algorithmInformation": "+====+====+\n|    | s1 |\n+====+====+\n| ε  | OK |\n+====+====+\n| s1 | OK |\n+====+====+\n",
@@ -137,11 +185,23 @@ ENTITIES.learnResults = [{
         "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20},
         "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
         "statistics": {
-            "duration": 7718,
+            "duration": {
+                "learner": 8868,
+                "eqOracle": 100,
+                "total": 8968
+            },
             "eqsUsed": 1,
-            "mqsUsed": 23,
-            "startDate": "2016-02-04T13:43:15.984+01:00",
-            "symbolsUsed": 112
+            "mqsUsed": {
+                "learner": 20,
+                "eqOracle": 3,
+                "total": 23
+            },
+            "startDate": "2016-02-01T20:02:58.256+01:00",
+            "symbolsUsed": {
+                "learner": 500,
+                "eqOracle": 500,
+                "total": 1000
+            }
         },
         "stepNo": 0,
         "stepsToLearn": -1
@@ -151,11 +211,23 @@ ENTITIES.learnResults = [{
         "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20},
         "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
         "statistics": {
-            "duration": 2,
+            "duration": {
+                "learner": 8868,
+                "eqOracle": 100,
+                "total": 8968
+            },
             "eqsUsed": 1,
-            "mqsUsed": 20,
-            "startDate": "2016-02-04T13:43:27.932+01:00",
-            "symbolsUsed": 108
+            "mqsUsed": {
+                "learner": 20,
+                "eqOracle": 3,
+                "total": 23
+            },
+            "startDate": "2016-02-01T20:02:58.256+01:00",
+            "symbolsUsed": {
+                "learner": 500,
+                "eqOracle": 500,
+                "total": 1000
+            }
         },
         "stepNo": 1,
         "stepsToLearn": -1
