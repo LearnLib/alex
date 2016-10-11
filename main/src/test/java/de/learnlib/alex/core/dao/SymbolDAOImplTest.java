@@ -106,6 +106,29 @@ public class SymbolDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
+    public void shouldFailToCreateASymbolsWithADuplicateNameOrAbbreviationWithinOneProject() {
+        User user = new User();
+        user.setId(USER_ID);
+        //
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        //
+        SymbolGroup group = new SymbolGroup();
+        group.setId(GROUP_ID);
+        //
+        Symbol symbol = new Symbol();
+        symbol.setUser(user);
+        symbol.setProject(project);
+        symbol.setGroup(group);
+        symbol.setName("Test");
+        symbol.setAbbreviation("test");
+        //
+        given(symbolRepository.countSymbolsByNameOrAbbreviation(USER_ID, PROJECT_ID, "Test", "test")).willReturn(1L);
+
+        symbolDAO.create(symbol); // should fail
+    }
+
+    @Test(expected = ValidationException.class)
     public void shouldHandleDataIntegrityViolationExceptionOnSymbolCreationGracefully() {
         User user = new User();
         user.setId(USER_ID);
@@ -379,6 +402,30 @@ public class SymbolDAOImplTest {
         symbolDAO.update(symbol);
 
         verify(symbolRepository).save(symbol);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldFailToUpdateASymbolsWithADuplicateNameOrAbbreviationWithinOneProject() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        //
+        SymbolGroup group = new SymbolGroup();
+        group.setId(GROUP_ID);
+        //
+        Symbol symbol = new Symbol();
+        symbol.setUser(user);
+        symbol.setProject(project);
+        symbol.setGroup(group);
+        symbol.setRevision(0L);
+        symbol.setName("Test");
+        symbol.setAbbreviation("test");
+        //
+        given(symbolRepository.countSymbolsByNameOrAbbreviation(USER_ID, PROJECT_ID, "Test", "test")).willReturn(1L);
+
+        symbolDAO.update(symbol); // should fail
     }
 
     @Test(expected = ValidationException.class)

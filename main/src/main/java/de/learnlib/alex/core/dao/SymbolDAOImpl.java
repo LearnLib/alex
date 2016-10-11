@@ -177,15 +177,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new ValidationException("To create a symbol it must not haven an ID or and revision");
         }
 
-        // make sure the abbreviation or the name of the symbol is unique
-        List<Symbol> allSymbols = symbolRepository.findAllByUser_IdAndProject_Id(symbol.getUserId(), symbol.getProjectId());
-        for (Symbol s: allSymbols) {
-            if (s.getAbbreviation().equals(symbol.getAbbreviation())) {
-                throw new ValidationException("To create a symbol its abbreviation must be unique.");
-            }
-            if (s.getName().equals(symbol.getName())) {
-                throw new ValidationException("To create a symbol its name must be unique.");
-            }
+        // make sure the abbreviation and the name of the symbol is unique
+        if (nameAndAbbreviationAreNotUnique(symbol)) {
+            throw new ValidationException("To create a symbol its name and abbreviation must be unique.");
         }
 
         Long userId    = symbol.getUserId();
@@ -429,6 +423,11 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                 + symbol.getProjectId() + ".");
         }
 
+        // make sure the abbreviation and the name of the symbol is unique
+        if (nameAndAbbreviationAreNotUnique(symbol)) {
+            throw new ValidationException("To update a symbol its name and abbreviation must be unique.");
+        }
+
         Symbol symbolInDB;
         try {
             symbolInDB = getWithLatestRevision(symbol.getUser(), symbol.getProjectId(), symbol.getId());
@@ -570,6 +569,15 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
 
         return symbols;
+    }
+
+    private boolean nameAndAbbreviationAreNotUnique(Symbol symbol) {
+        Long similarSymbolCount = symbolRepository.countSymbolsByNameOrAbbreviation(symbol.getUserId(),
+                                                                                    symbol.getProjectId(),
+                                                                                    symbol.getName(),
+                                                                                    symbol.getAbbreviation());
+
+        return similarSymbolCount > 0;
     }
 
     /**
