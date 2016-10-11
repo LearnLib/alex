@@ -309,8 +309,8 @@ public class LearnerResource {
                 throw new NotFoundException("No reset symbol specified!");
             }
 
-            Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsIdRevisionPair);
-            List<Symbol> symbols = loadSymbols(user, projectId, symbolSet.getSymbolsAsIdRevisionPairs());
+            Symbol       resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsIdRevisionPair);
+            List<Symbol> symbols     = loadSymbols(user, projectId, symbolSet.getSymbolsAsIdRevisionPairs());
 
             List<String> results = learner.readOutputs(user, project, resetSymbol, symbols);
 

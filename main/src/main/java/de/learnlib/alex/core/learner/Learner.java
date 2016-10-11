@@ -18,7 +18,14 @@ package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.entities.*;
+import de.learnlib.alex.core.entities.LearnerConfiguration;
+import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
+import de.learnlib.alex.core.entities.LearnerStatus;
+import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.ReadOutputConfig;
+import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
@@ -111,7 +118,7 @@ public class Learner {
      * The SymbolDAO and LearnerResultDAO must be externally injected.
      */
     public Learner() {
-        this.userThreads   = new HashMap<>();
+        this.userThreads      = new HashMap<>();
         this.executorService = Executors.newFixedThreadPool(MAX_CONCURRENT_THREADS);
     }
 
@@ -137,6 +144,16 @@ public class Learner {
         this.algorithmService      = algorithmService;
         this.contextHandlerFactory = contextHandlerFactory;
         this.learnerThreadFactory  = learnerThreadFactory;
+    }
+
+    /**
+     * Used only for testing.
+     *
+     * @param contextHandler
+     *         The new context handler to use.
+     */
+    void setContextHandler(ConnectorContextHandler contextHandler) {
+        this.contextHandler = contextHandler;
     }
 
     /**
@@ -454,6 +471,9 @@ public class Learner {
     public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
                                     ReadOutputConfig readOutputConfig)
             throws LearnerException {
+        ThreadContext.put("userId", String.valueOf(user.getId()));
+        ThreadContext.put("testNo", "readOutputs");
+        ThreadContext.put("indent", "");
         LOGGER.traceEntry();
         LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
 
@@ -465,6 +485,7 @@ public class Learner {
     }
 
     private List<String> readOutputs(List<Symbol> symbols, ConnectorManager connectors) {
+        LOGGER.traceEntry();
         try {
             List<String> output = symbols.stream().map(s ->
                     s.execute(connectors).toString()).collect(Collectors.toList());

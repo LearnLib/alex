@@ -151,11 +151,12 @@ public class LearnerTest {
             given(symbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
             symbols.add(symbol);
         }
-
+        //
         ConnectorContextHandler ctxHandler = mock(ConnectorContextHandler.class);
+        learner.setContextHandler(ctxHandler);
+        //
         ConnectorManager connectorManager = mock(ConnectorManager.class);
         given(ctxHandler.createContext()).willReturn(connectorManager);
-        given(contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER)).willReturn(ctxHandler);
 
         List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols);
 

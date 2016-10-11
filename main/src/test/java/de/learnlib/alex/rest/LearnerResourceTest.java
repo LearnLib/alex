@@ -397,7 +397,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn400IfCreatingAnOutputFailed() throws NotFoundException {
-        given(learner.readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList()))
+        given(learner.readOutputs(any(), any(), any(), anyList()))
                 .willThrow(LearnerException.class);
 
         String json = "{\"resetSymbol\":"
