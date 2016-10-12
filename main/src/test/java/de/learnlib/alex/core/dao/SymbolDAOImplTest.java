@@ -123,7 +123,8 @@ public class SymbolDAOImplTest {
         symbol.setName("Test");
         symbol.setAbbreviation("test");
         //
-        given(symbolRepository.countSymbolsByNameOrAbbreviation(USER_ID, PROJECT_ID, "Test", "test")).willReturn(1L);
+        given(symbolRepository.countSymbolsWithSameNameOrAbbreviation(null, USER_ID, PROJECT_ID, "Test", "test"))
+                .willReturn(1L);
 
         symbolDAO.create(symbol); // should fail
     }
@@ -423,7 +424,9 @@ public class SymbolDAOImplTest {
         symbol.setName("Test");
         symbol.setAbbreviation("test");
         //
-        given(symbolRepository.countSymbolsByNameOrAbbreviation(USER_ID, PROJECT_ID, "Test", "test")).willReturn(1L);
+        given(symbolRepository.countSymbolsWithSameNameOrAbbreviation(symbol.getIdRevisionPair().getId(), USER_ID,
+                                                                      PROJECT_ID, "Test", "test"))
+                .willReturn(1L);
 
         symbolDAO.update(symbol); // should fail
     }

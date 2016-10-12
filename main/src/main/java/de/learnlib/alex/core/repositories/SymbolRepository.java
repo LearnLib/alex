@@ -89,7 +89,7 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
     List<Symbol> findAll(Long userId, Long projectId, List<IdRevisionPair> idRevisionPairs);
 
     /**
-     * Count all symbols of a user and project with a specific name or abbreviation.
+     * Get symbols of a user and project with a specific name.
      *
      * @param userId
      *      The ID of the user the symbols belong to.
@@ -97,16 +97,16 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
      *      The ID of the project the symbol belongs to.
      * @param name
      *      The name of the Symbol.
-     * @param abbreviation
-     *      The abbreviation of the Symbol.
      * @return The symbols.
      */
     @Query("SELECT COUNT(s) "
             + "FROM  Symbol s "
-            + "WHERE s.user.id = ?1"
-            + "      AND s.project.id = ?2"
-            + "      AND (s.name = ?3 OR s.abbreviation = ?4)")
-    Long countSymbolsByNameOrAbbreviation(Long userId, Long projectId, String name, String abbreviation);
+            + "WHERE s.user.id = ?2"
+            + "      AND NOT s.idRevisionPair.id = ?1"
+            + "      AND s.project.id = ?3"
+            + "      AND ((s.name = ?4) OR (s.abbreviation =?5))")
+    Long countSymbolsWithSameNameOrAbbreviation(Long symbolId, Long userId, Long projectId, String name,
+                                                   String abbreviation);
 
     /**
      * Find all highest / latest revisions of Symbols.

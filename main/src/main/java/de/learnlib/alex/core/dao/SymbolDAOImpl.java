@@ -572,12 +572,15 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     private boolean nameAndAbbreviationAreNotUnique(Symbol symbol) {
-        Long similarSymbolCount = symbolRepository.countSymbolsByNameOrAbbreviation(symbol.getUserId(),
-                                                                                    symbol.getProjectId(),
-                                                                                    symbol.getName(),
-                                                                                    symbol.getAbbreviation());
+        Long count = symbolRepository.countSymbolsWithSameNameOrAbbreviation(
+                symbol.getId(),
+                symbol.getUserId(),
+                symbol.getProjectId(),
+                symbol.getName(),
+                symbol.getAbbreviation()
+        );
 
-        return similarSymbolCount > 0;
+        return count != 0;
     }
 
     /**

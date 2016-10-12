@@ -317,29 +317,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2rev0))));
         assertThat(symbolsFromDB, hasItem(equalTo(symbol2rev1)));
     }
-
-    @Test
-    public void shouldCorrectlyCountSymbolsByNameOrAbbreviation() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group = createGroup(user, project, 1L, "Test Group");
-        group = symbolGroupRepository.save(group);
-        //
-        Symbol symbol1 = createSymbol(user, project, group, 0L, 0L, "Test Symbol 1", "test1");
-        symbolRepository.save(symbol1);
-        Symbol symbol2 = createSymbol(user, project, group, 1L, 0L, "Test Symbol 2", "test2");
-        symbolRepository.save(symbol2);
-
-        Long count = symbolRepository.countSymbolsByNameOrAbbreviation(user.getId(), project.getId(),
-                                                                       "Test Symbol 1", "test2");
-
-        assertThat(count, is(equalTo(2)));
-    }
-
+    
     @Test
     public void shouldFetchSymbolsWithHighestRevisions() {
         User user = createUser("alex@test.example");
