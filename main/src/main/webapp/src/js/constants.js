@@ -24,6 +24,7 @@ export const learnAlgorithm = {
 export const webBrowser = {
     CHROME: 'chrome',
     FIREFOX: 'firefox',
+    EDGE: 'edge',
     HTMLUNITDRIVER: 'htmlunitdriver'
 };
 

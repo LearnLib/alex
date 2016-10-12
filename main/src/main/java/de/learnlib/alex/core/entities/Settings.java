@@ -63,6 +63,9 @@ public class Settings implements Serializable {
         /** The path to the gecko driver executable. */
         private String firefox;
 
+        /** The path to the edge driver executable. */
+        private String edge;
+
         /** Constructor. */
         public DriverSettings() {
         }
@@ -72,10 +75,12 @@ public class Settings implements Serializable {
          *
          * @param chrome {@link DriverSettings#chrome}
          * @param firefox {@link DriverSettings#firefox}
+         * @param edge {@link DriverSettings#edge}
          */
-        public DriverSettings(String chrome, String firefox) {
+        public DriverSettings(String chrome, String firefox, String edge) {
             this.chrome = chrome;
             this.firefox = firefox;
+            this.edge = edge;
         }
 
         /**
@@ -115,6 +120,24 @@ public class Settings implements Serializable {
         }
 
         /**
+         * Get the edge driver executable path.
+         *
+         * @return The executable path.
+         */
+        public String getEdge() {
+            return edge;
+        }
+
+        /**
+         * Set the edge driver executable path.
+         *
+         * @param edge {@link DriverSettings#edge}
+         */
+        public void setEdge(String edge) {
+            this.edge = edge;
+        }
+
+        /**
          * Checks the validity of the settings object.
          *
          * @throws ValidationException
@@ -123,14 +146,15 @@ public class Settings implements Serializable {
         public void checkValidity() throws ValidationException {
             checkDriver(firefox, "geckodriver");
             checkDriver(chrome, "chromedriver");
+            checkDriver(edge, "edgedriver");
         }
 
         private void checkDriver(String executable, String name) throws ValidationException {
             if (!executable.trim().equals("")) {
-                File chromeDriverExecutable = new File(executable);
-                if (!chromeDriverExecutable.exists()) {
+                File driverExecutable = new File(executable);
+                if (!driverExecutable.exists()) {
                     throw new ValidationException("The " + name  + " cannot be found.");
-                } else if (!chromeDriverExecutable.canExecute()) {
+                } else if (!driverExecutable.canExecute()) {
                     throw new ValidationException("The " + name + " is not executable.");
                 }
             }
@@ -160,7 +184,7 @@ public class Settings implements Serializable {
 
     /** Constructor. */
     public Settings() {
-        this.driverSettings = new DriverSettings("", "");
+        this.driverSettings = new DriverSettings("", "", "");
     }
 
     /**

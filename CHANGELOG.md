@@ -7,6 +7,7 @@
     * Check the value of an elements attribute
 * New equivalence oracle: hypothesis
 * Test symbols without starting a learning process
+* Support for the edge driver
 
 # ALEX v1.1.2
 

@@ -74,6 +74,8 @@ export function formatWebBrowser() {
                 return 'Chrome';
             case webBrowser.FIREFOX:
                 return 'Firefox';
+            case webBrowser.EDGE:
+                return 'Edge';
             default:
                 return browser;
         }

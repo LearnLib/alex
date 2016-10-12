@@ -149,8 +149,10 @@ public class ALEXApplication extends ResourceConfig {
 
                 String chromeDriverPath = System.getProperty("webdriver.chrome.driver", "");
                 String geckoDriverPath = System.getProperty("webdriver.gecko.driver", "");
+                String edgeDriverPath = System.getProperty("webdriver.edge.driver", "");
 
-                Settings.DriverSettings driverSettings = new Settings.DriverSettings(chromeDriverPath, geckoDriverPath);
+                Settings.DriverSettings driverSettings = new Settings.DriverSettings(
+                        chromeDriverPath, geckoDriverPath, edgeDriverPath);
                 settings.setDriverSettings(driverSettings);
 
                 settingsDAO.create(settings);
@@ -162,6 +164,7 @@ public class ALEXApplication extends ResourceConfig {
             Settings.DriverSettings driverSettings = settings.getDriverSettings();
             System.setProperty("webdriver.chrome.driver", driverSettings.getChrome());
             System.setProperty("webdriver.gecko.driver", driverSettings.getFirefox());
+            System.setProperty("webdriver.edge.driver", driverSettings.getEdge());
         }
     }
 

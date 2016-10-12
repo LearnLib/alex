@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.MarionetteDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -26,7 +27,10 @@ public enum WebBrowser {
     FIREFOX(MarionetteDriver.class),
 
     /** Simple & headless browser. This is the default driver. */
-    HTMLUNITDRIVER(HtmlUnitDriver.class);
+    HTMLUNITDRIVER(HtmlUnitDriver.class),
+
+    /** Use Microsoft Edge. */
+    EDGE(EdgeDriver.class);
 
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -82,6 +86,9 @@ public enum WebBrowser {
                 case FIREFOX:
                     DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
                     return new MarionetteDriver(firefoxCapabilities);
+                case EDGE:
+                    DesiredCapabilities edgeCapabilities = DesiredCapabilities.edge();
+                    return new EdgeDriver(edgeCapabilities);
                 default:
                     throw new Exception();
             }

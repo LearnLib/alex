@@ -38,6 +38,19 @@
                     </p>
                 </div>
 
+                <div class="form-group">
+                    <label>Edgedriver path</label>
+                    <input class="form-control" type="text" ng-model="vm.settings.driver.edge"
+                           placeholder="Enter the absolute path to the edgedriver executable">
+
+                    <p class="help-block">
+                        You can find the latest driver over at the
+                        <a href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" target="_blank">
+                            Edge developer page
+                        </a>.
+                    </p>
+                </div>
+
                 <button class="btn btn-sm btn-primary">Save Settings</button>
             </form>
 

@@ -23,6 +23,7 @@ public class SettingsDAOImplTest {
 
     private static final String PATH_TO_CHROME  = "path/to/chrome";
     private static final String PATH_TO_FIREFOX = "path/to/firefox";
+    private static final String PATH_TO_EDGE = "path/to/edge";
 
     @Mock
     private SettingsRepository settingsRepository;
@@ -59,11 +60,13 @@ public class SettingsDAOImplTest {
         Settings settings = new Settings();
         settings.getDriverSettings().setChrome(PATH_TO_CHROME);
         settings.getDriverSettings().setFirefox(PATH_TO_FIREFOX);
+        settings.getDriverSettings().setEdge(PATH_TO_EDGE);
 
         settingsDAO.create(settings);
 
         assertThat(System.getProperty("webdriver.chrome.driver"), is(equalTo(PATH_TO_CHROME)));
         assertThat(System.getProperty("webdriver.gecko.driver"),  is(equalTo(PATH_TO_FIREFOX)));
+        assertThat(System.getProperty("webdriver.edge.driver"), is(equalTo(PATH_TO_EDGE)));
     }
 
     @Test
@@ -98,18 +101,22 @@ public class SettingsDAOImplTest {
         Settings settings = new Settings();
         settings.getDriverSettings().setChrome(PATH_TO_CHROME);
         settings.getDriverSettings().setFirefox(PATH_TO_FIREFOX);
+        settings.getDriverSettings().setEdge(PATH_TO_EDGE);
         //
         settingsDAO.create(settings);
         //
         String chromePath  = "new/" + PATH_TO_CHROME;
         String firefoxPath = "new/" + PATH_TO_FIREFOX;
+        String edgePath = "new/" + PATH_TO_EDGE;
         settings.getDriverSettings().setChrome(chromePath);
         settings.getDriverSettings().setFirefox(firefoxPath);
+        settings.getDriverSettings().setEdge(edgePath);
 
         settingsDAO.update(settings);
 
         assertThat(System.getProperty("webdriver.chrome.driver"), is(equalTo("new/" + PATH_TO_CHROME)));
         assertThat(System.getProperty("webdriver.gecko.driver"),  is(equalTo("new/" + PATH_TO_FIREFOX)));
+        assertThat(System.getProperty("webdriver.edge.driver"),  is(equalTo("new/" + PATH_TO_EDGE)));
     }
 
 }
