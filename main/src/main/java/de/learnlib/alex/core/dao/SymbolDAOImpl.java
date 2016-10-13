@@ -347,8 +347,16 @@ public class SymbolDAOImpl implements SymbolDAO {
     public void update(Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException {
         // update
         try {
-            update_(symbol);
-            setExecuteToSymbols(symbolRepository, symbol);
+            Symbol updatedSymbol = update_(symbol);
+            List<SymbolAction> actions = updatedSymbol.getActions();
+            for(int i = 0; i < actions.size(); i++) {
+                SymbolAction action = actions.get(i);
+                if (action instanceof ExecuteSymbolAction) {
+                    IdRevisionPair idRevisionPair = ((ExecuteSymbolAction) symbol.getActions().get(i)).getSymbolToExecuteAsIdRevisionPair();
+                    ((ExecuteSymbolAction) action).setSymbolToExecuteAsIdRevisionPair(idRevisionPair);
+                }
+            }
+            setExecuteToSymbols(symbolRepository, updatedSymbol);
 
         // error handling
         } catch (DataIntegrityViolationException e) {
@@ -372,13 +380,15 @@ public class SymbolDAOImpl implements SymbolDAO {
     public void update(List<Symbol> symbols) throws IllegalArgumentException, NotFoundException, ValidationException {
         // update
         try {
+            List<Symbol> updatedSymbols = new LinkedList<>();
             for (Symbol symbol : symbols) {
-                update_(symbol);
+                Symbol updatedSymbol = update_(symbol);
+                updatedSymbols.add(updatedSymbol);
             }
 
             Map<IdRevisionPair, Symbol> symbolMap = new HashMap<>();
-            symbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
-            for (Symbol symbol : symbols) {
+            updatedSymbols.forEach(s -> symbolMap.put(s.getIdRevisionPair(), s));
+            for (Symbol symbol : updatedSymbols) {
                 setExecuteToSymbols(symbolRepository, symbol, symbolMap);
             }
 
@@ -416,7 +426,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private void update_(Symbol symbol) throws IllegalArgumentException, NotFoundException {
+    private Symbol update_(Symbol symbol) throws IllegalArgumentException, NotFoundException {
         // checks for valid symbol
         if (symbol.getProjectId() == null) {
             throw new NotFoundException("Update failed: Could not find the project with the id + "
@@ -459,7 +469,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         beforeSymbolSave(symbol);
 
-        symbolRepository.save(symbol);
+        symbol = symbolRepository.save(symbol);
 
         // update group
         if (!newGroup.equals(oldGroup)) {
@@ -470,6 +480,8 @@ public class SymbolDAOImpl implements SymbolDAO {
 
             symbols.forEach(newGroup::addSymbol);
         }
+
+        return symbol;
     }
 
     @Override
@@ -622,13 +634,22 @@ public class SymbolDAOImpl implements SymbolDAO {
     private static void setExecuteToSymbols(SymbolRepository symbolRepository, Symbol symbol,
                                             Map<IdRevisionPair, Symbol> cachedSymbols)
             throws NotFoundException {
+        System.out.println("User: " + symbol.getUser());
+        System.out.println("Project: " + symbol.getProject());
+        System.out.println("ID: " + symbol.getId());
+        System.out.println("Revision: " + symbol.getRevision());
+        System.out.println("Symbol ID: " + symbol.getSymbolId());
+        System.out.println("Action: " + symbol.getActions());
+
         for (SymbolAction action : symbol.getActions()) {
+            System.out.println("\tAction: " + action);
             if (action instanceof ExecuteSymbolAction) {
                 ExecuteSymbolAction executeSymbolAction = (ExecuteSymbolAction) action;
                 IdRevisionPair idAndRevision = executeSymbolAction.getSymbolToExecuteAsIdRevisionPair();
 
-                Symbol symbolToExecute = cachedSymbols.get(idAndRevision);
+                System.out.println("\t\tSymbol To Execute ID & Revision: " + idAndRevision);
 
+                Symbol symbolToExecute = cachedSymbols.get(idAndRevision);
                 if (symbolToExecute == null) { // it was not in the set of cached symbols
                     symbolToExecute = symbolRepository.findOne(action.getUser().getId(), action.getProject().getId(),
                                                                idAndRevision.getId(), idAndRevision.getRevision());
@@ -639,9 +660,17 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                     + idAndRevision.getId() + " and the revision "
                                                     + idAndRevision.getRevision() + ", but it was referenced");
                 }
+
+                cachedSymbols.put(symbolToExecute.getIdRevisionPair(), symbolToExecute);
+                System.out.println("\tSymbol to Execute: " + symbolToExecute);
+
                 executeSymbolAction.setSymbolToExecute(symbolToExecute);
             }
+            System.out.println();
         }
+
+        //symbolRepository.save(symbol);
+        //System.out.println("\tSymbol ID: " + symbol.getSymbolId());
     }
 
     /**
@@ -661,26 +690,29 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.getActions().stream().filter(a -> a instanceof ExecuteSymbolAction).forEach(a -> {
             ExecuteSymbolAction action = (ExecuteSymbolAction) a;
 
-            if (action.isUseLatestRevision()) {
-                try {
-                    Symbol symbolToExecute = symbolDAO.getWithLatestRevision(symbol.getUser(), symbol.getProjectId(),
-                                                                action.getSymbolToExecuteAsIdRevisionPair().getId());
-                    action.setSymbolToExecute(symbolToExecute);
-                } catch (NotFoundException e) {
-                    LOGGER.warn("While loading the lazy relation for the symbol '" + symbol + "': Could not find the"
-                                + "latest revision of the symbol to execute '" + action.getSymbolToExecute() + "'.");
-                    action.setSymbolToExecute(null);
-                }
-            }
-
             Symbol symbolToExecute = action.getSymbolToExecute();
+            if (symbolToExecute == null) {
 
-            if (symbolToExecute != null
-                    && (!Hibernate.isInitialized(symbolToExecute)
-                            || !Hibernate.isInitialized(symbolToExecute.getActions()))) {
-                Hibernate.initialize(symbolToExecute);
-                Hibernate.initialize(symbolToExecute.getActions());
-                loadLazyRelations(symbolDAO, symbolToExecute);
+                if (action.isUseLatestRevision()) {
+                    try {
+                        symbolToExecute = symbolDAO.getWithLatestRevision(symbol.getUser(), symbol.getProjectId(),
+                                                                    action.getSymbolToExecuteAsIdRevisionPair().getId());
+                        action.setSymbolToExecute(symbolToExecute);
+                    } catch (NotFoundException e) {
+                        LOGGER.warn("While loading the lazy relation for the symbol '" + symbol + "': Could not find the"
+                                    + "latest revision of the symbol to execute '" + action.getSymbolToExecute() + "'.");
+                        action.setSymbolToExecute(null);
+                    }
+                }
+
+
+                if (symbolToExecute != null
+                        && (!Hibernate.isInitialized(symbolToExecute)
+                                || !Hibernate.isInitialized(symbolToExecute.getActions()))) {
+                    Hibernate.initialize(symbolToExecute);
+                    Hibernate.initialize(symbolToExecute.getActions());
+                    loadLazyRelations(symbolDAO, symbolToExecute);
+                }
             }
         });
     }
